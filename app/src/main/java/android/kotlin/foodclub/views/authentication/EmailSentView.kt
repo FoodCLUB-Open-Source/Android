@@ -3,8 +3,10 @@ package android.kotlin.foodclub.views.authentication
 import android.kotlin.foodclub.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -21,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -72,23 +77,30 @@ fun EmailSentView(navController: NavHostController) {
         )
 
 
-        Row(
+        Button(
+            shape = RectangleShape,
             modifier = Modifier
-                .fillMaxWidth()
+                .border(1.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
                 .clip(RoundedCornerShape(10.dp))
-                .background(Color(126, 198, 11, 255))
-                .padding(15.dp), horizontalArrangement = Arrangement.Center
+                .fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(126, 198, 11, 255),
+                contentColor = Color.White
+            ), contentPadding = PaddingValues(15.dp),
+
+            onClick = {
+
+            }
 
 
         ) {
 
 
             Text(
+                color = Color.White,
                 text = "Log in",
                 fontFamily = montserratFamily,
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp,
-                color = Color.White
+                fontWeight = FontWeight.Bold
             )
         }
     }

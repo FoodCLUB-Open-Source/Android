@@ -5,8 +5,11 @@ import android.kotlin.foodclub.viewmodels.authentication.MainLogInAndSignUpViewM
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,14 +19,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -34,14 +45,29 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.foodclub.viewmodels.onboarding.MenuViewModel
-
 
 
 @Composable
 fun MainLogInAndSignUp(navController: NavHostController) {
 
     val viewModel: MainLogInAndSignUpViewModel = viewModel()
+
+    var interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+
+
+    if (!isPressed) {
+        viewModel.reverseButtonUi()
+    }
+
+    var interactionSource1 = remember { MutableInteractionSource() }
+    val isPressed1 by interactionSource1.collectIsPressedAsState()
+
+
+    if (!isPressed1) {
+        viewModel.reverseButtonUi()
+    }
+
 
     val montserratFamily = FontFamily(
 
@@ -79,16 +105,27 @@ fun MainLogInAndSignUp(navController: NavHostController) {
 
 
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(1.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
-                .padding(15.dp), horizontalArrangement = Arrangement.SpaceAround
+        Button(
 
+            shape = RectangleShape,
+            modifier = Modifier
+                .border(1.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
+                .clip(RoundedCornerShape(10.dp))
+                .fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = viewModel.backgroundColor,
+                contentColor = Color.Black
+            ), contentPadding = PaddingValues(15.dp),
+
+            onClick = {
+                viewModel.changeButtonUi()
+                viewModel.continueWithFacebook()
+
+            }, interactionSource = interactionSource
 
         ) {
             Image(
-                painterResource(id = R.drawable.facebook_icon),
+                painterResource(id = R.mipmap.facebook_icon),
                 contentDescription = "app_title",
                 modifier = Modifier.size(17.dp)
 
@@ -99,47 +136,67 @@ fun MainLogInAndSignUp(navController: NavHostController) {
                 text = "Continue with Facebook",
                 fontFamily = montserratFamily,
                 fontWeight = FontWeight.Bold,
-                fontSize = 15.sp
+                fontSize = 15.sp,
+                modifier = Modifier.padding(start = 25.dp)
             )
         }
 
 
-        Row(
+        Button(
+
+            shape = RectangleShape,
             modifier = Modifier
-                .fillMaxWidth()
                 .border(1.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
-                .padding(15.dp), horizontalArrangement = Arrangement.SpaceAround
+                .clip(RoundedCornerShape(10.dp))
+                .fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = viewModel.backgroundColor,
+                contentColor = Color.Black
+            ), contentPadding = PaddingValues(15.dp),
+
+            onClick = {
+                viewModel.changeButtonUi()
+                viewModel.continueWithInstagram()
+            }, interactionSource = interactionSource1
 
 
         ) {
             Image(
-                painterResource(id = R.drawable.instagram_icon),
+                painterResource(id = R.mipmap.instagram_icon),
                 contentDescription = "app_title",
                 modifier = Modifier.size(17.dp)
 
 
             )
 
-            
+
 
             Text(
                 text = "Continue with Instagram",
                 fontFamily = montserratFamily,
                 fontWeight = FontWeight.Bold,
-                fontSize = 15.sp
+                fontSize = 15.sp,
+                modifier = Modifier.padding(start = 25.dp)
             )
         }
 
-        Row(
+        Button(
+            shape = RectangleShape,
             modifier = Modifier
+                .border(1.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
                 .clip(RoundedCornerShape(10.dp))
-                .fillMaxWidth()
-                .background(Color(115, 180, 10))
-                .padding(15.dp),
-            horizontalArrangement = Arrangement.Center,
+                .fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(126, 198, 11, 255),
+                contentColor = Color.White
+            ), contentPadding = PaddingValues(15.dp),
+
+            onClick = {
+                viewModel.signUp()
+            }
 
 
-            ) {
+        ) {
 
 
             Text(
@@ -153,7 +210,7 @@ fun MainLogInAndSignUp(navController: NavHostController) {
         Row(
             modifier = Modifier.fillMaxWidth(),
 
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceEvenly
 
 
         ) {
@@ -165,11 +222,20 @@ fun MainLogInAndSignUp(navController: NavHostController) {
             )
 
 
-            Text(
-                color = Color(152, 209, 60),
-                text = "Log in",
-                fontFamily = montserratFamily
+            ClickableText(
+                text = AnnotatedString("Log in >"),
+                onClick = {
+                    viewModel.logIn()
+                },
+                style = TextStyle(
+                    color = Color(126, 198, 11, 255),
+                    fontFamily = montserratFamily
+                )
+
+
             )
+
+          
 
 
         }
@@ -193,13 +259,18 @@ fun MainLogInAndSignUp(navController: NavHostController) {
                     fontSize = 10.sp
                 )
 
-                Text(
-                    color = Color.Gray,
-                    text = "Terms & Conditions",
-                    fontFamily = montserratFamily,
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.Bold,
-                    textDecoration = TextDecoration.Underline
+                ClickableText(
+                    text = AnnotatedString("Terms & Conditions"),
+                    onClick={
+                        viewModel.termsAndConditions()
+                    },
+                    style = TextStyle(
+                        color = Color.Gray,
+                        fontFamily = montserratFamily,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        textDecoration = TextDecoration.Underline
+                    )
                 )
             }
 
@@ -214,6 +285,6 @@ fun MainLogInAndSignUp(navController: NavHostController) {
 
 @Composable
 @Preview
-fun MainLogInAndSignUp(){
+fun MainLogInAndSignUp() {
     MainLogInAndSignUp(rememberNavController())
 }
