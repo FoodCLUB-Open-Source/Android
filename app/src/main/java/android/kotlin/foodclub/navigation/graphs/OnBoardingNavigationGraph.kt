@@ -1,5 +1,8 @@
 package com.example.foodclub.navigation.graphs
 
+import android.kotlin.foodclub.views.authentication.EmailSentView
+import android.kotlin.foodclub.views.authentication.LogInWithEmail
+import android.kotlin.foodclub.views.authentication.MainLogInAndSignUp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -16,7 +19,7 @@ fun NavGraphBuilder.onBoardingNavigationGraph(navController: NavHostController) 
         startDestination = OnBoardingScreen.Menu.route
     ) {
         composable(route = OnBoardingScreen.Menu.route) {
-            MenuView(navController)
+            ForgotPasswordView(navController)
         }
     }
 }

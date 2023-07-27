@@ -1,4 +1,4 @@
-package com.example.foodclub.views.authentication
+package android.kotlin.foodclub.views.authentication
 
 import android.kotlin.foodclub.R
 import androidx.compose.foundation.Image
@@ -13,16 +13,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -34,21 +33,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.foodclub.viewmodels.authentication.ForgotPasswordViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ForgotPasswordView(navController: NavHostController) {
-    val viewModel: ForgotPasswordViewModel = viewModel()
+fun EmailSentView(navController: NavHostController) {
 
     val montserratFamily = FontFamily(
 
         Font(R.font.montserratregular, FontWeight.Normal),
 
-        )
+    )
 
     Column(
         modifier = Modifier
@@ -67,39 +63,19 @@ fun ForgotPasswordView(navController: NavHostController) {
         )
 
         Text(
-            text = "Forgot Password", fontSize = 30.sp,
+            text = "Email Sent", fontSize = 30.sp,
             fontWeight = FontWeight.SemiBold,
             fontFamily = montserratFamily,
             modifier = Modifier.padding(top = 20.dp, start = 10.dp)
         )
         Text(
-            text = "Don’t worry! It happens. Please enter the email associated with your account.",
+            text = "We’ve sent an email with password reset link to PersonalEmail@xxx.com",
             fontSize = 15.sp,
             color = Color.Gray,
             fontFamily = montserratFamily,
             modifier = Modifier.padding(start = 10.dp)
         )
 
-
-        TextField(
-            value = "",
-            onValueChange = {},
-            modifier = Modifier
-                .background(Color(218, 218, 218, 1))
-                .border(1.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
-                .clip(RoundedCornerShape(10.dp))
-                .fillMaxWidth(),
-
-            placeholder = {
-                Text(text = "Email", color = Color(218, 218, 218, 228))
-            },
-
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = Color(218, 218, 218, 128),
-                unfocusedBorderColor = Color(218, 218, 218, 110)
-            )
-
-        )
 
         Button(
             shape = RectangleShape,
@@ -122,18 +98,17 @@ fun ForgotPasswordView(navController: NavHostController) {
 
             Text(
                 color = Color.White,
-                text = "Send Code",
+                text = "Log in",
                 fontFamily = montserratFamily,
                 fontWeight = FontWeight.Bold
             )
         }
     }
 
-
 }
 
 @Composable
 @Preview
-fun ForgotPasswordView() {
-    ForgotPasswordView(rememberNavController())
+fun EmailSentView(){
+    EmailSentView(rememberNavController())
 }
