@@ -1,9 +1,11 @@
 package com.example.foodclub.viewmodels.home
 
 import android.kotlin.foodclub.data.models.VideoModel
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 class HomeViewModel : ViewModel() {
     private val _title = MutableLiveData("HomeViewModel View")

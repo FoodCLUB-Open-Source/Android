@@ -1,6 +1,9 @@
 package com.example.foodclub.views.home
 
 import android.annotation.SuppressLint
+import android.kotlin.foodclub.R
+import android.kotlin.foodclub.views.home.StoryView
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.height
@@ -37,6 +40,16 @@ fun MainView(navController: NavHostController = rememberNavController()) {
     val viewModel: HomeViewModel = viewModel()
 
     Scaffold(
+        topBar = {
+            Box(modifier = Modifier.padding(top = 60.dp)) { // Add desired padding here
+                StoryView(stories = listOf(
+                    R.drawable.story_user,
+                    R.drawable.story_user,
+                    R.drawable.story_user,
+                    R.drawable.story_user
+                ))
+            }
+        },
         bottomBar = { BottomBar(navController = navController) }
     ) {
         HomeNavigationGraph(navController = navController)
