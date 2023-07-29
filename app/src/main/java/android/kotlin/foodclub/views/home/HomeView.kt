@@ -76,6 +76,7 @@ import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
@@ -112,7 +113,14 @@ fun HomeView(
         )
     }
 
-
+    Box(modifier = Modifier.padding(top = 60.dp).zIndex(1f)) {
+        StoryView(stories = listOf(
+            R.drawable.story_user,
+            R.drawable.story_user,
+            R.drawable.story_user,
+            R.drawable.story_user
+        ))
+    }
     Column(
         modifier = Modifier
             .height(screenHeightMinusBottomNavItem)

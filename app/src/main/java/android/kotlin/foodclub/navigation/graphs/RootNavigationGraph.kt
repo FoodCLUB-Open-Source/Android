@@ -8,16 +8,17 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.foodclub.views.authentication.ForgotPasswordView
+import com.example.foodclub.views.home.HomeView
 import com.example.foodclub.views.home.MainView
 
 
 @Composable
 fun RootNavigationGraph(navController: NavHostController) {
-    NavHost(navController = navController, route = Graph.ROOT, startDestination = Graph.ON_BOARDING) {
+    NavHost(navController = navController, route = Graph.ROOT, startDestination = Graph.AUTHENTICATION) {
         onBoardingNavigationGraph(navController = navController)
         authNavigationGraph(navController = navController)
         composable(route = Graph.HOME) {
-            ForgotPasswordView(navController)
+            MainView()
         }
     }
 }

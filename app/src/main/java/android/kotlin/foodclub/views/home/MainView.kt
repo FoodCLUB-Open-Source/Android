@@ -40,8 +40,8 @@ fun MainView(navController: NavHostController = rememberNavController()) {
     val viewModel: HomeViewModel = viewModel()
 
     Scaffold(
-        topBar = {
-            Box(modifier = Modifier.padding(top = 60.dp)) { // Add desired padding here
+        /*topBar = {
+            Box(modifier = Modifier.padding(top = 60.dp)) {
                 StoryView(stories = listOf(
                     R.drawable.story_user,
                     R.drawable.story_user,
@@ -49,7 +49,7 @@ fun MainView(navController: NavHostController = rememberNavController()) {
                     R.drawable.story_user
                 ))
             }
-        },
+        },*/
         bottomBar = { BottomBar(navController = navController) }
     ) {
         HomeNavigationGraph(navController = navController)

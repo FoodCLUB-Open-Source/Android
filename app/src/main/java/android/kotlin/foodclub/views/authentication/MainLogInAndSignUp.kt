@@ -43,6 +43,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
@@ -192,7 +193,8 @@ fun MainLogInAndSignUp(navController: NavHostController) {
             ), contentPadding = PaddingValues(15.dp),
 
             onClick = {
-                viewModel.signUp()
+                navController.popBackStack()
+                navController.navigate("home_graph")
             }
 
 
