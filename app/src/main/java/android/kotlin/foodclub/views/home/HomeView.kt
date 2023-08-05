@@ -5,17 +5,15 @@ package com.example.foodclub.views.home
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.data.models.VideoModel
 import android.kotlin.foodclub.utils.composables.VideoPlayer
-import android.kotlin.foodclub.views.home.StoryView
+import android.kotlin.foodclub.views.home.StoriesContainerView
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -65,25 +63,107 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
 import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.navigation.NavHostController
+
+val montserratFamily = FontFamily(Font(R.font.montserratregular, FontWeight.Normal))
+
+@Composable
+fun BottomSheetItem(icon: Int, text: String, navController: NavHostController, destination: String) {
+    Row(
+        modifier = Modifier
+            .clickable { navController.navigate(destination) }
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(id = icon),
+            contentDescription = null,
+            modifier = Modifier.size(50.dp)
+        )
+        Spacer(Modifier.width(16.dp))
+        Text(
+            text = text,
+            fontFamily = montserratFamily,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BottomSheet(onDismiss: () -> Unit, navController: NavHostController) {
+    ModalBottomSheet(
+        containerColor = Color.White,
+        onDismissRequest = { onDismiss() },
+        //sheetState = modalBottomSheetState,
+        dragHandle = { BottomSheetDefaults.DragHandle() },
+    ) {
+
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            Text(
+                text = "Create",
+                fontFamily = montserratFamily,
+                fontWeight = FontWeight.Bold,
+            )
+            Divider(
+                color = Color.Gray,
+                thickness = 0.8.dp,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
+            BottomSheetItem(
+                icon = R.drawable.story_bottom_sheet_icon,
+                text = "Create a Story",
+                navController = navController,
+                "CAMERA_VIEW"
+            )
+            BottomSheetItem(
+                icon = R.drawable.recipe_bottom_sheet_icon,
+                text = "Create a Recipe",
+                navController = navController,
+                "CREATE_RECIPE_VIEW"
+            )
+            Spacer(modifier = Modifier.height(25.dp))
+        }
+
+    }
+}
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
 fun HomeView(
     modifier: Modifier = Modifier,
-    initialPage: Int? = 0,)
+    initialPage: Int? = 0,
+    navController: NavHostController,
+    showSheet: Boolean,
+    triggerBottomSheetModal: () -> Unit
+)
 {
     val viewModel: HomeViewModel = viewModel()
     val title = viewModel.title.value ?: "Loading..."
@@ -112,14 +192,16 @@ fun HomeView(
             color = Color.White
         )
     }
-
     Box(modifier = Modifier.padding(top = 60.dp).zIndex(1f)) {
-        StoryView(stories = listOf(
+        StoriesContainerView(stories = listOf(
             R.drawable.story_user,
             R.drawable.story_user,
             R.drawable.story_user,
             R.drawable.story_user
-        ))
+        ), navController)
+    }
+    if (showSheet) {
+        BottomSheet(triggerBottomSheetModal, navController)
     }
     Column(
         modifier = Modifier
@@ -223,14 +305,14 @@ fun HomeView(
                             modifier = Modifier.align(Alignment.End)
                                 .width(65.dp).height(65.dp)
                                 .clip(shape = RoundedCornerShape(35.dp))
-                                .background(Color.Black.copy(alpha = 0.9f)).blur(radiusX = 15.dp, radiusY = 15.dp)
+                                .background(Color.Black.copy(alpha = 0.9f)).blur(radius = 5.dp)
                             ,
                         ) {
                             Spacer(Modifier.weight(1f))
                             Image(
                                 painter = painterResource(id = R.drawable.save),
                                 modifier = Modifier.size(25.dp),
-                                contentDescription = "like",
+                                contentDescription = "save",
                             )
                             Spacer(Modifier.weight(1f))
                         }
@@ -268,7 +350,6 @@ fun HomeView(
                         }
                     }
                 }
-
             }
         }
 
