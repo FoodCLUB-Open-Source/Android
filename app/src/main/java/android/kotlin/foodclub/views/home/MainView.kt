@@ -5,17 +5,25 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.views.home.StoryView
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
@@ -32,33 +40,29 @@ import com.example.foodclub.navigation.graphs.HomeNavigationGraph
 import com.example.foodclub.ui.theme.BottomBarScreenObject
 import com.example.foodclub.ui.theme.BottomBarScreenObject.Create.icon
 import com.example.foodclub.viewmodels.home.HomeViewModel
+import androidx.compose.runtime.*
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainView(navController: NavHostController = rememberNavController()) {
     val viewModel: HomeViewModel = viewModel()
+    var showSheet by remember { mutableStateOf(false) }
+
+    val triggerBottomSheetModal: () -> Unit = {
+        showSheet = !showSheet
+    }
 
     Scaffold(
-        /*topBar = {
-            Box(modifier = Modifier.padding(top = 60.dp)) {
-                StoryView(stories = listOf(
-                    R.drawable.story_user,
-                    R.drawable.story_user,
-                    R.drawable.story_user,
-                    R.drawable.story_user
-                ))
-            }
-        },*/
-        bottomBar = { BottomBar(navController = navController) }
+        bottomBar = { BottomBar(navController = navController, triggerBottomSheetModal) }
     ) {
-        HomeNavigationGraph(navController = navController)
+        HomeNavigationGraph(navController = navController, showSheet = showSheet, triggerBottomSheetModal)
     }
 }
 
 
 @Composable
-fun BottomBar(navController: NavHostController) {
+fun BottomBar(navController: NavHostController, triggerBottomSheetModal: () -> Unit) {
     val screens = listOf(
         BottomBarScreenObject.Home,
         BottomBarScreenObject.Play,
@@ -78,7 +82,8 @@ fun BottomBar(navController: NavHostController) {
                 AddItem(
                     screen = screen,
                     currentDestination = currentDestination,
-                    navController = navController
+                    navController = navController,
+                    triggerBottomSheetModal = triggerBottomSheetModal
                 )
             }
         }
@@ -89,7 +94,8 @@ fun BottomBar(navController: NavHostController) {
 fun RowScope.AddItem(
     screen: BottomBarScreenObject,
     currentDestination: NavDestination?,
-    navController: NavHostController
+    navController: NavHostController,
+    triggerBottomSheetModal: () -> Unit
 ) {
     val icon = painterResource(screen.icon)
 
@@ -108,9 +114,13 @@ fun RowScope.AddItem(
         },
         selected = false,
         onClick = {
-            navController.navigate(screen.route) {
-                popUpTo(navController.graph.findStartDestination().id)
-                launchSingleTop = true
+            if (screen.route == "CREATE") {
+                triggerBottomSheetModal()
+            } else {
+                navController.navigate(screen.route) {
+                    popUpTo(navController.graph.findStartDestination().id)
+                    launchSingleTop = true
+                }
             }
         }
 
