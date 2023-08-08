@@ -74,7 +74,6 @@ fun TopBar() {
             modifier = Modifier.weight(0.3f),
             horizontalAlignment = Alignment.Start
         ) {
-
             Button(
                 onClick = { /*Goes to Page before this*/ },
                 colors = ButtonDefaults.buttonColors(
@@ -84,6 +83,7 @@ fun TopBar() {
             ) {
                 ArrowIcon(size = 25, icon = painterResource(id = R.drawable.back_icon))
             }
+        }
 
             Column(
                 modifier = Modifier.weight(1f),
@@ -91,7 +91,7 @@ fun TopBar() {
             ) {
                 CommonText(text = "Settings", size = 28, weight = FontWeight.W900)
             }
-        }
+
     }
 }
     
