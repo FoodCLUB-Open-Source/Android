@@ -130,7 +130,7 @@ fun UserContent(userName: String, userImage: Painter){
 
 @Composable
 fun SettingsButtons(name: String, icon: Painter){
-    
+
 }
 
 
