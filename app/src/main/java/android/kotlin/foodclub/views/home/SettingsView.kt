@@ -35,19 +35,35 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 val montSerratFamily = FontFamily(Font(R.font.montserratregular, FontWeight.Normal))
-//This is the main settings function where everything is being organised
-@Composable
-fun SettingsView(){
-    Column {
 
-        TopBar()
-        UserContent(userName = "Jake Rayner", userImage = painterResource(id=R.drawable.story_user))
-    }
+//Common icon code to be reused
+@Composable
+fun ArrowIcon(size: Int, icon: Painter){
+    Icon(
+        painter = icon,
+        contentDescription = "Back",
+        modifier = Modifier
+            .size(size.dp)
+    )
+}
+
+//Reusing Title Text Component
+
+@Composable
+fun CommonText(text:String, size: Int, weight:FontWeight){
+    Text(
+        text = text,
+        fontSize = size.sp,
+        color = Color.Black,
+        fontFamily = montserratFamily,
+        fontWeight = weight,
+        textAlign = TextAlign.Center
+    )
 }
 
 //This is the back button and the Settings text
 @Composable
-fun TopBar(){
+fun TopBar() {
     Row(
         horizontalArrangement = Arrangement.Start,
         modifier = Modifier
@@ -58,37 +74,27 @@ fun TopBar(){
             modifier = Modifier.weight(0.3f),
             horizontalAlignment = Alignment.Start
         ) {
+
             Button(
                 onClick = { /*Goes to Page before this*/ },
-                colors = ButtonDefaults.buttonColors(containerColor=Color.Transparent, contentColor = Color.Black)
-                ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.back_icon),
-                    contentDescription = "Back",
-                    modifier = Modifier
-                        .size(25.dp)
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Transparent,
+                    contentColor = Color.Black
                 )
+            ) {
+                ArrowIcon(size = 25, icon = painterResource(id = R.drawable.back_icon))
             }
-        }
 
-        Column(
-            modifier = Modifier.weight(1f),
-            horizontalAlignment = Alignment.Start
-        ) {
-            Text(
-                text = "Settings",
-                fontSize = 28.sp,
-                color = Color.Black,
-                fontFamily = montserratFamily,
-                fontWeight = FontWeight.W900,
-                modifier = Modifier
-                    .padding(top= 3.dp)
-
-            )
+            Column(
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = Alignment.Start
+            ) {
+                CommonText(text = "Settings", size = 28, weight = FontWeight.W900)
+            }
         }
     }
 }
-
+    
 @Composable
 fun UserContent(userName: String, userImage: Painter){
     Column(
@@ -110,18 +116,10 @@ fun UserContent(userName: String, userImage: Painter){
 
 
         }
-
         Row(
             horizontalArrangement = Arrangement.Center
         ) {
-            Text(
-                text = userName,
-                fontSize = 24.sp,
-                color = Color.Black,
-                fontFamily = montserratFamily,
-                fontWeight = FontWeight.W900,
-                textAlign = TextAlign.Center
-            )
+            CommonText(text = userName, size = 24, weight = FontWeight.W900)
         }
     }
 }
@@ -129,9 +127,31 @@ fun UserContent(userName: String, userImage: Painter){
 //Common Button
 
 @Composable
-fun SettingsButtons(name: String, icon: Painter){
+fun SettingsButtons(item: String, icon: Painter){
+    Button(
+        onClick = {/* Goes to the corresponding item page*/},
 
+    ){
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ){
+        ArrowIcon(size = 25, icon = icon)
+        CommonText(text = item, size = 16, weight = FontWeight.W500)
+        ArrowIcon(size = 25, icon = painterResource(id=R.drawable.baseline_arrow_right_24))
+        }
+    }
 }
+
+    //This is the main settings function where everything is being organised
+    @Composable
+    fun SettingsView(){
+        Column {
+
+            TopBar()
+            UserContent(userName = "Jake Rayner", userImage = painterResource(id=R.drawable.story_user))
+            SettingsButtons(item = "Se", icon = painterResource(id=R.drawable.story_user))
+        }
+    }
 
 
 
