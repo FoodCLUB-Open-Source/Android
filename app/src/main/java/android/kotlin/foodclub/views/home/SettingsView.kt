@@ -2,15 +2,26 @@ package android.kotlin.foodclub.views.home
 
 import android.graphics.drawable.shapes.Shape
 import android.kotlin.foodclub.R
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.AlertDialogDefaults.shape
 import androidx.compose.material3.Button
@@ -19,20 +30,30 @@ import androidx.compose.material3.ButtonDefaults.shape
 import androidx.compose.material3.DatePickerDefaults.shape
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import kotlinx.coroutines.launch
 
 val montSerratFamily = FontFamily(Font(R.font.montserratregular, FontWeight.Normal))
 
@@ -142,6 +163,209 @@ fun SettingsButtons(item: String, icon: Painter){
     }
 }
 
+@Composable
+fun ButtonWithBorder() {
+    Button(
+        onClick = {
+            //your onclick code
+        },
+        border = BorderStroke(1.dp, Color.Black),
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black)
+    ) {
+        Text(text = "Edit profile information", color = Color.DarkGray)
+    }
+}
+@Composable
+fun ButtonWithBorder2() {
+    Button(
+        onClick = {
+            //your onclick code
+        },
+        border = BorderStroke(1.dp, Color.Black),
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black)
+    ) {
+        Text(text = "Privacy settings", color = Color.DarkGray)
+    }
+}
+@Composable
+fun ButtonWithBorder3() {
+    Button(
+        onClick = {
+            //your onclick code
+        },
+        border = BorderStroke(1.dp, Color.Black),
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black)
+    ) {
+        Text(text = "Help & Support", color = Color.DarkGray)
+    }
+}
+/*
+@Composable
+fun SettingsButtons(item: String, icon: Painter){
+    Button(
+        onClick = {/* Goes to the corresponding item page*/},
+
+    ){
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ){
+        ArrowIcon(size = 25, icon = icon)
+        CommonText(text = item, size = 16, weight = FontWeight.W500)
+        ArrowIcon(size = 25, icon = painterResource(id=R.drawable.baseline_arrow_right_24))
+        }
+    }
+}
+ */
+
+@Composable
+fun LogoutBar(){
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp)
+            .background(MaterialTheme.colorScheme.primary)
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(painter = painterResource(id = R.drawable.logout),
+            contentDescription = "Log out",
+            tint = Color.White,
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text = "Log out",
+            color = Color.White,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+@Composable
+fun PrivacyPolicyRow(){
+    SettingRow(
+        text = "Privacy Policy",
+        iconId = R.drawable.logout, // Replace with your icon resource
+        endIcon = Icons.Default.ArrowForward
+    )
+}
+@Composable
+fun ContactUsRow() {
+    SettingRow(
+        text = "Contact us",
+        iconId = R.drawable.email, // Replace with your icon resource
+        endIcon = Icons.Default.ArrowForward
+    )
+}
+@Composable
+fun SettingBar(text: String, iconId: Int, endIcon: ImageVector){
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp)
+            .padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(id = iconId),
+            contentDescription = null,
+            tint = Color.Black,
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(text = text,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Normal
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        Icon(
+            imageVector = endIcon,
+            contentDescription = null,
+            tint = Color.Black,
+            modifier = Modifier.size(24.dp)
+        )
+    }
+}
+
+@Composable
+fun SettingRow(text: String, iconId: Int, endIcon: ImageVector) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp)
+            .padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        Icon(
+            painter = painterResource(id = iconId),
+            contentDescription = null, // No content description for decorative icons
+            tint = Color.Black,
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = text,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Normal
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        Icon(
+            imageVector = endIcon,
+            contentDescription = null, // No content description for decorative icons
+            tint = Color.Black,
+            modifier = Modifier.size(24.dp)
+        )
+    }
+}
+//@Preview(showBackground = true)
+//@Composable
+//fun PreviewSettingsView(){
+//    SettingBar(text = "Example", iconId = R.drawable.logout, endIcon = Icons.Default.ArrowForward)
+//}
+
+@Composable
+fun SettingPage() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Spacer(modifier = Modifier.weight(1f))
+        BoxWithBorder(
+            borderColor = Color.Black,
+            borderWidth = 2.dp,
+            cornerRadius = 16.dp
+        ) {
+            Column {
+                ContactUsRow()
+                PrivacyPolicyRow()
+            }
+        }
+    }
+}
+@Composable
+fun BoxWithBorder(
+    borderColor: Color,
+    borderWidth: Dp,
+    cornerRadius: Dp,
+    content: @Composable BoxScope.() -> Unit
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .border(
+                width = borderWidth,
+                color = borderColor,
+                shape = RoundedCornerShape(cornerRadius)
+            )
+            .padding(16.dp)
+    ) {
+        content()
+    }
+}
+
+
+
     //This is the main settings function where everything is being organised
     @Composable
     fun SettingsView(){
@@ -149,9 +373,21 @@ fun SettingsButtons(item: String, icon: Painter){
 
             TopBar()
             UserContent(userName = "Jake Rayner", userImage = painterResource(id=R.drawable.story_user))
-            SettingsButtons(item = "Se", icon = painterResource(id=R.drawable.story_user))
+            SettingsButtons(item = "Edit profile information", icon = painterResource(id=R.drawable.story_user))
+            ButtonWithBorder()
+            ButtonWithBorder2()
+            ButtonWithBorder3()
+            SettingBar(text = "Privacy Policy", iconId = R.drawable.insurance, endIcon = Icons.Default.ArrowForward)
+            BoxWithBorder(borderColor = Color.Black, borderWidth = 2.dp, cornerRadius =16.dp ) {
+                PrivacyPolicyRow()
+                ContactUsRow()
+            }
+            LogoutBar()
+
         }
     }
+
+
 
 
 
