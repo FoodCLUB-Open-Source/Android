@@ -38,6 +38,7 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.autoSaver
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -60,9 +61,9 @@ val montSerratFamily = FontFamily(Font(R.font.montserratregular, FontWeight.Norm
 
 //Common icon code to be reused
 @Composable
-fun AppIcons(size: Int, icon: Painter){
+fun AppIcons(size: Int, icon: Int){
     Icon(
-        painter = icon,
+        painter = painterResource(id = icon),
         contentDescription = "Back",
         modifier = Modifier
             .size(size.dp)
@@ -127,11 +128,13 @@ fun TopBar() {
             Button(
                 onClick = { /*Goes to Page before this*/ },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
+                    containerColor = Color(android.graphics.Color.parseColor("D0D0D0")),
                     contentColor = Color.Black
-                )
+                ),
+                modifier= Modifier
+                    .background(color= Color.Transparent,shape=RoundedCornerShape(8.dp))
             ) {
-                AppIcons(size = 25, icon = painterResource(id = R.drawable.back_icon))
+                AppIcons(size = 25, icon =  R.drawable.back_icon)
             }
         }
 
@@ -175,21 +178,21 @@ fun UserContent(userName: String, userImage: Painter){
 }
 
 //Common Button
-@Composable
-fun SettingsButtons(item: String, icon: Painter){
-    Button(
-        onClick = {/* Goes to the corresponding item page*/},
-
-    ){
-        Row(
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ){
-        AppIcons(size = 25, icon = icon)
-        CommonText(text = item, size = 16, weight = FontWeight.W500)
-        AppIcons(size = 25, icon = painterResource(id=R.drawable.forwardArrow))
-        }
-    }
-}
+//@Composable
+//fun SettingsButtons(item: String, icon: Painter){
+//    Button(
+//        onClick = {/* Goes to the corresponding item page*/},
+//
+//    ){
+//        Row(
+//            horizontalArrangement = Arrangement.SpaceEvenly
+//        ){
+//        AppIcons(size = 25, icon = icon)
+//        CommonText(text = item, size = 16, weight = FontWeight.W500)
+//        AppIcons(size = 25, icon = painterResource(id=R.drawable.forwardarrow))
+//        }
+//    }
+//}
 
 /*
 @Composable
@@ -308,53 +311,52 @@ fun SettingRow(text: String, iconId: Int, endIcon: ImageVector) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(48.dp)
+            .height(65  .dp)
             .padding(horizontal = 16.dp),
+//            .border(width = 1.dp,color =Color.Black),
         verticalAlignment = Alignment.CenterVertically
     ){
-        Icon(
-            painter = painterResource(id = iconId),
-            contentDescription = null, // No content description for decorative icons
-            tint = Color.Black,
-            modifier = Modifier.size(24.dp)
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        Text(
-            text = text,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Normal
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        Icon(
-            imageVector = endIcon,
-            contentDescription = null, // No content description for decorative icons
-            tint = Color.Black,
-            modifier = Modifier.size(24.dp)
-        )
-    }
-}
-@Composable
-fun SettingPage() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Spacer(modifier = Modifier.weight(1f))
+        Button(
+            onClick = {/*Goes to the corresponding screen*/},
+            colors= ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = Color.Black),
+            modifier = Modifier
+                .border(width = 1.dp,color =Color(android.graphics.Color.parseColor("D0D0D0")))
+                .clip(RoundedCornerShape(8.dp))
 
-        BoxWithBorder(
-            borderColor = Color.Black,
-            borderWidth = 2.dp,
-            cornerRadius = 16.dp
+
+
+
         ) {
-            Column {
-                HelpAndSupportRow()
-                ContactUsRow()
-                PrivacyPolicyRow()
-            }
+            AppIcons(size = 24, icon = iconId)
+            Spacer(modifier = Modifier.width(16.dp))
+            CommonText(text = text, size = 14, weight = FontWeight.Normal)
+            Spacer(modifier = Modifier.weight(1f))
+            AppIcons(size = 24, icon = R.drawable.forwardarrow)
         }
     }
 }
+//@Composable
+//fun SettingPage() {
+//    Column(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .padding(16.dp)
+//    ) {
+//        Spacer(modifier = Modifier.weight(1f))
+//
+//        BoxWithBorder(
+//            borderColor = Color.Black,
+//            borderWidth = 2.dp,
+//            cornerRadius = 16.dp
+//        ) {
+//            Column {
+//                HelpAndSupportRow()
+//                ContactUsRow()
+//                PrivacyPolicyRow()
+//            }
+//        }
+//    }
+//}
 /*
 Spacer(modifier = Modifier.weight(1f))
         Box(
@@ -397,13 +399,13 @@ fun BoxWithBorder(
             UserContent(userName = "Jake Rayner", userImage = painterResource(id=R.drawable.story_user))
           //  Spacer(modifier = Modifier.height(10.dp))
           //  SettingsButtons(item = "Edit profile information", icon = painterResource(id=R.drawable.story_user))
-            Spacer(modifier = Modifier.height(8.dp))
+//            Spacer(modifier = Modifier.height(8.dp))
 
-            SettingBar(text = "Edit profile information", iconId = R.drawable.edit, endIcon = Icons.Default.ArrowForward)
-            SettingBar(text = "Privacy settings", iconId = R.drawable.privacy, endIcon = Icons.Default.ArrowForward)
+            SettingRow(text = "Edit profile information", iconId = R.drawable.edit, endIcon = Icons.Default.ArrowForward)
+            SettingRow(text = "Privacy settings", iconId = R.drawable.privacy, endIcon = Icons.Default.ArrowForward)
            // SettingBar(text = "Help & Support", iconId = R.drawable.support, endIcon = Icons.Default.ArrowForward)
             Spacer(modifier = Modifier.weight(1f))
-            SettingPage()
+//            SettingPage()
             LogoutBar() //somehow disappeared??
         }
     }
