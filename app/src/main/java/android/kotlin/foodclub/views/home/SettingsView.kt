@@ -60,7 +60,7 @@ val montSerratFamily = FontFamily(Font(R.font.montserratregular, FontWeight.Norm
 
 //Common icon code to be reused
 @Composable
-fun ArrowIcon(size: Int, icon: Painter){
+fun AppIcons(size: Int, icon: Painter){
     Icon(
         painter = icon,
         contentDescription = "Back",
@@ -85,6 +85,34 @@ fun CommonText(text:String, size: Int, weight:FontWeight){
 
 //This is the back button and the Settings text
 @Composable
+fun TopBar1() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .background(Color.Gray, RoundedCornerShape(4.dp))
+                .padding(8.dp)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.back_icon), // Replace with your arrow icon
+                contentDescription = "Back",
+                modifier = Modifier
+                    .size(24.dp)
+                    .align(Alignment.Center)
+            )
+        }
+        Spacer(modifier = Modifier.width(8.dp))
+        CommonText(text = "Settings", size = 28, weight = FontWeight.Bold)
+    }
+}
+
+// Top Bar - Icon inside Button component so it is clickable
+@Composable
 fun TopBar() {
     Row(
         horizontalArrangement = Arrangement.Start,
@@ -103,7 +131,7 @@ fun TopBar() {
                     contentColor = Color.Black
                 )
             ) {
-                ArrowIcon(size = 25, icon = painterResource(id = R.drawable.back_icon))
+                AppIcons(size = 25, icon = painterResource(id = R.drawable.back_icon))
             }
         }
 
@@ -156,9 +184,9 @@ fun SettingsButtons(item: String, icon: Painter){
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly
         ){
-        ArrowIcon(size = 25, icon = icon)
+        AppIcons(size = 25, icon = icon)
         CommonText(text = item, size = 16, weight = FontWeight.W500)
-        ArrowIcon(size = 25, icon = painterResource(id=R.drawable.baseline_arrow_right_24))
+        AppIcons(size = 25, icon = painterResource(id=R.drawable.forwardArrow))
         }
     }
 }
@@ -355,32 +383,7 @@ fun BoxWithBorder(
         content()
     }
 }
-@Composable
-fun TopBar1() {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .background(Color.Gray, RoundedCornerShape(4.dp))
-                .padding(8.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.back_icon), // Replace with your arrow icon
-                contentDescription = "Back",
-                modifier = Modifier
-                    .size(24.dp)
-                    .align(Alignment.Center)
-            )
-        }
-        Spacer(modifier = Modifier.width(8.dp))
-        CommonText(text = "Settings", size = 28, weight = FontWeight.Bold)
-    }
-}
+
     //This is the main settings function where everything is being organised
     @Composable
     fun SettingsView(){
@@ -389,7 +392,7 @@ fun TopBar1() {
             .padding(16.dp)
         ){
 
-            TopBar1()
+            TopBar()
             Spacer(modifier = Modifier.height(30.dp))
             UserContent(userName = "Jake Rayner", userImage = painterResource(id=R.drawable.story_user))
           //  Spacer(modifier = Modifier.height(10.dp))
