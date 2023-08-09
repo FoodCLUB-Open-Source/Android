@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
@@ -146,7 +147,6 @@ fun UserContent(userName: String, userImage: Painter){
 }
 
 //Common Button
-
 @Composable
 fun SettingsButtons(item: String, icon: Painter){
     Button(
@@ -163,42 +163,6 @@ fun SettingsButtons(item: String, icon: Painter){
     }
 }
 
-@Composable
-fun ButtonWithBorder() {
-    Button(
-        onClick = {
-            //your onclick code
-        },
-        border = BorderStroke(1.dp, Color.Black),
-        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black)
-    ) {
-        Text(text = "Edit profile information", color = Color.DarkGray)
-    }
-}
-@Composable
-fun ButtonWithBorder2() {
-    Button(
-        onClick = {
-            //your onclick code
-        },
-        border = BorderStroke(1.dp, Color.Black),
-        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black)
-    ) {
-        Text(text = "Privacy settings", color = Color.DarkGray)
-    }
-}
-@Composable
-fun ButtonWithBorder3() {
-    Button(
-        onClick = {
-            //your onclick code
-        },
-        border = BorderStroke(1.dp, Color.Black),
-        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black)
-    ) {
-        Text(text = "Help & Support", color = Color.DarkGray)
-    }
-}
 /*
 @Composable
 fun SettingsButtons(item: String, icon: Painter){
@@ -216,7 +180,7 @@ fun SettingsButtons(item: String, icon: Painter){
     }
 }
  */
-
+//different bars
 @Composable
 fun LogoutBar(){
     Row(
@@ -234,7 +198,7 @@ fun LogoutBar(){
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(text = "Log out",
-            color = Color.White,
+            color = Color.Red,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold
         )
@@ -245,7 +209,7 @@ fun LogoutBar(){
 fun PrivacyPolicyRow(){
     SettingRow(
         text = "Privacy Policy",
-        iconId = R.drawable.logout, // Replace with your icon resource
+        iconId = R.drawable.logout,
         endIcon = Icons.Default.ArrowForward
     )
 }
@@ -253,6 +217,30 @@ fun PrivacyPolicyRow(){
 fun ContactUsRow() {
     SettingRow(
         text = "Contact us",
+        iconId = R.drawable.email,
+        endIcon = Icons.Default.ArrowForward
+    )
+}
+@Composable
+fun EditProfileBar() {
+    SettingBar(
+        text = "Edit profile information",
+        iconId = R.drawable.email,  //need to replace
+        endIcon = Icons.Default.ArrowForward
+    )
+}
+@Composable
+fun PrivacySettingsBar() {
+    SettingBar(
+        text = "Privacy settings",
+        iconId = R.drawable.email, // Replace with your icon resource
+        endIcon = Icons.Default.ArrowForward
+    )
+}
+@Composable
+fun HelpAndSupportRow() {
+    SettingRow(
+        text = "Help & Support",
         iconId = R.drawable.email, // Replace with your icon resource
         endIcon = Icons.Default.ArrowForward
     )
@@ -317,12 +305,6 @@ fun SettingRow(text: String, iconId: Int, endIcon: ImageVector) {
         )
     }
 }
-//@Preview(showBackground = true)
-//@Composable
-//fun PreviewSettingsView(){
-//    SettingBar(text = "Example", iconId = R.drawable.logout, endIcon = Icons.Default.ArrowForward)
-//}
-
 @Composable
 fun SettingPage() {
     Column(
@@ -331,18 +313,28 @@ fun SettingPage() {
             .padding(16.dp)
     ) {
         Spacer(modifier = Modifier.weight(1f))
+
         BoxWithBorder(
             borderColor = Color.Black,
             borderWidth = 2.dp,
             cornerRadius = 16.dp
         ) {
             Column {
+                HelpAndSupportRow()
                 ContactUsRow()
                 PrivacyPolicyRow()
             }
         }
     }
 }
+/*
+Spacer(modifier = Modifier.weight(1f))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .align(Alignment.CenterHorizontally)
+ */
 @Composable
 fun BoxWithBorder(
     borderColor: Color,
@@ -363,10 +355,57 @@ fun BoxWithBorder(
         content()
     }
 }
-
-
-
+@Composable
+fun TopBar1() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .background(Color.Gray, RoundedCornerShape(4.dp))
+                .padding(8.dp)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.back_icon), // Replace with your arrow icon
+                contentDescription = "Back",
+                modifier = Modifier
+                    .size(24.dp)
+                    .align(Alignment.Center)
+            )
+        }
+        Spacer(modifier = Modifier.width(8.dp))
+        CommonText(text = "Settings", size = 28, weight = FontWeight.Bold)
+    }
+}
     //This is the main settings function where everything is being organised
+    @Composable
+    fun SettingsView(){
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+        ){
+
+            TopBar1()
+            Spacer(modifier = Modifier.height(30.dp))
+            UserContent(userName = "Jake Rayner", userImage = painterResource(id=R.drawable.story_user))
+          //  Spacer(modifier = Modifier.height(10.dp))
+          //  SettingsButtons(item = "Edit profile information", icon = painterResource(id=R.drawable.story_user))
+            Spacer(modifier = Modifier.height(8.dp))
+
+            SettingBar(text = "Edit profile information", iconId = R.drawable.edit, endIcon = Icons.Default.ArrowForward)
+            SettingBar(text = "Privacy settings", iconId = R.drawable.privacy, endIcon = Icons.Default.ArrowForward)
+           // SettingBar(text = "Help & Support", iconId = R.drawable.support, endIcon = Icons.Default.ArrowForward)
+            Spacer(modifier = Modifier.weight(1f))
+            SettingPage()
+            LogoutBar() //somehow disappeared??
+        }
+    }
+
+/*
     @Composable
     fun SettingsView(){
         Column {
@@ -375,17 +414,22 @@ fun BoxWithBorder(
             UserContent(userName = "Jake Rayner", userImage = painterResource(id=R.drawable.story_user))
             SettingsButtons(item = "Edit profile information", icon = painterResource(id=R.drawable.story_user))
             ButtonWithBorder()
-            ButtonWithBorder2()
-            ButtonWithBorder3()
+         //   ButtonWithBorder2()
+         //   ButtonWithBorder3()
             SettingBar(text = "Privacy Policy", iconId = R.drawable.insurance, endIcon = Icons.Default.ArrowForward)
             BoxWithBorder(borderColor = Color.Black, borderWidth = 2.dp, cornerRadius =16.dp ) {
                 PrivacyPolicyRow()
                 ContactUsRow()
+                HelpAndSupportRow()
+                EditProfileBar()
             }
             LogoutBar()
 
         }
     }
+ */
+
+
 
 
 
