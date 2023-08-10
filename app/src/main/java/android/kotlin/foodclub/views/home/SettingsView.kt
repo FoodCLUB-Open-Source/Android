@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -95,6 +96,7 @@ fun TopBar() {
     }
 }
 
+
 @Composable
 fun UserContent(userName: String, userImage: Painter){
     Column(
@@ -181,121 +183,6 @@ fun SettingsView(){
 
     }
 }
-
-////different bars
-//@Composable
-//fun LogoutBar(){
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .height(56.dp)
-//            .background(MaterialTheme.colorScheme.primary)
-//            .padding(16.dp),
-//        verticalAlignment = Alignment.CenterVertically
-//    ) {
-//        Icon(painter = painterResource(id = R.drawable.logout),
-//            contentDescription = "Log out",
-//            tint = Color.White,
-//            modifier = Modifier.size(24.dp)
-//        )
-//        Spacer(modifier = Modifier.width(8.dp))
-//        Text(text = "Log out",
-//            color = Color.Red,
-//            fontSize = 16.sp,
-//            fontWeight = FontWeight.Bold
-//        )
-//    }
-//}
-//
-//@Composable
-//fun PrivacyPolicyRow(){
-//    SettingRow(
-//        text = "Privacy Policy",
-//        iconId = R.drawable.logout,
-//    )
-//}
-//@Composable
-//fun ContactUsRow() {
-//    SettingRow(
-//        text = "Contact us",
-//        iconId = R.drawable.email,
-//    )
-//}
-//@Composable
-//fun EditProfileBar() {
-//    SettingBar(
-//        text = "Edit profile information",
-//        iconId = R.drawable.email,  //need to replace
-//        endIcon = Icons.Default.ArrowForward
-//    )
-//}
-//@Composable
-//fun PrivacySettingsBar() {
-//    SettingBar(
-//        text = "Privacy settings",
-//        iconId = R.drawable.email, // Replace with your icon resource
-//        endIcon = Icons.Default.ArrowForward
-//    )
-//}
-//@Composable
-//fun HelpAndSupportRow() {
-//    SettingRow(
-//        text = "Help & Support",
-//        iconId = R.drawable.email, // Replace with your icon resource
-//    )
-//}
-////CHECK IF NEEDED
-//@Composable
-//fun SettingBar(text: String, iconId: Int, endIcon: ImageVector){
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .height(56.dp)
-//            .padding(horizontal = 16.dp),
-//        verticalAlignment = Alignment.CenterVertically
-//    ) {
-//        Icon(
-//            painter = painterResource(id = iconId),
-//            contentDescription = null,
-//            tint = Color.Black,
-//            modifier = Modifier.size(24.dp)
-//        )
-//        Spacer(modifier = Modifier.width(16.dp))
-//        Text(text = text,
-//            fontSize = 16.sp,
-//            fontWeight = FontWeight.Normal
-//        )
-//        Spacer(modifier = Modifier.weight(1f))
-//        Icon(
-//            imageVector = endIcon,
-//            contentDescription = null,
-//            tint = Color.Black,
-//            modifier = Modifier.size(24.dp)
-//        )
-//    }
-//}
-
-////CHECK IF NEEDED
-//@Composable
-//fun BoxWithBorder(
-//    borderColor: Color,
-//    borderWidth: Dp,
-//    cornerRadius: Dp,
-//    content: @Composable BoxScope.() -> Unit
-//) {
-//    Box(
-//        contentAlignment = Alignment.Center,
-//        modifier = Modifier
-//            .border(
-//                width = borderWidth,
-//                color = borderColor,
-//                shape = RoundedCornerShape(cornerRadius)
-//            )
-//            .padding(16.dp)
-//    ) {
-//        content()
-//    }
-//}
 
 
 
