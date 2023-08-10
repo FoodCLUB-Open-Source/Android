@@ -42,6 +42,7 @@ fun AppIcons(size: Int, icon: Int){
     )
 }
 
+
 //Reusing Title Text Component
 @Composable
 fun CommonText(text:String, size: Int, weight:FontWeight, fontC: Color=Color.Black){
@@ -59,33 +60,37 @@ fun CommonText(text:String, size: Int, weight:FontWeight, fontC: Color=Color.Bla
 @Composable
 fun TopBar() {
     Row(
-        horizontalArrangement = Arrangement.Start,
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 80.dp),
     ) {
         Column(
-            modifier = Modifier.weight(0.3f),
-            horizontalAlignment = Alignment.Start
+            modifier = Modifier
+                .background(Color.LightGray, RoundedCornerShape(8.dp)),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+
         ) {
             Button(
                 onClick = { /*Goes to Page before this*/ },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Gray,
+                    containerColor = Color.LightGray,
                     contentColor = Color.Black
                 ),
                 modifier= Modifier
-                    .background(color= Color.Transparent,shape=RoundedCornerShape(8.dp))
+                    .background(color=Color.Transparent, RoundedCornerShape(8.dp))
             ) {
                 AppIcons(size = 20, icon =  R.drawable.back_icon)
             }
         }
-            Column(
-                modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.Start
-            ) {
-                CommonText(text = "Settings", size = 28, weight = FontWeight.W900)
-            }
+
+        Spacer(modifier = Modifier.width(20.dp))
+
+        Column(
+
+        ) {
+            CommonText(text = "Settings", size = 28, weight = FontWeight.ExtraBold)
+        }
 
     }
 }
@@ -111,18 +116,17 @@ fun UserContent(userName: String, userImage: Painter){
         Row(
             horizontalArrangement = Arrangement.Center
         ) {
-            CommonText(text = userName, size = 24, weight = FontWeight.W900)
+            CommonText(text = userName, size = 24, weight = FontWeight.ExtraBold)
         }
     }
 }
 
 @Composable
-fun SettingRow(text: String, iconId: Int, fontC:  Color=Color.Black) {
+fun SettingRow(text: String, iconId: Int, fontC:  Color=Color.Black, bordersize: Int=1, bordercolor: Color=Color.LightGray) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp)
-            .padding(horizontal = 0.dp),
+            .height(55.dp),
         verticalAlignment = Alignment.CenterVertically
     ){
         Button(
@@ -130,8 +134,8 @@ fun SettingRow(text: String, iconId: Int, fontC:  Color=Color.Black) {
             colors= ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = Color.Black),
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier
-                .height(50.dp)
-                .border(width = 1.dp,color =Color.LightGray)
+                .height(55.dp)
+                .border(width = bordersize.dp,color =bordercolor, shape= RoundedCornerShape(8.dp))
 
         ) {
             AppIcons(size = 24, icon = iconId)
@@ -163,10 +167,14 @@ fun SettingsView(){
 
         Spacer(modifier = Modifier.height(15.dp))
 
-        SettingRow(text = "Help & Support", iconId = R.drawable.helpandsupport)
-        SettingRow(text = "Contact Us", iconId = R.drawable.contactus)
-        SettingRow(text = "Privacy Policy", iconId = R.drawable.privacypolicy)
-
+        Column(
+            modifier=Modifier
+                .border(width = 1.dp,color =Color.LightGray, shape= RoundedCornerShape(8.dp))
+        ) {
+            SettingRow(text = "Help & Support", iconId = R.drawable.helpandsupport, bordersize = 0, bordercolor = Color.Transparent)
+            SettingRow(text = "Contact Us", iconId = R.drawable.contactus, bordersize = 0, bordercolor = Color.Transparent)
+            SettingRow(text = "Privacy Policy", iconId = R.drawable.privacypolicy, bordersize = 0, bordercolor = Color.Transparent)
+        }
         Spacer(modifier = Modifier.height(15.dp))
 
         SettingRow(text = "Log Out", iconId = R.drawable.logout, fontC=Color.Red)
