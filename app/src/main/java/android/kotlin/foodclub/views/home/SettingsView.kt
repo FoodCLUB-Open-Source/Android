@@ -58,44 +58,44 @@ fun SettingsText(text:String, size: Int, weight:FontWeight, fontC: Color=Color.B
     )
 }
 
+//@Composable
+//fun SettingsTopBar() {
+//   Row(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(top = 80.dp),
+//    ) {
+//       Box(
+//           modifier = Modifier
+//               .size(32.dp)
+//               .background(color = colorGray, RoundedCornerShape(4.dp))
+//       ) {
+//            Button(
+//                onClick = { /*Goes to Page before this*/ },
+//                colors = ButtonDefaults.buttonColors(
+//                    containerColor = colorGray,
+//                    contentColor = Color.Black
+//                ),
+//                modifier= Modifier
+//                    .background(color=Color.Transparent, RoundedCornerShape(8.dp))
+//            ) {
+//                SettingsIcons(size = 20, icon =  R.drawable.back_icon)
+//            }
+//        }
+//        Spacer(modifier = Modifier.width(20.dp))
+//        Column(
+//        ) {
+//            SettingsText(text = "Settings", size = 28, weight = FontWeight.ExtraBold)
+//        }
+//
+//    }
+//}
 @Composable
 fun SettingsTopBar() {
-   Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 80.dp),
-    ) {
-       Box(
-           modifier = Modifier
-               .size(32.dp)
-               .background(color = colorGray, RoundedCornerShape(4.dp))
-       ) {
-            Button(
-                onClick = { /*Goes to Page before this*/ },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorGray,
-                    contentColor = Color.Black
-                ),
-                modifier= Modifier
-                    .background(color=Color.Transparent, RoundedCornerShape(8.dp))
-            ) {
-                SettingsIcons(size = 20, icon =  R.drawable.back_icon)
-            }
-        }
-        Spacer(modifier = Modifier.width(20.dp))
-        Column(
-        ) {
-            SettingsText(text = "Settings", size = 28, weight = FontWeight.ExtraBold)
-        }
-
-    }
-}
-@Composable
-fun SettingsTopBar2() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 16.dp, start = 16.dp) // Add top padding here
+            .padding(top = 80.dp) // Add top padding here
     ) {
         Box(
             modifier = Modifier
@@ -106,12 +106,10 @@ fun SettingsTopBar2() {
             SettingsIcons(size = 20, icon = R.drawable.back_icon)
         }
 
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(modifier = Modifier.width(15.dp))
 
-        Column(
-          ///  modifier = Modifier.fillMaxHeight()
-        ) {
-            SettingsText(text = "Settings", size = 20, weight = FontWeight.ExtraBold)
+        Column{
+            SettingsText(text = "Settings", size = 28, weight = FontWeight.ExtraBold)
         }
     }
 }
@@ -159,9 +157,9 @@ fun SettingsTopBar() {
 @Composable
 fun SettingsProfile(userName: String, userImage: Painter){
     Column(
-        horizontalAlignment = Alignment.Start,
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .padding(top = 30.dp, start = 125.dp)
+            .padding( start = 125.dp)
     ) {
         Row(
             horizontalArrangement = Arrangement.Center,
@@ -170,13 +168,15 @@ fun SettingsProfile(userName: String, userImage: Painter){
                     contentDescription = "User Images",
                     painter = userImage,
                     modifier = Modifier
-                        .size(150.dp)
+                        .size(120.dp)
                         .clip(RoundedCornerShape(100.dp))
                 )
         }
+
+        Spacer(modifier = Modifier.height(15.dp)) // Added spacer instead to give space between image and name
+
         Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(top = 20.dp)   //adjust the padding between the name and image here
+            horizontalArrangement = Arrangement.Center
         ) {
             SettingsText(text = userName, size = 24, weight = FontWeight.ExtraBold)
         }
@@ -189,8 +189,7 @@ fun SettingRow(text: String, iconId: Int, fontC:  Color=Color.Black, bordersize:
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(55.dp)
-            .padding(horizontal = 16.dp),  //adjust the padding here for the columns
+            .height(65.dp),  //adjust the padding here for the columns
         verticalAlignment = Alignment.CenterVertically
     ){
         Button(
@@ -198,7 +197,7 @@ fun SettingRow(text: String, iconId: Int, fontC:  Color=Color.Black, bordersize:
             colors= ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = Color.Black),
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier
-                .height(55.dp)
+                .height(65.dp)
                 .border(
                     width = bordersize.dp,
                     color = bordercolor,
@@ -251,12 +250,13 @@ fun SettingRow(text: String, iconId: Int, fontC:  Color=Color.Black, bordersize:
 fun SettingsView(){
     Column(modifier = Modifier
         .fillMaxSize()
-        .padding(10.dp)
-        .background(color = Color.White)
+        .padding(16.dp)
+//        .background(color = Color.White)
 
     ){
 
-        SettingsTopBar2()
+        SettingsTopBar()
+        Spacer(modifier = Modifier.height(30.dp))
         SettingsProfile(userName = "Jake Rayner", userImage = painterResource(id=R.drawable.story_user))
 
         Spacer(modifier = Modifier.height(60.dp))
@@ -268,9 +268,7 @@ fun SettingsView(){
 
         Column(
             modifier=Modifier
-                .border(width = 1.dp,color =colorGray, shape= RoundedCornerShape(8.dp))
-                .padding(horizontal = 16.dp), //should work but didn't show its effect on device
-          //  horizontalAlignment = Alignment.CenterHorizontally
+                .border(width = 1.dp,color =colorGray, shape= RoundedCornerShape(8.dp)),
         ) {
             SettingRow(text = "Help & Support", iconId = R.drawable.helpandsupport, bordersize = 0, bordercolor = Color.Transparent)
             SettingRow(text = "Contact Us", iconId = R.drawable.contactus, bordersize = 0, bordercolor = Color.Transparent)
