@@ -308,7 +308,7 @@ fun SettingBar(text: String, iconId: Int, endIcon: ImageVector){
 }
 
 @Composable
-fun SettingRow(text: String, iconId: Int, endIcon: ImageVector) {
+fun SettingRow(text: String, iconId: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -403,14 +403,14 @@ fun BoxWithBorder(
             TopBar()
             UserContent(userName = "Jake Rayner", userImage = painterResource(id=R.drawable.story_user))
             Spacer(modifier = Modifier.height(60.dp))
-            SettingRow(text = "Edit profile information", iconId = R.drawable.edit, endIcon = Icons.Default.ArrowForward)
-            SettingRow(text = "Privacy settings", iconId = R.drawable.privacy, endIcon = Icons.Default.ArrowForward)
+            SettingRow(text = "Edit profile information", iconId = R.drawable.edit)
+            SettingRow(text = "Privacy settings", iconId = R.drawable.privacy)
             Spacer(modifier = Modifier.height(10.dp))
-            SettingRow(text = "Help & Support", iconId = R.drawable.edit, endIcon = Icons.Default.ArrowForward)
-            SettingRow(text = "Contact Us", iconId = R.drawable.privacy, endIcon = Icons.Default.ArrowForward)
-            SettingRow(text = "Privacy Policy", iconId = R.drawable.privacy, endIcon = Icons.Default.ArrowForward)
+            SettingRow(text = "Help & Support", iconId = R.drawable.edit)
+            SettingRow(text = "Contact Us", iconId = R.drawable.privacy)
+            SettingRow(text = "Privacy Policy", iconId = R.drawable.privacy)
             Spacer(modifier = Modifier.height(10.dp))
-            SettingRow(text = "Log Out", iconId = R.drawable.privacy, endIcon = Icons.Default.ArrowForward)
+            SettingRow(text = "Log Out", iconId = R.drawable.logout)
 
 
         }
