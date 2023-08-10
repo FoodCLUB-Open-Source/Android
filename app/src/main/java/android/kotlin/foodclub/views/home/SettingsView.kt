@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
@@ -119,7 +120,7 @@ fun TopBar() {
         horizontalArrangement = Arrangement.Start,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 100.dp),
+            .padding(top = 80.dp),
     ) {
         Column(
             modifier = Modifier.weight(0.3f),
@@ -128,13 +129,13 @@ fun TopBar() {
             Button(
                 onClick = { /*Goes to Page before this*/ },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(android.graphics.Color.parseColor("D0D0D0")),
+                    containerColor = Color.Gray,
                     contentColor = Color.Black
                 ),
                 modifier= Modifier
                     .background(color= Color.Transparent,shape=RoundedCornerShape(8.dp))
             ) {
-                AppIcons(size = 25, icon =  R.drawable.back_icon)
+                AppIcons(size = 20, icon =  R.drawable.back_icon)
             }
         }
 
@@ -311,17 +312,20 @@ fun SettingRow(text: String, iconId: Int, endIcon: ImageVector) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(65  .dp)
-            .padding(horizontal = 16.dp),
+            .height(65.dp)
+            .padding(horizontal = 0.dp),
 //            .border(width = 1.dp,color =Color.Black),
         verticalAlignment = Alignment.CenterVertically
     ){
         Button(
             onClick = {/*Goes to the corresponding screen*/},
             colors= ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = Color.Black),
+            shape = RoundedCornerShape(8.dp),
             modifier = Modifier
-                .border(width = 1.dp,color =Color(android.graphics.Color.parseColor("D0D0D0")))
-                .clip(RoundedCornerShape(8.dp))
+                .height(65.dp)
+                .border(width = 1.dp,color =Color.LightGray)
+//                    Color(android.graphics.Color.parseColor("D0D0D0"))
+//                .clip(RoundedCornerShape(8.dp))
 
 
 
@@ -329,7 +333,7 @@ fun SettingRow(text: String, iconId: Int, endIcon: ImageVector) {
         ) {
             AppIcons(size = 24, icon = iconId)
             Spacer(modifier = Modifier.width(16.dp))
-            CommonText(text = text, size = 14, weight = FontWeight.Normal)
+            CommonText(text = text, size = 14, weight = FontWeight.W700)
             Spacer(modifier = Modifier.weight(1f))
             AppIcons(size = 24, icon = R.drawable.forwardarrow)
         }
@@ -391,22 +395,24 @@ fun BoxWithBorder(
     fun SettingsView(){
         Column(modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(5.dp)
+            .background(color = Color.White)
+
         ){
 
             TopBar()
-            Spacer(modifier = Modifier.height(30.dp))
             UserContent(userName = "Jake Rayner", userImage = painterResource(id=R.drawable.story_user))
-          //  Spacer(modifier = Modifier.height(10.dp))
-          //  SettingsButtons(item = "Edit profile information", icon = painterResource(id=R.drawable.story_user))
-//            Spacer(modifier = Modifier.height(8.dp))
-
+            Spacer(modifier = Modifier.height(60.dp))
             SettingRow(text = "Edit profile information", iconId = R.drawable.edit, endIcon = Icons.Default.ArrowForward)
             SettingRow(text = "Privacy settings", iconId = R.drawable.privacy, endIcon = Icons.Default.ArrowForward)
-           // SettingBar(text = "Help & Support", iconId = R.drawable.support, endIcon = Icons.Default.ArrowForward)
-            Spacer(modifier = Modifier.weight(1f))
-//            SettingPage()
-            LogoutBar() //somehow disappeared??
+            Spacer(modifier = Modifier.height(10.dp))
+            SettingRow(text = "Help & Support", iconId = R.drawable.edit, endIcon = Icons.Default.ArrowForward)
+            SettingRow(text = "Contact Us", iconId = R.drawable.privacy, endIcon = Icons.Default.ArrowForward)
+            SettingRow(text = "Privacy Policy", iconId = R.drawable.privacy, endIcon = Icons.Default.ArrowForward)
+            Spacer(modifier = Modifier.height(10.dp))
+            SettingRow(text = "Log Out", iconId = R.drawable.privacy, endIcon = Icons.Default.ArrowForward)
+
+
         }
     }
 
