@@ -31,9 +31,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-//Common icon code to be reused
+val colorGray= Color(android.graphics.Color.parseColor("#D0D0D0"))
+val colorRed= Color(android.graphics.Color.parseColor("#C64E0B"))
+
 @Composable
-fun AppIcons(size: Int, icon: Int){
+fun SettingsIcons(size: Int, icon: Int){
     Icon(
         painter = painterResource(id = icon),
         contentDescription = "Back",
@@ -43,9 +45,8 @@ fun AppIcons(size: Int, icon: Int){
 }
 
 
-//Reusing Title Text Component
 @Composable
-fun CommonText(text:String, size: Int, weight:FontWeight, fontC: Color=Color.Black){
+fun SettingsText(text:String, size: Int, weight:FontWeight, fontC: Color=Color.Black){
     Text(
         text = text,
         fontSize = size.sp,
@@ -56,17 +57,17 @@ fun CommonText(text:String, size: Int, weight:FontWeight, fontC: Color=Color.Bla
     )
 }
 
-// Top Bar - Icon inside Button component so it is clickable
+
 @Composable
-fun TopBar() {
-    Row(
+fun SettingsTopBar() {
+   Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 80.dp),
     ) {
         Column(
             modifier = Modifier
-                .background(Color.LightGray, RoundedCornerShape(8.dp)),
+                .background( colorGray, RoundedCornerShape(8.dp)),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
 
@@ -74,13 +75,13 @@ fun TopBar() {
             Button(
                 onClick = { /*Goes to Page before this*/ },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.LightGray,
+                    containerColor = colorGray,
                     contentColor = Color.Black
                 ),
                 modifier= Modifier
                     .background(color=Color.Transparent, RoundedCornerShape(8.dp))
             ) {
-                AppIcons(size = 20, icon =  R.drawable.back_icon)
+                SettingsIcons(size = 20, icon =  R.drawable.back_icon)
             }
         }
 
@@ -89,14 +90,14 @@ fun TopBar() {
         Column(
 
         ) {
-            CommonText(text = "Settings", size = 28, weight = FontWeight.ExtraBold)
+            SettingsText(text = "Settings", size = 28, weight = FontWeight.ExtraBold)
         }
 
     }
 }
 
 @Composable
-fun UserContent(userName: String, userImage: Painter){
+fun SettingsProfile(userName: String, userImage: Painter){
     Column(
         horizontalAlignment = Alignment.Start,
         modifier = Modifier
@@ -116,13 +117,13 @@ fun UserContent(userName: String, userImage: Painter){
         Row(
             horizontalArrangement = Arrangement.Center
         ) {
-            CommonText(text = userName, size = 24, weight = FontWeight.ExtraBold)
+            SettingsText(text = userName, size = 24, weight = FontWeight.ExtraBold)
         }
     }
 }
 
 @Composable
-fun SettingRow(text: String, iconId: Int, fontC:  Color=Color.Black, bordersize: Int=1, bordercolor: Color=Color.LightGray) {
+fun SettingRow(text: String, iconId: Int, fontC:  Color=Color.Black, bordersize: Int=1, bordercolor: Color= colorGray) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -138,16 +139,15 @@ fun SettingRow(text: String, iconId: Int, fontC:  Color=Color.Black, bordersize:
                 .border(width = bordersize.dp,color =bordercolor, shape= RoundedCornerShape(8.dp))
 
         ) {
-            AppIcons(size = 24, icon = iconId)
+            SettingsIcons(size = 24, icon = iconId)
             Spacer(modifier = Modifier.width(16.dp))
-            CommonText(text = text, size = 14, weight = FontWeight.W700, fontC=fontC)
+            SettingsText(text = text, size = 14, weight = FontWeight.W700, fontC=fontC)
             Spacer(modifier = Modifier.weight(1f))
-            AppIcons(size = 24, icon = R.drawable.forwardarrow)
+            SettingsIcons(size = 24, icon = R.drawable.forwardarrow)
         }
     }
 }
 
-//This is the main settings function where everything is being organised
 @Composable
 fun SettingsView(){
     Column(modifier = Modifier
@@ -157,8 +157,8 @@ fun SettingsView(){
 
     ){
 
-        TopBar()
-        UserContent(userName = "Jake Rayner", userImage = painterResource(id=R.drawable.story_user))
+        SettingsTopBar()
+        SettingsProfile(userName = "Jake Rayner", userImage = painterResource(id=R.drawable.story_user))
 
         Spacer(modifier = Modifier.height(60.dp))
 
@@ -169,133 +169,19 @@ fun SettingsView(){
 
         Column(
             modifier=Modifier
-                .border(width = 1.dp,color =Color.LightGray, shape= RoundedCornerShape(8.dp))
+                .border(width = 1.dp,color =colorGray, shape= RoundedCornerShape(8.dp))
         ) {
             SettingRow(text = "Help & Support", iconId = R.drawable.helpandsupport, bordersize = 0, bordercolor = Color.Transparent)
             SettingRow(text = "Contact Us", iconId = R.drawable.contactus, bordersize = 0, bordercolor = Color.Transparent)
             SettingRow(text = "Privacy Policy", iconId = R.drawable.privacypolicy, bordersize = 0, bordercolor = Color.Transparent)
         }
+
         Spacer(modifier = Modifier.height(15.dp))
 
-        SettingRow(text = "Log Out", iconId = R.drawable.logout, fontC=Color.Red)
+        SettingRow(text = "Log Out", iconId = R.drawable.logout, fontC=colorRed)
 
     }
 }
-
-////different bars
-//@Composable
-//fun LogoutBar(){
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .height(56.dp)
-//            .background(MaterialTheme.colorScheme.primary)
-//            .padding(16.dp),
-//        verticalAlignment = Alignment.CenterVertically
-//    ) {
-//        Icon(painter = painterResource(id = R.drawable.logout),
-//            contentDescription = "Log out",
-//            tint = Color.White,
-//            modifier = Modifier.size(24.dp)
-//        )
-//        Spacer(modifier = Modifier.width(8.dp))
-//        Text(text = "Log out",
-//            color = Color.Red,
-//            fontSize = 16.sp,
-//            fontWeight = FontWeight.Bold
-//        )
-//    }
-//}
-//
-//@Composable
-//fun PrivacyPolicyRow(){
-//    SettingRow(
-//        text = "Privacy Policy",
-//        iconId = R.drawable.logout,
-//    )
-//}
-//@Composable
-//fun ContactUsRow() {
-//    SettingRow(
-//        text = "Contact us",
-//        iconId = R.drawable.email,
-//    )
-//}
-//@Composable
-//fun EditProfileBar() {
-//    SettingBar(
-//        text = "Edit profile information",
-//        iconId = R.drawable.email,  //need to replace
-//        endIcon = Icons.Default.ArrowForward
-//    )
-//}
-//@Composable
-//fun PrivacySettingsBar() {
-//    SettingBar(
-//        text = "Privacy settings",
-//        iconId = R.drawable.email, // Replace with your icon resource
-//        endIcon = Icons.Default.ArrowForward
-//    )
-//}
-//@Composable
-//fun HelpAndSupportRow() {
-//    SettingRow(
-//        text = "Help & Support",
-//        iconId = R.drawable.email, // Replace with your icon resource
-//    )
-//}
-////CHECK IF NEEDED
-//@Composable
-//fun SettingBar(text: String, iconId: Int, endIcon: ImageVector){
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .height(56.dp)
-//            .padding(horizontal = 16.dp),
-//        verticalAlignment = Alignment.CenterVertically
-//    ) {
-//        Icon(
-//            painter = painterResource(id = iconId),
-//            contentDescription = null,
-//            tint = Color.Black,
-//            modifier = Modifier.size(24.dp)
-//        )
-//        Spacer(modifier = Modifier.width(16.dp))
-//        Text(text = text,
-//            fontSize = 16.sp,
-//            fontWeight = FontWeight.Normal
-//        )
-//        Spacer(modifier = Modifier.weight(1f))
-//        Icon(
-//            imageVector = endIcon,
-//            contentDescription = null,
-//            tint = Color.Black,
-//            modifier = Modifier.size(24.dp)
-//        )
-//    }
-//}
-
-////CHECK IF NEEDED
-//@Composable
-//fun BoxWithBorder(
-//    borderColor: Color,
-//    borderWidth: Dp,
-//    cornerRadius: Dp,
-//    content: @Composable BoxScope.() -> Unit
-//) {
-//    Box(
-//        contentAlignment = Alignment.Center,
-//        modifier = Modifier
-//            .border(
-//                width = borderWidth,
-//                color = borderColor,
-//                shape = RoundedCornerShape(cornerRadius)
-//            )
-//            .padding(16.dp)
-//    ) {
-//        content()
-//    }
-//}
 
 
 
