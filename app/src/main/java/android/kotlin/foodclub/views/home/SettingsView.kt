@@ -15,10 +15,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,228 +37,19 @@ import androidx.compose.ui.unit.sp
 val colorGray= Color(android.graphics.Color.parseColor("#D0D0D0"))
 val colorRed= Color(android.graphics.Color.parseColor("#C64E0B"))
 
-@Composable
-fun SettingsIcons(size: Int, icon: Int){
-    Icon(
-        painter = painterResource(id = icon),
-        contentDescription = "Back",
-        modifier = Modifier
-            .size(size.dp)
-    )
-}
-
-
-@Composable
-fun SettingsText(text:String, size: Int, weight:FontWeight, fontC: Color=Color.Black){
-    Text(
-        text = text,
-        fontSize = size.sp,
-        color = fontC,
-        fontFamily = montserratFamily,
-        fontWeight = weight,
-        textAlign = TextAlign.Center
-    )
-}
-
-//@Composable
-//fun SettingsTopBar() {
-//   Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(top = 80.dp),
-//    ) {
-//       Box(
-//           modifier = Modifier
-//               .size(32.dp)
-//               .background(color = colorGray, RoundedCornerShape(4.dp))
-//       ) {
-//            Button(
-//                onClick = { /*Goes to Page before this*/ },
-//                colors = ButtonDefaults.buttonColors(
-//                    containerColor = colorGray,
-//                    contentColor = Color.Black
-//                ),
-//                modifier= Modifier
-//                    .background(color=Color.Transparent, RoundedCornerShape(8.dp))
-//            ) {
-//                SettingsIcons(size = 20, icon =  R.drawable.back_icon)
-//            }
-//        }
-//        Spacer(modifier = Modifier.width(20.dp))
-//        Column(
-//        ) {
-//            SettingsText(text = "Settings", size = 28, weight = FontWeight.ExtraBold)
-//        }
-//
-//    }
-//}
-@Composable
-fun SettingsTopBar() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 80.dp) // Add top padding here
-    ) {
-        Box(
-            modifier = Modifier
-                .size(32.dp)
-                .background(color = colorGray, RoundedCornerShape(4.dp)),
-           // contentAlignment = Alignment.Center
-        ) {
-            SettingsIcons(size = 20, icon = R.drawable.back_icon)
-        }
-
-        Spacer(modifier = Modifier.width(15.dp))
-
-        Column{
-            SettingsText(text = "Settings", size = 28, weight = FontWeight.ExtraBold)
-        }
-    }
-}
-
-/*
-@Composable
-fun SettingsTopBar() {
-   Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 80.dp),
-    ) {
-        Column(
-            modifier = Modifier
-                .background( colorGray, RoundedCornerShape(8.dp)),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-
-        ) {
-            Button(
-                onClick = { /*Goes to Page before this*/ },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorGray,
-                    contentColor = Color.Black
-                ),
-                modifier= Modifier
-                    .background(color=Color.Transparent, RoundedCornerShape(8.dp))
-            ) {
-                SettingsIcons(size = 20, icon =  R.drawable.back_icon)
-            }
-        }
-
-        Spacer(modifier = Modifier.width(20.dp))
-
-        Column(
-
-        ) {
-            SettingsText(text = "Settings", size = 28, weight = FontWeight.ExtraBold)
-        }
-
-    }
-}
- */
-
-@Composable
-fun SettingsProfile(userName: String, userImage: Painter){
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .padding( start = 125.dp)
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.Center,
-        ) {
-                Image(
-                    contentDescription = "User Images",
-                    painter = userImage,
-                    modifier = Modifier
-                        .size(120.dp)
-                        .clip(RoundedCornerShape(100.dp))
-                )
-        }
-
-        Spacer(modifier = Modifier.height(15.dp)) // Added spacer instead to give space between image and name
-
-        Row(
-            horizontalArrangement = Arrangement.Center
-        ) {
-            SettingsText(text = userName, size = 24, weight = FontWeight.ExtraBold)
-        }
-    }
-}
-
-
-@Composable
-fun SettingRow(text: String, iconId: Int, fontC:  Color=Color.Black, bordersize: Int=1, bordercolor: Color= colorGray) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(65.dp),  //adjust the padding here for the columns
-        verticalAlignment = Alignment.CenterVertically
-    ){
-        Button(
-            onClick = {/*Goes to the corresponding screen*/},
-            colors= ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = Color.Black),
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier
-                .height(65.dp)
-                .border(
-                    width = bordersize.dp,
-                    color = bordercolor,
-                    shape = RoundedCornerShape(8.dp)
-                )
-
-        ) {
-            SettingsIcons(size = 24, icon = iconId)
-            Spacer(modifier = Modifier.width(16.dp))
-            SettingsText(text = text, size = 14, weight = FontWeight.Normal, fontC=fontC)
-            Spacer(modifier = Modifier.weight(1f))
-            SettingsIcons(size = 24, icon = R.drawable.forwardarrow)
-        }
-    }
-}
-
-/*
-@Composable
-fun SettingRow(text: String, iconId: Int, fontC:  Color=Color.Black, bordersize: Int=1, bordercolor: Color= colorGray) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(55.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ){
-        Button(
-            onClick = {/*Goes to the corresponding screen*/},
-            colors= ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = Color.Black),
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier
-                .height(55.dp)
-                .border(
-                    width = bordersize.dp,
-                    color = bordercolor,
-                    shape = RoundedCornerShape(8.dp)
-                )
-
-        ) {
-            SettingsIcons(size = 24, icon = iconId)
-            Spacer(modifier = Modifier.width(16.dp))
-            SettingsText(text = text, size = 14, weight = FontWeight.Normal, fontC=fontC)
-            Spacer(modifier = Modifier.weight(1f))
-            SettingsIcons(size = 24, icon = R.drawable.forwardarrow)
-        }
-    }
-}
- */
-
+//The main function of this SettingsView file. This arranges all components to build the screen
 @Composable
 fun SettingsView(){
     Column(modifier = Modifier
         .fillMaxSize()
-        .padding(16.dp)
-//        .background(color = Color.White)
-
+        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 0.dp), //Since the vertical arrangement is center, there is always some extra space on top of the topbar. Hence I removed padding for top
+        verticalArrangement = Arrangement.Center
     ){
 
         SettingsTopBar()
+
         Spacer(modifier = Modifier.height(30.dp))
+
         SettingsProfile(userName = "Jake Rayner", userImage = painterResource(id=R.drawable.story_user))
 
         Spacer(modifier = Modifier.height(60.dp))
@@ -279,6 +72,124 @@ fun SettingsView(){
         SettingRow(text = "Log Out", iconId = R.drawable.logout, fontC=colorRed)
     }
 }
+
+// Common icon composable to enter the parameters to create icons in this screen
+@Composable
+fun SettingsIcons(size: Int, icon: Int){
+    Icon(
+        painter = painterResource(id = icon),
+        contentDescription = "Back",
+        modifier = Modifier
+            .size(size.dp)
+    )
+}
+
+// Common text composable to create text according to the parameters entered in this screen
+@Composable
+fun SettingsText(text:String, size: Int, weight:FontWeight, fontC: Color=Color.Black){
+    Text(
+        text = text,
+        fontSize = size.sp,
+        color = fontC,
+        fontFamily = montserratFamily,
+        fontWeight = weight,
+        textAlign = TextAlign.Center
+    )
+}
+
+// The top bar composable - Back button and the "Settings" text
+@Composable
+fun SettingsTopBar() {
+   Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+       verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column{
+            IconButton(
+                onClick = { /*Goes to Page before this*/ },
+                modifier = Modifier
+                    .background(color=colorGray, RoundedCornerShape(8.dp))
+                    .size(35.dp),
+                content = {
+                    SettingsIcons(size = 20, icon =  R.drawable.back_icon)
+                }
+            )
+        }
+
+        Spacer(modifier = Modifier.width(20.dp))
+
+        Column {
+            SettingsText(text = "Settings", size = 28, weight = FontWeight.ExtraBold)
+        }
+
+    }
+}
+
+// The middle user profile group - the profile picture and the name. Parameters are used so this can be used to vary according to the user that is logged in
+@Composable
+fun SettingsProfile(userName: String, userImage: Painter){
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+                Image(
+                    contentDescription = "User Images",
+                    painter = userImage,
+                    modifier = Modifier
+                        .size(120.dp)
+                        .clip(RoundedCornerShape(100.dp))
+                )
+        }
+
+        Spacer(modifier = Modifier.height(15.dp)) // Added spacer instead to give space between image and name
+
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            SettingsText(text = userName, size = 24, weight = FontWeight.ExtraBold)
+        }
+    }
+}
+
+// A reused composable to create each setting button row
+@Composable
+fun SettingRow(text: String, iconId: Int, fontC:  Color=Color.Black, bordersize: Int=1, bordercolor: Color= colorGray) {
+   val rowSize=65.dp
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(rowSize),
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        Button(
+            onClick = {/*Goes to the corresponding screen*/},
+            colors= ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = Color.Black),
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier
+                .height(rowSize)
+                .border(
+                    width = bordersize.dp,
+                    color = bordercolor,
+                    shape = RoundedCornerShape(8.dp)
+                )
+
+        ) {
+            SettingsIcons(size = 24, icon = iconId)
+            Spacer(modifier = Modifier.width(16.dp))
+            SettingsText(text = text, size = 14, weight = FontWeight.Normal, fontC=fontC)
+            Spacer(modifier = Modifier.weight(1f))
+            SettingsIcons(size = 24, icon = R.drawable.forwardarrow)
+        }
+    }
+}
+
 
 
 
