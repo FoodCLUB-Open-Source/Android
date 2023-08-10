@@ -2,7 +2,6 @@ package com.example.foodclub.views.home
 
 import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.views.home.StoryView
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
