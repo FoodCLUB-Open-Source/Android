@@ -5,15 +5,11 @@ import android.kotlin.foodclub.utils.composables.Picker
 import android.kotlin.foodclub.utils.composables.rememberPickerState
 import android.kotlin.foodclub.viewmodels.home.CreateRecipeViewModel
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.SizeTransform
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.with
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -31,6 +27,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -68,7 +65,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Slider
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.getValue
@@ -96,11 +92,11 @@ fun BottomSheetCategories(onDismiss: () -> Unit) {
     var searchText by remember { mutableStateOf("") }
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val rows = listOf(
-        listOf("Button 1", "Button 2", "Button 3"),
-        listOf("Button 1", "Button 2", "Button 3"),
-        listOf("Button 1", "Button 2", "Button 3"),
-        listOf("Button 1", "Button 2", "Button 3"),
-        listOf("Button 1", "Button 2", "Button 3")
+        listOf("fzfe", "fefez", "fzeffezfze"),
+        listOf("Button", "Button", "fzefze"),
+        listOf("Button", "fzefe", "Button"),
+        listOf("Button", "fzefezfzf", "Button"),
+        listOf("fzefezfez", "Button", "Button")
     )
     val selectedButtonsState = remember { mutableStateListOf(*BooleanArray(rows.size * 3) { false }.toTypedArray()) }
 
@@ -118,7 +114,7 @@ fun BottomSheetCategories(onDismiss: () -> Unit) {
     ) {
 
         Box( modifier = Modifier.fillMaxWidth().height(screenHeight) ) {
-            Box(modifier = Modifier.fillMaxWidth().padding(start = 17.dp, end = 17.dp),
+            Box(modifier = Modifier.fillMaxWidth().padding(start = 30.dp, end = 17.dp),
                 contentAlignment = Alignment.CenterStart) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -130,19 +126,19 @@ fun BottomSheetCategories(onDismiss: () -> Unit) {
                         modifier = Modifier.size(24.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Add items", color = Color.White, fontFamily = montserratFamily)
+                    Text(text = "Categories", color = Color.White, fontFamily = montserratFamily)
                 }
             }
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(1),
                             contentPadding = PaddingValues(8.dp),
-                            modifier = Modifier.padding(top = 30.dp)
+                            modifier = Modifier.padding(top = 50.dp, start = 25.dp, end = 25.dp)
                         )  {
                             item {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.SpaceBetween,
-                                    modifier = Modifier.fillMaxWidth().padding(20.dp)
+                                    modifier = Modifier.fillMaxWidth().padding(bottom = 30.dp)
                                 ) {
                                     TextField(
                                         value = searchText,
@@ -174,40 +170,46 @@ fun BottomSheetCategories(onDismiss: () -> Unit) {
                                         color = Color(android.graphics.Color.parseColor("#545454")),
                                         modifier = Modifier.clickable { searchText = "" }
                                     )
-                                    Spacer(modifier = Modifier.width(20.dp))
+                                    Spacer(modifier = Modifier.height(20.dp))
                                 }
                             }
                             items(rows.size) { rowIndex ->
                                 val row = rows[rowIndex]
 
                                 Row(
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    modifier = Modifier.fillMaxWidth().padding(8.dp).background(Color.Red)
+                                    horizontalArrangement = Arrangement.Start,
+                                    modifier = Modifier.fillMaxWidth()
                                 ) {
                                     row.forEachIndexed { buttonIndex, buttonText ->
                                         val flatIndex = rowIndex * 3 + buttonIndex
                                         val isSelected = selectedButtonsState[flatIndex]
 
-                                            //.background(if (isSelected) Color.Gray else Color.Transparent)
                                         Button(
                                             modifier = Modifier
-                                                .border(1.dp, Color(126, 198, 11, 255), shape = RoundedCornerShape(15.dp))
+                                                .border(1.dp, Color.White, shape = RoundedCornerShape(15.dp))
+                                                .wrapContentWidth()
                                                 .clip(RoundedCornerShape(15.dp)),
                                             colors = ButtonDefaults.buttonColors(
-                                                containerColor = Color(126, 198, 11, 255),
+                                                containerColor = if (isSelected) Color(126, 198, 11, 255) else Color.Transparent,
                                                 contentColor = Color.White
                                             ), contentPadding = PaddingValues(15.dp),
+                                            shape = RoundedCornerShape(15.dp),
 
                                             onClick = {
-                                                // Toggle the selected state for this button
                                                 selectedButtonsState[flatIndex] = !isSelected
                                             }
                                         ) {
-                                            Text(text = buttonText)
+                                            val displayText = if (buttonText.length >= 10) {
+                                                buttonText.substring(0, 8) + ".."
+                                            } else {
+                                                buttonText
+                                            }
+                                            Text(text = displayText, modifier = Modifier.padding(start = 1.dp, end = 1.dp))
                                         }
-
+                                        Spacer(modifier = Modifier.width(20.dp))
                                     }
                                 }
+                                Spacer(modifier = Modifier.height(70.dp))
                             }
                         }
                 }
