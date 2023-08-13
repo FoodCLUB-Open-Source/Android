@@ -46,7 +46,7 @@ fun SettingsView(){
         verticalArrangement = Arrangement.Center
     ){
 
-        SettingsTopBar()
+        SettingsTopBar("Settings")
 
         Spacer(modifier = Modifier.height(30.dp))
 
@@ -99,7 +99,7 @@ fun SettingsText(text:String, size: Int, weight:FontWeight, fontC: Color=Color.B
 
 // The top bar composable - Back button and the "Settings" text
 @Composable
-fun SettingsTopBar() {
+fun SettingsTopBar(label:String) {
    Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -120,9 +120,8 @@ fun SettingsTopBar() {
         Spacer(modifier = Modifier.width(20.dp))
 
         Column {
-            SettingsText(text = "Settings", size = 28, weight = FontWeight.ExtraBold)
+            SettingsText(text = label, size = 28, weight = FontWeight.ExtraBold)
         }
-
     }
 }
 
