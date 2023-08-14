@@ -87,20 +87,20 @@ fun InputRow(boxType:String) {
     ){
 
         Column{
-            InputField(boxType, fieldType)
+            InputField(boxType, passwordVisibility.value)
         }
 
         Spacer(modifier = Modifier.weight(1f))
 
         Column{
-            EyeIcon()
+            EyeIcon(passwordVisibility)
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InputField(boxType:String, fieldType:VisualTransformation){
+fun InputField(boxType:String, passwordVisible:Boolean){
 
     var input by remember { mutableStateOf("") }
 
@@ -111,7 +111,11 @@ fun InputField(boxType:String, fieldType:VisualTransformation){
         keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = KeyboardType.Password
         ),
-        visualTransformation = fieldType,
+        visualTransformation = if (passwordVisible) {
+            passwordHidden(hidden = true)
+        } else {
+            VisualTransformation.None
+        },
         colors = TextFieldDefaults.textFieldColors(
             containerColor = colorLightGray,
             textColor = Color.Black,
@@ -134,6 +138,7 @@ fun EyeIcon(passwordVisibility: MutableState<Boolean>){
         IconButton(
             onClick = {
                  switch = !switch
+                passwordVisibility.value = !passwordVisibility.value
             },
             content = {
                 SettingsIcons(size = 20, icon = R.drawable.unhide)
