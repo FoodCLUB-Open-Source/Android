@@ -6,6 +6,8 @@ import android.kotlin.foodclub.utils.composables.rememberPickerState
 import android.kotlin.foodclub.viewmodels.home.CreateRecipeViewModel
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -67,15 +69,41 @@ import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.IntSize
+import java.util.Collections.copy
+
+@Stable
+data class Colors(
+    val statusBarColor: Color,
+    val navBarColor: Color,
+) {
+    private val animationSpec: AnimationSpec<Color> = tween(durationMillis = 1500)
+
+    @Composable
+    private fun animateColor(
+        targetValue: Color,
+        finishedListener: ((Color) -> Unit)? = null
+    ) = animateColorAsState(targetValue = targetValue, animationSpec = animationSpec).value
+
+    @Composable
+    fun switch() = copy(
+        statusBarColor = animateColor(statusBarColor),
+        navBarColor = animateColor(navBarColor),
+    )
+}
 
 val montserratFamily = FontFamily(Font(R.font.montserratregular, FontWeight.Normal))
 
@@ -88,7 +116,6 @@ enum class DrawerContentState {
 @Composable
 fun BottomSheetCategories(onDismiss: () -> Unit) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 150.dp
-    val systemUiController = rememberSystemUiController()
     var searchText by remember { mutableStateOf("") }
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val rows = listOf(
@@ -99,12 +126,6 @@ fun BottomSheetCategories(onDismiss: () -> Unit) {
         listOf("fzefezfez", "Button", "Button")
     )
     val selectedButtonsState = remember { mutableStateListOf(*BooleanArray(rows.size * 3) { false }.toTypedArray()) }
-
-    SideEffect {
-        systemUiController.setNavigationBarColor(
-            color = Color.Black
-        )
-    }
 
     ModalBottomSheet(
         containerColor = Color.Black,
@@ -220,18 +241,11 @@ fun BottomSheetCategories(onDismiss: () -> Unit) {
 @Composable
 fun BottomSheetIngredients(onDismiss: () -> Unit) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 150.dp
-    val systemUiController = rememberSystemUiController()
     var searchText by remember { mutableStateOf("") }
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var contentState = remember { mutableStateOf(DrawerContentState.IngredientListContent) }
     val values = remember { (1..99).map { (it * 10).toString() + "g" } }
     val valuesPickerState = rememberPickerState()
-
-    SideEffect {
-        systemUiController.setNavigationBarColor(
-            color = Color.Black
-        )
-    }
 
     ModalBottomSheet(
         containerColor = Color.Black,
@@ -403,20 +417,44 @@ fun CreateRecipeView() {
     val systemUiController = rememberSystemUiController()
     var showSheet by remember { mutableStateOf(false) }
     var showCategorySheet by remember { mutableStateOf(false) }
+    val codeTriggered = remember { mutableStateOf(false) }
+    /*val systemBarsColorsLight = Colors(
+        statusBarColor = Color.White,
+        navBarColor = Color.White,
+    )
+    val systemBarsColorsDark = Colors(
+        statusBarColor = Color(android.graphics.Color.parseColor("#ACACAC")),
+        navBarColor = Color.Black,
+    )*/
+
+    //val animatedColors = (if (showSheet) systemBarsColorsLight else systemBarsColorsDark).switch()
+
+    LaunchedEffect(key1 = codeTriggered.value) {
+        systemUiController.setSystemBarsColor(
+                color = Color.White,
+                darkIcons = true
+        )
+        if (!codeTriggered.value) {
+            codeTriggered.value = true
+        }
+    }
 
     val triggerCategoryBottomSheetModal: () -> Unit = {
         showCategorySheet = !showCategorySheet
+        systemUiController.setNavigationBarColor(
+            color = if (showSheet) Color.Black else Color.White,
+            darkIcons = true
+        )
     }
     val triggerBottomSheetModal: () -> Unit = {
         showSheet = !showSheet
-    }
-    SideEffect {
-        systemUiController.setSystemBarsColor(
-            color = Color.White,
+        systemUiController.setStatusBarColor(
+            color = if (showSheet) Color(android.graphics.Color.parseColor("#ACACAC")) else Color.White,
             darkIcons = true
         )
         systemUiController.setNavigationBarColor(
-            color = Color.White
+            color = if (showSheet) Color.Black else Color.White,
+            darkIcons = true
         )
     }
 

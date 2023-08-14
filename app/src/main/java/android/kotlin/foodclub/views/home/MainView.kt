@@ -76,7 +76,7 @@ fun BottomBar(navController: NavHostController, triggerBottomSheetModal: () -> U
     //val screenHeight = LocalConfiguration.current.screenHeightDp.dp * 0.1f
 
     if (bottomBarDestination) {
-        NavigationBar (containerColor = Color.White, modifier = Modifier.height(140.dp)) {
+        NavigationBar (containerColor = Color.White, modifier = Modifier.height(115.dp)) {
             screens.forEach { screen ->
                 AddItem(
                     screen = screen,
@@ -104,9 +104,9 @@ fun RowScope.AddItem(
                 painter = icon,
                 contentDescription = "Navigation Icon",
                 tint = when {
-                    screen is BottomBarScreenObject.Create -> Color.Unspecified // No tint for Create icon
-                    currentDestination?.hierarchy?.any { it.route == screen.route } == true -> Color(0xFF7EC60B) // green color for selected item
-                    else -> Color(0xFFB9B9B9) // dark grey color for unselected item
+                    screen is BottomBarScreenObject.Create -> Color.Unspecified
+                    currentDestination?.hierarchy?.any { it.route == screen.route } == true -> Color(0xFF7EC60B)
+                    else -> Color(0xFFB9B9B9)
                 }
 
             )

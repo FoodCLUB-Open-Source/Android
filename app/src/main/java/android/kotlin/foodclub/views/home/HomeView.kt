@@ -172,7 +172,7 @@ fun HomeView(
     val coroutineScope = rememberCoroutineScope()
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-    val screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.925f
+    val screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.95f
     val pagerState = rememberPagerState(initialPage = initialPage ?: 0)
 
     val fling = PagerDefaults.flingBehavior(
@@ -301,37 +301,65 @@ fun HomeView(
                         .padding(20.dp)
                 ) {
                     Column {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.align(Alignment.End)
-                                .width(65.dp).height(65.dp)
-                                .clip(shape = RoundedCornerShape(35.dp))
-                                .background(Color.Black.copy(alpha = 0.9f)).blur(radius = 5.dp)
-                            ,
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .align(Alignment.End)
+                                .width(65.dp)
+                                .height(65.dp)
                         ) {
-                            Spacer(Modifier.weight(1f))
-                            Image(
-                                painter = painterResource(id = R.drawable.save),
-                                modifier = Modifier.size(25.dp),
-                                contentDescription = "save",
-                            )
-                            Spacer(Modifier.weight(1f))
+                            Box(
+                                modifier = Modifier
+                                    .width(65.dp)
+                                    .height(65.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier.width(65.dp)
+                                        .height(65.dp)
+                                        .clip(RoundedCornerShape(35.dp))
+                                        .background(Color.Black.copy(alpha = 0.8f))
+                                        .blur(radius = 5.dp)
+                                ) {}
+                                Image(
+                                    painter = painterResource(id = R.drawable.save),
+                                    modifier = Modifier
+                                        .size(25.dp)
+                                        .align(Alignment.Center)
+                                        .zIndex(1f),
+                                    contentDescription = "save"
+                                )
+                            }
                         }
                         Spacer(modifier = Modifier.height(10.dp))
                         Column(horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.align(Alignment.End)
-                                .width(60.dp).height(80.dp)
-                                .clip(shape = RoundedCornerShape(30.dp))
-                                .background(Color.Black.copy(alpha = 0.9f))
-                                ,
+                                .width(60.dp).height(80.dp),
                             ) {
                             Spacer(Modifier.weight(1f))
-                            Image(
-                                painter = painterResource(id = R.drawable.like),
-                                modifier = Modifier.size(25.dp),
-                                contentDescription = "like",
-                            )
-                            Spacer(modifier = Modifier.height(5.dp))
-                            Text("4.2k", fontSize = 13.sp, color = Color.White)
+                            Box(
+                                modifier = Modifier.width(60.dp).height(80.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Box(
+                                    modifier = Modifier.width(60.dp).height(80.dp)
+                                        .clip(RoundedCornerShape(30.dp))
+                                        .background(Color.Black.copy(alpha = 0.8f))
+                                        .blur(radius = 5.dp)
+                                ) {}
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center,
+                                    modifier = Modifier.fillMaxSize()
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.like),
+                                        modifier = Modifier.size(25.dp),
+                                        contentDescription = "like",
+                                    )
+                                    Spacer(modifier = Modifier.height(3.dp))
+                                    Text("4.2k", fontSize = 13.sp, color = Color.White)
+                                }
+                            }
                             Spacer(Modifier.weight(1f))
                         }
 
