@@ -12,19 +12,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,8 +30,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -60,9 +56,9 @@ fun ChangePasswordView(){
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            inputBoxes("Password")
+            InputRow("Password")
             Spacer(modifier = Modifier.height(15.dp))
-            inputBoxes(boxType = "New Password")
+            InputRow(boxType = "New Password")
 
             Spacer(modifier = Modifier.height(30.dp))
             SaveButton()
@@ -72,7 +68,14 @@ fun ChangePasswordView(){
 }
 
 @Composable
-fun inputBoxes(boxType:String) {
+fun InputRow(boxType:String) {
+
+    val passwordVisibility = remember { mutableStateOf(false) }
+    val fieldType: VisualTransformation = if(passwordVisibility.value){
+        VisualTransformation.None
+    }else{
+        PasswordVisualTransformation(mask='*')
+    }
 
     Row (
         verticalAlignment=Alignment.CenterVertically,
@@ -82,47 +85,22 @@ fun inputBoxes(boxType:String) {
             .height(60.dp)
             .padding(5.dp)
     ){
+
         Column{
-            InputBox(boxType)
+            InputField(boxType, fieldType)
         }
 
         Spacer(modifier = Modifier.weight(1f))
 
         Column{
-            eyeIcon()
+            EyeIcon()
         }
-    }
-}
-
-@Composable
-fun eyeIcon() {
-
-    var switch by remember { mutableStateOf(true) }
-
-    Box(
-        contentAlignment = Alignment.Center
-    ) {
-        IconButton(
-            onClick = {
-                 switch = !switch
-            },
-
-            content = {
-                SettingsIcons(size = 20, icon = R.drawable.unhide)
-            },
-        )
-
-    if(switch){
-          SettingsIcons(size = 20, icon = R.drawable.crossline)
-          passwordHidden(hidden = true)
-      }
-
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InputBox(boxType:String){
+fun InputField(boxType:String, fieldType:VisualTransformation){
 
     var input by remember { mutableStateOf("") }
 
@@ -133,8 +111,7 @@ fun InputBox(boxType:String){
         keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = KeyboardType.Password
         ),
-//        visualTransformation= passwordHidden(hidden = hidePass),
-        visualTransformation = PasswordVisualTransformation(mask='*'),
+        visualTransformation = fieldType,
         colors = TextFieldDefaults.textFieldColors(
             containerColor = colorLightGray,
             textColor = Color.Black,
@@ -147,12 +124,42 @@ fun InputBox(boxType:String){
 }
 
 @Composable
+fun EyeIcon(passwordVisibility: MutableState<Boolean>){
+
+    var switch by remember { mutableStateOf(true) }
+
+    Box(
+        contentAlignment = Alignment.Center
+    ) {
+        IconButton(
+            onClick = {
+                 switch = !switch
+            },
+            content = {
+                SettingsIcons(size = 20, icon = R.drawable.unhide)
+            },
+        )
+
+        if(switch){
+            SettingsIcons(size = 20, icon = R.drawable.crossline)
+            passwordVisibility.value = true
+        }
+
+    }
+
+}
+
+
+
+
+
+
+@Composable
 fun passwordHidden(hidden:Boolean):VisualTransformation{
-    val passType:VisualTransformation
-    if(hidden) {
-        passType = PasswordVisualTransformation(mask = '*')
+    val passType:VisualTransformation = if(hidden) {
+        PasswordVisualTransformation(mask = '*')
     }else{
-        passType =VisualTransformation.None
+        VisualTransformation.None
     }
     return passType
 }
