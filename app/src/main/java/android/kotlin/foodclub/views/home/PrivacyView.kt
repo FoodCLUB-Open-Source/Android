@@ -2,8 +2,13 @@ package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CutCornerShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -13,6 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -23,84 +30,43 @@ fun PrivacySetting() {
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .padding(top = 80.dp)
     ) {
-        Text(
-            text = "Privacy",
-            fontSize = 20.sp,
-            modifier = Modifier.padding(top = 80.dp, bottom = 30.dp)
-        )
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .clickable(onClick = { /* Handle change password click */ })
-                .padding(bottom = 16.dp)
-        ) {
-            Text(text = "Change password", fontSize = 16.sp)
-            Spacer(modifier = Modifier.weight(1f))
-            Icon(
-                painter = painterResource(id = R.drawable.back_icon), // Replace with your image resource ID
-                contentDescription = null,
-                tint = Color.Black,
-                modifier = Modifier.size(24.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
+        SettingsTopBar(label = "Privacy")
+        Spacer(modifier = Modifier.height(50.dp))
+        ChangePasswordButton()
+        Spacer(modifier = Modifier.height(60.dp))
+        SettingsText(
             text = "If you would like to get sent your data, make changes to it or delete it, send an email to tech@foodclub.live",
-            fontSize = 14.sp,
-            color = Color.Black
+            size = 16,
+            weight = FontWeight.W600,
+            textAlign = TextAlign.Left
         )
     }
 }
 
+@Composable
+fun ChangePasswordButton(){
+    Row(
+        modifier = Modifier
+            .clickable { /* TO DO */ }
+            .fillMaxWidth()
+            .background(Color.Transparent)
+//        onClick = {/*Goes to the corresponding screen*/},
+//        colors= ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = Color.Black),
+//        modifier = Modifier
+//            .height(60.dp)
+//            .fillMaxWidth()
+//            .border(
+//                width = 0.dp,
+//                color = Color.Transparent
+//            ),
+//            shape = CutCornerShape(0.dp)
+    ){
+        SettingsText(text = "Change Password", size = 16, weight = FontWeight.W600, textAlign = TextAlign.Left)
+        Spacer(modifier = Modifier.weight(1f))
+        SettingsIcons(size = 20, icon = R.drawable.forwardarrow)
+    }
 
-//@Composable
-//fun PrivacyOptionRow(title: String, onClick: () -> Unit) {
-//    Row(
-//        verticalAlignment = Alignment.CenterVertically,
-//        horizontalArrangement = Arrangement.SpaceBetween,
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .clickable(onClick = onClick)
-//            .padding(16.dp)
-//            .background(MaterialTheme.colorScheme.background)
-//    ) {
-//        Text(text = title, fontSize = 16.sp)
-//        Icon(
-//            painter = painterResource(id =  R.drawable.back_icon),
-//            contentDescription = null,
-//            tint = Color.Black,
-//            modifier = Modifier.size(24.dp)
-//        )
-//    }
-//}
-//
-//@Composable
-//fun PrivacyOptionRow1(title: String, onClick: () -> Unit) {
-//    Surface(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .clickable(onClick = onClick)
-//            .padding(16.dp),
-//        shape = MaterialTheme.shapes.medium,
-//        color = MaterialTheme.colorScheme.background
-//    ) {
-//        Row(
-//            verticalAlignment = Alignment.CenterVertically,
-//            horizontalArrangement = Arrangement.SpaceBetween,
-//            modifier = Modifier.padding(16.dp)
-//        ) {
-//            Text(text = title, fontSize = 16.sp)
-//            Icon(
-//                painter = painterResource(id = R.drawable.back_icon), // Replace with your image resource ID
-//                contentDescription = null,
-//                tint = Color.Black,
-//                modifier = Modifier.size(24.dp)
-//            )
-//        }
-//    }
-//}
+}

@@ -84,14 +84,14 @@ fun SettingsIcons(size: Int, icon: Int){
 
 // Common text composable to create text according to the parameters entered in this screen
 @Composable
-fun SettingsText(text:String, size: Int, weight:FontWeight, fontC: Color=Color.Black){
+fun SettingsText(text:String, size: Int, weight:FontWeight, fontC: Color=Color.Black, textAlign: TextAlign = TextAlign.Center){
     Text(
         text = text,
         fontSize = size.sp,
         color = fontC,
         fontFamily = montserratFamily,
         fontWeight = weight,
-        textAlign = TextAlign.Center
+        textAlign = textAlign
     )
 }
 

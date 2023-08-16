@@ -45,7 +45,7 @@ fun EditProfileSetting(){
         Spacer(modifier = Modifier.height(15.dp))
         EditProfileInputRow1(boxType = "Email")
         Spacer(modifier = Modifier.height(30.dp))
-        SaveButtonGreen()
+        SaveButton()
     }
 }
 

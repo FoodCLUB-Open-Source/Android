@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
             keepSplashOnScreen = false }, delay)
         setContent {
           //  ChangePasswordView()
-          //  EditProfileSetting()
+//            EditProfileSetting()
             PrivacySetting()
 //            FoodClubTheme {
 //                RootNavigationGraph(navController = rememberNavController())
