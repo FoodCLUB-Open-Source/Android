@@ -29,12 +29,9 @@ class MainActivity : ComponentActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
             keepSplashOnScreen = false }, delay)
         setContent {
-          //  ChangePasswordView()
-//            EditProfileSetting()
-            PrivacySetting()
-//            FoodClubTheme {
-//                RootNavigationGraph(navController = rememberNavController())
-//            }
+            FoodClubTheme {
+                RootNavigationGraph(navController = rememberNavController())
+            }
         }
     }
 }
