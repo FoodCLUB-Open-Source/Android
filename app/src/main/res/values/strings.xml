@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">FoodClub</string>
+    <string name="title_activity_create_username_view">CreateUsernameView</string>
+    <string name="title_activity_preference_input_view">PreferenceInputView</string>
+    <string name="title_activity_preference_view">PreferenceView</string>
 </resources>
