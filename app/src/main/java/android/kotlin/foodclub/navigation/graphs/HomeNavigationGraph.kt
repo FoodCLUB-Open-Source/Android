@@ -27,7 +27,7 @@ import com.example.foodclub.views.home.ProfileView
             HomeView(navController = navController)
         }
         composable(route = BottomBarScreenObject.Profile.route) {
-            ProfileView()
+            ProfileView(navController)
         }
         composable(route = BottomBarScreenObject.Discover.route) {
             DiscoverView()
