@@ -3,6 +3,7 @@ package com.example.foodclub.navigation.graphs
 import android.kotlin.foodclub.views.home.CameraPreviewView
 import android.kotlin.foodclub.views.home.CameraView
 import android.kotlin.foodclub.views.home.CreateRecipeView
+import android.kotlin.foodclub.views.home.FollowerFollowingView
 import android.kotlin.foodclub.views.home.PlayView
 import android.kotlin.foodclub.views.home.StoryView
 import androidx.compose.runtime.Composable
@@ -36,7 +37,8 @@ import com.example.foodclub.views.home.ProfileView
             CreateView()
         }
         composable(route = BottomBarScreenObject.Play.route) {
-            PlayView()
+            DiscoverView()
+            //PlayView()
         }
         composable(route = HomeOtherRoutes.StoryView.route) {
             StoryView()

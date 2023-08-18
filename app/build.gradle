@@ -87,4 +87,11 @@ dependencies {
     implementation "androidx.camera:camera-view:1.2.1"
     implementation "androidx.camera:camera-extensions:1.2.1"
     implementation "com.google.accompanist:accompanist-permissions:0.23.1"
+
+    //runtimeOnly("com.google.accompanist:accompanist-pager-indicators:0.33.0-alpha")
+
+
+//    implementation "com.google.accompanist:accompanist-pager:0.28.0"
+//    implementation "com.google.accompanist:accompanist-pager-indicators:0.28.0"
+
 }
