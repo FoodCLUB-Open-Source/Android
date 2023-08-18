@@ -2,9 +2,13 @@ package com.example.foodclub.navigation.graphs
 
 import android.kotlin.foodclub.views.home.CameraPreviewView
 import android.kotlin.foodclub.views.home.CameraView
+import android.kotlin.foodclub.views.home.ChangePasswordView
 import android.kotlin.foodclub.views.home.CreateRecipeView
 import android.kotlin.foodclub.views.home.DeleteRecipeView
-import android.kotlin.foodclub.views.home.PlayView
+import android.kotlin.foodclub.views.home.EditProfileSetting
+import android.kotlin.foodclub.views.home.MyBasketView
+import android.kotlin.foodclub.views.home.PrivacySetting
+import android.kotlin.foodclub.views.home.SettingsView
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
@@ -30,14 +34,13 @@ import com.example.foodclub.views.home.ProfileView
             ProfileView(navController)
         }
         composable(route = BottomBarScreenObject.Discover.route) {
-            DiscoverView()
+            MyBasketView()
         }
         composable(route = BottomBarScreenObject.Create.route) {
             CreateView()
         }
         composable(route = BottomBarScreenObject.Play.route) {
             DiscoverView()
-            //PlayView()
         }
         composable(route = HomeOtherRoutes.CameraView.route) {
             CameraView(navController = navController)
@@ -48,11 +51,26 @@ import com.example.foodclub.views.home.ProfileView
         composable(route = HomeOtherRoutes.CreateRecipeView.route) {
             CreateRecipeView()
         }
-
+        composable(route = HomeOtherRoutes.SettingsView.route) {
+            SettingsView(navController = navController)
+        }
+        composable(route = HomeOtherRoutes.ChangePasswordView.route) {
+            ChangePasswordView(navController = navController)
+        }
+        composable(route = HomeOtherRoutes.PrivacySetting.route) {
+            PrivacySetting(navController = navController)
+        }
+        composable(route = HomeOtherRoutes.EditProfileSetting.route) {
+            EditProfileSetting(navController = navController)
+        }
     }
 }
 
 sealed class HomeOtherRoutes(val route: String) {
+    object EditProfileSetting : HomeOtherRoutes(route = "EDIT_PROFILE")
+    object PrivacySetting : HomeOtherRoutes(route = "PRIVACY")
+    object ChangePasswordView : HomeOtherRoutes(route = "CHANGE_PASSWORD")
+    object SettingsView : HomeOtherRoutes(route = "SETTINGS")
     object CameraView : HomeOtherRoutes(route = "CAMERA_VIEW")
     object CreateRecipeView : HomeOtherRoutes(route = "CREATE_RECIPE_VIEW")
     object CameraPreviewView : HomeOtherRoutes(route = "CAMERA_PREVIEW_VIEW/{uri}")

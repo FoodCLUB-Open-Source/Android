@@ -27,11 +27,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 
 //The main function of this EditProfile file. This arranges all components to build the screen
 @Composable
-fun EditProfileSetting(){
+fun EditProfileSetting(navController: NavController){
     Column(
         verticalArrangement = Arrangement.Top,
         modifier= Modifier
@@ -39,7 +40,7 @@ fun EditProfileSetting(){
             .fillMaxSize()
             .padding(16.dp)
     ){
-        SettingsTopBar("Edit Profile")
+        SettingsTopBar("Edit Profile", navController)
         Spacer(modifier = Modifier.height(30.dp))
         EditProfileInputRow("Username")
         Spacer(modifier = Modifier.height(15.dp))

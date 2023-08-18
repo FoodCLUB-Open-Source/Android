@@ -1,6 +1,6 @@
 package android.kotlin.foodclub.navigation.graphs
 
-import android.kotlin.foodclub.views.home.FollowerFollowingView
+import android.kotlin.foodclub.views.home.FollowerView
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -22,7 +22,7 @@ fun NavGraphBuilder.profileNavigationGraph(navController: NavHostController){
         }
 
         composable(route = ProfileNavigationScreens.FOLLOWER_VIEW.route) {
-            FollowerFollowingView(navController)
+            FollowerView()
         }
     }
 }

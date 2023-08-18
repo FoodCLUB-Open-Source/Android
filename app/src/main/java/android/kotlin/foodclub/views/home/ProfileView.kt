@@ -88,8 +88,6 @@ fun ProfileView(navController: NavController) {
     Row(modifier = Modifier
         .fillMaxSize()
         .padding(top = 60.dp, start = 100.dp), horizontalArrangement = Arrangement.spacedBy(55.dp,Alignment.CenterHorizontally)) {
-
-
         Image(
             painterResource(id = R.drawable.profilepicture),
             contentDescription = "profile_picture",
@@ -98,10 +96,6 @@ fun ProfileView(navController: NavController) {
                 .width(120.dp)
 
         )
-
-
-
-
         Button(shape = CircleShape,
             modifier = Modifier
                 .clip(CircleShape)
@@ -115,8 +109,7 @@ fun ProfileView(navController: NavController) {
             contentPadding = PaddingValues(),
 
             onClick = {
-
-
+                navController.navigate("SETTINGS")
             }
 
         ) {
@@ -124,9 +117,7 @@ fun ProfileView(navController: NavController) {
             Image(
                 painter = painterResource(id = R.drawable.vector_1_),
                 contentDescription = "",
-
                 )
-
         }
 
     }

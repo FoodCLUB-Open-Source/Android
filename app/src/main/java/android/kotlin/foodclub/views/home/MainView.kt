@@ -145,8 +145,8 @@ fun BottomBar(navController: NavHostController, triggerBottomSheetModal: () -> U
         BottomBarScreenObject.Home,
         BottomBarScreenObject.Play,
         BottomBarScreenObject.Create,
-        BottomBarScreenObject.Profile,
         BottomBarScreenObject.Discover,
+        BottomBarScreenObject.Profile,
     )
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination

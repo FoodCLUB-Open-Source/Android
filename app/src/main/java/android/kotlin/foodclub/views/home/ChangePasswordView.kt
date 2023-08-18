@@ -35,6 +35,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 val colorGreen= Color(android.graphics.Color.parseColor("#7EC60B"))
 val colorLightGray = Color(android.graphics.Color.parseColor("#DADADA"))
@@ -42,7 +43,7 @@ val colorLightGray = Color(android.graphics.Color.parseColor("#DADADA"))
 
 //The main function of this ChangePassword file. This arranges all components to build the screen
 @Composable
-fun ChangePasswordView(){
+fun ChangePasswordView(navController: NavController){
     Column(
         verticalArrangement = Arrangement.Top,
         modifier= Modifier
@@ -53,7 +54,7 @@ fun ChangePasswordView(){
 
     ){
 
-            SettingsTopBar("Password")
+            SettingsTopBar("Password", navController)
 
             Spacer(modifier = Modifier.height(30.dp))
 

@@ -2,7 +2,6 @@ package com.example.foodclub.viewmodels.home
 
 import android.content.Intent
 import android.kotlin.foodclub.data.models.MyRecipeModel
-import android.kotlin.foodclub.views.home.FollowerFollowingView
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
