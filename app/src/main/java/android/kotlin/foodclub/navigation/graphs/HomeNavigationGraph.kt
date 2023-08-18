@@ -36,7 +36,8 @@ import com.example.foodclub.views.home.ProfileView
             CreateView()
         }
         composable(route = BottomBarScreenObject.Play.route) {
-            PlayView()
+            DiscoverView()
+            //PlayView()
         }
         composable(route = HomeOtherRoutes.CameraView.route) {
             CameraView(navController = navController)

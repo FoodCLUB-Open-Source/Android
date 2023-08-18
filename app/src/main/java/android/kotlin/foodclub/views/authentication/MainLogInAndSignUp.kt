@@ -126,7 +126,7 @@ fun MainLogInAndSignUp(navController: NavHostController) {
 
         ) {
             Image(
-                painterResource(id = R.mipmap.facebook_icon),
+                painterResource(id = R.drawable.facebook_icon),
                 contentDescription = "app_title",
                 modifier = Modifier.size(17.dp)
 

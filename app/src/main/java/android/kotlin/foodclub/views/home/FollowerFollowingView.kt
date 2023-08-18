@@ -4,6 +4,7 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.data.models.Users
 import android.kotlin.foodclub.viewmodels.home.FollowerFollowingViewModel
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -22,6 +23,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Button
@@ -44,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
@@ -51,13 +54,21 @@ import androidx.navigation.compose.rememberNavController
 
 
 @Composable
-fun FollowerFollowingView() {
+fun FollowerFollowingView(navHostController: NavController) {
 
     val montserratFamily = FontFamily(
 
-        Font(R.font.montserratregular, FontWeight.Normal),
+        Font(R.font.montserratregular),
 
         )
+
+    val ralewayFamily = FontFamily(
+
+        Font(R.font.ralewayextrabold, FontWeight.ExtraBold),
+
+        )
+
+
 
 
     val viewModel: FollowerFollowingViewModel = viewModel()
@@ -74,54 +85,48 @@ fun FollowerFollowingView() {
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(top = 30.dp),
+                .padding(start = 10.dp, top = 30.dp),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
 
             Button(shape = RectangleShape,
                 modifier = Modifier
-                    .defaultMinSize(minWidth = 0.03.dp, minHeight = 0.03.dp)
-                    .border(1.dp, Color.LightGray, shape = RoundedCornerShape(15.dp))
-                    .clip(RoundedCornerShape(15.dp)),
+                    .clip(RoundedCornerShape(10.dp))
+                    .height(36.dp)
+                    .width(36.dp),
 
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.LightGray,
+                    containerColor = Color(230, 230, 230, 255),
 
                     ),
-                contentPadding = PaddingValues(),
+                contentPadding = PaddingValues(8.dp),
 
                 onClick = {
 
-                    viewModel.backButton();
+
 
                 }
 
             ) {
 
                 Image(
-                    painterResource(id = R.drawable.back_icon),
-                    contentDescription = "back_icon",
-                    modifier = Modifier
-                        .width(35.dp)
-                        .height(35.dp)
-                        .clip(RoundedCornerShape(15.dp))
-                        .padding(0.dp),
-                    contentScale = ContentScale.FillHeight,
-
-
+                    painter = painterResource(id = R.drawable.back_icon),
+                    contentDescription = "",
+                    modifier = Modifier.height(20.dp).width(20.dp)
                     )
 
             }
 
             Text(
-                text = "My Followers", fontSize = 20.sp,
+                text = "My Followers", fontSize = 18.sp,
                 fontWeight = FontWeight.ExtraBold,
-                fontFamily = montserratFamily,
+                fontFamily = ralewayFamily,
                 modifier = Modifier.padding(top = 20.dp, start = 10.dp)
             )
 
-            LazyColumn {
+            LazyColumn ( verticalArrangement = Arrangement.spacedBy(3.dp),){
+
                 items(viewModel.data) { dataItem ->
                     GridItem(dataItem)
                 }
@@ -140,9 +145,17 @@ fun FollowerFollowingView() {
 
 @Composable
 fun GridItem(user:Users) {
+
+    val avenirFamily = FontFamily(
+
+        Font(R.font.avenirblack, FontWeight.Bold),
+        Font(R.font.avenirbook, FontWeight.Medium),
+        )
+
     Card(modifier = Modifier
         .height(100.dp)
         .padding(10.dp)
+
         .clickable(
             interactionSource = MutableInteractionSource(),
             indication = rememberRipple(bounded = true, color = Color.Black),
@@ -156,27 +169,27 @@ fun GridItem(user:Users) {
 
         Row( modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(), verticalAlignment = Alignment.CenterVertically) {
+            .fillMaxHeight().background(Color.White), verticalAlignment = Alignment.CenterVertically) {
             Image(
                 painterResource(id = R.drawable.profilepicture),
                 contentDescription = "profile_picture",
                 modifier = Modifier
-                    .height(50.dp).width(50.dp).padding(start = 5.dp)
+                    .height(40.dp).width(40.dp).padding(start = 5.dp)
             )
 
             Column(modifier = Modifier
 
                 .fillMaxHeight(), verticalArrangement = Arrangement.Center) {
-                Text(fontFamily = montserratFamily ,
+                Text(fontFamily = avenirFamily ,
                     text = "${user.fullName}",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(start = 10.dp))
 
-                Text(fontFamily = montserratFamily ,
+                Text(fontFamily = avenirFamily ,
                     text = "${user.userName}",
                     fontSize = 12.sp,
-
+                    fontWeight = FontWeight.Medium,
                     modifier = Modifier.padding(start = 10.dp))
             }
         }
@@ -185,11 +198,11 @@ fun GridItem(user:Users) {
     }
 }
 
-@Preview
-@Composable
-fun FollowerFollowingView1() {
-    FollowerFollowingView()
-}
+//@Preview
+//@Composable
+//fun FollowerFollowingView1() {
+//    FollowerFollowingView(navHostController = rem)
+//}
 
 
 
