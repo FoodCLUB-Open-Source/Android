@@ -38,11 +38,44 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+fun extractThumbnailFromMedia(assetFileDesc: AssetFileDescriptor?, atTime: Int): Bitmap? {
+    var bitmap: Bitmap? = null
+    val retriever: MediaMetadataRetriever
+    if (assetFileDesc != null && assetFileDesc.fileDescriptor.valid()) try {
+        retriever = MediaMetadataRetriever()
+        assetFileDesc.apply {
+            retriever.setDataSource(
+                fileDescriptor,
+                startOffset,
+                length
+            )
+        }
+
+        bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            retriever.getScaledFrameAtTime(
+                atTime.toLong(),
+                MediaMetadataRetriever.OPTION_CLOSEST,
+                1280,
+                720
+            )
+        } else {
+            retriever.getFrameAtTime(atTime.toLong())
+        }
+        assetFileDesc.close()
+        retriever.release()
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return bitmap
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
-fun VideoPlayer(
+fun VideoScroller(
     video: VideoModel,
+    pagerState: PagerState,
+    pageIndex: Int,
     onSingleTap: (exoPlayer: ExoPlayer) -> Unit,
     onDoubleTap: (exoPlayer: ExoPlayer, offset: Offset) -> Unit,
     onVideoDispose: () -> Unit = {},
@@ -64,7 +97,7 @@ fun VideoPlayer(
             }
         }
     }
-
+    if (pagerState.settledPage == pageIndex) {
         val exoPlayer = remember(context) {
             ExoPlayer.Builder(context).build().apply {
                 videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT
@@ -126,6 +159,7 @@ fun VideoPlayer(
                 onVideoDispose()
             }
         })
+    }
 
     if (thumbnail.second) {
         AsyncImage(
