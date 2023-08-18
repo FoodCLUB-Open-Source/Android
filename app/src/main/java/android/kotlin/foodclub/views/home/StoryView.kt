@@ -35,17 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import com.ui.simplestories.Stories
 import kotlinx.coroutines.launch
-
-@Composable
-fun StoryView() {
-    val listOfImages = listOf(R.drawable.story_user, R.drawable.story_user)
-    Stories(numberOfPages = listOfImages.size, onComplete = { }) {
-        Image(painter = painterResource(id = listOfImages[it]), contentDescription = null,
-            contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
-    }
-}
 
 @Composable
 fun StoriesContainerView(stories: List<Int>, navController: NavHostController) {
@@ -136,12 +126,7 @@ fun StoriesContainerView(stories: List<Int>, navController: NavHostController) {
                             .width(65.dp)
                             .height(65.dp)
                             .clip(CircleShape)
-                            .clickable {
-                                navController.navigate("STORY") {
-                                    popUpTo(navController.graph.findStartDestination().id)
-                                    launchSingleTop = true
-                                }
-                            }
+                            .clickable {}
                     )
                 }
                 Spacer(modifier = Modifier.height(10.dp))
