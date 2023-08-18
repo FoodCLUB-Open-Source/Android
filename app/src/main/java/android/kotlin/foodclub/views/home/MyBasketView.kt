@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,6 +36,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -68,7 +70,11 @@ fun MyBasketView() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Spacer(modifier = Modifier.width(30.dp))
-                    Text("My Basket", fontSize = 30.sp, fontWeight = FontWeight.Bold,color = Color.Black,
+                    Text(
+                        "My Basket",
+                        fontSize = 30.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black,
                         modifier = Modifier.padding(end = 150.dp)
                     )
                     /*Icon(
@@ -77,9 +83,22 @@ fun MyBasketView() {
                         tint = Color.Black, // Customize the icon color
                         modifier = Modifier.size(30.dp) // Customize the icon size
                    */
-                    Image(painter = painterResource(id = R.drawable.delete_bin_5_line__2_), contentDescription = "",
-                         contentScale = ContentScale.FillHeight, modifier  = Modifier.size(50.dp))
-
+                    Box(
+                        modifier = Modifier
+                            .size(50.dp)
+                            .background(Color.LightGray, RoundedCornerShape(20))
+                            //.border(2.dp, Color.Green, RoundedCornerShape(20))
+                            .padding(1.dp), // Adding padding to create space for the text
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.delete_bin_5_line__2_),
+                            contentDescription = "",
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier.fillMaxSize(),
+                            alignment = Alignment.Center
+                        )
+                    }
                 }
 
 
@@ -98,39 +117,112 @@ fun MyBasketView() {
                     shape = RectangleShape,
                     modifier = Modifier
                         .border(1.dp, Color(126, 198, 11, 255), shape = RoundedCornerShape(20.dp))
-                        .clip(RoundedCornerShape(20.dp))
+                        //.clip(RoundedCornerShape(20.dp))
                         .width(145.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Green,
+                        containerColor = Color.White,
                         contentColor = Color(126, 198, 11, 255)
                     ), contentPadding = PaddingValues(15.dp),
                     onClick = {}
                 ) {
                     Text(
-                        "Add items +", color = Color(126, 198, 11, 255),
+                        "Add items +",
+                        fontSize = 18.sp,
+                        fontFamily = montserratFamily,
+                        color = Color(126, 198, 11, 255),
                     )
                 }
             }
             LazyColumn {
                 // TODO: Replace with actual data
-                items(10) {
+                items(3) {
                     Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                            .background(Color.LightGray)
-                    ){
-                        Text ("Item1")
+                            .fillMaxSize()
+                            .background(Color.White, RoundedCornerShape(10))
+                            .border(2.dp, Color.Green, RoundedCornerShape(20))
+                            .padding(16.dp), // Adding padding to create space for the text
+                        contentAlignment = Alignment.CenterStart,
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxHeight(), // Image will fill the height of the column
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Start
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.imagecard),
+                                contentDescription = "Image",
+                                contentScale = ContentScale.FillHeight,
+                                modifier = Modifier.fillMaxHeight()
+                            )
+                            Spacer(modifier = Modifier.width(30.dp))
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Top
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.Start
+                                ) {
+                                    Text(
+                                        text = "Item 1",
+                                        color = Color.Black,
+                                        textAlign = TextAlign.Left,
+                                        fontSize = 16.sp,
+                                    )
+                                }
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.End
+                                ) {
+                                    Image(
+                                        painter = painterResource(R.drawable.baseline_arrow_left_24),
+                                        contentDescription = "Image",
+                                        //contentScale = ContentScale.FillHeight,
+                                        modifier = Modifier.fillMaxHeight()
+                                    )
+                                    Text(
+                                        text = "Item 2",
+                                        color = Color.Black,
+                                        //textAlign = TextAlign.Right,
+                                        fontSize = 16.sp,
+                                    )
+                                    Image(
+                                        painter = painterResource(R.drawable.baseline_arrow_right_24),
+                                        contentDescription = "Image",
+                                        //contentScale = ContentScale.FillHeight,
+                                        modifier = Modifier.fillMaxHeight()
+                                    )
+                                }
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(30.dp))
+
                     }
+                    Spacer(modifier = Modifier.height(30.dp))
                 }
             }
+
+
+
+
+
         }
+
     }
 }
+
+
+
+
+
+
 
 @Composable
 @Preview
 fun PreviewMyBasketView() {
-     MyBasketView()
+    MyBasketView()
 }
+
 
