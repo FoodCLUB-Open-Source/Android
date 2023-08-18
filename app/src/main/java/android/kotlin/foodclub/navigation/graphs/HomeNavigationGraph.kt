@@ -49,7 +49,7 @@ import com.example.foodclub.views.home.ProfileView
             CameraPreviewView(it.arguments?.getString("uri") ?: "")
         }
         composable(route = HomeOtherRoutes.CreateRecipeView.route) {
-            CreateRecipeView()
+            CreateRecipeView(navController = navController)
         }
         composable(route = HomeOtherRoutes.SettingsView.route) {
             SettingsView(navController = navController)

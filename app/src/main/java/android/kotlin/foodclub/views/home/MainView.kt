@@ -52,10 +52,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
 
 @Composable
-fun BottomSheetItem(icon: Int, text: String, navController: NavHostController, destination: String) {
+fun BottomSheetItem(icon: Int, text: String,
+                    onDismiss: () -> Unit, navController: NavHostController, destination: String) {
     Row(
         modifier = Modifier
-            .clickable { navController.navigate(destination) }
+            .clickable { navController.navigate(destination); onDismiss() }
             .fillMaxWidth()
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -102,12 +103,14 @@ fun BottomSheet(onDismiss: () -> Unit, navController: NavHostController) {
             BottomSheetItem(
                 icon = R.drawable.story_bottom_sheet_icon,
                 text = "Create a Story",
+                onDismiss,
                 navController = navController,
                 "CAMERA_VIEW"
             )
             BottomSheetItem(
                 icon = R.drawable.recipe_bottom_sheet_icon,
                 text = "Create a Recipe",
+                onDismiss,
                 navController = navController,
                 "CREATE_RECIPE_VIEW"
             )

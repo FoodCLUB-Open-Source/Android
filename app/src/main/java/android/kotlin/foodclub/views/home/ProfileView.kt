@@ -34,6 +34,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,9 +60,7 @@ import androidx.navigation.NavController
 import com.example.foodclub.navigation.graphs.OnBoardingScreen
 import com.example.foodclub.navigation.graphs.RootNavigationGraph
 import com.example.foodclub.viewmodels.home.ProfileViewModel
-
-
-
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -72,15 +71,17 @@ fun ProfileView(navController: NavController) {
 
     val viewModel:ProfileViewModel = viewModel()
     viewModel.getData()
-
+    val systemUiController = rememberSystemUiController()
+    SideEffect {
+        systemUiController.setSystemBarsColor(
+            color = Color.White,
+            darkIcons = true
+        )
+    }
 
     val montserratFamily = FontFamily(
-
         Font(R.font.montserratregular, FontWeight.Normal),
-        Font(R.font.montserratsemibold, FontWeight.SemiBold),
-
-        )
-
+        Font(R.font.montserratsemibold, FontWeight.SemiBold),)
     val pagerState = rememberPagerState();
     val animals= arrayOf(R.drawable.profilepicture, R.drawable.login_with)
     val pages = viewModel.getPages();

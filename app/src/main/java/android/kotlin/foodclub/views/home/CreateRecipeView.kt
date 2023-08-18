@@ -83,6 +83,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.IntSize
+import androidx.navigation.NavController
 import java.util.Collections.copy
 
 @Stable
@@ -410,7 +411,7 @@ fun BottomSheetIngredients(onDismiss: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateRecipeView() {
+fun CreateRecipeView(navController: NavController) {
     val viewModel: CreateRecipeViewModel = viewModel()
     val title = viewModel.title.value ?: "Loading..."
     val ingredientList = listOf("Tomato paste", "Potato wedges", "Pasta")
@@ -503,7 +504,7 @@ fun CreateRecipeView() {
                                 containerColor = Color(0xFFB8B8B8),
                                 contentColor = Color.White
                             ), contentPadding = PaddingValues(5.dp),
-                            onClick = {}
+                            onClick = { navController.navigateUp() }
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
