@@ -102,6 +102,7 @@ import androidx.compose.ui.platform.LocalDensity
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
+
 val montserratFamily = FontFamily(Font(R.font.montserratregular, FontWeight.Normal))
 
 @Composable
