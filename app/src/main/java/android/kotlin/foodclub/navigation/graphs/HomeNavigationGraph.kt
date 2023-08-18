@@ -3,6 +3,7 @@ package com.example.foodclub.navigation.graphs
 import android.kotlin.foodclub.views.home.CameraPreviewView
 import android.kotlin.foodclub.views.home.CameraView
 import android.kotlin.foodclub.views.home.CreateRecipeView
+import android.kotlin.foodclub.views.home.DeleteRecipeView
 import android.kotlin.foodclub.views.home.PlayView
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavDestination
@@ -23,7 +24,7 @@ import com.example.foodclub.views.home.ProfileView
         startDestination = BottomBarScreenObject.Home.route
     ) {
         composable(route = BottomBarScreenObject.Home.route) {
-            HomeView(navController = navController, showSheet = showSheet, triggerBottomSheetModal = triggerBottomSheetModal)
+            HomeView(navController = navController)
         }
         composable(route = BottomBarScreenObject.Profile.route) {
             ProfileView()

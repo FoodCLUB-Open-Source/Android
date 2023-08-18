@@ -86,4 +86,7 @@ dependencies {
     implementation "androidx.camera:camera-view:1.2.1"
     implementation "androidx.camera:camera-extensions:1.2.1"
     implementation "com.google.accompanist:accompanist-permissions:0.23.1"
+
+    // Lottie animations
+    implementation "com.airbnb.android:lottie-compose:4.2.0"
 }
