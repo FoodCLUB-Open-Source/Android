@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -40,15 +41,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyBasketView() {
     Column(
         modifier = Modifier
-            .background(color = Color(0xFFF0F0F0))
+            .background(color = Color(0xFFF0F0F0))//Remove when doing navigation
             .fillMaxSize()
-            .padding(start = 15.dp, top = 60.dp, end = 15.dp, bottom = 70.dp),
+            .padding(start = 15.dp, top = 0.dp, end = 15.dp, bottom = 100.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(
@@ -153,7 +155,7 @@ fun MyBasketView() {
                                 painter = painterResource(R.drawable.imagecard),
                                 contentDescription = "Image",
                                 contentScale = ContentScale.FillHeight,
-                                modifier = Modifier.fillMaxHeight()
+                                //modifier = Modifier.fillMaxHeight()
                             )
                             Spacer(modifier = Modifier.width(30.dp))
                             Column(
@@ -171,6 +173,27 @@ fun MyBasketView() {
                                         textAlign = TextAlign.Left,
                                         fontSize = 16.sp,
                                     )
+                                    Spacer(modifier = Modifier.width(150.dp))
+                                    Button(
+                                        onClick = {},
+                                        shape = CircleShape,
+                                        modifier = Modifier
+                                            //.border(5.dp),// Color(126, 198, 11, 255),
+                                            //.shape = RoundedCornerShape(20.dp))
+                                            //.clip(RoundedCornerShape(20.dp))
+                                            .width(30.dp),
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = Color.White,
+                                            contentColor = Color(126, 198, 11, 255)
+                                        ), contentPadding = PaddingValues(1.dp))
+                                    {
+                                        Image(
+                                            painter = painterResource(R.drawable.vector),
+                                            contentDescription = "Food")
+                                            //contentScale = ContentScale.FillHeight,
+                                            //modifier = Modifier.fillMaxHeight())
+                                    }
+
                                 }
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
@@ -178,12 +201,12 @@ fun MyBasketView() {
                                 ) {
                                     Image(
                                         painter = painterResource(R.drawable.baseline_arrow_left_24),
-                                        contentDescription = "Image",
+                                        contentDescription = "Food",
                                         //contentScale = ContentScale.FillHeight,
                                         modifier = Modifier.fillMaxHeight()
                                     )
                                     Text(
-                                        text = "Item 2",
+                                        text = "250g",
                                         color = Color.Black,
                                         //textAlign = TextAlign.Right,
                                         fontSize = 16.sp,
