@@ -63,7 +63,6 @@ fun EditProfileInputRow(boxType: String) {
         ),
         colors = TextFieldDefaults.textFieldColors(
             containerColor = colorLightGray,
-            textColor = Color.Black,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent
         ),

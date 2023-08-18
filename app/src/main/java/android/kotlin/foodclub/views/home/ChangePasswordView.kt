@@ -121,7 +121,6 @@ fun InputField(boxType:String, passwordVisible:Boolean){
         },
         colors = TextFieldDefaults.textFieldColors(
             containerColor = colorLightGray,
-            textColor = Color.Black,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent
         ),
