@@ -28,8 +28,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-val colorGreen1= Color(android.graphics.Color.parseColor("#7EC60B"))
-val colorLightGray1 = Color(android.graphics.Color.parseColor("#DADADA"))
+
+//The main function of this EditProfile file. This arranges all components to build the screen
 @Composable
 fun EditProfileSetting(){
     Column(
@@ -41,17 +41,18 @@ fun EditProfileSetting(){
     ){
         SettingsTopBar("Edit Profile")
         Spacer(modifier = Modifier.height(30.dp))
-        EditProfileInputRow1("Username")
+        EditProfileInputRow("Username")
         Spacer(modifier = Modifier.height(15.dp))
-        EditProfileInputRow1(boxType = "Email")
+        EditProfileInputRow(boxType = "Email")
         Spacer(modifier = Modifier.height(30.dp))
         SaveButton()
     }
 }
 
+// The common component to generate the input boxes
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditProfileInputRow1(boxType: String) {
+fun EditProfileInputRow(boxType: String) {
     var input by remember { mutableStateOf("") }
     TextField(
         value = input,
@@ -61,38 +62,15 @@ fun EditProfileInputRow1(boxType: String) {
             keyboardType = if (boxType == "Email") KeyboardType.Email else KeyboardType.Text
         ),
         colors = TextFieldDefaults.textFieldColors(
-            containerColor = colorLightGray1,
+            containerColor = colorLightGray,
             textColor = Color.Black,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent
         ),
         modifier = Modifier
             .fillMaxWidth()
-            .background(color = colorLightGray1, shape = RoundedCornerShape(8.dp))
+            .background(color = colorLightGray, shape = RoundedCornerShape(8.dp))
             .height(60.dp)
             .padding(5.dp)
-    )
-}
-
-@Composable
-fun SaveButtonGreen(){
-    Button(
-        onClick = {/*Password changes*/},
-        content = {
-            Text(
-                text = "Save",
-                fontSize = 16.sp
-            )
-        },
-        colors= ButtonDefaults.buttonColors(containerColor = colorGreen1, contentColor = Color.White),
-        shape = RoundedCornerShape(8.dp),
-        modifier = Modifier
-            .height(60.dp)
-            .fillMaxWidth()
-            .border(
-                width = 0.dp,
-                color = Color.Transparent,
-                shape = RoundedCornerShape(8.dp)
-            )
     )
 }

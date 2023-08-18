@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 
+//The main function of this PrivacyView file. This arranges all components to build the screen
 @Composable
 fun PrivacySetting() {
     Column(
@@ -46,6 +47,7 @@ fun PrivacySetting() {
     }
 }
 
+// The Change Password button of this screen
 @Composable
 fun ChangePasswordButton(){
     Row(
@@ -53,16 +55,6 @@ fun ChangePasswordButton(){
             .clickable { /* TO DO */ }
             .fillMaxWidth()
             .background(Color.Transparent)
-//        onClick = {/*Goes to the corresponding screen*/},
-//        colors= ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = Color.Black),
-//        modifier = Modifier
-//            .height(60.dp)
-//            .fillMaxWidth()
-//            .border(
-//                width = 0.dp,
-//                color = Color.Transparent
-//            ),
-//            shape = CutCornerShape(0.dp)
     ){
         SettingsText(text = "Change Password", size = 16, weight = FontWeight.W600, textAlign = TextAlign.Left)
         Spacer(modifier = Modifier.weight(1f))
