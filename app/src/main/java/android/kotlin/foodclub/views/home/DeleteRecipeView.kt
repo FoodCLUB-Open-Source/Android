@@ -1,15 +1,12 @@
-@file:JvmName("HomeViewKt")
-
-package com.example.foodclub.views.home
+package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.data.models.VideoModel
-import android.kotlin.foodclub.utils.composables.VideoScroller
-import android.kotlin.foodclub.views.home.StoriesContainerView
+import android.kotlin.foodclub.utils.composables.VideoPlayer
+import android.kotlin.foodclub.viewmodels.home.DeleteRecipeViewModel
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.FastOutLinearInEasing
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.keyframes
@@ -27,22 +24,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.pager.PagerDefaults
-import androidx.compose.foundation.pager.VerticalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,175 +41,175 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.foodclub.viewmodels.home.HomeViewModel
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material3.BottomSheetDefaults
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.RoundRect
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.drawscope.clipPath
-import androidx.compose.ui.graphics.drawscope.clipRect
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavHostController
 import androidx.compose.ui.platform.LocalDensity
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
-
-
-val montserratFamily = FontFamily(Font(R.font.montserratregular, FontWeight.Normal))
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.window.Dialog
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 
 @Composable
-fun BlurImage(content: @Composable () -> Unit) {
-    Box {
-        content()
+fun HeaderImage(modifier: Modifier) {
+    val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.location))
+    val progress by animateLottieCompositionAsState(composition = composition)
+
+    LottieAnimation(
+        composition = composition,
+        progress = progress,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun ComfirmDeleteDialog(
+    title: String?="Delete video?",
+    desc: String?="lorem ipsum lorem ipsum lorem ipsum lorem ipsu" +
+            " lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsumm",
+    onDismiss: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismiss
+    ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .drawWithContent {
-                    val path = Path()
-                    path.addRoundRect(
-                        RoundRect(
-                            left = size.width / 1.25f, top = size.height / 1.425f,
-                            right = size.width / 1.05f, bottom = size.height / 1.27f,
-                            topLeftCornerRadius = CornerRadius(100f, 100f),
-                            topRightCornerRadius = CornerRadius(100f, 100f),
-                            bottomLeftCornerRadius = CornerRadius(100f, 100f),
-                            bottomRightCornerRadius = CornerRadius(100f, 100f),
-                        ),
-                    )
-                    clipPath(path) {
-                        this@drawWithContent.drawContent()
+                .height(450.dp)
+        ) {
+            Column(
+                modifier = Modifier
+            ) {
+                Spacer(modifier = Modifier.height(130.dp))
+                Box(
+                    modifier = Modifier
+                        .height(490.dp)
+                        .background(
+                            color = Color.White,
+                            shape = RoundedCornerShape(25.dp, 10.dp, 25.dp, 10.dp)
+                        )
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                        Text(
+                            text = title!!,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .padding(top = 10.dp)
+                                .fillMaxWidth(),
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            fontFamily = com.example.foodclub.views.home.montserratFamily,
+                            )
+                        Spacer(modifier = Modifier.height(8.dp))
+
+
+                        Text(
+                            text = desc!!,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .padding(top = 10.dp, start = 25.dp, end = 25.dp)
+                                .fillMaxWidth(),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            fontFamily = com.example.foodclub.views.home.montserratFamily,
+                            )
+                        Spacer(modifier = Modifier.height(24.dp))
+
+
+                        Button(
+                            onClick = onDismiss,
+                            colors= ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#7EC60B"))),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "Later",
+                                color = Color.White,
+                                fontFamily = com.example.foodclub.views.home.montserratFamily,
+                                )
+                        }
+                        ElevatedButton(
+                            onClick = onDismiss,
+                            colors= ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#7EC60B"))),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(5.dp))
+                        ) {
+                            Text(
+                                text = "Enable Location",
+                                color = Color.White,
+                                fontFamily = com.example.foodclub.views.home.montserratFamily,
+                                )
+                        }
+
+
+                        Spacer(modifier = Modifier.width(8.dp))
                     }
                 }
-                .blur(
-                    radiusX = 10.dp, radiusY = 10.dp
-                )
-        ) {
-            content()
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .drawWithContent {
-                    val path = Path()
-                    path.addRoundRect(
-                        RoundRect(
-                            left = size.width / 1.05f, top = size.height / 1.255f,
-                            right = size.width / 1.25f, bottom = size.height / 1.11f,
-                            topLeftCornerRadius = CornerRadius(100f, 100f),
-                            topRightCornerRadius = CornerRadius(100f, 100f),
-                            bottomLeftCornerRadius = CornerRadius(100f, 100f),
-                            bottomRightCornerRadius = CornerRadius(100f, 100f),
-                        ),
-                    )
-                    clipPath(path) {
-                        this@drawWithContent.drawContent()
-                    }
-                }
-                .blur(
-                    radiusX = 10.dp, radiusY = 10.dp
-                )
-        ) {
-            content()
+            }
+            HeaderImage(
+                modifier = Modifier
+                    .size(200.dp)
+                    .align(Alignment.TopCenter)
+                /*.border(
+                    border = BorderStroke(width = 5.dp, color = Color.White),
+                    shape = CircleShape
+                )*/
+            )
         }
     }
 }
 
+
+
+
 @OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
-fun HomeView(
-    modifier: Modifier = Modifier,
-    initialPage: Int? = 0,
-    navController: NavHostController,
-)
-{
-    val viewModel: HomeViewModel = viewModel()
-    val title = viewModel.title.value ?: "Loading..."
-    val localDensity = LocalDensity.current
-
-    val videos: List<VideoModel> = viewModel.videosList
+fun DeleteRecipeView(
+) {
+    val viewModel: DeleteRecipeViewModel = viewModel()
+    val videos: List<VideoModel> = viewModel.deleteVideoExemple
     val coroutineScope = rememberCoroutineScope()
-
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.95f
-    val pagerState = rememberPagerState(initialPage = initialPage ?: 0)
+    val localDensity = LocalDensity.current
+    val infoDialog = remember { mutableStateOf(false) }
 
-    val fling = PagerDefaults.flingBehavior(
-        state = pagerState, lowVelocityAnimationSpec = tween(
-            easing = LinearEasing, durationMillis = 300
-        )
-    )
-    val systemUiController = rememberSystemUiController()
-
-    SideEffect {
-        systemUiController.setSystemBarsColor(
-            color = Color.Transparent,
-            darkIcons = false
-        )
-        systemUiController.setNavigationBarColor(
-            color = Color.White
-        )
-    }
-    Box(modifier = Modifier.padding(top = 60.dp).zIndex(1f)) {
-        StoriesContainerView(stories = listOf(
-            R.drawable.story_user,
-            R.drawable.story_user,
-            R.drawable.story_user,
-            R.drawable.story_user
-        ), navController)
-    }
     Column(
         modifier = Modifier
             .height(screenHeightMinusBottomNavItem)
     ) {
-        VerticalPager(
-            pageCount = 4,
-            state = pagerState,
-            flingBehavior = fling,
-            beyondBoundsPageCount = 1,
-            modifier = modifier
-        ) {
             var pauseButtonVisibility by remember { mutableStateOf(false) }
             var doubleTapState by remember {
                 mutableStateOf(
@@ -229,19 +220,26 @@ fun HomeView(
                     )
                 )
             }
-
-            Box(
+        if (infoDialog.value) {
+            ComfirmDeleteDialog(
+                title = "Delete video?",
+                desc = "Are you sure you want to delete this video? This action cannot be undone.",
+                onDismiss = {
+                    infoDialog.value = false
+                }
+            )
+        }
+        Box(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                //BlurImage{
-                    VideoScroller(videos[it], pagerState, it, onSingleTap = {
+                    VideoPlayer(videos[0], onSingleTap = {
                         pauseButtonVisibility = it.isPlaying
                         it.playWhenReady = !it.isPlaying
                     },
                         onDoubleTap = { exoPlayer, offset ->
                             coroutineScope.launch {
-                                videos[it].currentViewerInteraction.isLikedByYou = true
+                                videos[0].currentViewerInteraction.isLikedByYou = true
                                 val rotationAngle = (-10..10).random()
                                 doubleTapState = Triple(offset, true, rotationAngle.toFloat())
                                 delay(400)
@@ -251,14 +249,12 @@ fun HomeView(
                         onVideoDispose = { pauseButtonVisibility = false },
                         onVideoGoBackground = { pauseButtonVisibility = false }
                     )
-                //}
-
-
                 var isLiked by remember {
-                    mutableStateOf(videos[it].currentViewerInteraction.isLikedByYou)
+                    mutableStateOf(videos[0].currentViewerInteraction.isLikedByYou)
                 }
 
                 Column() {
+
                     val iconSize = 110.dp
                     AnimatedVisibility(visible = doubleTapState.second,
                         enter = scaleIn(
@@ -337,7 +333,63 @@ fun HomeView(
                         }
                     }
                 }
-
+                Box(
+                    modifier = Modifier.background(Color.Transparent).padding(start = 10.dp, top = 60.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Button(
+                        shape = RectangleShape,
+                        modifier = Modifier
+                            .border(1.dp, Color.Transparent, shape = RoundedCornerShape(15.dp))
+                            .clip(RoundedCornerShape(15.dp))
+                            .align(Alignment.BottomCenter)
+                            .width(40.dp)
+                            .height(40.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Transparent,
+                            contentColor = Color.Transparent
+                        ), contentPadding = PaddingValues(5.dp),
+                        onClick = {}
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
+                            contentDescription = "Back",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .width(30.dp)
+                                .height(30.dp)
+                        )
+                    }
+                }
+                Box(
+                    modifier = Modifier.padding(end = 20.dp, top = 60.dp).align(Alignment.TopEnd),
+                ) {
+                    Button(
+                        shape = RectangleShape,
+                        modifier = Modifier
+                            .border(1.dp, Color.Transparent, shape = RoundedCornerShape(15.dp))
+                            .clip(RoundedCornerShape(15.dp))
+                            .align(Alignment.BottomCenter)
+                            .width(40.dp)
+                            .height(40.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Transparent,
+                            contentColor = Color.Transparent
+                        ), contentPadding = PaddingValues(5.dp),
+                        onClick = {
+                                infoDialog.value = true
+                        }
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.delete),
+                            contentDescription = "Back",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .width(25.dp)
+                                .height(25.dp)
+                        )
+                    }
+                }
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
@@ -360,7 +412,7 @@ fun HomeView(
                                     modifier = Modifier.width(65.dp)
                                         .height(65.dp)
                                         .clip(RoundedCornerShape(35.dp))
-                                        .background(Color.Black.copy(alpha = 0.8f))
+                                        .background(Color.Transparent)
                                         .blur(radius = 5.dp)
                                 ) {}
                                 Image(
@@ -378,7 +430,7 @@ fun HomeView(
                         Column(horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.align(Alignment.End)
                                 .width(60.dp).height(80.dp),
-                            ) {
+                        ) {
                             Spacer(Modifier.weight(1f))
                             Box(
                                 modifier = Modifier.width(60.dp).height(80.dp),
@@ -387,7 +439,7 @@ fun HomeView(
                                 Box(
                                     modifier = Modifier.width(60.dp).height(80.dp)
                                         .clip(RoundedCornerShape(30.dp))
-                                        .background(Color.Black.copy(alpha = 0.8f))
+                                        .background(Color.Transparent)
                                         .blur(radius = 5.dp)
                                 ) {}
                                 Column(
@@ -395,7 +447,7 @@ fun HomeView(
                                     verticalArrangement = Arrangement.Center,
                                     modifier = Modifier.fillMaxSize().clickable {
                                         isLiked = !isLiked
-                                        videos[it].currentViewerInteraction.isLikedByYou = !isLiked
+                                        videos[0].currentViewerInteraction.isLikedByYou = !isLiked
                                     }
                                 ) {
                                     val maxSize = 32.dp
@@ -442,6 +494,5 @@ fun HomeView(
                     }
                 }
             }
-        }
     }
 }

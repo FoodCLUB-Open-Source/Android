@@ -3,8 +3,8 @@ package com.example.foodclub.navigation.graphs
 import android.kotlin.foodclub.views.home.CameraPreviewView
 import android.kotlin.foodclub.views.home.CameraView
 import android.kotlin.foodclub.views.home.CreateRecipeView
+import android.kotlin.foodclub.views.home.DeleteRecipeView
 import android.kotlin.foodclub.views.home.PlayView
-import android.kotlin.foodclub.views.home.StoryView
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
@@ -24,10 +24,10 @@ import com.example.foodclub.views.home.ProfileView
         startDestination = BottomBarScreenObject.Home.route
     ) {
         composable(route = BottomBarScreenObject.Home.route) {
-            HomeView(navController = navController, showSheet = showSheet, triggerBottomSheetModal = triggerBottomSheetModal)
-        }   
+            HomeView(navController = navController)
+        }
         composable(route = BottomBarScreenObject.Profile.route) {
-            ProfileView()
+            ProfileView(navController)
         }
         composable(route = BottomBarScreenObject.Discover.route) {
             DiscoverView()
@@ -37,9 +37,6 @@ import com.example.foodclub.views.home.ProfileView
         }
         composable(route = BottomBarScreenObject.Play.route) {
             PlayView()
-        }
-        composable(route = HomeOtherRoutes.StoryView.route) {
-            StoryView()
         }
         composable(route = HomeOtherRoutes.CameraView.route) {
             CameraView(navController = navController)
@@ -55,7 +52,6 @@ import com.example.foodclub.views.home.ProfileView
 }
 
 sealed class HomeOtherRoutes(val route: String) {
-    object StoryView : HomeOtherRoutes(route = "STORY_VIEW")
     object CameraView : HomeOtherRoutes(route = "CAMERA_VIEW")
     object CreateRecipeView : HomeOtherRoutes(route = "CREATE_RECIPE_VIEW")
     object CameraPreviewView : HomeOtherRoutes(route = "CAMERA_PREVIEW_VIEW/{uri}")
