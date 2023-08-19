@@ -8,6 +8,7 @@ import android.kotlin.foodclub.ui.theme.FoodClubTheme
 import android.kotlin.foodclub.views.home.ChangePasswordView
 import android.kotlin.foodclub.views.home.EditProfileSetting
 import android.kotlin.foodclub.views.home.PrivacySetting
+import android.kotlin.foodclub.views.home.ProgressionBar
 import android.kotlin.foodclub.views.home.SettingsView
 import android.os.Handler
 import android.os.Looper
@@ -29,9 +30,11 @@ class MainActivity : ComponentActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
             keepSplashOnScreen = false }, delay)
         setContent {
-            FoodClubTheme {
-                RootNavigationGraph(navController = rememberNavController())
-            }
+//            FoodClubTheme {
+//                RootNavigationGraph(navController = rememberNavController())
+//            }
+
+            ProgressionBar(10, 500)
         }
     }
 }
