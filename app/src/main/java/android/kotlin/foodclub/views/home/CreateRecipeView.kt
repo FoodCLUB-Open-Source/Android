@@ -718,7 +718,6 @@ fun Ingredient(ingredient: String) {
         }
     }
     Spacer(modifier = Modifier.height(10.dp))
-
 }
 
 @Composable

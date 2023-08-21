@@ -54,6 +54,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
@@ -62,6 +63,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
@@ -71,10 +73,12 @@ import androidx.compose.ui.zIndex
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavController
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun HeaderImage(modifier: Modifier) {
@@ -197,18 +201,28 @@ fun ComfirmDeleteDialog(
 @OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
-fun DeleteRecipeView(
-) {
+fun DeleteRecipeView(navController: NavController) {
     val viewModel: DeleteRecipeViewModel = viewModel()
     val videos: List<VideoModel> = viewModel.deleteVideoExemple
     val coroutineScope = rememberCoroutineScope()
     val screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.95f
     val localDensity = LocalDensity.current
     val infoDialog = remember { mutableStateOf(false) }
+    val systemUiController = rememberSystemUiController()
+
+    SideEffect {
+        systemUiController.setSystemBarsColor(
+            color = Color.Transparent,
+            darkIcons = false
+        )
+        systemUiController.setNavigationBarColor(
+            color = Color.Black
+        )
+    }
 
     Column(
         modifier = Modifier
-            .height(screenHeightMinusBottomNavItem)
+            .fillMaxHeight().padding(bottom = 40.dp)
     ) {
             var pauseButtonVisibility by remember { mutableStateOf(false) }
             var doubleTapState by remember {
@@ -349,7 +363,7 @@ fun DeleteRecipeView(
                             containerColor = Color.Transparent,
                             contentColor = Color.Transparent
                         ), contentPadding = PaddingValues(5.dp),
-                        onClick = {}
+                        onClick = { navController.navigateUp() }
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
