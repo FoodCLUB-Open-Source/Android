@@ -41,6 +41,4 @@ sealed class BottomBarScreenObject(
         title = "PROFILE",
         icon= R.drawable.nav_profile_icon
     )
-
-
 }

@@ -63,10 +63,17 @@ import com.example.foodclub.views.home.ProfileView
         composable(route = HomeOtherRoutes.EditProfileSetting.route) {
             EditProfileSetting(navController = navController)
         }
+        composable(route = HomeOtherRoutes.EditProfileSetting.route) {
+            EditProfileSetting(navController = navController)
+        }
+        composable(route = HomeOtherRoutes.DeleteRecipeView.route) {
+            DeleteRecipeView(navController = navController)
+        }
     }
 }
 
 sealed class HomeOtherRoutes(val route: String) {
+    object DeleteRecipeView : HomeOtherRoutes(route = "DELETE_RECIPE")
     object EditProfileSetting : HomeOtherRoutes(route = "EDIT_PROFILE")
     object PrivacySetting : HomeOtherRoutes(route = "PRIVACY")
     object ChangePasswordView : HomeOtherRoutes(route = "CHANGE_PASSWORD")

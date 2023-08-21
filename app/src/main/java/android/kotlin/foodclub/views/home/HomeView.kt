@@ -314,13 +314,13 @@ fun HomeView(
                 ) {
                     Column {
                         Button(
-                            modifier = Modifier.width(78.dp).height(32.dp),
+                            modifier = Modifier.width(82.dp).height(32.dp),
                             onClick = { /*TODO*/ },
                             colors = ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#D95978")))
                         ) {
-                            Text("Meat", fontSize = 12.sp,style = TextStyle(color = Color.White))
+                            Text("Meat", fontFamily = montserratFamily,
+                                fontSize = 12.sp,style = TextStyle(color = Color.White))
                         }
-
                         Spacer(modifier = Modifier.height(20.dp))
 
                         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -332,7 +332,8 @@ fun HomeView(
                                     .clip(CircleShape)
                             )
                             Spacer(modifier = Modifier.width(10.dp))
-                            Text("Marc", color = Color.White, fontSize = 18.sp,
+                            Text("Marc", color = Color.White,
+                                fontFamily = montserratFamily, fontSize = 18.sp,
                                 modifier = Modifier.padding(2.dp))
                         }
                     }
@@ -420,7 +421,9 @@ fun HomeView(
                                         modifier = Modifier.size(iconSize)
                                     )
                                     Spacer(modifier = Modifier.height(3.dp))
-                                    Text("4.2k", fontSize = 13.sp, color = if (isLiked) Color(android.graphics.Color.parseColor("#7EC60B")) else Color.White)
+                                    Text("4.2k", fontSize = 13.sp,
+                                        fontFamily = montserratFamily,
+                                        color = if (isLiked) Color(android.graphics.Color.parseColor("#7EC60B")) else Color.White)
                                 }
                             }
                             Spacer(Modifier.weight(1f))
@@ -435,7 +438,7 @@ fun HomeView(
                             shape = RoundedCornerShape(15.dp)
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text("Ingredients", fontSize = 16.sp)
+                                Text("Ingredients", fontFamily = montserratFamily, fontSize = 16.sp)
                                 Icon(Icons.Default.KeyboardArrowRight, contentDescription = null)
                             }
                         }
