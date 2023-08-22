@@ -1,5 +1,6 @@
 package com.example.foodclub.views.home
 
+import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.data.models.DiscoverViewRecipeModel
 import android.kotlin.foodclub.data.models.MyRecipeModel
@@ -337,7 +338,7 @@ fun DiscoverView() {
 
         }
 
-        val pagerState = rememberPagerState();
+        val pagerState = rememberPagerState() { 2 };
 //
 //        TabRow(selectedTabIndex = pagerState.currentPage,
 //                 indicator = {
@@ -353,10 +354,8 @@ fun DiscoverView() {
 //
 //        }
 
-
-        HorizontalPager(pageCount = 2, modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 15.dp), state = pagerState, key = {pages[it]}) {
+        HorizontalPager(state = pagerState, key = {pages[it]},
+            modifier = Modifier.fillMaxSize().padding(top = 15.dp)) {
                 index->
 
             Box(
@@ -378,8 +377,34 @@ fun DiscoverView() {
                 }
 
             }
-
         }
+
+//        HorizontalPager(pageCount = 2, modifier = Modifier
+//            .fillMaxSize()
+//            .padding(top = 15.dp), state = pagerState, key = {pages[it]}) {
+//                index->
+//
+//            Box(
+//                Modifier
+//                    .fillMaxSize()
+//                    .padding(top = 5.dp, start = 15.dp, end = 15.dp)
+//
+//            ) {
+//
+//                LazyVerticalGrid(columns =  GridCells.Fixed(2),
+//                ){
+//
+//                    items(pages[index]){
+//                            dataItem ->
+//                        GridItem1(dataItem)
+//                    }
+//
+//
+//                }
+//
+//            }
+//
+//        }
 
 
     }
@@ -388,6 +413,7 @@ fun DiscoverView() {
 
 
 
+@SuppressLint("UnrememberedMutableInteractionSource")
 @Composable
 fun GridItem1(item: DiscoverViewRecipeModel){
 
@@ -416,7 +442,10 @@ fun GridItem1(item: DiscoverViewRecipeModel){
             Image(painter = painterResource(id = R.drawable.imagecard), contentDescription = "",
                 Modifier.fillMaxSize(), contentScale = ContentScale.FillHeight)
 
-            Column(Modifier.fillMaxSize().padding(10.dp),verticalArrangement = Arrangement.Bottom) {
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .padding(10.dp),verticalArrangement = Arrangement.Bottom) {
                 Text(text = "${item.userName}", fontFamily = satoshiFamily, color = Color.White, fontSize = 18.sp)
 
                 Text(text = "${item.timeUploaded}", fontFamily = satoshiFamily, fontSize = 14.sp

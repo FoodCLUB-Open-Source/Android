@@ -182,7 +182,7 @@ fun HomeView(
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.95f
-    val pagerState = rememberPagerState(initialPage = initialPage ?: 0)
+    val pagerState = rememberPagerState(initialPage = initialPage ?: 0) { 4 }
 
     val fling = PagerDefaults.flingBehavior(
         state = pagerState, lowVelocityAnimationSpec = tween(
@@ -213,7 +213,6 @@ fun HomeView(
             .height(screenHeightMinusBottomNavItem)
     ) {
         VerticalPager(
-            pageCount = 4,
             state = pagerState,
             flingBehavior = fling,
             beyondBoundsPageCount = 1,

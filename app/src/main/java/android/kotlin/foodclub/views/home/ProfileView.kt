@@ -88,7 +88,7 @@ fun ProfileView(navController: NavController) {
     val montserratFamily = FontFamily(
         Font(R.font.montserratregular, FontWeight.Normal),
         Font(R.font.montserratsemibold, FontWeight.SemiBold),)
-    val pagerState = rememberPagerState();
+    val pagerState = rememberPagerState() { 2 };
     val animals= arrayOf(R.drawable.profilepicture, R.drawable.login_with)
     val pages = viewModel.getPages();
     var currentTabIndex by remember { mutableStateOf(0) }
@@ -216,7 +216,6 @@ fun ProfileView(navController: NavController) {
                 }
             }
             HorizontalPager(
-                pageCount = 2,
                 state = pagerState,
                 beyondBoundsPageCount = 10,
             ) { page ->
