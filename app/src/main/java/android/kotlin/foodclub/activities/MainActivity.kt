@@ -1,23 +1,13 @@
 package android.kotlin.foodclub.activities
 
-import android.Manifest
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import android.kotlin.foodclub.ui.theme.FoodClubTheme
-import android.kotlin.foodclub.views.home.ChangePasswordView
-import android.kotlin.foodclub.views.home.EditProfileSetting
-import android.kotlin.foodclub.views.home.PrivacySetting
 import android.kotlin.foodclub.views.home.ProgressionBar
-import android.kotlin.foodclub.views.home.SettingsView
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.WindowManager
-import androidx.core.app.ActivityCompat
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
-import androidx.navigation.compose.rememberNavController
-import com.example.foodclub.navigation.graphs.RootNavigationGraph
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +24,7 @@ class MainActivity : ComponentActivity() {
 //                RootNavigationGraph(navController = rememberNavController())
 //            }
 
-            ProgressionBar(10, 500)
+            ProgressionBar(3000)
         }
     }
 }
