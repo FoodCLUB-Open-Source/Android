@@ -379,34 +379,6 @@ fun DiscoverView() {
             }
         }
 
-//        HorizontalPager(pageCount = 2, modifier = Modifier
-//            .fillMaxSize()
-//            .padding(top = 15.dp), state = pagerState, key = {pages[it]}) {
-//                index->
-//
-//            Box(
-//                Modifier
-//                    .fillMaxSize()
-//                    .padding(top = 5.dp, start = 15.dp, end = 15.dp)
-//
-//            ) {
-//
-//                LazyVerticalGrid(columns =  GridCells.Fixed(2),
-//                ){
-//
-//                    items(pages[index]){
-//                            dataItem ->
-//                        GridItem1(dataItem)
-//                    }
-//
-//
-//                }
-//
-//            }
-//
-//        }
-
-
     }
 
 }
