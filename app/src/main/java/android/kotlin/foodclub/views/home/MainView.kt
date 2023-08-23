@@ -2,6 +2,8 @@ package com.example.foodclub.views.home
 
 import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.data.models.StoryModel
+import android.kotlin.foodclub.utils.composables.StoryView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -50,6 +53,8 @@ import com.example.foodclub.viewmodels.home.HomeViewModel
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.zIndex
 
 @Composable
 fun BottomSheetItem(icon: Int, text: String,
@@ -127,6 +132,11 @@ fun MainView(navController: NavHostController = rememberNavController()) {
     val viewModel: HomeViewModel = viewModel()
     var showSheet by remember { mutableStateOf(false) }
 
+    val storyModel = StoryModel(painterResource(R.drawable.story_user), 1692815790, "Julien", painterResource(R.drawable.foodsnap))
+    var currentStory by remember { mutableStateOf(storyModel) }
+    var currentStoryOffset by remember { mutableStateOf(IntOffset(0, 0)) }
+    var storyViewMode by remember { mutableStateOf(false) }
+
     val triggerBottomSheetModal: () -> Unit = {
         showSheet = !showSheet
     }
@@ -137,7 +147,17 @@ fun MainView(navController: NavHostController = rememberNavController()) {
         if (showSheet) {
             BottomSheet(triggerBottomSheetModal, navController)
         }
-        HomeNavigationGraph(navController = navController, showSheet = showSheet, triggerBottomSheetModal)
+        HomeNavigationGraph(navController = navController, showSheet = showSheet, triggerBottomSheetModal,
+            callbackEnableStoryView = {
+                //Here we are going to put all information about the story - author, time created and story content
+                currentStoryOffset = it
+                storyViewMode = true
+            })
+    }
+    //Story view screen
+    Box(modifier = Modifier.zIndex(2f)) {
+        StoryView(storyEnabled = storyViewMode, storyDetails = currentStory,
+            callbackDisableStory = { storyViewMode = false }, currentStoryOffset, modifier = Modifier.fillMaxSize())
     }
 }
 
