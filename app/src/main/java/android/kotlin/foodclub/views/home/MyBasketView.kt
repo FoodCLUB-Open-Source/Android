@@ -85,12 +85,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
+import androidx.navigation.NavController
 import java.util.Collections.copy
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyBasketView() {
+fun MyBasketView(navController: NavController) {
     val montserratFamily1 = FontFamily(
 
         Font(R.font.montserratbold, FontWeight.Bold),

@@ -147,7 +147,7 @@ fun ProfileView(navController: NavController) {
                 ClickableText(
                     text = AnnotatedString("2.5K"),
                     onClick = {
-                        viewModel.showFollowers();
+                        navController.navigate("FOLLOWER_VIEW")
                     },
                     style = TextStyle(
                         color = Color.Black,
@@ -158,7 +158,9 @@ fun ProfileView(navController: NavController) {
                 )
                 ClickableText(
                     text = AnnotatedString("100"),
-                    onClick = {},
+                    onClick = {
+                        navController.navigate("FOLLOWING_VIEW")
+                    },
                     style = TextStyle(
                         color = Color.Black,
                         fontFamily = montserratFamily,

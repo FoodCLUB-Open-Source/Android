@@ -6,6 +6,8 @@ import android.kotlin.foodclub.views.home.ChangePasswordView
 import android.kotlin.foodclub.views.home.CreateRecipeView
 import android.kotlin.foodclub.views.home.DeleteRecipeView
 import android.kotlin.foodclub.views.home.EditProfileSetting
+import android.kotlin.foodclub.views.home.FollowerView
+import android.kotlin.foodclub.views.home.FollowingView
 import android.kotlin.foodclub.views.home.MyBasketView
 import android.kotlin.foodclub.views.home.PrivacySetting
 import android.kotlin.foodclub.views.home.SettingsView
@@ -34,13 +36,13 @@ import com.example.foodclub.views.home.ProfileView
             ProfileView(navController)
         }
         composable(route = BottomBarScreenObject.Discover.route) {
-            MyBasketView()
+            MyBasketView(navController = navController)
         }
         composable(route = BottomBarScreenObject.Create.route) {
             CreateView()
         }
         composable(route = BottomBarScreenObject.Play.route) {
-            DiscoverView()
+            DiscoverView(navController = navController)
         }
         composable(route = HomeOtherRoutes.CameraView.route) {
             CameraView(navController = navController)
@@ -69,6 +71,19 @@ import com.example.foodclub.views.home.ProfileView
         composable(route = HomeOtherRoutes.DeleteRecipeView.route) {
             DeleteRecipeView(navController = navController)
         }
+
+        composable(route = HomeOtherRoutes.FollowerView.route) {
+            FollowerView(navController = navController)
+        }
+
+        composable(route = HomeOtherRoutes.FollowingView.route) {
+            FollowingView(navController = navController)
+        }
+
+        composable(route = HomeOtherRoutes.MyBasketView.route) {
+            MyBasketView(navController = navController)
+        }
+
     }
 }
 
@@ -81,4 +96,10 @@ sealed class HomeOtherRoutes(val route: String) {
     object CameraView : HomeOtherRoutes(route = "CAMERA_VIEW")
     object CreateRecipeView : HomeOtherRoutes(route = "CREATE_RECIPE_VIEW")
     object CameraPreviewView : HomeOtherRoutes(route = "CAMERA_PREVIEW_VIEW/{uri}")
+
+    object FollowerView : HomeOtherRoutes(route = "FOLLOWER_VIEW")
+
+    object FollowingView : HomeOtherRoutes(route = "FOLLOWING_VIEW")
+
+    object MyBasketView : HomeOtherRoutes(route = "BASKET_VIEW")
 }
