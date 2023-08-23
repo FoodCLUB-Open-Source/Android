@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -35,7 +36,7 @@ import kotlinx.coroutines.launch
 // Function to Create the progression bar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProgressionBar(durationTime: Long){
+fun ProgressionBar3(durationTime: Long){
     var progress by remember { mutableStateOf(0f) }
     var timeDelay:Long = 10;
     var iterations = durationTime/timeDelay;
@@ -101,6 +102,7 @@ fun ProgressionBar(durationTime: Long){
 }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ProgressionBar1(durationTime: Long){
     var timeDelay:Long = 10;
@@ -118,9 +120,12 @@ fun ProgressionBar1(durationTime: Long){
     ) {
         LinearProgressIndicator(
             progress = progress,
+            trackColor = colorGray,
+            color = colorGreen,
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth  ()
                 .padding(16.dp)
+                ,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -139,6 +144,60 @@ fun ProgressionBar1(durationTime: Long){
     }
 
 
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ProgressionBar(durationTime: Long){
+    var progress by remember { mutableStateOf(0f) }
+    var timeDelay:Long = 10;
+    var iterations = durationTime/timeDelay;
+    var changeIterations = 0;
+    val progressionRate = (1f/iterations)
+    val coroutineScope = rememberCoroutineScope()
+
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top=100.dp),
+        contentAlignment =Alignment.Center,
+    ) {
+
+        LinearProgressIndicator(
+            progress = progress,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(0.dp),
+            trackColor = colorGray,
+            color = colorGreen,
+//            onValueChange = {
+//
+//            }
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            modifier = Modifier.padding(top=130.dp),
+            onClick = {
+                coroutineScope.launch {
+                    while((iterations+changeIterations)>=0){
+                        delay(timeDelay)
+                        progress += progressionRate
+
+                    }
+                }
+
+
+            }
+        ) {
+            Text("Start")
+        }
+
+    }
 }
 
 
