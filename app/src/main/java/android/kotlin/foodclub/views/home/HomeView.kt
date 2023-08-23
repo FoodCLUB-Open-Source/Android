@@ -99,6 +99,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.IntOffset
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
@@ -171,6 +172,7 @@ fun HomeView(
     modifier: Modifier = Modifier,
     initialPage: Int? = 0,
     navController: NavHostController,
+    callbackEnableStoryView: (offset: IntOffset) -> Unit
 )
 {
     val viewModel: HomeViewModel = viewModel()
@@ -206,7 +208,7 @@ fun HomeView(
             R.drawable.story_user,
             R.drawable.story_user,
             R.drawable.story_user
-        ), navController)
+        ), callbackEnableStoryView = callbackEnableStoryView, navController)
     }
     Column(
         modifier = Modifier
@@ -394,9 +396,9 @@ fun HomeView(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     verticalArrangement = Arrangement.Center,
                                     modifier = Modifier.fillMaxSize().clickable {
-                                        isLiked = !isLiked
-                                        videos[it].currentViewerInteraction.isLikedByYou = !isLiked
-                                    }
+                                            isLiked = !isLiked
+                                            videos[it].currentViewerInteraction.isLikedByYou = !isLiked
+                                        }
                                 ) {
                                     val maxSize = 32.dp
                                     val iconSize by animateDpAsState(targetValue = if (isLiked) 22.dp else 21.dp,
