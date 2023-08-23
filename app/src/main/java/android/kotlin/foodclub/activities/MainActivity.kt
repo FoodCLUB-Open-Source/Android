@@ -35,6 +35,7 @@ class MainActivity : ComponentActivity() {
 //            FoodClubTheme {
 //                RootNavigationGraph(navController = rememberNavController())
 //            }
+           // SettingsView()
         }
     }
 }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,6 +30,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -36,38 +38,90 @@ val colorGray= Color(android.graphics.Color.parseColor("#D0D0D0"))
 val colorRed= Color(android.graphics.Color.parseColor("#C64E0B"))
 
 //The main function of this SettingsView file. This arranges all components to build the screen
+//@Composable
+//fun SettingsView(){
+//    Column(modifier = Modifier
+//        .fillMaxSize()
+//        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 0.dp), //Since the vertical arrangement is center, there is always some extra space on top of the topbar. Hence I removed padding for top
+//        verticalArrangement = Arrangement.Center
+//    ){
+//
+//        SettingsTopBar("Settings")
+//
+//        Spacer(modifier = Modifier.height(30.dp))
+//
+//        SettingsProfile(userName = "Jake Rayner", userImage = painterResource(id=R.drawable.story_user))
+//
+//        Spacer(modifier = Modifier.height(60.dp))
+//
+//        SettingRow(text = "Edit profile information", iconId = R.drawable.editprofile)
+//        SettingRow(text = "Privacy settings", iconId = R.drawable.privacysettings)
+//
+//        Spacer(modifier = Modifier.height(15.dp))
+//
+//        Column(
+//            modifier=Modifier
+//                .border(width = 1.dp,color =colorGray, shape= RoundedCornerShape(8.dp)),
+//        ) {
+//            SettingRow(text = "Help & Support", iconId = R.drawable.helpandsupport, bordersize = 0, bordercolor = Color.Transparent)
+//            SettingRow(text = "Contact Us", iconId = R.drawable.contactus, bordersize = 0, bordercolor = Color.Transparent)
+//            SettingRow(text = "Privacy Policy", iconId = R.drawable.privacypolicy, bordersize = 0, bordercolor = Color.Transparent)
+//        }
+//        Spacer(modifier = Modifier.height(15.dp))
+//
+//        SettingRow(text = "Log Out", iconId = R.drawable.logout, fontC=colorRed)
+//    }
+//}
 @Composable
-fun SettingsView(){
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 0.dp), //Since the vertical arrangement is center, there is always some extra space on top of the topbar. Hence I removed padding for top
-        verticalArrangement = Arrangement.Center
-    ){
-
-        SettingsTopBar("Settings")
-
-        Spacer(modifier = Modifier.height(30.dp))
-
-        SettingsProfile(userName = "Jake Rayner", userImage = painterResource(id=R.drawable.story_user))
-
-        Spacer(modifier = Modifier.height(60.dp))
-
-        SettingRow(text = "Edit profile information", iconId = R.drawable.editprofile)
-        SettingRow(text = "Privacy settings", iconId = R.drawable.privacysettings)
-
-        Spacer(modifier = Modifier.height(15.dp))
-
+fun SettingsView() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
         Column(
-            modifier=Modifier
-                .border(width = 1.dp,color =colorGray, shape= RoundedCornerShape(8.dp)),
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
         ) {
-            SettingRow(text = "Help & Support", iconId = R.drawable.helpandsupport, bordersize = 0, bordercolor = Color.Transparent)
-            SettingRow(text = "Contact Us", iconId = R.drawable.contactus, bordersize = 0, bordercolor = Color.Transparent)
-            SettingRow(text = "Privacy Policy", iconId = R.drawable.privacypolicy, bordersize = 0, bordercolor = Color.Transparent)
-        }
-        Spacer(modifier = Modifier.height(15.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+            SettingsTopBar("Settings")
+            Spacer(modifier = Modifier.height(16.dp))
+            SettingsProfile(userName = "Jake Rayner", userImage = painterResource(id = R.drawable.story_user))
+            Spacer(modifier = Modifier.height(32.dp))
+            SettingRow(text = "Edit profile information", iconId = R.drawable.editprofile)
+            SettingRow(text = "Privacy settings", iconId = R.drawable.privacysettings)
+            Spacer(modifier = Modifier.height(16.dp))
+            Column(
+                modifier = Modifier
+                    .border(
+                        width = 1.dp,
+                        color = colorGray,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+            ) {
+                SettingRow(
+                    text = "Help & Support",
+                    iconId = R.drawable.helpandsupport,
+                    bordersize = 0,
+                    bordercolor = Color.Transparent
+                )
+                SettingRow(
+                    text = "Contact Us",
+                    iconId = R.drawable.contactus,
+                    bordersize = 0,
+                    bordercolor = Color.Transparent
+                )
+                SettingRow(
+                    text = "Privacy Policy",
+                    iconId = R.drawable.privacypolicy,
+                    bordersize = 0,
+                    bordercolor = Color.Transparent
+                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
 
-        SettingRow(text = "Log Out", iconId = R.drawable.logout, fontC=colorRed)
+            SettingRow(text = "Log Out", iconId = R.drawable.logout, fontC = colorRed)
+        }
     }
 }
 
