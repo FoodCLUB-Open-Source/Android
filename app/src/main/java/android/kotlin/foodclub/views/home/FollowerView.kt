@@ -32,12 +32,29 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
+val avenir = FontFamily(
+
+    Font(R.font.avenirblack, FontWeight.Bold),
+    Font(R.font.avenirbook, FontWeight.Medium)
+
+)
+
+val raleway = FontFamily(
+
+    Font(R.font.ralewayextrabold, FontWeight.ExtraBold),
+
+
+    )
+
 @Composable
-fun FollowerView() {
+fun FollowerView(navController: NavController) {
     val systemUiController = rememberSystemUiController()
 
     SideEffect {
@@ -54,7 +71,7 @@ fun FollowerView() {
                 modifier = Modifier.background(Color.Transparent).padding(start = 20.dp),
                 contentAlignment = Alignment.Center,
             ) {
-                Button(
+                Button(                                                                                  //current
                     shape = RectangleShape,
                     modifier = Modifier
                         .border(1.dp, Color(0xFFB8B8B8), shape = RoundedCornerShape(15.dp))
@@ -66,7 +83,9 @@ fun FollowerView() {
                         containerColor = Color(0xFFB8B8B8),
                         contentColor = Color.White
                     ), contentPadding = PaddingValues(5.dp),
-                    onClick = {}
+                    onClick = {
+                        navController.navigateUp()
+                    }
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
@@ -81,7 +100,7 @@ fun FollowerView() {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = "My Followers", fontWeight = FontWeight.ExtraBold,
-                fontFamily = com.example.foodclub.views.home.montserratFamily,
+                fontFamily = raleway,
                 fontSize = 20.sp,
                 modifier = Modifier.padding(start = 20.dp),
             )
@@ -109,7 +128,9 @@ fun Follower(index: Int, imageRes: Int, username: String, completeName: String) 
             .padding(vertical = 4.dp).clickable {  },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row( modifier = Modifier.padding(start = 20.dp) ) {
+
+        Spacer(modifier = Modifier.width(16.dp))
+
             Image(
                 painter = painterResource(id = imageRes),
                 contentDescription = null,
@@ -120,9 +141,9 @@ fun Follower(index: Int, imageRes: Int, username: String, completeName: String) 
             )
             Spacer(modifier = Modifier.width(12.dp))
             Column {
-                Text(text = username, fontWeight = FontWeight.ExtraBold, fontFamily = com.example.foodclub.views.home.montserratFamily)
-                Text(text = completeName, fontWeight = FontWeight.Light, fontFamily = com.example.foodclub.views.home.montserratFamily)
+                Text(text = username, fontSize = 15.sp, fontWeight = FontWeight.Bold, fontFamily = avenir)
+                Text(text = completeName, fontSize = 15.sp, fontWeight = FontWeight.Medium, fontFamily = avenir)
             }
-        }
+
     }
 }

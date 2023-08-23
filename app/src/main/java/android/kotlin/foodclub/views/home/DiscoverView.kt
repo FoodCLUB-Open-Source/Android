@@ -3,9 +3,13 @@ package com.example.foodclub.views.home
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.data.models.DiscoverViewRecipeModel
 import android.kotlin.foodclub.data.models.MyRecipeModel
+import android.kotlin.foodclub.views.home.BottomSheetIngredients
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -13,16 +17,19 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,13 +38,21 @@ import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
@@ -45,50 +60,60 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.foodclub.viewmodels.home.DiscoverViewModel
 import com.example.foodclub.viewmodels.home.ProfileViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import java.util.logging.Logger
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun DiscoverView() {
+fun DiscoverView(navController: NavController) {
     val systemUiController = rememberSystemUiController()
     SideEffect {
         systemUiController.setSystemBarsColor(
-            color = Color.White,
-            darkIcons = true
+            color = Color.White, darkIcons = true
         )
     }
+
 
     val montserratFamily1 = FontFamily(
 
         Font(R.font.montserratbold, FontWeight.Bold),
         Font(R.font.montserratmedium, FontWeight.Medium)
 
-        )
-
+    )
 
 
     val viewModel: DiscoverViewModel = viewModel()
     val pages = viewModel.getPages();
 
     viewModel.getData()
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
 
 
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 60.dp, end = 20.dp, start = 20.dp, bottom = 10.dp),
-            horizontalArrangement = Arrangement.spacedBy(5.dp,Alignment.Start)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 60.dp, end = 20.dp, start = 20.dp, bottom = 20.dp),
+            horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.Start)
+        ) {
 
             Column() {
 
 
-                Text(color = Color.Black,
+                Text(
+                    color = Color.Black,
                     text = "Hi Emily,",
 
                     fontFamily = montserratFamily1,
@@ -98,19 +123,22 @@ fun DiscoverView() {
                     style = TextStyle(letterSpacing = -1.sp)
                 )
 
-                Text(color = Color.Black,
+                Text(
+                    color = Color.Black,
                     text = "Let's get cooking!",
                     fontFamily = montserratFamily1,
                     fontSize = 25.sp,
                     fontWeight = FontWeight.Medium,
-                    style = TextStyle(letterSpacing = -1.sp))
+                    style = TextStyle(letterSpacing = -1.sp)
+                )
             }
 
 
 
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                ,horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
 
                 Button(shape = CircleShape,
                     modifier = Modifier
@@ -119,7 +147,7 @@ fun DiscoverView() {
                         .width(53.dp),
 
                     colors = ButtonDefaults.buttonColors(
-                        containerColor =  Color(245, 245, 245, 255),
+                        containerColor = Color(245, 245, 245, 255),
 
                         ),
                     contentPadding = PaddingValues(),
@@ -127,15 +155,13 @@ fun DiscoverView() {
                     onClick = {
 
 
-
                     }
 
                 ) {
 
                     Image(
-                        painter = painterResource(id = R.drawable.vector),
+                        painter = painterResource(id = R.drawable.frame_1171275072),
                         contentDescription = "",
-
                     )
 
                 }
@@ -154,7 +180,7 @@ fun DiscoverView() {
 
                     onClick = {
 
-
+                        navController.navigate("BASKET_VIEW")
 
                     }
 
@@ -165,199 +191,123 @@ fun DiscoverView() {
                         painter = painterResource(id = R.drawable.vector__1_),
                         contentDescription = "",
 
-                    )
+                        )
 
                 }
 
             }
         }
 
-        Row(
-            modifier = Modifier
+
+        val pagerState1 = rememberPagerState();
+
+        val scope = rememberCoroutineScope();
+
+
+        val tabItems1 = listOf(
+            "Categories", "World", "My Fridge"
+        )
+
+        val tabItems2 = listOf(
+            "Proteins", "Carbs", "Plant Based", "Drinks"
+        )
+
+        val tabItems3 = listOf(
+            "England", "Italy", "France", "Germany"
+        )
+
+        var tabIndex by remember { mutableStateOf(0) }
+
+        TabRow(
+            selectedTabIndex = tabIndex, modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 25.dp)
-            ,
-
-            horizontalArrangement = Arrangement.spacedBy(34.dp, Alignment.CenterHorizontally)
-
-
+                .wrapContentHeight()
         ) {
+            tabItems1.forEachIndexed { index, data ->
+                val selected = tabIndex == index
 
-            ClickableText(
+                Tab(selected = selected, onClick = {
+                    tabIndex = index
+                }, text = {
+                    Text(text = data)
+                })
 
-                onClick = {
-//                    viewModel.changeMyRecipeSliderColor()
-//                    viewModel.reverseBookmarkedSliderColor()
-                    viewModel.runUiChange(1);
-                },
-
-                text =  AnnotatedString("Categories"),
-                style = TextStyle(
-                    color = viewModel.categoriesColor,
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 16.sp,
-                    textDecoration = viewModel.categoriesDecoration ,
-
-                )
-
-            )
-
-
-            ClickableText(
-                onClick = {
-//                    viewModel.changeBookmarkedSliderColor()
-//                    viewModel.reverseMyRecipeSliderColor()
-                    viewModel.runUiChange(2);
-                },
-
-                text =  AnnotatedString("World"),
-                style = TextStyle(
-
-                    color = viewModel.worldColor ,
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 16.sp,
-                    textDecoration =  viewModel.worldDecoration,
-
-
-                    )
-            )
-
-            ClickableText(
-                onClick = {
-//                    viewModel.changeBookmarkedSliderColor()
-//                    viewModel.reverseMyRecipeSliderColor()
-                    viewModel.runUiChange(3);
-                },
-
-                text =  AnnotatedString("My Fridge!"),
-                style = TextStyle(
-
-                    color = viewModel.myFridgeColor,
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 16.sp,
-                    textDecoration = viewModel.myFridgeDecoration,
-
-
-                    )
-            )
-
+            }
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 30.dp)
-            ,
-
-            horizontalArrangement = Arrangement.spacedBy(30.dp, Alignment.CenterHorizontally)
 
 
-        ) {
 
-            ClickableText(
+        Spacer(modifier = Modifier.height(10.dp))
 
-                onClick = {
-//                    viewModel.()
-//                    viewModel.reverseBookmarkedSliderColor()
+        if (tabIndex == 0 || tabIndex == 2)
+            TabHomeDiscover(tabItems2, pagerState1, scope, 12.sp)
+        else if (tabIndex == 1)
+            TabHomeDiscover(tabItems3, pagerState1, scope, 12.sp)
 
-                },
 
-                text =  AnnotatedString("Protein"),
-                style = TextStyle(
-                    color = viewModel.proteinColor,
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 14.sp,
-                    textDecoration = viewModel.proteinDecoration,
 
-                )
+        Spacer(modifier = Modifier.height(20.dp))
 
+        val systemUiController = rememberSystemUiController()
+        var showSheet by remember { mutableStateOf(false) }
+
+        val triggerBottomSheetModal: () -> Unit = {
+            showSheet = !showSheet
+            systemUiController.setStatusBarColor(
+                color = Color(android.graphics.Color.parseColor("#ACACAC")), darkIcons = true
             )
-
-
-            ClickableText(
-                onClick = {
-//                    viewModel.changeBookmarkedSliderColor()
-//                    viewModel.reverseMyRecipeSliderColor()
-                },
-
-                text =  AnnotatedString("Carbs"),
-                style = TextStyle(
-
-                    color = viewModel.carbsColor,
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 14.sp,
-                    textDecoration = viewModel.carbsDecoration,
-
-
-                    )
+            systemUiController.setNavigationBarColor(
+                color = Color.Black, darkIcons = true
             )
-
-            ClickableText(
-                onClick = {
-//                    viewModel.changeBookmarkedSliderColor()
-//                    viewModel.reverseMyRecipeSliderColor()
-                },
-
-                text =  AnnotatedString("Plant Based"),
-                style = TextStyle(
-
-                    color = viewModel.plantBasedColor,
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 14.sp,
-                    textDecoration = viewModel.plantBasedDecoration,
-
-
-                    )
-            )
-
-            ClickableText(
-                onClick = {
-//                    viewModel.changeBookmarkedSliderColor()
-//                    viewModel.reverseMyRecipeSliderColor()
-                },
-
-                text =  AnnotatedString("Drinks"),
-                style = TextStyle(
-
-                    color = viewModel.drinksColor,
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 14.sp,
-                    textDecoration = viewModel.drinksDecoration,
-
-
-                    )
-            )
-
         }
 
-        val pagerState = rememberPagerState();
-//
-//        TabRow(selectedTabIndex = pagerState.currentPage,
-//                 indicator = {
-//                     tabPositions ->
-//                     TabRowDefaults.Indicator(
-//                         Modifier.fillMaxWidth().pagerTabIndicatorOffset(pagerState,tabPositions)
-//                     )
-//                 }
-//
-//        ) {
-//
-//
-//
-//        }
+        SideEffect {
+            if (!showSheet) {
+                systemUiController.setSystemBarsColor(
+                    color = Color.White, darkIcons = true
+                )
+            }
+        }
+
+        if (showSheet) {
+            BottomSheetIngredients(triggerBottomSheetModal)
+        }
 
 
-        HorizontalPager(pageCount = 2, modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 15.dp), state = pagerState, key = {pages[it]}) {
-                index->
+        if (tabIndex == 2) {
+
+
+            Button(shape = RectangleShape,
+                modifier = Modifier
+                    .border(
+                        1.dp, Color(126, 198, 11, 255), shape = RoundedCornerShape(20.dp)
+                    )
+                    .clip(RoundedCornerShape(20.dp))
+                    .width(125.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White, contentColor = Color(126, 198, 11, 255)
+                ),
+                contentPadding = PaddingValues(15.dp),
+                onClick = {
+                    triggerBottomSheetModal()
+                }) {
+                Text(
+                    "Add items +",
+                    fontSize = 13.sp,
+                    fontFamily = android.kotlin.foodclub.views.home.montserratFamily,
+                    color = Color(126, 198, 11, 255),
+                )
+            }
+        }
+
+        HorizontalPager(
+            pageCount = 4,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 15.dp),
+            state = pagerState1
+        ) { index ->
 
             Box(
                 Modifier
@@ -366,12 +316,12 @@ fun DiscoverView() {
 
             ) {
 
-                LazyVerticalGrid(columns =  GridCells.Fixed(2),
-                ){
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                ) {
 
-                    items(pages[index]){
-                            dataItem ->
-                        GridItem1(dataItem)
+                    items(5) { dataItem ->
+                        GridItem2(navController)
                     }
 
 
@@ -381,52 +331,100 @@ fun DiscoverView() {
 
         }
 
-
     }
 
 }
 
 
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun TabHomeDiscover(
+    tabItems: List<String>, pagerState1: PagerState, scope: CoroutineScope, fontSize: TextUnit
+) {
+
+    TabRow(
+        selectedTabIndex = pagerState1.currentPage
+    ) {
+        tabItems.forEachIndexed { index, item ->
+            Tab(selected = pagerState1.currentPage == index,
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    scope.launch {
+                        pagerState1.animateScrollToPage(index)
+                    }
+
+                },
+
+                text = {
+                    Text(
+
+                        text = AnnotatedString(item), style = TextStyle(
+                            fontFamily = montserratFamily,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = fontSize,
+                            textAlign = TextAlign.Center
+                        )
+
+
+                    )
+                })
+
+        }
+    }
+}
 
 @Composable
-fun GridItem1(item: DiscoverViewRecipeModel){
+fun GridItem2(navController: NavController) {
 
     val satoshiFamily = FontFamily(
-
-
         Font(R.font.satoshi, FontWeight.Medium)
-
     )
 
-    Card(modifier = Modifier
-        .height(272.dp)
-        .width(178.dp)
-        .padding(10.dp)
-        .clickable(
-            interactionSource = MutableInteractionSource(),
-            indication = rememberRipple(bounded = true, color = Color.Black),
-            onClick = {
-                //   After click
-            }
 
-        )
-        ,shape = RoundedCornerShape(10.dp)) {
+    Card(
+        modifier = Modifier
+            .height(272.dp)
+            .width(178.dp)
+            .padding(10.dp), shape = RoundedCornerShape(15.dp)
+    ) {
 
-        Box(){
-            Image(painter = painterResource(id = R.drawable.imagecard), contentDescription = "",
-                Modifier.fillMaxSize(), contentScale = ContentScale.FillHeight)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.imagecard),
+                contentDescription = "",
+                Modifier
+                    .fillMaxSize()
+                    .clickable { navController.navigate("DELETE_RECIPE") },
+                contentScale = ContentScale.FillHeight
+            )
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .padding(10.dp), verticalArrangement = Arrangement.Bottom
+            ) {
+                Text(
+                    text = "fdg",
+                    fontFamily = satoshiFamily,
+                    color = Color.White,
+                    fontSize = 18.sp
+                )
 
-            Column(Modifier.fillMaxSize().padding(10.dp),verticalArrangement = Arrangement.Bottom) {
-                Text(text = "${item.userName}", fontFamily = satoshiFamily, color = Color.White, fontSize = 18.sp)
-
-                Text(text = "${item.timeUploaded}", fontFamily = satoshiFamily, fontSize = 14.sp
-                    , color = Color(255,255,255,200)
+                Text(
+                    text = "gsd",
+                    fontFamily = satoshiFamily,
+                    fontSize = 14.sp,
+                    color = Color(255, 255, 255, 200)
                 )
             }
-
         }
 
     }
 }
+
+
 
 

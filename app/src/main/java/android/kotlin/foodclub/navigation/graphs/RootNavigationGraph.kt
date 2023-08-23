@@ -1,7 +1,5 @@
   package com.example.foodclub.navigation.graphs
 
-import android.kotlin.foodclub.navigation.graphs.ProfileNavigationScreens
-import android.kotlin.foodclub.navigation.graphs.profileNavigationGraph
 import android.kotlin.foodclub.views.authentication.EmailSentView
 import android.kotlin.foodclub.views.authentication.LogInWithEmail
 import android.kotlin.foodclub.views.authentication.MainLogInAndSignUp
@@ -19,7 +17,6 @@ fun RootNavigationGraph(navController: NavHostController) {
     NavHost(navController = navController, route = Graph.ROOT, startDestination = Graph.AUTHENTICATION) {
         onBoardingNavigationGraph(navController = navController)
         authNavigationGraph(navController = navController)
-        profileNavigationGraph(navController = navController)
         composable(route = Graph.HOME) {
             MainView()
         }
@@ -31,6 +28,6 @@ object Graph {
     const val AUTHENTICATION = "auth_graph"
     const val HOME = "home_graph"
     const val ON_BOARDING = "onBoarding_graph"
-    const val PROFILE = "profile_graph"
+
 
 }
