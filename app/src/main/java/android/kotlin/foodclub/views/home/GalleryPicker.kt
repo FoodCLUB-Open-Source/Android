@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.views.home
 
+import android.kotlin.foodclub.R
 import android.media.Image
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.PaddingValues
 //import androidx.compose.foundation.layout.ColumnScopeInstance.weight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -41,15 +43,15 @@ fun GalleryPicker(itemsPerRow: Int = 3)
         mutableStateOf(true)
     }
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(10.dp)) {
-        Text(fontSize = 20.sp, text="Gallery", fontFamily = montserratFamily, fontWeight = FontWeight.Bold, modifier= Modifier.padding(5.dp))
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(10.dp).fillMaxWidth()) {
+        Text(fontSize = 20.sp, text="Gallery", fontWeight = FontWeight.Bold, modifier= Modifier.padding(5.dp))
         Row(modifier = Modifier.fillMaxWidth()){
 
             Button(onClick = {
-                             if (!selectedImageOption)
-                             {
-                                 OnOptionSelected(true)
-                             }
+                if (!selectedImageOption)
+                {
+                    OnOptionSelected(true)
+                }
             }, shape= RectangleShape,
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
@@ -59,10 +61,17 @@ fun GalleryPicker(itemsPerRow: Int = 3)
                         } else {
                             Modifier.background(Color.DarkGray)
                         }
-                    )
+                    ),
+                contentPadding = PaddingValues(0.dp)
+                , colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Transparent,
+                    disabledContainerColor = Color.Transparent,
+                    disabledContentColor = Color.Transparent,
+                    contentColor = Color.Transparent
+                )
             )
             {
-                Text(text="Images", fontSize = 13.sp, fontFamily = montserratFamily, fontWeight = FontWeight.Bold)
+                Text(text="Images", fontSize = 13.sp, fontWeight = FontWeight.Bold, color=Color.Black)
             }
 
             Button(onClick = {
@@ -72,7 +81,7 @@ fun GalleryPicker(itemsPerRow: Int = 3)
                 }
             }, shape= RectangleShape,
                 modifier = Modifier
-                    .fillMaxWidth(0.5f)
+                    .fillMaxWidth()
                     .then(
                         if (!selectedImageOption) {
                             Modifier.background(Color.Transparent)
@@ -80,16 +89,23 @@ fun GalleryPicker(itemsPerRow: Int = 3)
                             Modifier.background(Color.DarkGray)
                         }
 
-                    )
+                    ),
+                contentPadding = PaddingValues(0.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Transparent,
+                    disabledContainerColor = Color.Transparent,
+                    disabledContentColor = Color.Transparent,
+                    contentColor = Color.Transparent
+                )
             )
             {
-                Text(text="Video", fontSize = 13.sp, fontFamily = montserratFamily, fontWeight = FontWeight.Bold)
+                Text(text="Video", fontSize = 13.sp, fontWeight = FontWeight.Bold, color=Color.Black)
             }
         }
 
         if (selectedImageOption)
         {
-            GalleryImageTab(images = arrayListOf(), itemsPerRow = itemsPerRow)
+            GalleryImageTab(images = arrayListOf(1,2,3,4,5,6,7), itemsPerRow = itemsPerRow)
         }
         else
         {
@@ -100,23 +116,23 @@ fun GalleryPicker(itemsPerRow: Int = 3)
 }
 
 @Composable
-fun GalleryImageTab(images: List<Image>, itemsPerRow: Int = 3)
+fun GalleryImageTab(images: List<Int>, itemsPerRow: Int = 3)
 {
-    var imageRows: MutableList<MutableList<Image>> = arrayListOf()
-    val imageRow: MutableList<Image> = arrayListOf()
+    var imageRows: MutableList<MutableList<Int>> = arrayListOf()
+    val imageRow: MutableList<Int> = arrayListOf()
     var count: Int = 0
 
     for (image in images)
     {
+        count += 1
+        imageRow.add(image)
         if (count == itemsPerRow)
         {
+            imageRows.add(imageRow.toMutableList())
             count = 0
-            imageRows.add(imageRow)
             imageRow.clear()
             continue
         }
-        count += 1
-        imageRow.add(image)
     }
 
     if (imageRow.isNotEmpty())
@@ -124,7 +140,7 @@ fun GalleryImageTab(images: List<Image>, itemsPerRow: Int = 3)
         imageRows.add(imageRow)
     }
 
-
+    //
     //Displays items in a grid format with a certain number of items per row
     LazyColumn(modifier= Modifier
         .padding(5.dp)
@@ -136,7 +152,7 @@ fun GalleryImageTab(images: List<Image>, itemsPerRow: Int = 3)
             {
                 for (image in imageLine)
                 {
-                    ImageItem(image)
+                    ImageItem()
                 }
             }
         }
@@ -144,13 +160,14 @@ fun GalleryImageTab(images: List<Image>, itemsPerRow: Int = 3)
 }
 
 @Composable
-fun ImageItem(image: Image)
+fun ImageItem()
 {
     //To be altered with intrinsic measurements
     Card(
         modifier = Modifier
             .height(32.dp)
             .fillMaxWidth(0.32f)
+            //.weight(1f, true)
             .padding(start = 5.dp, top = 5.dp)
             .background(Color.Red)
             .clickable {
@@ -158,7 +175,7 @@ fun ImageItem(image: Image)
             }
     ) {
         Image(
-            painter = painterResource(id = 0),
+            painter = painterResource(id = R.drawable.ic_launcher_foreground),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
