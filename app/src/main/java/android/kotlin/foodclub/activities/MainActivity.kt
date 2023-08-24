@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.activities
 
 import android.kotlin.foodclub.views.home.ProgressionBar
+import android.kotlin.foodclub.views.home.SettingsView
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -24,7 +25,8 @@ class MainActivity : ComponentActivity() {
 //                RootNavigationGraph(navController = rememberNavController())
 //            }
 
-            ProgressionBar(3000)
+           // ProgressionBar(3000)
+            SettingsView()
         }
     }
 }
