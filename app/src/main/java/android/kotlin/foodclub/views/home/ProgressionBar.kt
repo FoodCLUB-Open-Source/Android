@@ -1,19 +1,14 @@
 package android.kotlin.foodclub.views.home
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
@@ -24,190 +19,99 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.layout.LayoutModifier
+import androidx.compose.ui.layout.Measurable
+import androidx.compose.ui.layout.MeasureResult
+import androidx.compose.ui.layout.MeasureScope
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.offset
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-// Function to Create the progression bar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProgressionBar3(durationTime: Long){
+fun ProgressionBar(durationTime: Long) {
     var progress by remember { mutableStateOf(0f) }
-    var timeDelay:Long = 10;
-    var iterations = durationTime/timeDelay;
-    var changeIterations = 0;
-    val progressionRate = (1f/iterations)
+    var timeDelay: Long = 10
+    var iterations = durationTime / timeDelay
+    var changeIterations = 0
+    val progressionRate = (1f / iterations)
     val coroutineScope = rememberCoroutineScope()
-
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-//    val calculatedSliderWidth = screenWidth - (desiredMargin * 2)
+    var isChecked by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
-            .fillMaxWidth(),
-        contentAlignment =Alignment.Center,
+            .fillMaxWidth()
+            .padding(top = 100.dp),
+        contentAlignment = Alignment.Center
     ) {
 
         Slider(
             value = progress,
             onValueChange = {
                 progress = it
-                changeIterations=(it/progressionRate).toInt()
-
+                changeIterations = (it / progressionRate).toInt()
             },
             modifier = Modifier
-//                .fillMaxWidth()
-                .width(screenWidth)
-                .padding(top=100.dp) ,
+                .fillMaxWidth()
+                .negativeMargin((-16).dp)
+                .padding(0.dp),
             colors = SliderDefaults.colors(
                 thumbColor = Color.Transparent,
                 activeTrackColor = colorGreen,
                 inactiveTrackColor = colorGray,
             ),
-            thumb ={
-
+            thumb = {
                 Box(
                     modifier = Modifier
                         .size(0.dp)
                         .shadow(0.dp, clip = true)
                         .background(colorGreen)
+
                 )
             }
-
         )
-
         Spacer(modifier = Modifier.height(16.dp))
-
+        
+        //Logic within this can be linked to the play button on the video
         Button(
+            modifier = Modifier.padding(top = 130.dp),
             onClick = {
+                isChecked = !isChecked
+
                 coroutineScope.launch {
-                    while((iterations+changeIterations)>=0){
+                    while (((iterations + changeIterations) >= 0) && isChecked) {
                         delay(timeDelay)
                         progress += progressionRate
-
+                        if (progress > 1f) break
                     }
                 }
-
-
             }
         ) {
             Text("Start")
         }
-
-}
-}
-
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-fun ProgressionBar1(durationTime: Long){
-    var timeDelay:Long = 10;
-    var iterations = durationTime/timeDelay;
-    var progress by remember { mutableStateOf(0f) }
-
-    val coroutineScope = rememberCoroutineScope()
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        LinearProgressIndicator(
-            progress = progress,
-            trackColor = colorGray,
-            color = colorGreen,
-            modifier = Modifier
-                .fillMaxWidth  ()
-                .padding(16.dp)
-                ,
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = {
-                coroutineScope.launch{
-                    var progressionRate = (1f/iterations)
-                    for (i in 0..iterations) {
-                        delay(timeDelay)
-                        progress += (progressionRate)
-                    } } }) {
-                Text("Start")
-            }
-
     }
-
-
 }
 
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ProgressionBar(durationTime: Long){
-    var progress by remember { mutableStateOf(0f) }
-    var timeDelay:Long = 10;
-    var iterations = durationTime/timeDelay;
-    var changeIterations = 0;
-    val progressionRate = (1f/iterations)
-    val coroutineScope = rememberCoroutineScope()
-
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top=100.dp),
-        contentAlignment =Alignment.Center,
-    ) {
-
-        LinearProgressIndicator(
-            progress = progress,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(0.dp),
-            trackColor = colorGray,
-            color = colorGreen,
-//            onValueChange = {
-//
-//            }
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            modifier = Modifier.padding(top=130.dp),
-            onClick = {
-                coroutineScope.launch {
-                    while((iterations+changeIterations)>=0){
-                        delay(timeDelay)
-                        progress += progressionRate
-
-                    }
-                }
-
-
+// Function to override the default modifier properties of the slider. This was used to fix the width
+fun Modifier.negativeMargin(margin: Dp): Modifier = this.then(
+    object : LayoutModifier {
+        override fun MeasureScope.measure(
+            measurable: Measurable,
+            constraints: Constraints
+        ): MeasureResult {
+            val offset = margin.roundToPx()
+            val placeable = measurable.measure(
+                constraints.offset(-offset, -offset)
+            )
+            return layout(placeable.width + offset * 2, placeable.height) {
+                placeable.place(offset, 0)
             }
-        ) {
-            Text("Start")
         }
-
     }
-}
-
-
-//    val context = LocalContext.current
-//    val exoPlayer = ExoPlayer.Builder(context).build()
-//    val videoFile = File("../../../../assets/recipeVid.mp4")
-//
-//    exoPlayer.
-//        val videoUri = LocalContext.current.resources.getUri(R.raw.your_video_resource)
-//
-//    val videoPlayerState = rememberVideoPlayerState();
-//    val videoProgress by videoPlayerState.videoProgress.collectAsState();
-
+)
