@@ -56,14 +56,14 @@ fun StoriesContainerView(stories: List<Int>, navController: NavHostController) {
                         contentDescription = "Story",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .width(80.dp)
-                            .height(80.dp)
+                            .width(70.dp)
+                            .height(70.dp)
                             .clip(CircleShape)
                     )
                     Box(
                         modifier = Modifier
-                            .width(65.dp)
-                            .height(65.dp)
+                            .width(55.dp)
+                            .height(55.dp)
                             .clip(CircleShape)
                             .background(Color(android.graphics.Color.parseColor("#979797")))
                             .clickable {
@@ -85,7 +85,7 @@ fun StoriesContainerView(stories: List<Int>, navController: NavHostController) {
                     text = "Add Story",
                     fontFamily = montserratFamily,
                     color = Color.White,
-                    fontSize = 13.sp,
+                    fontSize = 12.sp,
                     modifier = Modifier.padding(start= 15.dp)
                 )
             }
@@ -106,8 +106,8 @@ fun StoriesContainerView(stories: List<Int>, navController: NavHostController) {
                         contentDescription = "Story",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .width(80.dp)
-                            .height(80.dp)
+                            .width(70.dp)
+                            .height(70.dp)
                             .clip(CircleShape)
                     )
                     Image(
@@ -115,8 +115,8 @@ fun StoriesContainerView(stories: List<Int>, navController: NavHostController) {
                         contentDescription = "Story",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .width(65.dp)
-                            .height(65.dp)
+                            .width(55.dp)
+                            .height(55.dp)
                             .clip(CircleShape)
                             .clickable {}
                     )

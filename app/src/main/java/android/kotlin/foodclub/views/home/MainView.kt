@@ -2,6 +2,7 @@ package com.example.foodclub.views.home
 
 import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -155,10 +156,13 @@ fun BottomBar(navController: NavHostController, triggerBottomSheetModal: () -> U
     val currentDestination = navBackStackEntry?.destination
 
     val bottomBarDestination = screens.any { it.route == currentDestination?.route }
-    //val screenHeight = LocalConfiguration.current.screenHeightDp.dp * 0.1f
+    var screenHeight = LocalConfiguration.current.screenHeightDp.dp * 0.13f
 
+    if (screenHeight < 90.dp) {
+        screenHeight = 110.dp
+    }
     if (bottomBarDestination) {
-        NavigationBar (containerColor = Color.White, modifier = Modifier.height(115.dp)) {
+        NavigationBar (containerColor = Color.White, modifier = Modifier.height(screenHeight)) {
             screens.forEach { screen ->
                 AddItem(
                     screen = screen,
@@ -184,6 +188,7 @@ fun RowScope.AddItem(
         icon = {
             Icon(
                 painter = icon,
+                modifier = Modifier.size(if (screen.route == "CREATE") 40.dp else 20.dp),
                 contentDescription = "Navigation Icon",
                 tint = when {
                     screen is BottomBarScreenObject.Create -> Color.Unspecified
