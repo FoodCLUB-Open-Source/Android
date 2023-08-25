@@ -13,8 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
 //import androidx.compose.foundation.layout.ColumnScopeInstance.weight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -38,6 +41,31 @@ import java.lang.Math.ceil
 @Composable
 fun GalleryPicker(itemsPerRow: Int = 3)
 {
+    val ResourceIds : List<Pair<String, String>> = arrayListOf(
+        Pair(R.drawable.ic_launcher_foreground.toString(), "Image"),
+        Pair(R.drawable.ic_launcher_foreground.toString(), "Image"),
+        Pair(R.drawable.ic_launcher_foreground.toString(), "Image"),
+        Pair(R.drawable.ic_launcher_foreground.toString(), "Image"),
+        Pair(R.drawable.imagecard.toString(), "Image"),
+    )
+
+    var ResourceDrawables: MutableList<Int> = mutableListOf<Int>();
+    var ResourceURI: MutableList<String> = mutableListOf<String>();
+
+    ResourceIds.forEach()
+    {
+        (name, type) ->
+        if (type.equals("Image"))
+        {
+            ResourceDrawables.add(name.toInt())
+        }
+        else
+        {
+            ResourceURI.add(name)
+        }
+    }
+
+
     //Toggles between Image and Video options
     val (selectedImageOption, OnOptionSelected) = remember {
         mutableStateOf(true)
@@ -45,7 +73,7 @@ fun GalleryPicker(itemsPerRow: Int = 3)
 
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(10.dp).fillMaxWidth()) {
         Text(fontSize = 20.sp, text="Gallery", fontWeight = FontWeight.Bold, modifier= Modifier.padding(5.dp))
-        Row(modifier = Modifier.fillMaxWidth()){
+        Row(modifier = Modifier.fillMaxWidth().border(1.dp, Color.Black)){
 
             Button(onClick = {
                 if (!selectedImageOption)
@@ -105,7 +133,7 @@ fun GalleryPicker(itemsPerRow: Int = 3)
 
         if (selectedImageOption)
         {
-            GalleryImageTab(images = arrayListOf(1,2,3,4,5,6,7), itemsPerRow = itemsPerRow)
+            GalleryImageTab(images = ResourceDrawables, itemsPerRow = itemsPerRow)
         }
         else
         {
@@ -150,9 +178,11 @@ fun GalleryImageTab(images: List<Int>, itemsPerRow: Int = 3)
                 imageLine ->
             Row(verticalAlignment = Alignment.CenterVertically)
             {
+                val ratioModifier: Modifier = Modifier.weight(1f);
+
                 for (image in imageLine)
                 {
-                    ImageItem()
+                    ImageItem(ratioModifier)
                 }
             }
         }
@@ -160,27 +190,30 @@ fun GalleryImageTab(images: List<Int>, itemsPerRow: Int = 3)
 }
 
 @Composable
-fun ImageItem()
+fun ImageItem(modifier: Modifier, imageID: Int = R.drawable.baseline_close_24)
 {
+
+
     //To be altered with intrinsic measurements
     Card(
         modifier = Modifier
-            .height(32.dp)
-            .fillMaxWidth(0.32f)
+            //.height(32.dp)
+            //.fillMaxWidth(0.32f)
             //.weight(1f, true)
+            .aspectRatio(1f)
             .padding(start = 5.dp, top = 5.dp)
             .background(Color.Red)
             .clickable {
 
             }
+            .then(modifier)
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
+            painter = painterResource(id = imageID),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .height(30.dp)
-                .width(30.dp)
+                .aspectRatio(1f, true)
                 .padding(2.dp)
         )
     }
