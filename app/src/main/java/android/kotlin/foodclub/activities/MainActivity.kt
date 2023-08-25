@@ -1,12 +1,18 @@
 package android.kotlin.foodclub.activities
 
-import android.kotlin.foodclub.views.home.ProgressionBar
-import android.kotlin.foodclub.views.home.SettingsView
+import android.Manifest
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import android.kotlin.foodclub.ui.theme.FoodClubTheme
+import android.kotlin.foodclub.views.home.ChangePasswordView
+import android.kotlin.foodclub.views.home.EditProfileSetting
+import android.kotlin.foodclub.views.home.PrivacySetting
+import android.kotlin.foodclub.views.home.SettingsView
+import android.os.Handler
+import android.os.Looper
+import android.view.WindowManager
+import androidx.core.app.ActivityCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController

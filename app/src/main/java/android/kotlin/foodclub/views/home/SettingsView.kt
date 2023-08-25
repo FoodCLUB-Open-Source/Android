@@ -74,6 +74,7 @@ val colorRed= Color(android.graphics.Color.parseColor("#C64E0B"))
 //        SettingRow(text = "Log Out", iconId = R.drawable.logout, fontC=colorRed)
 //    }
 //}
+@Composable
 fun SettingsView(navController: NavController) {
     Column(modifier = Modifier
         .fillMaxSize()

@@ -3,6 +3,7 @@ package android.kotlin.foodclub.utils.composables
 import android.content.res.AssetFileDescriptor
 import android.graphics.Bitmap
 import android.kotlin.foodclub.data.models.VideoModel
+import android.kotlin.foodclub.views.home.ProgressionBar
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
@@ -200,7 +201,15 @@ fun VideoScroller(
                 onDoubleTap(exoPlayer, offset)
             })
         })
-            BottomControls(
+            ProgressionBar(totalDuration,
+                modifier = Modifier.align(Alignment.BottomStart),
+                totalDuration = { totalDuration },
+                currentTime = { currentTime },
+                onSeekChanged = { timeMs: Float ->
+                    exoPlayer.seekTo(timeMs.toLong())
+                }
+            )
+            /*BottomControls(
                 modifier = Modifier.align(Alignment.BottomStart),
                 totalDuration = { totalDuration },
                 currentTime = { currentTime },
@@ -208,7 +217,7 @@ fun VideoScroller(
                 onSeekChanged = { timeMs: Float ->
                     exoPlayer.seekTo(timeMs.toLong())
                 }
-            )
+            )*/
         }, effect = {
             onDispose {
                 thumbnail = thumbnail.copy(second = true)
