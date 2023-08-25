@@ -9,6 +9,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import androidx.navigation.compose.rememberNavController
+import com.example.foodclub.navigation.graphs.RootNavigationGraph
+import com.example.foodclub.views.home.DiscoverView
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,12 +24,9 @@ class MainActivity : ComponentActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
             keepSplashOnScreen = false }, delay)
         setContent {
-//            FoodClubTheme {
-//                RootNavigationGraph(navController = rememberNavController())
-//            }
-
-           // ProgressionBar(3000)
-            SettingsView()
+            FoodClubTheme {
+                RootNavigationGraph(navController = rememberNavController())
+            }
         }
     }
 }

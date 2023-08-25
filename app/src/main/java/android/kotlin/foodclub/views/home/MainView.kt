@@ -2,6 +2,9 @@ package com.example.foodclub.views.home
 
 import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.data.models.StoryModel
+import android.kotlin.foodclub.utils.composables.StoryView
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +14,7 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -50,12 +54,15 @@ import com.example.foodclub.viewmodels.home.HomeViewModel
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.zIndex
 
 @Composable
-fun BottomSheetItem(icon: Int, text: String, navController: NavHostController, destination: String) {
+fun BottomSheetItem(icon: Int, text: String,
+                    onDismiss: () -> Unit, navController: NavHostController, destination: String) {
     Row(
         modifier = Modifier
-            .clickable { navController.navigate(destination) }
+            .clickable { navController.navigate(destination); onDismiss() }
             .fillMaxWidth()
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -102,12 +109,14 @@ fun BottomSheet(onDismiss: () -> Unit, navController: NavHostController) {
             BottomSheetItem(
                 icon = R.drawable.story_bottom_sheet_icon,
                 text = "Create a Story",
+                onDismiss,
                 navController = navController,
                 "CAMERA_VIEW"
             )
             BottomSheetItem(
                 icon = R.drawable.recipe_bottom_sheet_icon,
                 text = "Create a Recipe",
+                onDismiss,
                 navController = navController,
                 "CREATE_RECIPE_VIEW"
             )
@@ -124,6 +133,11 @@ fun MainView(navController: NavHostController = rememberNavController()) {
     val viewModel: HomeViewModel = viewModel()
     var showSheet by remember { mutableStateOf(false) }
 
+    val storyModel = StoryModel(painterResource(R.drawable.story_user), 1692815790, "Julien", painterResource(R.drawable.foodsnap))
+    var currentStory by remember { mutableStateOf(storyModel) }
+    var currentStoryOffset by remember { mutableStateOf(IntOffset(0, 0)) }
+    var storyViewMode by remember { mutableStateOf(false) }
+
     val triggerBottomSheetModal: () -> Unit = {
         showSheet = !showSheet
     }
@@ -134,7 +148,17 @@ fun MainView(navController: NavHostController = rememberNavController()) {
         if (showSheet) {
             BottomSheet(triggerBottomSheetModal, navController)
         }
-        HomeNavigationGraph(navController = navController, showSheet = showSheet, triggerBottomSheetModal)
+        HomeNavigationGraph(navController = navController, showSheet = showSheet, triggerBottomSheetModal,
+            callbackEnableStoryView = {
+                //Here we are going to put all information about the story - author, time created and story content
+                currentStoryOffset = it
+                storyViewMode = true
+            })
+    }
+    //Story view screen
+    Box(modifier = Modifier.zIndex(2f)) {
+        StoryView(storyEnabled = storyViewMode, storyDetails = currentStory,
+            callbackDisableStory = { storyViewMode = false }, currentStoryOffset, modifier = Modifier.fillMaxSize())
     }
 }
 
@@ -145,17 +169,20 @@ fun BottomBar(navController: NavHostController, triggerBottomSheetModal: () -> U
         BottomBarScreenObject.Home,
         BottomBarScreenObject.Play,
         BottomBarScreenObject.Create,
-        BottomBarScreenObject.Profile,
         BottomBarScreenObject.Discover,
+        BottomBarScreenObject.Profile,
     )
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
     val bottomBarDestination = screens.any { it.route == currentDestination?.route }
-    //val screenHeight = LocalConfiguration.current.screenHeightDp.dp * 0.1f
+    var screenHeight = LocalConfiguration.current.screenHeightDp.dp * 0.13f
 
+    if (screenHeight < 90.dp) {
+        screenHeight = 110.dp
+    }
     if (bottomBarDestination) {
-        NavigationBar (containerColor = Color.White, modifier = Modifier.height(115.dp)) {
+        NavigationBar (containerColor = Color.White, modifier = Modifier.height(screenHeight)) {
             screens.forEach { screen ->
                 AddItem(
                     screen = screen,
@@ -181,6 +208,7 @@ fun RowScope.AddItem(
         icon = {
             Icon(
                 painter = icon,
+                modifier = Modifier.size(if (screen.route == "CREATE") 40.dp else 20.dp),
                 contentDescription = "Navigation Icon",
                 tint = when {
                     screen is BottomBarScreenObject.Create -> Color.Unspecified

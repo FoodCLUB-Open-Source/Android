@@ -5,6 +5,7 @@ import android.kotlin.foodclub.utils.composables.Picker
 import android.kotlin.foodclub.utils.composables.rememberPickerState
 import android.kotlin.foodclub.viewmodels.home.CreateRecipeViewModel
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.AnimationSpec
@@ -83,6 +84,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.IntSize
+import androidx.navigation.NavController
 import java.util.Collections.copy
 
 @Stable
@@ -237,7 +239,7 @@ fun BottomSheetCategories(onDismiss: () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun BottomSheetIngredients(onDismiss: () -> Unit) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 150.dp
@@ -410,7 +412,7 @@ fun BottomSheetIngredients(onDismiss: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateRecipeView() {
+fun CreateRecipeView(navController: NavController) {
     val viewModel: CreateRecipeViewModel = viewModel()
     val title = viewModel.title.value ?: "Loading..."
     val ingredientList = listOf("Tomato paste", "Potato wedges", "Pasta")
@@ -503,7 +505,7 @@ fun CreateRecipeView() {
                                 containerColor = Color(0xFFB8B8B8),
                                 contentColor = Color.White
                             ), contentPadding = PaddingValues(5.dp),
-                            onClick = {}
+                            onClick = { navController.navigateUp() }
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
@@ -717,7 +719,6 @@ fun Ingredient(ingredient: String) {
         }
     }
     Spacer(modifier = Modifier.height(10.dp))
-
 }
 
 @Composable

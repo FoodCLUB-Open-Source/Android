@@ -4,14 +4,11 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.viewmodels.home.StoryViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,18 +24,20 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import kotlinx.coroutines.launch
 
 @Composable
-fun StoriesContainerView(stories: List<Int>, navController: NavHostController) {
+fun StoriesContainerView(stories: List<Int>, callbackEnableStoryView: (offset: IntOffset) -> Unit, navController: NavHostController) {
     val listOfImages = listOf(R.drawable.story_user, R.drawable.story_user, R.drawable.story_user, R.drawable.story_user, R.drawable.story_user)
     val viewModel: StoryViewModel = viewModel()
 
@@ -65,14 +64,14 @@ fun StoriesContainerView(stories: List<Int>, navController: NavHostController) {
                         contentDescription = "Story",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .width(80.dp)
-                            .height(80.dp)
+                            .width(70.dp)
+                            .height(70.dp)
                             .clip(CircleShape)
                     )
                     Box(
                         modifier = Modifier
-                            .width(65.dp)
-                            .height(65.dp)
+                            .width(55.dp)
+                            .height(55.dp)
                             .clip(CircleShape)
                             .background(Color(android.graphics.Color.parseColor("#979797")))
                             .clickable {
@@ -92,8 +91,9 @@ fun StoriesContainerView(stories: List<Int>, navController: NavHostController) {
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = "Add Story",
+                    fontFamily = montserratFamily,
                     color = Color.White,
-                    fontSize = 15.sp,
+                    fontSize = 12.sp,
                     modifier = Modifier.padding(start= 15.dp)
                 )
             }
@@ -101,6 +101,9 @@ fun StoriesContainerView(stories: List<Int>, navController: NavHostController) {
 
         // Display Stories
         items(stories.size) { story ->
+            var xOffset by remember { mutableStateOf(0f) }
+            var yOffset by remember { mutableStateOf(0f) }
+
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -114,8 +117,8 @@ fun StoriesContainerView(stories: List<Int>, navController: NavHostController) {
                         contentDescription = "Story",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .width(80.dp)
-                            .height(80.dp)
+                            .width(70.dp)
+                            .height(70.dp)
                             .clip(CircleShape)
                     )
                     Image(
@@ -123,18 +126,26 @@ fun StoriesContainerView(stories: List<Int>, navController: NavHostController) {
                         contentDescription = "Story",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .width(65.dp)
-                            .height(65.dp)
+                            .width(55.dp)
+                            .height(55.dp)
                             .clip(CircleShape)
-                            .clickable {}
+                            .onGloballyPositioned {
+                                xOffset = it.positionInRoot().x + it.size.width / 2
+                                yOffset = it.positionInRoot().y + it.size.height / 2
+                            }
+                            .clickable {
+                                val offset = IntOffset(xOffset.toInt(), yOffset.toInt())
+                                //pass item index to scroll lazyRow to current viewed story
+                                callbackEnableStoryView(offset) }
                     )
                 }
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = "Julien",
                     color = Color.White,
-                    fontSize = 15.sp,
-                )
+                    fontSize = 13.sp,
+                    fontFamily = montserratFamily,
+                    )
             }
 
         }

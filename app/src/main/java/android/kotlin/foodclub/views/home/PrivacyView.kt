@@ -22,11 +22,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 
 //The main function of this PrivacyView file. This arranges all components to build the screen
 @Composable
-fun PrivacySetting() {
+fun PrivacySetting(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -34,7 +35,7 @@ fun PrivacySetting() {
             .padding(top = 80.dp)
     ) {
 
-        SettingsTopBar(label = "Privacy")
+        SettingsTopBar(label = "Privacy", navController)
         Spacer(modifier = Modifier.height(50.dp))
         ChangePasswordButton()
         Spacer(modifier = Modifier.height(60.dp))
