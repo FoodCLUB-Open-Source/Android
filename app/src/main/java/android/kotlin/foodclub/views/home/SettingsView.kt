@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -73,55 +74,32 @@ val colorRed= Color(android.graphics.Color.parseColor("#C64E0B"))
 //    }
 //}
 @Composable
-fun SettingsView() {
-    Box(
+fun SettingsView(){
+    val screenSizeHeight = LocalConfiguration.current.screenHeightDp.dp //added screenSizeHeight so page is adaptable to all screen size
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .padding(16.dp)
+            .background(Color.White),
+        verticalArrangement = Arrangement.Center
     ) {
+        SettingsTopBar("Settings")
+        Spacer(modifier = Modifier.height(16.dp))
+        SettingsProfile(userName = "Jake Rayner", userImage = painterResource(id = R.drawable.story_user))
+        Spacer(modifier = Modifier.height(screenSizeHeight * 0.1f))
+        SettingRow(text = "Edit profile information", iconId = R.drawable.editprofile)
+        SettingRow(text = "Privacy settings", iconId = R.drawable.privacysettings)
+        Spacer(modifier = Modifier.height(screenSizeHeight * 0.03f))
         Column(
             modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                .border(width = 1.dp, color = colorGray, shape = RoundedCornerShape(8.dp))
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
-            SettingsTopBar("Settings")
-            Spacer(modifier = Modifier.height(16.dp))
-            SettingsProfile(userName = "Jake Rayner", userImage = painterResource(id = R.drawable.story_user))
-            Spacer(modifier = Modifier.height(32.dp))
-            SettingRow(text = "Edit profile information", iconId = R.drawable.editprofile)
-            SettingRow(text = "Privacy settings", iconId = R.drawable.privacysettings)
-            Spacer(modifier = Modifier.height(16.dp))
-            Column(
-                modifier = Modifier
-                    .border(
-                        width = 1.dp,
-                        color = colorGray,
-                        shape = RoundedCornerShape(8.dp)
-                    )
-            ) {
-                SettingRow(
-                    text = "Help & Support",
-                    iconId = R.drawable.helpandsupport,
-                    bordersize = 0,
-                    bordercolor = Color.Transparent
-                )
-                SettingRow(
-                    text = "Contact Us",
-                    iconId = R.drawable.contactus,
-                    bordersize = 0,
-                    bordercolor = Color.Transparent
-                )
-                SettingRow(
-                    text = "Privacy Policy",
-                    iconId = R.drawable.privacypolicy,
-                    bordersize = 0,
-                    bordercolor = Color.Transparent
-                )
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-
-            SettingRow(text = "Log Out", iconId = R.drawable.logout, fontC = colorRed)
+            SettingRow(text = "Help & Support", iconId = R.drawable.helpandsupport, bordersize = 0, bordercolor = Color.Transparent)
+            SettingRow(text = "Contact Us", iconId = R.drawable.contactus, bordersize = 0, bordercolor = Color.Transparent)
+            SettingRow(text = "Privacy Policy", iconId = R.drawable.privacypolicy, bordersize = 0, bordercolor = Color.Transparent)
         }
+        Spacer(modifier = Modifier.height(screenSizeHeight * 0.03f))
+        SettingRow(text = "Log Out", iconId = R.drawable.logout, fontC = colorRed)
     }
 }
 

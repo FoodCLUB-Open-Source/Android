@@ -31,11 +31,11 @@ class MainActivity : ComponentActivity() {
         setContent {
           //  ChangePasswordView()
           //  EditProfileSetting()
-            PrivacySetting()
+          //  PrivacySetting()
 //            FoodClubTheme {
 //                RootNavigationGraph(navController = rememberNavController())
 //            }
-           // SettingsView()
+            SettingsView()
         }
     }
 }
