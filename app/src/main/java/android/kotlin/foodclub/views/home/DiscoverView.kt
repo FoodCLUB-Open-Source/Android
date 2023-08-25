@@ -43,6 +43,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -57,6 +59,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -82,6 +85,13 @@ import java.util.logging.Logger
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DiscoverView(navController: NavController) {
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 240.dp
+
+    var isSmallScreen by remember { mutableStateOf(false) }
+
+    if (screenHeight <= 440.dp) {
+        isSmallScreen = true
+    }
     val systemUiController = rememberSystemUiController()
     SideEffect {
         systemUiController.setSystemBarsColor(
@@ -102,17 +112,17 @@ fun DiscoverView(navController: NavController) {
     val pages = viewModel.getPages();
 
     viewModel.getData()
-    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-
+    Column(modifier = Modifier.fillMaxSize().background(Color.White),
+        horizontalAlignment = Alignment.CenterHorizontally) {
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 60.dp, end = 20.dp, start = 20.dp, bottom = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.Start)
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
 
-            Column() {
+            Column(  ) {
 
 
                 Text(
@@ -120,7 +130,7 @@ fun DiscoverView(navController: NavController) {
                     text = "Hi Emily,",
 
                     fontFamily = montserratFamily1,
-                    fontSize = 25.sp,
+                    fontSize = if (isSmallScreen == true) 22.sp else 25.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 7.dp),
                     style = TextStyle(letterSpacing = -1.sp)
@@ -130,24 +140,23 @@ fun DiscoverView(navController: NavController) {
                     color = Color.Black,
                     text = "Let's get cooking!",
                     fontFamily = montserratFamily1,
-                    fontSize = 25.sp,
+                    fontSize = if (isSmallScreen == true) 20.sp else 23.sp,
                     fontWeight = FontWeight.Medium,
                     style = TextStyle(letterSpacing = -1.sp)
                 )
             }
 
-
+            Spacer(modifier = Modifier.weight(1f))
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(5.dp)
             ) {
 
                 Button(shape = CircleShape,
                     modifier = Modifier
                         .clip(CircleShape)
-                        .height(53.dp)
-                        .width(53.dp),
+                        .height(40.dp)
+                        .width(40.dp),
 
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(245, 245, 245, 255),
@@ -172,8 +181,8 @@ fun DiscoverView(navController: NavController) {
                 Button(shape = CircleShape,
                     modifier = Modifier
                         .clip(CircleShape)
-                        .height(53.dp)
-                        .width(53.dp),
+                        .height(40.dp)
+                        .width(40.dp),
 
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(245, 245, 245, 255),
@@ -236,14 +245,30 @@ fun DiscoverView(navController: NavController) {
             selectedTabIndex = tabIndex, modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
+                .background(Color.White),
+            containerColor = Color.White,
+            contentColor = Color.White,
+            divider = {},
+            indicator = { tabPositions ->
+                TabRowDefaults.Indicator(
+                    modifier = Modifier.tabIndicatorOffset(tabPositions[tabIndex]),
+                    height = 2.dp,
+                    color = Color.Black
+                )
+            }
         ) {
             tabItems1.forEachIndexed { index, data ->
                 val selected = tabIndex == index
 
-                Tab(selected = selected, onClick = {
+                Tab(selected = selected,
+                    modifier = Modifier.background(Color.White),
+                    selectedContentColor = Color.Black,
+                    onClick = {
                     tabIndex = index
                 }, text = {
-                    Text(text = data)
+                    Text(text = data,
+                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                        color = if (selected) Color.Black else Color(android.graphics.Color.parseColor("#C2C2C2")))
                 })
 
             }
@@ -261,7 +286,7 @@ fun DiscoverView(navController: NavController) {
 
 
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(if (tabIndex == 2) 5.dp else 0.dp))
 
         val systemUiController = rememberSystemUiController()
         var showSheet by remember { mutableStateOf(false) }
@@ -275,7 +300,6 @@ fun DiscoverView(navController: NavController) {
                 color = Color.Black, darkIcons = true
             )
         }
-
         SideEffect {
             if (!showSheet) {
                 systemUiController.setSystemBarsColor(
@@ -283,15 +307,10 @@ fun DiscoverView(navController: NavController) {
                 )
             }
         }
-
         if (showSheet) {
             BottomSheetIngredients(triggerBottomSheetModal)
         }
-
-
         if (tabIndex == 2) {
-
-
             Button(shape = RectangleShape,
                 modifier = Modifier
                     .border(
@@ -320,7 +339,7 @@ fun DiscoverView(navController: NavController) {
             flingBehavior = fling,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 15.dp),
+                .padding(top = 0.dp),
             state = pagerState1
         ) { index ->
 
@@ -358,11 +377,24 @@ fun TabHomeDiscover(
 ) {
 
     TabRow(
-        selectedTabIndex = pagerState1.currentPage
+        selectedTabIndex = pagerState1.currentPage,
+        modifier = Modifier.background(Color.White),
+        containerColor = Color.White,
+        contentColor = Color.White,
+        divider = {},
+        indicator = { tabPositions ->
+            TabRowDefaults.Indicator(
+                modifier = Modifier.tabIndicatorOffset(tabPositions[pagerState1.currentPage]),
+                height = 0.dp,
+                color = Color.Black
+            )
+        }
+
     ) {
         tabItems.forEachIndexed { index, item ->
             Tab(selected = pagerState1.currentPage == index,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().background(Color.White),
+                selectedContentColor = Color.Black,
                 onClick = {
                     scope.launch {
                         pagerState1.animateScrollToPage(index)
@@ -374,13 +406,11 @@ fun TabHomeDiscover(
                     Text(
 
                         text = AnnotatedString(item), style = TextStyle(
-                            fontFamily = montserratFamily,
-                            fontWeight = FontWeight.SemiBold,
+                            fontWeight = if (pagerState1.currentPage == index) FontWeight.Bold else FontWeight.Normal,
+                            color = if (pagerState1.currentPage == index) Color.Black else Color(android.graphics.Color.parseColor("#C2C2C2")),
                             fontSize = fontSize,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
                         )
-
-
                     )
                 })
 
@@ -409,7 +439,7 @@ fun GridItem2(navController: NavController) {
                 .fillMaxHeight()
         ) {
             Image(
-                painter = painterResource(id = R.drawable.imagecard),
+                painter = painterResource(id = R.drawable.salad_ingredient),
                 contentDescription = "",
                 Modifier
                     .fillMaxSize()
@@ -422,17 +452,17 @@ fun GridItem2(navController: NavController) {
                     .padding(10.dp), verticalArrangement = Arrangement.Bottom
             ) {
                 Text(
-                    text = "fdg",
+                    text = "Emily",
                     fontFamily = satoshiFamily,
                     color = Color.White,
                     fontSize = 18.sp
                 )
 
                 Text(
-                    text = "gsd",
+                    text = "19 hour ago",
                     fontFamily = satoshiFamily,
-                    fontSize = 14.sp,
-                    color = Color(255, 255, 255, 200)
+                    fontSize = 12.sp,
+                    color = Color(231, 231, 231, 200)
                 )
             }
         }

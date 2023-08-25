@@ -138,7 +138,6 @@ fun BottomSheetIngredients(onDismiss: () -> Unit) {
     var sliderPosition by remember { mutableStateOf(0f) }
     var isSmallScreen by remember { mutableStateOf(false) }
 
-    Log.d("ScreenHeightLog", "Screen bottom sheet: $screenHeight")
     if (screenHeight <= 440.dp) {
         isSmallScreen = true
     }

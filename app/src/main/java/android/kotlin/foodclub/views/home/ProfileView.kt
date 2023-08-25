@@ -35,6 +35,7 @@ import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -191,7 +192,16 @@ fun ProfileView(navController: NavController) {
             }
             TabRow(selectedTabIndex = pagerState.currentPage,
                 containerColor = Color.White,
-                contentColor = Color.White
+                contentColor = Color.White,
+                divider = {},
+                indicator = { tabPositions ->
+                    TabRowDefaults.Indicator(
+                        modifier = Modifier
+                            .tabIndicatorOffset(tabPositions[pagerState.currentPage]),
+                        height = 2.dp,
+                        color = Color.Black
+                    )
+                }
             ) {
                 tabItem.forEachIndexed{
                         index,tabItem ->
