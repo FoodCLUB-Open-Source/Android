@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.views.home
 
-import android.kotlin.foodclub.R
 import android.Manifest
+import android.kotlin.foodclub.R
 import android.kotlin.foodclub.utils.composables.createVideoCaptureUseCase
 import android.kotlin.foodclub.utils.composables.startRecordingVideo
 import android.net.Uri
@@ -15,14 +15,13 @@ import androidx.camera.video.VideoRecordEvent
 import androidx.camera.view.PreviewView
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,27 +30,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -62,8 +51,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.PermissionsRequired
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 import java.io.File
@@ -220,7 +209,11 @@ fun CameraView(
                     }
                 }
                 IconButton(
+
                     onClick = {
+
+                              //Temporarily ignore recording code
+
                         if (!recordingStarted.value) {
                             videoCapture.value?.let { videoCapture ->
                                 recordingStarted.value = true
@@ -255,10 +248,14 @@ fun CameraView(
                             recordingStarted.value = false
                             recording?.stop()
                         }
+
+
+                        //navController.navigate("GALLERY_VIEW")
                     },
                     modifier = Modifier
                         .align(Alignment.BottomCenter).size(80.dp)
                 ) {
+
                     RecordingButton(isRecording = recordingStarted.value)
                     /*Icon(
                         painter = painterResource(if (recordingStarted.value) R.drawable.story_user else R.drawable.save),
@@ -269,16 +266,26 @@ fun CameraView(
                 if (!recordingStarted.value) {
                     IconButton(
                         onClick = {
-                            getContent.launch("video/*")
+                            //getContent.launch("video/*")
+                            navController.navigate("GALLERY_VIEW")
                             //audioEnabled.value = !audioEnabled.value
                         },
                         modifier = Modifier
                             .align(Alignment.BottomStart)
                     ) {
+
+                        val ResourceIds : List<Pair<String, String>> = arrayListOf(
+                            Pair(R.drawable.ic_launcher_foreground.toString(), "Image"),
+                            Pair(R.drawable.ic_launcher_foreground.toString(), "Image"),
+                            Pair(R.drawable.ic_launcher_foreground.toString(), "Image"),
+                            Pair(R.drawable.ic_launcher_foreground.toString(), "Image"),
+                            Pair(R.drawable.imagecard.toString(), "Image"),
+                        )
+
                         Icon(
-                            painter = painterResource(if (audioEnabled.value) R.drawable.story_border_white else R.drawable.story_border),
+                            painter = painterResource(if (ResourceIds.isNotEmpty()) ResourceIds[0].first.toInt() else (if (audioEnabled.value) R.drawable.story_border_white else R.drawable.story_border)),
                             contentDescription = "",
-                            modifier = Modifier.size(64.dp)
+                            modifier = Modifier.size(64.dp).border(1.dp, Color.Black)
                         )
                     }
                 }
