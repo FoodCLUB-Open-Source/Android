@@ -37,10 +37,11 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
-fun FollowingView() {
+fun FollowingView(navController: NavController) {
     val systemUiController = rememberSystemUiController()
 
     SideEffect {
@@ -69,7 +70,9 @@ fun FollowingView() {
                         containerColor = Color(0xFFB8B8B8),
                         contentColor = Color.White
                     ), contentPadding = PaddingValues(5.dp),
-                    onClick = {}
+                    onClick = {
+                        navController.navigateUp()
+                    }
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
@@ -84,7 +87,7 @@ fun FollowingView() {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = "My Following", fontWeight = FontWeight.ExtraBold,
-                fontFamily = com.example.foodclub.views.home.montserratFamily,
+                fontFamily = raleway,
                 fontSize = 20.sp,
                 modifier = Modifier.padding(start = 20.dp),
             )
@@ -112,7 +115,9 @@ fun Following(index: Int, imageRes: Int, username: String, completeName: String)
             .padding(vertical = 4.dp).clickable {  },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row( modifier = Modifier.padding(start = 20.dp) ) {
+        Spacer(modifier = Modifier.width(16.dp))
+
+
             Image(
                 painter = painterResource(id = imageRes),
                 contentDescription = null,
@@ -123,9 +128,9 @@ fun Following(index: Int, imageRes: Int, username: String, completeName: String)
             )
             Spacer(modifier = Modifier.width(12.dp))
             Column {
-                Text(text = username, fontWeight = FontWeight.ExtraBold, fontFamily = com.example.foodclub.views.home.montserratFamily)
-                Text(text = completeName, fontWeight = FontWeight.Light, fontFamily = com.example.foodclub.views.home.montserratFamily)
+                Text(text = username, fontSize = 15.sp, fontWeight = FontWeight.Bold, fontFamily = avenir)
+                Text(text = completeName, fontSize = 15.sp, fontWeight = FontWeight.Medium, fontFamily = avenir)
             }
-        }
+
     }
 }
