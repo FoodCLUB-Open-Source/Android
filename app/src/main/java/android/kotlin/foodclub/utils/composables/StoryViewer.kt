@@ -45,6 +45,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -66,6 +67,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -73,12 +75,13 @@ fun StoryView(storyEnabled: Boolean, storyDetails: StoryModel,
               callbackDisableStory: () -> Unit, currentOffset: IntOffset,
               modifier: Modifier = Modifier
 ) {
+
     AnimatedVisibility(
         visible = storyEnabled,
         enter =
-//        slideInVertically(initialOffsetY = { (1.5 * it).toInt() } )
-        slideIn(animationSpec = tween(durationMillis = 500)) { IntOffset(- it.width / 2, - it.height / 2).plus(currentOffset) }
-                + scaleIn(animationSpec = tween(durationMillis = 500)),
+        // slideInVertically(initialOffsetY = { (1.5 * it).toInt() } )
+        slideIn(animationSpec = tween(durationMillis = 250)) { IntOffset(- it.width / 2, - it.height / 2).plus(currentOffset) }
+                + scaleIn(animationSpec = tween(durationMillis = 250)),
         exit = slideOut(){ IntOffset(- it.width / 2, - it.height / 2).plus(currentOffset) }
                 + scaleOut(animationSpec = tween(durationMillis = 250))
     ) {
@@ -132,7 +135,7 @@ fun StoryView(storyEnabled: Boolean, storyDetails: StoryModel,
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 40.dp)
+                    .padding(horizontal = 20.dp, vertical = 60.dp)
             ) {
                 StoryInfo(
                     painter = storyDetails.authorPhotoPainter,
@@ -147,7 +150,7 @@ fun StoryView(storyEnabled: Boolean, storyDetails: StoryModel,
                         contentColor = Color(0x00FFFFFF).copy(alpha = 0.1f)
                     ),
                     contentPadding = PaddingValues(4.dp),
-                    modifier = Modifier.size(60.dp)
+                    modifier = Modifier.size(40.dp)
                 ) {
                     Image(painter = painterResource(R.drawable.baseline_close_24), contentDescription = "close story")
                 }
@@ -159,27 +162,27 @@ fun StoryView(storyEnabled: Boolean, storyDetails: StoryModel,
 
 @Composable
 fun StoryInfo(painter: Painter, name: String, time: Long, modifier: Modifier = Modifier) {
-    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
         Image(
             painter = painter,
             contentDescription = "author photo",
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .size(70.dp)
+                .size(45.dp)
                 .clip(CircleShape)
         )
 
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
-            modifier = Modifier.height(70.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterVertically),
+            modifier = Modifier.height(45.dp)) {
             Text(
                 text = name,
                 color = Color.White,
-                fontSize = 20.sp
+                fontSize = 16.sp
             )
             Text(
                 text = TimeUtil.getHoursAgoFromNow(time) + " ago",
                 color = Color.White,
-                fontSize = 14.sp
+                fontSize = 12.sp
             )
         }
     }

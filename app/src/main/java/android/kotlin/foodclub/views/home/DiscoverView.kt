@@ -1,12 +1,13 @@
 package com.example.foodclub.views.home
 
-import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.data.models.DiscoverViewRecipeModel
 import android.kotlin.foodclub.data.models.MyRecipeModel
 import android.kotlin.foodclub.views.home.BottomSheetIngredients
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -30,6 +31,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -199,8 +201,19 @@ fun DiscoverView(navController: NavController) {
             }
         }
 
+        val initialPage: Int? = 0;
+        val pagerState1 = rememberPagerState(
+            initialPage = initialPage ?: 0,
+            initialPageOffsetFraction = 0f
+        ) {
+            4
+        };
 
-        val pagerState1 = rememberPagerState();
+        val fling = PagerDefaults.flingBehavior(
+            state = pagerState1, lowVelocityAnimationSpec = tween(
+                easing = LinearEasing, durationMillis = 300
+            )
+        )
 
         val scope = rememberCoroutineScope();
 
@@ -303,7 +316,8 @@ fun DiscoverView(navController: NavController) {
         }
 
         HorizontalPager(
-            pageCount = 4,
+            beyondBoundsPageCount = 1,
+            flingBehavior = fling,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = 15.dp),
@@ -329,6 +343,7 @@ fun DiscoverView(navController: NavController) {
                 }
 
             }
+
         }
 
     }
@@ -412,7 +427,7 @@ fun GridItem2(navController: NavController) {
                     color = Color.White,
                     fontSize = 18.sp
                 )
-                
+
                 Text(
                     text = "gsd",
                     fontFamily = satoshiFamily,
@@ -424,7 +439,3 @@ fun GridItem2(navController: NavController) {
 
     }
 }
-
-
-
-

@@ -361,7 +361,8 @@ fun HomeView(
     modifier: Modifier = Modifier,
     initialPage: Int? = 0,
     navController: NavHostController,
-    callbackEnableStoryView: (offset: IntOffset) -> Unit
+    callbackEnableStoryView: (offset: IntOffset) -> Unit,
+    storyViewMode: Boolean
 )
 {
     var showIngredientSheet by remember { mutableStateOf(false) }
@@ -379,7 +380,12 @@ fun HomeView(
     if (screenHeightMinusBottomNavItem <= 650.dp ) {
         screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.96f
     }
-    val pagerState = rememberPagerState(initialPage = initialPage ?: 0)
+    val pagerState = rememberPagerState(
+        initialPage = initialPage ?: 0,
+        initialPageOffsetFraction = 0f
+    ) {
+        4
+    }
 
     val fling = PagerDefaults.flingBehavior(
         state = pagerState, lowVelocityAnimationSpec = tween(
@@ -398,7 +404,7 @@ fun HomeView(
             darkIcons = false
         )
         systemUiController.setNavigationBarColor(
-            color = Color.White
+            color = if (storyViewMode) Color.Black else Color.White
         )
     }
     Box(modifier = Modifier.padding(top = 55.dp).zIndex(1f)) {

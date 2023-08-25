@@ -25,14 +25,16 @@ import com.example.foodclub.views.home.ProfileView
 
 @Composable
     fun HomeNavigationGraph(navController: NavHostController, showSheet: Boolean, triggerBottomSheetModal: () -> Unit,
-                            callbackEnableStoryView: (offset: IntOffset) -> Unit) {
+                            callbackEnableStoryView: (offset: IntOffset) -> Unit, storyViewMode: Boolean) {
     NavHost(
         navController = navController,
         route = Graph.HOME,
         startDestination = BottomBarScreenObject.Home.route
     ) {
         composable(route = BottomBarScreenObject.Home.route) {
-            HomeView(navController = navController, callbackEnableStoryView = callbackEnableStoryView)
+            HomeView(navController = navController,
+                callbackEnableStoryView = callbackEnableStoryView,
+                storyViewMode = storyViewMode)
         }
         composable(route = BottomBarScreenObject.Profile.route) {
             ProfileView(navController)

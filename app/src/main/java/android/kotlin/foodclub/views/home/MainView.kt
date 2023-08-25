@@ -56,6 +56,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.zIndex
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun BottomSheetItem(icon: Int, text: String,
@@ -137,6 +138,7 @@ fun MainView(navController: NavHostController = rememberNavController()) {
     var currentStory by remember { mutableStateOf(storyModel) }
     var currentStoryOffset by remember { mutableStateOf(IntOffset(0, 0)) }
     var storyViewMode by remember { mutableStateOf(false) }
+    val systemUiController = rememberSystemUiController()
 
     val triggerBottomSheetModal: () -> Unit = {
         showSheet = !showSheet
@@ -150,10 +152,13 @@ fun MainView(navController: NavHostController = rememberNavController()) {
         }
         HomeNavigationGraph(navController = navController, showSheet = showSheet, triggerBottomSheetModal,
             callbackEnableStoryView = {
-                //Here we are going to put all information about the story - author, time created and story content
+                // Here we are going to put all information about the story - author, time created and story content
                 currentStoryOffset = it
                 storyViewMode = true
-            })
+                systemUiController.setNavigationBarColor(
+                    color = Color.Black
+                )
+            }, storyViewMode = storyViewMode)
     }
     //Story view screen
     Box(modifier = Modifier.zIndex(2f)) {
