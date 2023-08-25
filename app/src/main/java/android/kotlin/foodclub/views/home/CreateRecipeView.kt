@@ -5,6 +5,7 @@ import android.kotlin.foodclub.utils.composables.Picker
 import android.kotlin.foodclub.utils.composables.rememberPickerState
 import android.kotlin.foodclub.viewmodels.home.CreateRecipeViewModel
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.AnimationSpec
@@ -238,7 +239,7 @@ fun BottomSheetCategories(onDismiss: () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun BottomSheetIngredients(onDismiss: () -> Unit) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 150.dp

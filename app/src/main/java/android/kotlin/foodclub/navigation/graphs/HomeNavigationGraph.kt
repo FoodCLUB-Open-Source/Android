@@ -12,6 +12,7 @@ import android.kotlin.foodclub.views.home.MyBasketView
 import android.kotlin.foodclub.views.home.PrivacySetting
 import android.kotlin.foodclub.views.home.SettingsView
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -23,14 +24,15 @@ import com.example.foodclub.views.home.HomeView
 import com.example.foodclub.views.home.ProfileView
 
 @Composable
-    fun HomeNavigationGraph(navController: NavHostController, showSheet: Boolean, triggerBottomSheetModal: () -> Unit) {
+    fun HomeNavigationGraph(navController: NavHostController, showSheet: Boolean, triggerBottomSheetModal: () -> Unit,
+                            callbackEnableStoryView: (offset: IntOffset) -> Unit) {
     NavHost(
         navController = navController,
         route = Graph.HOME,
         startDestination = BottomBarScreenObject.Home.route
     ) {
         composable(route = BottomBarScreenObject.Home.route) {
-            HomeView(navController = navController)
+            HomeView(navController = navController, callbackEnableStoryView = callbackEnableStoryView)
         }
         composable(route = BottomBarScreenObject.Profile.route) {
             ProfileView(navController)

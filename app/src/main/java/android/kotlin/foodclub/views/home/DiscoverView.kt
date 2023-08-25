@@ -1,5 +1,6 @@
 package com.example.foodclub.views.home
 
+import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.data.models.DiscoverViewRecipeModel
 import android.kotlin.foodclub.data.models.MyRecipeModel
@@ -328,7 +329,6 @@ fun DiscoverView(navController: NavController) {
                 }
 
             }
-
         }
 
     }
@@ -412,7 +412,7 @@ fun GridItem2(navController: NavController) {
                     color = Color.White,
                     fontSize = 18.sp
                 )
-
+                
                 Text(
                     text = "gsd",
                     fontFamily = satoshiFamily,

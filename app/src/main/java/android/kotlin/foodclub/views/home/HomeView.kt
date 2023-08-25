@@ -119,6 +119,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.IntSize
 import coil.compose.AsyncImage
@@ -360,6 +361,7 @@ fun HomeView(
     modifier: Modifier = Modifier,
     initialPage: Int? = 0,
     navController: NavHostController,
+    callbackEnableStoryView: (offset: IntOffset) -> Unit
 )
 {
     var showIngredientSheet by remember { mutableStateOf(false) }
@@ -405,7 +407,7 @@ fun HomeView(
             R.drawable.story_user,
             R.drawable.story_user,
             R.drawable.story_user
-        ), navController)
+        ), callbackEnableStoryView = callbackEnableStoryView, navController)
     }
     Column(
         modifier = Modifier
@@ -415,7 +417,6 @@ fun HomeView(
             BottomSheetIngredients(triggerIngredientBottomSheetModal)
         }
         VerticalPager(
-            pageCount = 4,
             state = pagerState,
             flingBehavior = fling,
             beyondBoundsPageCount = 1,

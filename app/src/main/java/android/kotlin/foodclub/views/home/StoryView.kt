@@ -25,11 +25,19 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 
 @Composable
-fun StoriesContainerView(stories: List<Int>, navController: NavHostController) {
+fun StoriesContainerView(stories: List<Int>, callbackEnableStoryView: (offset: IntOffset) -> Unit, navController: NavHostController) {
     val listOfImages = listOf(R.drawable.story_user, R.drawable.story_user, R.drawable.story_user, R.drawable.story_user, R.drawable.story_user)
     val viewModel: StoryViewModel = viewModel()
 
@@ -93,6 +101,9 @@ fun StoriesContainerView(stories: List<Int>, navController: NavHostController) {
 
         // Display Stories
         items(stories.size) { story ->
+            var xOffset by remember { mutableStateOf(0f) }
+            var yOffset by remember { mutableStateOf(0f) }
+
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -118,7 +129,14 @@ fun StoriesContainerView(stories: List<Int>, navController: NavHostController) {
                             .width(55.dp)
                             .height(55.dp)
                             .clip(CircleShape)
-                            .clickable {}
+                            .onGloballyPositioned {
+                                xOffset = it.positionInRoot().x + it.size.width / 2
+                                yOffset = it.positionInRoot().y + it.size.height / 2
+                            }
+                            .clickable {
+                                val offset = IntOffset(xOffset.toInt(), yOffset.toInt())
+                                //pass item index to scroll lazyRow to current viewed story
+                                callbackEnableStoryView(offset) }
                     )
                 }
                 Spacer(modifier = Modifier.height(10.dp))
