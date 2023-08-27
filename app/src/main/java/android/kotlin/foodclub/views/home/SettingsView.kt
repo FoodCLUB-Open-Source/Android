@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -75,28 +76,22 @@ val colorRed= Color(android.graphics.Color.parseColor("#C64E0B"))
 //    }
 //}
 @Composable
-fun SettingsView(navController: NavController) {
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 0.dp), //Since the vertical arrangement is center, there is always some extra space on top of the topbar. Hence I removed padding for top
+fun SettingsView(){
+    val screenSizeHeight = LocalConfiguration.current.screenHeightDp.dp //added screenSizeHeight so page is adaptable to all screen size
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .background(Color.White),
         verticalArrangement = Arrangement.Center
-    ){
-
-        SettingsTopBar("Settings", navController)
-
-        Spacer(modifier = Modifier.height(30.dp))
-
-        SettingsProfile(userName = "Jake Rayner", userImage = painterResource(id=R.drawable.story_user))
-
-        Spacer(modifier = Modifier.height(60.dp))
-
-        SettingRow(text = "Edit profile information", iconId = R.drawable.editprofile, Color.Black,
-            1, colorGray, "EDIT_PROFILE", navController)
-        SettingRow(text = "Privacy settings", iconId = R.drawable.privacysettings, Color.Black,
-            1, colorGray, "PRIVACY", navController)
-
-        Spacer(modifier = Modifier.height(15.dp))
-
+    ) {
+        SettingsTopBar("Settings")
+        Spacer(modifier = Modifier.height(16.dp))
+        SettingsProfile(userName = "Jake Rayner", userImage = painterResource(id = R.drawable.story_user))
+        Spacer(modifier = Modifier.height(screenSizeHeight * 0.1f))
+        SettingRow(text = "Edit profile information", iconId = R.drawable.editprofile)
+        SettingRow(text = "Privacy settings", iconId = R.drawable.privacysettings)
+        Spacer(modifier = Modifier.height(screenSizeHeight * 0.03f))
         Column(
             modifier = Modifier
                 .border(width = 1.dp, color = colorGray, shape = RoundedCornerShape(8.dp))
@@ -108,8 +103,8 @@ fun SettingsView(navController: NavController) {
             SettingRow(text = "Privacy Policy", iconId = R.drawable.privacypolicy, Color.Black,
                 bordersize = 0, bordercolor = Color.Transparent, "PRIVACY", navController)
         }
-        Spacer(modifier = Modifier.height(15.dp))
-        SettingRow(text = "Log Out", iconId = R.drawable.logout, fontC=colorRed, 1, colorGray,"CHANGE_PASSWORD", navController)
+        Spacer(modifier = Modifier.height(screenSizeHeight * 0.03f))
+        SettingRow(text = "Log Out", iconId = R.drawable.logout, fontC = colorRed)
     }
 }
 
