@@ -34,6 +34,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 
 val colorGray= Color(android.graphics.Color.parseColor("#D0D0D0"))
 val colorRed= Color(android.graphics.Color.parseColor("#C64E0B"))
@@ -94,9 +96,12 @@ fun SettingsView(){
             modifier = Modifier
                 .border(width = 1.dp, color = colorGray, shape = RoundedCornerShape(8.dp))
         ) {
-            SettingRow(text = "Help & Support", iconId = R.drawable.helpandsupport, bordersize = 0, bordercolor = Color.Transparent)
-            SettingRow(text = "Contact Us", iconId = R.drawable.contactus, bordersize = 0, bordercolor = Color.Transparent)
-            SettingRow(text = "Privacy Policy", iconId = R.drawable.privacypolicy, bordersize = 0, bordercolor = Color.Transparent)
+            SettingRow(text = "Help & Support", iconId = R.drawable.helpandsupport, Color.Black,
+                bordersize = 0, bordercolor = Color.Transparent, "PRIVACY", navController)
+            SettingRow(text = "Contact Us", iconId = R.drawable.contactus, Color.Black,
+                bordersize = 0, bordercolor = Color.Transparent, "PRIVACY", navController)
+            SettingRow(text = "Privacy Policy", iconId = R.drawable.privacypolicy, Color.Black,
+                bordersize = 0, bordercolor = Color.Transparent, "PRIVACY", navController)
         }
         Spacer(modifier = Modifier.height(screenSizeHeight * 0.03f))
         SettingRow(text = "Log Out", iconId = R.drawable.logout, fontC = colorRed)
@@ -116,20 +121,20 @@ fun SettingsIcons(size: Int, icon: Int){
 
 // Common text composable to create text according to the parameters entered in this screen
 @Composable
-fun SettingsText(text:String, size: Int, weight:FontWeight, fontC: Color=Color.Black){
+fun SettingsText(text:String, size: Int, weight:FontWeight, fontC: Color=Color.Black, textAlign: TextAlign = TextAlign.Center){
     Text(
         text = text,
         fontSize = size.sp,
         color = fontC,
         fontFamily = montserratFamily,
         fontWeight = weight,
-        textAlign = TextAlign.Center
+        textAlign = textAlign
     )
 }
 
 // The top bar composable - Back button and the "Settings" text
 @Composable
-fun SettingsTopBar(label:String) {
+fun SettingsTopBar(label:String, navController: NavController) {
    Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -137,7 +142,7 @@ fun SettingsTopBar(label:String) {
     ) {
         Column{
             IconButton(
-                onClick = { /*Goes to Page before this*/ },
+                onClick = { navController.navigateUp() },
                 modifier = Modifier
                     .background(color=colorGray, RoundedCornerShape(8.dp))
                     .size(35.dp),
@@ -189,7 +194,8 @@ fun SettingsProfile(userName: String, userImage: Painter){
 
 // A reused composable to create each setting button row
 @Composable
-fun SettingRow(text: String, iconId: Int, fontC:  Color=Color.Black, bordersize: Int=1, bordercolor: Color= colorGray) {
+fun SettingRow(text: String, iconId: Int, fontC:  Color=Color.Black,
+               bordersize: Int=1, bordercolor: Color= colorGray, destination: String, navController: NavController) {
    val rowSize=65.dp
     Row(
         modifier = Modifier
@@ -198,7 +204,7 @@ fun SettingRow(text: String, iconId: Int, fontC:  Color=Color.Black, bordersize:
         verticalAlignment = Alignment.CenterVertically
     ){
         Button(
-            onClick = {/*Goes to the corresponding screen*/},
+            onClick = { navController.navigate(destination) },
             colors= ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = Color.Black),
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier

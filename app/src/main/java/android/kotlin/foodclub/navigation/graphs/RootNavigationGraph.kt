@@ -1,4 +1,4 @@
-package com.example.foodclub.navigation.graphs
+  package com.example.foodclub.navigation.graphs
 
 import android.kotlin.foodclub.views.authentication.EmailSentView
 import android.kotlin.foodclub.views.authentication.LogInWithEmail
@@ -28,4 +28,6 @@ object Graph {
     const val AUTHENTICATION = "auth_graph"
     const val HOME = "home_graph"
     const val ON_BOARDING = "onBoarding_graph"
+
+
 }

@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace 'android.kotlin.foodclub'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "android.kotlin.foodclub"
@@ -57,8 +57,8 @@ dependencies {
     implementation 'androidx.compose.ui:ui'
     implementation 'androidx.compose.ui:ui-graphics'
     implementation 'androidx.compose.ui:ui-tooling-preview'
-    implementation 'androidx.compose.material3:material3:1.1.0-alpha06'
-//    implementation 'androidx.compose.material3:material3:1.2.0-alpha02'
+    implementation 'androidx.compose.material3:material3:1.1.0-alpha08'
+    //implementation 'androidx.compose.material3:material3:1.2.0-alpha02'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
@@ -69,7 +69,8 @@ dependencies {
 
     implementation "androidx.navigation:navigation-compose:2.6.0"
     implementation "androidx.core:core-splashscreen:1.0.1"
-    implementation 'androidx.compose.foundation:foundation:1.4.1'
+    implementation("androidx.compose.foundation:foundation:1.6.0-alpha01")
+//    implementation 'androidx.compose.foundation:foundation:1.4.1'
     implementation 'com.google.accompanist:accompanist-systemuicontroller:0.31.2-alpha'
 
     // video dependencies
@@ -78,7 +79,6 @@ dependencies {
     implementation "androidx.media3:media3-ui:1.1.0"
 
     // stories dependencies
-    implementation 'com.github.raipankaj:Stories:1.0.2'
     implementation("io.coil-kt:coil-compose:2.4.0")
 
     // Camera dependencies
@@ -87,4 +87,8 @@ dependencies {
     implementation "androidx.camera:camera-view:1.2.1"
     implementation "androidx.camera:camera-extensions:1.2.1"
     implementation "com.google.accompanist:accompanist-permissions:0.23.1"
+    implementation "com.google.accompanist:accompanist-pager:0.27.1"
+
+    // Lottie animations
+    implementation "com.airbnb.android:lottie-compose:4.2.0"
 }

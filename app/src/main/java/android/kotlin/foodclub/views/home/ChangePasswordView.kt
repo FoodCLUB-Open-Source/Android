@@ -35,13 +35,15 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 val colorGreen= Color(android.graphics.Color.parseColor("#7EC60B"))
 val colorLightGray = Color(android.graphics.Color.parseColor("#DADADA"))
 
 
-        @Composable
-fun ChangePasswordView(){
+//The main function of this ChangePassword file. This arranges all components to build the screen
+@Composable
+fun ChangePasswordView(navController: NavController){
     Column(
         verticalArrangement = Arrangement.Top,
         modifier= Modifier
@@ -52,7 +54,7 @@ fun ChangePasswordView(){
 
     ){
 
-            SettingsTopBar("Password")
+            SettingsTopBar("Password", navController)
 
             Spacer(modifier = Modifier.height(30.dp))
 
@@ -67,6 +69,7 @@ fun ChangePasswordView(){
     }
 }
 
+// The common component to generate the input boxes that combine the Eye Icon too
 @Composable
 fun InputRow(boxType:String) {
 
@@ -98,6 +101,7 @@ fun InputRow(boxType:String) {
     }
 }
 
+// The field that takes in String input which is a part of the Input Row
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputField(boxType:String, passwordVisible:Boolean){
@@ -118,7 +122,6 @@ fun InputField(boxType:String, passwordVisible:Boolean){
         },
         colors = TextFieldDefaults.textFieldColors(
             containerColor = colorLightGray,
-            textColor = Color.Black,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent
         ),
@@ -127,6 +130,7 @@ fun InputField(boxType:String, passwordVisible:Boolean){
     )
 }
 
+// The Eye Icon as part of the Input Row
 @Composable
 fun EyeIcon(passwordVisibility: MutableState<Boolean>){
 
@@ -154,11 +158,7 @@ fun EyeIcon(passwordVisibility: MutableState<Boolean>){
 
 }
 
-
-
-
-
-
+// Logic to deal with the visibility of the password entered in the input field
 @Composable
 fun passwordHidden(hidden:Boolean):VisualTransformation{
     val passType:VisualTransformation = if(hidden) {
@@ -168,6 +168,8 @@ fun passwordHidden(hidden:Boolean):VisualTransformation{
     }
     return passType
 }
+
+//Component to define Save Button
 @Composable
 fun SaveButton(){
     Button(
