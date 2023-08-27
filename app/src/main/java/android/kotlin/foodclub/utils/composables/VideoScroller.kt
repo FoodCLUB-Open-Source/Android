@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.utils.composables
 
+import android.annotation.SuppressLint
 import android.content.res.AssetFileDescriptor
 import android.graphics.Bitmap
 import android.kotlin.foodclub.data.models.VideoModel
@@ -8,38 +9,27 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
 import android.view.ViewGroup
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -64,6 +54,10 @@ import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import coil.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 
@@ -98,6 +92,7 @@ fun extractThumbnailFromMedia(assetFileDesc: AssetFileDescriptor?, atTime: Int):
     return bitmap
 }
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
@@ -119,6 +114,9 @@ fun VideoScroller(
     var totalDuration by remember { mutableStateOf(0L) }
     var currentTime by remember { mutableStateOf(0L) }
     var bufferedPercentage by remember { mutableStateOf(0) }
+
+    var job: Job? = null
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = true) {
         withContext(Dispatchers.IO) {
@@ -146,6 +144,13 @@ fun VideoScroller(
 
                     }
                 })
+            }
+        }
+
+        job = coroutineScope.launch {
+            while (isActive) {
+                currentTime = exoPlayer.currentPosition.coerceAtLeast(0L)
+                delay(50)
             }
         }
 
@@ -202,7 +207,7 @@ fun VideoScroller(
             })
         })
             ProgressionBar(totalDuration,
-                modifier = Modifier.align(Alignment.BottomStart),
+                modifier = Modifier.align(Alignment.BottomEnd),
                 totalDuration = { totalDuration },
                 currentTime = { currentTime },
                 onSeekChanged = { timeMs: Float ->
@@ -223,6 +228,7 @@ fun VideoScroller(
                 thumbnail = thumbnail.copy(second = true)
                 exoPlayer.release()
                 onVideoDispose()
+                job?.cancel()
             }
         })
     }
