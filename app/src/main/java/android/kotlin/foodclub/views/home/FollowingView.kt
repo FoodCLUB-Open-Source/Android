@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.viewmodels.home.FollowerFollowingViewModel
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
@@ -37,12 +38,14 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun FollowingView(navController: NavController) {
     val systemUiController = rememberSystemUiController()
+    val viewModel: FollowerFollowingViewModel = viewModel()
 
     SideEffect {
         systemUiController.setSystemBarsColor(
@@ -85,6 +88,9 @@ fun FollowingView(navController: NavController) {
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
+
+            var followingList = viewModel.getFollowingList();
+
             Text(
                 text = "My Following", fontWeight = FontWeight.ExtraBold,
                 fontFamily = raleway,
@@ -93,12 +99,12 @@ fun FollowingView(navController: NavController) {
             )
             Spacer(modifier = Modifier.height(16.dp))
             LazyColumn( modifier = Modifier.padding(bottom = 150.dp) ) {
-                items(10) { index ->
+                items(followingList.size) { index ->
                     Following(
                         index = index,
                         imageRes = R.drawable.story_user,
-                        username = "Eric $index",
-                        completeName = "Eric young $index"
+                        username = "${followingList.get(index).userName} $index",
+                        completeName = "${followingList.get(index).userName} $index"
                     )
                 }
             }

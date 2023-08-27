@@ -10,6 +10,7 @@ import android.kotlin.foodclub.views.home.FollowerView
 import android.kotlin.foodclub.views.home.FollowingView
 import android.kotlin.foodclub.views.home.MyBasketView
 import android.kotlin.foodclub.views.home.PrivacySetting
+import android.kotlin.foodclub.views.home.SearchView
 import android.kotlin.foodclub.views.home.SettingsView
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.IntOffset
@@ -88,6 +89,10 @@ import com.example.foodclub.views.home.ProfileView
             MyBasketView(navController = navController)
         }
 
+        composable(route = HomeOtherRoutes.MySearchView.route) {
+            SearchView(navController = navController)
+        }
+
     }
 }
 
@@ -106,4 +111,6 @@ sealed class HomeOtherRoutes(val route: String) {
     object FollowingView : HomeOtherRoutes(route = "FOLLOWING_VIEW")
 
     object MyBasketView : HomeOtherRoutes(route = "BASKET_VIEW")
+
+    object MySearchView : HomeOtherRoutes(route = "SEARCH_VIEW")
 }
