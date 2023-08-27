@@ -12,67 +12,35 @@ import androidx.navigation.NavHostController
 
 class ProfileViewModel() : ViewModel() {
 
-    var data = arrayListOf<MyRecipeModel>()
-    var data1 = arrayListOf<MyRecipeModel>()
-
-    var myRecipeSliderColor by mutableStateOf(Color(203, 203, 203,255))
-    var bookmarkedSliderColor by mutableStateOf(Color(203, 203, 203,255))
-    var myRecipeTextDecoration by mutableStateOf(TextDecoration.None)
-    var bookmarkedTextDecoration by mutableStateOf(TextDecoration.None)
-
-
-
-    fun getData(){
-        data.add(MyRecipeModel("ifjak","12"))
-        data.add(MyRecipeModel("ifjak","12"))
-        data.add(MyRecipeModel("ifjak","12"))
-        data.add(MyRecipeModel("ifjak","12"))
-        data.add(MyRecipeModel("ifjak","12"))
-
-        data1.add(MyRecipeModel("Book","11"))
-        data1.add(MyRecipeModel("Book","112"))
-        data1.add(MyRecipeModel("Book","112"))
-
-    }
-
-    fun getPages(): List<ArrayList<MyRecipeModel>> {
-        var pages = listOf(
-            data,data1
+    val tabItems = listOf(
+        MyRecipeModel(
+            "image", "0", true
+        ), MyRecipeModel(
+            "image", "0", false
+        ), MyRecipeModel(
+            "image", "0", true
+        ), MyRecipeModel(
+            "image", "0", false
         )
+    )
 
-        return pages;
+    private fun getListFromDatabase() {
+
+        /// Hardcoded List used, need to fetch from API---->
+
+
     }
 
-    fun showFollowers(){
-      //  navController.navigate("FOLLOWER_VIEW")
+
+    fun getListOfMyRecipes(): List<MyRecipeModel> {
+        return tabItems;
     }
 
-    fun showFollowings(){
-        // Jump to FollowersFollowingActivity
+    fun getListOfBookmarkedRecipes(): List<MyRecipeModel> {
+
+        return tabItems.filter { unit -> return@filter (unit.bookMarked == true) };
+
     }
-
-    fun changeMyRecipeSliderColor(){
-
-        myRecipeSliderColor = Color.Black
-        myRecipeTextDecoration = TextDecoration.Underline
-    }
-
-    fun changeBookmarkedSliderColor(){
-        bookmarkedSliderColor = Color.Black
-        bookmarkedTextDecoration = TextDecoration.Underline
-    }
-
-    fun reverseMyRecipeSliderColor(){
-
-        myRecipeSliderColor = Color(203, 203, 203,255)
-        myRecipeTextDecoration = TextDecoration.None
-    }
-
-    fun reverseBookmarkedSliderColor(){
-        bookmarkedSliderColor = Color(203, 203, 203,255)
-        bookmarkedTextDecoration = TextDecoration.None
-    }
-
 
 
 }

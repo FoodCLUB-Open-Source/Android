@@ -2,10 +2,7 @@ package com.example.foodclub.views.home
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.data.models.DiscoverViewRecipeModel
-import android.kotlin.foodclub.data.models.MyRecipeModel
 import android.kotlin.foodclub.views.home.BottomSheetIngredients
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -13,7 +10,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,15 +25,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -67,20 +60,24 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.foodclub.viewmodels.home.DiscoverViewModel
-import com.example.foodclub.viewmodels.home.ProfileViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.util.logging.Logger
 
+
+val recipesList = listOf(
+    DiscoverViewRecipeModel("Dwight","11 Hours","Protein","Germany"),
+    DiscoverViewRecipeModel("Jim","10 Hours","Carbs","England"),
+    DiscoverViewRecipeModel("Bob","9 Hours","Protein","France"),
+    DiscoverViewRecipeModel("Michael","24 Hours","Protein","England"),
+    DiscoverViewRecipeModel("Pam","12 Hours","Drinks","England"),
+)
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -109,9 +106,8 @@ fun DiscoverView(navController: NavController) {
 
 
     val viewModel: DiscoverViewModel = viewModel()
-    val pages = viewModel.getPages();
 
-    viewModel.getData()
+
     Column(modifier = Modifier.fillMaxSize().background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally) {
 
@@ -166,6 +162,7 @@ fun DiscoverView(navController: NavController) {
 
                     onClick = {
 
+                        navController.navigate("SEARCH_VIEW")
 
                     }
 
@@ -238,6 +235,10 @@ fun DiscoverView(navController: NavController) {
         val tabItems3 = listOf(
             "England", "Italy", "France", "Germany"
         )
+
+
+
+
 
         var tabIndex by remember { mutableStateOf(0) }
 
@@ -345,8 +346,8 @@ fun DiscoverView(navController: NavController) {
 
             Box(
                 Modifier
-                    .fillMaxSize()
-                    .padding(top = 5.dp, start = 15.dp, end = 15.dp)
+                    .fillMaxWidth()
+                    .padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 100.dp)
 
             ) {
 
@@ -354,8 +355,8 @@ fun DiscoverView(navController: NavController) {
                     columns = GridCells.Fixed(2),
                 ) {
 
-                    items(5) { dataItem ->
-                        GridItem2(navController)
+                    items(recipesList.size) { dataItem ->
+                        GridItem2(navController,dataItem)
                     }
 
 
@@ -419,7 +420,7 @@ fun TabHomeDiscover(
 }
 
 @Composable
-fun GridItem2(navController: NavController) {
+fun GridItem2(navController: NavController, dataItem: Int) {
 
     val satoshiFamily = FontFamily(
         Font(R.font.satoshi, FontWeight.Medium)
@@ -452,14 +453,14 @@ fun GridItem2(navController: NavController) {
                     .padding(10.dp), verticalArrangement = Arrangement.Bottom
             ) {
                 Text(
-                    text = "Emily",
+                    text = recipesList[dataItem].name ,
                     fontFamily = satoshiFamily,
                     color = Color.White,
                     fontSize = 18.sp
                 )
 
                 Text(
-                    text = "19 hour ago",
+                    text = recipesList[dataItem].name,
                     fontFamily = satoshiFamily,
                     fontSize = 12.sp,
                     color = Color(231, 231, 231, 200)

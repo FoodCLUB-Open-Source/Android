@@ -71,12 +71,9 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-
-
 fun ProfileView(navController: NavController) {
 
     val viewModel:ProfileViewModel = viewModel()
-    viewModel.getData()
     val systemUiController = rememberSystemUiController()
     SideEffect {
         systemUiController.setSystemBarsColor(
@@ -90,9 +87,7 @@ fun ProfileView(navController: NavController) {
         Font(R.font.montserratregular, FontWeight.Normal),
         Font(R.font.montserratsemibold, FontWeight.SemiBold),)
     val pagerState = rememberPagerState() { 2 };
-    val animals= arrayOf(R.drawable.profilepicture, R.drawable.login_with)
-    val pages = viewModel.getPages();
-    var currentTabIndex by remember { mutableStateOf(0) }
+
 
     Column (modifier = Modifier.fillMaxSize().background(Color.White),
         verticalArrangement = Arrangement.Center
@@ -227,6 +222,17 @@ fun ProfileView(navController: NavController) {
                     )
                 }
             }
+
+
+            var tabItems = viewModel.getListOfMyRecipes();
+
+            if(pagerState.currentPage == 0){
+                tabItems = viewModel.getListOfMyRecipes();
+            }
+            else if(pagerState.currentPage == 1){
+                tabItems = viewModel.getListOfBookmarkedRecipes();
+            }
+
             HorizontalPager(
                 state = pagerState,
                 beyondBoundsPageCount = 10,
@@ -239,8 +245,8 @@ fun ProfileView(navController: NavController) {
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(2),
                     ) {
-                        items(5) { dataItem ->
-                            GridItem(navController)
+                        items(tabItems) { dataItem ->
+                            GridItem(navController,dataItem)
                         }
                     }
                 }
@@ -250,7 +256,7 @@ fun ProfileView(navController: NavController) {
 }
 
 @Composable
-fun GridItem(navController: NavController){
+fun GridItem(navController: NavController,dataItem:MyRecipeModel){
     Card(modifier = Modifier
         .height(272.dp)
         .width(178.dp)
@@ -262,25 +268,20 @@ fun GridItem(navController: NavController){
             .fillMaxHeight()){
             Image(painter = painterResource(id = R.drawable.salad_ingredient), contentDescription = "",
                 Modifier.fillMaxSize().clickable { navController.navigate("DELETE_RECIPE") }, contentScale = ContentScale.FillHeight)
-            Text(text = "blabla" ,
-                fontFamily = montserratFamily,
-                modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(10.dp), color = Color.White)
         }
 
     }
 }
 
-data class Recipe(
+data class RecipeHeader(
     val title: String,
 )
 
 val tabItem = listOf(
-    Recipe(
+    RecipeHeader(
         "My Recipes",
     ),
-    Recipe(
+    RecipeHeader(
         "Bookmarked",
     )
 )

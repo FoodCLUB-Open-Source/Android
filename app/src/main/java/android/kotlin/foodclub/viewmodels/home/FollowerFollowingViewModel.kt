@@ -1,28 +1,36 @@
 package android.kotlin.foodclub.viewmodels.home
 
-import android.kotlin.foodclub.data.models.MyRecipeModel
-import android.kotlin.foodclub.data.models.Users
+import android.kotlin.foodclub.data.models.User
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 
 class FollowerFollowingViewModel :ViewModel(){
 
+    fun getFollowersList():List<User>{
+        val list = listOf<User>(
+            User("","eric","Eric Young",true,true),
+            User("","eric","Eric Young",true,true),
+            User("","eric","Eric Young",true,true),
+            User("","eric","Eric Young",true,true),
+            User("","eric","Eric Young",true,true),
+            User("","eric","Eric Young",true,true),
+            User("","eric","Eric Young",true,true),
+        )
 
-    var data = arrayListOf<Users>()
-
-    fun getData(){
-        data.add(Users("ifjak","shubhamjain","Shubham"))
-        data.add(Users("ifjak","shubhamjain","Shubham"))
-        data.add(Users("ifjak","shubhamjain","Shubham"))
-        data.add(Users("ifjak","shubhamjain","Shubham"))
-        data.add(Users("ifjak","shubhamjain","Shubham"))
+        return list;
     }
 
-    fun backButton(){
+    fun getFollowingList():List<User>{
+        val list = listOf<User>(
+            User("","eric","Eric Young",true,true),
+            User("","eric","Eric Young",true,true),
+            User("","eric","Eric Young",true,true),
+            User("","eric","Eric Young",true,true),
+            User("","eric","Eric Young",true,true),
+            User("","eric","Eric Young",true,true),
+            User("","eric","Eric Young",true,true),
+        )
 
-
+        return list;
     }
-
-
 
 }

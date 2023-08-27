@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.viewmodels.home.FollowerFollowingViewModel
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
@@ -36,26 +37,25 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.foodclub.viewmodels.home.ProfileViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 val avenir = FontFamily(
-
     Font(R.font.avenirblack, FontWeight.Bold),
     Font(R.font.avenirbook, FontWeight.Medium)
-
 )
 
 val raleway = FontFamily(
-
     Font(R.font.ralewayextrabold, FontWeight.ExtraBold),
-
-
-    )
+)
 
 @Composable
 fun FollowerView(navController: NavController) {
     val systemUiController = rememberSystemUiController()
+    val viewModel: FollowerFollowingViewModel = viewModel()
+
 
     SideEffect {
         systemUiController.setSystemBarsColor(
@@ -105,13 +105,16 @@ fun FollowerView(navController: NavController) {
                 modifier = Modifier.padding(start = 20.dp),
             )
             Spacer(modifier = Modifier.height(16.dp))
+
+            var followerList = viewModel.getFollowersList();
+
             LazyColumn( modifier = Modifier.padding(bottom = 150.dp) ) {
-                items(10) { index ->
+                items(followerList.size) { index ->
                     Follower(
                         index = index,
                         imageRes = R.drawable.story_user,
-                        username = "Eric $index",
-                        completeName = "Eric young $index"
+                        username = "${followerList.get(index).userName} $index",
+                        completeName = "${followerList.get(index).fullName} $index"
                     )
                 }
             }
