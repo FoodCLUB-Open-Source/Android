@@ -15,7 +15,7 @@ import com.example.foodclub.views.authentication.SignupView
 fun NavGraphBuilder.authNavigationGraph(navController: NavHostController) {
     navigation(
         route = Graph.AUTHENTICATION,
-        startDestination = AuthScreen.MainLogInAndSignUp.route
+        startDestination = AuthScreen.Login.route
     ) {
         composable(route = AuthScreen.MainLogInAndSignUp.route) {
             MainLogInAndSignUp(navController)

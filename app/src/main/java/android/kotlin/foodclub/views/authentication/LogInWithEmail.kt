@@ -34,7 +34,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,41 +57,37 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.text.TextStyle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.foodclub.viewmodels.authentication.LoginViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LogInWithEmail(navController: NavHostController) {
-
-
+    // we need to make only one view model
     val viewModel: LogInWithEmailViewModel = viewModel()
-
+    val viewModelApi: LoginViewModel = viewModel()
 
     var interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
-
-
-    if (!isPressed) {
-        viewModel.reverseButtonUi()
-    }
-
     var interactionSource1 = remember { MutableInteractionSource() }
     val isPressed1 by interactionSource1.collectIsPressedAsState()
+    // API
+    val creditCards by viewModelApi.user.observeAsState(emptyList())
 
+    // API we need to move this part in a onClick function. This will execute on runtime
+    LaunchedEffect(Unit) {
+        viewModelApi.fetchUserSignUp( /* there should be parameters since this is a post request */ )
+        // after calling the idea would be to make a Log.D(response)
+    }
 
-    if (!isPressed1) {
+    if (!isPressed || !isPressed1) {
         viewModel.reverseButtonUi()
     }
 
-
     val montserratFamily = FontFamily(
-
         Font(R.font.montserratbold, FontWeight.Bold),
         Font(R.font.montserratbold, FontWeight.SemiBold),
         Font(R.font.montserratmedium, FontWeight.Medium)
-
     )
-
-
     Column(
         Modifier
             .fillMaxSize()
@@ -128,7 +126,6 @@ fun LogInWithEmail(navController: NavHostController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(25.dp)
         ) {
-
             TextField(
                 value = "",
                 onValueChange = {},
@@ -137,22 +134,17 @@ fun LogInWithEmail(navController: NavHostController) {
                     .border(1.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
                     .clip(RoundedCornerShape(10.dp))
                     .fillMaxWidth(),
-
                 placeholder = {
                     Text(text = "Email", fontFamily = montserratFamily, color = Color(218, 218, 218, 228))
                 },
-
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = Color(218, 218, 218, 128),
                     unfocusedBorderColor = Color(218, 218, 218, 110)
                 )
-
             )
-
             TextField(
                 value = "",
                 onValueChange = {},
-
                 placeholder = {
                     Text(text = "Password", fontFamily = montserratFamily, color = Color(218, 218, 218, 228))
                 },
