@@ -68,6 +68,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.DisposableEffect
@@ -86,6 +88,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.IntSize
 import androidx.navigation.NavController
 import java.util.Collections.copy
+import kotlin.random.Random
 
 @Stable
 data class Colors(
@@ -420,17 +423,18 @@ fun CreateRecipeView(navController: NavController) {
     var showSheet by remember { mutableStateOf(false) }
     var showCategorySheet by remember { mutableStateOf(false) }
     val codeTriggered = remember { mutableStateOf(false) }
-    /*val systemBarsColorsLight = Colors(
-        statusBarColor = Color.White,
-        navBarColor = Color.White,
+    var sliderPosition by remember { mutableStateOf(0f) }
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 240.dp
+    val rows = listOf(
+        listOf("fzfe", "fefez", "fzeffezfze"),
+        listOf("Button", "Button"),
     )
-    val systemBarsColorsDark = Colors(
-        statusBarColor = Color(android.graphics.Color.parseColor("#ACACAC")),
-        navBarColor = Color.Black,
-    )*/
 
-    //val animatedColors = (if (showSheet) systemBarsColorsLight else systemBarsColorsDark).switch()
+    var isSmallScreen by remember { mutableStateOf(false) }
 
+    if (screenHeight <= 440.dp) {
+        isSmallScreen = true
+    }
     LaunchedEffect(key1 = codeTriggered.value) {
         systemUiController.setSystemBarsColor(
                 color = Color.White,
@@ -530,18 +534,8 @@ fun CreateRecipeView(navController: NavController) {
                     onValueChange = {},
                     placeholder = {
                         Text(
-                            "Add a caption", fontFamily = montserratFamily, fontSize = 14.sp,
+                            "Add my recipe’s name", fontFamily = montserratFamily, fontSize = 15.sp,
                             color = Color(android.graphics.Color.parseColor("#B3B3B3"))
-                        )
-                    },
-                    leadingIcon = {
-                        Image(
-                            painter = painterResource(id = R.drawable.story_user),
-                            contentDescription = "Profile Image",
-                            modifier = Modifier
-                                .size(100.dp)
-                                .padding(10.dp)
-                                .clip(RoundedCornerShape(12.dp))
                         )
                     },
                     modifier = Modifier.fillMaxWidth(),
@@ -551,45 +545,102 @@ fun CreateRecipeView(navController: NavController) {
                         unfocusedBorderColor = Color(android.graphics.Color.parseColor("#E8E8E8"))
                     )
                 )
-                SectionItem(
-                    title = "Add Categories",
-                    action = "Vegan",
-                    icon = Icons.Default.KeyboardArrowDown,
-                    onClick = triggerCategoryBottomSheetModal
-                )
-                Divider(
-                    color = Color(android.graphics.Color.parseColor("#E8E8E8")),
-                    thickness = 1.dp
-                )
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(80.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Add Serving Size", fontFamily = montserratFamily, fontSize = 14.sp)
+                    Text("Serving Size: 1", fontFamily = montserratFamily, fontSize = 14.sp)
                     Spacer(modifier = Modifier.weight(1f))
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Image(
-                            painter = painterResource(id = R.drawable.baseline_arrow_left_24),
-                            contentDescription = "Profile Image",
-                            modifier = Modifier
-                                .size(50.dp)
-                                .padding(end = 15.dp)
-                        )
-                        Text(
-                            "1",
-                            color = Color.Black,
-                            fontFamily = montserratFamily,
-                            fontSize = 14.sp
-                        )
-                        Image(
-                            painter = painterResource(id = R.drawable.baseline_arrow_right_24),
-                            contentDescription = "Profile Image",
-                            modifier = Modifier
-                                .size(50.dp)
-                                .padding(start = 15.dp)
-                        )
+                    Slider(
+                        modifier = Modifier
+                            .width(if (isSmallScreen == true) 150.dp else 200.dp),
+                        value = sliderPosition,
+                        onValueChange = { sliderPosition = it },
+                        valueRange = 0f..10f,
+                        steps = 0,
+                        colors = SliderDefaults.colors(
+                            thumbColor = Color(android.graphics.Color.parseColor("#7EC60B")),
+                            activeTrackColor = Color(android.graphics.Color.parseColor("#D9D9D9")),
+                            inactiveTrackColor = Color(android.graphics.Color.parseColor("#D9D9D9"))
+                        ),
+                    )
+                }
+                Divider(
+                    color = Color(android.graphics.Color.parseColor("#E8E8E8")),
+                    thickness = 1.dp
+                )
+                Spacer(modifier = Modifier.height(15.dp))
+                SectionItem(
+                    title = "Categories",
+                    action = "Vegan",
+                    icon = Icons.Default.KeyboardArrowDown,
+                    onClick = triggerCategoryBottomSheetModal
+                )
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(1),
+                    contentPadding = PaddingValues(8.dp),
+                    modifier = Modifier
+                        .padding(top = 2.dp)
+                        .height(100.dp)
+                )  {
+                    items(rows.size) { rowIndex ->
+                        val row = rows[rowIndex]
+                        Row(
+                            horizontalArrangement = Arrangement.Start,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            row.forEachIndexed { buttonIndex, buttonText ->
+                                val flatIndex = rowIndex * 3 + buttonIndex
+                                val color = Color(android.graphics.Color.parseColor("#A059D9"))
+                                Button(
+                                    modifier = Modifier
+                                        //.border(1.dp, Color.Transparent, shape = RoundedCornerShape(15.dp))
+                                        .wrapContentWidth().height(30.dp)
+                                        .clip(RoundedCornerShape(15.dp)),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = color,
+                                        contentColor = Color.White
+                                    ), contentPadding = PaddingValues(5.dp),
+                                    shape = RoundedCornerShape(15.dp),
+
+                                    onClick = {
+                                        //selectedButtonsState[flatIndex] = !isSelected
+                                    }
+                                ) {
+                                    Text(text = buttonText,
+                                        fontSize = 10.sp,
+                                        modifier = Modifier.padding(start = 1.dp, end = 1.dp),
+                                        fontFamily = montserratFamily)
+                                    Button(
+                                        modifier = Modifier
+                                            .border(2.dp, Color.White, shape = RoundedCornerShape(15.dp))
+                                            .width(20.dp).height(30.dp)
+                                            .clip(RoundedCornerShape(15.dp)),
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = color,
+                                            contentColor = Color.White
+                                        ), contentPadding = PaddingValues(0.dp),
+                                        shape = RoundedCornerShape(15.dp),
+                                        onClick = {
+                                            //selectedButtonsState[flatIndex] = !isSelected
+                                        }
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.baseline_clear_24),
+                                            contentDescription = null,
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier
+                                                .size(15.dp)
+                                                .clip(RoundedCornerShape(12.dp))
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.width(10.dp))
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(40.dp))
                     }
                 }
                 Divider(
@@ -613,17 +664,18 @@ fun CreateRecipeView(navController: NavController) {
                                 shape = RoundedCornerShape(20.dp)
                             )
                             .clip(RoundedCornerShape(20.dp))
-                            .width(145.dp),
+                            .width(120.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.White,
                             contentColor = Color(126, 198, 11, 255)
                         ), contentPadding = PaddingValues(15.dp),
+
                         onClick = {
                             triggerBottomSheetModal()
                         }
                     ) {
                         Text(
-                            "Add items +",
+                            "Add +",
                             color = Color(126, 198, 11, 255),
                             fontFamily = montserratFamily,
                             fontSize = 14.sp
@@ -660,7 +712,7 @@ fun Ingredient(ingredient: String) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(150.dp)
+            .height(100.dp)
             .border(
                 1.dp,
                 Color(android.graphics.Color.parseColor("#E8E8E8")),
@@ -671,35 +723,37 @@ fun Ingredient(ingredient: String) {
             .padding(10.dp)
     ) {
         Image(
-            painter = painterResource(id = R.drawable.story_user),
+            painter = painterResource(id = R.drawable.salad_ingredient),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .height(200.dp)
-                .width(130.dp)
+                .height(80.dp)
+                .width(80.dp)
                 .clip(RoundedCornerShape(12.dp))
         )
         Box(
             modifier = Modifier
-                .padding(start = 140.dp, top = 10.dp)
-                .fillMaxSize()
+                .padding(start = 95.dp)
+                .fillMaxWidth().height(70.dp),
+            contentAlignment = Alignment.Center
         ) {
-            Box ( ) {
+            Box ( modifier = Modifier.width(105.dp).align(Alignment.CenterStart) ) {
                 Text(
                     text = ingredient,
                     modifier = Modifier
                         .align(Alignment.TopStart),
+                    fontFamily = montserratFamily,
                     fontWeight = FontWeight.Normal
                 )
             }
-            Box ( modifier = Modifier.align(Alignment.BottomEnd) ) {
+            Box ( modifier = Modifier.align(Alignment.CenterEnd) ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Image(
                         painter = painterResource(id = R.drawable.baseline_arrow_left_24),
                         contentDescription = "Profile Image",
                         modifier = Modifier
-                            .size(50.dp)
-                            .padding(end = 15.dp)
+                            .size(35.dp)
+                            .padding(end = 5.dp)
                     )
                     Text(
                         "200g",
@@ -711,8 +765,8 @@ fun Ingredient(ingredient: String) {
                         painter = painterResource(id = R.drawable.baseline_arrow_right_24),
                         contentDescription = "Profile Image",
                         modifier = Modifier
-                            .size(50.dp)
-                            .padding(start = 15.dp)
+                            .size(35.dp)
+                            .padding(start = 5.dp)
                     )
                 }
             }
@@ -764,18 +818,33 @@ fun SectionItem(
 ) {
         Row ( modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp), verticalAlignment = Alignment.CenterVertically) {
+            .height(50.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(title, fontFamily = montserratFamily, fontSize = 14.sp)
             Spacer(modifier = Modifier.weight(1f))
-            Row( modifier = Modifier.clickable { onClick() } ) {
-                Text(action, color = actionColor, fontFamily = montserratFamily, fontSize = 14.sp)
-                icon?.let {
-                    Icon(
-                        it,
-                        contentDescription = null,
-                        modifier = Modifier.padding(start = 8.dp)
+            Button(
+                shape = RectangleShape,
+                modifier = Modifier
+                    .border(
+                        1.dp,
+                        Color(126, 198, 11, 255),
+                        shape = RoundedCornerShape(20.dp)
                     )
+                    .clip(RoundedCornerShape(20.dp))
+                    .width(120.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White,
+                    contentColor = Color(126, 198, 11, 255)
+                ), contentPadding = PaddingValues(15.dp),
+                onClick = {
+                    onClick()
                 }
+            ) {
+                Text(
+                    "Add +",
+                    color = Color(126, 198, 11, 255),
+                    fontFamily = montserratFamily,
+                    fontSize = 14.sp
+                )
             }
         }
 }
