@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
@@ -82,15 +83,18 @@ fun LogInWithEmail(navController: NavHostController) {
 
     val montserratFamily = FontFamily(
 
-        Font(R.font.montserratregular, FontWeight.Normal),
+        Font(R.font.montserratbold, FontWeight.Bold),
+        Font(R.font.montserratbold, FontWeight.SemiBold),
+        Font(R.font.montserratmedium, FontWeight.Medium)
 
-        )
+    )
 
 
     Column(
         Modifier
             .fillMaxSize()
-            .padding(12.dp),
+            .background(Color.White)
+            .padding(start = 25.dp, end = 25.dp, top = 30.dp, bottom = 60.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(35.dp)
     ) {
@@ -102,38 +106,25 @@ fun LogInWithEmail(navController: NavHostController) {
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            Image(
-                painterResource(id = R.drawable.back_icon),
-                contentDescription = "back_icon",
-                modifier = Modifier
-                    .width(35.dp)
-                    .height(35.dp)
-
-            )
-
             Text(
                 text = "Welcome Back!",
-                fontSize = 30.sp,
+                fontFamily = montserratFamily,
+                fontSize = 25.sp,
                 fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(top = 20.dp, start = 10.dp)
+                modifier = Modifier.padding(top = 20.dp)
             )
-
-
             Text(
                 text = "Cooking just got social!",
-                fontSize = 15.sp,
+                fontFamily = montserratFamily,
+                fontSize = 13.sp,
                 color = Color.Gray,
-                modifier = Modifier.padding(start = 10.dp)
+                modifier = Modifier
             )
-
-
         }
-
         Column(
 
             Modifier
-                .fillMaxSize()
-                .padding(20.dp),
+                .fillMaxSize().padding(top = 10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(25.dp)
         ) {
@@ -148,7 +139,7 @@ fun LogInWithEmail(navController: NavHostController) {
                     .fillMaxWidth(),
 
                 placeholder = {
-                    Text(text = "Email", color = Color(218, 218, 218, 228))
+                    Text(text = "Email", fontFamily = montserratFamily, color = Color(218, 218, 218, 228))
                 },
 
                 colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -163,7 +154,7 @@ fun LogInWithEmail(navController: NavHostController) {
                 onValueChange = {},
 
                 placeholder = {
-                    Text(text = "Password", color = Color(218, 218, 218, 228))
+                    Text(text = "Password", fontFamily = montserratFamily, color = Color(218, 218, 218, 228))
                 },
 
                 modifier =
@@ -212,24 +203,19 @@ fun LogInWithEmail(navController: NavHostController) {
 
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
-
-                horizontalArrangement = Arrangement.SpaceEvenly
-
-
+                modifier = Modifier.wrapContentWidth(),
+                horizontalArrangement = Arrangement.SpaceAround
             ) {
 
                 Text(
                     color = Color.Black,
                     text = "Forgot Password?",
                     fontFamily = montserratFamily,
-                    fontSize = 13.sp
-
+                    fontSize = 13.sp,
+                    modifier = Modifier.padding(end = 5.dp)
                 )
-
-
                 ClickableText(
-                    text = AnnotatedString("Log in >"),
+                    text = AnnotatedString("Log in"),
                     onClick = {
 
                     },
@@ -247,7 +233,7 @@ fun LogInWithEmail(navController: NavHostController) {
                 contentDescription = "app_title",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(20.dp)
+                    .height(15.dp)
 
 
             )
@@ -259,7 +245,7 @@ fun LogInWithEmail(navController: NavHostController) {
                 Button(
                     shape = RectangleShape,
                     modifier = Modifier
-                        .width(100.dp)
+                        .width(60.dp)
                         .border(1.dp, Color(230,230,230,255), shape = RoundedCornerShape(10.dp))
                         .clip(RoundedCornerShape(10.dp)),
                     colors = ButtonDefaults.buttonColors(
@@ -275,14 +261,14 @@ fun LogInWithEmail(navController: NavHostController) {
                     Image(
                         painterResource(id = R.mipmap.facebook_icon),
                         contentDescription = "",
-                        Modifier.size(25.dp)
+                        Modifier.size(20.dp)
                     )
                 }
 
                 Button(
                     shape = RectangleShape,
                     modifier = Modifier
-                        .width(100.dp)
+                        .width(60.dp)
                         .border(1.dp, Color(230,230,230,255), shape = RoundedCornerShape(10.dp))
                         .clip(RoundedCornerShape(10.dp)),
                     colors = ButtonDefaults.buttonColors(
@@ -298,7 +284,7 @@ fun LogInWithEmail(navController: NavHostController) {
                     Image(
                         painterResource(id = R.mipmap.instagram_icon),
                         contentDescription = "",
-                        Modifier.size(25.dp)
+                        Modifier.size(20.dp)
                     )
                 }
             }
