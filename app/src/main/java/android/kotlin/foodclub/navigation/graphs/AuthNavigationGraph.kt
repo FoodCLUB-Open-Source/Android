@@ -9,13 +9,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.foodclub.views.authentication.ConfirmIdentityView
 import com.example.foodclub.views.authentication.ForgotPasswordView
-import com.example.foodclub.views.authentication.LoginView
-import com.example.foodclub.views.authentication.SignupView
 
 fun NavGraphBuilder.authNavigationGraph(navController: NavHostController) {
     navigation(
         route = Graph.AUTHENTICATION,
-        startDestination = AuthScreen.Login.route
+        startDestination = AuthScreen.MainLogInAndSignUp.route
     ) {
         composable(route = AuthScreen.MainLogInAndSignUp.route) {
             MainLogInAndSignUp(navController)

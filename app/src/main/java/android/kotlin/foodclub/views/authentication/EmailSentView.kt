@@ -41,9 +41,7 @@ import androidx.navigation.compose.rememberNavController
 fun EmailSentView(navController: NavHostController) {
 
     val montserratFamily = FontFamily(
-
-        Font(R.font.montserratregular, FontWeight.Normal),
-
+         Font(R.font.montserratregular, FontWeight.Normal),
     )
 
     Column(
