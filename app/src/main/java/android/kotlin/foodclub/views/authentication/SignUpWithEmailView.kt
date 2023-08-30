@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.views.authentication
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.api.authentication.UserSignUpInformation
 import android.kotlin.foodclub.api.retrofit.RetrofitInstance
 import android.kotlin.foodclub.viewmodels.authentication.LogInWithEmailViewModel
 import android.util.Log
@@ -66,7 +67,6 @@ fun SignUpWithEmailView(navController: NavHostController) {
 
 
     val viewModel: SignupViewWithEmailViewModel = viewModel()
-    val coroutineScope = rememberCoroutineScope()
 
     val montserratFamily = FontFamily(
 
@@ -204,6 +204,10 @@ fun SignUpWithEmailView(navController: NavHostController) {
 
             )
 
+            val coroutineScope = rememberCoroutineScope()
+
+
+
 
             Button(
                 shape = RectangleShape,
@@ -218,10 +222,17 @@ fun SignUpWithEmailView(navController: NavHostController) {
 
                 onClick = {
                 coroutineScope.launch {
-                       // viewModel.signUpUser(userEmail, userPassword);
-                            val response =
+
+                    val requestBody = UserSignUpInformation("shubham619",userEmail,userPassword)
+
+
+
                                 try {
-                                    RetrofitInstance.retrofitApi.postUser("shubham619", email = userEmail, password = userPassword)
+
+                                    viewModel.signUpUser(requestBody);
+
+
+
                                 }catch (e:IOException){
 
                                 }

@@ -17,11 +17,9 @@ data class UserSignUpInformation(
 
 interface API {
 
-    @POST("api/v1/login/signup")
+    @POST("login/signup")
     suspend fun postUser(
-        @Query("username") username:String,
-        @Query("email") email:String,
-        @Query("password") password: String
+       @Query("username") name:String,@Query("email") email:String,@Query("password") password:String,
     ):Response<UserSignUpInformation>
 
 }

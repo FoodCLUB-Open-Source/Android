@@ -16,7 +16,7 @@ fun NavGraphBuilder.authNavigationGraph(navController: NavHostController) {
         startDestination = AuthScreen.MainLogInAndSignUp.route
     ) {
         composable(route = AuthScreen.MainLogInAndSignUp.route) {
-            MainLogInAndSignUp(navController)
+            SignUpWithEmailView(navController)
         }
         composable(route = AuthScreen.Login.route) {
             LogInWithEmail(navController)
