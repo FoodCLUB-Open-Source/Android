@@ -3,6 +3,7 @@ package com.example.foodclub.navigation.graphs
 import android.kotlin.foodclub.views.authentication.LogInWithEmail
 import android.kotlin.foodclub.views.authentication.MainLogInAndSignUp
 import android.kotlin.foodclub.views.authentication.SignUpWithEmailView
+import android.kotlin.foodclub.views.authentication.SignupVerification
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -30,6 +31,9 @@ fun NavGraphBuilder.authNavigationGraph(navController: NavHostController) {
         composable(route = AuthScreen.ConfirmId.route) {
             ConfirmIdentityView()
         }
+        composable(route = AuthScreen.VerifySignup.route) {
+            SignupVerification(navController)
+        }
     }
 }
 
@@ -39,4 +43,5 @@ sealed class AuthScreen(val route: String) {
     object SignUp : AuthScreen(route = "SIGN_UP")
     object Forgot : AuthScreen(route = "FORGOT")
     object ConfirmId : AuthScreen(route = "CONFIRM_ID")
+    object VerifySignup : AuthScreen(route = "VERIFY_SIGN_UP")
 }
