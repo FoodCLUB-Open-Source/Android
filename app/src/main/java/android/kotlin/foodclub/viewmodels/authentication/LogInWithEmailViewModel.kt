@@ -16,7 +16,7 @@ class LogInWithEmailViewModel :ViewModel(){
     interface API {
         @POST("login/signin")
 
-        suspend fun checkUser(
+        suspend fun loginUser(
             @Body credentials: UserCredentials
         ): Response<LoginResponse>
 
@@ -33,7 +33,7 @@ class LogInWithEmailViewModel :ViewModel(){
     fun logInUser(userEmail:String,userPassword:String){
         viewModelScope.launch {
             try{
-                val response = RetrofitInstance.retrofitApi.checkUser(UserCredentials(userEmail, userPassword))
+                val response = RetrofitInstance.retrofitApi1.loginUser(UserCredentials(userEmail, userPassword))
             } catch(e : Exception){
 
             }
