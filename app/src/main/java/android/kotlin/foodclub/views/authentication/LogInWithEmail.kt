@@ -2,18 +2,18 @@ package android.kotlin.foodclub.views.authentication
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.viewmodels.authentication.LogInWithEmailViewModel
-import android.kotlin.foodclub.viewmodels.authentication.MainLogInAndSignUpViewModel
-import android.widget.EditText
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,13 +36,15 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
@@ -57,42 +59,42 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.text.TextStyle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.foodclub.viewmodels.authentication.LoginViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LogInWithEmail(navController: NavHostController) {
     // we need to make only one view model
     val viewModel: LogInWithEmailViewModel = viewModel()
-    val viewModelApi: LoginViewModel = viewModel()
 
-    var interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-    var interactionSource1 = remember { MutableInteractionSource() }
-    val isPressed1 by interactionSource1.collectIsPressedAsState()
+
     // API
-    val creditCards by viewModelApi.user.observeAsState(emptyList())
+    //val creditCards by viewModelApi.user.observeAsState(emptyList())
 
     // API we need to move this part in a onClick function. This will execute on runtime
     LaunchedEffect(Unit) {
-        viewModelApi.fetchUserSignUp( /* there should be parameters since this is a post request */ )
+      //  viewModelApi.fetchUserSignUp( /* there should be parameters since this is a post request */ )
         // after calling the idea would be to make a Log.D(response)
     }
 
-    if (!isPressed || !isPressed1) {
-        viewModel.reverseButtonUi()
-    }
+
 
     val montserratFamily = FontFamily(
         Font(R.font.montserratbold, FontWeight.Bold),
         Font(R.font.montserratbold, FontWeight.SemiBold),
         Font(R.font.montserratmedium, FontWeight.Medium)
     )
+
+    val plusjakartasansFamily = FontFamily(
+
+        Font(R.font.plusjakartasanssemibold, FontWeight.Bold),
+
+    )
+
     Column(
         Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(start = 25.dp, end = 25.dp, top = 30.dp, bottom = 60.dp),
+            .padding(top = 60.dp, start = 30.dp, end = 30.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(35.dp)
     ) {
@@ -104,62 +106,109 @@ fun LogInWithEmail(navController: NavHostController) {
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
+            Button(
+                shape = RectangleShape,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(15.dp))
+                    .width(40.dp)
+                    .height(40.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White,
+                    contentColor = Color.White
+                ), contentPadding = PaddingValues(5.dp),
+                onClick = {
+                    navController.navigateUp()
+                }
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.back_icon),
+                    contentDescription = "Back",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .width(36.dp)
+                        .height(36.dp)
+                )
+            }
+
             Text(
                 text = "Welcome Back!",
-                fontFamily = montserratFamily,
-                fontSize = 25.sp,
-                fontWeight = FontWeight.SemiBold,
+                fontFamily = plusjakartasansFamily,
+                fontSize = 32.sp,
                 modifier = Modifier.padding(top = 20.dp)
             )
+
+            Spacer(modifier = Modifier.height(3.dp))
+
             Text(
                 text = "Cooking just got social!",
                 fontFamily = montserratFamily,
-                fontSize = 13.sp,
+                fontSize = 18.sp,
                 color = Color.Gray,
-                modifier = Modifier
+
             )
         }
         Column(
 
             Modifier
-                .fillMaxSize().padding(top = 10.dp),
+                .fillMaxSize()
+                .padding(top = 10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(25.dp)
         ) {
+            var userEmail by remember { mutableStateOf("") }
+            var userPassword by remember { mutableStateOf("") }
+
             TextField(
-                value = "",
-                onValueChange = {},
+                value = userEmail,
+                onValueChange = {
+                    userEmail = it;
+                },
                 modifier = Modifier
-                    .background(Color(218, 218, 218, 1))
                     .border(1.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
                     .clip(RoundedCornerShape(10.dp))
+                    .background(Color(218, 218, 218, 70))
                     .fillMaxWidth(),
+
                 placeholder = {
-                    Text(text = "Email", fontFamily = montserratFamily, color = Color(218, 218, 218, 228))
+                    Text(
+                        text = "Email",
+                        fontFamily = montserratFamily,
+                        color = Color(218, 218, 218, 238)
+                    )
                 },
+
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color(218, 218, 218, 128),
-                    unfocusedBorderColor = Color(218, 218, 218, 110)
+                    focusedBorderColor = Color(218, 218, 218, 158),
+                    unfocusedBorderColor = Color(218, 218, 218, 140)
                 )
+
             )
+
             TextField(
-                value = "",
-                onValueChange = {},
+                value = userPassword,
+                onValueChange = {
+                    userPassword = it;
+                },
+
                 placeholder = {
-                    Text(text = "Password", fontFamily = montserratFamily, color = Color(218, 218, 218, 228))
+                    Text(
+                        text = "Password",
+                        fontFamily = montserratFamily,
+                        color = Color(218, 218, 218, 238)
+                    )
                 },
 
                 modifier =
                 Modifier
-                    .background(Color(218, 218, 218, 1))
                     .border(1.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
                     .clip(RoundedCornerShape(10.dp))
+                    .background(Color(218, 218, 218, 70))
                     .fillMaxWidth(),
 
 
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color(218, 218, 218, 128),
-                    unfocusedBorderColor = Color(218, 218, 218, 110)
+                    focusedBorderColor = Color(218, 218, 218, 158),
+                    unfocusedBorderColor = Color(218, 218, 218, 140)
                 )
 
 
@@ -174,11 +223,11 @@ fun LogInWithEmail(navController: NavHostController) {
                     .fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(126, 198, 11, 255),
-                    contentColor = Color.White
-                ), contentPadding = PaddingValues(15.dp),
+
+                    ), contentPadding = PaddingValues(15.dp),
 
                 onClick = {
-
+                      viewModel.logInUser(userEmail, userPassword);
                 }
 
 
@@ -207,9 +256,9 @@ fun LogInWithEmail(navController: NavHostController) {
                     modifier = Modifier.padding(end = 5.dp)
                 )
                 ClickableText(
-                    text = AnnotatedString("Log in"),
+                    text = AnnotatedString("Reset here"),
                     onClick = {
-
+                        navController.navigate("FORGOT")
                     },
                     style = TextStyle(
                         color = Color(152, 209, 60),
@@ -237,17 +286,17 @@ fun LogInWithEmail(navController: NavHostController) {
                 Button(
                     shape = RectangleShape,
                     modifier = Modifier
-                        .width(60.dp)
-                        .border(1.dp, Color(230,230,230,255), shape = RoundedCornerShape(10.dp))
+                        .width(80.dp)
+                        .border(1.dp, Color(230, 230, 230, 255), shape = RoundedCornerShape(10.dp))
                         .clip(RoundedCornerShape(10.dp)),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = viewModel.backgroundColor,
-                        contentColor = Color.Black
+                        containerColor = Color(218, 218, 218, 70)
+
                     ), contentPadding = PaddingValues(15.dp),
 
                     onClick = {
-                        viewModel.changeButtonUi()
-                    }, interactionSource = interactionSource
+
+                    }
 
                 ) {
                     Image(
@@ -260,17 +309,16 @@ fun LogInWithEmail(navController: NavHostController) {
                 Button(
                     shape = RectangleShape,
                     modifier = Modifier
-                        .width(60.dp)
-                        .border(1.dp, Color(230,230,230,255), shape = RoundedCornerShape(10.dp))
+                        .width(80.dp)
+                        .border(1.dp, Color(230, 230, 230, 255), shape = RoundedCornerShape(10.dp))
                         .clip(RoundedCornerShape(10.dp)),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = viewModel.backgroundColor,
-                        contentColor = Color.Black
+                        containerColor = Color(218, 218, 218, 70)
                     ), contentPadding = PaddingValues(15.dp),
 
                     onClick = {
-                        viewModel.changeButtonUi()
-                    }, interactionSource = interactionSource1
+
+                    }
 
                 ) {
                     Image(
@@ -315,8 +363,3 @@ fun LogInWithEmail(navController: NavHostController) {
 
 }
 
-@Composable
-@Preview
-fun LogInWithEmail() {
-    LogInWithEmail(rememberNavController())
-}

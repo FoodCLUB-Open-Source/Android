@@ -74,9 +74,9 @@ fun MainLogInAndSignUp(navController: NavHostController) {
 
     val montserratFamily = FontFamily(
 
-        Font(R.font.montserratregular, FontWeight.Normal),
+        Font(R.font.montserratsemibold, FontWeight.Normal),
 
-        )
+    )
 
     Column(
         Modifier
@@ -164,8 +164,6 @@ fun MainLogInAndSignUp(navController: NavHostController) {
 
             )
 
-
-
             Text(
                 text = "Continue with Instagram",
                 fontFamily = montserratFamily,
@@ -194,7 +192,6 @@ fun MainLogInAndSignUp(navController: NavHostController) {
 
         ) {
 
-
             Text(
                 color = Color.White,
                 text = "Sign Up",
@@ -217,7 +214,7 @@ fun MainLogInAndSignUp(navController: NavHostController) {
             ClickableText(
                 text = AnnotatedString("Log in"),
                 onClick = {
-                    viewModel.logIn()
+                    navController.navigate("LOGIN");
                 },
                 style = TextStyle(
                     color = Color(126, 198, 11, 255),

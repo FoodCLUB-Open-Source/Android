@@ -5,6 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class ForgotPasswordViewModel : ViewModel() {
-    private val _title = MutableLiveData("ForgotPasswordViewModel View")
-    val title: LiveData<String> get() = _title
+
+    fun sendCode(){
+
+    }
+
 }

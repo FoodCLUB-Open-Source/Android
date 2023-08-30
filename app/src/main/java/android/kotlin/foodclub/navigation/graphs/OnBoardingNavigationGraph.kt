@@ -9,8 +9,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.foodclub.views.authentication.ConfirmIdentityView
 import com.example.foodclub.views.authentication.ForgotPasswordView
-import com.example.foodclub.views.authentication.LoginView
-import com.example.foodclub.views.authentication.SignupView
 import com.example.foodclub.views.onboarding.MenuView
 
 fun NavGraphBuilder.onBoardingNavigationGraph(navController: NavHostController) {
