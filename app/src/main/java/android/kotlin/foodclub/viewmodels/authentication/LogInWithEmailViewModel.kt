@@ -1,22 +1,26 @@
 package android.kotlin.foodclub.viewmodels.authentication
 
+import android.kotlin.foodclub.api.retrofit.RetrofitInstance
 import android.kotlin.foodclub.api.retrofit.RetrofitInstance.retrofitApi
 import androidx.camera.core.ImageProcessor
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.POST
+
 
 class LogInWithEmailViewModel :ViewModel(){
 
-    interface AuthApi {
+    interface API {
         @POST("login/signin")
 
-        suspend fun loginUser(
+        suspend fun checkUser(
             @Body credentials: UserCredentials
         ): Response<LoginResponse>
 
     }
-
     data class UserCredentials(
         val email: String,
         val password: String
@@ -29,7 +33,7 @@ class LogInWithEmailViewModel :ViewModel(){
     fun logInUser(userEmail:String,userPassword:String){
         viewModelScope.launch {
             try{
-                val response = retrofitApi.loginUser(UserCredentials(userEmail, userPassword))
+                val response = RetrofitInstance.retrofitApi.checkUser(UserCredentials(userEmail, userPassword))
             } catch(e : Exception){
 
             }
