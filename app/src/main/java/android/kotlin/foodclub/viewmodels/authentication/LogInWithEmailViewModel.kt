@@ -8,15 +8,12 @@ import androidx.lifecycle.ViewModel
 
 class LogInWithEmailViewModel :ViewModel(){
 
-    var backgroundColor by mutableStateOf(Color.White)
-    fun changeButtonUi(){
+        fun logInUser(userEmail:String,userPassword:String){
 
-        backgroundColor = Color(218, 218, 218, 80)
-    }
+        }
 
-    fun reverseButtonUi(){
-        backgroundColor = Color.White
-    }
+        fun resetPassword(){
 
+        }
 
 }

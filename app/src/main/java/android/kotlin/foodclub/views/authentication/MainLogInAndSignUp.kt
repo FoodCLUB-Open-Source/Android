@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
@@ -72,45 +74,37 @@ fun MainLogInAndSignUp(navController: NavHostController) {
 
     val montserratFamily = FontFamily(
 
-        Font(R.font.montserratregular, FontWeight.Normal),
+        Font(R.font.montserratsemibold, FontWeight.Normal),
 
-        )
+    )
 
     Column(
         Modifier
             .fillMaxSize()
-            .padding(20.dp),
+            .background(Color.White)
+            .padding(start = 25.dp, end = 25.dp, top = 80.dp, bottom = 50.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(35.dp)
     ) {
 
         Image(
-            painterResource(id = R.drawable.app_logo),
+            painterResource(id = R.drawable.welcome_logo),
             contentDescription = "app_logo",
             modifier = Modifier
-                .width(170.dp)
-                .height(170.dp)
-                .padding(top = 70.dp)
+                .width(80.dp)
+                .height(80.dp)
+                .padding(top = 20.dp)
         )
-
-
         Image(
-            painterResource(id = R.drawable.app_title),
+            painterResource(id = R.drawable.foodclub),
             contentDescription = "app_title",
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(70.dp)
-
+            modifier = Modifier.height(30.dp)
         )
-
-
-
-
+        Spacer(modifier = Modifier.height(16.dp))
         Button(
-
             shape = RectangleShape,
             modifier = Modifier
-                .border(1.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
+                .border(1.dp, Color(android.graphics.Color.parseColor("#DADADA")), shape = RoundedCornerShape(10.dp))
                 .clip(RoundedCornerShape(10.dp))
                 .fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
@@ -126,7 +120,7 @@ fun MainLogInAndSignUp(navController: NavHostController) {
 
         ) {
             Image(
-                painterResource(id = R.mipmap.facebook_icon),
+                painterResource(id = R.drawable.facebook_icon),
                 contentDescription = "app_title",
                 modifier = Modifier.size(17.dp)
 
@@ -147,7 +141,7 @@ fun MainLogInAndSignUp(navController: NavHostController) {
 
             shape = RectangleShape,
             modifier = Modifier
-                .border(1.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
+                .border(1.dp, Color(android.graphics.Color.parseColor("#DADADA")), shape = RoundedCornerShape(10.dp))
                 .clip(RoundedCornerShape(10.dp))
                 .fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
@@ -169,8 +163,6 @@ fun MainLogInAndSignUp(navController: NavHostController) {
 
 
             )
-
-
 
             Text(
                 text = "Continue with Instagram",
@@ -200,7 +192,6 @@ fun MainLogInAndSignUp(navController: NavHostController) {
 
         ) {
 
-
             Text(
                 color = Color.White,
                 text = "Sign Up",
@@ -210,28 +201,25 @@ fun MainLogInAndSignUp(navController: NavHostController) {
         }
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
-
-            horizontalArrangement = Arrangement.SpaceEvenly
-
-
+            modifier = Modifier.wrapContentWidth(),
+            horizontalArrangement = Arrangement.SpaceAround
         ) {
-
             Text(
                 color = Color.Black,
                 text = "Already have an account?",
-                fontFamily = montserratFamily
+                fontFamily = montserratFamily,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(end = 5.dp)
             )
-
-
             ClickableText(
-                text = AnnotatedString("Log in >"),
+                text = AnnotatedString("Log in"),
                 onClick = {
-                    viewModel.logIn()
+                    navController.navigate("LOGIN");
                 },
                 style = TextStyle(
                     color = Color(126, 198, 11, 255),
-                    fontFamily = montserratFamily
+                    fontFamily = montserratFamily,
+                    fontSize = 12.sp,
                 )
 
 

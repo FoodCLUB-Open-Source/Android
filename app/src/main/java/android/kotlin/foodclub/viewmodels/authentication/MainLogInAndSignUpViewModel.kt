@@ -28,15 +28,6 @@ class MainLogInAndSignUpViewModel : ViewModel() {
 
     }
 
-
-    fun logIn(){
-
-    }
-
-    fun signUp(){
-
-    }
-
     fun termsAndConditions(){
 
     }
