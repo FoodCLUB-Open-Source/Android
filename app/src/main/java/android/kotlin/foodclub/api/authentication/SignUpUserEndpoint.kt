@@ -22,4 +22,5 @@ interface API {
        @Query("username") name:String,@Query("email") email:String,@Query("password") password:String,
     ):Response<UserSignUpInformation>
 
+
 }
