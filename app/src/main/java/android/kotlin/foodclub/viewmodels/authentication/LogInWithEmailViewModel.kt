@@ -25,11 +25,12 @@ class LogInWithEmailViewModel :ViewModel(){
         val email: String,
         val password: String
     )
-
+//for the LoginResponse, maybe can be replaced by the code added in LogInWithEmail
     data class LoginResponse(
         val token: String? // or other fields you expect in the response
     )
 
+    //
     fun logInUser(userEmail:String,userPassword:String){
         viewModelScope.launch {
             try{

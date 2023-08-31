@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.views.authentication
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.api.retrofit.RetrofitInstance
 import android.kotlin.foodclub.viewmodels.authentication.LogInWithEmailViewModel
 
 import androidx.compose.foundation.Image
@@ -63,6 +64,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import okio.IOException
+import java.net.ConnectException
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -235,15 +237,50 @@ fun LogInWithEmail(navController: NavHostController) {
                     coroutineScope.launch {
                         val requestBody = LogInWithEmailViewModel.UserCredentials(userEmail,userPassword)
                             try{
-                                viewModel.logInUser(userEmail = "example@gmail.com",userPassword);
+                                val response = RetrofitInstance.retrofitApi1.loginUser(LogInWithEmailViewModel.UserCredentials(userEmail,userPassword))
+
+                                if(response.isSuccessful){
+                                    val loginResponse = response.body()
+                                    val token = loginResponse?.token
+
+                                    //not sure how to process the received token
+                                    //if success, nav and display to 'login success page/homepage'
+
+                                    navController.navigate("")//homepage?
+
+                                }else{
+                                  //  val errorMessage = "Login failed, please try again and check your login details"
+                                    val errorMessage = when(response.code()){
+                                        404 -> "Account not found. Please check your detail or sign up for a new account."
+                                        else -> {"Login failed. Please try again."}
+                                    }
+                                }
+                              //  viewModel.logInUser(userEmail = "example@gmail.com",userPassword);
 
                             }catch (e:IOException){
-
+                                val errorMessage = when{
+                                    e is ConnectException -> "Network error"
+                                    e is ConnectException -> "Request Time out, please retry."
+                                    else -> {"Error occurred. Please try again"}
+                                }
                             }
                     }
                       //viewModel.logInUser(userEmail, userPassword);
                 }
 //                        onClick = {
+//                    coroutineScope.launch {
+//                        val requestBody = LogInWithEmailViewModel.UserCredentials(userEmail,userPassword)
+//                        try{
+//                            viewModel.logInUser(userEmail = "example@gmail.com",userPassword);
+//
+//                        }catch (e:IOException){
+//
+//                        }
+//                    }
+//                    //viewModel.logInUser(userEmail, userPassword);
+//                }
+// this is the original code:
+//               onClick = {
 //                    viewModel.logInUser(userEmail, userPassword);
 //                }
 
