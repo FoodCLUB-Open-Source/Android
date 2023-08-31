@@ -38,6 +38,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,6 +60,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.text.TextStyle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import okio.IOException
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -213,6 +217,7 @@ fun LogInWithEmail(navController: NavHostController) {
 
 
             )
+            val coroutineScope = rememberCoroutineScope();
 
 
             Button(
@@ -227,9 +232,20 @@ fun LogInWithEmail(navController: NavHostController) {
                     ), contentPadding = PaddingValues(15.dp),
 
                 onClick = {
-                      viewModel.logInUser(userEmail, userPassword);
-                }
+                    coroutineScope.launch {
+                        val requestBody = LogInWithEmailViewModel.UserCredentials(userEmail,userPassword)
+                            try{
+                                viewModel.logInUser(userEmail = "example@gmail.com",userPassword);
 
+                            }catch (e:IOException){
+
+                            }
+                    }
+                      //viewModel.logInUser(userEmail, userPassword);
+                }
+//                        onClick = {
+//                    viewModel.logInUser(userEmail, userPassword);
+//                }
 
             ) {
 
