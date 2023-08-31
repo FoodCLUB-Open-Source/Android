@@ -32,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,22 +61,31 @@ import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 
 @Composable
-fun SignupVerification(navController: NavHostController) {
+fun SignupVerification(navController: NavHostController, username: String?) {
+    if(username == null) {
+        //Navigate to signup form and  show an error
+    }
     val viewModel: SignupVerificationViewModel = viewModel()
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.setData(navController, username.toString())
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(start = 25.dp, end = 25.dp, top = 80.dp, bottom = 50.dp),
     ) {
-        SignupVerificationTopLayout(modifier = Modifier.weight(1F))
-        SignupVerificationMainLayout(modifier = Modifier.weight(2F))
+        SignupVerificationTopLayout(viewModel, modifier = Modifier.weight(1F))
+        SignupVerificationMainLayout(viewModel, modifier = Modifier.weight(2F))
         SignupVerificationBottomLayout(modifier = Modifier.weight(1F))
     }
 }
 
 @Composable
-fun SignupVerificationTopLayout(modifier: Modifier = Modifier) {
+fun SignupVerificationTopLayout(viewModel: SignupVerificationViewModel, modifier: Modifier = Modifier) {
+    val message = viewModel.message.collectAsState()
+
     Box(modifier.fillMaxHeight()) {
         Column {
             Image(
@@ -91,7 +101,7 @@ fun SignupVerificationTopLayout(modifier: Modifier = Modifier) {
                     Text(text = "Enter code", textAlign = TextAlign.Left,
                         fontWeight = FontWeight.Bold, fontSize = 30.sp, fontFamily = PlusJakartaSans
                     )
-                    Text(text = "We’ve sent an SMS with an activation code to your phone +44 7503759410",
+                    Text(text = message.value,
                         textAlign = TextAlign.Left, fontWeight = FontWeight.Normal, fontSize = 16.sp,
                         fontFamily = Montserrat
                     )
@@ -102,7 +112,7 @@ fun SignupVerificationTopLayout(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun SignupVerificationMainLayout(modifier: Modifier = Modifier) {
+fun SignupVerificationMainLayout(viewModel: SignupVerificationViewModel, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -113,11 +123,16 @@ fun SignupVerificationMainLayout(modifier: Modifier = Modifier) {
             var enableButton by remember { mutableStateOf(false) }
             var isTimerRunning by remember { mutableStateOf(true) }
             var currentTime by remember { mutableStateOf(TimeUnit.SECONDS.toMillis(62)) }
+            var currentCode by remember { mutableStateOf("") }
 
-            CustomCodeTextField { enableButton = it }
+            CustomCodeTextField { isEnabled, code ->
+                enableButton = isEnabled
+                currentCode = code
+            }
             Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
                 CustomAuthButton(enabled = enableButton, "Verify") {
-
+                    viewModel.verifyCode(currentCode)
+                    enableButton = false
                 }
                 Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
                     Text(
@@ -130,6 +145,7 @@ fun SignupVerificationMainLayout(modifier: Modifier = Modifier) {
                     ClickableText(
                         text = AnnotatedString("Resend"),
                         onClick = { if(!isTimerRunning) {
+                            viewModel.sendVerificationCode()
                             currentTime = TimeUnit.SECONDS.toMillis(61)
                             isTimerRunning = true
                         } },
