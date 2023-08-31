@@ -72,7 +72,7 @@ fun LogInWithEmail(navController: NavHostController) {
     // we need to make only one view model
     val viewModel: LogInWithEmailViewModel = viewModel()
 
-
+    var errorMessage:String=" Test";
     // API
     //val creditCards by viewModelApi.user.observeAsState(emptyList())
 
@@ -239,7 +239,7 @@ fun LogInWithEmail(navController: NavHostController) {
                         navController.navigate("home_graph")
                     }else{
                         if(requestBody==404){
-                            val errorMessage = "Account Not found";
+                            errorMessage = "Account Not found";
                         }
                     }
 //                    coroutineScope.launch {
@@ -303,6 +303,13 @@ fun LogInWithEmail(navController: NavHostController) {
                 )
             }
 
+            Row(){
+                Text(
+                    text = errorMessage,
+                    fontSize = 11.sp,
+                    color=Color.Red
+                )
+            }
 
             Row(
                 modifier = Modifier.wrapContentWidth(),
