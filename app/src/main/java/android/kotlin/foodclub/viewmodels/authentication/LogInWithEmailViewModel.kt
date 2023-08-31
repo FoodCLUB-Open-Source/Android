@@ -3,6 +3,8 @@ package android.kotlin.foodclub.viewmodels.authentication
 import android.kotlin.foodclub.api.retrofit.RetrofitInstance
 import android.kotlin.foodclub.api.retrofit.RetrofitInstance.retrofitApi
 import androidx.camera.core.ImageProcessor
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
@@ -30,13 +32,29 @@ class LogInWithEmailViewModel :ViewModel(){
         val token: String? // or other fields you expect in the response
     )
 
+    private val _loginStatus = MutableLiveData<String>()
+    val loginStatus: LiveData<String> get() = _loginStatus
+
     //
     fun logInUser(userEmail:String,userPassword:String){
         viewModelScope.launch {
             try{
                 val response = RetrofitInstance.retrofitApi1.loginUser(UserCredentials(userEmail, userPassword))
-            } catch(e : Exception){
 
+                if(response.isSuccessful){
+                    val loginResponse = response.body()
+
+                    if(loginResponse?.token!=null){
+                        _loginStatus.value= "Login Successful"
+                    }else{
+                        _loginStatus.value = "Login Failed: Invalid Token"
+                    }
+                }else{
+                    _loginStatus.value="Login Failed: ${response.message()}"
+                }
+
+            } catch(e : Exception){
+                _loginStatus.value = "Login Error: ${e.message}"
             }
         }
     }
