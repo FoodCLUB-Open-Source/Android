@@ -65,7 +65,6 @@ import java.io.IOException
 fun SignUpWithEmailView(navController: NavHostController) {
 
 
-
     val viewModel: SignupViewWithEmailViewModel = viewModel()
 
     val montserratFamily = FontFamily(
@@ -146,6 +145,7 @@ fun SignUpWithEmailView(navController: NavHostController) {
             verticalArrangement = Arrangement.spacedBy(25.dp)
         ) {
             var userEmail by remember { mutableStateOf("") }
+            var username by remember { mutableStateOf("") }
             var userPassword by remember { mutableStateOf("") }
 
             TextField(
@@ -162,6 +162,31 @@ fun SignUpWithEmailView(navController: NavHostController) {
                 placeholder = {
                     Text(
                         text = "Email",
+                        fontFamily = montserratFamily,
+                        color = Color(218, 218, 218, 238)
+                    )
+                },
+
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color(218, 218, 218, 158),
+                    unfocusedBorderColor = Color(218, 218, 218, 140)
+                )
+
+            )
+            TextField(
+                value = username,
+                onValueChange = {
+                    username = it;
+                },
+                modifier = Modifier
+                    .border(1.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(Color(218, 218, 218, 70))
+                    .fillMaxWidth(),
+
+                placeholder = {
+                    Text(
+                        text = "Username",
                         fontFamily = montserratFamily,
                         color = Color(218, 218, 218, 238)
                     )
@@ -204,7 +229,7 @@ fun SignUpWithEmailView(navController: NavHostController) {
 
             )
 
-            val coroutineScope = rememberCoroutineScope()
+//            val coroutineScope = rememberCoroutineScope()
 
 
 
@@ -221,22 +246,11 @@ fun SignUpWithEmailView(navController: NavHostController) {
                     ), contentPadding = PaddingValues(15.dp),
 
                 onClick = {
-                coroutineScope.launch {
+//                cooutineScope.launch {
+                    val requestBody = UserSignUpInformation(username,userEmail,userPassword)
+                    viewModel.signUpUser(requestBody, navController)
 
-                    val requestBody = UserSignUpInformation("shubham619",userEmail,userPassword)
-
-
-
-                                try {
-
-                                    viewModel.signUpUser(requestBody);
-
-
-
-                                }catch (e:IOException){
-
-                                }
-                        }
+//                }
 
                 }
 
