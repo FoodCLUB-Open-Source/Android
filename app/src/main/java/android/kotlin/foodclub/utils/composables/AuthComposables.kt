@@ -54,16 +54,16 @@ fun CustomAuthButton(enabled: Boolean, title: String, onClick: () -> Unit){
 }
 
 @Composable
-fun CustomCodeTextField(onFillCallback: (Boolean) -> Unit) {
+fun CustomCodeTextField(onFillCallback: (Boolean, String) -> Unit) {
     var text by remember { mutableStateOf("") }
     BasicTextField(modifier = Modifier.fillMaxWidth(),
         value = text,
         singleLine = true,
         onValueChange = {
-            if (it.length <= 5) {
+            if (it.length <= 6) { /* TODO */
                 text = it
             }
-            onFillCallback(it.length >= 5)
+            onFillCallback(it.length >= 6, text) /* TODO */
         },
         enabled = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
