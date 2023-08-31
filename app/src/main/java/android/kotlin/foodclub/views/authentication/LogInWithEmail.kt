@@ -233,7 +233,15 @@ fun LogInWithEmail(navController: NavHostController) {
 
                     ), contentPadding = PaddingValues(15.dp),
 
-//                onClick = {
+                onClick = {
+                    val requestBody = viewModel.logInUser(userEmail, userPassword);
+                    if(requestBody==200){
+                        navController.navigate("home_graph")
+                    }else{
+                        if(requestBody==404){
+                            val errorMessage = "Account Not found";
+                        }
+                    }
 //                    coroutineScope.launch {
 //                        val requestBody = LogInWithEmailViewModel.UserCredentials(userEmail,userPassword)
 //                            try{
@@ -266,7 +274,7 @@ fun LogInWithEmail(navController: NavHostController) {
 //                            }
 //                    }
 //                      //viewModel.logInUser(userEmail, userPassword);
-//                }
+                }
 //                        onClick = {
 //                    coroutineScope.launch {
 //                        val requestBody = LogInWithEmailViewModel.UserCredentials(userEmail,userPassword)
@@ -280,9 +288,9 @@ fun LogInWithEmail(navController: NavHostController) {
 //                    //viewModel.logInUser(userEmail, userPassword);
 //                }
 // this is the original code:
-               onClick = {
-                    viewModel.logInUser(userEmail, userPassword);
-                }
+//               onClick = {
+//                    viewModel.logInUser(userEmail, userPassword);
+//                }
 
             ) {
 

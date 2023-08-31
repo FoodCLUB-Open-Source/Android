@@ -36,27 +36,32 @@ class LogInWithEmailViewModel :ViewModel(){
     val loginStatus: LiveData<String> get() = _loginStatus
 
     //
-    fun logInUser(userEmail:String,userPassword:String){
+    fun logInUser(userEmail:String,userPassword:String): Int{
+        var status: Int=0;
         viewModelScope.launch {
             try{
                 val response = RetrofitInstance.retrofitApi1.loginUser(UserCredentials(userEmail, userPassword))
 
                 if(response.isSuccessful){
                     val loginResponse = response.body()
-
                     if(loginResponse?.token!=null){
                         _loginStatus.value= "Login Successful"
+                        status = 200;
                     }else{
                         _loginStatus.value = "Login Failed: Invalid Token"
+                        status = 404;
                     }
                 }else{
                     _loginStatus.value="Login Failed: ${response.message()}"
+                    status = 404;
                 }
 
             } catch(e : Exception){
                 _loginStatus.value = "Login Error: ${e.message}"
+                status = 500;
             }
         }
+        return status;
     }
 
     fun resetPassword(){
