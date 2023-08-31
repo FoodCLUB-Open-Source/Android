@@ -15,6 +15,18 @@ data class UserSignUpInformation(
     val password: String,
 )
 
+data class LoginResponse(
+    val id: Int,
+    val username: String,
+    val profile_picture: String
+)
+
+data class UserCredentials (
+    val username: String,
+    val password: String
+)
+
+
 interface API {
 
     @POST("login/signup")
@@ -22,5 +34,10 @@ interface API {
        @Query("username") name:String,@Query("email") email:String,@Query("password") password:String,
     ):Response<UserSignUpInformation>
 
+    @POST("login/signin")
+
+    suspend fun loginUser(
+        @Body credentials: UserCredentials
+    ): Response<LoginResponse>
 
 }

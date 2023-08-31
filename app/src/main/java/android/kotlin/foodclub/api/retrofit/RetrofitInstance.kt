@@ -18,12 +18,12 @@ object RetrofitInstance {
             .create(API::class.java)
     }
 
-    val retrofitApi1 : LogInWithEmailViewModel.API by lazy {
-        Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(LogInWithEmailViewModel.API::class.java)
-    }
+//    val retrofitApi1 : LogInWithEmailViewModel.API by lazy {
+//        Retrofit.Builder()
+//            .baseUrl(BASE_URL)
+//            .addConverterFactory(GsonConverterFactory.create())
+//            .build()
+//            .create(LogInWithEmailViewModel.API::class.java)
+//    }
 
 }
