@@ -37,6 +37,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -72,7 +73,9 @@ fun LogInWithEmail(navController: NavHostController) {
     // we need to make only one view model
     val viewModel: LogInWithEmailViewModel = viewModel()
 
-    var errorMessage:String=" Test";
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+//    val loginStatus by viewModel.loginStatus.observeAsState(initial = 0)
+    val loginStatus by viewModel.loginStatus.observeAsState(null)
     // API
     //val creditCards by viewModelApi.user.observeAsState(emptyList())
 
@@ -234,63 +237,8 @@ fun LogInWithEmail(navController: NavHostController) {
                     ), contentPadding = PaddingValues(15.dp),
 
                 onClick = {
-                    val requestBody = viewModel.logInUser(userEmail, userPassword);
-                    if(requestBody==200){
-                        navController.navigate("home_graph")
-                    }else{
-                        if(requestBody==404){
-                            errorMessage = "Account Not found";
-                        }
-                    }
-//                    coroutineScope.launch {
-//                        val requestBody = LogInWithEmailViewModel.UserCredentials(userEmail,userPassword)
-//                            try{
-//                                val response = RetrofitInstance.retrofitApi1.loginUser(LogInWithEmailViewModel.UserCredentials(userEmail,userPassword))
-//
-//                                if(response.isSuccessful){
-//                                    val loginResponse = response.body()
-//                                    val token = loginResponse?.token
-//
-//                                    //not sure how to process the received token
-//                                    //if success, nav and display to 'login success page/homepage'
-//
-//                                    navController.navigate("")//homepage?
-//
-//                                }else{
-//                                  //  val errorMessage = "Login failed, please try again and check your login details"
-//                                    val errorMessage = when(response.code()){
-//                                        404 -> "Account not found. Please check your detail or sign up for a new account."
-//                                        else -> {"Login failed. Please try again."}
-//                                    }
-//                                }
-//                              //  viewModel.logInUser(userEmail = "example@gmail.com",userPassword);
-//
-//                            }catch (e:IOException){
-//                                val errorMessage = when{
-//                                    e is ConnectException -> "Network error"
-//                                    e is ConnectException -> "Request Time out, please retry."
-//                                    else -> {"Error occurred. Please try again"}
-//                                }
-//                            }
-//                    }
-//                      //viewModel.logInUser(userEmail, userPassword);
+                    viewModel.logInUser(userEmail, userPassword)
                 }
-//                        onClick = {
-//                    coroutineScope.launch {
-//                        val requestBody = LogInWithEmailViewModel.UserCredentials(userEmail,userPassword)
-//                        try{
-//                            viewModel.logInUser(userEmail = "example@gmail.com",userPassword);
-//
-//                        }catch (e:IOException){
-//
-//                        }
-//                    }
-//                    //viewModel.logInUser(userEmail, userPassword);
-//                }
-// this is the original code:
-//               onClick = {
-//                    viewModel.logInUser(userEmail, userPassword);
-//                }
 
             ) {
 
@@ -303,11 +251,23 @@ fun LogInWithEmail(navController: NavHostController) {
                 )
             }
 
-            Row(){
+
+            when (loginStatus) {
+                null -> {} // Do nothing on uninitialized state
+                200 -> navController.navigate("home_graph")
+                401 -> errorMessage = "Wrong username or password"
+                404 -> errorMessage = "Account Not found"
+                -1 -> errorMessage = "Connectivity Issues"
+                -2 -> errorMessage = "Please enter both email and password"
+                -3 -> errorMessage = "Unknown Error"
+                else -> errorMessage = "Unknown"
+            }
+
+            Row() {
                 Text(
-                    text = errorMessage,
+                    text = errorMessage ?: "",
                     fontSize = 11.sp,
-                    color=Color.Red
+                    color = Color.Red
                 )
             }
 
