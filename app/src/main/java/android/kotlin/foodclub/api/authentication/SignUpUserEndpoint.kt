@@ -15,11 +15,28 @@ data class UserSignUpInformation(
     val password: String,
 )
 
+data class ResponseMessage(
+    val message: String
+)
+
+data class VerificationCodeRequestData(val username: String, val verification_code: String)
+
+data class VerificationCodeResendData(val username: String)
+
 interface API {
 
     @POST("login/signup")
     suspend fun postUser(
-       @Query("username") name:String,@Query("email") email:String,@Query("password") password:String,
+       @Body signUpInformation: UserSignUpInformation
     ):Response<UserSignUpInformation>
 
+    @POST("login/confirm_verification")
+    suspend fun verifyCode(
+        @Body verificationCodeRequestData: VerificationCodeRequestData
+    ):Response<ResponseMessage>
+
+    @POST("login/resend_verification_code")
+    suspend fun resendCode(
+        @Body verificationCodeResendData: VerificationCodeResendData
+    ):Response<ResponseMessage>
 }
