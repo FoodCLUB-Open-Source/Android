@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.example.foodclub.navigation.graphs.AuthScreen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -68,10 +69,14 @@ class SignupVerificationViewModel : ViewModel() {
             _status.value = ApiCallStatus.LOADING
             try {
                 val response = RetrofitInstance.retrofitApi
-                    .verifyCode(VerificationCodeRequestData(_username.value.toString(), code)).message()
-                _message.value = response
+                    .verifyCode(VerificationCodeRequestData(_username.value.toString(), code))
+                _message.value = response.body()?.message ?: ""
                 Log.d("SignUpVerificationViewModel", "verify code response: $response")
                 _status.value = ApiCallStatus.DONE
+
+                if(response.isSuccessful) {
+                    navController.value?.navigate(AuthScreen.Login.route)
+                }
             } catch (e: Exception) {
                 _status.value = ApiCallStatus.ERROR
                 _message.value = "Unknown error occured. Check your Internet connection and try again."
