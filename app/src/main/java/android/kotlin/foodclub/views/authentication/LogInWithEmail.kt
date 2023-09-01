@@ -3,6 +3,7 @@ package android.kotlin.foodclub.views.authentication
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.api.retrofit.RetrofitInstance
 import android.kotlin.foodclub.viewmodels.authentication.LogInWithEmailViewModel
+import android.kotlin.foodclub.viewmodels.authentication.LoginErrorCodes
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -253,15 +254,16 @@ fun LogInWithEmail(navController: NavHostController) {
 
 
             when (loginStatus) {
-                null -> {} // Do nothing on uninitialized state
+                null -> {}
                 200 -> navController.navigate("home_graph")
-                401 -> errorMessage = "Wrong username or password"
-                404 -> errorMessage = "Account Not found"
-                -1 -> errorMessage = "Connectivity Issues"
-                -2 -> errorMessage = "Please enter both email and password"
-                -3 -> errorMessage = "Unknown Error"
-                else -> errorMessage = "Unknown"
+                LoginErrorCodes.EMPTY_CREDENTIALS -> errorMessage = "Please enter both email and password"
+                LoginErrorCodes.WRONG_CREDENTIALS -> errorMessage = "Wrong username or password"
+                LoginErrorCodes.ACCOUNT_NOT_FOUND -> errorMessage = "Account Not found"
+                LoginErrorCodes.CONNECTIVITY_ISSUES -> errorMessage = "Connectivity Issues. Please check your internet connection."
+                LoginErrorCodes.UNKNOWN_ERROR -> errorMessage = "An unexpected error occurred. Please try again later."
+                else -> errorMessage = "Error Code: $loginStatus" // Display other HTTP codes for further analysis or debugging
             }
+
 
             Row() {
                 Text(

@@ -2,48 +2,55 @@ package android.kotlin.foodclub.viewmodels.authentication
 
 import android.kotlin.foodclub.api.authentication.UserCredentials
 import android.kotlin.foodclub.api.retrofit.RetrofitInstance
-import android.kotlin.foodclub.api.retrofit.RetrofitInstance.retrofitApi
 import android.util.Log
-import androidx.camera.core.ImageProcessor
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.POST
-import java.io.IOException
 import java.net.UnknownHostException
 
+
+object LoginErrorCodes {
+    const val EMPTY_CREDENTIALS = -2
+    const val CONNECTIVITY_ISSUES = -1
+    const val WRONG_CREDENTIALS = -4
+    const val ACCOUNT_NOT_FOUND = -5
+    const val UNKNOWN_ERROR = -3
+}
 
 class LogInWithEmailViewModel : ViewModel() {
 
     private val _loginStatus = MutableLiveData<Int?>()
     val loginStatus: LiveData<Int?> get() = _loginStatus
 
-    fun logInUser(userEmail: String, userPassword: String) {
-        if (userEmail.isBlank() || userPassword.isBlank()) {
-            _loginStatus.postValue(-2) // -2 for null or empty credentials
-            return
-        }
+    fun logInUser(userEmail: String?, userPassword: String?) {
+        when {
+            userEmail == null || userPassword == null ||
+                    userEmail.isBlank() || userPassword.isBlank() -> {
+                _loginStatus.postValue(LoginErrorCodes.EMPTY_CREDENTIALS)
+                return
+            }
+            else -> {
+                viewModelScope.launch {
+                    try {
+                        val response = RetrofitInstance.retrofitApi.loginUser(
+                            UserCredentials(userEmail, userPassword)
+                        )
 
-        viewModelScope.launch {
-            try {
-                val response = RetrofitInstance.retrofitApi.loginUser(UserCredentials(userEmail, userPassword))
-                Log.d("LoginViewModel", "Response code: ${response.code()}")
-
-                if (response.isSuccessful) {
-                    _loginStatus.postValue(200)
-                } else {
-                    _loginStatus.postValue(response.code()) // This will post the HTTP error code
+                        when {
+                            response.isSuccessful -> _loginStatus.postValue(200)
+                            response.code() == 401 -> _loginStatus.postValue(LoginErrorCodes.WRONG_CREDENTIALS)
+                            response.code() == 404 -> _loginStatus.postValue(LoginErrorCodes.ACCOUNT_NOT_FOUND)
+                            else -> _loginStatus.postValue(response.code()) // Still post other HTTP error codes for further handling
+                        }
+                    } catch (e: UnknownHostException) {
+                        _loginStatus.postValue(LoginErrorCodes.CONNECTIVITY_ISSUES)
+                    } catch (e: Exception) {
+                        _loginStatus.postValue(LoginErrorCodes.UNKNOWN_ERROR)
+                    }
                 }
-            } catch (e: UnknownHostException) {
-                Log.e("LoginViewModel", "No internet connection or server is down.", e)
-                _loginStatus.postValue(-1) // -1 for connectivity issues
-            } catch (e: Exception) {
-                Log.e("LoginViewModel", "Unexpected error.", e)
-                _loginStatus.postValue(-3) // -3 for general unknown error
             }
         }
     }
