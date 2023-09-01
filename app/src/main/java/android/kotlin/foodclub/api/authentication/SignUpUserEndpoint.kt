@@ -28,7 +28,7 @@ interface API {
     @POST("login/signup")
     suspend fun postUser(
        @Body signUpInformation: UserSignUpInformation
-    ):Response<UserSignUpInformation>
+    ):Response<ResponseMessage>
 
     @POST("login/confirm_verification")
     suspend fun verifyCode(
