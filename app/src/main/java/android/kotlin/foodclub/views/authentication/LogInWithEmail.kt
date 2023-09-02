@@ -259,8 +259,10 @@ fun LogInWithEmail(navController: NavHostController) {
                 LoginErrorCodes.EMPTY_CREDENTIALS -> errorMessage = "Please enter both email and password"
                 LoginErrorCodes.WRONG_CREDENTIALS -> errorMessage = "Wrong username or password"
                 LoginErrorCodes.ACCOUNT_NOT_FOUND -> errorMessage = "Account Not found"
+                LoginErrorCodes.PASSWORD_FORMAT -> errorMessage = "Password must have at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character"
                 LoginErrorCodes.CONNECTIVITY_ISSUES -> errorMessage = "Connectivity Issues. Please check your internet connection."
                 LoginErrorCodes.UNKNOWN_ERROR -> errorMessage = "An unexpected error occurred. Please try again later."
+                LoginErrorCodes.USERNAME_FORMAT -> errorMessage ="Username must only contain letters and numbers"
                 else -> errorMessage = "Error Code: $loginStatus" // Display other HTTP codes for further analysis or debugging
             }
 

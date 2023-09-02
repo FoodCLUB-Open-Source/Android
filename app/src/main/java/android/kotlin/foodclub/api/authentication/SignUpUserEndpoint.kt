@@ -21,6 +21,17 @@ data class LoginResponse(
     val profile_picture: String
 )
 
+data class ErrorItem(
+    val type: String,
+    val value: String,
+    val msg: String,
+    val path: String,
+    val location: String
+)
+data class ErrorResponse(
+    val errors: List<Map<String, String>>
+)
+
 data class UserCredentials (
     val username: String,
     val password: String
@@ -35,7 +46,6 @@ interface API {
     ):Response<UserSignUpInformation>
 
     @POST("login/signin")
-
     suspend fun loginUser(
         @Body credentials: UserCredentials
     ): Response<LoginResponse>
