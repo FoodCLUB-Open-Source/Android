@@ -65,7 +65,6 @@ import java.io.IOException
 fun SignUpWithEmailView(navController: NavHostController) {
 
 
-
     val viewModel: SignupViewWithEmailViewModel = viewModel()
 
     val montserratFamily = FontFamily(
@@ -87,7 +86,7 @@ fun SignUpWithEmailView(navController: NavHostController) {
         Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(start = 25.dp, end = 25.dp, top = 30.dp, bottom = 60.dp),
+            .padding(start = 25.dp, end = 25.dp, top = 30.dp, bottom = 50.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(35.dp)
     ) {
@@ -103,14 +102,14 @@ fun SignUpWithEmailView(navController: NavHostController) {
                 shape = RectangleShape,
                 modifier = Modifier
                     .clip(RoundedCornerShape(15.dp))
-                    .width(40.dp)
+                    .width(30.dp)
                     .height(40.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.White,
                     contentColor = Color.White
                 ), contentPadding = PaddingValues(5.dp),
                 onClick = {
-                    navController.navigateUp()
+                    navController.popBackStack()
                 }
             ) {
                 Image(
@@ -118,8 +117,8 @@ fun SignUpWithEmailView(navController: NavHostController) {
                     contentDescription = "Back",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .width(36.dp)
-                        .height(36.dp)
+                        .width(20.dp)
+                        .height(20.dp)
                 )
             }
 
@@ -127,7 +126,7 @@ fun SignUpWithEmailView(navController: NavHostController) {
                 text = "New Here?",
                 fontFamily = plusjakartasansFamily,
                 fontSize = 32.sp,
-                modifier = Modifier.padding(top = 20.dp)
+                modifier = Modifier.padding(top = 10.dp)
 
             )
             Text(
@@ -146,6 +145,7 @@ fun SignUpWithEmailView(navController: NavHostController) {
             verticalArrangement = Arrangement.spacedBy(25.dp)
         ) {
             var userEmail by remember { mutableStateOf("") }
+            var username by remember { mutableStateOf("") }
             var userPassword by remember { mutableStateOf("") }
 
             TextField(
@@ -162,6 +162,31 @@ fun SignUpWithEmailView(navController: NavHostController) {
                 placeholder = {
                     Text(
                         text = "Email",
+                        fontFamily = montserratFamily,
+                        color = Color(218, 218, 218, 238)
+                    )
+                },
+
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color(218, 218, 218, 158),
+                    unfocusedBorderColor = Color(218, 218, 218, 140)
+                )
+
+            )
+            TextField(
+                value = username,
+                onValueChange = {
+                    username = it;
+                },
+                modifier = Modifier
+                    .border(1.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(Color(218, 218, 218, 70))
+                    .fillMaxWidth(),
+
+                placeholder = {
+                    Text(
+                        text = "Username",
                         fontFamily = montserratFamily,
                         color = Color(218, 218, 218, 238)
                     )
@@ -204,7 +229,7 @@ fun SignUpWithEmailView(navController: NavHostController) {
 
             )
 
-            val coroutineScope = rememberCoroutineScope()
+//            val coroutineScope = rememberCoroutineScope()
 
 
 
@@ -221,22 +246,11 @@ fun SignUpWithEmailView(navController: NavHostController) {
                     ), contentPadding = PaddingValues(15.dp),
 
                 onClick = {
-                coroutineScope.launch {
+//                cooutineScope.launch {
+                    val requestBody = UserSignUpInformation(username,userEmail,userPassword)
+                    viewModel.signUpUser(requestBody, navController)
 
-                    val requestBody = UserSignUpInformation("shubham619",userEmail,userPassword)
-
-
-
-                                try {
-
-                                    viewModel.signUpUser(requestBody);
-
-
-
-                                }catch (e:IOException){
-
-                                }
-                        }
+//                }
 
                 }
 
@@ -338,34 +352,6 @@ fun SignUpWithEmailView(navController: NavHostController) {
                     )
                 }
             }
-
-            Column(
-                Modifier.fillMaxHeight(),
-                verticalArrangement = Arrangement.Bottom,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    color = Color.Gray,
-                    text = "By using FoodCLUB you agree to our",
-                    fontFamily = montserratFamily,
-                    fontSize = 10.sp
-                )
-
-                ClickableText(
-                    text = AnnotatedString("Terms & Conditions"),
-                    onClick = {
-
-                    },
-                    style = TextStyle(
-                        color = Color.Gray,
-                        fontFamily = montserratFamily,
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold,
-                        textDecoration = TextDecoration.Underline
-                    )
-                )
-            }
-
 
         }
 

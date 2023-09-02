@@ -194,8 +194,7 @@ fun MainLogInAndSignUp(navController: NavHostController) {
             ), contentPadding = PaddingValues(15.dp),
 
             onClick = {
-                navController.popBackStack()
-                navController.navigate("home_graph")
+                navController.navigate("SIGN_UP")
             }
 
 
