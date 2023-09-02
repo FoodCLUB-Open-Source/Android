@@ -373,3 +373,9 @@ fun SignUpWithEmailView(navController: NavHostController) {
 
 
 }
+
+@Composable
+@Preview
+fun SignUpWithEmailView() {
+    SignUpWithEmailView(rememberNavController())
+}
