@@ -6,7 +6,9 @@ import android.kotlin.foodclub.views.authentication.SignUpWithEmailView
 import android.kotlin.foodclub.views.authentication.SignupVerification
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.foodclub.views.authentication.ConfirmIdentityView
 import com.example.foodclub.views.authentication.ForgotPasswordView
@@ -14,7 +16,7 @@ import com.example.foodclub.views.authentication.ForgotPasswordView
 fun NavGraphBuilder.authNavigationGraph(navController: NavHostController) {
     navigation(
         route = Graph.AUTHENTICATION,
-        startDestination = AuthScreen.MainLogInAndSignUp.route
+        startDestination = AuthScreen.SignUp.route
     ) {
         composable(route = AuthScreen.MainLogInAndSignUp.route) {
             MainLogInAndSignUp(navController)
@@ -31,8 +33,12 @@ fun NavGraphBuilder.authNavigationGraph(navController: NavHostController) {
         composable(route = AuthScreen.ConfirmId.route) {
             ConfirmIdentityView()
         }
-        composable(route = AuthScreen.VerifySignup.route) {
-            SignupVerification(navController)
+        composable(route = AuthScreen.VerifySignup.route + "/{username}",
+            arguments = listOf(
+                navArgument("username") { type = NavType.StringType }
+            )
+        ) {backStackEntry ->
+            SignupVerification(navController, backStackEntry.arguments?.getString("username"))
         }
     }
 }
