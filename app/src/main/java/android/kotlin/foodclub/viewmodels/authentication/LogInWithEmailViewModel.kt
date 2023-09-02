@@ -8,28 +8,39 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.net.UnknownHostException
 
+//object LoginErrorCodes {
+//    const val EMPTY_CREDENTIALS = 1
+//    const val CONNECTIVITY_ISSUES = 2
+//    const val WRONG_CREDENTIALS = 3
+//    const val ACCOUNT_NOT_FOUND = 4
+//    const val PASSWORD_FORMAT= 5
+//    const val USERNAME_FORMAT=6
+//    const val UNKNOWN_ERROR = 7
+//}
 object LoginErrorCodes {
-    const val EMPTY_CREDENTIALS = 1
-    const val CONNECTIVITY_ISSUES = 2
-    const val WRONG_CREDENTIALS = 3
-    const val ACCOUNT_NOT_FOUND = 4
-    const val PASSWORD_FORMAT= 5
-    const val USERNAME_FORMAT=6
-    const val UNKNOWN_ERROR = 7
+    const val EMPTY_CREDENTIALS = "Please enter both email and password"
+    const val CONNECTIVITY_ISSUES = "Connectivity Issues. Please check your internet connection."
+    const val WRONG_CREDENTIALS = "Wrong username or password"
+    const val ACCOUNT_NOT_FOUND = "Account Not found"
+    const val PASSWORD_FORMAT= "Password must have at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character"
+    const val USERNAME_FORMAT="Username must only contain letters and numbers"
+    const val UNKNOWN_ERROR = "An unexpected error occurred. Please try again later."
 }
 
 
 class LogInWithEmailViewModel : ViewModel() {
     private val gson = Gson()
-    private val _loginStatus = MutableLiveData<Int?>()
-    val loginStatus: LiveData<Int?> get() = _loginStatus
+    private val _loginStatus = MutableLiveData<String?>()
+    val loginStatus: LiveData<String?> get() = _loginStatus
 
-    fun logInUser(userEmail: String?, userPassword: String?) {
+
+    fun logInUser(userEmail: String?, userPassword: String?, navController: NavController) {
         if (userEmail.isNullOrEmpty() || userPassword.isNullOrEmpty()) {
             _loginStatus.postValue(LoginErrorCodes.EMPTY_CREDENTIALS)
             return
@@ -38,7 +49,8 @@ class LogInWithEmailViewModel : ViewModel() {
             try {
                 val response = RetrofitInstance.retrofitApi.loginUser(UserCredentials(userEmail, userPassword))
                 if (response.isSuccessful) {
-                    _loginStatus.postValue(200)
+                    navController.navigate("home_graph")
+//                    _loginStatus.postValue("Login Successful")
                 } else {
                     val errorString = response.errorBody()?.string()
                     Log.d("LoginWithEmailViewModel", "Raw error response: $errorString")
@@ -76,6 +88,19 @@ class LogInWithEmailViewModel : ViewModel() {
                 _loginStatus.postValue(LoginErrorCodes.UNKNOWN_ERROR)
             }
         }
+
+//        when (loginStatus) {
+//            null -> {}
+//            200 -> navController.navigate("home_graph")
+//            LoginErrorCodes.EMPTY_CREDENTIALS -> errorMessage = "Please enter both email and password"
+//            LoginErrorCodes.WRONG_CREDENTIALS -> errorMessage = "Wrong username or password"
+//            LoginErrorCodes.ACCOUNT_NOT_FOUND -> errorMessage = "Account Not found"
+//            LoginErrorCodes.PASSWORD_FORMAT -> errorMessage = "Password must have at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character"
+//            LoginErrorCodes.CONNECTIVITY_ISSUES -> errorMessage = "Connectivity Issues. Please check your internet connection."
+//            LoginErrorCodes.UNKNOWN_ERROR -> errorMessage = "An unexpected error occurred. Please try again later."
+//            LoginErrorCodes.USERNAME_FORMAT -> errorMessage ="Username must only contain letters and numbers"
+//            else -> errorMessage = "Error Code: $loginStatus" // Display other HTTP codes for further analysis or debugging
+//        }
     }
 
     fun resetPassword() {
