@@ -86,7 +86,7 @@ fun SignUpWithEmailView(navController: NavHostController) {
         Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(start = 25.dp, end = 25.dp, top = 30.dp, bottom = 60.dp),
+            .padding(start = 25.dp, end = 25.dp, top = 30.dp, bottom = 50.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(35.dp)
     ) {
@@ -102,14 +102,14 @@ fun SignUpWithEmailView(navController: NavHostController) {
                 shape = RectangleShape,
                 modifier = Modifier
                     .clip(RoundedCornerShape(15.dp))
-                    .width(40.dp)
+                    .width(30.dp)
                     .height(40.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.White,
                     contentColor = Color.White
                 ), contentPadding = PaddingValues(5.dp),
                 onClick = {
-                    navController.navigateUp()
+                    navController.popBackStack()
                 }
             ) {
                 Image(
@@ -117,8 +117,8 @@ fun SignUpWithEmailView(navController: NavHostController) {
                     contentDescription = "Back",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .width(36.dp)
-                        .height(36.dp)
+                        .width(20.dp)
+                        .height(20.dp)
                 )
             }
 
@@ -126,7 +126,7 @@ fun SignUpWithEmailView(navController: NavHostController) {
                 text = "New Here?",
                 fontFamily = plusjakartasansFamily,
                 fontSize = 32.sp,
-                modifier = Modifier.padding(top = 20.dp)
+                modifier = Modifier.padding(top = 10.dp)
 
             )
             Text(
@@ -352,34 +352,6 @@ fun SignUpWithEmailView(navController: NavHostController) {
                     )
                 }
             }
-
-            Column(
-                Modifier.fillMaxHeight(),
-                verticalArrangement = Arrangement.Bottom,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    color = Color.Gray,
-                    text = "By using FoodCLUB you agree to our",
-                    fontFamily = montserratFamily,
-                    fontSize = 10.sp
-                )
-
-                ClickableText(
-                    text = AnnotatedString("Terms & Conditions"),
-                    onClick = {
-
-                    },
-                    style = TextStyle(
-                        color = Color.Gray,
-                        fontFamily = montserratFamily,
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold,
-                        textDecoration = TextDecoration.Underline
-                    )
-                )
-            }
-
 
         }
 

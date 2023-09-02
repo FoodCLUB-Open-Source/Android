@@ -16,7 +16,7 @@ import com.example.foodclub.views.authentication.ForgotPasswordView
 fun NavGraphBuilder.authNavigationGraph(navController: NavHostController) {
     navigation(
         route = Graph.AUTHENTICATION,
-        startDestination = AuthScreen.SignUp.route
+        startDestination = AuthScreen.MainLogInAndSignUp.route
     ) {
         composable(route = AuthScreen.MainLogInAndSignUp.route) {
             MainLogInAndSignUp(navController)

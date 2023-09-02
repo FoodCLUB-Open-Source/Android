@@ -185,8 +185,7 @@ fun MainLogInAndSignUp(navController: NavHostController) {
             ), contentPadding = PaddingValues(15.dp),
 
             onClick = {
-                navController.popBackStack()
-                navController.navigate("home_graph")
+                navController.navigate("SIGN_UP")
             }
 
 
@@ -214,7 +213,7 @@ fun MainLogInAndSignUp(navController: NavHostController) {
             ClickableText(
                 text = AnnotatedString("Log in"),
                 onClick = {
-                    navController.navigate("LOGIN");
+                    navController.navigate("LOGIN")
                 },
                 style = TextStyle(
                     color = Color(126, 198, 11, 255),
