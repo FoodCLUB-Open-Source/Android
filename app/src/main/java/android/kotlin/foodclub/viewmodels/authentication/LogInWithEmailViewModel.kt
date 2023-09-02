@@ -14,13 +14,13 @@ import retrofit2.Response
 import java.net.UnknownHostException
 
 object LoginErrorCodes {
-    const val EMPTY_CREDENTIALS = -2
-    const val CONNECTIVITY_ISSUES = -1
-    const val WRONG_CREDENTIALS = -4
-    const val ACCOUNT_NOT_FOUND = -5
-    const val PASSWORD_FORMAT= -6
-    const val USERNAME_FORMAT=-7
-    const val UNKNOWN_ERROR = -3
+    const val EMPTY_CREDENTIALS = 1
+    const val CONNECTIVITY_ISSUES = 2
+    const val WRONG_CREDENTIALS = 3
+    const val ACCOUNT_NOT_FOUND = 4
+    const val PASSWORD_FORMAT= 5
+    const val USERNAME_FORMAT=6
+    const val UNKNOWN_ERROR = 7
 }
 
 
