@@ -362,4 +362,9 @@ fun LogInWithEmail(navController: NavHostController) {
     }
 
 }
+@Composable
+@Preview
+fun LogInWithEmail() {
+    LogInWithEmail(rememberNavController())
+}
 
