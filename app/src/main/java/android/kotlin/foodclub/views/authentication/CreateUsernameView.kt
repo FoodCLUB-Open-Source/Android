@@ -1,145 +1,133 @@
 package android.kotlin.foodclub.views.authentication
 
 import android.kotlin.foodclub.R
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
+import android.kotlin.foodclub.api.authentication.UserSignUpInformation
+import android.kotlin.foodclub.ui.theme.Montserrat
+import android.kotlin.foodclub.ui.theme.PlusJakartaSans
+import android.kotlin.foodclub.utils.composables.CustomTextField
+import android.kotlin.foodclub.utils.composables.TermsAndConditionsInfoFooter
+import android.kotlin.foodclub.utils.helpers.FieldsValidation
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import android.kotlin.foodclub.views.authentication.ui.theme.FoodClubTheme
-import android.view.Window
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.TextField
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-class CreateUsernameView : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+@Composable
+fun UsernameView(onValuesUpdate: (String) -> Unit, onBackButtonClick: (String) -> Unit,
+                 userSignUpInformation: State<UserSignUpInformation>, error: String) {
+    var username by remember { mutableStateOf(userSignUpInformation.value.username) }
+    var initialUsernameCorrectnessState = FieldsValidation.checkUsername(username) == null
+    var filledUsername by remember { mutableStateOf(false) }
 
+    Column(
+        modifier = Modifier
+            .fillMaxSize()          // MAKING IT SO IT FILLS THE MAX SCREEN SIZE
+            .padding(start = 32.dp, end = 32.dp, top = 100.dp, bottom = 32.dp) // ADDING PADDING TO SHIFT IT UP/DOWN
+    ) {
+        Column(verticalArrangement = Arrangement.SpaceBetween, modifier = Modifier.weight(1F)) {
+            Column {
+                // BACK BUTTON
+                Image(
+                    painter = painterResource(R.drawable.back_icon),
+                    contentDescription = "go back",
+                    modifier = Modifier
+                        .width(36.dp)
+                        .height(36.dp)
+                        .offset(x = (-8).dp)
+                        .clickable { onBackButtonClick(username) }
+                )
+                Column(Modifier.padding(top = 32.dp)) {
+                    // USERNAME TEXTVIEW
+                    Text(
+                        text = "Create a username!",
+                        fontSize = 32.sp,
+                        fontFamily = PlusJakartaSans,  // AS ITS A CLEAN CUT FONT
+                        fontWeight = FontWeight.Bold       // TO MAKE IT STAND OUT
+                    )
 
-
-        setContent {
-            FoodClubTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    UsernameView()
+                    // SUB TEXT VIEW
+                    Text(
+                        text = "So everyone can find you!",
+                        fontSize = 18.sp,
+                        fontFamily = Montserrat,  // AS ITS A CLEAN CUT FONT
+                        color = Color(0xFF000000).copy(alpha = 0.4f)
+                    )
                 }
             }
-        }
-    }
-}
 
-@OptIn(ExperimentalMaterial3Api::class) // FOR SEARCH BAR
-@Composable
-fun UsernameView(modifier: Modifier = Modifier.fillMaxSize()) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()          // MAKING IT SO IT FILLS THE MAX SCREEN SIZE
-            .padding(top = 100.dp)  // ADDING PADDING TO SHIFT IT UP/DOWN
-    )  {
-
-        // BACK BUTTON
-        Image(
-            painterResource(id = R.drawable.back_icon),
-            contentDescription = "back_icon",
-            modifier = Modifier
-                .width(35.dp)
-                .height(35.dp)
-                .offset(y = (-45).dp)  // TO SHIFT THE BACK BUTTON UP/DOWN
-                .offset(x = (+25).dp)  // TO SHIFT THE BACK BUTTON INWARDS
-
-        )
-
-        // USERNAME TEXTVIEW
-        Text(
-            text = "Create a Username!",
-            fontSize = 30.sp,
-            fontFamily = FontFamily.SansSerif,  // AS ITS A CLEAN CUT FONT
-            fontWeight = FontWeight.Bold,       // TO MAKE IT STAND OUT
-            modifier = Modifier
-                .padding(start = 30.dp, end = 4.dp)
-                .offset(y = (+5).dp)
-        )
-
-        // SUB TEXT VIEW
-        Text(
-            text = "So everyone can find you!",
-            fontSize = 15.sp,
-            fontFamily = FontFamily.SansSerif,  // AS ITS A CLEAN CUT FONT
-            modifier = Modifier                 // TO MAKE IT STAND OUT
-                .padding(bottom = 16.dp, start = 32.dp, end = 16.dp)
-        )
-
-        // TEXT FIELD STUFF
-        OutlinedTextField(
-            value = "",
-            onValueChange = {},                             // NEEDED OR ELSE IT'LL SHOW ERROR
-            placeholder = { Text("Username...") },     // TEXT HINT
-            singleLine = true,                              // MAKING IT A SINGLE LINE
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 30.dp, end = 30.dp)        // PADDING TO SHIFT THE TEXT FIELD INWARDS
-        )
-
-        // BUTTON
-        Button(
-            onClick = {
-
-                // ADD THE ON CLICK EVENT HERE
-
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp, start = 30.dp, end = 30.dp),
-
-            shape = MaterialTheme.shapes.extraSmall,  // CHOOSE FROM XS (SHARP) TO XL (CURVED) EDGES
-
-            // LIME GREEN BUTTON COLOR
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(126, 198, 11, 255),
-                contentColor = Color.White
-            ) 
-        ) {
             Text(
-                text = "Create",
-                color = Color.White // COLOR OF TEXT
+                text = if(error.isNotEmpty()) "Error: $error" else "",
+                fontFamily = Montserrat,
+                color = Color.Red,
+                modifier = Modifier.padding(bottom = 20.dp)
             )
         }
+        Column(Modifier.weight(2F)) {
+            // TEXT FIELD STUFF
+            CustomTextField(initialValue = username,
+                placeholder = "Username", keyboardType = KeyboardType.Text,
+                onCorrectnessStateChange = { filledUsername = !filledUsername },
+                onValueChange = { username = it
+                    initialUsernameCorrectnessState = false }, textValidation = true,
+                validationMethod = { text -> FieldsValidation.checkUsername(text) }
+            )
 
+            // BUTTON
+            Button(
+                onClick = { onValuesUpdate(username) },
+                shape = RoundedCornerShape(10.dp),
+                modifier = Modifier
+                    .height(56.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .fillMaxWidth(),
+                enabled = filledUsername || initialUsernameCorrectnessState,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF7EC60B),
+                    disabledContainerColor = Color(0xFFC9C9C9),
+                    disabledContentColor = Color.White,
+                    contentColor = Color.White
+                )
+            ) {
+                Text(text = "Create", fontSize = 16.sp)
+            }
+
+        }
+        Box(Modifier.weight(1F)) {
+            TermsAndConditionsInfoFooter()
+        }
     }
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun UsernameViewPreview() {
-    FoodClubTheme {
-        UsernameView()
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun UsernameViewPreview() {
+//    FoodClubTheme {
+//        UsernameView()
+//    }
+//}
