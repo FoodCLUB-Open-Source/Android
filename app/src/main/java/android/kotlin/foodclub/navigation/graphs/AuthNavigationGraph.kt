@@ -1,15 +1,19 @@
 package com.example.foodclub.navigation.graphs
 
+import android.kotlin.foodclub.utils.composables.sharedViewModel
 import android.kotlin.foodclub.views.authentication.LogInWithEmail
 import android.kotlin.foodclub.views.authentication.MainLogInAndSignUp
 import android.kotlin.foodclub.views.authentication.SignUpWithEmailView
 import android.kotlin.foodclub.views.authentication.SignupVerification
+import android.kotlin.foodclub.views.authentication.UsernameView
+import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import android.kotlin.foodclub.viewmodels.authentication.SignupWithEmailViewModel
 import com.example.foodclub.views.authentication.ConfirmIdentityView
 import com.example.foodclub.views.authentication.ForgotPasswordView
 
@@ -18,14 +22,48 @@ fun NavGraphBuilder.authNavigationGraph(navController: NavHostController) {
         route = Graph.AUTHENTICATION,
         startDestination = AuthScreen.MainLogInAndSignUp.route
     ) {
+        // Sign up process
+        navigation(
+            route = AuthScreen.SignUp.route,
+            startDestination = "signup_page_1"
+        ) {
+            composable("signup_page_1") {entry ->
+                val viewModel = entry.sharedViewModel<SignupWithEmailViewModel>(navController)
+                val userSignUpInformation = viewModel.userSignUpInformation.collectAsState()
+
+                SignUpWithEmailView(
+                    onValuesUpdate = { email, pass ->
+                        viewModel.saveEmailPasswordData(email, pass)
+                        navController.navigate("signup_page_2")
+                    },
+                    onBackButtonClick = {navController.popBackStack()},
+                    userSignUpInformation = userSignUpInformation
+                )
+            }
+            composable("signup_page_2") {entry ->
+                val viewModel = entry.sharedViewModel<SignupWithEmailViewModel>(navController)
+                val userSignUpInformation = viewModel.userSignUpInformation.collectAsState()
+                val error = viewModel.error.collectAsState()
+
+                UsernameView(
+                    onValuesUpdate = {
+                        viewModel.saveUsername(it)
+                        viewModel.signUpUser(navController)
+                    },
+                    onBackButtonClick = {
+                        viewModel.saveUsername(it)
+                        navController.popBackStack() },
+                    userSignUpInformation = userSignUpInformation,
+                    error = error.value
+                )
+            }
+        }
+
         composable(route = AuthScreen.MainLogInAndSignUp.route) {
             MainLogInAndSignUp(navController)
         }
         composable(route = AuthScreen.Login.route) {
             LogInWithEmail(navController)
-        }
-        composable(route = AuthScreen.SignUp.route) {
-            SignUpWithEmailView(navController)
         }
         composable(route = AuthScreen.Forgot.route) {
             ForgotPasswordView(navController)
