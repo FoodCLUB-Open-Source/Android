@@ -1,58 +1,67 @@
 package android.kotlin.foodclub.viewmodels.authentication
 
+import android.kotlin.foodclub.api.authentication.SignUpResponseMessage
 import android.kotlin.foodclub.api.authentication.VerificationCodeRequestData
 import android.kotlin.foodclub.api.authentication.VerificationCodeResendData
 import android.kotlin.foodclub.api.retrofit.RetrofitInstance
 import android.kotlin.foodclub.utils.enums.ApiCallStatus
-import android.os.CountDownTimer
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.example.foodclub.navigation.graphs.AuthScreen
+import com.example.foodclub.navigation.graphs.Graph
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import retrofit2.Response
+import java.io.IOException
 import java.lang.Exception
-import java.util.concurrent.TimeUnit
 
 class SignupVerificationViewModel : ViewModel() {
-    private val _status = MutableLiveData<ApiCallStatus>()
-    val status: LiveData<ApiCallStatus> get() = _status
+    private val _status = MutableStateFlow<ApiCallStatus>(ApiCallStatus.DONE)
+    val status: StateFlow<ApiCallStatus> get() = _status
 
-    private val _message = MutableStateFlow("We’ve sent an SMS with an activation code to your phone +44 7503759410")
+    private val _message = MutableStateFlow("")
     val message: StateFlow<String> get() = _message
 
+    private val _errorOccurred = MutableStateFlow(false)
+    val errorOccurred: StateFlow<Boolean> get() = _errorOccurred
 
-    private val _username = MutableLiveData<String>()
-    val username: LiveData<String> get() = _username
+    private val _username = MutableStateFlow<String?>(null)
+    val username: StateFlow<String?> get() = _username
 
-    private val _navController = MutableLiveData<NavHostController>()
-    val navController: LiveData<NavHostController> get() = _navController
+    private val _navController = MutableStateFlow<NavHostController?>(null)
+    val navController: StateFlow<NavHostController?> get() = _navController
 
 
     fun sendVerificationCode() {
         if(_username.value == null) {
+            _errorOccurred.value = true
             _message.value = "Unknown error occurred. Try again later"
-            //Here it would be best to take user to previous (signup) view
+            _navController.value?.navigate(Graph.AUTHENTICATION)
             return
         }
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = RetrofitInstance.retrofitApi.resendCode(VerificationCodeResendData(_username.value.toString()))
-                if (response.body() != null) {
-                    _message.value = response.body()!!.message
+
+                if(response.isSuccessful) {
+                    _errorOccurred.value = false
+                    _message.value = response.body()?.message?.replaceFirstChar(Char::uppercase).toString()
+                } else {
+                    _errorOccurred.value = true
+                    checkError(response)
                 }
-                Log.d("SignUpVerificationViewModel", "verify code header: ${response.headers()}")
-                Log.d("SignUpVerificationViewModel", "verify code response: ${response.raw()}")
-                Log.d("SignUpVerificationViewModel", "verify code status: ${response.code()}")
-            } catch (e: Exception) {
+            } catch (e: IOException) {
+                _errorOccurred.value = true
                 _message.value = "Cannot resend verification code. Check your Internet connection and try again."
+            } catch (e: Exception) {
+                _errorOccurred.value = true
+                _message.value = "Unknown error occurred."
             }
         }
 
@@ -60,8 +69,9 @@ class SignupVerificationViewModel : ViewModel() {
 
     fun verifyCode(code: String) {
         if(_username.value == null) {
+            _errorOccurred.value = true
             _message.value = "Unknown error occurred. Try again later"
-            //Here it would be best to take user to previous (signup) view
+            _navController.value?.navigate(Graph.AUTHENTICATION)
             return
         }
 
@@ -70,21 +80,47 @@ class SignupVerificationViewModel : ViewModel() {
             try {
                 val response = RetrofitInstance.retrofitApi
                     .verifyCode(VerificationCodeRequestData(_username.value.toString(), code))
-                _message.value = response.body()?.message ?: ""
                 Log.d("SignUpVerificationViewModel", "verify code response: $response")
                 _status.value = ApiCallStatus.DONE
 
                 if(response.isSuccessful) {
+                    _errorOccurred.value = false
+                    _message.value = ""
                     navController.value?.navigate(AuthScreen.Login.route)
+                } else {
+                    _errorOccurred.value = true
+                    checkError(response)
                 }
+            } catch(e: IOException) {
+                _errorOccurred.value = true
+                _message.value = "Cannot send verification code. Check your Internet connection and try again."
             } catch (e: Exception) {
                 _status.value = ApiCallStatus.ERROR
-                _message.value = "Unknown error occured. Check your Internet connection and try again."
+                _errorOccurred.value = true
+                _message.value = "Unknown error occured."
             }
         }
     }
 
-    fun setData(navController: NavHostController, username: String) {
+    private fun checkError(response: Response<SignUpResponseMessage>) {
+        if(response.errorBody() == null) {
+            _message.value = "Unknown error occurred."
+            return
+        }
+        val errorResponse = Gson().fromJson(response.errorBody()?.string(), SignUpResponseMessage::class.java)
+
+        _message.value = errorResponse.message
+
+        if(_message.value.isEmpty()){
+            if(errorResponse.errors.isNotEmpty()) {
+                _message.value = "Input data are invalid. Check mistakes and try again."
+            } else {
+                _message.value = "Unknown error occurred."
+            }
+        }
+    }
+
+    fun setData(navController: NavHostController, username: String?) {
         _navController.value = navController
         _username.value = username
     }
