@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 
 val colorGray= Color(android.graphics.Color.parseColor("#D0D0D0"))
 val colorRed= Color(android.graphics.Color.parseColor("#C64E0B"))
@@ -192,6 +193,11 @@ fun SettingRow(text: String, iconId: Int, fontC:  Color=Color.Black,
             SettingsIcons(size = 24, icon = R.drawable.forwardarrow)
         }
     }
+}
+@Composable
+@Preview
+fun SettingsView() {
+    SettingsView(rememberNavController())
 }
 
 

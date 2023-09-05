@@ -104,7 +104,7 @@ fun LogInWithEmail(navController: NavHostController) {
         Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(top = 60.dp, start = 30.dp, end = 30.dp),
+            .padding(top = 40.dp, start = 30.dp, end = 30.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(35.dp)
     ) {
@@ -120,14 +120,14 @@ fun LogInWithEmail(navController: NavHostController) {
                 shape = RectangleShape,
                 modifier = Modifier
                     .clip(RoundedCornerShape(15.dp))
-                    .width(40.dp)
+                    .width(20.dp)
                     .height(40.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.White,
                     contentColor = Color.White
                 ), contentPadding = PaddingValues(5.dp),
                 onClick = {
-                    navController.navigateUp()
+                    navController.popBackStack()
                 }
             ) {
                 Image(
@@ -135,8 +135,8 @@ fun LogInWithEmail(navController: NavHostController) {
                     contentDescription = "Back",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .width(36.dp)
-                        .height(36.dp)
+                        .width(20.dp)
+                        .height(20.dp)
                 )
             }
 
@@ -144,7 +144,7 @@ fun LogInWithEmail(navController: NavHostController) {
                 text = "Welcome Back!",
                 fontFamily = plusjakartasansFamily,
                 fontSize = 32.sp,
-                modifier = Modifier.padding(top = 20.dp)
+                modifier = Modifier.padding(top = 10.dp)
             )
 
             Spacer(modifier = Modifier.height(3.dp))
@@ -393,5 +393,10 @@ fun LogInWithEmail(navController: NavHostController) {
 
     }
 
+}
+@Composable
+@Preview
+fun LogInWithEmail() {
+    LogInWithEmail(rememberNavController())
 }
 

@@ -25,9 +25,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 
 //The main function of this EditProfile file. This arranges all components to build the screen
@@ -73,4 +75,10 @@ fun EditProfileInputRow(boxType: String) {
             .height(60.dp)
             .padding(5.dp)
     )
+}
+
+@Composable
+@Preview
+fun EditProfileSetting() {
+    EditProfileSetting(rememberNavController())
 }

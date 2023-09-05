@@ -1,23 +1,31 @@
 package android.kotlin.foodclub.views.home
 
+import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.data.models.IngredientModel
 import android.kotlin.foodclub.utils.composables.Picker
 import android.kotlin.foodclub.utils.composables.rememberPickerState
 import android.kotlin.foodclub.viewmodels.home.CreateRecipeViewModel
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.with
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +35,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -75,6 +84,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -82,12 +92,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.navigation.NavController
+import kotlinx.coroutines.delay
 import java.util.Collections.copy
+import kotlin.math.roundToInt
 import kotlin.random.Random
 
 @Stable
@@ -356,9 +371,8 @@ fun BottomSheetIngredients(onDismiss: () -> Unit) {
                                 Image(
                                     painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
                                     contentDescription = "Left Arrow",
-                                    modifier = Modifier.size(24.dp).align(Alignment.CenterStart).clickable(onClick = {
-                                        contentState.value = DrawerContentState.IngredientListContent
-                                    })
+                                    modifier = Modifier.size(24.dp).align(Alignment.CenterStart)
+                                        .clickable(onClick = { contentState.value = DrawerContentState.IngredientListContent })
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
@@ -418,7 +432,8 @@ fun BottomSheetIngredients(onDismiss: () -> Unit) {
 fun CreateRecipeView(navController: NavController) {
     val viewModel: CreateRecipeViewModel = viewModel()
     val title = viewModel.title.value ?: "Loading..."
-    val ingredientList = listOf("Tomato paste", "Potato wedges", "Pasta")
+    val ingredientList by viewModel.ingredients.collectAsState()
+    val revealedIngredientId by viewModel.revealedIngredientId.collectAsState()
     val systemUiController = rememberSystemUiController()
     var showSheet by remember { mutableStateOf(false) }
     var showCategorySheet by remember { mutableStateOf(false) }
@@ -685,7 +700,12 @@ fun CreateRecipeView(navController: NavController) {
                 Spacer(modifier = Modifier.height(10.dp))
             }
             items(ingredientList) { ingredient ->
-                Ingredient(ingredient)
+                Ingredient(ingredient = ingredient,
+                    isRevealed = revealedIngredientId == ingredient.id,
+                    onExpand = { viewModel.onIngredientExpanded(ingredient.id) },
+                    onCollapse = { viewModel.onIngredientCollapsed(ingredient.id) },
+                    onDelete = { viewModel.onIngredientDeleted(ingredient) }
+                    )
             }
         }
     }
@@ -707,72 +727,145 @@ fun CreateRecipeView(navController: NavController) {
     }
 }
 
+@SuppressLint("UnusedTransitionTargetStateParameter")
 @Composable
-fun Ingredient(ingredient: String) {
-    Box(
-        modifier = Modifier
+fun Ingredient(ingredient: IngredientModel, isRevealed: Boolean, onExpand: () -> Unit, onCollapse: () -> Unit,
+               onDelete: () -> Unit) {
+    var ingredientXOffset = remember { mutableStateOf(0f) }
+    var showItem by remember { mutableStateOf(true) }
+
+    val transitionState = remember { MutableTransitionState(isRevealed).apply { targetState = !isRevealed }}
+    val transition = updateTransition(transitionState, label = "")
+    val offsetTransition by transition.animateFloat(
+        label = "ingredientOffsetTransition",
+        transitionSpec = { tween(durationMillis = 500) },
+        targetValueByState = { if (isRevealed) (-ingredientXOffset.value - 300f) else -ingredientXOffset.value }
+    )
+
+
+    AnimatedVisibility(visible = showItem, exit = shrinkOut(shrinkTowards = Alignment.TopCenter)) {
+        Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier
             .fillMaxWidth()
             .height(100.dp)
-            .border(
-                1.dp,
-                Color(android.graphics.Color.parseColor("#E8E8E8")),
-                shape = RoundedCornerShape(15.dp)
-            )
-            .clip(RoundedCornerShape(10.dp))
-            .background(Color.White)
-            .padding(10.dp)
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.salad_ingredient),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .height(80.dp)
-                .width(80.dp)
-                .clip(RoundedCornerShape(12.dp))
-        )
-        Box(
-            modifier = Modifier
-                .padding(start = 95.dp)
-                .fillMaxWidth().height(70.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Box ( modifier = Modifier.width(105.dp).align(Alignment.CenterStart) ) {
-                Text(
-                    text = ingredient,
+            .padding(end = 15.dp)) {
+            Button(
+                shape = RectangleShape,
+                modifier = Modifier
+                    .border(1.dp, Color(0xFFF5F5F5), shape = RoundedCornerShape(22.dp))
+                    .clip(RoundedCornerShape(22.dp))
+                    .width(50.dp)
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFF5F5F5),
+                    contentColor = Color.White
+                ), contentPadding = PaddingValues(5.dp),
+                onClick = { showItem = false }
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.delete_bin_5_line__2_),
+                    contentDescription = "Back",
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .align(Alignment.TopStart),
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.Normal
+                        .width(20.dp)
+                        .height(20.dp)
                 )
             }
-            Box ( modifier = Modifier.align(Alignment.CenterEnd) ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Image(
-                        painter = painterResource(id = R.drawable.baseline_arrow_left_24),
-                        contentDescription = "Profile Image",
-                        modifier = Modifier
-                            .size(35.dp)
-                            .padding(end = 5.dp)
+        }
+        Column {
+            Box(modifier = Modifier
+                    .offset {
+                        IntOffset((ingredientXOffset.value + offsetTransition).roundToInt(), 0)
+                    }
+                    .pointerInput("") {
+                        detectHorizontalDragGestures { change, dragAmount ->
+                            val original = Offset(ingredientXOffset.value, 0f)
+                            val summed = original + Offset(x = dragAmount, y = 0f)
+                            val newValue = Offset(summed.x.coerceIn(-300f, 0f), 0f)
+                            if (newValue.x <= -20f) {
+                                onExpand()
+                                return@detectHorizontalDragGestures
+                            } else if (newValue.x >= 0) {
+                                onCollapse()
+                                return@detectHorizontalDragGestures
+                            }
+                            if (change.positionChange() != Offset.Zero) change.consume()
+                            ingredientXOffset.value = newValue.x
+                        }
+                    }
+                    .fillMaxWidth()
+                    .height(100.dp)
+                    .border(
+                        1.dp,
+                        Color(android.graphics.Color.parseColor("#E8E8E8")),
+                        shape = RoundedCornerShape(15.dp)
                     )
-                    Text(
-                        "200g",
-                        color = Color.Black,
-                        fontFamily = montserratFamily,
-                        fontSize = 14.sp
-                    )
-                    Image(
-                        painter = painterResource(id = R.drawable.baseline_arrow_right_24),
-                        contentDescription = "Profile Image",
-                        modifier = Modifier
-                            .size(35.dp)
-                            .padding(start = 5.dp)
-                    )
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(Color.White)
+                    .padding(10.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.salad_ingredient),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .height(80.dp)
+                        .width(80.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                )
+                Box(
+                    modifier = Modifier
+                        .padding(start = 95.dp)
+                        .fillMaxWidth()
+                        .height(70.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Box ( modifier = Modifier
+                        .width(105.dp)
+                        .align(Alignment.CenterStart) ) {
+                        Text(
+                            text = ingredient.title,
+                            modifier = Modifier
+                                .align(Alignment.TopStart),
+                            fontFamily = montserratFamily,
+                            fontWeight = FontWeight.Normal
+                        )
+                    }
+                    Box ( modifier = Modifier.align(Alignment.CenterEnd) ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Image(
+                                painter = painterResource(id = R.drawable.baseline_arrow_left_24),
+                                contentDescription = "Profile Image",
+                                modifier = Modifier
+                                    .size(35.dp)
+                                    .padding(end = 5.dp)
+                            )
+                            Text(
+                                "200g",
+                                color = Color.Black,
+                                fontFamily = montserratFamily,
+                                fontSize = 14.sp
+                            )
+                            Image(
+                                painter = painterResource(id = R.drawable.baseline_arrow_right_24),
+                                contentDescription = "Profile Image",
+                                modifier = Modifier
+                                    .size(35.dp)
+                                    .padding(start = 5.dp)
+                            )
+                        }
+                    }
                 }
             }
+            Spacer(modifier = Modifier.height(10.dp))
         }
     }
-    Spacer(modifier = Modifier.height(10.dp))
+
+    LaunchedEffect(Unit) {
+        if(!showItem) {
+            delay(800)
+            onDelete()
+        }
+    }
 }
 
 @Composable
@@ -783,8 +876,10 @@ fun AddItemComposable(
 ) {
     Box(
         modifier = Modifier
-            .fillMaxWidth().height(70.dp)
-            .padding(start = 20.dp, top = 20.dp).clickable(onClick = { onClick() })
+            .fillMaxWidth()
+            .height(70.dp)
+            .padding(start = 20.dp, top = 20.dp)
+            .clickable(onClick = { onClick() })
     ) {
         Row(
             modifier = Modifier

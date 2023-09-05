@@ -74,15 +74,21 @@ fun MainLogInAndSignUp(navController: NavHostController) {
 
     val montserratFamily = FontFamily(
 
-        Font(R.font.montserratsemibold, FontWeight.Normal),
+        Font(R.font.montserratregular, FontWeight.Normal),
 
-    )
+        )
+
+
+
+
+
+
 
     Column(
         Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(start = 25.dp, end = 25.dp, top = 80.dp, bottom = 50.dp),
+            .padding(start = 50.dp, end = 50.dp, top = 80.dp, bottom = 50.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(35.dp)
     ) {
@@ -99,6 +105,7 @@ fun MainLogInAndSignUp(navController: NavHostController) {
             painterResource(id = R.drawable.foodclub),
             contentDescription = "app_title",
             modifier = Modifier.height(30.dp)
+
         )
         Spacer(modifier = Modifier.height(16.dp))
         Button(
@@ -122,7 +129,7 @@ fun MainLogInAndSignUp(navController: NavHostController) {
             Image(
                 painterResource(id = R.drawable.facebook_icon),
                 contentDescription = "app_title",
-                modifier = Modifier.size(17.dp)
+                modifier = Modifier.size(20.dp)
 
 
             )
@@ -132,7 +139,7 @@ fun MainLogInAndSignUp(navController: NavHostController) {
                 fontFamily = montserratFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 15.sp,
-                modifier = Modifier.padding(start = 25.dp)
+                modifier = Modifier.padding(start = 10.dp)
             )
         }
 
@@ -159,17 +166,19 @@ fun MainLogInAndSignUp(navController: NavHostController) {
             Image(
                 painterResource(id = R.mipmap.instagram_icon),
                 contentDescription = "app_title",
-                modifier = Modifier.size(17.dp)
+                modifier = Modifier.size(20.dp)
 
 
             )
+
+
 
             Text(
                 text = "Continue with Instagram",
                 fontFamily = montserratFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 15.sp,
-                modifier = Modifier.padding(start = 25.dp)
+                modifier = Modifier.padding(start = 10.dp)
             )
         }
 
@@ -185,12 +194,12 @@ fun MainLogInAndSignUp(navController: NavHostController) {
             ), contentPadding = PaddingValues(15.dp),
 
             onClick = {
-                navController.popBackStack()
-                navController.navigate("home_graph")
+                navController.navigate("SIGN_UP")
             }
 
 
         ) {
+
 
             Text(
                 color = Color.White,
@@ -200,10 +209,14 @@ fun MainLogInAndSignUp(navController: NavHostController) {
             )
         }
 
+
+
+
         Row(
             modifier = Modifier.wrapContentWidth(),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
+
             Text(
                 color = Color.Black,
                 text = "Already have an account?",
@@ -212,20 +225,20 @@ fun MainLogInAndSignUp(navController: NavHostController) {
                 modifier = Modifier.padding(end = 5.dp)
             )
             ClickableText(
-                text = AnnotatedString("Log in"),
+                text = AnnotatedString("Log in →"),
                 onClick = {
-                    navController.navigate("LOGIN");
+                    navController.navigate("LOGIN")
                 },
                 style = TextStyle(
                     color = Color(126, 198, 11, 255),
-                    fontFamily = montserratFamily,
-                    fontSize = 12.sp,
+                    fontFamily = montserratFamily
                 )
 
 
             )
 
-          
+
+
 
 
         }
