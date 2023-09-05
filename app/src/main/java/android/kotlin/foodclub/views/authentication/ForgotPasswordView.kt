@@ -161,3 +161,9 @@ fun ForgotPasswordView(navController: NavHostController) {
 
 }
 
+@Composable
+@Preview
+fun ForgotPasswordView() {
+    ForgotPasswordView(rememberNavController())
+}
+

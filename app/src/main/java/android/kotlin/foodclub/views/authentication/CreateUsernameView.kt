@@ -16,6 +16,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -31,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -86,6 +90,27 @@ fun UsernameView(onValuesUpdate: (String) -> Unit, onBackButtonClick: (String) -
                 color = Color.Red,
                 modifier = Modifier.padding(bottom = 20.dp)
             )
+
+            Button(
+                onClick = {
+                    // Add the onClick event here
+                },
+                shape = RoundedCornerShape(10.dp),
+                modifier = Modifier
+                    .border(1.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
+                    .clip(RoundedCornerShape(10.dp))
+                    .fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(126, 198, 11, 255),
+                    contentColor = Color.White
+                ),
+                contentPadding = PaddingValues(15.dp),
+            ) {
+                Text(
+                    text = "Create",
+                    //color = Color.White // COLOR OF TEXT
+                )
+            }
         }
         Column(Modifier.weight(2F)) {
             // TEXT FIELD STUFF
@@ -121,7 +146,9 @@ fun UsernameView(onValuesUpdate: (String) -> Unit, onBackButtonClick: (String) -
             TermsAndConditionsInfoFooter()
         }
     }
-}
+
+    }
+
 
 
 //@Preview(showBackground = true)

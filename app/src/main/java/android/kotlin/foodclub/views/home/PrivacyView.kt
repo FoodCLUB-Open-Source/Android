@@ -20,9 +20,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 
 //The main function of this PrivacyView file. This arranges all components to build the screen
@@ -62,4 +64,9 @@ fun ChangePasswordButton(){
         SettingsIcons(size = 20, icon = R.drawable.forwardarrow)
     }
 
+}
+@Composable
+@Preview
+fun PrivacySetting() {
+    PrivacySetting(rememberNavController())
 }
