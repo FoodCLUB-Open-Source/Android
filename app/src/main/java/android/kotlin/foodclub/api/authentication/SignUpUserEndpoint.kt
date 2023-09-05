@@ -13,6 +13,28 @@ data class UserSignUpInformation(
     val password: String,
 )
 
+data class LoginResponse(
+    val id: Int,
+    val username: String,
+    val profile_picture: String
+)
+
+data class ErrorItem(
+    val type: String,
+    val value: String,
+    val msg: String,
+    val path: String,
+    val location: String
+)
+data class ErrorResponse(
+    val errors: List<Map<String, String>>
+)
+
+data class UserCredentials (
+    val username: String,
+    val password: String
+)
+
 data class SignUpResponseMessage(
     val message: String = "",
     val errors: List<SignUpError> = listOf()
@@ -38,6 +60,11 @@ interface API {
     suspend fun verifyCode(
         @Body verificationCodeRequestData: VerificationCodeRequestData
     ):Response<SignUpResponseMessage>
+
+    @POST("login/signin")
+    suspend fun loginUser(
+        @Body credentials: UserCredentials
+    ): Response<LoginResponse>
 
     @POST("login/resend_verification_code")
     suspend fun resendCode(
