@@ -90,27 +90,6 @@ fun UsernameView(onValuesUpdate: (String) -> Unit, onBackButtonClick: (String) -
                 color = Color.Red,
                 modifier = Modifier.padding(bottom = 20.dp)
             )
-
-            Button(
-                onClick = {
-                    // Add the onClick event here
-                },
-                shape = RoundedCornerShape(10.dp),
-                modifier = Modifier
-                    .border(1.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
-                    .clip(RoundedCornerShape(10.dp))
-                    .fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(126, 198, 11, 255),
-                    contentColor = Color.White
-                ),
-                contentPadding = PaddingValues(15.dp),
-            ) {
-                Text(
-                    text = "Create",
-                    //color = Color.White // COLOR OF TEXT
-                )
-            }
         }
         Column(Modifier.weight(2F)) {
             // TEXT FIELD STUFF
