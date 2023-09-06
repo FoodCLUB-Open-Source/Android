@@ -67,8 +67,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProfileView(navController: NavController, sessionCache: SessionCache) {
-//    val userId = sessionCache.getActiveSession()?.userId ?: 1L
-    val userId = 1L
+    val userId = sessionCache.getActiveSession()?.userId ?: 1L
+//    val userId = 1L
 
     val viewModel: ProfileViewModel = viewModel(
         factory = object : ViewModelProvider.Factory {
