@@ -1,16 +1,24 @@
-package com.example.foodclub.viewmodels.home
+package android.kotlin.foodclub.viewmodels.home
 
-import android.content.Intent
+import android.kotlin.foodclub.data.models.MyPostsModel
+import android.kotlin.foodclub.data.models.MyProfileModel
 import android.kotlin.foodclub.data.models.MyRecipeModel
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextDecoration
+import android.kotlin.foodclub.repositories.MyProfileRepository
+import android.kotlin.foodclub.utils.helpers.Resource
+import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.navigation.NavHostController
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
-class ProfileViewModel() : ViewModel() {
+class ProfileViewModel(private val userId: Long) : ViewModel() {
+
+    private val _profileModel = MutableStateFlow<MyProfileModel?>(null)
+    val profileModel: StateFlow<MyProfileModel?> get() = _profileModel
+
+    private val _error = MutableStateFlow("")
+    val error: StateFlow<String> get() = _error
 
     val tabItems = listOf(
         MyRecipeModel(
@@ -24,6 +32,26 @@ class ProfileViewModel() : ViewModel() {
         )
     )
 
+    init {
+        getMyProfileModel(userId)
+    }
+
+    fun getMyProfileModel(userId: Long) {
+        viewModelScope.launch() {
+            Log.d("ProfileViewModel", "test")
+            when(val resource = MyProfileRepository().retrieveProfileData(userId)) {
+                is Resource.Success -> {
+                    _error.value = ""
+                    _profileModel.value = resource.data
+                }
+                is Resource.Error -> {
+                    _error.value = resource.message!!
+                }
+            }
+
+        }
+    }
+
     private fun getListFromDatabase() {
 
         /// Hardcoded List used, need to fetch from API---->
@@ -32,13 +60,13 @@ class ProfileViewModel() : ViewModel() {
     }
 
 
-    fun getListOfMyRecipes(): List<MyRecipeModel> {
-        return tabItems;
+    fun getListOfMyRecipes(): List<MyPostsModel> {
+        return _profileModel.value!!.userPosts
     }
 
-    fun getListOfBookmarkedRecipes(): List<MyRecipeModel> {
-
-        return tabItems.filter { unit -> return@filter (unit.bookMarked == true) };
+    fun getListOfBookmarkedRecipes(): List<MyPostsModel> {
+        return _profileModel.value!!.userPosts
+//        return tabItems.filter { unit -> return@filter (unit.bookMarked == true) };
 
     }
 
