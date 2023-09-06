@@ -1,10 +1,15 @@
 package android.kotlin.foodclub.api.authentication
 
+import android.kotlin.foodclub.api.responses.LoginResponse
+import android.kotlin.foodclub.api.responses.RetrieveMyProfileResponse
 import android.kotlin.foodclub.data.models.SignUpError
 import com.google.gson.annotations.SerializedName
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 
 data class UserSignUpInformation(
@@ -13,19 +18,6 @@ data class UserSignUpInformation(
     val password: String,
 )
 
-data class LoginResponse(
-    val id: Int,
-    val username: String,
-    val profile_picture: String
-)
-
-data class ErrorItem(
-    val type: String,
-    val value: String,
-    val msg: String,
-    val path: String,
-    val location: String
-)
 data class ErrorResponse(
     val errors: List<Map<String, String>>
 )
@@ -70,4 +62,12 @@ interface API {
     suspend fun resendCode(
         @Body verificationCodeResendData: VerificationCodeResendData
     ):Response<SignUpResponseMessage>
+
+    //Retrieve Profile Page Details
+    @GET("profile/{Id}")
+    suspend fun retrieveMyProfileData(
+        @Path("Id") userId: Long,
+        @Query("page_number") pageNo: Int,
+        @Query("page_size") pageSize: Int
+    ): Response<RetrieveMyProfileResponse>
 }
