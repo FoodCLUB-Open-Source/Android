@@ -1,5 +1,6 @@
   package com.example.foodclub.navigation.graphs
 
+import android.kotlin.foodclub.utils.helpers.SessionCache
 import android.kotlin.foodclub.views.authentication.EmailSentView
 import android.kotlin.foodclub.views.authentication.LogInWithEmail
 import android.kotlin.foodclub.views.authentication.MainLogInAndSignUp
@@ -13,12 +14,15 @@ import com.example.foodclub.views.home.MainView
 
 
 @Composable
-fun RootNavigationGraph(navController: NavHostController) {
-    NavHost(navController = navController, route = Graph.ROOT, startDestination = Graph.AUTHENTICATION) {
+fun RootNavigationGraph(navController: NavHostController, sessionCache: SessionCache) {
+    NavHost(
+        navController = navController,
+        route = Graph.ROOT,
+        startDestination = Graph.AUTHENTICATION) {
         onBoardingNavigationGraph(navController = navController)
-        authNavigationGraph(navController = navController)
+        authNavigationGraph(navController = navController, sessionCache = sessionCache)
         composable(route = Graph.HOME) {
-            MainView()
+            MainView(sessionCache = sessionCache)
         }
     }
 }

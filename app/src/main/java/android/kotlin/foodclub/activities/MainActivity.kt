@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import android.kotlin.foodclub.ui.theme.FoodClubTheme
+import android.kotlin.foodclub.utils.helpers.SessionCache
 import android.kotlin.foodclub.views.home.ChangePasswordView
 import android.kotlin.foodclub.views.home.EditProfileSetting
 import android.kotlin.foodclub.views.home.PrivacySetting
@@ -26,12 +27,14 @@ class MainActivity : ComponentActivity() {
         var keepSplashOnScreen = true
         val delay = 2500L
 
+        val sharedPreferences = getSharedPreferences("session_prefs", MODE_PRIVATE)
+        val sessionCache = SessionCache(sharedPreferences)
         installSplashScreen().setKeepOnScreenCondition { keepSplashOnScreen }
         Handler(Looper.getMainLooper()).postDelayed({
             keepSplashOnScreen = false }, delay)
         setContent {
             FoodClubTheme {
-                RootNavigationGraph(navController = rememberNavController())
+                RootNavigationGraph(navController = rememberNavController(), sessionCache = sessionCache)
             }
         }
     }
