@@ -54,7 +54,7 @@ import com.example.foodclub.views.home.ProfileView
         }
 
         composable(route = HomeOtherRoutes.GalleryView.route){
-            GalleryView(navController = navController)
+            GalleryView(navController = navController, it.arguments?.getString("firstImage") ?: "")
         }
     }
 }
@@ -64,6 +64,5 @@ sealed class HomeOtherRoutes(val route: String) {
     object CameraView : HomeOtherRoutes(route = "CAMERA_VIEW")
     object CreateRecipeView : HomeOtherRoutes(route = "CREATE_RECIPE_VIEW")
     object CameraPreviewView : HomeOtherRoutes(route = "CAMERA_PREVIEW_VIEW/{uri}")
-
-    object GalleryView: HomeOtherRoutes(route = "GALLERY_VIEW")
+    object GalleryView: HomeOtherRoutes(route = "GALLERY_VIEW/{firstImage}")
 }

@@ -1,7 +1,13 @@
 package android.kotlin.foodclub.views.home
 
 //import androidx.compose.foundation.layout.ColumnScopeInstance.weight
+import android.content.Context
+import android.graphics.Bitmap
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.viewmodels.home.GalleryViewModel
+import android.media.MediaMetadataRetriever
+import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -26,15 +32,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @Composable
-public fun GalleryView(navController: NavController, itemsPerRow: Int = 3)
+public fun GalleryView(navController: NavController, firstImage: String,itemsPerRow: Int = 3)
 {
     /*
     val context = LocalContext.current
@@ -44,16 +56,19 @@ public fun GalleryView(navController: NavController, itemsPerRow: Int = 3)
         factory = { previewView },
         modifier = Modifier.fillMaxWidth().height(screenHeight).clip(RoundedCornerShape(20.dp))
     )
-
      */
 
-    val ResourceIds : List<Pair<String, String>> = arrayListOf(
-        Pair(R.drawable.ic_launcher_foreground.toString(), "Image"),
-        Pair(R.drawable.ic_launcher_foreground.toString(), "Image"),
-        Pair(R.drawable.ic_launcher_foreground.toString(), "Image"),
-        Pair(R.drawable.ic_launcher_foreground.toString(), "Image"),
-        Pair(R.drawable.imagecard.toString(), "Image"),
-    )
+
+    val viewModel: GalleryViewModel = viewModel()
+    //val str = firstImage.toString()
+
+
+    val ResourceIds : MutableList<Pair<String, String>> = viewModel.ResourceIds.toMutableList()
+
+    ResourceIds.add(Pair(firstImage, "Video"))
+    ResourceIds.add(Pair(firstImage, "Video"))
+    ResourceIds.add(Pair(firstImage, "Video"))
+    ResourceIds.add(Pair(firstImage, "Video"))
 
     var ResourceDrawables: MutableList<Int> = mutableListOf<Int>();
     var ResourceURI: MutableList<String> = mutableListOf<String>();
@@ -61,7 +76,13 @@ public fun GalleryView(navController: NavController, itemsPerRow: Int = 3)
     ResourceIds.forEach()
     {
         (name, type) ->
-        if (type.equals("Image"))
+
+        if (name.contains("mp4"))
+        {
+            ResourceURI.add(name)
+        }
+
+        if (type == "Image")
         {
             ResourceDrawables.add(name.toInt())
         }
@@ -164,7 +185,7 @@ public fun GalleryView(navController: NavController, itemsPerRow: Int = 3)
             }
             else
             {
-                GalleryVideoTab()
+                GalleryVideoTab(videos = ResourceURI, itemsPerRow = itemsPerRow, navController = navController)
             }
 
         }
@@ -172,6 +193,52 @@ public fun GalleryView(navController: NavController, itemsPerRow: Int = 3)
     }
 
 
+}
+
+@Composable
+fun <E> GalleryTab(items: List<E>, itemsPerRow: Int = 3, navController: NavController)
+{
+    var itemRows: MutableList<MutableList<E>> = arrayListOf()
+    val itemRow: MutableList<E> = arrayListOf()
+    var count: Int = 0
+
+    for (image in items)
+    {
+        count += 1
+        itemRow.add(image)
+        if (count == itemsPerRow)
+        {
+            itemRows.add(itemRow.toMutableList())
+            count = 0
+            itemRow.clear()
+            continue
+        }
+    }
+
+    if (itemRow.isNotEmpty())
+    {
+        itemRows.add(itemRow)
+    }
+
+    //
+    //Displays items in a grid format with a certain number of items per row
+    LazyColumn(modifier= Modifier
+        .padding(5.dp)
+        .fillMaxWidth()) {
+        items(items = itemRows)
+        {
+                itemLine ->
+            Row(verticalAlignment = Alignment.CenterVertically)
+            {
+                val ratioModifier: Modifier = Modifier.weight(1f);
+
+                for (item in itemLine)
+                {
+                    VideoItem(ratioModifier, item.toString(), navController)
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -213,7 +280,7 @@ fun GalleryImageTab(images: List<Int>, itemsPerRow: Int = 3)
 
                 for (image in imageLine)
                 {
-                    ImageItem(ratioModifier)
+                    ImageItem(ratioModifier, image)
                 }
             }
         }
@@ -252,13 +319,97 @@ fun ImageItem(modifier: Modifier, imageID: Int = R.drawable.baseline_close_24)
 }
 
 @Composable
-fun GalleryVideoTab()
+fun GalleryVideoTab(videos: List<String>, itemsPerRow: Int = 3, navController: NavController)
 {
+    var videoRows: MutableList<MutableList<String>> = arrayListOf()
+    val videoRow: MutableList<String> = arrayListOf()
+    var count: Int = 0
 
+    for (image in videos)
+    {
+        count += 1
+        videoRow.add(image)
+        if (count == itemsPerRow)
+        {
+            videoRows.add(videoRow.toMutableList())
+            count = 0
+            videoRow.clear()
+            continue
+        }
+    }
+
+    if (videoRow.isNotEmpty())
+    {
+        videoRows.add(videoRow)
+    }
+
+    //
+    //Displays items in a grid format with a certain number of items per row
+    LazyColumn(modifier= Modifier
+        .padding(5.dp)
+        .fillMaxWidth()) {
+        items(items = videoRows)
+        {
+                videoLine ->
+            Row(verticalAlignment = Alignment.CenterVertically)
+            {
+                val ratioModifier: Modifier = Modifier.weight(1f);
+
+                for (video in videoLine)
+                {
+                    VideoItem(ratioModifier, video, navController)
+                }
+            }
+        }
+    }
+}
+
+fun createVideoThumb(context: Context, uri: Uri): Bitmap? {
+    try {
+        val mediaMetadataRetriever = MediaMetadataRetriever()
+        mediaMetadataRetriever.setDataSource(context, uri)
+        return mediaMetadataRetriever.frameAtTime
+    } catch (ex: Exception) {
+        Toast
+            .makeText(context, "Error retrieving bitmap", Toast.LENGTH_SHORT)
+            .show()
+    }
+    return null
 }
 
 @Composable
-fun VideoItem()
+fun VideoItem(modifier: Modifier, videoID: String = "", navController: NavController)
 {
+    val context = LocalContext.current
+    val bitmap = createVideoThumb(context = context, videoID.toUri())?.asImageBitmap()
+    //To be altered with intrinsic measurements
+    Card(
+        modifier = Modifier
+            //.height(32.dp)
+            //.fillMaxWidth(0.32f)
+            //.weight(1f, true)
+            .aspectRatio(1f)
+            .padding(start = 5.dp, top = 5.dp)
+            .background(Color.Red)
+            .clickable {
 
+                val uriEncoded = URLEncoder.encode(
+                    videoID.toString(),
+                    StandardCharsets.UTF_8.toString()
+                )
+                navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}")
+            }
+            .then(modifier)
+    ) {
+        if (bitmap != null) {
+            Image(
+                bitmap = bitmap,//painterResource(id = R.drawable.baseline_close_24),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .aspectRatio(1f, true)
+                    .padding(2.dp)
+            )
+        }
+    }
 }

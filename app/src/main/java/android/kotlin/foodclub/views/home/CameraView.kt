@@ -235,11 +235,13 @@ fun CameraView(
                                     if (event is VideoRecordEvent.Finalize) {
                                         val uri = event.outputResults.outputUri
                                         if (uri != Uri.EMPTY) {
+
                                             val uriEncoded = URLEncoder.encode(
                                                 uri.toString(),
                                                 StandardCharsets.UTF_8.toString()
                                             )
-                                            navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}")
+                                            //navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}")
+                                            navController.navigate("GALLERY_VIEW/${uriEncoded}")
                                         }
                                     }
                                 }
@@ -264,23 +266,43 @@ fun CameraView(
                     )*/
                 }
                 if (!recordingStarted.value) {
+
+                    val ResourceIds : List<Pair<String, String>> = arrayListOf(
+                        Pair(R.drawable.imagecard.toString(), "Image"),
+                        Pair(R.drawable.ic_launcher_foreground.toString(), "Image"),
+                        Pair(R.drawable.ic_launcher_foreground.toString(), "Image"),
+                        Pair(R.drawable.ic_launcher_foreground.toString(), "Image"),
+                        Pair(R.drawable.imagecard.toString(), "Image"),
+                    )
+
+
                     IconButton(
                         onClick = {
                             //getContent.launch("video/*")
-                            navController.navigate("GALLERY_VIEW")
+
+                            var ResourceDrawables: MutableList<Int> = mutableListOf<Int>();
+                            var ResourceURI: MutableList<String> = mutableListOf<String>();
+
+                            ResourceIds.forEach()
+                            {
+                                    (name, type) ->
+                                if (type == "Image")
+                                {
+                                    ResourceDrawables.add(name.toInt())
+                                }
+                                else
+                                {
+                                    ResourceURI.add(name)
+                                }
+                            }
+
+
+                            navController.navigate("GALLERY_VIEW/${(R.drawable.app_logo).toByte()}")
                             //audioEnabled.value = !audioEnabled.value
                         },
                         modifier = Modifier
                             .align(Alignment.BottomStart)
                     ) {
-
-                        val ResourceIds : List<Pair<String, String>> = arrayListOf(
-                            Pair(R.drawable.ic_launcher_foreground.toString(), "Image"),
-                            Pair(R.drawable.ic_launcher_foreground.toString(), "Image"),
-                            Pair(R.drawable.ic_launcher_foreground.toString(), "Image"),
-                            Pair(R.drawable.ic_launcher_foreground.toString(), "Image"),
-                            Pair(R.drawable.imagecard.toString(), "Image"),
-                        )
 
                         Icon(
                             painter = painterResource(if (ResourceIds.isNotEmpty()) ResourceIds[0].first.toInt() else (if (audioEnabled.value) R.drawable.story_border_white else R.drawable.story_border)),
