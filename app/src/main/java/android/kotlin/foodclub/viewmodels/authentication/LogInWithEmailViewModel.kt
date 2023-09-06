@@ -3,6 +3,8 @@ package android.kotlin.foodclub.viewmodels.authentication
 import android.kotlin.foodclub.api.authentication.ErrorResponse
 import android.kotlin.foodclub.api.authentication.UserCredentials
 import android.kotlin.foodclub.api.retrofit.RetrofitInstance
+import android.kotlin.foodclub.data.models.Session
+import android.kotlin.foodclub.utils.helpers.SessionCache
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,8 +12,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import retrofit2.Response
 import java.net.UnknownHostException
 
 //object LoginErrorCodes {
@@ -39,6 +41,23 @@ class LogInWithEmailViewModel : ViewModel() {
     private val _loginStatus = MutableLiveData<String?>()
     val loginStatus: LiveData<String?> get() = _loginStatus
 
+    private val _sessionCache = MutableStateFlow<SessionCache?>(null)
+
+    private fun setSession(userId: Long) {
+        Log.d("LoginWithEmailViewModel", "Starting setting session: $userId")
+        Log.d("LoginWithEmailViewModel", "Current session: ${_sessionCache.value?.getActiveSession()?.userId}")
+
+        if(_sessionCache.value == null) return
+        if(_sessionCache.value!!.getActiveSession() != null) _sessionCache.value!!.clearSession()
+        Log.d("LoginWithEmailViewModel", "Saving session")
+        _sessionCache.value!!.saveSession(Session(userId))
+        Log.d("LoginWithEmailViewModel", "Saved session")
+        Log.d("LoginWithEmailViewModel", "Saved session: ${_sessionCache.value!!.getActiveSession()?.userId}")
+    }
+
+    fun setSessionCache(sessionCache: SessionCache) {
+        _sessionCache.value = sessionCache
+    }
 
     fun logInUser(userEmail: String?, userPassword: String?, navController: NavController) {
         if (userEmail.isNullOrEmpty() || userPassword.isNullOrEmpty()) {
@@ -49,6 +68,7 @@ class LogInWithEmailViewModel : ViewModel() {
             try {
                 val response = RetrofitInstance.retrofitApi.loginUser(UserCredentials(userEmail, userPassword))
                 if (response.isSuccessful) {
+                    setSession(response.body()!!.user.id.toLong())
                     navController.navigate("home_graph")
 //                    _loginStatus.postValue("Login Successful")
                 } else {
