@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.api.authentication
 
+import android.kotlin.foodclub.api.responses.FollowUnfollowResponse
 import android.kotlin.foodclub.api.responses.LoginResponse
 import android.kotlin.foodclub.api.responses.RetrieveFollowerListResponse
 import android.kotlin.foodclub.api.responses.RetrieveFollowingListResponse
@@ -8,6 +9,7 @@ import android.kotlin.foodclub.data.models.SignUpError
 import com.google.gson.annotations.SerializedName
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -69,21 +71,33 @@ interface API {
     @GET("profile/{Id}")
     suspend fun retrieveProfileData(
         @Path("Id") userId: Long,
-        @Query("page_number") pageNo: Int,
-        @Query("page_size") pageSize: Int
+        @Query("page_number") pageNo: Int?,
+        @Query("page_size") pageSize: Int?
     ): Response<RetrieveProfileResponse>
 
     @GET("profile/{Id}/following")
     suspend fun retrieveProfileFollowing(
         @Path("Id") userId: Long,
-        @Query("page_number") pageNo: Int,
-        @Query("page_size") pageSize: Int
+        @Query("page_number") pageNo: Int?,
+        @Query("page_size") pageSize: Int?
     ): Response<RetrieveFollowingListResponse>
 
     @GET("profile/{Id}/followers")
     suspend fun retrieveProfileFollowers(
         @Path("Id") userId: Long,
-        @Query("page_number") pageNo: Int,
-        @Query("page_size") pageSize: Int
+        @Query("page_number") pageNo: Int?,
+        @Query("page_size") pageSize: Int?
     ): Response<RetrieveFollowerListResponse>
+
+    @DELETE("profile/unfollow/user/{followerId}/following/{userId}")
+    suspend fun unfollowUser(
+        @Path("followerId") followerId: Long,
+        @Path("userId") userId: Long
+    ): Response<FollowUnfollowResponse>
+
+    @POST("profile/follow/user/{followerId}/following/{userId}")
+    suspend fun followUser(
+        @Path("followerId") followerId: Long,
+        @Path("userId") userId: Long
+    ): Response<FollowUnfollowResponse>
 }
