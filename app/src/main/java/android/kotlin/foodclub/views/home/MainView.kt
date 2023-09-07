@@ -147,7 +147,7 @@ fun MainView(navController: NavHostController = rememberNavController(),
     }
 
     Scaffold(
-        bottomBar = { BottomBar(navController = navController, triggerBottomSheetModal) }
+        bottomBar = { BottomBar(navController = navController, triggerBottomSheetModal, sessionCache) }
     ) {
         if (showSheet) {
             BottomSheet(triggerBottomSheetModal, navController)
@@ -171,7 +171,7 @@ fun MainView(navController: NavHostController = rememberNavController(),
 
 
 @Composable
-fun BottomBar(navController: NavHostController, triggerBottomSheetModal: () -> Unit) {
+fun BottomBar(navController: NavHostController, triggerBottomSheetModal: () -> Unit, sessionCache: SessionCache) {
     val screens = listOf(
         BottomBarScreenObject.Home,
         BottomBarScreenObject.Play,
@@ -195,7 +195,8 @@ fun BottomBar(navController: NavHostController, triggerBottomSheetModal: () -> U
                     screen = screen,
                     currentDestination = currentDestination,
                     navController = navController,
-                    triggerBottomSheetModal = triggerBottomSheetModal
+                    triggerBottomSheetModal = triggerBottomSheetModal,
+                    sessionCache = sessionCache
                 )
             }
         }
@@ -207,7 +208,8 @@ fun RowScope.AddItem(
     screen: BottomBarScreenObject,
     currentDestination: NavDestination?,
     navController: NavHostController,
-    triggerBottomSheetModal: () -> Unit
+    triggerBottomSheetModal: () -> Unit,
+    sessionCache: SessionCache
 ) {
     val icon = painterResource(screen.icon)
 
@@ -230,10 +232,19 @@ fun RowScope.AddItem(
             if (screen.route == "CREATE") {
                 triggerBottomSheetModal()
             } else {
-                navController.navigate(screen.route) {
-                    popUpTo(navController.graph.findStartDestination().id)
-                    launchSingleTop = true
+                val userId = sessionCache.getActiveSession()?.userId
+                if(screen == BottomBarScreenObject.Profile) {
+                    navController.navigate(screen.route + "/$userId") {
+                        popUpTo(navController.graph.findStartDestination().id)
+                        launchSingleTop = true
+                    }
+                } else {
+                    navController.navigate(screen.route) {
+                        popUpTo(navController.graph.findStartDestination().id)
+                        launchSingleTop = true
+                    }
                 }
+
             }
         }
 

@@ -40,8 +40,15 @@ import androidx.navigation.navArgument
                 callbackEnableStoryView = callbackEnableStoryView,
                 storyViewMode = storyViewMode)
         }
-        composable(route = BottomBarScreenObject.Profile.route) {
-            ProfileView(navController, sessionCache)
+        composable(route = BottomBarScreenObject.Profile.route + "/{userId}",
+            arguments = listOf(
+                navArgument("userId") { type = NavType.StringType }
+            )
+        ) {
+            it.arguments?.getString("userId")?.let { it1 ->
+                ProfileView(navController, sessionCache, it1.toLong())
+            }
+
         }
         composable(route = BottomBarScreenObject.Discover.route) {
             MyBasketView(navController = navController)
