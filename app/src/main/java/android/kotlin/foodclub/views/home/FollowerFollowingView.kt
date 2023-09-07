@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.foodclub.ui.theme.BottomBarScreenObject
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 val avenir = FontFamily(
@@ -136,8 +137,9 @@ fun FollowerView(navController: NavController, viewType: String, userId: Long) {
             LazyColumn( modifier = Modifier.padding(bottom = 150.dp) ) {
                 items(userList.size) { index ->
                     Follower(
-                        index = index,
-                        imageUrl = userList[index].profilePictureUrl,
+                        navController = navController,
+                        userId = userList[index].userId,
+                        imageUrl = userList[index].profilePictureUrl ?: "",
                         username = userList[index].username,
                         completeName = userList[index].username + " No name in API"
                     )
@@ -148,13 +150,13 @@ fun FollowerView(navController: NavController, viewType: String, userId: Long) {
 }
 
 @Composable
-fun Follower(index: Int, imageUrl: String, username: String, completeName: String) {
+fun Follower(navController: NavController, userId: Int, imageUrl: String, username: String, completeName: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(75.dp)
             .padding(vertical = 4.dp)
-            .clickable { },
+            .clickable { navController.navigate(BottomBarScreenObject.Profile.route + "/$userId") },
         verticalAlignment = Alignment.CenterVertically
     ) {
 
