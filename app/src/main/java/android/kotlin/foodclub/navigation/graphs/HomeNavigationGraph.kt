@@ -8,7 +8,7 @@ import android.kotlin.foodclub.views.home.CreateRecipeView
 import android.kotlin.foodclub.views.home.DeleteRecipeView
 import android.kotlin.foodclub.views.home.EditProfileSetting
 import android.kotlin.foodclub.views.home.FollowerView
-import android.kotlin.foodclub.views.home.FollowingView
+//import android.kotlin.foodclub.views.home.FollowingView
 import android.kotlin.foodclub.views.home.MyBasketView
 import android.kotlin.foodclub.views.home.PrivacySetting
 import android.kotlin.foodclub.views.home.SearchView
@@ -23,6 +23,8 @@ import com.example.foodclub.views.home.CreateView
 import com.example.foodclub.views.home.DiscoverView
 import com.example.foodclub.views.home.HomeView
 import android.kotlin.foodclub.views.home.ProfileView
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 
 @Composable
     fun HomeNavigationGraph(navController: NavHostController, showSheet: Boolean, triggerBottomSheetModal: () -> Unit,
@@ -78,12 +80,26 @@ import android.kotlin.foodclub.views.home.ProfileView
             DeleteRecipeView(navController = navController)
         }
 
-        composable(route = HomeOtherRoutes.FollowerView.route) {
-            FollowerView(navController = navController)
+        composable(route = HomeOtherRoutes.FollowerView.route + "/{userId}",
+            arguments = listOf(
+                navArgument("userId") { type = NavType.StringType }
+            )
+        ) {
+            it.arguments?.getString("userId")?.let { it1 ->
+                FollowerView(navController = navController, viewType = "followers",
+                    userId = it1.toLong())
+            }
         }
 
-        composable(route = HomeOtherRoutes.FollowingView.route) {
-            FollowingView(navController = navController)
+        composable(route = HomeOtherRoutes.FollowingView.route + "/{userId}",
+            arguments = listOf(
+                navArgument("userId") { type = NavType.StringType }
+            )
+        ) {
+            it.arguments?.getString("userId")?.let { it1 ->
+                FollowerView(navController = navController, viewType = "following",
+                    userId = it1.toLong())
+            }
         }
 
         composable(route = HomeOtherRoutes.MyBasketView.route) {
