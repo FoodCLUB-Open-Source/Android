@@ -9,5 +9,5 @@ data class FollowerUserModel(
     val username: String,
 
     @SerializedName("profile_picture")
-    val profilePictureUrl: String
+    val profilePictureUrl: String?
 )
