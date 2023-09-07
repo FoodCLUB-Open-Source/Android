@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.data.models.SimpleUserModel
 import android.kotlin.foodclub.viewmodels.home.FollowerFollowingViewModel
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,7 +30,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
@@ -39,6 +42,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 val avenir = FontFamily(
@@ -51,10 +55,9 @@ val raleway = FontFamily(
 )
 
 @Composable
-fun FollowerView(navController: NavController) {
+fun FollowerView(navController: NavController, viewType: String, userId: Long) {
     val systemUiController = rememberSystemUiController()
     val viewModel: FollowerFollowingViewModel = viewModel()
-
 
     SideEffect {
         systemUiController.setSystemBarsColor(
@@ -62,12 +65,30 @@ fun FollowerView(navController: NavController) {
             darkIcons = true
         )
     }
-    Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
+
+    LaunchedEffect(Unit) {
+        if(viewType == "followers") viewModel.getFollowersList(userId)
+        if(viewType == "following") viewModel.getFollowingList(userId)
+    }
+
+    val titleState = viewModel.title.collectAsState()
+    val followersListState = viewModel.followersList.collectAsState()
+    val followingListState = viewModel.followingList.collectAsState()
+    val error = viewModel.error.collectAsState()
+
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(Color.White)) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(top = 55.dp).background(Color.White)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 55.dp)
+                .background(Color.White)
         ) {
             Box(
-                modifier = Modifier.background(Color.Transparent).padding(start = 20.dp),
+                modifier = Modifier
+                    .background(Color.Transparent)
+                    .padding(start = 20.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Button(                                                                                  //current
@@ -98,22 +119,27 @@ fun FollowerView(navController: NavController) {
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "My Followers", fontWeight = FontWeight.ExtraBold,
+                text = titleState.value, fontWeight = FontWeight.ExtraBold,
                 fontFamily = raleway,
                 fontSize = 20.sp,
                 modifier = Modifier.padding(start = 20.dp),
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            var followerList = viewModel.getFollowersList();
+            val userList: List<SimpleUserModel> = when(viewType) {
+                "followers" -> followersListState.value
+                "following" -> followingListState.value
+                else -> listOf()
+            }
+
 
             LazyColumn( modifier = Modifier.padding(bottom = 150.dp) ) {
-                items(followerList.size) { index ->
+                items(userList.size) { index ->
                     Follower(
                         index = index,
-                        imageRes = R.drawable.story_user,
-                        username = "${followerList.get(index).userName} $index",
-                        completeName = "${followerList.get(index).fullName} $index"
+                        imageUrl = userList[index].profilePictureUrl,
+                        username = userList[index].username,
+                        completeName = userList[index].username + " No name in API"
                     )
                 }
             }
@@ -122,25 +148,34 @@ fun FollowerView(navController: NavController) {
 }
 
 @Composable
-fun Follower(index: Int, imageRes: Int, username: String, completeName: String) {
+fun Follower(index: Int, imageUrl: String, username: String, completeName: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(75.dp)
-            .padding(vertical = 4.dp).clickable {  },
+            .padding(vertical = 4.dp)
+            .clickable { },
         verticalAlignment = Alignment.CenterVertically
     ) {
 
         Spacer(modifier = Modifier.width(16.dp))
 
-            Image(
-                painter = painterResource(id = imageRes),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(50.dp)
-                    .clip(CircleShape)
-                    .background(Color.White)
-            )
+        AsyncImage(
+            model = imageUrl,
+            contentDescription = null,
+            modifier = Modifier
+                .size(50.dp)
+                .clip(CircleShape)
+                .background(Color.White)
+        )
+//            Image(
+//                painter = painterResource(id = imageRes),
+//                contentDescription = null,
+//                modifier = Modifier
+//                    .size(50.dp)
+//                    .clip(CircleShape)
+//                    .background(Color.White)
+//            )
             Spacer(modifier = Modifier.width(12.dp))
             Column {
                 Text(text = username, fontSize = 15.sp, fontWeight = FontWeight.Bold, fontFamily = avenir)
