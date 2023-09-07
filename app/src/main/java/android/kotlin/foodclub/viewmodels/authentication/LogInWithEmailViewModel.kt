@@ -44,15 +44,9 @@ class LogInWithEmailViewModel : ViewModel() {
     private val _sessionCache = MutableStateFlow<SessionCache?>(null)
 
     private fun setSession(userId: Long) {
-        Log.d("LoginWithEmailViewModel", "Starting setting session: $userId")
-        Log.d("LoginWithEmailViewModel", "Current session: ${_sessionCache.value?.getActiveSession()?.userId}")
-
         if(_sessionCache.value == null) return
         if(_sessionCache.value!!.getActiveSession() != null) _sessionCache.value!!.clearSession()
-        Log.d("LoginWithEmailViewModel", "Saving session")
         _sessionCache.value!!.saveSession(Session(userId))
-        Log.d("LoginWithEmailViewModel", "Saved session")
-        Log.d("LoginWithEmailViewModel", "Saved session: ${_sessionCache.value!!.getActiveSession()?.userId}")
     }
 
     fun setSessionCache(sessionCache: SessionCache) {
