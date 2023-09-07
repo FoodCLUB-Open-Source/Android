@@ -20,6 +20,10 @@ class ProfileViewModel(private val userId: Long) : ViewModel() {
     private val _error = MutableStateFlow("")
     val error: StateFlow<String> get() = _error
 
+    private val _isFollowedByUser = MutableStateFlow(false)
+    val isFollowedByUser: StateFlow<Boolean> get() = _isFollowedByUser
+
+
     val tabItems = listOf(
         MyRecipeModel(
             "image", "0", true
@@ -57,6 +61,47 @@ class ProfileViewModel(private val userId: Long) : ViewModel() {
 
     }
 
+    fun unfollowUser(followerId: Long, userId: Long) {
+        viewModelScope.launch() {
+            when(val resource = ProfileRepository().unfollowUser(followerId, userId)) {
+                is Resource.Success -> {
+                    _error.value = ""
+                    _isFollowedByUser.value = false
+                }
+                is Resource.Error -> {
+                    _error.value = resource.message!!
+                }
+            }
+        }
+    }
+
+    fun followUser(followerId: Long, userId: Long) {
+        viewModelScope.launch() {
+            when(val resource = ProfileRepository().followUser(followerId, userId)) {
+                is Resource.Success -> {
+                    _error.value = ""
+                    _isFollowedByUser.value = true
+                }
+                is Resource.Error -> {
+                    _error.value = resource.message!!
+                }
+            }
+        }
+    }
+
+    fun isFollowedByUser(followerId: Long, userId: Long) {
+        viewModelScope.launch() {
+            when(val resource = ProfileRepository().retrieveProfileFollowers(userId)) {
+                is Resource.Success -> {
+                    _error.value = ""
+                    _isFollowedByUser.value = resource.data!!.any { it.userId.toLong() == followerId }
+                }
+                is Resource.Error -> {
+                    _error.value = resource.message!!
+                }
+            }
+        }
+    }
 
     fun getListOfMyRecipes(): List<UserPostsModel> {
         return _profileModel.value!!.userPosts
