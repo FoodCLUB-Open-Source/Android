@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.data.models.StoryModel
 import android.kotlin.foodclub.utils.composables.StoryView
+import android.kotlin.foodclub.utils.helpers.SessionCache
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -130,7 +131,8 @@ fun BottomSheet(onDismiss: () -> Unit, navController: NavHostController) {
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainView(navController: NavHostController = rememberNavController()) {
+fun MainView(navController: NavHostController = rememberNavController(),
+             sessionCache: SessionCache) {
     val viewModel: HomeViewModel = viewModel()
     var showSheet by remember { mutableStateOf(false) }
 
@@ -158,7 +160,7 @@ fun MainView(navController: NavHostController = rememberNavController()) {
                 systemUiController.setNavigationBarColor(
                     color = Color.Black
                 )
-            }, storyViewMode = storyViewMode)
+            }, storyViewMode = storyViewMode, sessionCache = sessionCache)
     }
     //Story view screen
     Box(modifier = Modifier.zIndex(2f)) {

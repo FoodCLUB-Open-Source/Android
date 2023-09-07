@@ -2,6 +2,7 @@ package android.kotlin.foodclub.views.authentication
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.api.retrofit.RetrofitInstance
+import android.kotlin.foodclub.utils.helpers.SessionCache
 import android.kotlin.foodclub.viewmodels.authentication.LogInWithEmailViewModel
 import android.kotlin.foodclub.viewmodels.authentication.LoginErrorCodes
 
@@ -70,9 +71,10 @@ import java.net.ConnectException
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LogInWithEmail(navController: NavHostController) {
+fun LogInWithEmail(navController: NavHostController, sessionCache: SessionCache) {
     // we need to make only one view model
     val viewModel: LogInWithEmailViewModel = viewModel()
+    viewModel.setSessionCache(sessionCache)
 
     var errorMessage by remember { mutableStateOf<String?>(null) }
 //    val loginStatus by viewModel.loginStatus.observeAsState(initial = 0)
@@ -394,9 +396,9 @@ fun LogInWithEmail(navController: NavHostController) {
     }
 
 }
-@Composable
-@Preview
-fun LogInWithEmail() {
-    LogInWithEmail(rememberNavController())
-}
+//@Composable
+//@Preview
+//fun LogInWithEmail() {
+//    LogInWithEmail(rememberNavController())
+//}
 

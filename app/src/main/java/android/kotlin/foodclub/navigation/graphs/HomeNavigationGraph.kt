@@ -1,5 +1,6 @@
 package com.example.foodclub.navigation.graphs
 
+import android.kotlin.foodclub.utils.helpers.SessionCache
 import android.kotlin.foodclub.views.home.CameraPreviewView
 import android.kotlin.foodclub.views.home.CameraView
 import android.kotlin.foodclub.views.home.ChangePasswordView
@@ -14,7 +15,6 @@ import android.kotlin.foodclub.views.home.SearchView
 import android.kotlin.foodclub.views.home.SettingsView
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.IntOffset
-import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,11 +22,12 @@ import com.example.foodclub.ui.theme.BottomBarScreenObject
 import com.example.foodclub.views.home.CreateView
 import com.example.foodclub.views.home.DiscoverView
 import com.example.foodclub.views.home.HomeView
-import com.example.foodclub.views.home.ProfileView
+import android.kotlin.foodclub.views.home.ProfileView
 
 @Composable
     fun HomeNavigationGraph(navController: NavHostController, showSheet: Boolean, triggerBottomSheetModal: () -> Unit,
-                            callbackEnableStoryView: (offset: IntOffset) -> Unit, storyViewMode: Boolean) {
+                            callbackEnableStoryView: (offset: IntOffset) -> Unit, storyViewMode: Boolean,
+                            sessionCache: SessionCache) {
     NavHost(
         navController = navController,
         route = Graph.HOME,
@@ -38,7 +39,7 @@ import com.example.foodclub.views.home.ProfileView
                 storyViewMode = storyViewMode)
         }
         composable(route = BottomBarScreenObject.Profile.route) {
-            ProfileView(navController)
+            ProfileView(navController, sessionCache)
         }
         composable(route = BottomBarScreenObject.Discover.route) {
             MyBasketView(navController = navController)
