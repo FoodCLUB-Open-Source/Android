@@ -2,7 +2,7 @@ package android.kotlin.foodclub.data.models
 
 import com.google.gson.annotations.SerializedName
 
-data class MyPostsModel(
+data class UserPostsModel(
     val id: Int,
     val title: String,
     val description: String,

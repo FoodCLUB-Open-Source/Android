@@ -1,8 +1,7 @@
 package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.data.models.MyPostsModel
-import android.kotlin.foodclub.data.models.MyRecipeModel
+import android.kotlin.foodclub.data.models.UserPostsModel
 import android.kotlin.foodclub.ui.theme.Montserrat
 import android.kotlin.foodclub.utils.helpers.SessionCache
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -48,15 +47,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import android.kotlin.foodclub.viewmodels.home.ProfileViewModel
-import android.util.Log
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -146,7 +142,7 @@ fun ProfileView(navController: NavController, sessionCache: SessionCache) {
                     ClickableText(
                         text = AnnotatedString(profile.totalUserFollowers.toString()),
                         onClick = {
-                            navController.navigate("FOLLOWER_VIEW")
+                            navController.navigate("FOLLOWER_VIEW/$userId")
                         },
                         style = TextStyle(
                             color = Color.Black,
@@ -158,7 +154,7 @@ fun ProfileView(navController: NavController, sessionCache: SessionCache) {
                     ClickableText(
                         text = AnnotatedString(profile.totalUserFollowing.toString()),
                         onClick = {
-                            navController.navigate("FOLLOWING_VIEW")
+                            navController.navigate("FOLLOWING_VIEW/$userId")
                         },
                         style = TextStyle(
                             color = Color.Black,
@@ -263,7 +259,7 @@ fun ProfileView(navController: NavController, sessionCache: SessionCache) {
 }
 
 @Composable
-fun GridItem(navController: NavController, dataItem: MyPostsModel){
+fun GridItem(navController: NavController, dataItem: UserPostsModel){
     Card(modifier = Modifier
         .height(272.dp)
         .width(178.dp)

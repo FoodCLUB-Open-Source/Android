@@ -2,7 +2,7 @@ package android.kotlin.foodclub.data.models
 
 import com.google.gson.annotations.SerializedName
 
-data class MyProfileModel(
+data class UserProfileModel(
     val username: String,
 
     @SerializedName("profile_picture")
@@ -18,7 +18,7 @@ data class MyProfileModel(
     val totalUserFollowing: Int,
 
     @SerializedName("user_posts")
-    val userPosts: List<MyPostsModel> = listOf(),
+    val userPosts: List<UserPostsModel> = listOf(),
 
     @SerializedName("top_creators")
     val topCreators: List<TopCreatorsModel> = listOf()
