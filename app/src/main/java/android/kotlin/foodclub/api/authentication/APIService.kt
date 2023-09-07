@@ -1,7 +1,9 @@
 package android.kotlin.foodclub.api.authentication
 
 import android.kotlin.foodclub.api.responses.LoginResponse
-import android.kotlin.foodclub.api.responses.RetrieveMyProfileResponse
+import android.kotlin.foodclub.api.responses.RetrieveFollowerListResponse
+import android.kotlin.foodclub.api.responses.RetrieveFollowingListResponse
+import android.kotlin.foodclub.api.responses.RetrieveProfileResponse
 import android.kotlin.foodclub.data.models.SignUpError
 import com.google.gson.annotations.SerializedName
 import retrofit2.Response
@@ -65,9 +67,23 @@ interface API {
 
     //Retrieve Profile Page Details
     @GET("profile/{Id}")
-    suspend fun retrieveMyProfileData(
+    suspend fun retrieveProfileData(
         @Path("Id") userId: Long,
         @Query("page_number") pageNo: Int,
         @Query("page_size") pageSize: Int
-    ): Response<RetrieveMyProfileResponse>
+    ): Response<RetrieveProfileResponse>
+
+    @GET("profile/{Id}/following")
+    suspend fun retrieveProfileFollowing(
+        @Path("Id") userId: Long,
+        @Query("page_number") pageNo: Int,
+        @Query("page_size") pageSize: Int
+    ): Response<RetrieveFollowingListResponse>
+
+    @GET("profile/{Id}/followers")
+    suspend fun retrieveProfileFollowers(
+        @Path("Id") userId: Long,
+        @Query("page_number") pageNo: Int,
+        @Query("page_size") pageSize: Int
+    ): Response<RetrieveFollowerListResponse>
 }
