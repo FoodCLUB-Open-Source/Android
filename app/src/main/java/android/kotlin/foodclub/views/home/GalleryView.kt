@@ -1,13 +1,18 @@
 package android.kotlin.foodclub.views.home
 
 //import androidx.compose.foundation.layout.ColumnScopeInstance.weight
+import android.Manifest
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.viewmodels.home.GalleryViewModel
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -26,6 +31,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -35,6 +41,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -42,49 +49,77 @@ import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionsRequired
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 public fun GalleryView(navController: NavController, firstImage: String,itemsPerRow: Int = 3)
 {
-    /*
-    val context = LocalContext.current
-    val previewView: PreviewView = remember { PreviewView(context) }
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp + 10.dp
-    AndroidView(
-        factory = { previewView },
-        modifier = Modifier.fillMaxWidth().height(screenHeight).clip(RoundedCornerShape(20.dp))
-    )
-     */
-
-
     val viewModel: GalleryViewModel = viewModel()
     //val str = firstImage.toString()
 
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
 
-    val ResourceIds : MutableList<Pair<String, String>> = viewModel.ResourceIds.toMutableList()
+    val permissionState = rememberMultiplePermissionsState(
+        permissions = listOf(
+            Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO
+        )
+    )
 
-    ResourceIds.add(Pair(firstImage, "Video"))
-    ResourceIds.add(Pair(firstImage, "Video"))
-    ResourceIds.add(Pair(firstImage, "Video"))
-    ResourceIds.add(Pair(firstImage, "Video"))
+    //val ResourceIds : MutableList<Pair<String, String>> = remember{viewModel.ResourceIds.toMutableList()}
+    val ResourceIds : MutableList<Pair<Uri, String>> = remember{ mutableListOf() }
+    //ResourceIds.add(Pair(firstImage, "Video"))
+    var ResourceDrawables: MutableList<Uri> = mutableListOf<Uri>();
+    var ResourceURI: MutableList<Uri> = mutableListOf<Uri>();
 
-    var ResourceDrawables: MutableList<Int> = mutableListOf<Int>();
-    var ResourceURI: MutableList<String> = mutableListOf<String>();
+
+    val getContent = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetMultipleContents(),
+        onResult = { uris ->
+            for (uri in uris)
+            {
+                //val drawable = Drawable.createFromStream(context.contentResolver.openInputStream(uri), uri.toString())
+                //ResourceIds.add(Pair(uri.toString(), "Image"))
+                val type = context.contentResolver.getType(uri)
+                val s = type?.let { type.substring(0, it.indexOf("/")) }
+                ResourceIds.add(Pair(uri, s) as Pair<Uri, String>)
+                //ResourceDrawables.add(drawable as BitmapDrawable)
+            }
+            //Log.i("CameraView", uri.toString())
+        }
+    )
+
+    LaunchedEffect(Unit) {
+        permissionState.launchMultiplePermissionRequest()
+        //getContent.launch("*")
+        getContent.launch("video/*")
+        getContent.launch("image/*")
+    }
+
+
+
 
     ResourceIds.forEach()
     {
         (name, type) ->
 
+        /*
         if (name.contains("mp4"))
         {
             ResourceURI.add(name)
         }
+         */
 
-        if (type == "Image")
+        if (type == "image")
         {
-            ResourceDrawables.add(name.toInt())
+            //val drawable = Drawable.createFromStream(context.contentResolver.openInputStream(name.toUri()), name)
+            ResourceDrawables.add(name)
         }
         else
         {
@@ -98,100 +133,138 @@ public fun GalleryView(navController: NavController, firstImage: String,itemsPer
         mutableStateOf(true)
     }
 
-    Column(modifier = Modifier
-        .padding(10.dp)
-        .fillMaxWidth())
+    PermissionsRequired(
+        multiplePermissionsState = permissionState,
+        permissionsNotGrantedContent = { /* ... */ },
+        permissionsNotAvailableContent = { /* ... */ }
+    )
     {
-        Row(verticalAlignment = Alignment.CenterVertically)
-        {
-            Button(onClick = {
-                navController.navigate("CAMERA_VIEW")
-            },
-                shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(Color.DarkGray)
-            )
-            {
-                Image(painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24), contentDescription = null)
-            }
-            Text(fontSize = 30.sp, text="Gallery", fontFamily = montserratFamily, fontWeight = FontWeight.Bold, modifier= Modifier.padding(25.dp))
-        }
 
-        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
-            .fillMaxWidth()) {
 
-            Row(modifier = Modifier
+
+        Column(
+            modifier = Modifier
+                .padding(10.dp)
                 .fillMaxWidth()
-                .border(1.dp, Color.Black)){
-
-                Button(onClick = {
-                    if (!selectedImageOption)
-                    {
-                        OnOptionSelected(true)
-                    }
-                }, shape= RectangleShape,
-                    modifier = Modifier
-                        .fillMaxWidth(0.5f)
-                        .then(
-                            if (selectedImageOption) {
-                                Modifier.background(Color.Transparent)
-                            } else {
-                                Modifier.background(Color.DarkGray)
-                            }
-                        ),
-                    contentPadding = PaddingValues(0.dp)
-                    , colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Transparent,
-                        disabledContainerColor = Color.Transparent,
-                        disabledContentColor = Color.Transparent,
-                        contentColor = Color.Transparent
-                    )
+        )
+        {
+            Row(verticalAlignment = Alignment.CenterVertically)
+            {
+                Button(
+                    onClick = {
+                        navController.navigate("CAMERA_VIEW")
+                    },
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(Color.DarkGray)
                 )
                 {
-                    Text(text="Images", fontFamily = montserratFamily, fontSize = 13.sp, fontWeight = FontWeight.Bold, color=Color.Black)
+                    Image(
+                        painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
+                        contentDescription = null
+                    )
                 }
+                Text(
+                    fontSize = 30.sp,
+                    text = "Gallery",
+                    fontFamily = montserratFamily,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(25.dp)
+                )
+            }
 
-                Button(onClick = {
-                    if (selectedImageOption)
-                    {
-                        OnOptionSelected(false)
-                    }
-                }, shape= RectangleShape,
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .then(
+                        .border(1.dp, Color.Black)
+                ) {
+
+                    Button(
+                        onClick = {
                             if (!selectedImageOption) {
-                                Modifier.background(Color.Transparent)
-                            } else {
-                                Modifier.background(Color.DarkGray)
+                                OnOptionSelected(true)
                             }
-
-                        ),
-                    contentPadding = PaddingValues(0.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Transparent,
-                        disabledContainerColor = Color.Transparent,
-                        disabledContentColor = Color.Transparent,
-                        contentColor = Color.Transparent
+                        }, shape = RectangleShape,
+                        modifier = Modifier
+                            .fillMaxWidth(0.5f)
+                            .then(
+                                if (selectedImageOption) {
+                                    Modifier.background(Color.Transparent)
+                                } else {
+                                    Modifier.background(Color.DarkGray)
+                                }
+                            ),
+                        contentPadding = PaddingValues(0.dp), colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Transparent,
+                            disabledContainerColor = Color.Transparent,
+                            disabledContentColor = Color.Transparent,
+                            contentColor = Color.Transparent
+                        )
                     )
-                )
-                {
-                    Text(text="Video", fontFamily = montserratFamily, fontSize = 13.sp, fontWeight = FontWeight.Bold, color=Color.Black)
-                }
-            }
+                    {
+                        Text(
+                            text = "Images",
+                            fontFamily = montserratFamily,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
+                        )
+                    }
 
-            if (selectedImageOption)
-            {
-                GalleryImageTab(images = ResourceDrawables, itemsPerRow = itemsPerRow)
-            }
-            else
-            {
-                GalleryVideoTab(videos = ResourceURI, itemsPerRow = itemsPerRow, navController = navController)
+                    Button(
+                        onClick = {
+                            if (selectedImageOption) {
+                                OnOptionSelected(false)
+                            }
+                        }, shape = RectangleShape,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .then(
+                                if (!selectedImageOption) {
+                                    Modifier.background(Color.Transparent)
+                                } else {
+                                    Modifier.background(Color.DarkGray)
+                                }
+
+                            ),
+                        contentPadding = PaddingValues(0.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Transparent,
+                            disabledContainerColor = Color.Transparent,
+                            disabledContentColor = Color.Transparent,
+                            contentColor = Color.Transparent
+                        )
+                    )
+                    {
+                        Text(
+                            text = "Video",
+                            fontFamily = montserratFamily,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
+                        )
+                    }
+                }
+
+                if (selectedImageOption) {
+                    GalleryImageTab(images = ResourceDrawables, itemsPerRow = itemsPerRow, context = context)
+                } else {
+                    GalleryVideoTab(
+                        videos = ResourceURI,
+                        itemsPerRow = itemsPerRow,
+                        navController = navController,
+                        context = context
+                    )
+                }
+
             }
 
         }
-
     }
-
 
 }
 
@@ -234,7 +307,7 @@ fun <E> GalleryTab(items: List<E>, itemsPerRow: Int = 3, navController: NavContr
 
                 for (item in itemLine)
                 {
-                    VideoItem(ratioModifier, item.toString(), navController)
+                    VideoItem(ratioModifier, item.toString().toUri(), navController)
                 }
             }
         }
@@ -242,16 +315,18 @@ fun <E> GalleryTab(items: List<E>, itemsPerRow: Int = 3, navController: NavContr
 }
 
 @Composable
-fun GalleryImageTab(images: List<Int>, itemsPerRow: Int = 3)
+fun GalleryImageTab(images: List<Uri>, itemsPerRow: Int = 3, context: Context)
 {
-    var imageRows: MutableList<MutableList<Int>> = arrayListOf()
-    val imageRow: MutableList<Int> = arrayListOf()
+    var imageRows: MutableList<MutableList<BitmapDrawable>> = arrayListOf()
+    val imageRow: MutableList<BitmapDrawable> = arrayListOf()
     var count: Int = 0
 
     for (image in images)
     {
         count += 1
-        imageRow.add(image)
+        imageRow.add(
+            Drawable.createFromStream(context.contentResolver.openInputStream(image), image.toString()) as BitmapDrawable
+        )
         if (count == itemsPerRow)
         {
             imageRows.add(imageRow.toMutableList())
@@ -288,7 +363,7 @@ fun GalleryImageTab(images: List<Int>, itemsPerRow: Int = 3)
 }
 
 @Composable
-fun ImageItem(modifier: Modifier, imageID: Int = R.drawable.baseline_close_24)
+fun ImageItem(modifier: Modifier, imageID: BitmapDrawable)
 {
 
 
@@ -307,7 +382,7 @@ fun ImageItem(modifier: Modifier, imageID: Int = R.drawable.baseline_close_24)
             .then(modifier)
     ) {
         Image(
-            painter = painterResource(id = imageID),
+            bitmap = imageID.bitmap.asImageBitmap(),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -319,10 +394,10 @@ fun ImageItem(modifier: Modifier, imageID: Int = R.drawable.baseline_close_24)
 }
 
 @Composable
-fun GalleryVideoTab(videos: List<String>, itemsPerRow: Int = 3, navController: NavController)
+fun GalleryVideoTab(videos: List<Uri>, itemsPerRow: Int = 3, navController: NavController, context: Context)
 {
-    var videoRows: MutableList<MutableList<String>> = arrayListOf()
-    val videoRow: MutableList<String> = arrayListOf()
+    var videoRows: MutableList<MutableList<Uri>> = arrayListOf()
+    val videoRow: MutableList<Uri> = arrayListOf()
     var count: Int = 0
 
     for (image in videos)
@@ -378,10 +453,10 @@ fun createVideoThumb(context: Context, uri: Uri): Bitmap? {
 }
 
 @Composable
-fun VideoItem(modifier: Modifier, videoID: String = "", navController: NavController)
+fun VideoItem(modifier: Modifier, videoID: Uri = ("").toUri(), navController: NavController)
 {
     val context = LocalContext.current
-    val bitmap = createVideoThumb(context = context, videoID.toUri())?.asImageBitmap()
+    val bitmap = createVideoThumb(context = context, videoID)?.asImageBitmap()
     //To be altered with intrinsic measurements
     Card(
         modifier = Modifier

@@ -5,6 +5,7 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.utils.composables.createVideoCaptureUseCase
 import android.kotlin.foodclub.utils.composables.startRecordingVideo
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
@@ -66,7 +67,7 @@ fun RecordingButton(isRecording: Boolean) {
         animationSpec = infiniteRepeatable(
             animation = tween(20000, easing = LinearEasing),
             repeatMode = RepeatMode.Restart
-        )
+        ), label = ""
     )
 
     Box(
@@ -121,13 +122,14 @@ fun CameraView(
         mutableStateOf(CameraSelector.DEFAULT_BACK_CAMERA)
     }
     val getContent = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
+        contract = ActivityResultContracts.GetMultipleContents(),
         onResult = { uri ->
             val uriEncoded = URLEncoder.encode(
                 uri.toString(),
                 StandardCharsets.UTF_8.toString()
             )
-            navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}")
+            Log.i("CameraView", uri.toString())
+            navController.navigate("GALLERY_VIEW/${uriEncoded}")
         }
     )
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp + 10.dp
@@ -240,8 +242,8 @@ fun CameraView(
                                                 uri.toString(),
                                                 StandardCharsets.UTF_8.toString()
                                             )
-                                            //navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}")
-                                            navController.navigate("GALLERY_VIEW/${uriEncoded}")
+                                            navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}")
+                                            //navController.navigate("GALLERY_VIEW/${uriEncoded}")
                                         }
                                     }
                                 }
@@ -279,7 +281,7 @@ fun CameraView(
                     IconButton(
                         onClick = {
                             //getContent.launch("video/*")
-
+                            /*
                             var ResourceDrawables: MutableList<Int> = mutableListOf<Int>();
                             var ResourceURI: MutableList<String> = mutableListOf<String>();
 
@@ -297,8 +299,12 @@ fun CameraView(
                             }
 
 
+                             */
+
                             navController.navigate("GALLERY_VIEW/${(R.drawable.app_logo).toByte()}")
                             //audioEnabled.value = !audioEnabled.value
+
+
                         },
                         modifier = Modifier
                             .align(Alignment.BottomStart)
