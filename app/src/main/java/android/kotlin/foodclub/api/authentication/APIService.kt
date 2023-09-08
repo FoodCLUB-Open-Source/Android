@@ -6,6 +6,7 @@ import android.kotlin.foodclub.api.responses.RetrieveFollowingListResponse
 import android.kotlin.foodclub.api.responses.RetrieveProfileResponse
 import android.kotlin.foodclub.data.models.SignUpError
 import com.google.gson.annotations.SerializedName
+import kotlinx.coroutines.flow.MutableStateFlow
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -42,6 +43,13 @@ data class VerificationCodeRequestData(
 )
 
 data class VerificationCodeResendData(val username: String)
+data class VerificationCodeForPasswordData(val message: String)
+
+data class ChangePasswordInformation(
+    val username: String,
+    val verification_code: String,
+    val new_password: String,
+)
 
 interface API {
 
@@ -86,4 +94,15 @@ interface API {
         @Query("page_number") pageNo: Int,
         @Query("page_size") pageSize: Int
     ): Response<RetrieveFollowerListResponse>
+
+    @POST("login/forgot_password/verification_code")
+    suspend fun sendVerificationCodePassword(
+        @Body VerificationCodeResendData: VerificationCodeResendData
+    ):Response<VerificationCodeForPasswordData>
+
+    @POST("login/forgot_password_code/new_password")
+    suspend fun changePassword(
+        @Body changePasswordInformation: ChangePasswordInformation
+    ):Response<VerificationCodeForPasswordData>
+
 }
