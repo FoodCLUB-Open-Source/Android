@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "android.kotlin.foodclub"
-        minSdk 30
+        minSdk 29
         targetSdk 33
         versionCode 1
         versionName "1.0"
@@ -57,7 +57,7 @@ dependencies {
     implementation 'androidx.compose.ui:ui'
     implementation 'androidx.compose.ui:ui-graphics'
     implementation 'androidx.compose.ui:ui-tooling-preview'
-    implementation 'androidx.compose.material3:material3:1.1.0-alpha06'
+    implementation 'androidx.compose.material3:material3:1.1.0-alpha08'
     //implementation 'androidx.compose.material3:material3:1.2.0-alpha02'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
@@ -78,7 +78,6 @@ dependencies {
     implementation "androidx.media3:media3-ui:1.1.0"
 
     // stories dependencies
-    implementation 'com.github.raipankaj:Stories:1.0.2'
     implementation("io.coil-kt:coil-compose:2.4.0")
 
     // Camera dependencies
@@ -87,4 +86,7 @@ dependencies {
     implementation "androidx.camera:camera-view:1.2.1"
     implementation "androidx.camera:camera-extensions:1.2.1"
     implementation "com.google.accompanist:accompanist-permissions:0.23.1"
+
+    // Lottie animations
+    implementation "com.airbnb.android:lottie-compose:4.2.0"
 }

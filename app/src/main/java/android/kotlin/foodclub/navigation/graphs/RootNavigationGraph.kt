@@ -1,5 +1,6 @@
   package com.example.foodclub.navigation.graphs
 
+import android.kotlin.foodclub.navigation.graphs.ProfileNavigationScreens
 import android.kotlin.foodclub.navigation.graphs.profileNavigationGraph
 import android.kotlin.foodclub.views.authentication.EmailSentView
 import android.kotlin.foodclub.views.authentication.LogInWithEmail
@@ -31,4 +32,5 @@ object Graph {
     const val HOME = "home_graph"
     const val ON_BOARDING = "onBoarding_graph"
     const val PROFILE = "profile_graph"
+
 }
