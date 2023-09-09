@@ -14,6 +14,16 @@ import androidx.lifecycle.ViewModel
 class DiscoverViewModel : ViewModel() {
 
 
+    val recipesList = listOf(
+        DiscoverViewRecipeModel("Dwight","11 Hours","Protein","Germany"),
+        DiscoverViewRecipeModel("Jim","10 Hours","Carbs","England"),
+        DiscoverViewRecipeModel("Bob","9 Hours","Protein","France"),
+        DiscoverViewRecipeModel("Michael","24 Hours","Protein","England"),
+        DiscoverViewRecipeModel("Pam","12 Hours","Drinks","England"),
+    )
+
+
+
 
 
 }
