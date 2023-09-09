@@ -15,6 +15,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import android.kotlin.foodclub.viewmodels.authentication.SignupWithEmailViewModel
+import android.kotlin.foodclub.views.authentication.ChangePasswordView
+import android.kotlin.foodclub.views.authentication.EmailSentView
 import com.example.foodclub.views.authentication.ConfirmIdentityView
 import com.example.foodclub.views.authentication.ForgotPasswordView
 
@@ -79,6 +81,19 @@ fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, sessio
         ) {backStackEntry ->
             SignupVerification(navController, backStackEntry.arguments?.getString("username"))
         }
+
+        composable(route = AuthScreen.ForgotEmailSent.route) {
+            EmailSentView()
+        }
+
+        composable(route = AuthScreen.ChangePassword.route + "/{username}",
+            arguments = listOf(
+                navArgument("username") { type = NavType.StringType }
+            )
+        ) {backStackEntry ->
+            ChangePasswordView(navController,backStackEntry.arguments?.getString("username"))
+        }
+
     }
 }
 
@@ -87,6 +102,11 @@ sealed class AuthScreen(val route: String) {
     object Login : AuthScreen(route = "LOGIN")
     object SignUp : AuthScreen(route = "SIGN_UP")
     object Forgot : AuthScreen(route = "FORGOT")
+
+    object ForgotEmailSent : AuthScreen(route = "FORGOT_EMAIL_SENT")
+
+    object ChangePassword : AuthScreen(route = "CHANGE_PASSWORD")
+
     object ConfirmId : AuthScreen(route = "CONFIRM_ID")
     object VerifySignup : AuthScreen(route = "VERIFY_SIGN_UP")
 }

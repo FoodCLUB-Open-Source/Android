@@ -1,36 +1,30 @@
-package com.example.foodclub.viewmodels.authentication
+package android.kotlin.foodclub.viewmodels.authentication
 
+import android.kotlin.foodclub.api.authentication.ChangePasswordInformation
 import android.kotlin.foodclub.api.authentication.VerificationCodeResendData
 import android.kotlin.foodclub.api.retrofit.RetrofitInstance
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.example.foodclub.navigation.graphs.AuthScreen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.io.IOException
 
-class ForgotPasswordViewModel : ViewModel() {
+class ChangePasswordViewModel:ViewModel() {
 
-
-    fun sendCode(username:String,navController: NavHostController){
+    fun changePassword(username:String,verificationCode:String,password:String,navController: NavHostController){
         viewModelScope.launch(Dispatchers.Main) {
             try {
-                val response = RetrofitInstance.retrofitApi.sendVerificationCodePassword(
-                    VerificationCodeResendData(username)
+                val response = RetrofitInstance.retrofitApi.changePassword(
+                    ChangePasswordInformation(username,verificationCode,password)
                 )
-
                 if(response.isSuccessful) {
-
-                    navController.navigate(route = AuthScreen.ChangePassword.route + "/" + username)
-
+                    navController.navigate("FORGOT_EMAIL_SENT")
                 }
 
             } catch(e: IOException) {
-
 
             } catch (e: Exception) {
 
