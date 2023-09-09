@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.repositories
 
+import android.kotlin.foodclub.api.responses.FollowUnfollowResponse
 import android.kotlin.foodclub.api.retrofit.RetrofitInstance
 import android.kotlin.foodclub.data.models.FollowerUserModel
 import android.kotlin.foodclub.data.models.FollowingUserModel
@@ -12,7 +13,7 @@ class ProfileRepository {
 
     suspend fun retrieveProfileData(userId: Long): Resource<UserProfileModel> {
         val response = try {
-            api.retrieveProfileData(userId, 1, 5)
+            api.retrieveProfileData(userId, null, null)
         } catch (e: IOException) {
             return Resource.Error("Cannot retrieve data. Check your internet connection and try again.")
         } catch (e: Exception) {
@@ -27,7 +28,7 @@ class ProfileRepository {
 
     suspend fun retrieveProfileFollowers(userId: Long): Resource<List<FollowerUserModel>> {
         val response = try {
-            api.retrieveProfileFollowers(userId, 1, 3)
+            api.retrieveProfileFollowers(userId, null, null)
         } catch (e: IOException) {
             return Resource.Error("Cannot retrieve data. Check your internet connection and try again.")
         } catch (e: Exception) {
@@ -42,7 +43,7 @@ class ProfileRepository {
 
     suspend fun retrieveProfileFollowing(userId: Long): Resource<List<FollowingUserModel>> {
         val response = try {
-            api.retrieveProfileFollowing(userId, 1, 3)
+            api.retrieveProfileFollowing(userId, null, null)
         } catch (e: IOException) {
             return Resource.Error("Cannot retrieve data. Check your internet connection and try again.")
         } catch (e: Exception) {
@@ -51,6 +52,36 @@ class ProfileRepository {
 
         if(response.isSuccessful && response.body() != null && response.body()?.data != null){
             return Resource.Success(response.body()!!.data)
+        }
+        return Resource.Error("Unknown error occurred.")
+    }
+
+    suspend fun followUser(followerId: Long, userId: Long): Resource<FollowUnfollowResponse> {
+        val response = try {
+            api.followUser(followerId, userId)
+        } catch (e: IOException) {
+            return Resource.Error("Cannot retrieve data. Check your internet connection and try again.")
+        } catch (e: Exception) {
+            return Resource.Error("Unknown error occurred.")
+        }
+
+        if(response.isSuccessful && response.body() != null){
+            return Resource.Success(response.body()!!)
+        }
+        return Resource.Error("Unknown error occurred.")
+    }
+
+    suspend fun unfollowUser(followerId: Long, userId: Long): Resource<FollowUnfollowResponse> {
+        val response = try {
+            api.unfollowUser(followerId, userId)
+        } catch (e: IOException) {
+            return Resource.Error("Cannot retrieve data. Check your internet connection and try again.")
+        } catch (e: Exception) {
+            return Resource.Error("Unknown error occurred.")
+        }
+
+        if(response.isSuccessful && response.body() != null){
+            return Resource.Success(response.body()!!)
         }
         return Resource.Error("Unknown error occurred.")
     }

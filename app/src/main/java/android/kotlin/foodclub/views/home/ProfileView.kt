@@ -53,18 +53,25 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import android.kotlin.foodclub.viewmodels.home.ProfileViewModel
+import androidx.compose.foundation.border
+import androidx.compose.material3.ButtonColors
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.foodclub.navigation.graphs.AuthScreen
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ProfileView(navController: NavController, sessionCache: SessionCache) {
-    val userId = sessionCache.getActiveSession()?.userId ?: 1L
-//    val userId = 1L
+fun ProfileView(navController: NavController, sessionCache: SessionCache, userId: Long) {
+    val sessionUserId = sessionCache.getActiveSession()?.userId
+    if(sessionUserId == null) {
+        navController.navigate(AuthScreen.Login.route)
+        return
+    }
 
     val viewModel: ProfileViewModel = viewModel(
         factory = object : ViewModelProvider.Factory {
@@ -74,6 +81,13 @@ fun ProfileView(navController: NavController, sessionCache: SessionCache) {
         })
     val error = viewModel.error.collectAsState()
     val profileModelState = viewModel.profileModel.collectAsState()
+
+    if(userId != sessionUserId) {
+        LaunchedEffect(Unit) {
+            viewModel.isFollowedByUser(sessionUserId, userId)
+        }
+    }
+    val isFollowed = viewModel.isFollowedByUser.collectAsState()
 
     val systemUiController = rememberSystemUiController()
     SideEffect {
@@ -185,6 +199,10 @@ fun ProfileView(navController: NavController, sessionCache: SessionCache) {
                         fontWeight = FontWeight.Light
                     )
                 }
+                if(userId != sessionUserId) {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    FollowButton(isFollowed.value, viewModel, sessionUserId, userId)
+                }
                 TabRow(selectedTabIndex = pagerState.currentPage,
                     containerColor = Color.White,
                     contentColor = Color.White,
@@ -275,6 +293,31 @@ fun GridItem(navController: NavController, dataItem: UserPostsModel){
                     .clickable { navController.navigate("DELETE_RECIPE") }, contentScale = ContentScale.FillHeight)
         }
 
+    }
+}
+
+@Composable
+fun FollowButton(isFollowed: Boolean, viewModel: ProfileViewModel, sessionUserId: Long, userId: Long) {
+    val colors = if(isFollowed)
+        ButtonDefaults.buttonColors(containerColor = Color(0xFFFFFFFF), contentColor = Color.Black)
+
+    else
+        ButtonDefaults.buttonColors(containerColor = Color(0xFF7EC60B), contentColor = Color.White)
+
+    val content = if(isFollowed) "Unfollow" else "Follow"
+
+    val modifier = if(isFollowed) Modifier.width(130.dp).height(40.dp)
+        .border(1.dp, Color.Black, RoundedCornerShape(40.dp)).clip(RoundedCornerShape(40.dp))
+    else Modifier.width(130.dp).height(40.dp)
+
+    Button(
+        onClick = { if(isFollowed) viewModel.unfollowUser(sessionUserId, userId)
+            else viewModel.followUser(sessionUserId, userId) },
+        shape = RoundedCornerShape(40.dp),
+        modifier = modifier,
+        colors = colors
+    ) {
+        Text(text = content)
     }
 }
 
