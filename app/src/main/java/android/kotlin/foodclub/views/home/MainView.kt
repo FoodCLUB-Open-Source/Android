@@ -182,7 +182,7 @@ fun BottomBar(navController: NavHostController, triggerBottomSheetModal: () -> U
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    val bottomBarDestination = screens.any { it.route == currentDestination?.route }
+    val bottomBarDestination = screens.any { currentDestination?.route?.startsWith(it.route) == true }
     var screenHeight = LocalConfiguration.current.screenHeightDp.dp * 0.13f
 
     if (screenHeight < 90.dp) {
@@ -221,7 +221,7 @@ fun RowScope.AddItem(
                 contentDescription = "Navigation Icon",
                 tint = when {
                     screen is BottomBarScreenObject.Create -> Color.Unspecified
-                    currentDestination?.hierarchy?.any { it.route == screen.route } == true -> Color(0xFF7EC60B)
+                    currentDestination?.hierarchy?.any { it.route?.startsWith(screen.route) == true } == true -> Color(0xFF7EC60B)
                     else -> Color(0xFFB9B9B9)
                 }
 
