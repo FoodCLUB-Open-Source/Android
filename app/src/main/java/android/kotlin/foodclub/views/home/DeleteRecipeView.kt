@@ -2,6 +2,7 @@ package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.data.models.VideoModel
+import android.kotlin.foodclub.ui.theme.Montserrat
 import android.kotlin.foodclub.utils.composables.VideoPlayer
 import android.kotlin.foodclub.viewmodels.home.DeleteRecipeViewModel
 import androidx.compose.animation.AnimatedVisibility
@@ -133,7 +134,7 @@ fun ComfirmDeleteDialog(
                                 .fillMaxWidth(),
                             style = MaterialTheme.typography.headlineSmall,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            fontFamily = com.example.foodclub.views.home.montserratFamily,
+                            fontFamily = Montserrat,
                             )
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -146,7 +147,7 @@ fun ComfirmDeleteDialog(
                                 .fillMaxWidth(),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            fontFamily = com.example.foodclub.views.home.montserratFamily,
+                            fontFamily = Montserrat,
                             )
                         Spacer(modifier = Modifier.height(24.dp))
 
@@ -160,7 +161,7 @@ fun ComfirmDeleteDialog(
                             Text(
                                 text = "Later",
                                 color = Color.White,
-                                fontFamily = com.example.foodclub.views.home.montserratFamily,
+                                fontFamily = Montserrat,
                                 )
                         }
                         ElevatedButton(
@@ -173,7 +174,7 @@ fun ComfirmDeleteDialog(
                             Text(
                                 text = "Enable Location",
                                 color = Color.White,
-                                fontFamily = com.example.foodclub.views.home.montserratFamily,
+                                fontFamily = Montserrat,
                                 )
                         }
 
