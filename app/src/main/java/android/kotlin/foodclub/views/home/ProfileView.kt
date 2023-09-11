@@ -165,7 +165,7 @@ fun ProfileView(navController: NavController, userId: Long?) {
                     ClickableText(
                         text = AnnotatedString(profile.totalUserFollowers.toString()),
                         onClick = {
-                            navController.navigate("FOLLOWER_VIEW/$userId")
+                            navController.navigate("FOLLOWER_VIEW/${userId ?: sessionUserId.value}")
                         },
                         style = TextStyle(
                             color = Color.Black,
@@ -177,7 +177,7 @@ fun ProfileView(navController: NavController, userId: Long?) {
                     ClickableText(
                         text = AnnotatedString(profile.totalUserFollowing.toString()),
                         onClick = {
-                            navController.navigate("FOLLOWING_VIEW/$userId")
+                            navController.navigate("FOLLOWING_VIEW/${userId ?: sessionUserId.value}")
                         },
                         style = TextStyle(
                             color = Color.Black,
