@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.navigation.graphs.Graph
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -74,7 +75,7 @@ fun SettingsView(navController: NavHostController){
         }
         Spacer(modifier = Modifier.height(screenSizeHeight * 0.03f))
         SettingRow(text = "Log Out", iconId = R.drawable.logout, fontC = colorRed, 0,
-            Color.Black, "EDIT_PROFILE", navController)
+            Color.Black, Graph.AUTHENTICATION, navController)
     }
 }
 
