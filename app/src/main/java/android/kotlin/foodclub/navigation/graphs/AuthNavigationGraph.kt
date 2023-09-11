@@ -20,7 +20,7 @@ import android.kotlin.foodclub.views.authentication.EmailSentView
 import com.example.foodclub.views.authentication.ConfirmIdentityView
 import com.example.foodclub.views.authentication.ForgotPasswordView
 
-fun NavGraphBuilder.authNavigationGraph(navController: NavHostController) {
+fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, setBottomBarVisibility: (Boolean) -> Unit) {
     navigation(
         route = Graph.AUTHENTICATION,
         startDestination = AuthScreen.MainLogInAndSignUp.route
@@ -63,6 +63,7 @@ fun NavGraphBuilder.authNavigationGraph(navController: NavHostController) {
         }
 
         composable(route = AuthScreen.MainLogInAndSignUp.route) {
+            setBottomBarVisibility(false)
             MainLogInAndSignUp(navController)
         }
         composable(route = AuthScreen.Login.route) {

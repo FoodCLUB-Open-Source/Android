@@ -3,6 +3,7 @@ package com.example.foodclub.views.home
 import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.data.models.StoryModel
+import android.kotlin.foodclub.ui.theme.Montserrat
 import android.kotlin.foodclub.utils.composables.StoryView
 import android.kotlin.foodclub.utils.helpers.SessionCache
 import android.util.Log
@@ -48,7 +49,6 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.foodclub.navigation.graphs.HomeNavigationGraph
 import com.example.foodclub.ui.theme.BottomBarScreenObject
 import com.example.foodclub.ui.theme.BottomBarScreenObject.Create.icon
 import com.example.foodclub.viewmodels.home.HomeViewModel
@@ -77,7 +77,7 @@ fun BottomSheetItem(icon: Int, text: String,
         Spacer(Modifier.width(16.dp))
         Text(
             text = text,
-            fontFamily = montserratFamily,
+            fontFamily = Montserrat,
             fontWeight = FontWeight.Bold
         )
     }
@@ -100,7 +100,7 @@ fun BottomSheet(onDismiss: () -> Unit, navController: NavHostController) {
         ) {
             Text(
                 text = "Create",
-                fontFamily = montserratFamily,
+                fontFamily = Montserrat,
                 fontWeight = FontWeight.Bold,
             )
             Divider(
@@ -128,44 +128,44 @@ fun BottomSheet(onDismiss: () -> Unit, navController: NavHostController) {
     }
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@Composable
-fun MainView(navController: NavHostController = rememberNavController()) {
-    val viewModel: HomeViewModel = viewModel()
-    var showSheet by remember { mutableStateOf(false) }
-
-    val storyModel = StoryModel(painterResource(R.drawable.story_user), 1692815790, "Julien", painterResource(R.drawable.foodsnap))
-    var currentStory by remember { mutableStateOf(storyModel) }
-    var currentStoryOffset by remember { mutableStateOf(IntOffset(0, 0)) }
-    var storyViewMode by remember { mutableStateOf(false) }
-    val systemUiController = rememberSystemUiController()
-
-    val triggerBottomSheetModal: () -> Unit = {
-        showSheet = !showSheet
-    }
-
-    Scaffold(
-        bottomBar = { BottomBar(navController = navController, triggerBottomSheetModal) }
-    ) {
-        if (showSheet) {
-            BottomSheet(triggerBottomSheetModal, navController)
-        }
-        HomeNavigationGraph(navController = navController, showSheet = showSheet, triggerBottomSheetModal,
-            callbackEnableStoryView = {
-                // Here we are going to put all information about the story - author, time created and story content
-                currentStoryOffset = it
-                storyViewMode = true
-                systemUiController.setNavigationBarColor(
-                    color = Color.Black
-                )
-            }, storyViewMode = storyViewMode)
-    }
-    //Story view screen
-    Box(modifier = Modifier.zIndex(2f)) {
-        StoryView(storyEnabled = storyViewMode, storyDetails = currentStory,
-            callbackDisableStory = { storyViewMode = false }, currentStoryOffset, modifier = Modifier.fillMaxSize())
-    }
-}
+//@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+//@Composable
+//fun MainView(navController: NavHostController = rememberNavController()) {
+//    val viewModel: HomeViewModel = viewModel()
+//    var showSheet by remember { mutableStateOf(false) }
+//
+//    val storyModel = StoryModel(painterResource(R.drawable.story_user), 1692815790, "Julien", painterResource(R.drawable.foodsnap))
+//    var currentStory by remember { mutableStateOf(storyModel) }
+//    var currentStoryOffset by remember { mutableStateOf(IntOffset(0, 0)) }
+//    var storyViewMode by remember { mutableStateOf(false) }
+//    val systemUiController = rememberSystemUiController()
+//
+//    val triggerBottomSheetModal: () -> Unit = {
+//        showSheet = !showSheet
+//    }
+//
+//    Scaffold(
+//        bottomBar = { BottomBar(navController = navController, triggerBottomSheetModal) }
+//    ) {
+//        if (showSheet) {
+//            BottomSheet(triggerBottomSheetModal, navController)
+//        }
+//        HomeNavigationGraph(navController = navController, showSheet = showSheet, triggerBottomSheetModal,
+//            callbackEnableStoryView = {
+//                // Here we are going to put all information about the story - author, time created and story content
+//                currentStoryOffset = it
+//                storyViewMode = true
+//                systemUiController.setNavigationBarColor(
+//                    color = Color.Black
+//                )
+//            }, storyViewMode = storyViewMode)
+//    }
+//    //Story view screen
+//    Box(modifier = Modifier.zIndex(2f)) {
+//        StoryView(storyEnabled = storyViewMode, storyDetails = currentStory,
+//            callbackDisableStory = { storyViewMode = false }, currentStoryOffset, modifier = Modifier.fillMaxSize())
+//    }
+//}
 
 
 @Composable

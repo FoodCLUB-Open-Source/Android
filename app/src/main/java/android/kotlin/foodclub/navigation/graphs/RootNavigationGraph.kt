@@ -3,23 +3,26 @@
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import com.example.foodclub.navigation.graphs.authNavigationGraph
-import com.example.foodclub.views.home.MainView
+import com.example.foodclub.navigation.graphs.homeNavigationGraph
 
 
 @Composable
-fun RootNavigationGraph(navController: NavHostController) {
+fun RootNavigationGraph(navController: NavHostController, showSheet: Boolean,
+                        triggerBottomSheetModal:  () -> Unit, triggerStory: () -> Unit,
+                        setBottomBarVisibility: (Boolean) -> Unit) {
     NavHost(
         navController = navController,
         route = Graph.ROOT,
         startDestination = Graph.AUTHENTICATION
     ) {
-        onBoardingNavigationGraph(navController = navController)
-        authNavigationGraph(navController = navController)
-        composable(route = Graph.HOME) {
-            MainView()
-        }
+        onBoardingNavigationGraph(navController = navController, setBottomBarVisibility)
+        authNavigationGraph(navController = navController, setBottomBarVisibility)
+        homeNavigationGraph(navController, showSheet, triggerBottomSheetModal, triggerStory, setBottomBarVisibility)
+
+//        composable(route = Graph.HOME) {
+//            MainView()
+//        }
     }
 }
 
