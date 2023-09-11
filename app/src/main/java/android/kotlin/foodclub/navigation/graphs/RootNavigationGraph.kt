@@ -1,29 +1,28 @@
-  package com.example.foodclub.navigation.graphs
+  package android.kotlin.foodclub.navigation.graphs
 
-import android.kotlin.foodclub.utils.helpers.SessionCache
-import android.kotlin.foodclub.views.authentication.EmailSentView
-import android.kotlin.foodclub.views.authentication.LogInWithEmail
-import android.kotlin.foodclub.views.authentication.MainLogInAndSignUp
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import com.example.foodclub.views.authentication.ForgotPasswordView
-import com.example.foodclub.views.home.HomeView
-import com.example.foodclub.views.home.MainView
+import com.example.foodclub.navigation.graphs.authNavigationGraph
+import com.example.foodclub.navigation.graphs.homeNavigationGraph
 
 
 @Composable
-fun RootNavigationGraph(navController: NavHostController, sessionCache: SessionCache) {
+fun RootNavigationGraph(navController: NavHostController, showSheet: Boolean,
+                        triggerBottomSheetModal:  () -> Unit, triggerStory: () -> Unit,
+                        setBottomBarVisibility: (Boolean) -> Unit) {
     NavHost(
         navController = navController,
         route = Graph.ROOT,
-        startDestination = Graph.AUTHENTICATION) {
-        onBoardingNavigationGraph(navController = navController)
-        authNavigationGraph(navController = navController, sessionCache = sessionCache)
-        composable(route = Graph.HOME) {
-            MainView(sessionCache = sessionCache)
-        }
+        startDestination = Graph.AUTHENTICATION
+    ) {
+        onBoardingNavigationGraph(navController = navController, setBottomBarVisibility)
+        authNavigationGraph(navController = navController, setBottomBarVisibility)
+        homeNavigationGraph(navController, showSheet, triggerBottomSheetModal, triggerStory, setBottomBarVisibility)
+
+//        composable(route = Graph.HOME) {
+//            MainView()
+//        }
     }
 }
 

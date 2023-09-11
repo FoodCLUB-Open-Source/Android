@@ -1,6 +1,6 @@
 package com.example.foodclub.navigation.graphs
 
-import android.kotlin.foodclub.utils.helpers.SessionCache
+import android.kotlin.foodclub.navigation.graphs.Graph
 import android.kotlin.foodclub.views.home.CameraPreviewView
 import android.kotlin.foodclub.views.home.CameraView
 import android.kotlin.foodclub.views.home.ChangePasswordView
@@ -23,31 +23,28 @@ import com.example.foodclub.views.home.CreateView
 import com.example.foodclub.views.home.DiscoverView
 import com.example.foodclub.views.home.HomeView
 import android.kotlin.foodclub.views.home.ProfileView
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import androidx.navigation.navigation
 
-@Composable
-    fun HomeNavigationGraph(navController: NavHostController, showSheet: Boolean, triggerBottomSheetModal: () -> Unit,
-                            callbackEnableStoryView: (offset: IntOffset) -> Unit, storyViewMode: Boolean,
-                            sessionCache: SessionCache) {
-    NavHost(
-        navController = navController,
+    fun NavGraphBuilder.homeNavigationGraph(navController: NavHostController, showSheet: Boolean,
+                                            triggerBottomSheetModal: () -> Unit,
+                                            triggerStory: () -> Unit,
+                                            setBottomBarVisibility: (Boolean) -> Unit) {
+    navigation(
         route = Graph.HOME,
         startDestination = BottomBarScreenObject.Home.route
     ) {
         composable(route = BottomBarScreenObject.Home.route) {
-            HomeView(navController = navController,
-                callbackEnableStoryView = callbackEnableStoryView,
-                storyViewMode = storyViewMode)
+            setBottomBarVisibility(true)
+            HomeView(navController = navController, triggerStoryView = triggerStory)
         }
-        composable(route = BottomBarScreenObject.Profile.route + "/{userId}",
-            arguments = listOf(
-                navArgument("userId") { type = NavType.StringType }
-            )
+        composable(route = BottomBarScreenObject.Profile.route + "?userId={userId}",
+            arguments = listOf(navArgument("userId") { nullable = true })
         ) {
-            it.arguments?.getString("userId")?.let { it1 ->
-                ProfileView(navController, sessionCache, it1.toLong())
-            }
+            val userId = it.arguments?.getString("userId")
+            ProfileView(navController, userId?.toLong())
 
         }
         composable(route = BottomBarScreenObject.Discover.route) {
@@ -89,7 +86,7 @@ import androidx.navigation.navArgument
 
         composable(route = HomeOtherRoutes.FollowerView.route + "/{userId}",
             arguments = listOf(
-                navArgument("userId") { type = NavType.StringType }
+                navArgument("userId") { nullable = true }
             )
         ) {
             it.arguments?.getString("userId")?.let { it1 ->
@@ -100,7 +97,7 @@ import androidx.navigation.navArgument
 
         composable(route = HomeOtherRoutes.FollowingView.route + "/{userId}",
             arguments = listOf(
-                navArgument("userId") { type = NavType.StringType }
+                navArgument("userId") { nullable = true }
             )
         ) {
             it.arguments?.getString("userId")?.let { it1 ->

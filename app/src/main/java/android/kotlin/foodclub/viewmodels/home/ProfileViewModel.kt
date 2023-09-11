@@ -5,14 +5,27 @@ import android.kotlin.foodclub.data.models.UserProfileModel
 import android.kotlin.foodclub.data.models.MyRecipeModel
 import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.helpers.Resource
-import android.util.Log
+import android.kotlin.foodclub.utils.helpers.SessionCache
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
+import android.kotlin.foodclub.navigation.graphs.Graph
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class ProfileViewModel(private val userId: Long) : ViewModel() {
+class ProfileViewModel @AssistedInject constructor(
+    private val repository: ProfileRepository,
+    private val sessionCache: SessionCache,
+    @Assisted private val userId: Long?,
+    @Assisted private val navController: NavController
+) : ViewModel() {
+    private val _myUserId = MutableStateFlow(sessionCache.getActiveSession()?.userId ?: 0)
+    val myUserId: StateFlow<Long> get() = _myUserId
 
     private val _profileModel = MutableStateFlow<UserProfileModel?>(null)
     val profileModel: StateFlow<UserProfileModel?> get() = _profileModel
@@ -23,6 +36,15 @@ class ProfileViewModel(private val userId: Long) : ViewModel() {
     private val _isFollowedByUser = MutableStateFlow(false)
     val isFollowedByUser: StateFlow<Boolean> get() = _isFollowedByUser
 
+    init {
+        if(sessionCache.getActiveSession()?.userId == null) {
+            navController.navigate(Graph.AUTHENTICATION) {
+                popUpTo(Graph.HOME) { inclusive = true }
+            }
+        } else {
+            getProfileModel(userId ?: sessionCache.getActiveSession()!!.userId)
+        }
+    }
 
     val tabItems = listOf(
         MyRecipeModel(
@@ -36,13 +58,9 @@ class ProfileViewModel(private val userId: Long) : ViewModel() {
         )
     )
 
-    init {
-        getProfileModel(userId)
-    }
-
     private fun getProfileModel(userId: Long) {
         viewModelScope.launch() {
-            when(val resource = ProfileRepository().retrieveProfileData(userId)) {
+            when(val resource = repository.retrieveProfileData(userId)) {
                 is Resource.Success -> {
                     _error.value = ""
                     _profileModel.value = resource.data
@@ -63,7 +81,7 @@ class ProfileViewModel(private val userId: Long) : ViewModel() {
 
     fun unfollowUser(followerId: Long, userId: Long) {
         viewModelScope.launch() {
-            when(val resource = ProfileRepository().unfollowUser(followerId, userId)) {
+            when(val resource = repository.unfollowUser(followerId, userId)) {
                 is Resource.Success -> {
                     _error.value = ""
                     _isFollowedByUser.value = false
@@ -77,7 +95,7 @@ class ProfileViewModel(private val userId: Long) : ViewModel() {
 
     fun followUser(followerId: Long, userId: Long) {
         viewModelScope.launch() {
-            when(val resource = ProfileRepository().followUser(followerId, userId)) {
+            when(val resource = repository.followUser(followerId, userId)) {
                 is Resource.Success -> {
                     _error.value = ""
                     _isFollowedByUser.value = true
@@ -91,7 +109,7 @@ class ProfileViewModel(private val userId: Long) : ViewModel() {
 
     fun isFollowedByUser(followerId: Long, userId: Long) {
         viewModelScope.launch() {
-            when(val resource = ProfileRepository().retrieveProfileFollowers(userId)) {
+            when(val resource = repository.retrieveProfileFollowers(userId)) {
                 is Resource.Success -> {
                     _error.value = ""
                     _isFollowedByUser.value = resource.data!!.any { it.userId.toLong() == followerId }
@@ -113,5 +131,19 @@ class ProfileViewModel(private val userId: Long) : ViewModel() {
 
     }
 
+    @AssistedFactory
+    interface Factory {
+        fun create(userId: Long?, navController: NavController): ProfileViewModel
+    }
+
+    companion object {
+        fun provideFactory(
+            assistedFactory: Factory, userId: Long?, navController: NavController
+        ):ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return assistedFactory.create(userId, navController) as T
+            }
+        }
+    }
 
 }

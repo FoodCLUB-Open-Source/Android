@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.repositories
 
+import android.kotlin.foodclub.api.authentication.API
 import android.kotlin.foodclub.api.responses.FollowUnfollowResponse
 import android.kotlin.foodclub.api.retrofit.RetrofitInstance
 import android.kotlin.foodclub.data.models.FollowerUserModel
@@ -8,8 +9,9 @@ import android.kotlin.foodclub.data.models.UserProfileModel
 import android.kotlin.foodclub.utils.helpers.Resource
 import java.io.IOException
 
-class ProfileRepository {
-    private val api = RetrofitInstance.retrofitApi
+class ProfileRepository(
+    private val api: API
+) {
 
     suspend fun retrieveProfileData(userId: Long): Resource<UserProfileModel> {
         val response = try {

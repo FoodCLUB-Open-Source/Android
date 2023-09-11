@@ -9,12 +9,17 @@ import android.kotlin.foodclub.utils.helpers.Resource
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.lang.Thread.State
+import javax.inject.Inject
 
-class FollowerFollowingViewModel() : ViewModel(){
+@HiltViewModel
+class FollowerFollowingViewModel @Inject constructor(
+    private val repository: ProfileRepository
+) : ViewModel() {
     private val _followersList = MutableStateFlow<List<SimpleUserModel>>(listOf())
     val followersList: StateFlow<List<SimpleUserModel>> get() = _followersList
 
@@ -29,7 +34,7 @@ class FollowerFollowingViewModel() : ViewModel(){
 
     fun getFollowersList(userId: Long) {
         viewModelScope.launch() {
-            when(val resource = ProfileRepository().retrieveProfileFollowers(userId)) {
+            when(val resource = repository.retrieveProfileFollowers(userId)) {
                 is Resource.Success -> {
                     _error.value = ""
                     _followersList.value = mapFollowersToSimpleList(resource.data!!)
@@ -44,7 +49,7 @@ class FollowerFollowingViewModel() : ViewModel(){
 
     fun getFollowingList(userId: Long) {
         viewModelScope.launch() {
-            when(val resource = ProfileRepository().retrieveProfileFollowing(userId)) {
+            when(val resource = repository.retrieveProfileFollowing(userId)) {
                 is Resource.Success -> {
                     _error.value = ""
                     _followingList.value = mapFollowingToSimpleList(resource.data!!)

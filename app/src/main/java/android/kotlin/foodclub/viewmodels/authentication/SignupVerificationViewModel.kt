@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.example.foodclub.navigation.graphs.AuthScreen
-import com.example.foodclub.navigation.graphs.Graph
+import android.kotlin.foodclub.navigation.graphs.Graph
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
