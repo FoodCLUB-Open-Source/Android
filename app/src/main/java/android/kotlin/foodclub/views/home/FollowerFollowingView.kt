@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -40,7 +41,6 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.foodclub.ui.theme.BottomBarScreenObject
@@ -58,7 +58,7 @@ val raleway = FontFamily(
 @Composable
 fun FollowerView(navController: NavController, viewType: String, userId: Long) {
     val systemUiController = rememberSystemUiController()
-    val viewModel: FollowerFollowingViewModel = viewModel()
+    val viewModel: FollowerFollowingViewModel = hiltViewModel()
 
     SideEffect {
         systemUiController.setSystemBarsColor(
@@ -156,7 +156,7 @@ fun Follower(navController: NavController, userId: Int, imageUrl: String, userna
             .fillMaxWidth()
             .height(75.dp)
             .padding(vertical = 4.dp)
-            .clickable { navController.navigate(BottomBarScreenObject.Profile.route + "/$userId") },
+            .clickable { navController.navigate(BottomBarScreenObject.Profile.route + "?userId=$userId") },
         verticalAlignment = Alignment.CenterVertically
     ) {
 

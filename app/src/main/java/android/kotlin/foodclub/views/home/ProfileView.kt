@@ -1,6 +1,8 @@
 package android.kotlin.foodclub.views.home
 
+import android.app.Activity
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.activities.MainActivity
 import android.kotlin.foodclub.data.models.UserPostsModel
 import android.kotlin.foodclub.ui.theme.Montserrat
 import android.kotlin.foodclub.utils.helpers.SessionCache
@@ -57,34 +59,31 @@ import androidx.compose.foundation.border
 import androidx.compose.material3.ButtonColors
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.foodclub.navigation.graphs.AuthScreen
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ProfileView(navController: NavController, sessionCache: SessionCache, userId: Long) {
-    val sessionUserId = sessionCache.getActiveSession()?.userId
-    if(sessionUserId == null) {
-        navController.navigate(AuthScreen.Login.route)
-        return
-    }
-
+fun ProfileView(navController: NavController, userId: Long?) {
+    val factory = EntryPointAccessors.fromActivity(LocalContext.current as Activity,
+        MainActivity.ViewModelFactoryProvider::class.java).profileViewModelFactory()
     val viewModel: ProfileViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return ProfileViewModel(userId) as T
-            }
-        })
+        factory = ProfileViewModel.provideFactory(factory, userId, navController)
+    )
+
     val error = viewModel.error.collectAsState()
     val profileModelState = viewModel.profileModel.collectAsState()
+    val sessionUserId = viewModel.myUserId.collectAsState()
 
-    if(userId != sessionUserId) {
+    if(userId != null && userId != sessionUserId.value) {
         LaunchedEffect(Unit) {
-            viewModel.isFollowedByUser(sessionUserId, userId)
+            viewModel.isFollowedByUser(sessionUserId.value, userId)
         }
     }
     val isFollowed = viewModel.isFollowedByUser.collectAsState()
@@ -107,20 +106,30 @@ fun ProfileView(navController: NavController, sessionCache: SessionCache, userId
         val userPosts = profile!!.userPosts
         val topCreators = profile.topCreators
 
-        Column (modifier = Modifier.fillMaxSize().background(Color.White),
+        Column (modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White),
             verticalArrangement = Arrangement.Center
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 70.dp, start = 95.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 70.dp, start = 95.dp),
                 horizontalArrangement = Arrangement.Center
             ) {
                 Image(
                     painterResource(id = R.drawable.story_user),
                     contentDescription = "profile_picture",
-                    modifier = Modifier.clip(RoundedCornerShape(60.dp)).height(80.dp).width(80.dp))
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(60.dp))
+                        .height(80.dp)
+                        .width(80.dp))
                 Spacer(modifier = Modifier.width(40.dp))
                 Button(shape = CircleShape,
-                    modifier = Modifier.clip(CircleShape).height(53.dp).width(53.dp),
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .height(53.dp)
+                        .width(53.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(255, 255, 255, 255)),
                     contentPadding = PaddingValues(),
                     onClick = { navController.navigate("SETTINGS") }
@@ -199,9 +208,9 @@ fun ProfileView(navController: NavController, sessionCache: SessionCache, userId
                         fontWeight = FontWeight.Light
                     )
                 }
-                if(userId != sessionUserId) {
+                if(userId != null && userId != sessionUserId.value) {
                     Spacer(modifier = Modifier.height(10.dp))
-                    FollowButton(isFollowed.value, viewModel, sessionUserId, userId)
+                    FollowButton(isFollowed.value, viewModel, sessionUserId.value, userId)
                 }
                 TabRow(selectedTabIndex = pagerState.currentPage,
                     containerColor = Color.White,
@@ -306,9 +315,14 @@ fun FollowButton(isFollowed: Boolean, viewModel: ProfileViewModel, sessionUserId
 
     val content = if(isFollowed) "Unfollow" else "Follow"
 
-    val modifier = if(isFollowed) Modifier.width(130.dp).height(40.dp)
-        .border(1.dp, Color.Black, RoundedCornerShape(40.dp)).clip(RoundedCornerShape(40.dp))
-    else Modifier.width(130.dp).height(40.dp)
+    val modifier = if(isFollowed) Modifier
+        .width(130.dp)
+        .height(40.dp)
+        .border(1.dp, Color.Black, RoundedCornerShape(40.dp))
+        .clip(RoundedCornerShape(40.dp))
+    else Modifier
+        .width(130.dp)
+        .height(40.dp)
 
     Button(
         onClick = { if(isFollowed) viewModel.unfollowUser(sessionUserId, userId)
