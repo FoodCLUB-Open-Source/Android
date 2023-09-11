@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.foodclub.navigation.graphs.Graph
+import android.kotlin.foodclub.navigation.graphs.Graph
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 

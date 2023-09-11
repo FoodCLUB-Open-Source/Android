@@ -1,6 +1,6 @@
 package com.example.foodclub.navigation.graphs
 
-import android.kotlin.foodclub.utils.helpers.SessionCache
+import android.kotlin.foodclub.navigation.graphs.Graph
 import android.kotlin.foodclub.views.home.CameraPreviewView
 import android.kotlin.foodclub.views.home.CameraView
 import android.kotlin.foodclub.views.home.ChangePasswordView
@@ -28,8 +28,7 @@ import androidx.navigation.navArgument
 
 @Composable
     fun HomeNavigationGraph(navController: NavHostController, showSheet: Boolean, triggerBottomSheetModal: () -> Unit,
-                            callbackEnableStoryView: (offset: IntOffset) -> Unit, storyViewMode: Boolean,
-                            sessionCache: SessionCache) {
+                            callbackEnableStoryView: (offset: IntOffset) -> Unit, storyViewMode: Boolean) {
     NavHost(
         navController = navController,
         route = Graph.HOME,
@@ -40,14 +39,11 @@ import androidx.navigation.navArgument
                 callbackEnableStoryView = callbackEnableStoryView,
                 storyViewMode = storyViewMode)
         }
-        composable(route = BottomBarScreenObject.Profile.route + "/{userId}",
-            arguments = listOf(
-                navArgument("userId") { type = NavType.StringType }
-            )
+        composable(route = BottomBarScreenObject.Profile.route + "?userId={userId}",
+            arguments = listOf(navArgument("userId") { nullable = true })
         ) {
-            it.arguments?.getString("userId")?.let { it1 ->
-                ProfileView(navController, sessionCache, it1.toLong())
-            }
+            val userId = it.arguments?.getString("userId")
+            ProfileView(navController, userId?.toLong())
 
         }
         composable(route = BottomBarScreenObject.Discover.route) {

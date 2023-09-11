@@ -129,10 +129,8 @@ fun BottomSheet(onDismiss: () -> Unit, navController: NavHostController) {
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainView(navController: NavHostController = rememberNavController(),
-             sessionCache: SessionCache) {
+fun MainView(navController: NavHostController = rememberNavController()) {
     val viewModel: HomeViewModel = viewModel()
     var showSheet by remember { mutableStateOf(false) }
 
@@ -147,7 +145,7 @@ fun MainView(navController: NavHostController = rememberNavController(),
     }
 
     Scaffold(
-        bottomBar = { BottomBar(navController = navController, triggerBottomSheetModal, sessionCache) }
+        bottomBar = { BottomBar(navController = navController, triggerBottomSheetModal) }
     ) {
         if (showSheet) {
             BottomSheet(triggerBottomSheetModal, navController)
@@ -160,7 +158,7 @@ fun MainView(navController: NavHostController = rememberNavController(),
                 systemUiController.setNavigationBarColor(
                     color = Color.Black
                 )
-            }, storyViewMode = storyViewMode, sessionCache = sessionCache)
+            }, storyViewMode = storyViewMode)
     }
     //Story view screen
     Box(modifier = Modifier.zIndex(2f)) {
@@ -171,7 +169,7 @@ fun MainView(navController: NavHostController = rememberNavController(),
 
 
 @Composable
-fun BottomBar(navController: NavHostController, triggerBottomSheetModal: () -> Unit, sessionCache: SessionCache) {
+fun BottomBar(navController: NavHostController, triggerBottomSheetModal: () -> Unit) {
     val screens = listOf(
         BottomBarScreenObject.Home,
         BottomBarScreenObject.Play,
@@ -196,7 +194,6 @@ fun BottomBar(navController: NavHostController, triggerBottomSheetModal: () -> U
                     currentDestination = currentDestination,
                     navController = navController,
                     triggerBottomSheetModal = triggerBottomSheetModal,
-                    sessionCache = sessionCache
                 )
             }
         }
@@ -209,7 +206,6 @@ fun RowScope.AddItem(
     currentDestination: NavDestination?,
     navController: NavHostController,
     triggerBottomSheetModal: () -> Unit,
-    sessionCache: SessionCache
 ) {
     val icon = painterResource(screen.icon)
 
@@ -232,19 +228,10 @@ fun RowScope.AddItem(
             if (screen.route == "CREATE") {
                 triggerBottomSheetModal()
             } else {
-                val userId = sessionCache.getActiveSession()?.userId
-                if(screen == BottomBarScreenObject.Profile) {
-                    navController.navigate(screen.route + "/$userId") {
-                        popUpTo(navController.graph.findStartDestination().id)
-                        launchSingleTop = true
-                    }
-                } else {
-                    navController.navigate(screen.route) {
-                        popUpTo(navController.graph.findStartDestination().id)
-                        launchSingleTop = true
-                    }
+                navController.navigate(screen.route) {
+                    popUpTo(navController.graph.findStartDestination().id)
+                    launchSingleTop = true
                 }
-
             }
         }
 

@@ -12,9 +12,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.google.gson.Gson
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
+import javax.inject.Inject
 
 //object LoginErrorCodes {
 //    const val EMPTY_CREDENTIALS = 1
@@ -35,23 +37,21 @@ object LoginErrorCodes {
     const val UNKNOWN_ERROR = "An unexpected error occurred. Please try again later."
 }
 
-
-class LogInWithEmailViewModel : ViewModel() {
+@HiltViewModel
+class LogInWithEmailViewModel @Inject constructor(
+    private val sessionCache: SessionCache
+) : ViewModel() {
     private val gson = Gson()
     private val _loginStatus = MutableLiveData<String?>()
     val loginStatus: LiveData<String?> get() = _loginStatus
 
-    private val _sessionCache = MutableStateFlow<SessionCache?>(null)
-
     private fun setSession(userId: Long) {
-        if(_sessionCache.value == null) return
-        if(_sessionCache.value!!.getActiveSession() != null) _sessionCache.value!!.clearSession()
-        _sessionCache.value!!.saveSession(Session(userId))
+//        if(sessionCache == null) return
+        if(sessionCache.getActiveSession() != null) sessionCache.clearSession()
+        sessionCache.saveSession(Session(userId))
+        Log.d("LoginWithEmailViewModel", "Logged in user: $userId")
     }
 
-    fun setSessionCache(sessionCache: SessionCache) {
-        _sessionCache.value = sessionCache
-    }
 
     fun logInUser(userEmail: String?, userPassword: String?, navController: NavController) {
         if (userEmail.isNullOrEmpty() || userPassword.isNullOrEmpty()) {

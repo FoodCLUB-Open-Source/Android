@@ -63,6 +63,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.text.TextStyle
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -71,10 +72,9 @@ import java.net.ConnectException
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LogInWithEmail(navController: NavHostController, sessionCache: SessionCache) {
+fun LogInWithEmail(navController: NavHostController) {
     // we need to make only one view model
-    val viewModel: LogInWithEmailViewModel = viewModel()
-    viewModel.setSessionCache(sessionCache)
+    val viewModel: LogInWithEmailViewModel = hiltViewModel()
 
     var errorMessage by remember { mutableStateOf<String?>(null) }
 //    val loginStatus by viewModel.loginStatus.observeAsState(initial = 0)

@@ -1,7 +1,7 @@
 package com.example.foodclub.navigation.graphs
 
+import android.kotlin.foodclub.navigation.graphs.Graph
 import android.kotlin.foodclub.utils.composables.sharedViewModel
-import android.kotlin.foodclub.utils.helpers.SessionCache
 import android.kotlin.foodclub.views.authentication.LogInWithEmail
 import android.kotlin.foodclub.views.authentication.MainLogInAndSignUp
 import android.kotlin.foodclub.views.authentication.SignUpWithEmailView
@@ -20,7 +20,7 @@ import android.kotlin.foodclub.views.authentication.EmailSentView
 import com.example.foodclub.views.authentication.ConfirmIdentityView
 import com.example.foodclub.views.authentication.ForgotPasswordView
 
-fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, sessionCache: SessionCache) {
+fun NavGraphBuilder.authNavigationGraph(navController: NavHostController) {
     navigation(
         route = Graph.AUTHENTICATION,
         startDestination = AuthScreen.MainLogInAndSignUp.route
@@ -39,7 +39,7 @@ fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, sessio
                         viewModel.saveEmailPasswordData(email, pass)
                         navController.navigate("signup_page_2")
                     },
-                    onBackButtonClick = {navController.popBackStack()},
+                    onBackButtonClick = { navController.popBackStack() },
                     userSignUpInformation = userSignUpInformation
                 )
             }
@@ -66,7 +66,7 @@ fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, sessio
             MainLogInAndSignUp(navController)
         }
         composable(route = AuthScreen.Login.route) {
-            LogInWithEmail(navController, sessionCache)
+            LogInWithEmail(navController)
         }
         composable(route = AuthScreen.Forgot.route) {
             ForgotPasswordView(navController)
