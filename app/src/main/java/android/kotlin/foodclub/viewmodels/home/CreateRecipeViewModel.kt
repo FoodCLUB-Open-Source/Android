@@ -1,6 +1,9 @@
 package android.kotlin.foodclub.viewmodels.home
 
+import android.kotlin.foodclub.api.retrofit.RetrofitInstance
 import android.kotlin.foodclub.data.models.IngredientModel
+import android.kotlin.foodclub.data.models.Recipe
+import android.kotlin.foodclub.data.models.RecipeRepository
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,6 +23,9 @@ class CreateRecipeViewModel : ViewModel() {
     val ingredients: StateFlow<List<IngredientModel>> get() = _ingredients
     private val _revealedIngredientId = MutableStateFlow(0)
     val revealedIngredientId: StateFlow<Int> get() = _revealedIngredientId
+
+    // FOR CREATE RECIPE
+    private val repository: RecipeRepository = RecipeRepository(RetrofitInstance.recipeAPI)
 
     init {
         getTestData()
@@ -54,4 +60,16 @@ class CreateRecipeViewModel : ViewModel() {
             mutableList
         }
     }
+
+    // CREATE RECIPE FUNCTION
+    suspend fun createRecipe(recipe: Recipe, userId: String): Boolean {
+        try {
+            // CREATES RECIPE + USER ID
+            return repository.createRecipe(recipe, userId)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return false
+        }
+    }
+
 }

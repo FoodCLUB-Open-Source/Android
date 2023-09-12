@@ -8,19 +8,26 @@ import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.C
 import androidx.media3.common.Player
+import androidx.navigation.NavController
 
 @Composable
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 fun CameraPreviewView(
-    uri: String
+    uri: String,
+    navController: NavController // NEED NAV CONTROLLER
 ) {
     val context = LocalContext.current
 
@@ -60,6 +67,27 @@ fun CameraPreviewView(
     ) {
         onDispose {
             exoPlayer.release()
+        }
+    }
+
+    // NEXT BUTTON + VIDEO URI
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Button(
+            onClick = {
+                navController.navigate(
+                    // URI ROUTE ON CLICK
+                    route = "CreateRecipeRoute/${Uri.encode(uri)}"
+                )
+            },
+            modifier = Modifier
+                // ALIGNMENT
+                .align(Alignment.BottomCenter)
+        ) {
+            Text(text = "Next")
         }
     }
 }

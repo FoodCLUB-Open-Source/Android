@@ -3,6 +3,7 @@ package android.kotlin.foodclub.views.home
 import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.data.models.IngredientModel
+import android.kotlin.foodclub.data.models.Recipe
 import android.kotlin.foodclub.utils.composables.Picker
 import android.kotlin.foodclub.utils.composables.rememberPickerState
 import android.kotlin.foodclub.viewmodels.home.CreateRecipeViewModel
@@ -97,10 +98,13 @@ import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Collections.copy
 import kotlin.math.roundToInt
 import kotlin.random.Random
@@ -942,4 +946,79 @@ fun SectionItem(
                 )
             }
         }
+}
+
+// CREATE RECIPE
+@Composable
+fun CreateRecipe(viewModel: CreateRecipeViewModel) {
+    var recipeTitle by remember { mutableStateOf("") }
+    var recipeDescription by remember { mutableStateOf("") }
+    var preparationTime by remember { mutableStateOf("") }
+    var servingSize by remember { mutableStateOf("") }
+    var category by remember { mutableStateOf("") }
+
+    val coroutineScope = rememberCoroutineScope() // COROUTINE SCOPE
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        TextField(
+            value = recipeTitle,
+            onValueChange = { newValue -> recipeTitle = newValue },
+            label = { Text("Recipe Title") }
+        )
+
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            onClick = {
+                val recipe = Recipe(
+                    title = recipeTitle,
+                    description = recipeDescription,
+                    preparationTime = preparationTime.toIntOrNull() ?: 0,
+                    servingSize = servingSize.toIntOrNull() ?: 0,
+                    category = category
+                )
+
+                // LAUNCH COROUTINE
+                coroutineScope.launch {
+                    val success = viewModel.createRecipe(recipe, "user_id_here")
+
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Create Recipe")
+        }
+    }
+}
+
+// SUBMITTING RECIPE
+fun onRecipeSubmit(
+    recipeTitle: String,
+    recipeDescription: String,
+    preparationTime: String,
+    servingSize: String,
+    category: String
+) {
+
+    val newRecipe = Recipe(
+        title = recipeTitle,
+        description = recipeDescription,
+        preparationTime = preparationTime.toIntOrNull() ?: 0,
+        servingSize = servingSize.toIntOrNull() ?: 0,
+        category = category,
+
+        )
+}
+
+// PREVIEW
+@Composable
+@Preview
+fun CreateRecipeViewPreview() {
+    val navController = rememberNavController()
+    CreateRecipeView(navController)
 }
