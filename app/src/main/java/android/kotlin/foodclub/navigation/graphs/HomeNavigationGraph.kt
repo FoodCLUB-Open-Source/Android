@@ -54,7 +54,7 @@ import com.example.foodclub.views.home.ProfileView
         }
         composable(route = HomeOtherRoutes.CameraPreviewView.route) { backStackEntry ->
             val uri = backStackEntry.arguments?.getString("uri") ?: ""
-            CameraPreviewView(uri = uri, navController = navController) // CHANGED THIS
+            CameraPreviewView(uri = uri, navController = navController) // **CHANGED THIS**
         }
         composable(route = HomeOtherRoutes.CreateRecipeView.route) {
             CreateRecipeView(navController = navController)

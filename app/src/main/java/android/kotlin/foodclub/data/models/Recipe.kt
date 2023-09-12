@@ -1,6 +1,6 @@
 package android.kotlin.foodclub.data.models
 
-// DATA CLASS FOR "CREATE RECIPE VIEW" LINE 988
+// DATA CLASS FOR "CREATE RECIPE VIEW" SECTION
 
 data class Recipe(
     val title: String,

@@ -948,7 +948,7 @@ fun SectionItem(
         }
 }
 
-// CREATE RECIPE
+// CREATE RECIPE STUFF
 @Composable
 fun CreateRecipe(viewModel: CreateRecipeViewModel) {
     var recipeTitle by remember { mutableStateOf("") }
