@@ -4,6 +4,7 @@ import android.kotlin.foodclub.api.authentication.ErrorResponse
 import android.kotlin.foodclub.api.authentication.UserCredentials
 import android.kotlin.foodclub.api.retrofit.RetrofitInstance
 import android.kotlin.foodclub.data.models.Session
+import android.kotlin.foodclub.navigation.graphs.Graph
 import android.kotlin.foodclub.utils.helpers.SessionCache
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -63,7 +64,7 @@ class LogInWithEmailViewModel @Inject constructor(
                 val response = RetrofitInstance.retrofitApi.loginUser(UserCredentials(userEmail, userPassword))
                 if (response.isSuccessful) {
                     setSession(response.body()!!.user.id.toLong())
-                    navController.navigate("home_graph")
+                    navController.navigate(Graph.HOME) { popUpTo(Graph.AUTHENTICATION) { inclusive = true } }
 //                    _loginStatus.postValue("Login Successful")
                 } else {
                     val errorString = response.errorBody()?.string()
@@ -74,6 +75,9 @@ class LogInWithEmailViewModel @Inject constructor(
                     if(errorResponse.errors==null){
                         when{
                             errorString?.contains("Incorrect username or password.") == true -> _loginStatus.postValue(LoginErrorCodes.WRONG_CREDENTIALS)
+                            errorString?.contains("User is not confirmed.") == true ->  {
+                                navController.navigate("VERIFY_SIGN_UP/${userEmail}?resendCode=${true}")
+                            }
                             errorString?.contains("account_not_found") == true-> _loginStatus.postValue(LoginErrorCodes.ACCOUNT_NOT_FOUND)
                             else -> _loginStatus.postValue(LoginErrorCodes.UNKNOWN_ERROR)
                         }

@@ -9,10 +9,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.example.foodclub.navigation.graphs.AuthScreen
+import android.kotlin.foodclub.navigation.graphs.AuthScreen
 import android.kotlin.foodclub.navigation.graphs.Graph
 import com.google.gson.Gson
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -45,7 +44,7 @@ class SignupVerificationViewModel : ViewModel() {
             return
         }
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             try {
                 val response = RetrofitInstance.retrofitApi.resendCode(VerificationCodeResendData(_username.value.toString()))
 
@@ -107,6 +106,7 @@ class SignupVerificationViewModel : ViewModel() {
             _message.value = "Unknown error occurred."
             return
         }
+        Log.d("SignupVerificationViewModel", "errorResponse: ${response.errorBody()?.string()}")
         val errorResponse = Gson().fromJson(response.errorBody()?.string(), SignUpResponseMessage::class.java)
 
         _message.value = errorResponse.message

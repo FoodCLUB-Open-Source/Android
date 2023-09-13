@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.views.authentication
+package android.kotlin.foodclub.views.authentication.signup
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.api.authentication.UserSignUpInformation

@@ -4,11 +4,10 @@ import android.kotlin.foodclub.api.authentication.SignUpResponseMessage
 import android.kotlin.foodclub.api.authentication.UserSignUpInformation
 import android.kotlin.foodclub.api.retrofit.RetrofitInstance
 import android.kotlin.foodclub.utils.enums.ApiCallStatus
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.example.foodclub.navigation.graphs.AuthScreen
+import android.kotlin.foodclub.navigation.graphs.AuthScreen
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,16 +23,34 @@ class SignupWithEmailViewModel() : ViewModel() {
     private val _error = MutableStateFlow("")
     val error: StateFlow<String> get() = _error
 
-    private val _userSignUpInformation = MutableStateFlow(UserSignUpInformation("", "", ""))
+    private val _userSignUpInformation = MutableStateFlow(
+        UserSignUpInformation("", "", "", "")
+    )
     val userSignUpInformation: StateFlow<UserSignUpInformation> get() = _userSignUpInformation
 
+    private val _repeatedEmail = MutableStateFlow("")
+    val repeatedEmail: StateFlow<String> get() = _repeatedEmail
+
     fun saveEmailPasswordData(email: String, password: String) {
-        _userSignUpInformation.value = UserSignUpInformation(_userSignUpInformation.value.username, email, password)
+        _userSignUpInformation.value = UserSignUpInformation(_userSignUpInformation.value.username,
+            email, password, _userSignUpInformation.value.name)
+    }
+
+    fun saveRepeatedEmail(repeatedEmail: String) {
+        _repeatedEmail.value = repeatedEmail
     }
 
     fun saveUsername(username: String) {
         _userSignUpInformation.value = UserSignUpInformation(
-            username, _userSignUpInformation.value.email, _userSignUpInformation.value.password
+            username, _userSignUpInformation.value.email, _userSignUpInformation.value.password,
+            _userSignUpInformation.value.name
+        )
+    }
+
+    fun saveFullName(name: String) {
+        _userSignUpInformation.value = UserSignUpInformation(
+            _userSignUpInformation.value.username, _userSignUpInformation.value.email,
+            _userSignUpInformation.value.password, name
         )
     }
 

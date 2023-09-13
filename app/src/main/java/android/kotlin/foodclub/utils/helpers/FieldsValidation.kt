@@ -23,5 +23,21 @@ class FieldsValidation {
                 return "Username can only contain letters and numbers"
             return null
         }
+
+        fun checkFullName(content: String): String? {
+            if(!Regex("^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+\$").containsMatchIn(content))
+                return "Name can only contain letters"
+            if(!Regex("^[^\\s]+(\\s+[^\\s]+)*\$").containsMatchIn(content)) {
+                return "No space at the beginning and the end"
+            }
+            return null
+        }
+
+        fun confirmEmail(content: String, email: String): String? {
+            if(content != email) {
+                return "Email addresses do not match"
+            }
+            return null
+        }
     }
 }

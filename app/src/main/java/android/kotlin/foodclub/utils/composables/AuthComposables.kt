@@ -114,7 +114,7 @@ fun CustomCodeTextField(onFillCallback: (Boolean, String) -> Unit) {
 
 @Composable
 fun CustomTextField(initialValue: String = "",
-    placeholder: String, keyboardType: KeyboardType, textValidation: Boolean = false,
+    placeholder: String, keyboardType: KeyboardType, textValidation: Boolean = false, allowSpace: Boolean = false,
     validationMethod: (text: String) -> String? = { text -> text.toString() },
     onCorrectnessStateChange: () -> Unit = {}, onValueChange: (text: String) -> Unit,
     modifier: Modifier = Modifier
@@ -128,14 +128,15 @@ fun CustomTextField(initialValue: String = "",
             value = text,
             onValueChange = {
                 var textValidCurrent = true
+                val currentVal = if(allowSpace) it else it.trim()
                 if (textValidation) {
-                    errorMessage = validationMethod(it.trim())
+                    errorMessage = validationMethod(currentVal)
                     textValidCurrent = errorMessage.isNullOrBlank()
                 }
-                if (it.trim() == "") errorMessage = null
+                if (currentVal == "") errorMessage = null
                 if (textValid != textValidCurrent) onCorrectnessStateChange()
-                text = it.trim()
-                onValueChange(it.trim())
+                text = currentVal
+                onValueChange(currentVal)
                 textValid = textValidCurrent
             },
             placeholder = { Text(text = placeholder, color = Color(0xFF939393)) },

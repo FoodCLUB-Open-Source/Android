@@ -4,7 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.example.foodclub.views.authentication.ForgotPasswordView
+import android.kotlin.foodclub.views.authentication.ForgotPasswordView
 
 fun NavGraphBuilder.onBoardingNavigationGraph(navController: NavHostController,
                                               setBottomBarVisibility: (Boolean) -> Unit) {

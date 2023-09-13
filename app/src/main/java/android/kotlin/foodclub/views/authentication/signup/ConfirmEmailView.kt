@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.views.authentication
+package android.kotlin.foodclub.views.authentication.signup
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.api.authentication.UserSignUpInformation
@@ -16,9 +16,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -34,7 +31,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -42,11 +38,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun UsernameView(onValuesUpdate: (String) -> Unit, onBackButtonClick: (String) -> Unit,
-                 userSignUpInformation: State<UserSignUpInformation>, error: String) {
-    var username by remember { mutableStateOf(userSignUpInformation.value.username) }
-    var initialUsernameCorrectnessState = FieldsValidation.checkUsername(username) == null
-    var filledUsername by remember { mutableStateOf(false) }
+fun ConfirmEmailView(onValuesUpdate: (String) -> Unit, onBackButtonClick: (String) -> Unit,
+                 userSignUpInformation: State<UserSignUpInformation>,
+                     repeatedEmailState: State<String>, error: String) {
+    val email by remember { mutableStateOf(userSignUpInformation.value.email) }
+    var repeatedEmail by remember { mutableStateOf(repeatedEmailState.value) }
+    var initialEmailCorrectnessState = email == repeatedEmail
+    var filledEmail by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -63,12 +61,12 @@ fun UsernameView(onValuesUpdate: (String) -> Unit, onBackButtonClick: (String) -
                         .width(36.dp)
                         .height(36.dp)
                         .offset(x = (-8).dp)
-                        .clickable { onBackButtonClick(username) }
+                        .clickable { onBackButtonClick(repeatedEmail) }
                 )
                 Column(Modifier.padding(top = 32.dp)) {
                     // USERNAME TEXTVIEW
                     Text(
-                        text = "Create a username!",
+                        text = "Check email!",
                         fontSize = 32.sp,
                         fontFamily = PlusJakartaSans,  // AS ITS A CLEAN CUT FONT
                         fontWeight = FontWeight.Bold       // TO MAKE IT STAND OUT
@@ -76,7 +74,7 @@ fun UsernameView(onValuesUpdate: (String) -> Unit, onBackButtonClick: (String) -
 
                     // SUB TEXT VIEW
                     Text(
-                        text = "So everyone can find you!",
+                        text = "So that you are sure you haven't mistyped it!",
                         fontSize = 18.sp,
                         fontFamily = Montserrat,  // AS ITS A CLEAN CUT FONT
                         color = Color(0xFF000000).copy(alpha = 0.4f)
@@ -93,23 +91,23 @@ fun UsernameView(onValuesUpdate: (String) -> Unit, onBackButtonClick: (String) -
         }
         Column(Modifier.weight(2F)) {
             // TEXT FIELD STUFF
-            CustomTextField(initialValue = username,
-                placeholder = "Username", keyboardType = KeyboardType.Text,
-                onCorrectnessStateChange = { filledUsername = !filledUsername },
-                onValueChange = { username = it
-                    initialUsernameCorrectnessState = false }, textValidation = true,
-                validationMethod = { text -> FieldsValidation.checkUsername(text) }
+            CustomTextField(initialValue = repeatedEmail,
+                placeholder = "Email", keyboardType = KeyboardType.Text,
+                onCorrectnessStateChange = { filledEmail = !filledEmail },
+                onValueChange = { repeatedEmail = it
+                    initialEmailCorrectnessState = false }, textValidation = true,
+                validationMethod = { text -> FieldsValidation.confirmEmail(text, email) }
             )
 
             // BUTTON
             Button(
-                onClick = { onValuesUpdate(username) },
+                onClick = { onValuesUpdate(repeatedEmail) },
                 shape = RoundedCornerShape(10.dp),
                 modifier = Modifier
                     .height(56.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .fillMaxWidth(),
-                enabled = filledUsername || initialUsernameCorrectnessState,
+                enabled = filledEmail || initialEmailCorrectnessState,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF7EC60B),
                     disabledContainerColor = Color(0xFFC9C9C9),
@@ -117,7 +115,7 @@ fun UsernameView(onValuesUpdate: (String) -> Unit, onBackButtonClick: (String) -
                     contentColor = Color.White
                 )
             ) {
-                Text(text = "Create", fontSize = 16.sp)
+                Text(text = "Continue", fontSize = 16.sp)
             }
 
         }
@@ -127,13 +125,3 @@ fun UsernameView(onValuesUpdate: (String) -> Unit, onBackButtonClick: (String) -
     }
 
     }
-
-
-
-//@Preview(showBackground = true)
-//@Composable
-//fun UsernameViewPreview() {
-//    FoodClubTheme {
-//        UsernameView()
-//    }
-//}

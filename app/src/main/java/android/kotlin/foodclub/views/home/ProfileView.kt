@@ -5,7 +5,6 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.activities.MainActivity
 import android.kotlin.foodclub.data.models.UserPostsModel
 import android.kotlin.foodclub.ui.theme.Montserrat
-import android.kotlin.foodclub.utils.helpers.SessionCache
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -56,13 +55,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import android.kotlin.foodclub.viewmodels.home.ProfileViewModel
 import androidx.compose.foundation.border
-import androidx.compose.material3.ButtonColors
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.example.foodclub.navigation.graphs.AuthScreen
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.launch

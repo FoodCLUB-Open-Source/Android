@@ -47,7 +47,7 @@ import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 
 @Composable
-fun SignupVerification(navController: NavHostController, username: String?) {
+fun SignupVerification(navController: NavHostController, username: String?, resendCode: Boolean?) {
     val viewModel: SignupVerificationViewModel = viewModel()
 
     LaunchedEffect(key1 = Unit) {
@@ -60,7 +60,7 @@ fun SignupVerification(navController: NavHostController, username: String?) {
             .padding(start = 25.dp, end = 25.dp, top = 80.dp, bottom = 50.dp),
     ) {
         SignupVerificationTopLayout(navController, modifier = Modifier.weight(1F))
-        SignupVerificationMainLayout(viewModel, modifier = Modifier.weight(2F))
+        SignupVerificationMainLayout(viewModel, resendCode, modifier = Modifier.weight(2F))
         Box(Modifier.weight(1F)) { TermsAndConditionsInfoFooter() }
     }
 }
@@ -95,7 +95,7 @@ fun SignupVerificationTopLayout(navController: NavHostController, modifier: Modi
 }
 
 @Composable
-fun SignupVerificationMainLayout(viewModel: SignupVerificationViewModel, modifier: Modifier = Modifier) {
+fun SignupVerificationMainLayout(viewModel: SignupVerificationViewModel, resendCode: Boolean?, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -156,8 +156,13 @@ fun SignupVerificationMainLayout(viewModel: SignupVerificationViewModel, modifie
                 }
             }
 
+            var resendCodeValue by remember { mutableStateOf(resendCode) }
 
             LaunchedEffect(key1 = currentTime, key2 = isTimerRunning) {
+                if(resendCodeValue == true) {
+                    viewModel.sendVerificationCode()
+                    resendCodeValue = false
+                }
                 if(currentTime > 0 && isTimerRunning) {
                     delay(100L)
                     currentTime -= 100L
