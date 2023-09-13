@@ -12,7 +12,7 @@ import androidx.navigation.navigation
 import android.kotlin.foodclub.views.authentication.ChangePasswordView
 import android.kotlin.foodclub.views.authentication.EmailSentView
 import com.example.foodclub.views.authentication.ConfirmIdentityView
-import com.example.foodclub.views.authentication.ForgotPasswordView
+import android.kotlin.foodclub.views.authentication.ForgotPasswordView
 
 fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, setBottomBarVisibility: (Boolean) -> Unit) {
     navigation(

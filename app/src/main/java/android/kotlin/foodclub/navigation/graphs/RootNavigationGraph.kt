@@ -3,7 +3,6 @@
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.example.foodclub.navigation.graphs.authNavigationGraph
 import com.example.foodclub.navigation.graphs.homeNavigationGraph
 
 

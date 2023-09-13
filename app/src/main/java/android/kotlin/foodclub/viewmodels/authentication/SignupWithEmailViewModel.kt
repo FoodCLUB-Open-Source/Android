@@ -4,11 +4,10 @@ import android.kotlin.foodclub.api.authentication.SignUpResponseMessage
 import android.kotlin.foodclub.api.authentication.UserSignUpInformation
 import android.kotlin.foodclub.api.retrofit.RetrofitInstance
 import android.kotlin.foodclub.utils.enums.ApiCallStatus
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.example.foodclub.navigation.graphs.AuthScreen
+import android.kotlin.foodclub.navigation.graphs.AuthScreen
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
