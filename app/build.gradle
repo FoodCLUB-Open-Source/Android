@@ -108,5 +108,5 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
     // Video editor (trimming section)
-    implementation 'com.github.tizisdeepan:videoeditor:1.0.8'
+    //implementation 'com.github.tizisdeepan:videoeditor:1.0.8'
 }
