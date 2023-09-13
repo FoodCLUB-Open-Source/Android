@@ -21,6 +21,9 @@ data class UserSignUpInformation(
     val username: String,
     val email: String,
     val password: String,
+
+    @SerializedName("fullname")
+    val name: String
 )
 
 data class ErrorResponse(
