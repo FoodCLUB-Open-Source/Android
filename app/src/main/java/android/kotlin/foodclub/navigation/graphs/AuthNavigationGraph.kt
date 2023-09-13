@@ -1,20 +1,14 @@
-package com.example.foodclub.navigation.graphs
+package android.kotlin.foodclub.navigation.graphs
 
-import android.kotlin.foodclub.navigation.graphs.Graph
-import android.kotlin.foodclub.utils.composables.sharedViewModel
 import android.kotlin.foodclub.views.authentication.LogInWithEmail
 import android.kotlin.foodclub.views.authentication.MainLogInAndSignUp
-import android.kotlin.foodclub.views.authentication.SignUpWithEmailView
 import android.kotlin.foodclub.views.authentication.SignupVerification
-import android.kotlin.foodclub.views.authentication.UsernameView
-import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import android.kotlin.foodclub.viewmodels.authentication.SignupWithEmailViewModel
 import android.kotlin.foodclub.views.authentication.ChangePasswordView
 import android.kotlin.foodclub.views.authentication.EmailSentView
 import com.example.foodclub.views.authentication.ConfirmIdentityView
@@ -25,42 +19,7 @@ fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, setBot
         route = Graph.AUTHENTICATION,
         startDestination = AuthScreen.MainLogInAndSignUp.route
     ) {
-        // Sign up process
-        navigation(
-            route = AuthScreen.SignUp.route,
-            startDestination = "signup_page_1"
-        ) {
-            composable("signup_page_1") {entry ->
-                val viewModel = entry.sharedViewModel<SignupWithEmailViewModel>(navController)
-                val userSignUpInformation = viewModel.userSignUpInformation.collectAsState()
-
-                SignUpWithEmailView(
-                    onValuesUpdate = { email, pass ->
-                        viewModel.saveEmailPasswordData(email, pass)
-                        navController.navigate("signup_page_2")
-                    },
-                    onBackButtonClick = { navController.popBackStack() },
-                    userSignUpInformation = userSignUpInformation
-                )
-            }
-            composable("signup_page_2") {entry ->
-                val viewModel = entry.sharedViewModel<SignupWithEmailViewModel>(navController)
-                val userSignUpInformation = viewModel.userSignUpInformation.collectAsState()
-                val error = viewModel.error.collectAsState()
-
-                UsernameView(
-                    onValuesUpdate = {
-                        viewModel.saveUsername(it)
-                        viewModel.signUpUser(navController)
-                    },
-                    onBackButtonClick = {
-                        viewModel.saveUsername(it)
-                        navController.popBackStack() },
-                    userSignUpInformation = userSignUpInformation,
-                    error = error.value
-                )
-            }
-        }
+        signupNavigationGraph(navController)
 
         composable(route = AuthScreen.MainLogInAndSignUp.route) {
             setBottomBarVisibility(false)
@@ -75,12 +34,14 @@ fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, setBot
         composable(route = AuthScreen.ConfirmId.route) {
             ConfirmIdentityView()
         }
-        composable(route = AuthScreen.VerifySignup.route + "/{username}",
+        composable(route = AuthScreen.VerifySignup.route + "/{username}?resendCode={resendCode}",
             arguments = listOf(
-                navArgument("username") { type = NavType.StringType }
+                navArgument("username") { type = NavType.StringType },
+                navArgument("resendCode") { defaultValue = false }
             )
         ) {backStackEntry ->
-            SignupVerification(navController, backStackEntry.arguments?.getString("username"))
+            SignupVerification(navController, backStackEntry.arguments?.getString("username"),
+                backStackEntry.arguments?.getBoolean("resendCode"))
         }
 
         composable(route = AuthScreen.ForgotEmailSent.route) {
@@ -88,9 +49,7 @@ fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, setBot
         }
 
         composable(route = AuthScreen.ChangePassword.route + "/{username}",
-            arguments = listOf(
-                navArgument("username") { type = NavType.StringType }
-            )
+            arguments = listOf(navArgument("username") { type = NavType.StringType })
         ) {backStackEntry ->
             ChangePasswordView(navController,backStackEntry.arguments?.getString("username"))
         }
