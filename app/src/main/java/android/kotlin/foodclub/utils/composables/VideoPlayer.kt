@@ -1,16 +1,15 @@
 package android.kotlin.foodclub.utils.composables
 
-import android.content.res.AssetFileDescriptor
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.kotlin.foodclub.data.models.VideoModel
-import android.media.MediaMetadataRetriever
 import android.net.Uri
-import android.os.Build
+import android.util.Log
 import android.view.ViewGroup
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -37,8 +36,9 @@ import androidx.media3.ui.PlayerView
 import coil.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.IOException
+import java.net.URL
 
-@OptIn(ExperimentalFoundationApi::class)
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
 fun VideoPlayer(
@@ -46,7 +46,8 @@ fun VideoPlayer(
     onSingleTap: (exoPlayer: ExoPlayer) -> Unit,
     onDoubleTap: (exoPlayer: ExoPlayer, offset: Offset) -> Unit,
     onVideoDispose: () -> Unit = {},
-    onVideoGoBackground: () -> Unit = {}
+    onVideoGoBackground: () -> Unit = {},
+    controlPoint: Boolean = false
 ) {
     val context = LocalContext.current
     var thumbnail by remember {
@@ -56,9 +57,16 @@ fun VideoPlayer(
 
     LaunchedEffect(key1 = true) {
         withContext(Dispatchers.IO) {
-            val bm = extractThumbnailFromMedia(
-                context.assets.openFd("${video.videoLink}"), 1
-            )
+            val bm = if(video.videoLink.startsWith("asset:///")) extractThumbnailFromMedia(
+                context.assets.openFd(video.videoLink.substring(9)), 1
+            )  else {
+                try {
+                    BitmapFactory.decodeStream(URL(video.thumbnailLink).openConnection().getInputStream());
+                } catch (e: IOException) {
+                    Log.d("VideoPlayer", "Cannot fetch thumbnail. No connection")
+                    null
+                }
+            }
             withContext(Dispatchers.Main) {
                 thumbnail = thumbnail.copy(first = bm, second = thumbnail.second)
             }
@@ -69,7 +77,7 @@ fun VideoPlayer(
             ExoPlayer.Builder(context).build().apply {
                 videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT
                 repeatMode = Player.REPEAT_MODE_ONE
-                setMediaItem(MediaItem.fromUri(Uri.parse("asset:///${video.videoLink}")))
+                setMediaItem(MediaItem.fromUri(Uri.parse(video.videoLink)))
                 playWhenReady = true
                 prepare()
                 addListener(object : Player.Listener {
@@ -101,31 +109,37 @@ fun VideoPlayer(
         }
 
         val playerView = remember {
-            PlayerView(context).apply {
-                player = exoPlayer
+            PlayerView(context, ).apply {
                 useController = false
                 resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+                player = exoPlayer
                 layoutParams = ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
                 )
             }
         }
 
-        DisposableEffect(key1 = AndroidView(factory = {
-            playerView
-        }, modifier = Modifier.pointerInput(Unit) {
+        DisposableEffect(key1 = Box(Modifier.fillMaxSize()){
+            AndroidView(factory = {
+                playerView
+            }, modifier = Modifier.pointerInput(Unit) {
             detectTapGestures(onTap = {
                 onSingleTap(exoPlayer)
             }, onDoubleTap = { offset ->
                 onDoubleTap(exoPlayer, offset)
             })
-        }), effect = {
+        })}, effect = {
             onDispose {
                 thumbnail = thumbnail.copy(second = true)
                 exoPlayer.release()
                 onVideoDispose()
             }
         })
+
+    //Fix width deformation - recomposing works...
+    AnimatedVisibility(visible = controlPoint) {
+        Box{}
+    }
 
     if (thumbnail.second) {
         AsyncImage(
