@@ -1,5 +1,6 @@
 package com.example.foodclub.navigation.graphs
 
+import android.kotlin.foodclub.navigation.graphs.Graph
 import android.kotlin.foodclub.views.home.CameraPreviewView
 import android.kotlin.foodclub.views.home.CameraView
 import android.kotlin.foodclub.views.home.ChangePasswordView
@@ -7,14 +8,13 @@ import android.kotlin.foodclub.views.home.CreateRecipeView
 import android.kotlin.foodclub.views.home.DeleteRecipeView
 import android.kotlin.foodclub.views.home.EditProfileSetting
 import android.kotlin.foodclub.views.home.FollowerView
-import android.kotlin.foodclub.views.home.FollowingView
+//import android.kotlin.foodclub.views.home.FollowingView
 import android.kotlin.foodclub.views.home.MyBasketView
 import android.kotlin.foodclub.views.home.PrivacySetting
 import android.kotlin.foodclub.views.home.SearchView
 import android.kotlin.foodclub.views.home.SettingsView
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.IntOffset
-import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,23 +22,30 @@ import com.example.foodclub.ui.theme.BottomBarScreenObject
 import com.example.foodclub.views.home.CreateView
 import com.example.foodclub.views.home.DiscoverView
 import com.example.foodclub.views.home.HomeView
-import com.example.foodclub.views.home.ProfileView
+import android.kotlin.foodclub.views.home.ProfileView
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import androidx.navigation.navigation
 
-@Composable
-    fun HomeNavigationGraph(navController: NavHostController, showSheet: Boolean, triggerBottomSheetModal: () -> Unit,
-                            callbackEnableStoryView: (offset: IntOffset) -> Unit, storyViewMode: Boolean) {
-    NavHost(
-        navController = navController,
+    fun NavGraphBuilder.homeNavigationGraph(navController: NavHostController, showSheet: Boolean,
+                                            triggerBottomSheetModal: () -> Unit,
+                                            triggerStory: () -> Unit,
+                                            setBottomBarVisibility: (Boolean) -> Unit) {
+    navigation(
         route = Graph.HOME,
         startDestination = BottomBarScreenObject.Home.route
     ) {
         composable(route = BottomBarScreenObject.Home.route) {
-            HomeView(navController = navController,
-                callbackEnableStoryView = callbackEnableStoryView,
-                storyViewMode = storyViewMode)
+            setBottomBarVisibility(true)
+            HomeView(navController = navController, triggerStoryView = triggerStory)
         }
-        composable(route = BottomBarScreenObject.Profile.route) {
-            ProfileView(navController)
+        composable(route = BottomBarScreenObject.Profile.route + "?userId={userId}",
+            arguments = listOf(navArgument("userId") { nullable = true })
+        ) {
+            val userId = it.arguments?.getString("userId")
+            ProfileView(navController, userId?.toLong())
+
         }
         composable(route = BottomBarScreenObject.Discover.route) {
             MyBasketView(navController = navController)
@@ -78,12 +85,26 @@ import com.example.foodclub.views.home.ProfileView
             DeleteRecipeView(navController = navController)
         }
 
-        composable(route = HomeOtherRoutes.FollowerView.route) {
-            FollowerView(navController = navController)
+        composable(route = HomeOtherRoutes.FollowerView.route + "/{userId}",
+            arguments = listOf(
+                navArgument("userId") { nullable = true }
+            )
+        ) {
+            it.arguments?.getString("userId")?.let { it1 ->
+                FollowerView(navController = navController, viewType = "followers",
+                    userId = it1.toLong())
+            }
         }
 
-        composable(route = HomeOtherRoutes.FollowingView.route) {
-            FollowingView(navController = navController)
+        composable(route = HomeOtherRoutes.FollowingView.route + "/{userId}",
+            arguments = listOf(
+                navArgument("userId") { nullable = true }
+            )
+        ) {
+            it.arguments?.getString("userId")?.let { it1 ->
+                FollowerView(navController = navController, viewType = "following",
+                    userId = it1.toLong())
+            }
         }
 
         composable(route = HomeOtherRoutes.MyBasketView.route) {

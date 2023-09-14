@@ -1,17 +1,13 @@
-package com.example.foodclub.navigation.graphs
+package android.kotlin.foodclub.navigation.graphs
 
-import android.kotlin.foodclub.views.authentication.EmailSentView
-import android.kotlin.foodclub.views.authentication.LogInWithEmail
-import android.kotlin.foodclub.views.authentication.MainLogInAndSignUp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.example.foodclub.views.authentication.ConfirmIdentityView
-import com.example.foodclub.views.authentication.ForgotPasswordView
-import com.example.foodclub.views.onboarding.MenuView
+import android.kotlin.foodclub.views.authentication.ForgotPasswordView
 
-fun NavGraphBuilder.onBoardingNavigationGraph(navController: NavHostController) {
+fun NavGraphBuilder.onBoardingNavigationGraph(navController: NavHostController,
+                                              setBottomBarVisibility: (Boolean) -> Unit) {
     navigation(
         route = Graph.ON_BOARDING,
         startDestination = OnBoardingScreen.Menu.route

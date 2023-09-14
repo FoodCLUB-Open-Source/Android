@@ -3,19 +3,14 @@
 package com.example.foodclub.views.home
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.data.models.StoryModel
 import android.kotlin.foodclub.data.models.VideoModel
-import android.kotlin.foodclub.utils.composables.Picker
+import android.kotlin.foodclub.ui.theme.Montserrat
+import android.kotlin.foodclub.utils.composables.StoryView
 import android.kotlin.foodclub.utils.composables.VideoScroller
-import android.kotlin.foodclub.utils.composables.rememberPickerState
-import android.kotlin.foodclub.views.home.AddItemComposable
-import android.kotlin.foodclub.views.home.BasketIngredient
-import android.kotlin.foodclub.views.home.DrawerContentState
 import android.kotlin.foodclub.views.home.StoriesContainerView
 import android.util.Log
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.Spring
@@ -23,12 +18,10 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.with
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -45,11 +38,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -60,13 +51,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -79,55 +67,33 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.BottomSheetDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.clipPath
-import androidx.compose.ui.graphics.drawscope.clipRect
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.unit.IntSize
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import androidx.compose.material3.rememberModalBottomSheetState
 
-
-val montserratFamily = FontFamily(Font(R.font.montserratregular, FontWeight.Normal))
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -160,7 +126,7 @@ fun BottomSheetIngredients(onDismiss: () -> Unit) {
                 ) {
                     Text("Chicken broth and meatballs",
                         color = Color.Black,
-                        fontFamily = android.kotlin.foodclub.views.home.montserratFamily,
+                        fontFamily = Montserrat,
                         fontSize = if (isSmallScreen == true) 18.sp else 22.sp,
                         fontWeight = FontWeight.Bold)
                 }
@@ -353,15 +319,14 @@ fun BlurImage(content: @Composable () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
 fun HomeView(
     modifier: Modifier = Modifier,
     initialPage: Int? = 0,
     navController: NavHostController,
-    callbackEnableStoryView: (offset: IntOffset) -> Unit,
-    storyViewMode: Boolean
+    triggerStoryView: () -> Unit,
 )
 {
     var showIngredientSheet by remember { mutableStateOf(false) }
@@ -393,6 +358,11 @@ fun HomeView(
     )
     val systemUiController = rememberSystemUiController()
 
+    val storyModel = StoryModel(painterResource(R.drawable.story_user), 1692815790, "Julien", painterResource(R.drawable.foodsnap))
+    val currentStory by remember { mutableStateOf(storyModel) }
+    var currentStoryOffset by remember { mutableStateOf(IntOffset(0, 0)) }
+    var storyViewMode by remember { mutableStateOf(false) }
+
     val triggerIngredientBottomSheetModal: () -> Unit = {
         showIngredientSheet = !showIngredientSheet
     }
@@ -412,7 +382,23 @@ fun HomeView(
             R.drawable.story_user,
             R.drawable.story_user,
             R.drawable.story_user
-        ), callbackEnableStoryView = callbackEnableStoryView, navController)
+        ), callbackEnableStoryView = {
+            // Here we are going to put all information about the story - author, time created and story content
+            currentStoryOffset = it
+            storyViewMode = true
+            systemUiController.setNavigationBarColor(
+                color = Color.Black
+            )
+            triggerStoryView()
+        }, navController)
+    }
+    //Story view screen
+    Box(modifier = Modifier.zIndex(2f)) {
+        StoryView(storyEnabled = storyViewMode, storyDetails = currentStory,
+            callbackDisableStory = {
+                storyViewMode = false
+                triggerStoryView()
+            }, currentStoryOffset, modifier = Modifier.fillMaxSize())
     }
     Column(
         modifier = Modifier
@@ -497,8 +483,7 @@ fun HomeView(
                     }
                 }
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize().padding(top = 30.dp),
+                    modifier = Modifier.fillMaxSize().padding(top = 30.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -527,7 +512,7 @@ fun HomeView(
                             contentPadding = PaddingValues(0.dp),
                                     colors = ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#D95978")))
                         ) {
-                            Text("Meat", fontFamily = montserratFamily,
+                            Text("Meat", fontFamily = Montserrat,
                                 fontSize = 12.sp,style = TextStyle(color = Color.White))
                         }
                         Spacer(modifier = Modifier.height(20.dp))
@@ -542,7 +527,7 @@ fun HomeView(
                             )
                             Spacer(modifier = Modifier.width(10.dp))
                             Text("Marc", color = Color.White,
-                                fontFamily = montserratFamily, fontSize = 18.sp,
+                                fontFamily = Montserrat, fontSize = 18.sp,
                                 modifier = Modifier.padding(2.dp))
                         }
                     }
@@ -586,8 +571,7 @@ fun HomeView(
                         Spacer(modifier = Modifier.height(10.dp))
 
                         Column(horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.align(Alignment.End)
-                                .width(50.dp).height(80.dp),
+                            modifier = Modifier.align(Alignment.End).width(50.dp).height(80.dp),
                             ) {
                             Spacer(Modifier.weight(1f))
                             Box(
@@ -604,9 +588,9 @@ fun HomeView(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     verticalArrangement = Arrangement.Center,
                                     modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(30.dp)).clickable {
-                                        isLiked = !isLiked
-                                        videos[it].currentViewerInteraction.isLikedByYou = !isLiked
-                                    }
+                                            isLiked = !isLiked
+                                            videos[it].currentViewerInteraction.isLikedByYou = !isLiked
+                                        }
                                 ) {
                                     val maxSize = 32.dp
                                     val iconSize by animateDpAsState(targetValue = if (isLiked) 22.dp else 21.dp,
@@ -631,7 +615,7 @@ fun HomeView(
                                     )
                                     Spacer(modifier = Modifier.height(3.dp))
                                     Text("4.2k", fontSize = 13.sp,
-                                        fontFamily = montserratFamily,
+                                        fontFamily = Montserrat,
                                         color = if (isLiked) Color(android.graphics.Color.parseColor("#7EC60B")) else Color.White)
                                 }
                             }
@@ -649,7 +633,7 @@ fun HomeView(
                             contentPadding = PaddingValues(0.dp)
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text("Ingredients", fontFamily = montserratFamily, fontSize = 14.sp)
+                                Text("Ingredients", fontFamily = Montserrat, fontSize = 14.sp)
                             }
                         }
                     }
@@ -698,7 +682,7 @@ fun HomeIngredient(ingredientTitle: String, ingredientImage : Int) {
                 .align(Alignment.TopEnd)
                 .clip(RoundedCornerShape(30.dp))
                 .background(if (isSelected) Color(android.graphics.Color.parseColor("#7EC60B"))
-                else Color(android.graphics.Color.parseColor("#ECECEC")))
+                    else Color(android.graphics.Color.parseColor("#ECECEC")))
                 .clickable { isSelected = !isSelected }
                 .padding(4.dp),
             contentAlignment = Alignment.Center

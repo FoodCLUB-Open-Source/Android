@@ -15,22 +15,26 @@ import android.kotlin.foodclub.views.authentication.ui.theme.FoodClubTheme
 import android.view.View
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
@@ -92,6 +96,7 @@ fun Preference(modifier: Modifier = Modifier) {
             text = "So we can bring the latest recipes!",
             fontSize = 15.sp,
             fontFamily = FontFamily.SansSerif,  // AS ITS A CLEAN CUT FONT
+            color = Color.Gray,
             modifier = Modifier                 // TO MAKE IT STAND OUT
                 .padding(bottom = 16.dp, start = 32.dp, end = 16.dp)
         )
@@ -99,7 +104,7 @@ fun Preference(modifier: Modifier = Modifier) {
         // **PREFERENCE FOOD BOXES HERE**
 
         // LIST TO ADD INTO MINI BOXES
-        val foodPreferences = listOf("Italian", "Mexican", "Chinese", "Thai", "Indian", "Japanese", "Viewnamese", "Korean", "Vegan", "Low-Carb", "Vegetarian", "Paleo", "Gluten-Free")
+        val foodPreferences = listOf("Italian", "Mexican", "Chinese", "Thai", "Indian", "Japanese", "Vietnamese", "Korean", "Vegan", "Low-Carb", "Vegetarian", "Paleo", "Gluten-Free")
         val chunkedFoodPreferences = foodPreferences.chunked(4)
 
         for (row in chunkedFoodPreferences) {
@@ -152,7 +157,9 @@ fun FoodPreferenceBox(text: String) = Box(
     modifier = Modifier
         .height(30.dp)
         .size(80.dp)
-        .background(Color.LightGray)    // SETS THE BUTTON TO LIGHT GREY
+        //.background(color = MaterialTheme.colorScheme.background)    // SETS THE BUTTON TO LIGHT GREY
+        .border(1.dp, Color.Gray, shape = RoundedCornerShape(10.dp))
+        .clip(RoundedCornerShape(10.dp))
         .clickable(onClick = {
 
             /* ON CLICK LISTENER STUFF GOES HERE */
@@ -160,9 +167,14 @@ fun FoodPreferenceBox(text: String) = Box(
         }),
     contentAlignment = Alignment.Center
 ) {
+    Spacer(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(android.graphics.Color.parseColor("#DADADA"))) // Set the background color for the clipped corners
+    )
     Text(
         text = text,
-        color = Color.DarkGray,             // MAKES THE TEXT DARK GREY SO IT'S VISIBLE
+        color = Color.Gray,             // MAKES THE TEXT DARK GREY SO IT'S VISIBLE
         fontWeight = FontWeight.Medium,
         fontSize = 11.sp,
         textAlign = TextAlign.Center,
@@ -174,9 +186,8 @@ fun FoodPreferenceBox(text: String) = Box(
 @Preview(showBackground = true)
 @Composable
 fun PreferencePreview() {
-    FoodClubTheme {
         Preference()
-    }
+
 }
 
 

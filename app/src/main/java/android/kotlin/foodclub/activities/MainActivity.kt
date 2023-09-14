@@ -1,25 +1,31 @@
 package android.kotlin.foodclub.activities
 
-import android.Manifest
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import android.kotlin.foodclub.ui.theme.FoodClubTheme
-import android.kotlin.foodclub.views.home.ChangePasswordView
-import android.kotlin.foodclub.views.home.EditProfileSetting
-import android.kotlin.foodclub.views.home.PrivacySetting
-import android.kotlin.foodclub.views.home.SettingsView
+import android.kotlin.foodclub.viewmodels.home.ProfileViewModel
 import android.os.Handler
 import android.os.Looper
-import android.view.WindowManager
-import androidx.core.app.ActivityCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
-import com.example.foodclub.navigation.graphs.RootNavigationGraph
-import com.example.foodclub.views.home.DiscoverView
+import android.kotlin.foodclub.navigation.graphs.RootNavigationGraph
+import android.kotlin.foodclub.utils.composables.MainLayout
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.components.ActivityComponent
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @EntryPoint
+    @InstallIn(ActivityComponent::class)
+    interface ViewModelFactoryProvider {
+        fun profileViewModelFactory(): ProfileViewModel.Factory
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -31,7 +37,11 @@ class MainActivity : ComponentActivity() {
             keepSplashOnScreen = false }, delay)
         setContent {
             FoodClubTheme {
-                RootNavigationGraph(navController = rememberNavController())
+                val navController = rememberNavController()
+                MainLayout(navController = navController) { showSheet, triggerBottomSheetModal,
+                                                            triggerStory, setBottomBarVisibility ->
+                    RootNavigationGraph(navController, showSheet, triggerBottomSheetModal, triggerStory, setBottomBarVisibility)
+                }
             }
         }
     }

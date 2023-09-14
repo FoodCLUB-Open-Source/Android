@@ -1,21 +1,31 @@
 package android.kotlin.foodclub.utils.composables
 
+import android.kotlin.foodclub.R
 import android.kotlin.foodclub.ui.theme.PlusJakartaSans
+import android.kotlin.foodclub.ui.theme.textFieldCustomColors
+import android.kotlin.foodclub.utils.helpers.FieldsValidation
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,10 +35,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -54,16 +70,16 @@ fun CustomAuthButton(enabled: Boolean, title: String, onClick: () -> Unit){
 }
 
 @Composable
-fun CustomCodeTextField(onFillCallback: (Boolean) -> Unit) {
+fun CustomCodeTextField(onFillCallback: (Boolean, String) -> Unit) {
     var text by remember { mutableStateOf("") }
     BasicTextField(modifier = Modifier.fillMaxWidth(),
         value = text,
         singleLine = true,
         onValueChange = {
-            if (it.length <= 5) {
+            if (it.length <= 6) {
                 text = it
             }
-            onFillCallback(it.length >= 5)
+            onFillCallback(it.length >= 6, text)
         },
         enabled = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
@@ -73,10 +89,10 @@ fun CustomCodeTextField(onFillCallback: (Boolean) -> Unit) {
                 modifier = Modifier.size(352.dp, 72.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                repeat(5) { index ->
+                repeat(6) { index ->
                     Box(
                         modifier = Modifier
-                            .size(64.dp, 72.dp)
+                            .size(52.dp, 72.dp)
                             .border(
                                 1.dp,
                                 color = if(text.length == index) Color(0xFF7EC60B)
@@ -94,4 +110,176 @@ fun CustomCodeTextField(onFillCallback: (Boolean) -> Unit) {
                 }
             }
         })
+}
+
+@Composable
+fun CustomTextField(initialValue: String = "",
+    placeholder: String, keyboardType: KeyboardType, textValidation: Boolean = false, allowSpace: Boolean = false,
+    validationMethod: (text: String) -> String? = { text -> text.toString() },
+    onCorrectnessStateChange: () -> Unit = {}, onValueChange: (text: String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var text by remember { mutableStateOf(initialValue) }
+    var textValid by remember { mutableStateOf(false) }
+    var errorMessage: String? by remember { mutableStateOf(null) }
+
+    Column {
+        TextField(
+            value = text,
+            onValueChange = {
+                var textValidCurrent = true
+                val currentVal = if(allowSpace) it else it.trim()
+                if (textValidation) {
+                    errorMessage = validationMethod(currentVal)
+                    textValidCurrent = errorMessage.isNullOrBlank()
+                }
+                if (currentVal == "") errorMessage = null
+                if (textValid != textValidCurrent) onCorrectnessStateChange()
+                text = currentVal
+                onValueChange(currentVal)
+                textValid = textValidCurrent
+            },
+            placeholder = { Text(text = placeholder, color = Color(0xFF939393)) },
+            colors = if (errorMessage.isNullOrBlank()) textFieldCustomColors() else textFieldCustomColors(
+                focusedIndicatorColor = Color.Red,
+                unfocusedIndicatorColor = Color.Red
+            ),
+            modifier = modifier
+                .border(1.dp, Color(0xFFDADADA), RoundedCornerShape(percent = 20))
+                .clip(RoundedCornerShape(10.dp))
+                .background(Color(0xFF000000).copy(alpha = 0.04F))
+                .padding(horizontal = 10.dp)
+                .fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(keyboardType = keyboardType)
+        )
+
+        Text(
+            text = errorMessage.toString(),
+            color = if (!textValid && !errorMessage.isNullOrBlank()) Color.Red else Color.Transparent,
+            fontSize = 12.sp
+        )
+    }
+}
+
+@Composable
+fun CustomPasswordTextField(initialValue: String = "",
+    placeholder: String, strengthValidation: Boolean = true,
+    onCorrectnessStateChange: () -> Unit,
+    onValueChange: (text: String) -> Unit = {}, modifier: Modifier = Modifier
+) {
+    var password by remember { mutableStateOf(initialValue) }
+    var passVisible by remember { mutableStateOf(false) }
+    var passValid by remember { mutableStateOf(false) }
+    var errorMessage: String? by remember { mutableStateOf(null) }
+
+    Column {
+        TextField(
+            value = password,
+            onValueChange = {
+                var passValidCurrent = true
+                if (strengthValidation) {
+                    errorMessage = FieldsValidation.checkPassword(it.trim())
+                    passValidCurrent = errorMessage.isNullOrBlank()
+                }
+                if (it.trim() == "") errorMessage = null
+                if (passValid != passValidCurrent) onCorrectnessStateChange()
+                password = it.trim()
+                onValueChange(it.trim())
+                passValid = passValidCurrent
+            },
+            placeholder = { Text(text = placeholder, color = Color(0xFF939393)) },
+            colors = if (errorMessage.isNullOrBlank()) textFieldCustomColors() else textFieldCustomColors(
+                focusedIndicatorColor = Color.Red,
+                unfocusedIndicatorColor = Color.Red
+            ),
+            modifier = Modifier
+                .border(1.dp, Color(0xFFDADADA), RoundedCornerShape(percent = 20))
+                .clip(RoundedCornerShape(10.dp))
+                .background(Color(0xFF000000).copy(alpha = 0.04F))
+                .padding(horizontal = 10.dp)
+                .fillMaxWidth(),
+            trailingIcon = {
+                if (passVisible) {
+                    Button(
+                        onClick = { passVisible = !passVisible },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.unhide),
+                            contentDescription = null,
+                        )
+                    }
+                } else {
+                    Button(
+                        onClick = { passVisible = !passVisible },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.hide),
+                            contentDescription = null,
+                        )
+                    }
+                }
+            },
+            visualTransformation = if (passVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+        )
+
+        Text(
+            text = errorMessage.toString(),
+            color = if (!passValid && !errorMessage.isNullOrBlank()) Color.Red else Color.Transparent,
+            fontSize = 12.sp
+        )
+
+
+    }
+
+}
+
+@Composable
+fun AlternativeLoginOption(
+    image: Painter,
+    contentDescription: String
+) {
+    Button(
+        onClick = {},
+        shape = RoundedCornerShape(10.dp),
+        modifier = Modifier
+            .border(1.dp, Color(0xFFDADADA), RoundedCornerShape(percent = 20))
+            .height(56.dp).width(105.dp)
+            .clip(RoundedCornerShape(10.dp)),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.White,
+            contentColor = Color.White
+        )
+    ) {
+        Image(
+            painter = image,
+            contentDescription = contentDescription,
+            modifier = Modifier.size(26.dp)
+        )
+    }
+}
+
+@Composable
+fun TermsAndConditionsInfoFooter() {
+    Box(Modifier.fillMaxSize()){
+        Row(modifier = Modifier.align(Alignment.BottomCenter)) {
+            Text(
+                text = "By using FoodClub you agree to our ",
+                fontSize = 12.sp,
+                color = Color(0xFF1E232C).copy(alpha = 0.5F)
+            )
+            ClickableText(
+                text = AnnotatedString("Terms & Conditions"),
+                onClick = {},
+                style = TextStyle(
+                    textDecoration = TextDecoration.Underline,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp,
+                    color = Color(0xFF1E232C).copy(alpha = 0.5F)
+                )
+            )
+        }
+    }
 }

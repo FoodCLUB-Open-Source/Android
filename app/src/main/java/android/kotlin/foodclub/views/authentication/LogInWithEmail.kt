@@ -1,7 +1,10 @@
 package android.kotlin.foodclub.views.authentication
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.api.retrofit.RetrofitInstance
+import android.kotlin.foodclub.utils.helpers.SessionCache
 import android.kotlin.foodclub.viewmodels.authentication.LogInWithEmailViewModel
+import android.kotlin.foodclub.viewmodels.authentication.LoginErrorCodes
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -36,8 +39,10 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,15 +63,22 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.text.TextStyle
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import okio.IOException
+import java.net.ConnectException
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LogInWithEmail(navController: NavHostController) {
     // we need to make only one view model
-    val viewModel: LogInWithEmailViewModel = viewModel()
+    val viewModel: LogInWithEmailViewModel = hiltViewModel()
 
-
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+//    val loginStatus by viewModel.loginStatus.observeAsState(initial = 0)
+    val loginStatus by viewModel.loginStatus.observeAsState(null)
     // API
     //val creditCards by viewModelApi.user.observeAsState(emptyList())
 
@@ -94,7 +106,7 @@ fun LogInWithEmail(navController: NavHostController) {
         Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(top = 60.dp, start = 30.dp, end = 30.dp),
+            .padding(top = 40.dp, start = 30.dp, end = 30.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(35.dp)
     ) {
@@ -110,14 +122,14 @@ fun LogInWithEmail(navController: NavHostController) {
                 shape = RectangleShape,
                 modifier = Modifier
                     .clip(RoundedCornerShape(15.dp))
-                    .width(40.dp)
+                    .width(20.dp)
                     .height(40.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.White,
                     contentColor = Color.White
                 ), contentPadding = PaddingValues(5.dp),
                 onClick = {
-                    navController.navigateUp()
+                    navController.popBackStack()
                 }
             ) {
                 Image(
@@ -125,8 +137,8 @@ fun LogInWithEmail(navController: NavHostController) {
                     contentDescription = "Back",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .width(36.dp)
-                        .height(36.dp)
+                        .width(20.dp)
+                        .height(20.dp)
                 )
             }
 
@@ -134,7 +146,7 @@ fun LogInWithEmail(navController: NavHostController) {
                 text = "Welcome Back!",
                 fontFamily = plusjakartasansFamily,
                 fontSize = 32.sp,
-                modifier = Modifier.padding(top = 20.dp)
+                modifier = Modifier.padding(top = 10.dp)
             )
 
             Spacer(modifier = Modifier.height(3.dp))
@@ -213,6 +225,7 @@ fun LogInWithEmail(navController: NavHostController) {
 
 
             )
+            val coroutineScope = rememberCoroutineScope();
 
 
             Button(
@@ -227,9 +240,8 @@ fun LogInWithEmail(navController: NavHostController) {
                     ), contentPadding = PaddingValues(15.dp),
 
                 onClick = {
-                      viewModel.logInUser(userEmail, userPassword);
+                    viewModel.logInUser(userEmail, userPassword, navController)
                 }
-
 
             ) {
 
@@ -242,6 +254,28 @@ fun LogInWithEmail(navController: NavHostController) {
                 )
             }
 
+
+//            when (loginStatus) {
+//                null -> {}
+//                200 -> navController.navigate("home_graph")
+//                LoginErrorCodes.EMPTY_CREDENTIALS -> errorMessage = "Please enter both email and password"
+//                LoginErrorCodes.WRONG_CREDENTIALS -> errorMessage = "Wrong username or password"
+//                LoginErrorCodes.ACCOUNT_NOT_FOUND -> errorMessage = "Account Not found"
+//                LoginErrorCodes.PASSWORD_FORMAT -> errorMessage = "Password must have at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character"
+//                LoginErrorCodes.CONNECTIVITY_ISSUES -> errorMessage = "Connectivity Issues. Please check your internet connection."
+//                LoginErrorCodes.UNKNOWN_ERROR -> errorMessage = "An unexpected error occurred. Please try again later."
+//                LoginErrorCodes.USERNAME_FORMAT -> errorMessage ="Username must only contain letters and numbers"
+//                else -> errorMessage = "Error Code: $loginStatus" // Display other HTTP codes for further analysis or debugging
+//            }
+
+
+            Row() {
+                Text(
+                    text = loginStatus ?: "",
+                    fontSize = 11.sp,
+                    color = Color.Red
+                )
+            }
 
             Row(
                 modifier = Modifier.wrapContentWidth(),
@@ -362,4 +396,9 @@ fun LogInWithEmail(navController: NavHostController) {
     }
 
 }
+//@Composable
+//@Preview
+//fun LogInWithEmail() {
+//    LogInWithEmail(rememberNavController())
+//}
 

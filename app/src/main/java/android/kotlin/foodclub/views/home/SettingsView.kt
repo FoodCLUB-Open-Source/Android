@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.navigation.graphs.Graph
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 
 val colorGray= Color(android.graphics.Color.parseColor("#D0D0D0"))
 val colorRed= Color(android.graphics.Color.parseColor("#C64E0B"))
@@ -73,7 +75,7 @@ fun SettingsView(navController: NavHostController){
         }
         Spacer(modifier = Modifier.height(screenSizeHeight * 0.03f))
         SettingRow(text = "Log Out", iconId = R.drawable.logout, fontC = colorRed, 0,
-            Color.Black, "EDIT_PROFILE", navController)
+            Color.Black, Graph.AUTHENTICATION, navController)
     }
 }
 
@@ -192,6 +194,11 @@ fun SettingRow(text: String, iconId: Int, fontC:  Color=Color.Black,
             SettingsIcons(size = 24, icon = R.drawable.forwardarrow)
         }
     }
+}
+@Composable
+@Preview
+fun SettingsView() {
+    SettingsView(rememberNavController())
 }
 
 
