@@ -18,13 +18,14 @@ fun Long.formattedCount(): String {
 fun randomUploadDate(): String = "${(1..24).random()}h"
 
 data class VideoModel(
-    val videoId: String,
+    val videoId: Long,
     val authorDetails: String,
     val videoStats: VideoStats,
     val videoLink: String,
     val currentViewerInteraction: ViewerInteraction = ViewerInteraction(),
     val description: String,
     val createdAt: String = randomUploadDate(),
+    val thumbnailLink: String = ""
 ) {
     data class VideoStats(
         var like: Long,
