@@ -1,6 +1,9 @@
 package android.kotlin.foodclub.api.retrofit
 
 import android.kotlin.foodclub.api.authentication.API
+import android.kotlin.foodclub.api.authentication.UserSignUpInformation
+import android.kotlin.foodclub.api.retrofit.post.RecipeAPI
+import retrofit2.CallAdapter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -16,6 +19,18 @@ object RetrofitInstance {
             .create(API::class.java)
     }
 
+
+    // FOR RECIPE POST REQUEST
+    val recipeAPI: RecipeAPI by lazy {
+        Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(RecipeAPI::class.java)
+    }
+
+
+
 //    val retrofitApi1 : LogInWithEmailViewModel.API by lazy {
 //        Retrofit.Builder()
 //            .baseUrl(BASE_URL)
@@ -23,5 +38,6 @@ object RetrofitInstance {
 //            .build()
 //            .create(LogInWithEmailViewModel.API::class.java)
 //    }
+
 
 }

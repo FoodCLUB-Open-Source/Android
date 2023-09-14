@@ -59,8 +59,9 @@ import androidx.navigation.navigation
         composable(route = HomeOtherRoutes.CameraView.route) {
             CameraView(navController = navController)
         }
-        composable(route = HomeOtherRoutes.CameraPreviewView.route) {
-            CameraPreviewView(it.arguments?.getString("uri") ?: "")
+        composable(route = HomeOtherRoutes.CameraPreviewView.route) { backStackEntry ->
+            val uri = backStackEntry.arguments?.getString("uri") ?: ""
+            CameraPreviewView(uri = uri, navController = navController) // **CHANGED THIS**
         }
         composable(route = HomeOtherRoutes.CreateRecipeView.route) {
             CreateRecipeView(navController = navController)
