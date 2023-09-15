@@ -43,7 +43,7 @@ class DeleteRecipeViewModel @AssistedInject constructor(
                 is Resource.Success -> {
                     _error.value = ""
                     _postData.value = resource.data
-                    setTestData()
+                     setTestData()
                 }
                 is Resource.Error -> {
                     _error.value = resource.message!!

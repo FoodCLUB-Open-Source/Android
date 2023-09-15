@@ -58,6 +58,54 @@ data class ChangePasswordInformation(
     val new_password: String,
 )
 
+data class PostByWorld(
+    val id: String,
+    val user_id:String,
+    val title:String,
+    val description:String,
+    val created_at:String,
+    val updated_at:String,
+    val post_id:String,
+    val category_name:String,
+    val video_url:String,
+    val thumbnail_url:String
+)
+
+data class GetPostByWorld(
+    val posts:List<PostByWorld>
+)
+
+data class PostById(
+    val id: Int,
+    val title:String,
+    val description:String,
+    val username:String,
+    val profile_picture:String,
+    val video_url:String,
+    val thumbnail_url:String,
+    val total_likes:Int,
+    val total_views:Int
+)
+
+data class GetPostById(
+    val data:List<PostById>
+)
+
+data class PostByUserId(
+    val id: Int,
+    val title:String,
+    val description:String,
+    val created_at:String,
+    val video_url:String,
+    val thumbnail_url:String,
+)
+
+data class GetPostByUserId(
+    val posts:List<PostByUserId>
+)
+
+
+
 interface API {
 
     @POST("login/signup")
@@ -133,4 +181,26 @@ interface API {
     suspend fun deletePost(
         @Path("postId") postId: Long
     ): Response<DeletePostResponse>
+
+
+    @GET("posts/category/{Id}")
+    suspend fun getPostByWorldCategory(
+        @Path("Id") categoryId: Long,
+    ):Response<GetPostByWorld>
+
+    @GET("posts/{Id}")
+    suspend fun getPostById(
+        @Path("Id") postId: Long,
+    ):Response<GetPostById>
+
+    @GET("posts/homepage/{userId}")
+    suspend fun getPostsByUserId(
+        @Path("userId") userId: Long,
+        @Query("page_size") pageSize: Int?,
+        @Query("page_number") pageNo: Int?,
+    ):Response<GetPostByUserId>
+
+
+
+
 }
