@@ -8,7 +8,6 @@ import android.kotlin.foodclub.views.home.CreateRecipeView
 import android.kotlin.foodclub.views.home.DeleteRecipeView
 import android.kotlin.foodclub.views.home.EditProfileSetting
 import android.kotlin.foodclub.views.home.FollowerView
-//import android.kotlin.foodclub.views.home.FollowingView
 import android.kotlin.foodclub.views.home.MyBasketView
 import android.kotlin.foodclub.views.home.PrivacySetting
 import android.kotlin.foodclub.views.home.SearchView
@@ -41,10 +40,15 @@ import androidx.navigation.navigation
             HomeView(navController = navController, triggerStoryView = triggerStory)
         }
         composable(route = BottomBarScreenObject.Profile.route + "?userId={userId}",
-            arguments = listOf(navArgument("userId") { nullable = true })
+            arguments = listOf(navArgument("userId") { defaultValue = 0L
+            type = NavType.LongType})
         ) {
-            val userId = it.arguments?.getString("userId")
-            ProfileView(navController, userId?.toLong())
+            val userId = it.arguments?.getLong("userId")
+            if(userId == null) {
+                navController.popBackStack()
+                return@composable
+            }
+            ProfileView(navController, userId)
 
         }
         composable(route = BottomBarScreenObject.Discover.route) {
