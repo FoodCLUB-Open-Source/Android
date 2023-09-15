@@ -1,6 +1,8 @@
 package android.kotlin.foodclub.api.authentication
 
+import android.kotlin.foodclub.api.responses.DeletePostResponse
 import android.kotlin.foodclub.api.responses.FollowUnfollowResponse
+import android.kotlin.foodclub.api.responses.GetPostResponse
 import android.kotlin.foodclub.api.responses.LoginResponse
 import android.kotlin.foodclub.api.responses.RetrieveFollowerListResponse
 import android.kotlin.foodclub.api.responses.RetrieveFollowingListResponse
@@ -121,4 +123,14 @@ interface API {
     suspend fun changePassword(
         @Body changePasswordInformation: ChangePasswordInformation
     ):Response<VerificationCodeForPasswordData>
+
+    @GET("posts/{postId}")
+    suspend fun getPost(
+        @Path("postId") postId: Long
+    ): Response<GetPostResponse>
+
+    @DELETE("posts/{postId}")
+    suspend fun deletePost(
+        @Path("postId") postId: Long
+    ): Response<DeletePostResponse>
 }

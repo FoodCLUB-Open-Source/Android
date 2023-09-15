@@ -444,7 +444,7 @@ fun GridItem2(navController: NavController, dataItem: Int) {
                 contentDescription = "",
                 Modifier
                     .fillMaxSize()
-                    .clickable { navController.navigate("DELETE_RECIPE") },
+                    .clickable { navController.navigate("DELETE_RECIPE/${dataItem.toLong()}") },
                 contentScale = ContentScale.FillHeight
             )
             Column(

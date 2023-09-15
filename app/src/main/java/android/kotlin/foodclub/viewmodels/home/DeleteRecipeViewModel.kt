@@ -1,20 +1,88 @@
 package android.kotlin.foodclub.viewmodels.home
 
+import android.kotlin.foodclub.data.models.PostModel
 import android.kotlin.foodclub.data.models.VideoModel
+import android.kotlin.foodclub.repositories.PostRepository
+import android.kotlin.foodclub.utils.helpers.Resource
+import android.kotlin.foodclub.utils.helpers.SessionCache
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.example.foodclub.viewmodels.home.HomeViewModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
-class DeleteRecipeViewModel: ViewModel() {
+class DeleteRecipeViewModel @AssistedInject constructor(
+    private val repository: PostRepository,
+    @Assisted private val postId: Long
+): ViewModel() {
     private val _title = MutableLiveData("HomeViewModel View")
     val title: LiveData<String> get() = _title
 
+    private val _postData = MutableStateFlow<VideoModel?>(null)
+    val postData: StateFlow<VideoModel?> get() = _postData
+
+    private val _error = MutableStateFlow("")
+    val error: StateFlow<String> get() = _error
+
+    init {
+        getPostData()
+    }
+
+    private fun getPostData() {
+        viewModelScope.launch {
+            when(val resource = repository.getPost(postId)) {
+                is Resource.Success -> {
+                    _error.value = ""
+                    _postData.value = resource.data
+                    setTestData()
+                }
+                is Resource.Error -> {
+                    _error.value = resource.message!!
+                }
+            }
+        }
+    }
+
+    private fun setTestData() {
+        if(_postData.value == null) return
+        val post = _postData.value!!
+        _postData.value = VideoModel(post.videoId, post.authorDetails, post.videoStats,
+            "https://kretu.sts3.pl/foodclub_videos/daniel_vid2.mp4",
+            post.currentViewerInteraction, post.description, post.createdAt,
+            "https://kretu.sts3.pl/foodclub_thumbnails/daniel_vid2-thumbnail.jpg")
+    }
+
+    fun deleteCurrentPost() {
+        viewModelScope.launch {
+            Log.d("DeleteRecipeViewModel", "postId: $postId")
+            when(val resource = repository.deletePost(postId)) {
+                is Resource.Success -> {
+                    _error.value = ""
+                    Log.d("DeleteRecipeViewModel", "success")
+                    _postData.value = null
+                }
+                is Resource.Error -> {
+                    _error.value = resource.message!!
+                    Log.d("DeleteRecipeViewModel", "error: ${_error.value}")
+                }
+            }
+        }
+    }
+
     object RecipesVideos {
         val recipe_vid1 = VideoModel(
-            videoId = "kylie_vid1",
+            videoId = 1,
             authorDetails = "kylieJenner",
-            videoLink = "recipeVid.mp4",
+            videoLink = "asset:///recipeVid.mp4",
             videoStats = VideoModel.VideoStats(
                 like = 409876,
                 comment = 8356,
@@ -30,5 +98,20 @@ class DeleteRecipeViewModel: ViewModel() {
 
     val deleteVideoExemple = arrayListOf<VideoModel>().apply {
         addAll(RecipesVideos.recipesVideosList)
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(postId: Long): DeleteRecipeViewModel
+    }
+
+    companion object {
+        fun provideFactory(
+            assistedFactory: Factory, postId: Long
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return assistedFactory.create(postId) as T
+            }
+        }
     }
 }

@@ -81,8 +81,19 @@ import androidx.navigation.navigation
         composable(route = HomeOtherRoutes.EditProfileSetting.route) {
             EditProfileSetting(navController = navController)
         }
-        composable(route = HomeOtherRoutes.DeleteRecipeView.route) {
-            DeleteRecipeView(navController = navController)
+        composable(route = HomeOtherRoutes.DeleteRecipeView.route  + "/{postId}",
+            arguments = listOf(
+                navArgument("postId") { defaultValue = 0L
+                    type = NavType.LongType
+                }
+            )
+        ) {
+            val postId = it.arguments?.getLong("postId")
+            if(postId == null || postId == 0L) {
+                navController.popBackStack()
+                return@composable
+            }
+            DeleteRecipeView(navController = navController, postId = postId)
         }
 
         composable(route = HomeOtherRoutes.FollowerView.route + "/{userId}",

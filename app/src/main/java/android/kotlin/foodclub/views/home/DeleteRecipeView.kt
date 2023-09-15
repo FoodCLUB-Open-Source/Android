@@ -1,12 +1,13 @@
 package android.kotlin.foodclub.views.home
 
+import android.app.Activity
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.activities.MainActivity
 import android.kotlin.foodclub.data.models.VideoModel
 import android.kotlin.foodclub.ui.theme.Montserrat
 import android.kotlin.foodclub.utils.composables.VideoPlayer
 import android.kotlin.foodclub.viewmodels.home.DeleteRecipeViewModel
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
@@ -17,7 +18,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -65,10 +65,12 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.compose.ui.platform.LocalDensity
@@ -80,6 +82,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import dagger.hilt.android.EntryPointAccessors
 
 @Composable
 fun HeaderImage(modifier: Modifier) {
@@ -98,7 +101,8 @@ fun ComfirmDeleteDialog(
     title: String?="Delete video?",
     desc: String?="lorem ipsum lorem ipsum lorem ipsum lorem ipsu" +
             " lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsumm",
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
 ) {
     Dialog(
         onDismissRequest = onDismiss
@@ -159,20 +163,20 @@ fun ComfirmDeleteDialog(
                                 .fillMaxWidth()
                         ) {
                             Text(
-                                text = "Later",
+                                text = "No",
                                 color = Color.White,
                                 fontFamily = Montserrat,
                                 )
                         }
                         ElevatedButton(
-                            onClick = onDismiss,
+                            onClick = onConfirm,
                             colors= ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#7EC60B"))),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(5.dp))
                         ) {
                             Text(
-                                text = "Enable Location",
+                                text = "Yes",
                                 color = Color.White,
                                 fontFamily = Montserrat,
                                 )
@@ -198,18 +202,25 @@ fun ComfirmDeleteDialog(
 
 
 
-
-@OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
-fun DeleteRecipeView(navController: NavController) {
-    val viewModel: DeleteRecipeViewModel = viewModel()
-    val videos: List<VideoModel> = viewModel.deleteVideoExemple
+fun DeleteRecipeView(navController: NavController, postId: Long) {
+    val factory = EntryPointAccessors.fromActivity(
+        LocalContext.current as Activity,
+        MainActivity.ViewModelFactoryProvider::class.java).deleteRecipeViewModelFactory()
+    val viewModel: DeleteRecipeViewModel = viewModel(
+        factory = DeleteRecipeViewModel.provideFactory(factory, postId)
+    )
+
+    val post = viewModel.postData.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.95f
     val localDensity = LocalDensity.current
     val infoDialog = remember { mutableStateOf(false) }
     val systemUiController = rememberSystemUiController()
+
+    val controlPoint = remember { mutableStateOf(true) }
+    val hasVideoLoaded = remember { mutableStateOf(false) }
 
     SideEffect {
         systemUiController.setSystemBarsColor(
@@ -222,8 +233,7 @@ fun DeleteRecipeView(navController: NavController) {
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxHeight().padding(bottom = 40.dp)
+        modifier = Modifier.fillMaxHeight().padding(bottom = 40.dp)
     ) {
             var pauseButtonVisibility by remember { mutableStateOf(false) }
             var doubleTapState by remember {
@@ -241,32 +251,40 @@ fun DeleteRecipeView(navController: NavController) {
                 desc = "Are you sure you want to delete this video? This action cannot be undone.",
                 onDismiss = {
                     infoDialog.value = false
+                },
+                onConfirm = {
+                    infoDialog.value = false
+                    viewModel.deleteCurrentPost()
+                    navController.popBackStack()
                 }
             )
         }
-        Box(
+        if(post.value != null) {
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                    VideoPlayer(videos[0], onSingleTap = {
-                        pauseButtonVisibility = it.isPlaying
-                        it.playWhenReady = !it.isPlaying
+                VideoPlayer(post.value!!, onSingleTap = {
+                    pauseButtonVisibility = it.isPlaying
+                    it.playWhenReady = !it.isPlaying
+                },
+                    onDoubleTap = { exoPlayer, offset ->
+                        coroutineScope.launch {
+                            post.value!!.currentViewerInteraction.isLikedByYou = true
+                            val rotationAngle = (-10..10).random()
+                            doubleTapState = Triple(offset, true, rotationAngle.toFloat())
+                            delay(400)
+                            doubleTapState = Triple(offset, false, rotationAngle.toFloat())
+                        }
                     },
-                        onDoubleTap = { exoPlayer, offset ->
-                            coroutineScope.launch {
-                                videos[0].currentViewerInteraction.isLikedByYou = true
-                                val rotationAngle = (-10..10).random()
-                                doubleTapState = Triple(offset, true, rotationAngle.toFloat())
-                                delay(400)
-                                doubleTapState = Triple(offset, false, rotationAngle.toFloat())
-                            }
-                        },
-                        onVideoDispose = { pauseButtonVisibility = false },
-                        onVideoGoBackground = { pauseButtonVisibility = false }
-                    )
+                    onVideoDispose = { pauseButtonVisibility = false },
+                    onVideoGoBackground = { pauseButtonVisibility = false },
+                    controlPoint = controlPoint.value
+                )
                 var isLiked by remember {
-                    mutableStateOf(videos[0].currentViewerInteraction.isLikedByYou)
+                    mutableStateOf(post.value!!.currentViewerInteraction.isLikedByYou)
                 }
+                hasVideoLoaded.value = true
 
                 Column() {
 
@@ -300,8 +318,7 @@ fun DeleteRecipeView(navController: NavController) {
                     }
                 }
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize().padding(top = 30.dp),
+                    modifier = Modifier.fillMaxSize().padding(top = 30.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -392,7 +409,7 @@ fun DeleteRecipeView(navController: NavController) {
                             contentColor = Color.Transparent
                         ), contentPadding = PaddingValues(5.dp),
                         onClick = {
-                                infoDialog.value = true
+                            infoDialog.value = true
                         }
                     ) {
                         Image(
@@ -424,8 +441,7 @@ fun DeleteRecipeView(navController: NavController) {
                                     .height(65.dp)
                             ) {
                                 Box(
-                                    modifier = Modifier.width(65.dp)
-                                        .height(65.dp)
+                                    modifier = Modifier.width(65.dp).height(65.dp)
                                         .clip(RoundedCornerShape(35.dp))
                                         .background(Color.Transparent)
                                         .blur(radius = 5.dp)
@@ -461,9 +477,9 @@ fun DeleteRecipeView(navController: NavController) {
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     verticalArrangement = Arrangement.Center,
                                     modifier = Modifier.fillMaxSize().clickable {
-                                        isLiked = !isLiked
-                                        videos[0].currentViewerInteraction.isLikedByYou = !isLiked
-                                    }
+                                            isLiked = !isLiked
+                                            post.value!!.currentViewerInteraction.isLikedByYou = !isLiked
+                                        }
                                 ) {
                                     val maxSize = 32.dp
                                     val iconSize by animateDpAsState(targetValue = if (isLiked) 22.dp else 21.dp,
@@ -509,5 +525,16 @@ fun DeleteRecipeView(navController: NavController) {
                     }
                 }
             }
+        }
     }
+
+    //Fix width deformation - recompose
+    LaunchedEffect(hasVideoLoaded.value) {
+        if(post.value != null) {
+            delay(50)
+            controlPoint.value = false
+        }
+    }
+
+
 }

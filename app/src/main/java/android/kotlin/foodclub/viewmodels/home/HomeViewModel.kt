@@ -13,9 +13,9 @@ class HomeViewModel : ViewModel() {
 
     object RecipesVideos {
         val recipe_vid1 = VideoModel(
-            videoId = "kylie_vid1",
+            videoId = 1,
             authorDetails = "kylieJenner",
-            videoLink = "recipeVid.mp4",
+            videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
             videoStats = VideoModel.VideoStats(
                 like = 409876,
                 comment = 8356,
@@ -23,11 +23,12 @@ class HomeViewModel : ViewModel() {
                 favourite = 1500
             ),
             description = "Draft video testing  #foryou #fyp #compose #tik",
+            thumbnailLink = "https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg"
         )
         val recipe_vid2 = VideoModel(
-            videoId = "kylie_vid2",
+            videoId = 2,
             authorDetails = "kylieJenner",
-            videoLink = "daniel_vid2.mp4",
+            videoLink = "https://kretu.sts3.pl/foodclub_videos/daniel_vid2.mp4",
             videoStats = VideoModel.VideoStats(
                 like = 564572,
                 comment = 8790,
@@ -35,11 +36,12 @@ class HomeViewModel : ViewModel() {
                 favourite = 1546
             ),
             description = "Draft video testing  #foryou #fyp #compose #tik",
+            thumbnailLink = "https://kretu.sts3.pl/foodclub_thumbnails/daniel_vid2-thumbnail.jpg"
         )
         val recipe_vid3 = VideoModel(
-            videoId = "kylie_vid3",
+            videoId = 3,
             authorDetails = "kylieJenner",
-            videoLink = "recipeVid.mp4",
+            videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
             videoStats = VideoModel.VideoStats(
                 like = 2415164,
                 comment = 5145,
@@ -47,11 +49,12 @@ class HomeViewModel : ViewModel() {
                 favourite = 2000
             ),
             description = "Draft video testing  #foryou #fyp #compose #tik",
+            thumbnailLink = "https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg"
         )
         val recipe_vid4 = VideoModel(
-            videoId = "kylie_vid4",
+            videoId = 4,
             authorDetails = "kylieJenner",
-            videoLink = "recipeVid.mp4",
+            videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
             videoStats = VideoModel.VideoStats(
                 like = 51626,
                 comment = 1434,
@@ -59,11 +62,12 @@ class HomeViewModel : ViewModel() {
                 favourite = 633
             ),
             description = "Draft video testing  #foryou #fyp #compose #tik",
+            thumbnailLink = "https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg"
         )
         val recipe_vid5 = VideoModel(
-            videoId = "kylie_vid5",
+            videoId = 5,
             authorDetails = "kylieJenner",
-            videoLink = "recipeVid.mp4",
+            videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
             videoStats = VideoModel.VideoStats(
                 like = 547819,
                 comment = 79131,
@@ -71,11 +75,12 @@ class HomeViewModel : ViewModel() {
                 favourite = 2901
             ),
             description = "Draft video testing  #foryou #fyp #compose #tik",
+            thumbnailLink = "https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg"
         )
         val recipe_vid6 = VideoModel(
-            videoId = "kylie_vid6",
+            videoId = 6,
             authorDetails = "kylieJenner",
-            videoLink = "recipeVid.mp4",
+            videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
             videoStats = VideoModel.VideoStats(
                 like = 4512340,
                 comment = 65901,
@@ -83,12 +88,13 @@ class HomeViewModel : ViewModel() {
                 favourite = 154
             ),
             description = "Draft video testing  #foryou #fyp #compose #tik",
+            thumbnailLink = "https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg"
         )
 
         val recipe_vid7 = VideoModel(
-            videoId = "kylie_vid7",
+            videoId = 7,
             authorDetails = "kylieJenner",
-            videoLink = "recipeVid.mp4",
+            videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
             videoStats = VideoModel.VideoStats(
                 like = 612907,
                 comment = 7643,
@@ -96,6 +102,7 @@ class HomeViewModel : ViewModel() {
                 favourite = 890
             ),
             description = "Draft video testing  #foryou #fyp #compose #tik",
+            thumbnailLink = "https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg"
         )
 
         val recipesVideosList = listOf(

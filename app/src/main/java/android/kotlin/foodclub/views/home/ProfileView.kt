@@ -294,7 +294,7 @@ fun GridItem(navController: NavController, dataItem: UserPostsModel){
             Image(painter = painterResource(id = R.drawable.salad_ingredient), contentDescription = "",
                 Modifier
                     .fillMaxSize()
-                    .clickable { navController.navigate("DELETE_RECIPE") }, contentScale = ContentScale.FillHeight)
+                    .clickable { navController.navigate("DELETE_RECIPE/${dataItem.id.toLong()}") }, contentScale = ContentScale.FillHeight)
         }
 
     }

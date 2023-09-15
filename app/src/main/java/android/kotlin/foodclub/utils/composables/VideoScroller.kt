@@ -3,11 +3,13 @@ package android.kotlin.foodclub.utils.composables
 import android.annotation.SuppressLint
 import android.content.res.AssetFileDescriptor
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.kotlin.foodclub.data.models.VideoModel
 import android.kotlin.foodclub.views.home.ProgressionBar
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import android.view.ViewGroup
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -59,6 +61,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.IOException
+import java.net.URL
 import java.util.concurrent.TimeUnit
 
 fun extractThumbnailFromMedia(assetFileDesc: AssetFileDescriptor?, atTime: Int): Bitmap? {
@@ -120,9 +124,16 @@ fun VideoScroller(
 
     LaunchedEffect(key1 = true) {
         withContext(Dispatchers.IO) {
-            val bm = extractThumbnailFromMedia(
-                context.assets.openFd("${video.videoLink}"), 1
-            )
+            val bm = if(video.videoLink.startsWith("asset:///")) extractThumbnailFromMedia(
+                context.assets.openFd(video.videoLink.substring(9)), 1
+            )  else {
+                try {
+                    BitmapFactory.decodeStream(URL(video.thumbnailLink).openConnection().getInputStream());
+                } catch (e: IOException) {
+                    Log.d("VideoPlayer", "Cannot fetch thumbnail. No connection")
+                    null
+                }
+            }
             withContext(Dispatchers.Main) {
                 thumbnail = thumbnail.copy(first = bm, second = thumbnail.second)
             }
@@ -133,7 +144,7 @@ fun VideoScroller(
             ExoPlayer.Builder(context).build().apply {
                 videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT
                 repeatMode = Player.REPEAT_MODE_ONE
-                setMediaItem(MediaItem.fromUri(Uri.parse("asset:///${video.videoLink}")))
+                setMediaItem(MediaItem.fromUri(Uri.parse(video.videoLink)))
                 playWhenReady = true
                 prepare()
                 addListener(object : Player.Listener {
