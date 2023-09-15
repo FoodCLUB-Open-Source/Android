@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 class ProfileViewModel @AssistedInject constructor(
     private val repository: ProfileRepository,
     private val sessionCache: SessionCache,
-    @Assisted private val userId: Long?,
+    @Assisted private val userId: Long,
     @Assisted private val navController: NavController
 ) : ViewModel() {
     private val _myUserId = MutableStateFlow(sessionCache.getActiveSession()?.userId ?: 0)
@@ -42,7 +42,7 @@ class ProfileViewModel @AssistedInject constructor(
                 popUpTo(Graph.HOME) { inclusive = true }
             }
         } else {
-            getProfileModel(userId ?: sessionCache.getActiveSession()!!.userId)
+            getProfileModel(if(userId != 0L) userId else sessionCache.getActiveSession()!!.userId)
         }
     }
 
@@ -57,6 +57,12 @@ class ProfileViewModel @AssistedInject constructor(
             "image", "0", false
         )
     )
+
+    fun setUser(newUserId: Long) {
+        if(newUserId != userId) {
+            getProfileModel(if(newUserId != 0L) newUserId else sessionCache.getActiveSession()!!.userId)
+        }
+    }
 
     private fun getProfileModel(userId: Long) {
         viewModelScope.launch() {
@@ -133,12 +139,12 @@ class ProfileViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(userId: Long?, navController: NavController): ProfileViewModel
+        fun create(userId: Long, navController: NavController): ProfileViewModel
     }
 
     companion object {
         fun provideFactory(
-            assistedFactory: Factory, userId: Long?, navController: NavController
+            assistedFactory: Factory, userId: Long, navController: NavController
         ):ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 return assistedFactory.create(userId, navController) as T

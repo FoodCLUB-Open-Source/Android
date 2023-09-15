@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import android.kotlin.foodclub.viewmodels.home.ProfileViewModel
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -65,7 +66,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ProfileView(navController: NavController, userId: Long?) {
+fun ProfileView(navController: NavController, userId: Long) {
     val factory = EntryPointAccessors.fromActivity(LocalContext.current as Activity,
         MainActivity.ViewModelFactoryProvider::class.java).profileViewModelFactory()
     val viewModel: ProfileViewModel = viewModel(
@@ -76,8 +77,9 @@ fun ProfileView(navController: NavController, userId: Long?) {
     val profileModelState = viewModel.profileModel.collectAsState()
     val sessionUserId = viewModel.myUserId.collectAsState()
 
-    if(userId != null && userId != sessionUserId.value) {
-        LaunchedEffect(Unit) {
+    LaunchedEffect(userId) {
+        viewModel.setUser(userId)
+        if(userId != 0L && userId != sessionUserId.value) {
             viewModel.isFollowedByUser(sessionUserId.value, userId)
         }
     }
@@ -160,7 +162,8 @@ fun ProfileView(navController: NavController, userId: Long?) {
                     ClickableText(
                         text = AnnotatedString(profile.totalUserFollowers.toString()),
                         onClick = {
-                            navController.navigate("FOLLOWER_VIEW/${userId ?: sessionUserId.value}")
+                            navController.navigate("FOLLOWER_VIEW/${
+                                if(userId != 0L) userId else sessionUserId.value}")
                         },
                         style = TextStyle(
                             color = Color.Black,
@@ -172,7 +175,8 @@ fun ProfileView(navController: NavController, userId: Long?) {
                     ClickableText(
                         text = AnnotatedString(profile.totalUserFollowing.toString()),
                         onClick = {
-                            navController.navigate("FOLLOWING_VIEW/${userId ?: sessionUserId.value}")
+                            navController.navigate("FOLLOWING_VIEW/${
+                                if(userId != 0L) userId else sessionUserId.value}")
                         },
                         style = TextStyle(
                             color = Color.Black,
@@ -203,7 +207,7 @@ fun ProfileView(navController: NavController, userId: Long?) {
                         fontWeight = FontWeight.Light
                     )
                 }
-                if(userId != null && userId != sessionUserId.value) {
+                if(userId != 0L && userId != sessionUserId.value) {
                     Spacer(modifier = Modifier.height(10.dp))
                     FollowButton(isFollowed.value, viewModel, sessionUserId.value, userId)
                 }
