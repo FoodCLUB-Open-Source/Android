@@ -5,9 +5,11 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.utils.composables.createVideoCaptureUseCase
 import android.kotlin.foodclub.utils.composables.startRecordingVideo
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.camera.core.CameraSelector
 import androidx.camera.video.Recorder
 import androidx.camera.video.Recording
@@ -96,6 +98,7 @@ fun RecordingButton(isRecording: Boolean) {
 
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun CameraView(
@@ -107,7 +110,9 @@ fun CameraView(
     val permissionState = rememberMultiplePermissionsState(
         permissions = listOf(
             Manifest.permission.CAMERA,
-            Manifest.permission.RECORD_AUDIO
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.READ_MEDIA_IMAGES,
+            Manifest.permission.READ_MEDIA_VIDEO
         )
     )
 

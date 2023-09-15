@@ -10,19 +10,25 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.viewmodels.home.GalleryViewModel
 import android.media.MediaMetadataRetriever
 import android.net.Uri
+import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -37,7 +43,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -55,6 +60,7 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 public fun GalleryView(navController: NavController, firstImage: String,itemsPerRow: Int = 3)
@@ -67,13 +73,15 @@ public fun GalleryView(navController: NavController, firstImage: String,itemsPer
 
     val permissionState = rememberMultiplePermissionsState(
         permissions = listOf(
-            Manifest.permission.CAMERA,
-            Manifest.permission.RECORD_AUDIO
+            //Manifest.permission.CAMERA,
+            //Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.READ_MEDIA_IMAGES,
+            Manifest.permission.READ_MEDIA_VIDEO
         )
     )
 
     //val ResourceIds : MutableList<Pair<String, String>> = remember{viewModel.ResourceIds.toMutableList()}
-    val ResourceIds : MutableList<Pair<Uri, String>> = remember{ mutableListOf() }
+    val ResourceIds : MutableList<Pair<Uri, String>> = mutableListOf()
     //ResourceIds.add(Pair(firstImage, "Video"))
     var ResourceDrawables: MutableList<Uri> = mutableListOf<Uri>();
     var ResourceURI: MutableList<Uri> = mutableListOf<Uri>();
@@ -98,12 +106,26 @@ public fun GalleryView(navController: NavController, firstImage: String,itemsPer
     LaunchedEffect(Unit) {
         permissionState.launchMultiplePermissionRequest()
         //getContent.launch("*")
-        getContent.launch("video/*")
-        getContent.launch("image/*")
+
+
+
+        //getContent.launch("video/*")
+        //getContent.launch("image/*")
     }
 
 
-
+    val uris = viewModel.getMediaContent(context = context, limitSize = true)
+    uris.addAll(viewModel.getVideoMediaContent(context = context, limitSize = true))
+    for (uri in uris)
+    {
+        //val drawable = Drawable.createFromStream(context.contentResolver.openInputStream(uri), uri.toString())
+        //ResourceIds.add(Pair(uri.toString(), "Image"))
+        val type = context.contentResolver.getType(uri)
+        val s = type?.let { type.substring(0, it.indexOf("/")) }
+        ResourceIds.add(Pair(uri, s) as Pair<Uri, String>)
+        //ResourceDrawables.add(drawable as BitmapDrawable)
+    }
+    val y = 0;
 
     ResourceIds.forEach()
     {
@@ -141,7 +163,6 @@ public fun GalleryView(navController: NavController, firstImage: String,itemsPer
     {
 
 
-
         Column(
             modifier = Modifier
                 .padding(10.dp)
@@ -155,12 +176,18 @@ public fun GalleryView(navController: NavController, firstImage: String,itemsPer
                         navController.navigate("CAMERA_VIEW")
                     },
                     shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.buttonColors(Color.DarkGray)
+                    colors = ButtonDefaults.buttonColors(Color.DarkGray),
+                    contentPadding = PaddingValues(0.dp) ,
+                    modifier = Modifier.size(50.dp)
                 )
                 {
                     Image(
                         painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
-                        contentDescription = null
+                        contentDescription = null,
+                        modifier = Modifier
+                            //.aspectRatio(1f)
+                            .width(20.dp)
+                            .height(20.dp)
                     )
                 }
                 Text(
@@ -180,7 +207,7 @@ public fun GalleryView(navController: NavController, firstImage: String,itemsPer
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .border(1.dp, Color.Black)
+                    , horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
 
                     Button(
@@ -188,14 +215,15 @@ public fun GalleryView(navController: NavController, firstImage: String,itemsPer
                             if (!selectedImageOption) {
                                 OnOptionSelected(true)
                             }
-                        }, shape = RectangleShape,
+                        }, shape = RoundedCornerShape(20.dp),
                         modifier = Modifier
-                            .fillMaxWidth(0.5f)
+                            .width(170.dp)
+                            .border(1.dp, Color.Black, shape = RoundedCornerShape(20.dp) )
                             .then(
                                 if (selectedImageOption) {
                                     Modifier.background(Color.Transparent)
                                 } else {
-                                    Modifier.background(Color.DarkGray)
+                                    Modifier.background(Color.DarkGray, shape = RoundedCornerShape(20.dp))
                                 }
                             ),
                         contentPadding = PaddingValues(0.dp), colors = ButtonDefaults.buttonColors(
@@ -220,14 +248,15 @@ public fun GalleryView(navController: NavController, firstImage: String,itemsPer
                             if (selectedImageOption) {
                                 OnOptionSelected(false)
                             }
-                        }, shape = RectangleShape,
+                        }, shape = RoundedCornerShape(20.dp),
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .width(170.dp)
+                            .border(1.dp, Color.Black, shape = RoundedCornerShape(20.dp) )
                             .then(
                                 if (!selectedImageOption) {
                                     Modifier.background(Color.Transparent)
                                 } else {
-                                    Modifier.background(Color.DarkGray)
+                                    Modifier.background(Color.DarkGray, shape = RoundedCornerShape(20.dp))
                                 }
 
                             ),
@@ -375,7 +404,7 @@ fun ImageItem(modifier: Modifier, imageID: BitmapDrawable)
             //.weight(1f, true)
             .aspectRatio(1f)
             .padding(start = 5.dp, top = 5.dp)
-            .background(Color.Red)
+            //.background(Color.Red)
             .clickable {
 
             }
@@ -389,6 +418,7 @@ fun ImageItem(modifier: Modifier, imageID: BitmapDrawable)
                 .aspectRatio(1f, true)
                 .padding(2.dp)
         )
+
     }
 
 }
@@ -465,7 +495,7 @@ fun VideoItem(modifier: Modifier, videoID: Uri = ("").toUri(), navController: Na
             //.weight(1f, true)
             .aspectRatio(1f)
             .padding(start = 5.dp, top = 5.dp)
-            .background(Color.Red)
+            //.background(Color.Red)
             .clickable {
 
                 val uriEncoded = URLEncoder.encode(
