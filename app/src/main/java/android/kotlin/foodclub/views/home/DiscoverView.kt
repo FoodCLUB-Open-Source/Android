@@ -1,8 +1,12 @@
 package com.example.foodclub.views.home
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.api.authentication.PostByWorld
 import android.kotlin.foodclub.data.models.DiscoverViewRecipeModel
+import android.kotlin.foodclub.data.models.SimpleUserModel
+import android.kotlin.foodclub.data.models.UserPostsModel
 import android.kotlin.foodclub.views.home.BottomSheetIngredients
+import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -25,6 +29,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
@@ -41,6 +46,7 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,12 +69,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Observer
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.foodclub.viewmodels.home.DiscoverViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.launch
+import kotlin.math.log
 
 
 val recipesList = listOf(
@@ -105,10 +116,19 @@ fun DiscoverView(navController: NavController) {
     )
 
 
-    val viewModel: DiscoverViewModel = viewModel()
+    val viewModel: DiscoverViewModel = hiltViewModel()
+
+    viewModel.getPostsByWorld(197)
+    viewModel.getPostsByUserId(197)
+    viewModel.getPostInfoById(197)
+    viewModel.myFridgePosts(5)
 
 
-    Column(modifier = Modifier.fillMaxSize().background(Color.White),
+
+
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally) {
 
         Row(
@@ -119,7 +139,6 @@ fun DiscoverView(navController: NavController) {
         ) {
 
             Column(  ) {
-
 
                 Text(
                     color = Color.Black,
@@ -277,14 +296,12 @@ fun DiscoverView(navController: NavController) {
 
 
 
-
         Spacer(modifier = Modifier.height(10.dp))
 
         if (tabIndex == 0 || tabIndex == 2)
             TabHomeDiscover(tabItems2, pagerState1, scope, 12.sp)
         else if (tabIndex == 1)
             TabHomeDiscover(tabItems3, pagerState1, scope, 12.sp)
-
 
 
         Spacer(modifier = Modifier.height(if (tabIndex == 2) 5.dp else 0.dp))
@@ -335,6 +352,10 @@ fun DiscoverView(navController: NavController) {
             }
         }
 
+        val myFridgePosts = viewModel.myFridgePosts.collectAsState()
+
+        Log.i("FRIDGE ___----->",myFridgePosts.value.toString())
+
         HorizontalPager(
             beyondBoundsPageCount = 1,
             flingBehavior = fling,
@@ -355,7 +376,7 @@ fun DiscoverView(navController: NavController) {
                     columns = GridCells.Fixed(2),
                 ) {
 
-                    items(recipesList.size) { dataItem ->
+                    items(myFridgePosts.value) { dataItem ->
                         GridItem2(navController,dataItem)
                     }
 
@@ -394,7 +415,9 @@ fun TabHomeDiscover(
     ) {
         tabItems.forEachIndexed { index, item ->
             Tab(selected = pagerState1.currentPage == index,
-                modifier = Modifier.fillMaxWidth().background(Color.White),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White),
                 selectedContentColor = Color.Black,
                 onClick = {
                     scope.launch {
@@ -420,12 +443,11 @@ fun TabHomeDiscover(
 }
 
 @Composable
-fun GridItem2(navController: NavController, dataItem: Int) {
+fun GridItem2(navController: NavController, dataItem: UserPostsModel) {
 
     val satoshiFamily = FontFamily(
         Font(R.font.satoshi, FontWeight.Medium)
     )
-
 
     Card(
         modifier = Modifier
@@ -440,11 +462,11 @@ fun GridItem2(navController: NavController, dataItem: Int) {
                 .fillMaxHeight()
         ) {
             Image(
-                painter = painterResource(id = R.drawable.salad_ingredient),
+                painter = rememberAsyncImagePainter(dataItem.thumbnailUrl),
                 contentDescription = "",
                 Modifier
                     .fillMaxSize()
-                    .clickable { navController.navigate("DELETE_RECIPE/${dataItem.toLong()}") },
+                    .clickable { navController.navigate("DELETE_RECIPE/${dataItem.id}") },
                 contentScale = ContentScale.FillHeight
             )
             Column(
@@ -453,14 +475,14 @@ fun GridItem2(navController: NavController, dataItem: Int) {
                     .padding(10.dp), verticalArrangement = Arrangement.Bottom
             ) {
                 Text(
-                    text = recipesList[dataItem].name ,
+                    text = dataItem.title ,
                     fontFamily = satoshiFamily,
                     color = Color.White,
                     fontSize = 18.sp
                 )
 
                 Text(
-                    text = recipesList[dataItem].name,
+                    text =  dataItem.title ,
                     fontFamily = satoshiFamily,
                     fontSize = 12.sp,
                     color = Color(231, 231, 231, 200)
