@@ -133,7 +133,10 @@ fun CustomTextField(initialValue: String = "",
                     errorMessage = validationMethod(currentVal)
                     textValidCurrent = errorMessage.isNullOrBlank()
                 }
-                if (currentVal == "") errorMessage = null
+                if (currentVal == "") {
+                    errorMessage = null
+                    textValidCurrent = false
+                }
                 if (textValid != textValidCurrent) onCorrectnessStateChange()
                 text = currentVal
                 onValueChange(currentVal)
@@ -181,7 +184,10 @@ fun CustomPasswordTextField(initialValue: String = "",
                     errorMessage = FieldsValidation.checkPassword(it.trim())
                     passValidCurrent = errorMessage.isNullOrBlank()
                 }
-                if (it.trim() == "") errorMessage = null
+                if (it.trim() == "") {
+                    errorMessage = null
+                    passValidCurrent = false
+                }
                 if (passValid != passValidCurrent) onCorrectnessStateChange()
                 password = it.trim()
                 onValueChange(it.trim())
