@@ -6,7 +6,7 @@ data class PostModel(
     val id: Long,
     val title: String,
     val description: String,
-    val username: String,
+    val username: String?,
 
     @SerializedName("profile_picture")
     val profilePictureUrl: String?,
@@ -16,7 +16,7 @@ data class PostModel(
     val thumbnailUrl: String,
 
     @SerializedName("total_likes")
-    val likes: Long,
+    val likes: Long?,
     @SerializedName("total_views")
-    val views: Long
+    val views: Long?
 )
