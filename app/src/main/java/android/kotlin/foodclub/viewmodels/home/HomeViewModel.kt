@@ -1,15 +1,61 @@
-package com.example.foodclub.viewmodels.home
+package android.kotlin.foodclub.viewmodels.home
 
 import android.kotlin.foodclub.data.models.VideoModel
-import androidx.compose.foundation.isSystemInDarkTheme
+import android.kotlin.foodclub.repositories.PostRepository
+import android.kotlin.foodclub.utils.helpers.Resource
+import android.kotlin.foodclub.utils.helpers.SessionCache
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HomeViewModel : ViewModel() {
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    val repository: PostRepository,
+    private val sessionCache: SessionCache
+) : ViewModel() {
     private val _title = MutableLiveData("HomeViewModel View")
     val title: LiveData<String> get() = _title
+
+    private val _postListData = MutableStateFlow<List<VideoModel>>(listOf())
+    val postListData: StateFlow<List<VideoModel>> get() = _postListData
+
+    private val _error = MutableStateFlow("")
+    val error: StateFlow<String> get() = _error
+
+    init {
+        getPostListData()
+    }
+
+    private fun getPostListData() {
+        viewModelScope.launch {
+            when(val resource = repository.getHomepagePosts(sessionCache.getActiveSession()!!.userId)) {
+                is Resource.Success -> {
+                    _error.value = ""
+                    _postListData.value = resource.data!!
+                    setTestData()
+                }
+                is Resource.Error -> {
+                    _error.value = resource.message!!
+                }
+            }
+        }
+    }
+
+    private fun setTestData() {
+        if(_postListData.value.isEmpty()) return
+        _postListData.value = _postListData.value.map {
+            VideoModel(it.videoId, it.authorDetails, it.videoStats,
+                "https://kretu.sts3.pl/foodclub_videos/daniel_vid2.mp4",
+                it.currentViewerInteraction, it.description, it.createdAt,
+                "https://kretu.sts3.pl/foodclub_thumbnails/daniel_vid2-thumbnail.jpg")
+        }
+    }
 
     object RecipesVideos {
         val recipe_vid1 = VideoModel(
