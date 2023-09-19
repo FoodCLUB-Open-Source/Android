@@ -6,6 +6,7 @@ import android.kotlin.foodclub.api.responses.GetPostResponse
 import android.kotlin.foodclub.api.responses.LoginResponse
 import android.kotlin.foodclub.api.responses.RetrieveFollowerListResponse
 import android.kotlin.foodclub.api.responses.RetrieveFollowingListResponse
+import android.kotlin.foodclub.api.responses.RetrieveHomepagePostList
 import android.kotlin.foodclub.api.responses.RetrieveProfileResponse
 import android.kotlin.foodclub.data.models.SignUpError
 import com.google.gson.annotations.SerializedName
@@ -90,20 +91,6 @@ data class PostById(
 data class GetPostById(
     val data:List<PostById>
 )
-
-data class PostByUserId(
-    val id: Int,
-    val title:String,
-    val description:String,
-    val created_at:String,
-    val video_url:String,
-    val thumbnail_url:String,
-)
-
-data class GetPostByUserId(
-    val posts:List<PostByUserId>
-)
-
 
 
 interface API {
@@ -194,13 +181,10 @@ interface API {
     ):Response<GetPostById>
 
     @GET("posts/homepage/{userId}")
-    suspend fun getPostsByUserId(
+    suspend fun getHomepagePosts(
         @Path("userId") userId: Long,
         @Query("page_size") pageSize: Int?,
-        @Query("page_number") pageNo: Int?,
-    ):Response<GetPostByUserId>
-
-
-
+        @Query("page_number") pageNo: Int?
+    ):Response<RetrieveHomepagePostList>
 
 }
