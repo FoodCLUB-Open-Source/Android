@@ -1,6 +1,6 @@
 @file:JvmName("HomeViewKt")
 
-package com.example.foodclub.views.home
+package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.data.models.StoryModel
@@ -8,7 +8,7 @@ import android.kotlin.foodclub.data.models.VideoModel
 import android.kotlin.foodclub.ui.theme.Montserrat
 import android.kotlin.foodclub.utils.composables.StoryView
 import android.kotlin.foodclub.utils.composables.VideoScroller
-import android.kotlin.foodclub.views.home.StoriesContainerView
+import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
@@ -57,8 +57,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.foodclub.viewmodels.home.HomeViewModel
+import android.kotlin.foodclub.viewmodels.home.HomeViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -93,11 +92,13 @@ import androidx.navigation.NavHostController
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.collectAsState
+import androidx.hilt.navigation.compose.hiltViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheetIngredients(onDismiss: () -> Unit) {
+fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 240.dp
     var searchText by remember { mutableStateOf("") }
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -113,8 +114,8 @@ fun BottomSheetIngredients(onDismiss: () -> Unit) {
         sheetState = bottomSheetState,
         dragHandle = { BottomSheetDefaults.DragHandle() },
     ) {
-        Column ( modifier = Modifier.height(screenHeight).padding(start = 16.dp, end = 16.dp) ) {
-            Row (
+        Column(modifier = Modifier.height(screenHeight).padding(start = 16.dp, end = 16.dp)) {
+            Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -151,13 +152,13 @@ fun BottomSheetIngredients(onDismiss: () -> Unit) {
                             "copy clip",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            fontFamily = android.kotlin.foodclub.views.home.montserratFamily,
+                            fontFamily = Montserrat,
                             color = Color(android.graphics.Color.parseColor("#3A7CA8")),
                         )
                     }
                 }
             }
-            Row (
+            Row(
                 modifier = Modifier.fillMaxWidth().padding(if (isSmallScreen == true) 0.dp else 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -168,7 +169,7 @@ fun BottomSheetIngredients(onDismiss: () -> Unit) {
                 ) {
                     Text("Serving Size",
                         color = Color.Black,
-                        fontFamily = android.kotlin.foodclub.views.home.montserratFamily,
+                        fontFamily = Montserrat,
                         fontSize = if (isSmallScreen == true) 14.sp else 17.sp)
                 }
                 Box(
@@ -190,7 +191,7 @@ fun BottomSheetIngredients(onDismiss: () -> Unit) {
                     )
                 }
             }
-            Row (
+            Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -200,7 +201,7 @@ fun BottomSheetIngredients(onDismiss: () -> Unit) {
                         .padding(start = 16.dp)
                 ) {
                     Text("Ingredients", color = Color.Black,
-                        fontFamily = android.kotlin.foodclub.views.home.montserratFamily,
+                        fontFamily = Montserrat,
                         fontSize = if (isSmallScreen == true) 13.sp else 16.sp,
                         fontWeight = FontWeight.Bold)
                 }
@@ -210,7 +211,7 @@ fun BottomSheetIngredients(onDismiss: () -> Unit) {
                         .padding(end = if (isSmallScreen == true) 16.dp else 16.dp)
                 ) {
                     Text("Clear", color = Color(android.graphics.Color.parseColor("#7EC60B")),
-                        fontFamily = android.kotlin.foodclub.views.home.montserratFamily,
+                        fontFamily = Montserrat,
                         fontSize = if (isSmallScreen == true) 13.sp else 16.sp,
                         fontWeight = FontWeight.Bold)
                 }
@@ -250,7 +251,7 @@ fun BottomSheetIngredients(onDismiss: () -> Unit) {
                     Text(
                         "Add to my shopping list",
                         color = Color.White,
-                        fontFamily = android.kotlin.foodclub.views.home.montserratFamily,
+                        fontFamily = Montserrat,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.ExtraBold
                     )
@@ -327,21 +328,20 @@ fun HomeView(
     initialPage: Int? = 0,
     navController: NavHostController,
     triggerStoryView: () -> Unit,
-)
-{
+) {
     var showIngredientSheet by remember { mutableStateOf(false) }
 
-    val viewModel: HomeViewModel = viewModel()
+    val viewModel: HomeViewModel = hiltViewModel()
     val title = viewModel.title.value ?: "Loading..."
     val localDensity = LocalDensity.current
 
-    val videos: List<VideoModel> = viewModel.videosList
+    val videosState = viewModel.postListData.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     var screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.94f
 
-    if (screenHeightMinusBottomNavItem <= 650.dp ) {
+    if (screenHeightMinusBottomNavItem <= 650.dp) {
         screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.96f
     }
     val pagerState = rememberPagerState(
@@ -398,14 +398,14 @@ fun HomeView(
             callbackDisableStory = {
                 storyViewMode = false
                 triggerStoryView()
-            }, currentStoryOffset, modifier = Modifier.fillMaxSize())
+                                   }, currentStoryOffset, modifier = Modifier.fillMaxSize())
     }
     Column(
         modifier = Modifier
             .height(screenHeightMinusBottomNavItem)
     ) {
         if (showIngredientSheet) {
-            BottomSheetIngredients(triggerIngredientBottomSheetModal)
+            HomeBottomSheetIngredients(triggerIngredientBottomSheetModal)
         }
         VerticalPager(
             state = pagerState,
@@ -428,14 +428,15 @@ fun HomeView(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                //BlurImage{
-                    VideoScroller(videos[it], pagerState, it, onSingleTap = {
+                if (videosState.value.isNotEmpty()) {
+                    //BlurImage{
+                    VideoScroller(videosState.value[it], pagerState, it, onSingleTap = {
                         pauseButtonVisibility = it.isPlaying
                         it.playWhenReady = !it.isPlaying
                     },
                         onDoubleTap = { exoPlayer, offset ->
                             coroutineScope.launch {
-                                videos[it].currentViewerInteraction.isLikedByYou = true
+                                videosState.value[it].currentViewerInteraction.isLikedByYou = true
                                 val rotationAngle = (-10..10).random()
                                 doubleTapState = Triple(offset, true, rotationAngle.toFloat())
                                 delay(400)
@@ -445,195 +446,197 @@ fun HomeView(
                         onVideoDispose = { pauseButtonVisibility = false },
                         onVideoGoBackground = { pauseButtonVisibility = false }
                     )
-                //}
+                    //}
 
 
-                var isLiked by remember {
-                    mutableStateOf(videos[it].currentViewerInteraction.isLikedByYou)
-                }
-
-                Column() {
-                    val iconSize = 110.dp
-                    AnimatedVisibility(visible = doubleTapState.second,
-                        enter = scaleIn(
-                            spring(Spring.DampingRatioMediumBouncy),
-                            initialScale = 1.3f
-                        ),
-                        exit = scaleOut(
-                            tween(600), targetScale = 1.58f
-                        ) + fadeOut(tween(600)) + slideOutVertically(
-                            tween(600)
-                        ),
-                        modifier = Modifier.run {
-                            if (doubleTapState.first != Offset.Unspecified) {
-                                this.offset(x = localDensity.run {
-                                    doubleTapState.first.x.toInt().toDp().plus(-iconSize.div(2))
-                                }, y = localDensity.run {
-                                    doubleTapState.first.y.toInt().toDp().plus(-iconSize.div(2))
-                                })
-                            } else this
-                        }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.liked),
-                            contentDescription = null,
-                            tint = Color.Unspecified,
-                            modifier = Modifier
-                                .size(iconSize)
-                        )
+                    var isLiked by remember {
+                        mutableStateOf(videosState.value[it].currentViewerInteraction.isLikedByYou)
                     }
-                }
-                Column(
-                    modifier = Modifier.fillMaxSize().padding(top = 30.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    AnimatedVisibility(
-                        visible = pauseButtonVisibility,
-                        enter = scaleIn(spring(Spring.DampingRatioMediumBouncy), initialScale = 1.5f),
-                        exit = scaleOut(tween(150)),
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.pause_video_button),
-                            contentDescription = null,
-                            tint = Color.Unspecified,
-                            modifier = Modifier.size(36.dp)
-                        )
-                    }
-                }
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(15.dp)
-                ) {
-                    Column {
-                        Button(
-                            modifier = Modifier.width(60.dp).height(25.dp),
-                            onClick = { /*TODO*/ },
-                            contentPadding = PaddingValues(0.dp),
-                                    colors = ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#D95978")))
-                        ) {
-                            Text("Meat", fontFamily = Montserrat,
-                                fontSize = 12.sp,style = TextStyle(color = Color.White))
-                        }
-                        Spacer(modifier = Modifier.height(20.dp))
 
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Image(
-                                painter = painterResource(id = R.drawable.story_user),
-                                contentDescription = "Profile Image",
+                    Column() {
+                        val iconSize = 110.dp
+                        AnimatedVisibility(visible = doubleTapState.second,
+                            enter = scaleIn(
+                                spring(Spring.DampingRatioMediumBouncy),
+                                initialScale = 1.3f
+                            ),
+                            exit = scaleOut(
+                                tween(600), targetScale = 1.58f
+                            ) + fadeOut(tween(600)) + slideOutVertically(
+                                tween(600)
+                            ),
+                            modifier = Modifier.run {
+                                if (doubleTapState.first != Offset.Unspecified) {
+                                    this.offset(x = localDensity.run {
+                                        doubleTapState.first.x.toInt().toDp().plus(-iconSize.div(2))
+                                    }, y = localDensity.run {
+                                        doubleTapState.first.y.toInt().toDp().plus(-iconSize.div(2))
+                                    })
+                                } else this
+                            }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.liked),
+                                contentDescription = null,
+                                tint = Color.Unspecified,
                                 modifier = Modifier
-                                    .size(35.dp)
-                                    .clip(CircleShape)
+                                    .size(iconSize)
                             )
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Text("Marc", color = Color.White,
-                                fontFamily = Montserrat, fontSize = 18.sp,
-                                modifier = Modifier.padding(2.dp))
                         }
                     }
-                }
-
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(15.dp)
-                ) {
-                    Column {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .align(Alignment.End)
-                                .width(50.dp)
-                                .height(50.dp)
+                    Column(
+                        modifier = Modifier.fillMaxSize().padding(top = 30.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        AnimatedVisibility(
+                            visible = pauseButtonVisibility,
+                            enter = scaleIn(spring(Spring.DampingRatioMediumBouncy), initialScale = 1.5f),
+                            exit = scaleOut(tween(150)),
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .width(55.dp)
-                                    .height(55.dp)
+                            Icon(
+                                painter = painterResource(id = R.drawable.pause_video_button),
+                                contentDescription = null,
+                                tint = Color.Unspecified,
+                                modifier = Modifier.size(36.dp)
+                            )
+                        }
+                    }
+                    Box(
+                        modifier = Modifier.align(Alignment.BottomStart).padding(15.dp)
+                    ) {
+                        Column {
+                            Button(
+                                modifier = Modifier.width(60.dp).height(25.dp),
+                                onClick = { /*TODO*/ },
+                                contentPadding = PaddingValues(0.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    Color(android.graphics.Color.parseColor("#D95978")
+                                    )
+                                )
                             ) {
-                                Box(
-                                    modifier = Modifier.width(55.dp)
-                                        .height(55.dp)
-                                        .clip(RoundedCornerShape(35.dp))
-                                        .background(Color.Black.copy(alpha = 0.5f))
-                                        .blur(radius = 5.dp)
-                                ) {}
+                                Text(
+                                    "Meat", fontFamily = Montserrat,
+                                    fontSize = 12.sp, style = TextStyle(color = Color.White)
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(20.dp))
+
+                            Row(verticalAlignment = Alignment.CenterVertically) {
                                 Image(
-                                    painter = painterResource(id = R.drawable.save),
-                                    modifier = Modifier
-                                        .size(22.dp)
-                                        .align(Alignment.Center)
-                                        .zIndex(1f),
-                                    contentDescription = "save"
+                                    painter = painterResource(id = R.drawable.story_user),
+                                    contentDescription = "Profile Image",
+                                    modifier = Modifier.size(35.dp).clip(CircleShape)
+                                )
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Text(
+                                    videosState.value[it].authorDetails, color = Color.White,
+                                    fontFamily = Montserrat, fontSize = 18.sp,
+                                    modifier = Modifier.padding(2.dp)
                                 )
                             }
                         }
-                        Spacer(modifier = Modifier.height(10.dp))
+                    }
 
-                        Column(horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.align(Alignment.End).width(50.dp).height(80.dp),
-                            ) {
-                            Spacer(Modifier.weight(1f))
-                            Box(
-                                modifier = Modifier.width(50.dp).height(80.dp),
-                                contentAlignment = Alignment.Center
+                    Box(
+                        modifier = Modifier.align(Alignment.BottomEnd).padding(15.dp)
+                    ) {
+                        Column {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.align(Alignment.End).width(50.dp).height(50.dp)
                             ) {
                                 Box(
-                                    modifier = Modifier.width(50.dp).height(80.dp)
-                                        .clip(RoundedCornerShape(30.dp))
-                                        .background(Color.Black.copy(alpha = 0.5f))
-                                        .blur(radius = 5.dp)
-                                ) {}
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center,
-                                    modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(30.dp)).clickable {
-                                            isLiked = !isLiked
-                                            videos[it].currentViewerInteraction.isLikedByYou = !isLiked
-                                        }
+                                    modifier = Modifier.width(55.dp).height(55.dp)
                                 ) {
-                                    val maxSize = 32.dp
-                                    val iconSize by animateDpAsState(targetValue = if (isLiked) 22.dp else 21.dp,
-                                        animationSpec = keyframes {
-                                            durationMillis = 400
-                                            14.dp.at(50)
-                                            maxSize.at(190)
-                                            16.dp.at(330)
-                                            22.dp.at(400).with(FastOutLinearInEasing)
-                                        })
-
-                                    LaunchedEffect(key1 = doubleTapState) {
-                                        if (doubleTapState.first != Offset.Unspecified && doubleTapState.second) {
-                                            isLiked = doubleTapState.second
-                                        }
-                                    }
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.like),
-                                        contentDescription = null,
-                                        tint = if (isLiked) Color(android.graphics.Color.parseColor("#7EC60B")) else Color.White,
-                                        modifier = Modifier.size(iconSize)
+                                    Box(
+                                        modifier = Modifier
+                                            .width(55.dp).height(55.dp)
+                                            .clip(RoundedCornerShape(35.dp))
+                                            .background(Color.Black.copy(alpha = 0.5f))
+                                            .blur(radius = 5.dp)
+                                    ) {}
+                                    Image(
+                                        painter = painterResource(id = R.drawable.save),
+                                        modifier = Modifier
+                                            .size(22.dp)
+                                            .align(Alignment.Center)
+                                            .zIndex(1f),
+                                        contentDescription = "save"
                                     )
-                                    Spacer(modifier = Modifier.height(3.dp))
-                                    Text("4.2k", fontSize = 13.sp,
-                                        fontFamily = Montserrat,
-                                        color = if (isLiked) Color(android.graphics.Color.parseColor("#7EC60B")) else Color.White)
                                 }
                             }
-                            Spacer(Modifier.weight(1f))
-                        }
+                            Spacer(modifier = Modifier.height(10.dp))
+
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .align(Alignment.End)
+                                    .width(50.dp).height(80.dp),
+                            ) {
+                                Spacer(Modifier.weight(1f))
+                                Box(
+                                    modifier = Modifier.width(50.dp).height(80.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Box(
+                                        modifier = Modifier.width(50.dp).height(80.dp)
+                                            .clip(RoundedCornerShape(30.dp))
+                                            .background(Color.Black.copy(alpha = 0.5f))
+                                            .blur(radius = 5.dp)
+                                    ) {}
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.Center,
+                                        modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(30.dp)).clickable {
+                                                isLiked = !isLiked
+                                                videosState.value[it].currentViewerInteraction.isLikedByYou = !isLiked
+                                            }
+                                    ) {
+                                        val maxSize = 32.dp
+                                        val iconSize by animateDpAsState(targetValue = if (isLiked) 22.dp else 21.dp,
+                                            animationSpec = keyframes {
+                                                durationMillis = 400
+                                                14.dp.at(50)
+                                                maxSize.at(190)
+                                                16.dp.at(330)
+                                                22.dp.at(400).with(FastOutLinearInEasing)
+                                            })
+
+                                        LaunchedEffect(key1 = doubleTapState) {
+                                            if (doubleTapState.first != Offset.Unspecified && doubleTapState.second) {
+                                                isLiked = doubleTapState.second
+                                            }
+                                        }
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.like),
+                                            contentDescription = null,
+                                            tint = if (isLiked) Color(android.graphics.Color.parseColor("#7EC60B")) else Color.White,
+                                            modifier = Modifier.size(iconSize)
+                                        )
+                                        Spacer(modifier = Modifier.height(3.dp))
+                                        Text(
+                                            text = ValueParser.numberToThousands(videosState.value[it].videoStats.like),
+                                            fontSize = 13.sp,
+                                            fontFamily = Montserrat,
+                                            color = if (isLiked) Color(android.graphics.Color.parseColor("#7EC60B")) else Color.White
+                                        )
+                                    }
+                                }
+                                Spacer(Modifier.weight(1f))
+                            }
 
 
-                        Spacer(modifier = Modifier.height(10.dp))
+                            Spacer(modifier = Modifier.height(10.dp))
 
-                        Button(
-                            onClick = { triggerIngredientBottomSheetModal() },
-                            colors = ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#7EC60B"))),
-                            shape = RoundedCornerShape(15.dp),
-                            modifier = Modifier.width(120.dp).height(35.dp),
-                            contentPadding = PaddingValues(0.dp)
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text("Ingredients", fontFamily = Montserrat, fontSize = 14.sp)
+                            Button(
+                                onClick = { triggerIngredientBottomSheetModal() },
+                                colors = ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#7EC60B"))),
+                                shape = RoundedCornerShape(15.dp),
+                                modifier = Modifier.width(120.dp).height(35.dp),
+                                contentPadding = PaddingValues(0.dp)
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text("Ingredients", fontFamily = Montserrat, fontSize = 14.sp) }
                             }
                         }
                     }
@@ -644,7 +647,7 @@ fun HomeView(
 }
 
 @Composable
-fun HomeIngredient(ingredientTitle: String, ingredientImage : Int) {
+fun HomeIngredient(ingredientTitle: String, ingredientImage: Int) {
     var isSelected by remember { mutableStateOf(false) }
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 240.dp
     var isSmallScreen by remember { mutableStateOf(false) }
@@ -698,17 +701,17 @@ fun HomeIngredient(ingredientTitle: String, ingredientImage : Int) {
                 .padding(start = if (isSmallScreen == true) 90.dp else 110.dp, top = 10.dp)
                 .fillMaxSize()
         ) {
-            Box ( modifier = Modifier.width(115.dp).padding(start = 10.dp) ) {
+            Box(modifier = Modifier.width(115.dp).padding(start = 10.dp)) {
                 Text(
                     text = ingredientTitle,
                     lineHeight = 18.sp,
                     modifier = Modifier
                         .align(Alignment.TopStart),
                     fontWeight = FontWeight.Normal,
-                    fontFamily = android.kotlin.foodclub.views.home.montserratFamily
+                    fontFamily = Montserrat
                 )
             }
-            Box ( modifier = Modifier.align(Alignment.BottomStart) ) {
+            Box(modifier = Modifier.align(Alignment.BottomStart)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Image(
                         painter = painterResource(id = R.drawable.baseline_arrow_left_24),
@@ -717,12 +720,12 @@ fun HomeIngredient(ingredientTitle: String, ingredientImage : Int) {
                             .size(50.dp)
                             .padding(end = 15.dp)
                             .clip(RoundedCornerShape(20.dp))
-                            .clickable {  }
+                            .clickable { }
                     )
                     Text(
                         "200g",
                         color = Color.Black,
-                        fontFamily = android.kotlin.foodclub.views.home.montserratFamily,
+                        fontFamily = Montserrat,
                         fontSize = 14.sp
                     )
                     Image(
@@ -732,7 +735,7 @@ fun HomeIngredient(ingredientTitle: String, ingredientImage : Int) {
                             .size(50.dp)
                             .padding(start = 15.dp)
                             .clip(RoundedCornerShape(20.dp))
-                            .clickable {  }
+                            .clickable { }
                     )
                 }
             }

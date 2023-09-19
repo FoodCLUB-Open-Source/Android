@@ -1,12 +1,11 @@
-  package android.kotlin.foodclub.navigation.graphs
+package android.kotlin.foodclub.navigation.graphs
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.example.foodclub.navigation.graphs.homeNavigationGraph
 
 
-@Composable
+  @Composable
 fun RootNavigationGraph(navController: NavHostController, showSheet: Boolean,
                         triggerBottomSheetModal:  () -> Unit, triggerStory: () -> Unit,
                         setBottomBarVisibility: (Boolean) -> Unit) {
