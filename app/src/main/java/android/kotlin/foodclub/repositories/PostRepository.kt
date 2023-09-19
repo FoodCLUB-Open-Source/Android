@@ -12,13 +12,13 @@ class PostRepository(
     private fun mapDtoToModel(dtoModel: PostModel): VideoModel {
         return VideoModel(
             videoId = dtoModel.id,
-            authorDetails = dtoModel.username,
+            authorDetails = dtoModel.username ?: "Marc",
             videoStats = VideoModel.VideoStats(
-                dtoModel.likes,
+                dtoModel.likes ?: 15,
                 0L,
                 0L,
                 0L,
-                dtoModel.views
+                dtoModel.views ?: 100
             ),
             videoLink = dtoModel.videoUrl,
             description = dtoModel.description,
@@ -40,6 +40,24 @@ class PostRepository(
         }
         return Resource.Error("Unknown error occurred.")
 
+    }
+
+    suspend fun getHomepagePosts(
+        userId: Long, pageSize: Int? = null, pageNo: Int? = null
+    ): Resource<List<VideoModel>> {
+        val response = try {
+            api.getHomepagePosts(userId, pageSize, pageNo)
+        } catch (e: IOException) {
+            return Resource.Error("Cannot retrieve data. Check your internet connection and try again.")
+        } catch (e: Exception) {
+            return Resource.Error("Unknown error occurred.")
+        }
+
+        if(response.isSuccessful && response.body() != null && response.body()?.posts != null
+            && response.body()?.posts?.isEmpty() == false){
+            return Resource.Success(response.body()!!.posts.map { mapDtoToModel(it) })
+        }
+        return Resource.Error("Unknown error occurred.")
     }
 
     suspend fun deletePost(id: Long): Resource<Boolean> {
