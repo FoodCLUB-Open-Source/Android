@@ -1,21 +1,12 @@
-package com.example.foodclub.viewmodels.home
+package android.kotlin.foodclub.viewmodels.home
 
 import android.kotlin.foodclub.api.authentication.PostById
-import android.kotlin.foodclub.api.authentication.PostByUserId
 import android.kotlin.foodclub.api.authentication.PostByWorld
 import android.kotlin.foodclub.api.retrofit.RetrofitInstance
-import android.kotlin.foodclub.data.models.DiscoverViewRecipeModel
-import android.kotlin.foodclub.data.models.MyRecipeModel
 import android.kotlin.foodclub.data.models.UserPostsModel
-import android.kotlin.foodclub.data.models.UserProfileModel
-import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.kotlin.foodclub.data.models.VideoModel
+import android.kotlin.foodclub.repositories.PostRepository
+import android.kotlin.foodclub.utils.helpers.Resource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,11 +18,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DiscoverViewModel @Inject constructor(
-
+    private val repository: PostRepository
 ):ViewModel() {
 
-    private val _postList = MutableStateFlow<List<PostByUserId>>(listOf())
-    val postList: StateFlow<List<PostByUserId>> get() = _postList
+    private val _postList = MutableStateFlow<List<VideoModel>>(listOf())
+    val postList: StateFlow<List<VideoModel>> get() = _postList
 
     private val _postListPerCategory = MutableStateFlow<List<PostByWorld>>(listOf())
     val postListPerCategory: StateFlow<List<PostByWorld>> get() = _postListPerCategory
@@ -86,15 +77,14 @@ class DiscoverViewModel @Inject constructor(
 
     fun getPostsByUserId(id: Long) {
 
-        viewModelScope.launch(Dispatchers.Main) {
-            try {
-                val response = RetrofitInstance.retrofitApi.getPostsByUserId(id, 10, 1)
-
-                if (response.isSuccessful) {
-                    _postList.value = response.body()!!.posts
+        viewModelScope.launch {
+            when(val resource = repository.getHomepagePosts(id, 10, 1)) {
+                is Resource.Success -> {
+                    _postList.value = resource.data!!
                 }
-            } catch (e: Exception) {
+                is Resource.Error -> {
 
+                }
             }
 
         }
