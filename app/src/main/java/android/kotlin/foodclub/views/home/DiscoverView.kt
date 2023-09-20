@@ -1,10 +1,10 @@
 package com.example.foodclub.views.home
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.api.authentication.PostByUserId
 import android.kotlin.foodclub.api.authentication.PostByWorld
 import android.kotlin.foodclub.data.models.DiscoverViewRecipeModel
 import android.kotlin.foodclub.data.models.UserPostsModel
+import android.kotlin.foodclub.data.models.VideoModel
 import android.kotlin.foodclub.views.home.CreateRecipeBottomSheetIngredients
 import android.util.Log
 import androidx.compose.animation.core.LinearEasing
@@ -279,9 +279,9 @@ fun DiscoverView(navController: NavController) {
             }
         }
 
-        var homePosts: State<List<PostByUserId>>? = null;
+        var homePosts: State<List<VideoModel>>? = null;
         var worldPosts: State<List<PostByWorld>>? = null;
-        var myFridgePosts: State<List<PostByUserId>>? = null;
+        var myFridgePosts: State<List<VideoModel>>? = null;
 
         Spacer(modifier = Modifier.height(10.dp))
 
@@ -438,7 +438,7 @@ fun TabHomeDiscover(
 }
 
 @Composable
-fun GridItem2(navController: NavController, dataItem: PostByUserId) {
+fun GridItem2(navController: NavController, dataItem: VideoModel) {
 
     val satoshiFamily = FontFamily(
         Font(R.font.satoshi, FontWeight.Medium)
@@ -457,11 +457,11 @@ fun GridItem2(navController: NavController, dataItem: PostByUserId) {
                 .fillMaxHeight()
         ) {
             Image(
-                painter = rememberAsyncImagePainter(dataItem.thumbnail_url),
+                painter = rememberAsyncImagePainter(dataItem.thumbnailLink),
                 contentDescription = "",
                 Modifier
                     .fillMaxSize()
-                    .clickable { navController.navigate("DELETE_RECIPE/${dataItem.id}") },
+                    .clickable { navController.navigate("DELETE_RECIPE/${dataItem.videoId}") },
                 contentScale = ContentScale.FillHeight
             )
             Column(
@@ -470,13 +470,13 @@ fun GridItem2(navController: NavController, dataItem: PostByUserId) {
                     .padding(10.dp), verticalArrangement = Arrangement.Bottom
             ) {
                 Text(
-                    text = dataItem.title ,
+                    text = dataItem.videoId.toString() ,
                     fontFamily = satoshiFamily,
                     color = Color.White,
                     fontSize = 18.sp
                 )
                 Text(
-                    text =  dataItem.title ,
+                    text =  dataItem.description ,
                     fontFamily = satoshiFamily,
                     fontSize = 12.sp,
                     color = Color(231, 231, 231, 200)
