@@ -4,6 +4,7 @@ import android.kotlin.foodclub.api.responses.DeletePostResponse
 import android.kotlin.foodclub.api.responses.FollowUnfollowResponse
 import android.kotlin.foodclub.api.responses.GetPostResponse
 import android.kotlin.foodclub.api.responses.LoginResponse
+import android.kotlin.foodclub.api.responses.RetrieveBookmarkedPostsResponse
 import android.kotlin.foodclub.api.responses.RetrieveFollowerListResponse
 import android.kotlin.foodclub.api.responses.RetrieveFollowingListResponse
 import android.kotlin.foodclub.api.responses.RetrieveHomepagePostList
@@ -187,4 +188,10 @@ interface API {
         @Query("page_number") pageNo: Int?
     ):Response<RetrieveHomepagePostList>
 
+    @GET("bookmarks/{userId}")
+    suspend fun getBookmarkedPosts(
+        @Path("userId") userId: Long,
+        @Query("page_size") pageSize: Int?,
+        @Query("page_number") pageNo: Int?
+    ): Response<RetrieveBookmarkedPostsResponse>
 }
