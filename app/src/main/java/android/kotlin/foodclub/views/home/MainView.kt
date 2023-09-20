@@ -2,18 +2,15 @@ package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.ui.theme.Montserrat
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import android.kotlin.foodclub.utils.composables.BottomSheetItem
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,30 +35,6 @@ import com.example.foodclub.ui.theme.BottomBarScreenObject
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
-
-@Composable
-fun BottomSheetItem(icon: Int, text: String,
-                    onDismiss: () -> Unit, navController: NavHostController, destination: String) {
-    Row(
-        modifier = Modifier
-            .clickable { navController.navigate(destination); onDismiss() }
-            .fillMaxWidth()
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painter = painterResource(id = icon),
-            contentDescription = null,
-            modifier = Modifier.size(50.dp)
-        )
-        Spacer(Modifier.width(16.dp))
-        Text(
-            text = text,
-            fontFamily = Montserrat,
-            fontWeight = FontWeight.Bold
-        )
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,15 +65,14 @@ fun BottomSheet(onDismiss: () -> Unit, navController: NavHostController) {
                 icon = R.drawable.story_bottom_sheet_icon,
                 text = "Create a Story",
                 onDismiss,
-                navController = navController,
-                "CAMERA_VIEW"
+                onClick = { navController.navigate("CAMERA_VIEW") }
+
             )
             BottomSheetItem(
                 icon = R.drawable.recipe_bottom_sheet_icon,
                 text = "Create a Recipe",
                 onDismiss,
-                navController = navController,
-                "CREATE_RECIPE_VIEW"
+                onClick = { navController.navigate("CREATE_RECIPE_VIEW") }
             )
             Spacer(modifier = Modifier.height(25.dp))
         }
