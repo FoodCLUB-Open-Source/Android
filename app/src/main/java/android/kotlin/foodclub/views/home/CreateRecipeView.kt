@@ -51,12 +51,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -82,7 +80,6 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collectAsState
@@ -105,9 +102,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.Collections.copy
 import kotlin.math.roundToInt
-import kotlin.random.Random
 
 @Stable
 data class Colors(
@@ -263,7 +258,7 @@ fun BottomSheetCategories(onDismiss: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
-fun BottomSheetIngredients(onDismiss: () -> Unit) {
+fun CreateRecipeBottomSheetIngredients(onDismiss: () -> Unit) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 150.dp
     var searchText by remember { mutableStateOf("") }
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -490,7 +485,7 @@ fun CreateRecipeView(navController: NavController) {
             .padding(start = 15.dp, top = 0.dp, end = 15.dp, bottom = 70.dp)
     ) {
         if (showSheet) {
-            BottomSheetIngredients(triggerBottomSheetModal)
+            CreateRecipeBottomSheetIngredients(triggerBottomSheetModal)
         }
         if (showCategorySheet) {
             BottomSheetCategories(triggerCategoryBottomSheetModal)

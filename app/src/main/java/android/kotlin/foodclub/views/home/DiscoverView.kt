@@ -4,9 +4,8 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.api.authentication.PostByUserId
 import android.kotlin.foodclub.api.authentication.PostByWorld
 import android.kotlin.foodclub.data.models.DiscoverViewRecipeModel
-import android.kotlin.foodclub.data.models.SimpleUserModel
 import android.kotlin.foodclub.data.models.UserPostsModel
-import android.kotlin.foodclub.views.home.BottomSheetIngredients
+import android.kotlin.foodclub.views.home.CreateRecipeBottomSheetIngredients
 import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -72,16 +71,12 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Observer
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.example.foodclub.viewmodels.home.DiscoverViewModel
+import android.kotlin.foodclub.viewmodels.home.DiscoverViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.launch
-import kotlin.math.log
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -322,7 +317,7 @@ fun DiscoverView(navController: NavController) {
             }
         }
         if (showSheet) {
-            BottomSheetIngredients(triggerBottomSheetModal)
+            CreateRecipeBottomSheetIngredients(triggerBottomSheetModal)
         }
         if (tabIndex == 2) {
             Button(shape = RectangleShape,

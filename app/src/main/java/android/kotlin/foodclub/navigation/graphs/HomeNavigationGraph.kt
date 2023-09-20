@@ -1,6 +1,5 @@
-package com.example.foodclub.navigation.graphs
+package android.kotlin.foodclub.navigation.graphs
 
-import android.kotlin.foodclub.navigation.graphs.Graph
 import android.kotlin.foodclub.views.home.CameraPreviewView
 import android.kotlin.foodclub.views.home.CameraView
 import android.kotlin.foodclub.views.home.ChangePasswordView
@@ -8,19 +7,16 @@ import android.kotlin.foodclub.views.home.CreateRecipeView
 import android.kotlin.foodclub.views.home.DeleteRecipeView
 import android.kotlin.foodclub.views.home.EditProfileSetting
 import android.kotlin.foodclub.views.home.FollowerView
+import android.kotlin.foodclub.views.home.HomeView
 import android.kotlin.foodclub.views.home.MyBasketView
 import android.kotlin.foodclub.views.home.PrivacySetting
 import android.kotlin.foodclub.views.home.SearchView
 import android.kotlin.foodclub.views.home.SettingsView
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.foodclub.ui.theme.BottomBarScreenObject
 import com.example.foodclub.views.home.CreateView
 import com.example.foodclub.views.home.DiscoverView
-import com.example.foodclub.views.home.HomeView
 import android.kotlin.foodclub.views.home.ProfileView
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
