@@ -30,6 +30,9 @@ class ProfileViewModel @AssistedInject constructor(
     private val _profileModel = MutableStateFlow<UserProfileModel?>(null)
     val profileModel: StateFlow<UserProfileModel?> get() = _profileModel
 
+    private val _bookmarkedPosts = MutableStateFlow<List<UserPostsModel>>(listOf())
+    val bookmaredPosts: StateFlow<List<UserPostsModel>> get() = _bookmarkedPosts
+
     private val _error = MutableStateFlow("")
     val error: StateFlow<String> get() = _error
 
@@ -42,7 +45,9 @@ class ProfileViewModel @AssistedInject constructor(
                 popUpTo(Graph.HOME) { inclusive = true }
             }
         } else {
-            getProfileModel(if(userId != 0L) userId else sessionCache.getActiveSession()!!.userId)
+            val id = if(userId != 0L) userId else sessionCache.getActiveSession()!!.userId
+            getProfileModel(id)
+            getBookmarkedPosts(id)
         }
     }
 
@@ -70,6 +75,20 @@ class ProfileViewModel @AssistedInject constructor(
                 is Resource.Success -> {
                     _error.value = ""
                     _profileModel.value = resource.data
+                }
+                is Resource.Error -> {
+                    _error.value = resource.message!!
+                }
+            }
+        }
+    }
+
+    private fun getBookmarkedPosts(userId: Long) {
+        viewModelScope.launch() {
+            when(val resource = repository.retrieveBookmaredPosts(userId)) {
+                is Resource.Success -> {
+                    _error.value = ""
+                    _bookmarkedPosts.value = resource.data!!
                 }
                 is Resource.Error -> {
                     _error.value = resource.message!!

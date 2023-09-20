@@ -75,6 +75,7 @@ fun ProfileView(navController: NavController, userId: Long) {
 
     val error = viewModel.error.collectAsState()
     val profileModelState = viewModel.profileModel.collectAsState()
+    val bookmarkedPostsState = viewModel.bookmaredPosts.collectAsState()
     val sessionUserId = viewModel.myUserId.collectAsState()
 
     LaunchedEffect(userId) {
@@ -102,6 +103,7 @@ fun ProfileView(navController: NavController, userId: Long) {
         val profile = profileModelState.value
         val userPosts = profile!!.userPosts
         val topCreators = profile.topCreators
+        val bookmarkedPosts = bookmarkedPostsState.value
 
         Column (modifier = Modifier
             .fillMaxSize()
@@ -250,13 +252,13 @@ fun ProfileView(navController: NavController, userId: Long) {
                 }
 
 
-                var tabItems = viewModel.getListOfMyRecipes();
+                var tabItems = listOf<UserPostsModel>()
 
                 if(pagerState.currentPage == 0){
                     tabItems = viewModel.getListOfMyRecipes();
                 }
                 else if(pagerState.currentPage == 1){
-                    tabItems = viewModel.getListOfBookmarkedRecipes();
+                    tabItems = bookmarkedPosts
                 }
 
                 HorizontalPager(
