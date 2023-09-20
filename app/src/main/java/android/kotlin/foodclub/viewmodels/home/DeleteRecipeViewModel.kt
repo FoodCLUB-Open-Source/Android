@@ -39,7 +39,7 @@ class DeleteRecipeViewModel @AssistedInject constructor(
                 is Resource.Success -> {
                     _error.value = ""
                     _postData.value = resource.data
-                     setTestData()
+                     setTestData(_postData.value!!.videoLink, _postData.value!!.thumbnailLink)
                 }
                 is Resource.Error -> {
                     _error.value = resource.message!!
@@ -48,13 +48,13 @@ class DeleteRecipeViewModel @AssistedInject constructor(
         }
     }
 
-    private fun setTestData() {
+    private fun setTestData(videoLink: String, thumbnailLink: String) {
         if(_postData.value == null) return
         val post = _postData.value!!
         _postData.value = VideoModel(post.videoId, post.authorDetails, post.videoStats,
-            "https://kretu.sts3.pl/foodclub_videos/daniel_vid2.mp4",
+            videoLink,
             post.currentViewerInteraction, post.description, post.createdAt,
-            "https://kretu.sts3.pl/foodclub_thumbnails/daniel_vid2-thumbnail.jpg")
+            thumbnailLink)
     }
 
     fun deleteCurrentPost() {

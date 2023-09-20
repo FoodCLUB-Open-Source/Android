@@ -1,6 +1,8 @@
 package com.example.foodclub.views.home
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.api.authentication.PostByUserId
+import android.kotlin.foodclub.api.authentication.PostByWorld
 import android.kotlin.foodclub.data.models.DiscoverViewRecipeModel
 import android.kotlin.foodclub.data.models.UserPostsModel
 import android.kotlin.foodclub.views.home.CreateRecipeBottomSheetIngredients
@@ -44,6 +46,7 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -74,15 +77,6 @@ import android.kotlin.foodclub.viewmodels.home.DiscoverViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-
-
-val recipesList = listOf(
-    DiscoverViewRecipeModel("Dwight","11 Hours","Protein","Germany"),
-    DiscoverViewRecipeModel("Jim","10 Hours","Carbs","England"),
-    DiscoverViewRecipeModel("Bob","9 Hours","Protein","France"),
-    DiscoverViewRecipeModel("Michael","24 Hours","Protein","England"),
-    DiscoverViewRecipeModel("Pam","12 Hours","Drinks","England"),
-)
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -250,9 +244,6 @@ fun DiscoverView(navController: NavController) {
         )
 
 
-
-
-
         var tabIndex by remember { mutableStateOf(0) }
 
         TabRow(
@@ -278,24 +269,30 @@ fun DiscoverView(navController: NavController) {
                     modifier = Modifier.background(Color.White),
                     selectedContentColor = Color.Black,
                     onClick = {
-                    tabIndex = index
-                }, text = {
-                    Text(text = data,
-                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-                        color = if (selected) Color.Black else Color(android.graphics.Color.parseColor("#C2C2C2")))
-                })
+                        tabIndex = index
+                    }, text = {
+                        Text(text = data,
+                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                            color = if (selected) Color.Black else Color(android.graphics.Color.parseColor("#C2C2C2")))
+                    })
 
             }
         }
 
-
+        var homePosts: State<List<PostByUserId>>? = null;
+        var worldPosts: State<List<PostByWorld>>? = null;
+        var myFridgePosts: State<List<PostByUserId>>? = null;
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        if (tabIndex == 0 || tabIndex == 2)
+        if (tabIndex == 0 || tabIndex == 2){
             TabHomeDiscover(tabItems2, pagerState1, scope, 12.sp)
+            homePosts = viewModel.postList.collectAsState()
+        }
+
         else if (tabIndex == 1)
             TabHomeDiscover(tabItems3, pagerState1, scope, 12.sp)
+        worldPosts = viewModel.postListPerCategory.collectAsState()
 
 
         Spacer(modifier = Modifier.height(if (tabIndex == 2) 5.dp else 0.dp))
@@ -346,9 +343,7 @@ fun DiscoverView(navController: NavController) {
             }
         }
 
-        val myFridgePosts = viewModel.myFridgePosts.collectAsState()
 
-        Log.i("FRIDGE ___----->",myFridgePosts.value.toString())
 
         HorizontalPager(
             beyondBoundsPageCount = 1,
@@ -370,11 +365,19 @@ fun DiscoverView(navController: NavController) {
                     columns = GridCells.Fixed(2),
                 ) {
 
-                    items(myFridgePosts.value) { dataItem ->
-                        GridItem2(navController,dataItem)
+                    if(homePosts!=null){
+                        items(homePosts!!.value) { dataItem ->
+                            GridItem2(navController,dataItem)
+                        }
                     }
 
+                    else if(worldPosts!=null){
 
+                        items(worldPosts!!.value) { dataItem ->
+                            GridItem2(navController,dataItem)
+                        }
+
+                    }
                 }
 
             }
@@ -382,9 +385,7 @@ fun DiscoverView(navController: NavController) {
         }
 
     }
-
 }
-
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -437,7 +438,7 @@ fun TabHomeDiscover(
 }
 
 @Composable
-fun GridItem2(navController: NavController, dataItem: UserPostsModel) {
+fun GridItem2(navController: NavController, dataItem: PostByUserId) {
 
     val satoshiFamily = FontFamily(
         Font(R.font.satoshi, FontWeight.Medium)
@@ -456,7 +457,7 @@ fun GridItem2(navController: NavController, dataItem: UserPostsModel) {
                 .fillMaxHeight()
         ) {
             Image(
-                painter = rememberAsyncImagePainter(dataItem.thumbnailUrl),
+                painter = rememberAsyncImagePainter(dataItem.thumbnail_url),
                 contentDescription = "",
                 Modifier
                     .fillMaxSize()
@@ -474,7 +475,56 @@ fun GridItem2(navController: NavController, dataItem: UserPostsModel) {
                     color = Color.White,
                     fontSize = 18.sp
                 )
+                Text(
+                    text =  dataItem.title ,
+                    fontFamily = satoshiFamily,
+                    fontSize = 12.sp,
+                    color = Color(231, 231, 231, 200)
+                )
+            }
+        }
 
+    }
+}
+
+@Composable
+fun GridItem2(navController: NavController, dataItem: PostByWorld) {
+
+    val satoshiFamily = FontFamily(
+        Font(R.font.satoshi, FontWeight.Medium)
+    )
+
+    Card(
+        modifier = Modifier
+            .height(272.dp)
+            .width(178.dp)
+            .padding(10.dp), shape = RoundedCornerShape(15.dp)
+    ) {
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+        ) {
+            Image(
+                painter = rememberAsyncImagePainter(dataItem.thumbnail_url),
+                contentDescription = "",
+                Modifier
+                    .fillMaxSize()
+                    .clickable { navController.navigate("DELETE_RECIPE/${dataItem.id}") },
+                contentScale = ContentScale.FillHeight
+            )
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .padding(10.dp), verticalArrangement = Arrangement.Bottom
+            ) {
+                Text(
+                    text = dataItem.title ,
+                    fontFamily = satoshiFamily,
+                    color = Color.White,
+                    fontSize = 18.sp
+                )
                 Text(
                     text =  dataItem.title ,
                     fontFamily = satoshiFamily,
