@@ -1,16 +1,15 @@
 package android.kotlin.foodclub.views.authentication
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.api.retrofit.RetrofitInstance
-import android.kotlin.foodclub.utils.helpers.SessionCache
+import android.kotlin.foodclub.ui.theme.Montserrat
+import android.kotlin.foodclub.ui.theme.PlusJakartaSans
+import android.kotlin.foodclub.utils.composables.CustomPasswordTextField
+import android.kotlin.foodclub.utils.composables.CustomTextField
 import android.kotlin.foodclub.viewmodels.authentication.LogInWithEmailViewModel
-import android.kotlin.foodclub.viewmodels.authentication.LoginErrorCodes
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 
 import androidx.compose.foundation.layout.Column
@@ -30,19 +29,12 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,25 +42,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import okio.IOException
-import java.net.ConnectException
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,30 +60,7 @@ fun LogInWithEmail(navController: NavHostController) {
     val viewModel: LogInWithEmailViewModel = hiltViewModel()
 
     var errorMessage by remember { mutableStateOf<String?>(null) }
-//    val loginStatus by viewModel.loginStatus.observeAsState(initial = 0)
     val loginStatus by viewModel.loginStatus.observeAsState(null)
-    // API
-    //val creditCards by viewModelApi.user.observeAsState(emptyList())
-
-    // API we need to move this part in a onClick function. This will execute on runtime
-    LaunchedEffect(Unit) {
-      //  viewModelApi.fetchUserSignUp( /* there should be parameters since this is a post request */ )
-        // after calling the idea would be to make a Log.D(response)
-    }
-
-
-
-    val montserratFamily = FontFamily(
-        Font(R.font.montserratbold, FontWeight.Bold),
-        Font(R.font.montserratbold, FontWeight.SemiBold),
-        Font(R.font.montserratmedium, FontWeight.Medium)
-    )
-
-    val plusjakartasansFamily = FontFamily(
-
-        Font(R.font.plusjakartasanssemibold, FontWeight.Bold),
-
-    )
 
     Column(
         Modifier
@@ -144,7 +104,7 @@ fun LogInWithEmail(navController: NavHostController) {
 
             Text(
                 text = "Welcome Back!",
-                fontFamily = plusjakartasansFamily,
+                fontFamily = PlusJakartaSans,
                 fontSize = 32.sp,
                 modifier = Modifier.padding(top = 10.dp)
             )
@@ -153,7 +113,7 @@ fun LogInWithEmail(navController: NavHostController) {
 
             Text(
                 text = "Cooking just got social!",
-                fontFamily = montserratFamily,
+                fontFamily = Montserrat,
                 fontSize = 18.sp,
                 color = Color.Gray,
 
@@ -165,116 +125,50 @@ fun LogInWithEmail(navController: NavHostController) {
                 .fillMaxSize()
                 .padding(top = 10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(25.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            var userEmail by remember { mutableStateOf("") }
-            var userPassword by remember { mutableStateOf("") }
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                var username by remember { mutableStateOf("") }
+                var userPassword by remember { mutableStateOf("") }
 
-            TextField(
-                value = userEmail,
-                onValueChange = {
-                    userEmail = it;
-                },
-                modifier = Modifier
-                    .border(1.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(Color(218, 218, 218, 70))
-                    .fillMaxWidth(),
+                var filledUsername by remember { mutableStateOf(false) }
+                var filledPassword by remember { mutableStateOf(false) }
 
-                placeholder = {
-                    Text(
-                        text = "Email",
-                        fontFamily = montserratFamily,
-                        color = Color(218, 218, 218, 238)
-                    )
-                },
-
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color(218, 218, 218, 158),
-                    unfocusedBorderColor = Color(218, 218, 218, 140)
+                CustomTextField(initialValue = username,
+                    placeholder = "Username", keyboardType = KeyboardType.Text,
+                    onCorrectnessStateChange = { filledUsername = !filledUsername },
+                    onValueChange = { username = it }
                 )
 
-            )
+                CustomPasswordTextField(
+                    placeholder = "Password",
+                    strengthValidation = false,
+                    onCorrectnessStateChange = { filledPassword = !filledPassword },
+                    onValueChange = { userPassword = it })
 
-            TextField(
-                value = userPassword,
-                onValueChange = {
-                    userPassword = it;
-                },
-
-                placeholder = {
-                    Text(
-                        text = "Password",
-                        fontFamily = montserratFamily,
-                        color = Color(218, 218, 218, 238)
-                    )
-                },
-
-                modifier =
-                Modifier
-                    .border(1.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(Color(218, 218, 218, 70))
-                    .fillMaxWidth(),
-
-
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color(218, 218, 218, 158),
-                    unfocusedBorderColor = Color(218, 218, 218, 140)
-                )
-
-
-            )
-            val coroutineScope = rememberCoroutineScope();
-
-
-            Button(
-                shape = RectangleShape,
-                modifier = Modifier
-                    .border(1.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
-                    .clip(RoundedCornerShape(10.dp))
-                    .fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(126, 198, 11, 255),
-
-                    ), contentPadding = PaddingValues(15.dp),
-
-                onClick = {
-                    viewModel.logInUser(userEmail, userPassword, navController)
-                }
-
-            ) {
-
-
-                Text(
-                    color = Color.White,
-                    text = "Log in",
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-
-//            when (loginStatus) {
-//                null -> {}
-//                200 -> navController.navigate("home_graph")
-//                LoginErrorCodes.EMPTY_CREDENTIALS -> errorMessage = "Please enter both email and password"
-//                LoginErrorCodes.WRONG_CREDENTIALS -> errorMessage = "Wrong username or password"
-//                LoginErrorCodes.ACCOUNT_NOT_FOUND -> errorMessage = "Account Not found"
-//                LoginErrorCodes.PASSWORD_FORMAT -> errorMessage = "Password must have at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character"
-//                LoginErrorCodes.CONNECTIVITY_ISSUES -> errorMessage = "Connectivity Issues. Please check your internet connection."
-//                LoginErrorCodes.UNKNOWN_ERROR -> errorMessage = "An unexpected error occurred. Please try again later."
-//                LoginErrorCodes.USERNAME_FORMAT -> errorMessage ="Username must only contain letters and numbers"
-//                else -> errorMessage = "Error Code: $loginStatus" // Display other HTTP codes for further analysis or debugging
-//            }
-
-
-            Row() {
                 Text(
                     text = loginStatus ?: "",
                     fontSize = 11.sp,
                     color = Color.Red
                 )
+
+                Button(
+                    onClick = { viewModel.logInUser(username, userPassword, navController) },
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier
+                        .height(56.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .fillMaxWidth(),
+                    enabled = filledUsername && filledPassword,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF7EC60B),
+                        disabledContainerColor = Color(0xFFC9C9C9),
+                        disabledContentColor = Color.White,
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text(text = "Log in", fontSize = 16.sp)
+                }
             }
 
             Row(
@@ -285,7 +179,7 @@ fun LogInWithEmail(navController: NavHostController) {
                 Text(
                     color = Color.Black,
                     text = "Forgot Password?",
-                    fontFamily = montserratFamily,
+                    fontFamily = Montserrat,
                     fontSize = 13.sp,
                     modifier = Modifier.padding(end = 5.dp)
                 )
@@ -296,7 +190,7 @@ fun LogInWithEmail(navController: NavHostController) {
                     },
                     style = TextStyle(
                         color = Color(152, 209, 60),
-                        fontFamily = montserratFamily,
+                        fontFamily = Montserrat,
                         fontSize = 13.sp,
                         textDecoration = TextDecoration.Underline
                     )
@@ -371,7 +265,7 @@ fun LogInWithEmail(navController: NavHostController) {
                 Text(
                     color = Color.Gray,
                     text = "By using FoodCLUB you agree to our",
-                    fontFamily = montserratFamily,
+                    fontFamily = Montserrat,
                     fontSize = 10.sp
                 )
 
@@ -382,7 +276,7 @@ fun LogInWithEmail(navController: NavHostController) {
                     },
                     style = TextStyle(
                         color = Color.Gray,
-                        fontFamily = montserratFamily,
+                        fontFamily = Montserrat,
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold,
                         textDecoration = TextDecoration.Underline
