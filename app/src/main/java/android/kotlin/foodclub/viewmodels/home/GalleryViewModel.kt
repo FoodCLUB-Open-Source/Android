@@ -1,8 +1,10 @@
 package android.kotlin.foodclub.viewmodels.home
 
+import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
 import android.net.Uri
+import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.util.Size
@@ -11,13 +13,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 
-data class MediaImageTest(var id: String)
-{
+data class MediaImageTest(var id: String) {
     var count: Int = 0
     var cover_ID: Long = 0;
     var cover_name = "";
 }
-
 
 
 class GalleryViewModel : ViewModel() {
@@ -26,21 +26,36 @@ class GalleryViewModel : ViewModel() {
 
     //Hard coded data for now
     val ResourceIds: MutableList<Pair<Uri, String>> = mutableListOf()
-    val tests : MutableList<MediaImageTest> = mutableListOf()
-    fun getMediaContent(context: Context, limitSize: Boolean = false, sizeLimit: Int = 10): MutableList<Uri> {
+    val tests: MutableList<MediaImageTest> = mutableListOf()
+    fun getMediaContent(
+        context: Context,
+        limitSize: Boolean = false,
+        sizeLimit: Int = 10
+    ): MutableList<Uri> {
         val imageProjection = arrayOf(
             MediaStore.Images.Media.DISPLAY_NAME,
             MediaStore.Images.Media.SIZE,
             MediaStore.Images.Media.DATE_TAKEN,
             MediaStore.Images.Media._ID
         )
-        val imageSortOrder = "${MediaStore.Images.Media.DATE_TAKEN} DESC"
+        val imageSortOrder = "${MediaStore.Images.ImageColumns.DATE_TAKEN} DESC"
+
+        val selectionArgs: Bundle = Bundle()
+        if (limitSize) {
+            selectionArgs.putInt(ContentResolver.QUERY_ARG_LIMIT, sizeLimit)
+        }
+        val sortArgs = arrayOf(MediaStore.Images.ImageColumns.DATE_TAKEN)
+        selectionArgs.putStringArray(ContentResolver.QUERY_ARG_SORT_COLUMNS, sortArgs)
+        selectionArgs.putInt(
+            ContentResolver.QUERY_ARG_SORT_DIRECTION,
+            ContentResolver.QUERY_SORT_DIRECTION_DESCENDING
+        )
+
         val cursor = context.contentResolver.query(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             imageProjection,
+            selectionArgs,
             null,
-            null,
-            imageSortOrder
         )
 
         val uris = mutableListOf<Uri>()
@@ -63,15 +78,20 @@ class GalleryViewModel : ViewModel() {
                     )
                     // add the URI to the list
 
+                    /*
                     if (limitSize && count >= sizeLimit)
                     {
                         break
                     }
 
+                     */
+
                     uris.add(contentUri)
                     count++;
                     // generate the thumbnail
-                    val thumbnail = (context).contentResolver.loadThumbnail(contentUri, Size(480, 480), null)
+                    val thumbnail =
+                        (context).contentResolver.loadThumbnail(contentUri, Size(480, 480), null)
+                    val y = 0;
                 }
             } ?: kotlin.run {
                 Log.e("TAG", "Cursor is null!")
@@ -81,20 +101,37 @@ class GalleryViewModel : ViewModel() {
         return uris
     }
 
-    fun getVideoMediaContent(context: Context, limitSize: Boolean = false, sizeLimit: Int = 10): MutableList<Uri> {
+    fun getVideoMediaContent(
+        context: Context,
+        limitSize: Boolean = false,
+        sizeLimit: Int = 10
+    ): MutableList<Uri> {
         val imageProjection = arrayOf(
             MediaStore.Video.Media.DISPLAY_NAME,
             MediaStore.Video.Media.SIZE,
             MediaStore.Video.Media.DATE_TAKEN,
             MediaStore.Video.Media._ID
         )
-        val imageSortOrder = "${MediaStore.Video.Media.DATE_TAKEN} DESC"
+        val imageSortOrder = "${MediaStore.Video.VideoColumns.DATE_TAKEN} DESC"
+
+        val selectionArgs: Bundle = Bundle()
+        if (limitSize)
+        {
+            selectionArgs.putInt(ContentResolver.QUERY_ARG_LIMIT, sizeLimit)
+        }
+        val sortArgs = arrayOf(MediaStore.Images.ImageColumns.DATE_TAKEN)
+        selectionArgs.putStringArray(ContentResolver.QUERY_ARG_SORT_COLUMNS, sortArgs)
+        selectionArgs.putInt(
+            ContentResolver.QUERY_ARG_SORT_DIRECTION,
+            ContentResolver.QUERY_SORT_DIRECTION_DESCENDING
+        )
+
         val cursor = context.contentResolver.query(
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
             imageProjection,
+            selectionArgs,
             null,
-            null,
-            imageSortOrder
+            //imageSortOrder
         )
 
         val uris = mutableListOf<Uri>()
@@ -116,15 +153,18 @@ class GalleryViewModel : ViewModel() {
                         id
                     )
                     // add the URI to the list
-
+                    /*
                     if (limitSize && count >= sizeLimit)
                     {
                         break
                     }
+
+                     */
                     uris.add(contentUri)
                     count++;
                     // generate the thumbnail
-                    val thumbnail = (context).contentResolver.loadThumbnail(contentUri, Size(480, 480), null)
+                    //val thumbnail = (context).contentResolver.loadThumbnail(contentUri, Size(480, 480), null)
+
                 }
             } ?: kotlin.run {
                 Log.e("TAG", "Cursor is null!")

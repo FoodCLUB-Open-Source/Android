@@ -1,12 +1,19 @@
 package android.kotlin.foodclub.views.home
 
 import android.Manifest
+import android.content.ContentResolver
+import android.content.ContentUris
+import android.content.Context
+import android.graphics.Bitmap
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.utils.composables.createVideoCaptureUseCase
 import android.kotlin.foodclub.utils.composables.startRecordingVideo
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
+import android.util.Size
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -35,7 +42,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -44,6 +50,7 @@ import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -282,45 +289,19 @@ fun CameraView(
                         Pair(R.drawable.imagecard.toString(), "Image"),
                     )
 
-
-                    IconButton(
-                        onClick = {
-                            //getContent.launch("video/*")
-                            /*
-                            var ResourceDrawables: MutableList<Int> = mutableListOf<Int>();
-                            var ResourceURI: MutableList<String> = mutableListOf<String>();
-
-                            ResourceIds.forEach()
-                            {
-                                    (name, type) ->
-                                if (type == "Image")
-                                {
-                                    ResourceDrawables.add(name.toInt())
-                                }
-                                else
-                                {
-                                    ResourceURI.add(name)
-                                }
-                            }
-
-
-                             */
-
-                            navController.navigate("GALLERY_VIEW/${(R.drawable.app_logo).toByte()}")
-                            //audioEnabled.value = !audioEnabled.value
-
-
-                        },
+                    val bitmap = loadCurrentThumbnail(context = context).asImageBitmap()
+                    Image(
+                        bitmap = bitmap,
+                        contentScale = ContentScale.Crop,
+                        contentDescription = null,
                         modifier = Modifier
                             .align(Alignment.BottomStart)
-                    ) {
-
-                        Icon(
-                            painter = painterResource(if (ResourceIds.isNotEmpty()) ResourceIds[0].first.toInt() else (if (audioEnabled.value) R.drawable.story_border_white else R.drawable.story_border)),
-                            contentDescription = "",
-                            modifier = Modifier.size(64.dp).border(1.dp, Color.Black)
-                        )
-                    }
+                            .clip(RoundedCornerShape(5.dp))
+                            .then(Modifier.size(64.dp).border(2.dp, Color.White, RoundedCornerShape(5.dp)))
+                            .clickable {
+                                navController.navigate("GALLERY_VIEW/${(R.drawable.app_logo).toByte()}")
+                            }
+                    )
                 }
                         Image(
                             painter = painterResource(id = R.drawable.baseline_cameraswitch_24),
@@ -347,4 +328,97 @@ fun CameraView(
             }
         }
     }
+}
+
+
+fun loadCurrentThumbnail(context: Context): Bitmap {
+    val imageProjection = arrayOf(
+        MediaStore.Images.Media._ID,
+        MediaStore.Images.Media.DATE_TAKEN
+    )
+
+    val videoProjection = arrayOf(
+        MediaStore.Video.Media._ID,
+        MediaStore.Video.Media.DATE_TAKEN
+    )
+
+    var uri: Uri = Uri.EMPTY;
+    var timeSinceEpoch = "0";
+
+    val selectionImageArgs: Bundle = Bundle()
+    selectionImageArgs.putInt(ContentResolver.QUERY_ARG_LIMIT, 1)
+    val sortArgs = arrayOf(MediaStore.Images.ImageColumns.DATE_TAKEN)
+    selectionImageArgs.putStringArray(ContentResolver.QUERY_ARG_SORT_COLUMNS, sortArgs)
+    selectionImageArgs.putInt(
+        ContentResolver.QUERY_ARG_SORT_DIRECTION,
+        ContentResolver.QUERY_SORT_DIRECTION_DESCENDING
+    )
+
+    val cursorImage = context.contentResolver.query(
+        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+        imageProjection,
+        selectionImageArgs,
+        null,
+        //imageSortOrder
+    )
+
+    cursorImage.use{
+        it?.let{
+            val idColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+            val dateColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN)
+            while (it.moveToNext()) {
+                val id = it.getLong(idColumn)
+                val date = it.getString(dateColumn)
+                val contentUri = ContentUris.withAppendedId(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    id
+                )
+                uri = contentUri
+                timeSinceEpoch = date //can't parse as Int
+            }
+        } ?: kotlin.run {
+            Log.e("TAG", "Cursor is null!")
+        }
+    }
+
+    val selectionVideoArgs: Bundle = Bundle()
+    selectionVideoArgs.putInt(ContentResolver.QUERY_ARG_LIMIT, 1)
+    val sortVideoArgs = arrayOf(MediaStore.Video.VideoColumns.DATE_TAKEN)
+    selectionVideoArgs.putStringArray(ContentResolver.QUERY_ARG_SORT_COLUMNS, sortVideoArgs)
+    selectionVideoArgs.putInt(
+        ContentResolver.QUERY_ARG_SORT_DIRECTION,
+        ContentResolver.QUERY_SORT_DIRECTION_DESCENDING
+    )
+
+    val cursor = context.contentResolver.query(
+        MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+        videoProjection,
+        selectionVideoArgs,
+        null,
+        //imageSortOrder
+    )
+
+    cursor.use{
+        it?.let{
+            val idColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+            val dateColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN)
+            while (it.moveToNext()) {
+                val id = it.getLong(idColumn)
+                val date = it.getString(dateColumn)
+                val contentUri = ContentUris.withAppendedId(
+                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                    id
+                )
+
+                if (timeSinceEpoch < date)
+                {
+                    uri = contentUri
+                }
+            }
+        } ?: kotlin.run {
+            Log.e("TAG", "Cursor is null!")
+        }
+    }
+
+    return context.contentResolver.loadThumbnail(uri, Size(240, 240), null)
 }
