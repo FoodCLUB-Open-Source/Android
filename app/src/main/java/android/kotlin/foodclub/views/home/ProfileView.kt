@@ -3,6 +3,7 @@ package android.kotlin.foodclub.views.home
 import android.app.Activity
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.activities.MainActivity
+import android.kotlin.foodclub.data.models.BottomSheetItem
 import android.kotlin.foodclub.data.models.UserPostsModel
 import android.kotlin.foodclub.ui.theme.Montserrat
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -54,14 +55,21 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import android.kotlin.foodclub.viewmodels.home.ProfileViewModel
-import android.util.Log
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.launch
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -105,6 +113,8 @@ fun ProfileView(navController: NavController, userId: Long) {
         val topCreators = profile.topCreators
         val bookmarkedPosts = bookmarkedPostsState.value
 
+        var showBottomSheet by remember { mutableStateOf(false) }
+
         Column (modifier = Modifier
             .fillMaxSize()
             .background(Color.White),
@@ -116,13 +126,27 @@ fun ProfileView(navController: NavController, userId: Long) {
                     .padding(top = 70.dp, start = 95.dp),
                 horizontalArrangement = Arrangement.Center
             ) {
-                Image(
-                    painterResource(id = R.drawable.story_user),
-                    contentDescription = "profile_picture",
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(60.dp))
-                        .height(80.dp)
-                        .width(80.dp))
+                Box(if(userId == 0L) Modifier.clickable { showBottomSheet = true } else Modifier) {
+                    Image(
+                        painterResource(id = R.drawable.story_user),
+                        contentDescription = "profile_picture",
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(60.dp))
+                            .height(124.dp)
+                            .width(124.dp))
+                    if(userId == 0L){
+                        Image(
+                            painter = painterResource(R.drawable.profile_picture_change_icon),
+                            contentDescription = "profile picture change icon",
+                            modifier = Modifier.height(46.dp).width(46.dp)
+                                //Use trigonometry to move icon to right bottom corner of profile picture
+                                .offset(
+                                    x = (cos(PI/4)*62 + 39).dp,
+                                    y = (sin(PI/4)*62 + 39).dp
+                                )
+                        )
+                    }
+                }
                 Spacer(modifier = Modifier.width(40.dp))
                 Button(shape = CircleShape,
                     modifier = Modifier
@@ -281,6 +305,19 @@ fun ProfileView(navController: NavController, userId: Long) {
                     }
                 }
             }
+        }
+
+        if(userId == 0L && showBottomSheet) {
+            android.kotlin.foodclub.utils.composables.BottomSheet(
+                itemList = listOf(
+                    BottomSheetItem(1, "Select From Gallery", R.drawable.select_from_gallery) {},
+                    BottomSheetItem(2, "Take Photo", R.drawable.take_photo) {}
+                ),
+                sheetTitle = "Upload Photo",
+//                enableDragHandle = true,
+                onDismiss = { showBottomSheet = false },
+                modifier = Modifier.padding(bottom = 110.dp)
+            )
         }
     }
 
