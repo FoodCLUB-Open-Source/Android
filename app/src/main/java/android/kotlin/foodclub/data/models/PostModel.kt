@@ -8,6 +8,14 @@ data class PostModel(
     val description: String,
     val username: String?,
 
+    val created_at:String,
+    val updated_at:String,
+
+    val post_id:String,
+
+    @SerializedName("category_name")
+    val categoryName: String?,
+
     @SerializedName("profile_picture")
     val profilePictureUrl: String?,
     @SerializedName("video_url")

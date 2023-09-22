@@ -1,12 +1,13 @@
 package android.kotlin.foodclub.viewmodels.home
 
-import android.kotlin.foodclub.api.authentication.PostById
-import android.kotlin.foodclub.api.authentication.PostByWorld
 import android.kotlin.foodclub.api.retrofit.RetrofitInstance
 import android.kotlin.foodclub.data.models.UserPostsModel
+import android.kotlin.foodclub.data.models.UserProfileModel
 import android.kotlin.foodclub.data.models.VideoModel
 import android.kotlin.foodclub.repositories.PostRepository
+import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.helpers.Resource
+import android.kotlin.foodclub.utils.helpers.SessionCache
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,35 +19,34 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DiscoverViewModel @Inject constructor(
-    private val repository: PostRepository
+    private val repository: PostRepository,
+    private val profileRepo: ProfileRepository
 ):ViewModel() {
 
     private val _postList = MutableStateFlow<List<VideoModel>>(listOf())
     val postList: StateFlow<List<VideoModel>> get() = _postList
 
-    private val _postListPerCategory = MutableStateFlow<List<PostByWorld>>(listOf())
-    val postListPerCategory: StateFlow<List<PostByWorld>> get() = _postListPerCategory
-
-    private val _postInfo = MutableStateFlow<List<PostById>>(listOf())
-    val postInfo: StateFlow<List<PostById>> get() = _postInfo
+    private val _postListPerCategory = MutableStateFlow<List<VideoModel>>(listOf())
+    val postListPerCategory: StateFlow<List<VideoModel>> get() = _postListPerCategory
 
     private val _myFridgePosts = MutableStateFlow<List<UserPostsModel>>(listOf())
     val myFridgePosts: StateFlow<List<UserPostsModel>> get() = _myFridgePosts
 
+    private val _profileData = MutableStateFlow<List<UserProfileModel>>(listOf())
+    val profileData: MutableStateFlow<List<UserProfileModel>> get() = _profileData
+
+    lateinit var session:SessionCache
 
     fun getPostsByWorld(worldCategory: Long) {
 
-
         viewModelScope.launch(Dispatchers.Main) {
-            try {
-                val response = RetrofitInstance.retrofitApi.getPostByWorldCategory(worldCategory)
-
-                if (response.isSuccessful) {
-                    _postListPerCategory.value = response.body()!!.posts
+            when(val resource = repository.getWorldCategoryPosts(worldCategory, 10, 1)) {
+                is Resource.Success -> {
+                    _postListPerCategory.value = resource.data!!
                 }
+                is Resource.Error -> {
 
-            } catch (e: Exception) {
-
+                }
             }
 
         }
@@ -54,25 +54,20 @@ class DiscoverViewModel @Inject constructor(
 
     }
 
+    fun getUserData(){
+        viewModelScope.launch {
 
-    fun getPostInfoById(id: Long) {
-        viewModelScope.launch(Dispatchers.Main) {
-
-            try {
-
-                val response1 = RetrofitInstance.retrofitApi.getPostById(id)
-
-
-                if (response1.isSuccessful) {
-                    _postInfo.value = response1.body()!!.data
+            when (val resource = profileRepo.retrieveProfileData(5)) {
+                is Resource.Success -> {
+                    _profileData.value = listOf( resource.data!!)
                 }
 
-            } catch (e: Exception) {
+                is Resource.Error -> {
 
+                }
             }
 
         }
-
     }
 
     fun getPostsByUserId(id: Long) {

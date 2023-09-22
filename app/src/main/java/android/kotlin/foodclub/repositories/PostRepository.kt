@@ -60,6 +60,24 @@ class PostRepository(
         return Resource.Error("Unknown error occurred.")
     }
 
+    suspend fun getWorldCategoryPosts(
+        userId: Long, pageSize: Int? = null, pageNo: Int? = null
+    ): Resource<List<VideoModel>> {
+        val response = try {
+            api.getPostByWorldCategory(userId, pageSize, pageNo)
+        } catch (e: IOException) {
+            return Resource.Error("Cannot retrieve data. Check your internet connection and try again.")
+        } catch (e: Exception) {
+            return Resource.Error("Unknown error occurred.")
+        }
+
+        if(response.isSuccessful && response.body() != null && response.body()?.posts != null
+            && response.body()?.posts?.isEmpty() == false){
+            return Resource.Success(response.body()!!.posts.map { mapDtoToModel(it) })
+        }
+        return Resource.Error("Unknown error occurred.")
+    }
+
     suspend fun deletePost(id: Long): Resource<Boolean> {
         val response = try {
             api.deletePost(id)
