@@ -24,6 +24,7 @@ class ProfileViewModel @AssistedInject constructor(
     @Assisted private val userId: Long,
     @Assisted private val navController: NavController
 ) : ViewModel() {
+
     private val _myUserId = MutableStateFlow(sessionCache.getActiveSession()?.userId ?: 0)
     val myUserId: StateFlow<Long> get() = _myUserId
 

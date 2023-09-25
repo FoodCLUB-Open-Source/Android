@@ -1,12 +1,10 @@
 package com.example.foodclub.views.home
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.api.authentication.PostByWorld
-import android.kotlin.foodclub.data.models.DiscoverViewRecipeModel
 import android.kotlin.foodclub.data.models.UserPostsModel
+import android.kotlin.foodclub.data.models.UserProfileModel
 import android.kotlin.foodclub.data.models.VideoModel
 import android.kotlin.foodclub.views.home.CreateRecipeBottomSheetIngredients
-import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -106,12 +104,16 @@ fun DiscoverView(navController: NavController) {
 
     val viewModel: DiscoverViewModel = hiltViewModel()
 
+    //Switch with WORLD categories (Yet to get the list..)=>
     viewModel.getPostsByWorld(197)
-    viewModel.getPostsByUserId(197)
-    viewModel.getPostInfoById(197)
+
+    //Switch with current logged in userId=>
+    viewModel.getPostsByUserId(5)
+
+    //Switch with current logged in userId=>
     viewModel.myFridgePosts(5)
 
-
+    viewModel.getUserData();
 
 
     Column(modifier = Modifier
@@ -280,19 +282,29 @@ fun DiscoverView(navController: NavController) {
         }
 
         var homePosts: State<List<VideoModel>>? = null;
-        var worldPosts: State<List<PostByWorld>>? = null;
-        var myFridgePosts: State<List<VideoModel>>? = null;
+        var worldPosts: State<List<VideoModel>>? = null;
+        var myFridgePosts: State<List<UserPostsModel>>? = null;
+
+        var profileData: State<List<UserProfileModel>>? = null;
+        profileData = viewModel.profileData.collectAsState()
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        if (tabIndex == 0 || tabIndex == 2){
+        if (tabIndex == 0){
             TabHomeDiscover(tabItems2, pagerState1, scope, 12.sp)
             homePosts = viewModel.postList.collectAsState()
         }
 
-        else if (tabIndex == 1)
+        else if (tabIndex == 1){
             TabHomeDiscover(tabItems3, pagerState1, scope, 12.sp)
-        worldPosts = viewModel.postListPerCategory.collectAsState()
+            worldPosts = viewModel.postListPerCategory.collectAsState()
+        }
+
+        else if(tabIndex == 2){
+            TabHomeDiscover(tabItems2, pagerState1, scope, 12.sp)
+            myFridgePosts = viewModel.myFridgePosts.collectAsState()
+        }
+
 
 
         Spacer(modifier = Modifier.height(if (tabIndex == 2) 5.dp else 0.dp))
@@ -367,16 +379,22 @@ fun DiscoverView(navController: NavController) {
 
                     if(homePosts!=null){
                         items(homePosts!!.value) { dataItem ->
-                            GridItem2(navController,dataItem)
+                            GridItem2(navController,dataItem,profileData.value.get(0))
                         }
                     }
 
                     else if(worldPosts!=null){
 
                         items(worldPosts!!.value) { dataItem ->
-                            GridItem2(navController,dataItem)
+                            GridItem2(navController,dataItem,profileData.value.get(0))
                         }
 
+                    }
+
+                    else if(myFridgePosts!=null){
+                        items(myFridgePosts!!.value) { dataItem ->
+                            GridItem2(navController,dataItem,profileData.value.get(0))
+                        }
                     }
                 }
 
@@ -438,7 +456,7 @@ fun TabHomeDiscover(
 }
 
 @Composable
-fun GridItem2(navController: NavController, dataItem: VideoModel) {
+fun GridItem2(navController: NavController, dataItem: VideoModel,userProfile: UserProfileModel) {
 
     val satoshiFamily = FontFamily(
         Font(R.font.satoshi, FontWeight.Medium)
@@ -467,19 +485,20 @@ fun GridItem2(navController: NavController, dataItem: VideoModel) {
             Column(
                 Modifier
                     .fillMaxSize()
-                    .padding(10.dp), verticalArrangement = Arrangement.Bottom
+                    .padding(10.dp)
+                    , verticalArrangement = Arrangement.Bottom
             ) {
                 Text(
-                    text = dataItem.videoId.toString() ,
+                    text = userProfile.username,
                     fontFamily = satoshiFamily,
                     color = Color.White,
                     fontSize = 18.sp
                 )
                 Text(
-                    text =  dataItem.description ,
+                    text =  dataItem.createdAt ,
                     fontFamily = satoshiFamily,
-                    fontSize = 12.sp,
-                    color = Color(231, 231, 231, 200)
+                    fontSize = 14.sp,
+                    color= Color.White
                 )
             }
         }
@@ -488,7 +507,7 @@ fun GridItem2(navController: NavController, dataItem: VideoModel) {
 }
 
 @Composable
-fun GridItem2(navController: NavController, dataItem: PostByWorld) {
+fun GridItem2(navController: NavController, dataItem: UserPostsModel,userProfile: UserProfileModel) {
 
     val satoshiFamily = FontFamily(
         Font(R.font.satoshi, FontWeight.Medium)
@@ -507,7 +526,7 @@ fun GridItem2(navController: NavController, dataItem: PostByWorld) {
                 .fillMaxHeight()
         ) {
             Image(
-                painter = rememberAsyncImagePainter(dataItem.thumbnail_url),
+                painter = rememberAsyncImagePainter(dataItem.thumbnailUrl),
                 contentDescription = "",
                 Modifier
                     .fillMaxSize()
@@ -520,17 +539,12 @@ fun GridItem2(navController: NavController, dataItem: PostByWorld) {
                     .padding(10.dp), verticalArrangement = Arrangement.Bottom
             ) {
                 Text(
-                    text = dataItem.title ,
+                    text = dataItem.totalLikes.toString() ,
                     fontFamily = satoshiFamily,
                     color = Color.White,
                     fontSize = 18.sp
                 )
-                Text(
-                    text =  dataItem.title ,
-                    fontFamily = satoshiFamily,
-                    fontSize = 12.sp,
-                    color = Color(231, 231, 231, 200)
-                )
+
             }
         }
 

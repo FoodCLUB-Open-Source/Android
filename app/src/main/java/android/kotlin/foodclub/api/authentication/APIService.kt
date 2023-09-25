@@ -9,6 +9,7 @@ import android.kotlin.foodclub.api.responses.RetrieveFollowerListResponse
 import android.kotlin.foodclub.api.responses.RetrieveFollowingListResponse
 import android.kotlin.foodclub.api.responses.RetrieveHomepagePostList
 import android.kotlin.foodclub.api.responses.RetrieveProfileResponse
+import android.kotlin.foodclub.api.responses.RetrieveWorldCategoryPostList
 import android.kotlin.foodclub.data.models.SignUpError
 import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -58,23 +59,6 @@ data class ChangePasswordInformation(
     val username: String,
     val verification_code: String,
     val new_password: String,
-)
-
-data class PostByWorld(
-    val id: String,
-    val user_id:String,
-    val title:String,
-    val description:String,
-    val created_at:String,
-    val updated_at:String,
-    val post_id:String,
-    val category_name:String,
-    val video_url:String,
-    val thumbnail_url:String
-)
-
-data class GetPostByWorld(
-    val posts:List<PostByWorld>
 )
 
 data class PostById(
@@ -171,10 +155,12 @@ interface API {
     ): Response<DeletePostResponse>
 
 
-    @GET("posts/category/{Id}")
+    @GET("posts/category/{userId}")
     suspend fun getPostByWorldCategory(
-        @Path("Id") categoryId: Long,
-    ):Response<GetPostByWorld>
+        @Path("userId") categoryId: Long,
+        @Query("page_size") pageSize: Int?,
+        @Query("page_number") pageNo: Int?
+    ):Response<RetrieveWorldCategoryPostList>
 
     @GET("posts/{Id}")
     suspend fun getPostById(
