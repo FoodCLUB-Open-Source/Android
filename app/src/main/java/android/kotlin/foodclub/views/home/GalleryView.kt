@@ -223,8 +223,10 @@ public fun GalleryView(navController: NavController, firstImage: String, itemsPe
                                 .border(1.dp, Color.White, shape = RoundedCornerShape(20.dp))
                                 .then(
                                     if (selectedImageOption) {
-                                        Modifier.background(Color(0xFF7EC60B),
-                                            shape = RoundedCornerShape(20.dp))
+                                        Modifier.background(
+                                            Color(0xFF7EC60B),
+                                            shape = RoundedCornerShape(20.dp)
+                                        )
                                     } else {
                                         Modifier.background(
                                             Color.Transparent,
@@ -261,8 +263,10 @@ public fun GalleryView(navController: NavController, firstImage: String, itemsPe
                                 .border(1.dp, Color.White, shape = RoundedCornerShape(20.dp))
                                 .then(
                                     if (!selectedImageOption) {
-                                        Modifier.background(Color(0xFF7EC60B),
-                                            shape = RoundedCornerShape(20.dp))
+                                        Modifier.background(
+                                            Color(0xFF7EC60B),
+                                            shape = RoundedCornerShape(20.dp)
+                                        )
                                     } else {
                                         Modifier.background(
                                             Color.Transparent,
@@ -398,6 +402,7 @@ fun GalleryImageTab(images: List<Uri>, itemsPerRow: Int = 3, context: Context) {
                 }
             }
         }
+        //Box(modifier = Modifier.fillMaxWidth().padding(5.dp))
     }
 }
 
