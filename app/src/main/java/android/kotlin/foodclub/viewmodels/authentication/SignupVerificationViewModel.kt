@@ -4,6 +4,7 @@ import android.kotlin.foodclub.api.authentication.SignUpResponseMessage
 import android.kotlin.foodclub.api.authentication.VerificationCodeRequestData
 import android.kotlin.foodclub.api.authentication.VerificationCodeResendData
 import android.kotlin.foodclub.api.retrofit.RetrofitInstance
+import android.kotlin.foodclub.data.models.Session
 import android.kotlin.foodclub.utils.enums.ApiCallStatus
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -11,15 +12,24 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import android.kotlin.foodclub.navigation.graphs.AuthScreen
 import android.kotlin.foodclub.navigation.graphs.Graph
+import android.kotlin.foodclub.repositories.AuthRepository
+import android.kotlin.foodclub.utils.helpers.Resource
+import android.kotlin.foodclub.utils.helpers.SessionCache
+import android.kotlin.foodclub.utils.helpers.ValueParser
 import com.google.gson.Gson
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import retrofit2.Response
 import java.io.IOException
 import java.lang.Exception
+import javax.inject.Inject
 
-class SignupVerificationViewModel : ViewModel() {
+@HiltViewModel
+class SignupVerificationViewModel @Inject constructor(
+    val repository: AuthRepository,
+    private val sessionCache: SessionCache
+) : ViewModel() {
     private val _status = MutableStateFlow<ApiCallStatus>(ApiCallStatus.DONE)
     val status: StateFlow<ApiCallStatus> get() = _status
 
@@ -30,7 +40,7 @@ class SignupVerificationViewModel : ViewModel() {
     val errorOccurred: StateFlow<Boolean> get() = _errorOccurred
 
     private val _username = MutableStateFlow<String?>(null)
-    val username: StateFlow<String?> get() = _username
+    private val _password = MutableStateFlow<String?>(null)
 
     private val _navController = MutableStateFlow<NavHostController?>(null)
     val navController: StateFlow<NavHostController?> get() = _navController
@@ -53,7 +63,7 @@ class SignupVerificationViewModel : ViewModel() {
                     _message.value = response.body()?.message?.replaceFirstChar(Char::uppercase).toString()
                 } else {
                     _errorOccurred.value = true
-                    checkError(response)
+                    _message.value = ValueParser.errorResponseToMessage(response)
                 }
             } catch (e: IOException) {
                 _errorOccurred.value = true
@@ -85,10 +95,10 @@ class SignupVerificationViewModel : ViewModel() {
                 if(response.isSuccessful) {
                     _errorOccurred.value = false
                     _message.value = ""
-                    navController.value?.navigate(AuthScreen.Login.route)
+                    logInUser()
                 } else {
                     _errorOccurred.value = true
-                    checkError(response)
+                    _message.value = ValueParser.errorResponseToMessage(response)
                 }
             } catch(e: IOException) {
                 _errorOccurred.value = true
@@ -101,27 +111,39 @@ class SignupVerificationViewModel : ViewModel() {
         }
     }
 
-    private fun checkError(response: Response<SignUpResponseMessage>) {
-        if(response.errorBody() == null) {
-            _message.value = "Unknown error occurred."
+    private fun logInUser() {
+        if (_password.value == null) {
+            _navController.value?.navigate(AuthScreen.Login.route)
             return
         }
-        Log.d("SignupVerificationViewModel", "errorResponse: ${response.errorBody()?.string()}")
-        val errorResponse = Gson().fromJson(response.errorBody()?.string(), SignUpResponseMessage::class.java)
 
-        _message.value = errorResponse.message
-
-        if(_message.value.isEmpty()){
-            if(errorResponse.errors.isNotEmpty()) {
-                _message.value = "Input data are invalid. Check mistakes and try again."
-            } else {
-                _message.value = "Unknown error occurred."
+        viewModelScope.launch() {
+            when(val resource = repository.signIn(_username.value!!, _password.value!!)) {
+                is Resource.Success -> {
+                    _errorOccurred.value = false
+                    _message.value = ""
+                    setSession(resource.data!!.id.toLong())
+                    _navController.value?.navigate(Graph.HOME) { popUpTo(Graph.AUTHENTICATION) { inclusive = true } }
+                }
+                is Resource.Error -> {
+                    _errorOccurred.value = true
+                    _message.value = resource.message!!
+                    _navController.value?.navigate(AuthScreen.Login.route)
+                }
             }
         }
     }
 
-    fun setData(navController: NavHostController, username: String?) {
+    private fun setSession(userId: Long) {
+//        if(sessionCache == null) return
+        if(sessionCache.getActiveSession() != null) sessionCache.clearSession()
+        sessionCache.saveSession(Session(userId))
+        Log.d("AccountVerification", "Logged in user: $userId")
+    }
+
+    fun setData(navController: NavHostController, username: String?, password: String?) {
         _navController.value = navController
         _username.value = username
+        _password.value = password
     }
 }
