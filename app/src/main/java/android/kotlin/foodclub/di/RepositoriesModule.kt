@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.di
 
 import android.kotlin.foodclub.api.authentication.API
+import android.kotlin.foodclub.repositories.AuthRepository
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.repositories.ProfileRepository
 import dagger.Module
@@ -22,5 +23,11 @@ object RepositoriesModule {
     @Singleton
     fun providePostRepository(api: API): PostRepository {
         return PostRepository(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(api: API): AuthRepository {
+        return AuthRepository(api)
     }
 }
