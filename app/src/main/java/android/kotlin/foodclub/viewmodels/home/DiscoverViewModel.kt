@@ -1,111 +1,110 @@
-package com.example.foodclub.viewmodels.home
+package android.kotlin.foodclub.viewmodels.home
 
-import android.kotlin.foodclub.data.models.DiscoverViewRecipeModel
-import android.kotlin.foodclub.data.models.MyRecipeModel
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.kotlin.foodclub.api.retrofit.RetrofitInstance
+import android.kotlin.foodclub.data.models.UserPostsModel
+import android.kotlin.foodclub.data.models.UserProfileModel
+import android.kotlin.foodclub.data.models.VideoModel
+import android.kotlin.foodclub.repositories.PostRepository
+import android.kotlin.foodclub.repositories.ProfileRepository
+import android.kotlin.foodclub.utils.helpers.Resource
+import android.kotlin.foodclub.utils.helpers.SessionCache
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class DiscoverViewModel : ViewModel() {
+@HiltViewModel
+class DiscoverViewModel @Inject constructor(
+    private val repository: PostRepository,
+    private val profileRepo: ProfileRepository
+):ViewModel() {
 
+    private val _postList = MutableStateFlow<List<VideoModel>>(listOf())
+    val postList: StateFlow<List<VideoModel>> get() = _postList
 
-    var data = arrayListOf<DiscoverViewRecipeModel>()
-    var data1 = arrayListOf<DiscoverViewRecipeModel>()
+    private val _postListPerCategory = MutableStateFlow<List<VideoModel>>(listOf())
+    val postListPerCategory: StateFlow<List<VideoModel>> get() = _postListPerCategory
 
-    var categoriesColor by mutableStateOf(Color(203, 203, 203, 255))
-    var worldColor by mutableStateOf(Color(203, 203, 203, 255))
-    var myFridgeColor by mutableStateOf(Color(203, 203, 203, 255))
-    var categoriesDecoration by mutableStateOf(TextDecoration.None)
-    var worldDecoration by mutableStateOf(TextDecoration.None)
-    var myFridgeDecoration by mutableStateOf(TextDecoration.None)
+    private val _myFridgePosts = MutableStateFlow<List<UserPostsModel>>(listOf())
+    val myFridgePosts: StateFlow<List<UserPostsModel>> get() = _myFridgePosts
 
-    var proteinColor by mutableStateOf(Color(203, 203, 203, 255))
-    var carbsColor by mutableStateOf(Color(203, 203, 203, 255))
-    var plantBasedColor by mutableStateOf(Color(203, 203, 203, 255))
-    var drinksColor by mutableStateOf(Color(203, 203, 203, 255))
-    var proteinDecoration by mutableStateOf(TextDecoration.None)
-    var carbsDecoration by mutableStateOf(TextDecoration.None)
-    var plantBasedDecoration by mutableStateOf(TextDecoration.None)
-    var drinksDecoration by mutableStateOf(TextDecoration.None)
+    private val _profileData = MutableStateFlow<List<UserProfileModel>>(listOf())
+    val profileData: MutableStateFlow<List<UserProfileModel>> get() = _profileData
 
+    lateinit var session:SessionCache
 
-    fun getData() {
-        data.add(DiscoverViewRecipeModel("Emily", "19 hours ago"))
-        data.add(DiscoverViewRecipeModel("Emily", "19 hours ago"))
-        data.add(DiscoverViewRecipeModel("Emily", "19 hours ago"))
-        data.add(DiscoverViewRecipeModel("Emily", "19 hours ago"))
-        data.add(DiscoverViewRecipeModel("Emily", "19 hours ago"))
+    fun getPostsByWorld(worldCategory: Long) {
 
-        data1.add(DiscoverViewRecipeModel("Emily", "19 hours ago"))
-        data1.add(DiscoverViewRecipeModel("Emily", "19 hours ago"))
-        data1.add(DiscoverViewRecipeModel("Emily", "19 hours ago"))
+        viewModelScope.launch(Dispatchers.Main) {
+            when(val resource = repository.getWorldCategoryPosts(worldCategory, 10, 1)) {
+                is Resource.Success -> {
+                    _postListPerCategory.value = resource.data!!
+                }
+                is Resource.Error -> {
+
+                }
+            }
+
+        }
+
 
     }
 
-    fun getPages(): List<ArrayList<DiscoverViewRecipeModel>> {
-        var pages = listOf(
-            data, data1
-        )
+    fun getUserData(){
+        viewModelScope.launch {
 
-        return pages;
+            when (val resource = profileRepo.retrieveProfileData(5)) {
+                is Resource.Success -> {
+                    _profileData.value = listOf( resource.data!!)
+                }
+
+                is Resource.Error -> {
+
+                }
+            }
+
+        }
     }
 
-    fun showFollowers() {
-        //  navController.navigate("FOLLOWER_VIEW")
-    }
+    fun getPostsByUserId(id: Long) {
 
-    fun showFollowings() {
-        // Jump to FollowersFollowingActivity
-    }
+        viewModelScope.launch {
+            when(val resource = repository.getHomepagePosts(id, 10, 1)) {
+                is Resource.Success -> {
+                    _postList.value = resource.data!!
+                }
+                is Resource.Error -> {
 
-//    fun changeMyRecipeSliderColor() {
-//
-//        myRecipeSliderColor = Color.Black
-//        myRecipeTextDecoration = TextDecoration.Underline
-//    }
-//
-//    fun changeBookmarkedSliderColor() {
-//        bookmarkedSliderColor = Color.Black
-//        bookmarkedTextDecoration = TextDecoration.Underline
-//    }
-//
-//    fun reverseMyRecipeSliderColor() {
-//
-//        myRecipeSliderColor = Color(203, 203, 203, 255)
-//        myRecipeTextDecoration = TextDecoration.None
-//    }
-//
-//    fun reverseBookmarkedSliderColor() {
-//        bookmarkedSliderColor = Color(203, 203, 203, 255)
-//        bookmarkedTextDecoration = TextDecoration.None
-//
-//    }
+                }
+            }
 
-    fun runUiChange(index:Int){
-
-        for(i in 0..2){
-             if(i == index){
-                 myFridgeColor = Color.Black
-                 myFridgeDecoration = TextDecoration.Underline
-             }
         }
 
     }
 
-    fun runUiChange1(index:Int){
+    fun myFridgePosts(id: Long) {
 
-        for(i in 0..3){
-            if(i == index){
-                myFridgeColor = Color.Black
-                myFridgeDecoration = TextDecoration.Underline
+        viewModelScope.launch(Dispatchers.Main) {
+            try {
+                val response = RetrofitInstance.retrofitApi.retrieveProfileData(id, 1, 1)
+
+                if (response.isSuccessful) {
+                    _myFridgePosts.value = response.body()!!.data.userPosts
+                }
+
+            } catch (e: Exception) {
+
             }
+
         }
 
     }
 
 }
+
+
+

@@ -2,11 +2,13 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'com.google.relay' version '0.3.02'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
     namespace 'android.kotlin.foodclub'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "android.kotlin.foodclub"
@@ -57,19 +59,31 @@ dependencies {
     implementation 'androidx.compose.ui:ui'
     implementation 'androidx.compose.ui:ui-graphics'
     implementation 'androidx.compose.ui:ui-tooling-preview'
+    //implementation 'androidx.compose.material3:material3:1.1.0-alpha06'
+    implementation platform('androidx.compose:compose-bom:2022.10.00')    
     implementation 'androidx.compose.material3:material3:1.1.0-alpha08'
+
+    implementation platform('androidx.compose:compose-bom:2022.10.00')
+
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+
     //implementation 'androidx.compose.material3:material3:1.2.0-alpha02'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
+    androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
+    androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
+    androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
+    androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
 
     implementation "androidx.navigation:navigation-compose:2.6.0"
     implementation "androidx.core:core-splashscreen:1.0.1"
-    implementation 'androidx.compose.foundation:foundation:1.4.1'
+    implementation("androidx.compose.foundation:foundation:1.6.0-alpha01")
+//    implementation 'androidx.compose.foundation:foundation:1.4.1'
     implementation 'com.google.accompanist:accompanist-systemuicontroller:0.31.2-alpha'
 
     // video dependencies
@@ -86,7 +100,32 @@ dependencies {
     implementation "androidx.camera:camera-view:1.2.1"
     implementation "androidx.camera:camera-extensions:1.2.1"
     implementation "com.google.accompanist:accompanist-permissions:0.23.1"
+    implementation "com.google.accompanist:accompanist-pager:0.27.1"
 
     // Lottie animations
     implementation "com.airbnb.android:lottie-compose:4.2.0"
+
+    // Jetpack Compose
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07'
+    implementation 'androidx.compose.runtime:runtime-livedata:1.0.4'
+
+
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+    // FOR LOADING IMAGES-->
+    implementation("io.coil-kt:coil-compose:2.0.0-rc01")
+   
+
+    // Hilt Dependency Injection
+    implementation("com.google.dagger:hilt-android:2.44")
+    kapt("com.google.dagger:hilt-android-compiler:2.44")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+
+}
+
+// Allow references to generated code
+kapt {
+    correctErrorTypes = true
+
 }

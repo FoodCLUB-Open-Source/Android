@@ -1,150 +1,167 @@
 package com.example.foodclub.views.home
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.data.models.DiscoverViewRecipeModel
-import android.kotlin.foodclub.data.models.MyRecipeModel
+import android.kotlin.foodclub.data.models.UserPostsModel
+import android.kotlin.foodclub.data.models.UserProfileModel
+import android.kotlin.foodclub.data.models.VideoModel
+import android.kotlin.foodclub.views.home.CreateRecipeBottomSheetIngredients
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerDefaults
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.foodclub.viewmodels.home.DiscoverViewModel
-import com.example.foodclub.viewmodels.home.ProfileViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
+import android.kotlin.foodclub.viewmodels.home.DiscoverViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun DiscoverView() {
+fun DiscoverView(navController: NavController) {
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 240.dp
+
+    var isSmallScreen by remember { mutableStateOf(false) }
+
+    if (screenHeight <= 440.dp) {
+        isSmallScreen = true
+    }
     val systemUiController = rememberSystemUiController()
     SideEffect {
         systemUiController.setSystemBarsColor(
-            color = Color.White,
-            darkIcons = true
+            color = Color.White, darkIcons = true
         )
     }
+
 
     val montserratFamily1 = FontFamily(
 
         Font(R.font.montserratbold, FontWeight.Bold),
         Font(R.font.montserratmedium, FontWeight.Medium)
 
-        )
+    )
 
 
+    val viewModel: DiscoverViewModel = hiltViewModel()
 
-    val viewModel: DiscoverViewModel = viewModel()
-    val pages = viewModel.getPages();
+    //Switch with WORLD categories (Yet to get the list..)=>
+    viewModel.getPostsByWorld(197)
 
-    viewModel.getData()
-    Column(modifier = Modifier.fillMaxSize()) {
+    //Switch with current logged in userId=>
+    viewModel.getPostsByUserId(5)
 
+    //Switch with current logged in userId=>
+    viewModel.myFridgePosts(5)
 
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 60.dp, end = 20.dp, start = 20.dp, bottom = 10.dp),
-            horizontalArrangement = Arrangement.spacedBy(5.dp,Alignment.Start)) {
-
-            Column() {
+    viewModel.getUserData();
 
 
-                Text(color = Color.Black,
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .background(Color.White),
+        horizontalAlignment = Alignment.CenterHorizontally) {
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 60.dp, end = 20.dp, start = 20.dp, bottom = 20.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            Column(  ) {
+
+                Text(
+                    color = Color.Black,
                     text = "Hi Emily,",
 
                     fontFamily = montserratFamily1,
-                    fontSize = 25.sp,
+                    fontSize = if (isSmallScreen == true) 22.sp else 25.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 7.dp),
                     style = TextStyle(letterSpacing = -1.sp)
                 )
 
-                Text(color = Color.Black,
+                Text(
+                    color = Color.Black,
                     text = "Let's get cooking!",
                     fontFamily = montserratFamily1,
-                    fontSize = 25.sp,
+                    fontSize = if (isSmallScreen == true) 20.sp else 23.sp,
                     fontWeight = FontWeight.Medium,
-                    style = TextStyle(letterSpacing = -1.sp))
+                    style = TextStyle(letterSpacing = -1.sp)
+                )
             }
 
+            Spacer(modifier = Modifier.weight(1f))
 
-
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                ,horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-
-                Button(shape = CircleShape,
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .height(53.dp)
-                        .width(53.dp),
-
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor =  Color(245, 245, 245, 255),
-
-                        ),
-                    contentPadding = PaddingValues(),
-
-                    onClick = {
-
-
-
-                    }
-
-                ) {
-
-                    Image(
-                        painter = painterResource(id = R.drawable.vector),
-                        contentDescription = "",
-
-                    )
-
-                }
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
 
                 Button(shape = CircleShape,
                     modifier = Modifier
                         .clip(CircleShape)
-                        .height(53.dp)
-                        .width(53.dp),
+                        .height(40.dp)
+                        .width(40.dp),
 
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(245, 245, 245, 255),
@@ -154,7 +171,34 @@ fun DiscoverView() {
 
                     onClick = {
 
+                        navController.navigate("SEARCH_VIEW")
 
+                    }
+
+                ) {
+
+                    Image(
+                        painter = painterResource(id = R.drawable.frame_1171275072),
+                        contentDescription = "",
+                    )
+
+                }
+
+                Button(shape = CircleShape,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .height(40.dp)
+                        .width(40.dp),
+
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(245, 245, 245, 255),
+
+                        ),
+                    contentPadding = PaddingValues(),
+
+                    onClick = {
+
+                        navController.navigate("BASKET_VIEW")
 
                     }
 
@@ -165,268 +209,344 @@ fun DiscoverView() {
                         painter = painterResource(id = R.drawable.vector__1_),
                         contentDescription = "",
 
-                    )
+                        )
 
                 }
 
             }
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 25.dp)
-            ,
-
-            horizontalArrangement = Arrangement.spacedBy(34.dp, Alignment.CenterHorizontally)
-
-
+        val initialPage: Int? = 0;
+        val pagerState1 = rememberPagerState(
+            initialPage = initialPage ?: 0,
+            initialPageOffsetFraction = 0f
         ) {
+            4
+        };
 
-            ClickableText(
+        val fling = PagerDefaults.flingBehavior(
+            state = pagerState1, lowVelocityAnimationSpec = tween(
+                easing = LinearEasing, durationMillis = 300
+            )
+        )
 
-                onClick = {
-//                    viewModel.changeMyRecipeSliderColor()
-//                    viewModel.reverseBookmarkedSliderColor()
-                    viewModel.runUiChange(1);
-                },
+        val scope = rememberCoroutineScope();
 
-                text =  AnnotatedString("Categories"),
-                style = TextStyle(
-                    color = viewModel.categoriesColor,
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 16.sp,
-                    textDecoration = viewModel.categoriesDecoration ,
 
+        val tabItems1 = listOf(
+            "Categories", "World", "My Fridge"
+        )
+
+        val tabItems2 = listOf(
+            "Proteins", "Carbs", "Plant Based", "Drinks"
+        )
+
+        val tabItems3 = listOf(
+            "England", "Italy", "France", "Germany"
+        )
+
+
+        var tabIndex by remember { mutableStateOf(0) }
+
+        TabRow(
+            selectedTabIndex = tabIndex, modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .background(Color.White),
+            containerColor = Color.White,
+            contentColor = Color.White,
+            divider = {},
+            indicator = { tabPositions ->
+                TabRowDefaults.Indicator(
+                    modifier = Modifier.tabIndicatorOffset(tabPositions[tabIndex]),
+                    height = 2.dp,
+                    color = Color.Black
                 )
+            }
+        ) {
+            tabItems1.forEachIndexed { index, data ->
+                val selected = tabIndex == index
 
-            )
+                Tab(selected = selected,
+                    modifier = Modifier.background(Color.White),
+                    selectedContentColor = Color.Black,
+                    onClick = {
+                        tabIndex = index
+                    }, text = {
+                        Text(text = data,
+                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                            color = if (selected) Color.Black else Color(android.graphics.Color.parseColor("#C2C2C2")))
+                    })
 
-
-            ClickableText(
-                onClick = {
-//                    viewModel.changeBookmarkedSliderColor()
-//                    viewModel.reverseMyRecipeSliderColor()
-                    viewModel.runUiChange(2);
-                },
-
-                text =  AnnotatedString("World"),
-                style = TextStyle(
-
-                    color = viewModel.worldColor ,
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 16.sp,
-                    textDecoration =  viewModel.worldDecoration,
-
-
-                    )
-            )
-
-            ClickableText(
-                onClick = {
-//                    viewModel.changeBookmarkedSliderColor()
-//                    viewModel.reverseMyRecipeSliderColor()
-                    viewModel.runUiChange(3);
-                },
-
-                text =  AnnotatedString("My Fridge!"),
-                style = TextStyle(
-
-                    color = viewModel.myFridgeColor,
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 16.sp,
-                    textDecoration = viewModel.myFridgeDecoration,
-
-
-                    )
-            )
-
+            }
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 30.dp)
-            ,
+        var homePosts: State<List<VideoModel>>? = null;
+        var worldPosts: State<List<VideoModel>>? = null;
+        var myFridgePosts: State<List<UserPostsModel>>? = null;
 
-            horizontalArrangement = Arrangement.spacedBy(30.dp, Alignment.CenterHorizontally)
+        var profileData: State<List<UserProfileModel>>? = null;
+        profileData = viewModel.profileData.collectAsState()
 
+        Spacer(modifier = Modifier.height(10.dp))
 
-        ) {
-
-            ClickableText(
-
-                onClick = {
-//                    viewModel.()
-//                    viewModel.reverseBookmarkedSliderColor()
-
-                },
-
-                text =  AnnotatedString("Protein"),
-                style = TextStyle(
-                    color = viewModel.proteinColor,
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 14.sp,
-                    textDecoration = viewModel.proteinDecoration,
-
-                )
-
-            )
-
-
-            ClickableText(
-                onClick = {
-//                    viewModel.changeBookmarkedSliderColor()
-//                    viewModel.reverseMyRecipeSliderColor()
-                },
-
-                text =  AnnotatedString("Carbs"),
-                style = TextStyle(
-
-                    color = viewModel.carbsColor,
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 14.sp,
-                    textDecoration = viewModel.carbsDecoration,
-
-
-                    )
-            )
-
-            ClickableText(
-                onClick = {
-//                    viewModel.changeBookmarkedSliderColor()
-//                    viewModel.reverseMyRecipeSliderColor()
-                },
-
-                text =  AnnotatedString("Plant Based"),
-                style = TextStyle(
-
-                    color = viewModel.plantBasedColor,
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 14.sp,
-                    textDecoration = viewModel.plantBasedDecoration,
-
-
-                    )
-            )
-
-            ClickableText(
-                onClick = {
-//                    viewModel.changeBookmarkedSliderColor()
-//                    viewModel.reverseMyRecipeSliderColor()
-                },
-
-                text =  AnnotatedString("Drinks"),
-                style = TextStyle(
-
-                    color = viewModel.drinksColor,
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 14.sp,
-                    textDecoration = viewModel.drinksDecoration,
-
-
-                    )
-            )
-
+        if (tabIndex == 0){
+            TabHomeDiscover(tabItems2, pagerState1, scope, 12.sp)
+            homePosts = viewModel.postList.collectAsState()
         }
 
-        val pagerState = rememberPagerState();
-//
-//        TabRow(selectedTabIndex = pagerState.currentPage,
-//                 indicator = {
-//                     tabPositions ->
-//                     TabRowDefaults.Indicator(
-//                         Modifier.fillMaxWidth().pagerTabIndicatorOffset(pagerState,tabPositions)
-//                     )
-//                 }
-//
-//        ) {
-//
-//
-//
-//        }
+        else if (tabIndex == 1){
+            TabHomeDiscover(tabItems3, pagerState1, scope, 12.sp)
+            worldPosts = viewModel.postListPerCategory.collectAsState()
+        }
+
+        else if(tabIndex == 2){
+            TabHomeDiscover(tabItems2, pagerState1, scope, 12.sp)
+            myFridgePosts = viewModel.myFridgePosts.collectAsState()
+        }
 
 
-        HorizontalPager(pageCount = 2, modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 15.dp), state = pagerState, key = {pages[it]}) {
-                index->
+
+        Spacer(modifier = Modifier.height(if (tabIndex == 2) 5.dp else 0.dp))
+
+        val systemUiController = rememberSystemUiController()
+        var showSheet by remember { mutableStateOf(false) }
+
+        val triggerBottomSheetModal: () -> Unit = {
+            showSheet = !showSheet
+            systemUiController.setStatusBarColor(
+                color = Color(android.graphics.Color.parseColor("#ACACAC")), darkIcons = true
+            )
+            systemUiController.setNavigationBarColor(
+                color = Color.Black, darkIcons = true
+            )
+        }
+        SideEffect {
+            if (!showSheet) {
+                systemUiController.setSystemBarsColor(
+                    color = Color.White, darkIcons = true
+                )
+            }
+        }
+        if (showSheet) {
+            CreateRecipeBottomSheetIngredients(triggerBottomSheetModal)
+        }
+        if (tabIndex == 2) {
+            Button(shape = RectangleShape,
+                modifier = Modifier
+                    .border(
+                        1.dp, Color(126, 198, 11, 255), shape = RoundedCornerShape(20.dp)
+                    )
+                    .clip(RoundedCornerShape(20.dp))
+                    .width(125.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White, contentColor = Color(126, 198, 11, 255)
+                ),
+                contentPadding = PaddingValues(15.dp),
+                onClick = {
+                    triggerBottomSheetModal()
+                }) {
+                Text(
+                    "Add items +",
+                    fontSize = 13.sp,
+                    fontFamily = android.kotlin.foodclub.views.home.montserratFamily,
+                    color = Color(126, 198, 11, 255),
+                )
+            }
+        }
+
+
+
+        HorizontalPager(
+            beyondBoundsPageCount = 1,
+            flingBehavior = fling,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 0.dp),
+            state = pagerState1
+        ) { index ->
 
             Box(
                 Modifier
-                    .fillMaxSize()
-                    .padding(top = 5.dp, start = 15.dp, end = 15.dp)
+                    .fillMaxWidth()
+                    .padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 100.dp)
 
             ) {
 
-                LazyVerticalGrid(columns =  GridCells.Fixed(2),
-                ){
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                ) {
 
-                    items(pages[index]){
-                            dataItem ->
-                        GridItem1(dataItem)
+                    if(homePosts!=null){
+                        items(homePosts!!.value) { dataItem ->
+                            GridItem2(navController,dataItem,profileData.value.get(0))
+                        }
                     }
 
+                    else if(worldPosts!=null){
 
+                        items(worldPosts!!.value) { dataItem ->
+                            GridItem2(navController,dataItem,profileData.value.get(0))
+                        }
+
+                    }
+
+                    else if(myFridgePosts!=null){
+                        items(myFridgePosts!!.value) { dataItem ->
+                            GridItem2(navController,dataItem,profileData.value.get(0))
+                        }
+                    }
                 }
 
             }
 
         }
 
-
     }
-
 }
 
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun TabHomeDiscover(
+    tabItems: List<String>, pagerState1: PagerState, scope: CoroutineScope, fontSize: TextUnit
+) {
 
+    TabRow(
+        selectedTabIndex = pagerState1.currentPage,
+        modifier = Modifier.background(Color.White),
+        containerColor = Color.White,
+        contentColor = Color.White,
+        divider = {},
+        indicator = { tabPositions ->
+            TabRowDefaults.Indicator(
+                modifier = Modifier.tabIndicatorOffset(tabPositions[pagerState1.currentPage]),
+                height = 0.dp,
+                color = Color.Black
+            )
+        }
+
+    ) {
+        tabItems.forEachIndexed { index, item ->
+            Tab(selected = pagerState1.currentPage == index,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White),
+                selectedContentColor = Color.Black,
+                onClick = {
+                    scope.launch {
+                        pagerState1.animateScrollToPage(index)
+                    }
+
+                },
+
+                text = {
+                    Text(
+
+                        text = AnnotatedString(item), style = TextStyle(
+                            fontWeight = if (pagerState1.currentPage == index) FontWeight.Bold else FontWeight.Normal,
+                            color = if (pagerState1.currentPage == index) Color.Black else Color(android.graphics.Color.parseColor("#C2C2C2")),
+                            fontSize = fontSize,
+                            textAlign = TextAlign.Center,
+                        )
+                    )
+                })
+
+        }
+    }
+}
 
 @Composable
-fun GridItem1(item: DiscoverViewRecipeModel){
+fun GridItem2(navController: NavController, dataItem: VideoModel,userProfile: UserProfileModel) {
 
     val satoshiFamily = FontFamily(
-
-
         Font(R.font.satoshi, FontWeight.Medium)
-
     )
 
-    Card(modifier = Modifier
-        .height(272.dp)
-        .width(178.dp)
-        .padding(10.dp)
-        .clickable(
-            interactionSource = MutableInteractionSource(),
-            indication = rememberRipple(bounded = true, color = Color.Black),
-            onClick = {
-                //   After click
-            }
+    Card(
+        modifier = Modifier
+            .height(272.dp)
+            .width(178.dp)
+            .padding(10.dp), shape = RoundedCornerShape(15.dp)
+    ) {
 
-        )
-        ,shape = RoundedCornerShape(10.dp)) {
-
-        Box(){
-            Image(painter = painterResource(id = R.drawable.imagecard), contentDescription = "",
-                Modifier.fillMaxSize(), contentScale = ContentScale.FillHeight)
-
-            Column(Modifier.fillMaxSize().padding(10.dp),verticalArrangement = Arrangement.Bottom) {
-                Text(text = "${item.userName}", fontFamily = satoshiFamily, color = Color.White, fontSize = 18.sp)
-
-                Text(text = "${item.timeUploaded}", fontFamily = satoshiFamily, fontSize = 14.sp
-                    , color = Color(255,255,255,200)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+        ) {
+            Image(
+                painter = rememberAsyncImagePainter(dataItem.thumbnailLink),
+                contentDescription = "",
+                Modifier
+                    .fillMaxSize()
+                    .clickable { navController.navigate("DELETE_RECIPE/${dataItem.videoId}") },
+                contentScale = ContentScale.FillHeight
+            )
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .padding(10.dp)
+                    , verticalArrangement = Arrangement.Bottom
+            ) {
+                Text(
+                    text = userProfile.username,
+                    fontFamily = satoshiFamily,
+                    color = Color.White,
+                    fontSize = 18.sp
+                )
+                Text(
+                    text =  dataItem.createdAt ,
+                    fontFamily = satoshiFamily,
+                    fontSize = 14.sp,
+                    color= Color.White
                 )
             }
-
         }
 
     }
 }
 
+@Composable
+fun GridItem2(navController: NavController, dataItem: UserPostsModel,userProfile: UserProfileModel) {
 
+    val satoshiFamily = FontFamily(
+        Font(R.font.satoshi, FontWeight.Medium)
+    )
+
+    Card(
+        modifier = Modifier
+            .height(272.dp)
+            .width(178.dp)
+            .padding(10.dp), shape = RoundedCornerShape(15.dp)
+    ) {
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+        ) {
+            Image(
+                painter = rememberAsyncImagePainter(dataItem.thumbnailUrl),
+                contentDescription = "",
+                Modifier
+                    .fillMaxSize()
+                    .clickable { navController.navigate("DELETE_RECIPE/${dataItem.id}") },
+                contentScale = ContentScale.FillHeight
+            )
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .padding(10.dp), verticalArrangement = Arrangement.Bottom
+            ) {
+                Text(
+                    text = dataItem.totalLikes.toString() ,
+                    fontFamily = satoshiFamily,
+                    color = Color.White,
+                    fontSize = 18.sp
+                )
+
+            }
+        }
+
+    }
+}

@@ -6,8 +6,8 @@ import android.content.ContentUris
 import android.content.Context
 import android.graphics.Bitmap
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.utils.composables.createVideoCaptureUseCase
-import android.kotlin.foodclub.utils.composables.startRecordingVideo
+import android.kotlin.foodclub.utils.composables.engine.createVideoCaptureUseCase
+import android.kotlin.foodclub.utils.composables.engine.startRecordingVideo
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle

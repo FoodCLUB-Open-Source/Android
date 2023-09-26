@@ -4,7 +4,9 @@ import android.app.Activity
 import android.os.Build
 import android.view.WindowInsetsController
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -78,3 +80,22 @@ fun FoodClubTheme(
         content = content
     )
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun textFieldCustomColors(
+    containerColor: Color = Color(0xFFDADADA).copy(alpha = 0.04F),
+    textColor: Color = Color(0xFF939393),
+    cursorColor: Color = Color(0xFF7EC60B),
+    focusedIndicatorColor: Color = Color.Transparent,
+    unfocusedIndicatorColor: Color = Color.Transparent,
+    disabledIndicatorColor: Color = Color.Transparent
+) = TextFieldDefaults.textFieldColors(
+    containerColor = containerColor,
+    unfocusedTextColor = textColor,
+    focusedTextColor = textColor,
+    cursorColor = cursorColor,
+    focusedIndicatorColor = focusedIndicatorColor,
+    unfocusedIndicatorColor = unfocusedIndicatorColor,
+    disabledIndicatorColor = disabledIndicatorColor
+)

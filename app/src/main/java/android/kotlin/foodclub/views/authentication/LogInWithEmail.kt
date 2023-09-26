@@ -1,19 +1,21 @@
 package android.kotlin.foodclub.views.authentication
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.ui.theme.Montserrat
+import android.kotlin.foodclub.ui.theme.PlusJakartaSans
+import android.kotlin.foodclub.utils.composables.CustomPasswordTextField
+import android.kotlin.foodclub.utils.composables.CustomTextField
 import android.kotlin.foodclub.viewmodels.authentication.LogInWithEmailViewModel
-import android.kotlin.foodclub.viewmodels.authentication.MainLogInAndSignUpViewModel
-import android.widget.EditText
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,76 +23,50 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.text.TextStyle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LogInWithEmail(navController: NavHostController) {
+    // we need to make only one view model
+    val viewModel: LogInWithEmailViewModel = hiltViewModel()
 
-
-    val viewModel: LogInWithEmailViewModel = viewModel()
-
-
-    var interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-
-
-    if (!isPressed) {
-        viewModel.reverseButtonUi()
-    }
-
-    var interactionSource1 = remember { MutableInteractionSource() }
-    val isPressed1 by interactionSource1.collectIsPressedAsState()
-
-
-    if (!isPressed1) {
-        viewModel.reverseButtonUi()
-    }
-
-
-    val montserratFamily = FontFamily(
-
-        Font(R.font.montserratregular, FontWeight.Normal),
-
-        )
-
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    val loginStatus by viewModel.loginStatus.observeAsState(null)
 
     Column(
         Modifier
             .fillMaxSize()
-            .padding(12.dp),
+            .background(Color.White)
+            .padding(top = 40.dp, start = 30.dp, end = 30.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(35.dp)
     ) {
@@ -102,140 +78,119 @@ fun LogInWithEmail(navController: NavHostController) {
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            Image(
-                painterResource(id = R.drawable.back_icon),
-                contentDescription = "back_icon",
+            Button(
+                shape = RectangleShape,
                 modifier = Modifier
-                    .width(35.dp)
-                    .height(35.dp)
-
-            )
+                    .clip(RoundedCornerShape(15.dp))
+                    .width(20.dp)
+                    .height(40.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White,
+                    contentColor = Color.White
+                ), contentPadding = PaddingValues(5.dp),
+                onClick = {
+                    navController.popBackStack()
+                }
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.back_icon),
+                    contentDescription = "Back",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .width(20.dp)
+                        .height(20.dp)
+                )
+            }
 
             Text(
                 text = "Welcome Back!",
-                fontSize = 30.sp,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(top = 20.dp, start = 10.dp)
+                fontFamily = PlusJakartaSans,
+                fontSize = 32.sp,
+                modifier = Modifier.padding(top = 10.dp)
             )
 
+            Spacer(modifier = Modifier.height(3.dp))
 
             Text(
                 text = "Cooking just got social!",
-                fontSize = 15.sp,
+                fontFamily = Montserrat,
+                fontSize = 18.sp,
                 color = Color.Gray,
-                modifier = Modifier.padding(start = 10.dp)
+
             )
-
-
         }
-
         Column(
 
             Modifier
                 .fillMaxSize()
-                .padding(20.dp),
+                .padding(top = 10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(25.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                var username by remember { mutableStateOf("") }
+                var userPassword by remember { mutableStateOf("") }
 
-            TextField(
-                value = "",
-                onValueChange = {},
-                modifier = Modifier
-                    .background(Color(218, 218, 218, 1))
-                    .border(1.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
-                    .clip(RoundedCornerShape(10.dp))
-                    .fillMaxWidth(),
+                var filledUsername by remember { mutableStateOf(false) }
+                var filledPassword by remember { mutableStateOf(false) }
 
-                placeholder = {
-                    Text(text = "Email", color = Color(218, 218, 218, 228))
-                },
-
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color(218, 218, 218, 128),
-                    unfocusedBorderColor = Color(218, 218, 218, 110)
+                CustomTextField(initialValue = username,
+                    placeholder = "Username", keyboardType = KeyboardType.Text,
+                    onCorrectnessStateChange = { filledUsername = !filledUsername },
+                    onValueChange = { username = it }
                 )
 
-            )
-
-            TextField(
-                value = "",
-                onValueChange = {},
-
-                placeholder = {
-                    Text(text = "Password", color = Color(218, 218, 218, 228))
-                },
-
-                modifier =
-                Modifier
-                    .background(Color(218, 218, 218, 1))
-                    .border(1.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
-                    .clip(RoundedCornerShape(10.dp))
-                    .fillMaxWidth(),
-
-
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color(218, 218, 218, 128),
-                    unfocusedBorderColor = Color(218, 218, 218, 110)
-                )
-
-
-            )
-
-
-            Button(
-                shape = RectangleShape,
-                modifier = Modifier
-                    .border(1.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
-                    .clip(RoundedCornerShape(10.dp))
-                    .fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(126, 198, 11, 255),
-                    contentColor = Color.White
-                ), contentPadding = PaddingValues(15.dp),
-
-                onClick = {
-
-                }
-
-
-            ) {
-
+                CustomPasswordTextField(
+                    placeholder = "Password",
+                    strengthValidation = false,
+                    onCorrectnessStateChange = { filledPassword = !filledPassword },
+                    onValueChange = { userPassword = it })
 
                 Text(
-                    color = Color.White,
-                    text = "Log in",
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.Bold
+                    text = loginStatus ?: "",
+                    fontSize = 11.sp,
+                    color = Color.Red
                 )
+
+                Button(
+                    onClick = { viewModel.logInUser(username, userPassword, navController) },
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier
+                        .height(56.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .fillMaxWidth(),
+                    enabled = filledUsername && filledPassword,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF7EC60B),
+                        disabledContainerColor = Color(0xFFC9C9C9),
+                        disabledContentColor = Color.White,
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text(text = "Log in", fontSize = 16.sp)
+                }
             }
 
-
             Row(
-                modifier = Modifier.fillMaxWidth(),
-
-                horizontalArrangement = Arrangement.SpaceEvenly
-
-
+                modifier = Modifier.wrapContentWidth(),
+                horizontalArrangement = Arrangement.SpaceAround
             ) {
 
                 Text(
                     color = Color.Black,
                     text = "Forgot Password?",
-                    fontFamily = montserratFamily,
-                    fontSize = 13.sp
-
+                    fontFamily = Montserrat,
+                    fontSize = 13.sp,
+                    modifier = Modifier.padding(end = 5.dp)
                 )
-
-
                 ClickableText(
-                    text = AnnotatedString("Log in >"),
+                    text = AnnotatedString("Reset here"),
                     onClick = {
-
+                        navController.navigate("FORGOT")
                     },
                     style = TextStyle(
                         color = Color(152, 209, 60),
-                        fontFamily = montserratFamily,
+                        fontFamily = Montserrat,
                         fontSize = 13.sp,
                         textDecoration = TextDecoration.Underline
                     )
@@ -247,7 +202,7 @@ fun LogInWithEmail(navController: NavHostController) {
                 contentDescription = "app_title",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(20.dp)
+                    .height(15.dp)
 
 
             )
@@ -259,46 +214,45 @@ fun LogInWithEmail(navController: NavHostController) {
                 Button(
                     shape = RectangleShape,
                     modifier = Modifier
-                        .width(100.dp)
-                        .border(1.dp, Color(230,230,230,255), shape = RoundedCornerShape(10.dp))
+                        .width(80.dp)
+                        .border(1.dp, Color(230, 230, 230, 255), shape = RoundedCornerShape(10.dp))
                         .clip(RoundedCornerShape(10.dp)),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = viewModel.backgroundColor,
-                        contentColor = Color.Black
+                        containerColor = Color(218, 218, 218, 70)
+
                     ), contentPadding = PaddingValues(15.dp),
 
                     onClick = {
-                        viewModel.changeButtonUi()
-                    }, interactionSource = interactionSource
+
+                    }
 
                 ) {
                     Image(
                         painterResource(id = R.mipmap.facebook_icon),
                         contentDescription = "",
-                        Modifier.size(25.dp)
+                        Modifier.size(20.dp)
                     )
                 }
 
                 Button(
                     shape = RectangleShape,
                     modifier = Modifier
-                        .width(100.dp)
-                        .border(1.dp, Color(230,230,230,255), shape = RoundedCornerShape(10.dp))
+                        .width(80.dp)
+                        .border(1.dp, Color(230, 230, 230, 255), shape = RoundedCornerShape(10.dp))
                         .clip(RoundedCornerShape(10.dp)),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = viewModel.backgroundColor,
-                        contentColor = Color.Black
+                        containerColor = Color(218, 218, 218, 70)
                     ), contentPadding = PaddingValues(15.dp),
 
                     onClick = {
-                        viewModel.changeButtonUi()
-                    }, interactionSource = interactionSource1
+
+                    }
 
                 ) {
                     Image(
                         painterResource(id = R.mipmap.instagram_icon),
                         contentDescription = "",
-                        Modifier.size(25.dp)
+                        Modifier.size(20.dp)
                     )
                 }
             }
@@ -311,7 +265,7 @@ fun LogInWithEmail(navController: NavHostController) {
                 Text(
                     color = Color.Gray,
                     text = "By using FoodCLUB you agree to our",
-                    fontFamily = montserratFamily,
+                    fontFamily = Montserrat,
                     fontSize = 10.sp
                 )
 
@@ -322,7 +276,7 @@ fun LogInWithEmail(navController: NavHostController) {
                     },
                     style = TextStyle(
                         color = Color.Gray,
-                        fontFamily = montserratFamily,
+                        fontFamily = Montserrat,
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold,
                         textDecoration = TextDecoration.Underline
@@ -336,9 +290,9 @@ fun LogInWithEmail(navController: NavHostController) {
     }
 
 }
+//@Composable
+//@Preview
+//fun LogInWithEmail() {
+//    LogInWithEmail(rememberNavController())
+//}
 
-@Composable
-@Preview
-fun LogInWithEmail() {
-    LogInWithEmail(rememberNavController())
-}

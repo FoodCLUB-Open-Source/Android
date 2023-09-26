@@ -1,10 +1,12 @@
 package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.navigation.graphs.Graph
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,44 +28,43 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 
 val colorGray= Color(android.graphics.Color.parseColor("#D0D0D0"))
 val colorRed= Color(android.graphics.Color.parseColor("#C64E0B"))
 
-//The main function of this SettingsView file. This arranges all components to build the screen
 @Composable
-fun SettingsView(navController: NavController) {
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 0.dp), //Since the vertical arrangement is center, there is always some extra space on top of the topbar. Hence I removed padding for top
+fun SettingsView(navController: NavHostController){
+    val screenSizeHeight = LocalConfiguration.current.screenHeightDp.dp //added screenSizeHeight so page is adaptable to all screen size
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .background(Color.White),
         verticalArrangement = Arrangement.Center
-    ){
-
+    ) {
         SettingsTopBar("Settings", navController)
-
-        Spacer(modifier = Modifier.height(30.dp))
-
-        SettingsProfile(userName = "Jake Rayner", userImage = painterResource(id=R.drawable.story_user))
-
-        Spacer(modifier = Modifier.height(60.dp))
-
-        SettingRow(text = "Edit profile information", iconId = R.drawable.editprofile, Color.Black,
-            1, colorGray, "EDIT_PROFILE", navController)
-        SettingRow(text = "Privacy settings", iconId = R.drawable.privacysettings, Color.Black,
-            1, colorGray, "PRIVACY", navController)
-
-        Spacer(modifier = Modifier.height(15.dp))
-
+        Spacer(modifier = Modifier.height(25.dp))
+        SettingsProfile(userName = "Jake Rayner", userImage = painterResource(id = R.drawable.story_user))
+        Spacer(modifier = Modifier.height(screenSizeHeight * 0.1f))
+        SettingRow(text = "Edit profile information", iconId = R.drawable.editprofile, Color.Black, 0,
+        Color.Gray, "EDIT_PROFILE", navController)
+        SettingRow(text = "Privacy settings", iconId = R.drawable.privacysettings, Color.Black, 0,
+            Color.Gray, "PRIVACY", navController)
+        Spacer(modifier = Modifier.height(screenSizeHeight * 0.03f))
         Column(
-            modifier=Modifier
-                .border(width = 1.dp,color =colorGray, shape= RoundedCornerShape(8.dp)),
+            modifier = Modifier
+                .border(width = 1.dp, color = colorGray, shape = RoundedCornerShape(8.dp))
         ) {
             SettingRow(text = "Help & Support", iconId = R.drawable.helpandsupport, Color.Black,
                 bordersize = 0, bordercolor = Color.Transparent, "PRIVACY", navController)
@@ -72,9 +73,9 @@ fun SettingsView(navController: NavController) {
             SettingRow(text = "Privacy Policy", iconId = R.drawable.privacypolicy, Color.Black,
                 bordersize = 0, bordercolor = Color.Transparent, "PRIVACY", navController)
         }
-        Spacer(modifier = Modifier.height(15.dp))
-
-        SettingRow(text = "Log Out", iconId = R.drawable.logout, fontC=colorRed, 1, colorGray,"CHANGE_PASSWORD", navController)
+        Spacer(modifier = Modifier.height(screenSizeHeight * 0.03f))
+        SettingRow(text = "Log Out", iconId = R.drawable.logout, fontC = colorRed, 0,
+            Color.Black, Graph.AUTHENTICATION, navController)
     }
 }
 
@@ -193,6 +194,11 @@ fun SettingRow(text: String, iconId: Int, fontC:  Color=Color.Black,
             SettingsIcons(size = 24, icon = R.drawable.forwardarrow)
         }
     }
+}
+@Composable
+@Preview
+fun SettingsView() {
+    SettingsView(rememberNavController())
 }
 
 

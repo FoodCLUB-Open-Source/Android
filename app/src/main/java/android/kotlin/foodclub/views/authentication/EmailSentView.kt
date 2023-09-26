@@ -41,9 +41,7 @@ import androidx.navigation.compose.rememberNavController
 fun EmailSentView(navController: NavHostController) {
 
     val montserratFamily = FontFamily(
-
-        Font(R.font.montserratregular, FontWeight.Normal),
-
+         Font(R.font.montserratregular, FontWeight.Normal),
     )
 
     Column(
@@ -63,18 +61,12 @@ fun EmailSentView(navController: NavHostController) {
         )
 
         Text(
-            text = "Email Sent", fontSize = 30.sp,
+            text = "Password Changed", fontSize = 30.sp,
             fontWeight = FontWeight.SemiBold,
             fontFamily = montserratFamily,
             modifier = Modifier.padding(top = 20.dp, start = 10.dp)
         )
-        Text(
-            text = "We’ve sent an email with password reset link to PersonalEmail@xxx.com",
-            fontSize = 15.sp,
-            color = Color.Gray,
-            fontFamily = montserratFamily,
-            modifier = Modifier.padding(start = 10.dp)
-        )
+
 
 
         Button(
@@ -89,12 +81,10 @@ fun EmailSentView(navController: NavHostController) {
             ), contentPadding = PaddingValues(15.dp),
 
             onClick = {
-
+                navController.navigate("LOGIN")
             }
 
-
         ) {
-
 
             Text(
                 color = Color.White,

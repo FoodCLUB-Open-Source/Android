@@ -1,22 +1,32 @@
 package android.kotlin.foodclub.views.home
 
+import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.data.models.IngredientModel
+import android.kotlin.foodclub.data.models.Recipe
 import android.kotlin.foodclub.utils.composables.Picker
 import android.kotlin.foodclub.utils.composables.rememberPickerState
 import android.kotlin.foodclub.viewmodels.home.CreateRecipeViewModel
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.with
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +36,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -40,12 +51,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -67,11 +76,13 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -79,12 +90,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.navigation.NavController
-import java.util.Collections.copy
+import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 @Stable
 data class Colors(
@@ -238,9 +256,9 @@ fun BottomSheetCategories(onDismiss: () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
-fun BottomSheetIngredients(onDismiss: () -> Unit) {
+fun CreateRecipeBottomSheetIngredients(onDismiss: () -> Unit) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 150.dp
     var searchText by remember { mutableStateOf("") }
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -352,9 +370,8 @@ fun BottomSheetIngredients(onDismiss: () -> Unit) {
                                 Image(
                                     painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
                                     contentDescription = "Left Arrow",
-                                    modifier = Modifier.size(24.dp).align(Alignment.CenterStart).clickable(onClick = {
-                                        contentState.value = DrawerContentState.IngredientListContent
-                                    })
+                                    modifier = Modifier.size(24.dp).align(Alignment.CenterStart)
+                                        .clickable(onClick = { contentState.value = DrawerContentState.IngredientListContent })
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
@@ -414,22 +431,24 @@ fun BottomSheetIngredients(onDismiss: () -> Unit) {
 fun CreateRecipeView(navController: NavController) {
     val viewModel: CreateRecipeViewModel = viewModel()
     val title = viewModel.title.value ?: "Loading..."
-    val ingredientList = listOf("Tomato paste", "Potato wedges", "Pasta")
+    val ingredientList by viewModel.ingredients.collectAsState()
+    val revealedIngredientId by viewModel.revealedIngredientId.collectAsState()
     val systemUiController = rememberSystemUiController()
     var showSheet by remember { mutableStateOf(false) }
     var showCategorySheet by remember { mutableStateOf(false) }
     val codeTriggered = remember { mutableStateOf(false) }
-    /*val systemBarsColorsLight = Colors(
-        statusBarColor = Color.White,
-        navBarColor = Color.White,
+    var sliderPosition by remember { mutableStateOf(0f) }
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 240.dp
+    val rows = listOf(
+        listOf("fzfe", "fefez", "fzeffezfze"),
+        listOf("Button", "Button"),
     )
-    val systemBarsColorsDark = Colors(
-        statusBarColor = Color(android.graphics.Color.parseColor("#ACACAC")),
-        navBarColor = Color.Black,
-    )*/
 
-    //val animatedColors = (if (showSheet) systemBarsColorsLight else systemBarsColorsDark).switch()
+    var isSmallScreen by remember { mutableStateOf(false) }
 
+    if (screenHeight <= 440.dp) {
+        isSmallScreen = true
+    }
     LaunchedEffect(key1 = codeTriggered.value) {
         systemUiController.setSystemBarsColor(
                 color = Color.White,
@@ -466,7 +485,7 @@ fun CreateRecipeView(navController: NavController) {
             .padding(start = 15.dp, top = 0.dp, end = 15.dp, bottom = 70.dp)
     ) {
         if (showSheet) {
-            BottomSheetIngredients(triggerBottomSheetModal)
+            CreateRecipeBottomSheetIngredients(triggerBottomSheetModal)
         }
         if (showCategorySheet) {
             BottomSheetCategories(triggerCategoryBottomSheetModal)
@@ -529,18 +548,8 @@ fun CreateRecipeView(navController: NavController) {
                     onValueChange = {},
                     placeholder = {
                         Text(
-                            "Add a caption", fontFamily = montserratFamily, fontSize = 14.sp,
+                            "Add my recipe’s name", fontFamily = montserratFamily, fontSize = 15.sp,
                             color = Color(android.graphics.Color.parseColor("#B3B3B3"))
-                        )
-                    },
-                    leadingIcon = {
-                        Image(
-                            painter = painterResource(id = R.drawable.story_user),
-                            contentDescription = "Profile Image",
-                            modifier = Modifier
-                                .size(100.dp)
-                                .padding(10.dp)
-                                .clip(RoundedCornerShape(12.dp))
                         )
                     },
                     modifier = Modifier.fillMaxWidth(),
@@ -550,45 +559,102 @@ fun CreateRecipeView(navController: NavController) {
                         unfocusedBorderColor = Color(android.graphics.Color.parseColor("#E8E8E8"))
                     )
                 )
-                SectionItem(
-                    title = "Add Categories",
-                    action = "Vegan",
-                    icon = Icons.Default.KeyboardArrowDown,
-                    onClick = triggerCategoryBottomSheetModal
-                )
-                Divider(
-                    color = Color(android.graphics.Color.parseColor("#E8E8E8")),
-                    thickness = 1.dp
-                )
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(80.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Add Serving Size", fontFamily = montserratFamily, fontSize = 14.sp)
+                    Text("Serving Size: 1", fontFamily = montserratFamily, fontSize = 14.sp)
                     Spacer(modifier = Modifier.weight(1f))
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Image(
-                            painter = painterResource(id = R.drawable.baseline_arrow_left_24),
-                            contentDescription = "Profile Image",
-                            modifier = Modifier
-                                .size(50.dp)
-                                .padding(end = 15.dp)
-                        )
-                        Text(
-                            "1",
-                            color = Color.Black,
-                            fontFamily = montserratFamily,
-                            fontSize = 14.sp
-                        )
-                        Image(
-                            painter = painterResource(id = R.drawable.baseline_arrow_right_24),
-                            contentDescription = "Profile Image",
-                            modifier = Modifier
-                                .size(50.dp)
-                                .padding(start = 15.dp)
-                        )
+                    Slider(
+                        modifier = Modifier
+                            .width(if (isSmallScreen == true) 150.dp else 200.dp),
+                        value = sliderPosition,
+                        onValueChange = { sliderPosition = it },
+                        valueRange = 0f..10f,
+                        steps = 0,
+                        colors = SliderDefaults.colors(
+                            thumbColor = Color(android.graphics.Color.parseColor("#7EC60B")),
+                            activeTrackColor = Color(android.graphics.Color.parseColor("#D9D9D9")),
+                            inactiveTrackColor = Color(android.graphics.Color.parseColor("#D9D9D9"))
+                        ),
+                    )
+                }
+                Divider(
+                    color = Color(android.graphics.Color.parseColor("#E8E8E8")),
+                    thickness = 1.dp
+                )
+                Spacer(modifier = Modifier.height(15.dp))
+                SectionItem(
+                    title = "Categories",
+                    action = "Vegan",
+                    icon = Icons.Default.KeyboardArrowDown,
+                    onClick = triggerCategoryBottomSheetModal
+                )
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(1),
+                    contentPadding = PaddingValues(8.dp),
+                    modifier = Modifier
+                        .padding(top = 2.dp)
+                        .height(100.dp)
+                )  {
+                    items(rows.size) { rowIndex ->
+                        val row = rows[rowIndex]
+                        Row(
+                            horizontalArrangement = Arrangement.Start,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            row.forEachIndexed { buttonIndex, buttonText ->
+                                val flatIndex = rowIndex * 3 + buttonIndex
+                                val color = Color(android.graphics.Color.parseColor("#A059D9"))
+                                Button(
+                                    modifier = Modifier
+                                        //.border(1.dp, Color.Transparent, shape = RoundedCornerShape(15.dp))
+                                        .wrapContentWidth().height(30.dp)
+                                        .clip(RoundedCornerShape(15.dp)),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = color,
+                                        contentColor = Color.White
+                                    ), contentPadding = PaddingValues(5.dp),
+                                    shape = RoundedCornerShape(15.dp),
+
+                                    onClick = {
+                                        //selectedButtonsState[flatIndex] = !isSelected
+                                    }
+                                ) {
+                                    Text(text = buttonText,
+                                        fontSize = 10.sp,
+                                        modifier = Modifier.padding(start = 1.dp, end = 1.dp),
+                                        fontFamily = montserratFamily)
+                                    Button(
+                                        modifier = Modifier
+                                            .border(2.dp, Color.White, shape = RoundedCornerShape(15.dp))
+                                            .width(20.dp).height(30.dp)
+                                            .clip(RoundedCornerShape(15.dp)),
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = color,
+                                            contentColor = Color.White
+                                        ), contentPadding = PaddingValues(0.dp),
+                                        shape = RoundedCornerShape(15.dp),
+                                        onClick = {
+                                            //selectedButtonsState[flatIndex] = !isSelected
+                                        }
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.baseline_clear_24),
+                                            contentDescription = null,
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier
+                                                .size(15.dp)
+                                                .clip(RoundedCornerShape(12.dp))
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.width(10.dp))
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(40.dp))
                     }
                 }
                 Divider(
@@ -612,17 +678,18 @@ fun CreateRecipeView(navController: NavController) {
                                 shape = RoundedCornerShape(20.dp)
                             )
                             .clip(RoundedCornerShape(20.dp))
-                            .width(145.dp),
+                            .width(120.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.White,
                             contentColor = Color(126, 198, 11, 255)
                         ), contentPadding = PaddingValues(15.dp),
+
                         onClick = {
                             triggerBottomSheetModal()
                         }
                     ) {
                         Text(
-                            "Add items +",
+                            "Add +",
                             color = Color(126, 198, 11, 255),
                             fontFamily = montserratFamily,
                             fontSize = 14.sp
@@ -632,7 +699,12 @@ fun CreateRecipeView(navController: NavController) {
                 Spacer(modifier = Modifier.height(10.dp))
             }
             items(ingredientList) { ingredient ->
-                Ingredient(ingredient)
+                Ingredient(ingredient = ingredient,
+                    isRevealed = revealedIngredientId == ingredient.id,
+                    onExpand = { viewModel.onIngredientExpanded(ingredient.id) },
+                    onCollapse = { viewModel.onIngredientCollapsed(ingredient.id) },
+                    onDelete = { viewModel.onIngredientDeleted(ingredient) }
+                    )
             }
         }
     }
@@ -654,71 +726,145 @@ fun CreateRecipeView(navController: NavController) {
     }
 }
 
+@SuppressLint("UnusedTransitionTargetStateParameter")
 @Composable
-fun Ingredient(ingredient: String) {
-    Box(
-        modifier = Modifier
+fun Ingredient(ingredient: IngredientModel, isRevealed: Boolean, onExpand: () -> Unit, onCollapse: () -> Unit,
+               onDelete: () -> Unit) {
+    var ingredientXOffset = remember { mutableStateOf(0f) }
+    var showItem by remember { mutableStateOf(true) }
+
+    val transitionState = remember { MutableTransitionState(isRevealed).apply { targetState = !isRevealed }}
+    val transition = updateTransition(transitionState, label = "")
+    val offsetTransition by transition.animateFloat(
+        label = "ingredientOffsetTransition",
+        transitionSpec = { tween(durationMillis = 500) },
+        targetValueByState = { if (isRevealed) (-ingredientXOffset.value - 300f) else -ingredientXOffset.value }
+    )
+
+
+    AnimatedVisibility(visible = showItem, exit = shrinkOut(shrinkTowards = Alignment.TopCenter)) {
+        Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier
             .fillMaxWidth()
-            .height(150.dp)
-            .border(
-                1.dp,
-                Color(android.graphics.Color.parseColor("#E8E8E8")),
-                shape = RoundedCornerShape(15.dp)
-            )
-            .clip(RoundedCornerShape(10.dp))
-            .background(Color.White)
-            .padding(10.dp)
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.story_user),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .height(200.dp)
-                .width(130.dp)
-                .clip(RoundedCornerShape(12.dp))
-        )
-        Box(
-            modifier = Modifier
-                .padding(start = 140.dp, top = 10.dp)
-                .fillMaxSize()
-        ) {
-            Box ( ) {
-                Text(
-                    text = ingredient,
+            .height(100.dp)
+            .padding(end = 15.dp)) {
+            Button(
+                shape = RectangleShape,
+                modifier = Modifier
+                    .border(1.dp, Color(0xFFF5F5F5), shape = RoundedCornerShape(22.dp))
+                    .clip(RoundedCornerShape(22.dp))
+                    .width(50.dp)
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFF5F5F5),
+                    contentColor = Color.White
+                ), contentPadding = PaddingValues(5.dp),
+                onClick = { showItem = false }
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.delete_bin_5_line__2_),
+                    contentDescription = "Back",
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .align(Alignment.TopStart),
-                    fontWeight = FontWeight.Normal
+                        .width(20.dp)
+                        .height(20.dp)
                 )
             }
-            Box ( modifier = Modifier.align(Alignment.BottomEnd) ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Image(
-                        painter = painterResource(id = R.drawable.baseline_arrow_left_24),
-                        contentDescription = "Profile Image",
-                        modifier = Modifier
-                            .size(50.dp)
-                            .padding(end = 15.dp)
+        }
+        Column {
+            Box(modifier = Modifier
+                    .offset {
+                        IntOffset((ingredientXOffset.value + offsetTransition).roundToInt(), 0)
+                    }
+                    .pointerInput("") {
+                        detectHorizontalDragGestures { change, dragAmount ->
+                            val original = Offset(ingredientXOffset.value, 0f)
+                            val summed = original + Offset(x = dragAmount, y = 0f)
+                            val newValue = Offset(summed.x.coerceIn(-300f, 0f), 0f)
+                            if (newValue.x <= -20f) {
+                                onExpand()
+                                return@detectHorizontalDragGestures
+                            } else if (newValue.x >= 0) {
+                                onCollapse()
+                                return@detectHorizontalDragGestures
+                            }
+                            if (change.positionChange() != Offset.Zero) change.consume()
+                            ingredientXOffset.value = newValue.x
+                        }
+                    }
+                    .fillMaxWidth()
+                    .height(100.dp)
+                    .border(
+                        1.dp,
+                        Color(android.graphics.Color.parseColor("#E8E8E8")),
+                        shape = RoundedCornerShape(15.dp)
                     )
-                    Text(
-                        "200g",
-                        color = Color.Black,
-                        fontFamily = montserratFamily,
-                        fontSize = 14.sp
-                    )
-                    Image(
-                        painter = painterResource(id = R.drawable.baseline_arrow_right_24),
-                        contentDescription = "Profile Image",
-                        modifier = Modifier
-                            .size(50.dp)
-                            .padding(start = 15.dp)
-                    )
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(Color.White)
+                    .padding(10.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.salad_ingredient),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .height(80.dp)
+                        .width(80.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                )
+                Box(
+                    modifier = Modifier
+                        .padding(start = 95.dp)
+                        .fillMaxWidth()
+                        .height(70.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Box ( modifier = Modifier
+                        .width(105.dp)
+                        .align(Alignment.CenterStart) ) {
+                        Text(
+                            text = ingredient.title,
+                            modifier = Modifier
+                                .align(Alignment.TopStart),
+                            fontFamily = montserratFamily,
+                            fontWeight = FontWeight.Normal
+                        )
+                    }
+                    Box ( modifier = Modifier.align(Alignment.CenterEnd) ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Image(
+                                painter = painterResource(id = R.drawable.baseline_arrow_left_24),
+                                contentDescription = "Profile Image",
+                                modifier = Modifier
+                                    .size(35.dp)
+                                    .padding(end = 5.dp)
+                            )
+                            Text(
+                                "200g",
+                                color = Color.Black,
+                                fontFamily = montserratFamily,
+                                fontSize = 14.sp
+                            )
+                            Image(
+                                painter = painterResource(id = R.drawable.baseline_arrow_right_24),
+                                contentDescription = "Profile Image",
+                                modifier = Modifier
+                                    .size(35.dp)
+                                    .padding(start = 5.dp)
+                            )
+                        }
+                    }
                 }
             }
+            Spacer(modifier = Modifier.height(10.dp))
         }
     }
-    Spacer(modifier = Modifier.height(10.dp))
 
+    LaunchedEffect(Unit) {
+        if(!showItem) {
+            delay(800)
+            onDelete()
+        }
+    }
 }
 
 @Composable
@@ -729,8 +875,10 @@ fun AddItemComposable(
 ) {
     Box(
         modifier = Modifier
-            .fillMaxWidth().height(70.dp)
-            .padding(start = 20.dp, top = 20.dp).clickable(onClick = { onClick() })
+            .fillMaxWidth()
+            .height(70.dp)
+            .padding(start = 20.dp, top = 20.dp)
+            .clickable(onClick = { onClick() })
     ) {
         Row(
             modifier = Modifier
@@ -764,18 +912,108 @@ fun SectionItem(
 ) {
         Row ( modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp), verticalAlignment = Alignment.CenterVertically) {
+            .height(50.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(title, fontFamily = montserratFamily, fontSize = 14.sp)
             Spacer(modifier = Modifier.weight(1f))
-            Row( modifier = Modifier.clickable { onClick() } ) {
-                Text(action, color = actionColor, fontFamily = montserratFamily, fontSize = 14.sp)
-                icon?.let {
-                    Icon(
-                        it,
-                        contentDescription = null,
-                        modifier = Modifier.padding(start = 8.dp)
+            Button(
+                shape = RectangleShape,
+                modifier = Modifier
+                    .border(
+                        1.dp,
+                        Color(126, 198, 11, 255),
+                        shape = RoundedCornerShape(20.dp)
                     )
+                    .clip(RoundedCornerShape(20.dp))
+                    .width(120.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White,
+                    contentColor = Color(126, 198, 11, 255)
+                ), contentPadding = PaddingValues(15.dp),
+                onClick = {
+                    onClick()
                 }
+            ) {
+                Text(
+                    "Add +",
+                    color = Color(126, 198, 11, 255),
+                    fontFamily = montserratFamily,
+                    fontSize = 14.sp
+                )
             }
         }
+}
+
+// CREATE RECIPE STUFF
+@Composable
+fun CreateRecipe(viewModel: CreateRecipeViewModel) {
+    var recipeTitle by remember { mutableStateOf("") }
+    var recipeDescription by remember { mutableStateOf("") }
+    var preparationTime by remember { mutableStateOf("") }
+    var servingSize by remember { mutableStateOf("") }
+    var category by remember { mutableStateOf("") }
+
+    val coroutineScope = rememberCoroutineScope() // COROUTINE SCOPE
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        TextField(
+            value = recipeTitle,
+            onValueChange = { newValue -> recipeTitle = newValue },
+            label = { Text("Recipe Title") }
+        )
+
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            onClick = {
+                val recipe = Recipe(
+                    title = recipeTitle,
+                    description = recipeDescription,
+                    preparationTime = preparationTime.toIntOrNull() ?: 0,
+                    servingSize = servingSize.toIntOrNull() ?: 0,
+                    category = category
+                )
+
+                // LAUNCH COROUTINE
+                coroutineScope.launch {
+                    val success = viewModel.createRecipe(recipe, "user_id_here")
+
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Create Recipe")
+        }
+    }
+}
+
+// SUBMITTING RECIPE
+fun onRecipeSubmit(
+    recipeTitle: String,
+    recipeDescription: String,
+    preparationTime: String,
+    servingSize: String,
+    category: String
+) {
+
+    val newRecipe = Recipe(
+        title = recipeTitle,
+        description = recipeDescription,
+        preparationTime = preparationTime.toIntOrNull() ?: 0,
+        servingSize = servingSize.toIntOrNull() ?: 0,
+        category = category,
+
+        )
+}
+
+// PREVIEW
+@Composable
+@Preview
+fun CreateRecipeViewPreview() {
+    val navController = rememberNavController()
+    CreateRecipeView(navController)
 }
