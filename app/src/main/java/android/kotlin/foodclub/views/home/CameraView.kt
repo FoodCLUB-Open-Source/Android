@@ -46,8 +46,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.BlurredEdgeTreatment
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
@@ -168,36 +166,45 @@ fun CameraView(
         permissionsNotAvailableContent = { /* ... */ }
     ) {
         Box(
-            modifier = Modifier.fillMaxSize().background(Color.Black)
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black)
         ) {
             AndroidView(
                 factory = { previewView },
-                modifier = Modifier.fillMaxWidth().height(screenHeight).clip(RoundedCornerShape(20.dp))
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(screenHeight)
+                    .clip(RoundedCornerShape(20.dp))
             )
             Box(
-                modifier = Modifier.fillMaxWidth().height(screenHeight).padding(start = 20.dp, top = 50.dp, end = 20.dp, bottom = 20.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(screenHeight)
+                    .padding(start = 20.dp, top = 50.dp, end = 20.dp, bottom = 20.dp)
             ) {
 
-                    Box(
+                Box(
+                    modifier = Modifier
+                        .width(40.dp)
+                        .height(40.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(Color.Black.copy(alpha = 0.9f))
+                        //.blur(radius = 20.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
+                        .clickable {
+                            // Do something when the box is clicked
+                        }
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.baseline_close_24),
+                        contentDescription = "Story",
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .width(40.dp)
-                            .height(40.dp)
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(Color.Black.copy(alpha = 0.9f))
-                            .blur(radius = 20.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
-                            .clickable {
-                                // Do something when the box is clicked
-                            }
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.baseline_close_24),
-                            contentDescription = "Story",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .width(25.dp)
-                                .height(25.dp).align(Alignment.Center)
-                        )
-                    }
+                            .width(25.dp)
+                            .height(25.dp)
+                            .align(Alignment.Center)
+                    )
+                }
                 if (!recordingStarted.value) {
 
                     Box(
@@ -206,7 +213,7 @@ fun CameraView(
                             .height(40.dp)
                             .clip(RoundedCornerShape(10.dp))
                             .background(Color.White)
-                            .blur(radius = 20.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
+                            //.blur(radius = 20.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
                             .align(Alignment.TopEnd)
                             .clickable {
                                 // Do something when the box is clicked
@@ -218,7 +225,8 @@ fun CameraView(
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .width(20.dp)
-                                .height(20.dp).align(Alignment.Center)
+                                .height(20.dp)
+                                .align(Alignment.Center)
                         )
                     }
                 }
@@ -226,7 +234,7 @@ fun CameraView(
 
                     onClick = {
 
-                              //Temporarily ignore recording code
+                        //Temporarily ignore recording code
 
                         if (!recordingStarted.value) {
                             videoCapture.value?.let { videoCapture ->
@@ -269,7 +277,8 @@ fun CameraView(
                         //navController.navigate("GALLERY_VIEW")
                     },
                     modifier = Modifier
-                        .align(Alignment.BottomCenter).size(80.dp)
+                        .align(Alignment.BottomCenter)
+                        .size(80.dp)
                 ) {
 
                     RecordingButton(isRecording = recordingStarted.value)
@@ -281,14 +290,6 @@ fun CameraView(
                 }
                 if (!recordingStarted.value) {
 
-                    val ResourceIds : List<Pair<String, String>> = arrayListOf(
-                        Pair(R.drawable.imagecard.toString(), "Image"),
-                        Pair(R.drawable.ic_launcher_foreground.toString(), "Image"),
-                        Pair(R.drawable.ic_launcher_foreground.toString(), "Image"),
-                        Pair(R.drawable.ic_launcher_foreground.toString(), "Image"),
-                        Pair(R.drawable.imagecard.toString(), "Image"),
-                    )
-
                     val bitmap = loadCurrentThumbnail(context = context).asImageBitmap()
                     Image(
                         bitmap = bitmap,
@@ -297,33 +298,37 @@ fun CameraView(
                         modifier = Modifier
                             .align(Alignment.BottomStart)
                             .clip(RoundedCornerShape(5.dp))
-                            .then(Modifier.size(64.dp).border(2.dp, Color.White, RoundedCornerShape(5.dp)))
+                            .then(
+                                Modifier
+                                    .size(64.dp)
+                                    .border(2.dp, Color.White, RoundedCornerShape(5.dp))
+                            )
                             .clickable {
                                 navController.navigate("GALLERY_VIEW/${(R.drawable.app_logo).toByte()}")
                             }
                     )
                 }
-                        Image(
-                            painter = painterResource(id = R.drawable.baseline_cameraswitch_24),
-                            contentDescription = "Story",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .width(40.dp)
-                                .height(40.dp)
-                                .align(Alignment.BottomEnd)
-                                .clickable {
-                                    cameraSelector.value =
-                                        if (cameraSelector.value == CameraSelector.DEFAULT_BACK_CAMERA) CameraSelector.DEFAULT_FRONT_CAMERA
-                                        else CameraSelector.DEFAULT_BACK_CAMERA
-                                    lifecycleOwner.lifecycleScope.launch {
-                                        videoCapture.value = context.createVideoCaptureUseCase(
-                                            lifecycleOwner = lifecycleOwner,
-                                            cameraSelector = cameraSelector.value,
-                                            previewView = previewView
-                                        )
-                                    }
-                                }
-                        )
+                Image(
+                    painter = painterResource(id = R.drawable.baseline_cameraswitch_24),
+                    contentDescription = "Story",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .width(40.dp)
+                        .height(40.dp)
+                        .align(Alignment.BottomEnd)
+                        .clickable {
+                            cameraSelector.value =
+                                if (cameraSelector.value == CameraSelector.DEFAULT_BACK_CAMERA) CameraSelector.DEFAULT_FRONT_CAMERA
+                                else CameraSelector.DEFAULT_BACK_CAMERA
+                            lifecycleOwner.lifecycleScope.launch {
+                                videoCapture.value = context.createVideoCaptureUseCase(
+                                    lifecycleOwner = lifecycleOwner,
+                                    cameraSelector = cameraSelector.value,
+                                    previewView = previewView
+                                )
+                            }
+                        }
+                )
 
             }
         }
@@ -362,8 +367,8 @@ fun loadCurrentThumbnail(context: Context): Bitmap {
         //imageSortOrder
     )
 
-    cursorImage.use{
-        it?.let{
+    cursorImage.use {
+        it?.let {
             val idColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
             val dateColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN)
             while (it.moveToNext()) {
@@ -398,8 +403,8 @@ fun loadCurrentThumbnail(context: Context): Bitmap {
         //imageSortOrder
     )
 
-    cursor.use{
-        it?.let{
+    cursor.use {
+        it?.let {
             val idColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
             val dateColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN)
             while (it.moveToNext()) {
@@ -410,8 +415,7 @@ fun loadCurrentThumbnail(context: Context): Bitmap {
                     id
                 )
 
-                if (timeSinceEpoch < date)
-                {
+                if (timeSinceEpoch < date) {
                     uri = contentUri
                 }
             }
