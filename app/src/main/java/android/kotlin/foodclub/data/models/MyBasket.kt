@@ -7,13 +7,13 @@ class MyBasket {
     var selectedIngredients: MutableList<Int> = mutableListOf()
         private set
 
-    private var idIndex = ingredients.size
+    private var idIndex = ingredients.size + 1
     private var removedIds = ArrayList<Int>()
 
     fun addIngredient(ingredient: Ingredient) {
         if(removedIds.isNotEmpty()) {
             idIndex = removedIds[0]
-            removedIds.remove(0)
+            removedIds.removeAt(0)
         }
         ingredient.id = idIndex
         ingredients.add(ingredient)
