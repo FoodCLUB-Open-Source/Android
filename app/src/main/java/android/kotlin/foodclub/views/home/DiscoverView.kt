@@ -1,5 +1,6 @@
 package com.example.foodclub.views.home
 
+import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.data.models.UserPostsModel
 import android.kotlin.foodclub.data.models.UserProfileModel
@@ -76,6 +77,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DiscoverView(navController: NavController) {
@@ -104,16 +106,11 @@ fun DiscoverView(navController: NavController) {
 
     val viewModel: DiscoverViewModel = hiltViewModel()
 
-    //Switch with WORLD categories (Yet to get the list..)=>
     viewModel.getPostsByWorld(197)
+    viewModel.getPostsByUserId()
+    viewModel.myFridgePosts()
 
-    //Switch with current logged in userId=>
-    viewModel.getPostsByUserId(5)
 
-    //Switch with current logged in userId=>
-    viewModel.myFridgePosts(5)
-
-    viewModel.getUserData();
 
 
     Column(modifier = Modifier
@@ -285,8 +282,6 @@ fun DiscoverView(navController: NavController) {
         var worldPosts: State<List<VideoModel>>? = null;
         var myFridgePosts: State<List<UserPostsModel>>? = null;
 
-        var profileData: State<List<UserProfileModel>>? = null;
-        profileData = viewModel.profileData.collectAsState()
 
         Spacer(modifier = Modifier.height(10.dp))
 
@@ -379,21 +374,25 @@ fun DiscoverView(navController: NavController) {
 
                     if(homePosts!=null){
                         items(homePosts!!.value) { dataItem ->
-                            GridItem2(navController,dataItem,profileData.value.get(0))
+                            viewModel.getPostData(dataItem.videoId);
+                            GridItem2(navController,dataItem,viewModel.sessionUserName.value)
                         }
                     }
 
                     else if(worldPosts!=null){
 
                         items(worldPosts!!.value) { dataItem ->
-                            GridItem2(navController,dataItem,profileData.value.get(0))
+                            
+                            viewModel.getPostData(dataItem.videoId);
+                            GridItem2(navController,dataItem,viewModel.sessionUserName.value)
                         }
 
                     }
 
                     else if(myFridgePosts!=null){
                         items(myFridgePosts!!.value) { dataItem ->
-                            GridItem2(navController,dataItem,profileData.value.get(0))
+                            viewModel.getPostData(dataItem.id.toLong());
+                            GridItem2(navController,dataItem,viewModel.sessionUserName.value)
                         }
                     }
                 }
@@ -456,7 +455,7 @@ fun TabHomeDiscover(
 }
 
 @Composable
-fun GridItem2(navController: NavController, dataItem: VideoModel,userProfile: UserProfileModel) {
+fun GridItem2(navController: NavController, dataItem: VideoModel,userName:String) {
 
     val satoshiFamily = FontFamily(
         Font(R.font.satoshi, FontWeight.Medium)
@@ -489,15 +488,15 @@ fun GridItem2(navController: NavController, dataItem: VideoModel,userProfile: Us
                     , verticalArrangement = Arrangement.Bottom
             ) {
                 Text(
-                    text = userProfile.username,
+                    text = userName,
                     fontFamily = satoshiFamily,
                     color = Color.White,
-                    fontSize = 18.sp
+                    fontSize = 15.sp
                 )
                 Text(
                     text =  dataItem.createdAt ,
                     fontFamily = satoshiFamily,
-                    fontSize = 14.sp,
+                    fontSize = 13.sp,
                     color= Color.White
                 )
             }
@@ -507,7 +506,7 @@ fun GridItem2(navController: NavController, dataItem: VideoModel,userProfile: Us
 }
 
 @Composable
-fun GridItem2(navController: NavController, dataItem: UserPostsModel,userProfile: UserProfileModel) {
+fun GridItem2(navController: NavController, dataItem: UserPostsModel,userName:String) {
 
     val satoshiFamily = FontFamily(
         Font(R.font.satoshi, FontWeight.Medium)
@@ -542,7 +541,7 @@ fun GridItem2(navController: NavController, dataItem: UserPostsModel,userProfile
                     text = dataItem.totalLikes.toString() ,
                     fontFamily = satoshiFamily,
                     color = Color.White,
-                    fontSize = 18.sp
+                    fontSize = 15.sp
                 )
 
             }

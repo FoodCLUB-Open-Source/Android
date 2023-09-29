@@ -13,6 +13,7 @@ import android.kotlin.foodclub.views.authentication.ChangePasswordView
 import android.kotlin.foodclub.views.authentication.EmailSentView
 import com.example.foodclub.views.authentication.ConfirmIdentityView
 import android.kotlin.foodclub.views.authentication.ForgotPasswordView
+import android.kotlin.foodclub.views.authentication.TermsAndConditions
 import com.example.foodclub.views.home.DiscoverView
 
 fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, setBottomBarVisibility: (Boolean) -> Unit) {
@@ -23,8 +24,10 @@ fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, setBot
         signupNavigationGraph(navController)
 
         composable(route = AuthScreen.MainLogInAndSignUp.route) {
+
             setBottomBarVisibility(false)
             MainLogInAndSignUp(navController)
+            //DiscoverView(navController = navController)
         }
         composable(route = AuthScreen.Login.route) {
             LogInWithEmail(navController)
@@ -35,7 +38,13 @@ fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, setBot
         composable(route = AuthScreen.ConfirmId.route) {
             ConfirmIdentityView()
         }
+        
+        composable(route = AuthScreen.TermsAndConditions.route) {
+            TermsAndConditions(navController)
+        }
+        
         composable(route = AuthScreen.VerifySignup.route + "/{username}?password={password}",
+
             arguments = listOf(
                 navArgument("username") { type = NavType.StringType },
                 navArgument("password") { nullable = true
@@ -71,4 +80,6 @@ sealed class AuthScreen(val route: String) {
 
     object ConfirmId : AuthScreen(route = "CONFIRM_ID")
     object VerifySignup : AuthScreen(route = "VERIFY_SIGN_UP")
+
+    object TermsAndConditions : AuthScreen(route = "TERMS")
 }

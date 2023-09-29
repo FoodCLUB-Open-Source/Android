@@ -79,11 +79,6 @@ fun MainLogInAndSignUp(navController: NavHostController) {
         )
 
 
-
-
-
-
-
     Column(
         Modifier
             .fillMaxSize()
@@ -107,80 +102,84 @@ fun MainLogInAndSignUp(navController: NavHostController) {
             modifier = Modifier.height(30.dp)
 
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            shape = RectangleShape,
-            modifier = Modifier
-                .border(1.dp, Color(android.graphics.Color.parseColor("#DADADA")), shape = RoundedCornerShape(10.dp))
-                .clip(RoundedCornerShape(10.dp))
-                .fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = viewModel.backgroundColor,
-                contentColor = Color.Black
-            ), contentPadding = PaddingValues(15.dp),
+        Spacer(modifier = Modifier.height(30.dp))
 
-            onClick = {
-                viewModel.changeButtonUi()
-                viewModel.continueWithFacebook()
-
-            }, interactionSource = interactionSource
-
-        ) {
-            Image(
-                painterResource(id = R.drawable.facebook_icon),
-                contentDescription = "app_title",
-                modifier = Modifier.size(20.dp)
+        // Commented out sign ins with facebook and instagram for now --->
 
 
-            )
-
-            Text(
-                text = "Continue with Facebook",
-                fontFamily = montserratFamily,
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp,
-                modifier = Modifier.padding(start = 10.dp)
-            )
-        }
-
-
-        Button(
-
-            shape = RectangleShape,
-            modifier = Modifier
-                .border(1.dp, Color(android.graphics.Color.parseColor("#DADADA")), shape = RoundedCornerShape(10.dp))
-                .clip(RoundedCornerShape(10.dp))
-                .fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = viewModel.backgroundColor,
-                contentColor = Color.Black
-            ), contentPadding = PaddingValues(15.dp),
-
-            onClick = {
-                viewModel.changeButtonUi()
-                viewModel.continueWithInstagram()
-            }, interactionSource = interactionSource1
-
-
-        ) {
-            Image(
-                painterResource(id = R.mipmap.instagram_icon),
-                contentDescription = "app_title",
-                modifier = Modifier.size(20.dp)
-
-
-            )
+//        Button(
+//            shape = RectangleShape,
+//            modifier = Modifier
+//                .border(1.dp, Color(android.graphics.Color.parseColor("#DADADA")), shape = RoundedCornerShape(10.dp))
+//                .clip(RoundedCornerShape(10.dp))
+//                .fillMaxWidth(),
+//            colors = ButtonDefaults.buttonColors(
+//                containerColor = viewModel.backgroundColor,
+//                contentColor = Color.Black
+//            ), contentPadding = PaddingValues(15.dp),
+//
+//            onClick = {
+//                viewModel.changeButtonUi()
+//                viewModel.continueWithFacebook()
+//
+//            }, interactionSource = interactionSource
+//
+//        ) {
+//            Image(
+//                painterResource(id = R.drawable.facebook_icon),
+//                contentDescription = "app_title",
+//                modifier = Modifier.size(20.dp)
+//
+//
+//            )
+//
+//            Text(
+//                text = "Continue with Facebook",
+//                fontFamily = montserratFamily,
+//                fontWeight = FontWeight.Bold,
+//                fontSize = 15.sp,
+//                modifier = Modifier.padding(start = 10.dp)
+//            )
+//        }
 
 
-
-            Text(
-                text = "Continue with Instagram",
-                fontFamily = montserratFamily,
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp,
-                modifier = Modifier.padding(start = 10.dp)
-            )
-        }
+//        Button(
+//
+//            shape = RectangleShape,
+//            modifier = Modifier
+//                .border(1.dp, Color(android.graphics.Color.parseColor("#DADADA")), shape = RoundedCornerShape(10.dp))
+//                .clip(RoundedCornerShape(10.dp))
+//                .fillMaxWidth(),
+//            colors = ButtonDefaults.buttonColors(
+//                containerColor = viewModel.backgroundColor,
+//                contentColor = Color.Black
+//            ), contentPadding = PaddingValues(15.dp),
+//
+//            onClick = {
+//                viewModel.changeButtonUi()
+//                viewModel.continueWithInstagram()
+//            }, interactionSource = interactionSource1
+//
+//
+//        ) {
+//            Image(
+//                painterResource(id = R.mipmap.instagram_icon),
+//                contentDescription = "app_title",
+//                modifier = Modifier.size(20.dp)
+//
+//
+//            )
+//
+//
+//
+//            Text(
+//                text = "Continue with Instagram",
+//                fontFamily = montserratFamily,
+//                fontWeight = FontWeight.Bold,
+//                fontSize = 15.sp,
+//                modifier = Modifier.padding(start = 10.dp)
+//            )
+//        }
 
         Button(
             shape = RectangleShape,
@@ -194,7 +193,7 @@ fun MainLogInAndSignUp(navController: NavHostController) {
             ), contentPadding = PaddingValues(15.dp),
 
             onClick = {
-                navController.navigate("SIGN_UP")
+                navController.navigate("TERMS")
             }
 
 
@@ -231,7 +230,8 @@ fun MainLogInAndSignUp(navController: NavHostController) {
                 },
                 style = TextStyle(
                     color = Color(126, 198, 11, 255),
-                    fontFamily = montserratFamily
+                    fontFamily = montserratFamily,
+                    fontSize = 12.sp
                 )
 
 
