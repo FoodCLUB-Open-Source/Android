@@ -287,9 +287,9 @@ fun CreateRecipeBottomSheetIngredients(onDismiss: () -> Unit, onSave: (ingredien
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 150.dp
     var searchText by remember { mutableStateOf("") }
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var contentState = remember { mutableStateOf(DrawerContentState.IngredientListContent) }
-    var values = remember { (1..99).map {
-        (it * 10).toString() + ValueParser.quantityUnitToString(editedIngredient.unit) }
+    val contentState = remember { mutableStateOf(DrawerContentState.IngredientListContent) }
+    val values = remember { mutableStateOf((1..99).map {
+        (it * 10).toString() + ValueParser.quantityUnitToString(editedIngredient.unit) })
     }
     val valuesPickerState = rememberPickerState()
 
@@ -316,7 +316,7 @@ fun CreateRecipeBottomSheetIngredients(onDismiss: () -> Unit, onSave: (ingredien
                         }
                     }
 
-        }
+        }, label = ""
         ) { contentState ->
             when (contentState.value) {
                 DrawerContentState.IngredientListContent -> {
@@ -383,9 +383,12 @@ fun CreateRecipeBottomSheetIngredients(onDismiss: () -> Unit, onSave: (ingredien
                                 }
                             }
                             items(ingredientList.size) {
-                                AddItemComposable(ingredientList[it], onClick = {
-                                    editedIngredient = it
-
+                                AddItemComposable(ingredientList[it], onClick = { ingredient ->
+                                    values.value = (1..99).map { value ->
+                                        (value * 10).toString() +
+                                                ValueParser.quantityUnitToString(ingredient.unit)
+                                    }
+                                    editedIngredient = ingredient
                                     contentState.value = DrawerContentState.IngredientAmountSelection
                                 })
                             }
@@ -451,7 +454,7 @@ fun CreateRecipeBottomSheetIngredients(onDismiss: () -> Unit, onSave: (ingredien
                                     Spacer(modifier = Modifier.height(35.dp))
                                     Picker(
                                         state = valuesPickerState,
-                                        items = values,
+                                        items = values.value,
                                         visibleItemsCount = 3,
                                         modifier = Modifier.weight(0.3f),
                                         textModifier = Modifier.padding(8.dp),
@@ -484,6 +487,7 @@ fun CreateRecipeBottomSheetIngredients(onDismiss: () -> Unit, onSave: (ingredien
                                                     editedIngredient.imageUrl
                                                 )
                                             )
+                                            onDismiss()
                                         }
                                     ) {
                                         Text("Save", color = Color.White, fontFamily = montserratFamily, fontSize = 16.sp, fontWeight = FontWeight.ExtraBold)
