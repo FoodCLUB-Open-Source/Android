@@ -3,7 +3,6 @@ package android.kotlin.foodclub.views.home
 import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.data.models.Ingredient
-import android.kotlin.foodclub.data.models.IngredientModel
 import android.kotlin.foodclub.data.models.Recipe
 import android.kotlin.foodclub.utils.composables.Picker
 import android.kotlin.foodclub.utils.composables.rememberPickerState
@@ -274,16 +273,17 @@ fun BottomSheetCategories(onDismiss: () -> Unit) {
 @Composable
 fun CreateRecipeBottomSheetIngredients(onDismiss: () -> Unit, onSave: (ingredient: Ingredient) -> Unit = {}) {
     val ingredientList = listOf(
-        Ingredient(1, "Olive Oil", 0, QuantityUnit.MILLILITERS, ""),
-        Ingredient(2, "Tomato", 120, QuantityUnit.GRAMS, ""),
-        Ingredient(3, "Lettuce", 50, QuantityUnit.GRAMS, ""),
-        Ingredient(4, "Broccoli", 0, QuantityUnit.GRAMS, ""),
-        Ingredient(5, "Carrot", 0, QuantityUnit.GRAMS, ""),
-        Ingredient(6, "Flour", 0, QuantityUnit.GRAMS, ""),
-        Ingredient(7, "Milk", 0, QuantityUnit.MILLILITERS, "")
+        Ingredient(1, "Olive Oil", 0, QuantityUnit.MILLILITERS, "https://kretu.sts3.pl/foodclub_drawable/tomato_ingredient.png"),
+        Ingredient(2, "Tomato", 120, QuantityUnit.GRAMS, "https://kretu.sts3.pl/foodclub_drawable/tomato_ingredient.png"),
+        Ingredient(3, "Lettuce", 50, QuantityUnit.GRAMS, "https://kretu.sts3.pl/foodclub_drawable/salad_ingredient.png"),
+        Ingredient(4, "Broccoli", 0, QuantityUnit.GRAMS, "https://kretu.sts3.pl/foodclub_drawable/salad_ingredient.png"),
+        Ingredient(5, "Carrot", 0, QuantityUnit.GRAMS, "https://kretu.sts3.pl/foodclub_drawable/salad_ingredient.png"),
+        Ingredient(6, "Flour", 0, QuantityUnit.GRAMS, "https://kretu.sts3.pl/foodclub_drawable/tomato_ingredient.png"),
+        Ingredient(7, "Milk", 0, QuantityUnit.MILLILITERS, "https://kretu.sts3.pl/foodclub_drawable/tomato_ingredient.png")
     )
-
     var editedIngredient by remember { mutableStateOf(ingredientList[0]) }
+
+    val coroutineScope = rememberCoroutineScope()
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 150.dp
     var searchText by remember { mutableStateOf("") }
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -329,7 +329,13 @@ fun CreateRecipeBottomSheetIngredients(onDismiss: () -> Unit, onSave: (ingredien
                             contentAlignment = Alignment.CenterStart) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Start
+                                horizontalArrangement = Arrangement.Start,
+                                modifier = Modifier.clickable {
+                                    coroutineScope.launch {
+                                        bottomSheetState.hide()
+                                        onDismiss()
+                                    }
+                                }
                             ) {
                                 Image(
                                     painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
@@ -437,20 +443,20 @@ fun CreateRecipeBottomSheetIngredients(onDismiss: () -> Unit, onSave: (ingredien
                                         .fillMaxSize()
                                         .padding(top = 30.dp, bottom = 40.dp)
                                 ) {
-//                                    AsyncImage(
-//                                        model = editedIngredient.imageUrl,
-//                                        contentDescription = null,
-//                                        modifier = Modifier
-//                                            .size(130.dp)
-//                                            .clip(CircleShape)
-//                                    )
-                                    Image(
-                                        painter = painterResource(id = R.drawable.tomato_ingredient),
-                                        contentDescription = "Circular Image",
+                                    AsyncImage(
+                                        model = editedIngredient.imageUrl,
+                                        contentDescription = null,
                                         modifier = Modifier
                                             .size(130.dp)
                                             .clip(CircleShape)
                                     )
+//                                    Image(
+//                                        painter = painterResource(id = R.drawable.tomato_ingredient),
+//                                        contentDescription = "Circular Image",
+//                                        modifier = Modifier
+//                                            .size(130.dp)
+//                                            .clip(CircleShape)
+//                                    )
                                     Spacer(modifier = Modifier.height(35.dp))
                                     Picker(
                                         state = valuesPickerState,
@@ -487,7 +493,10 @@ fun CreateRecipeBottomSheetIngredients(onDismiss: () -> Unit, onSave: (ingredien
                                                     editedIngredient.imageUrl
                                                 )
                                             )
-                                            onDismiss()
+                                            coroutineScope.launch {
+                                                bottomSheetState.hide()
+                                                onDismiss()
+                                            }
                                         }
                                     ) {
                                         Text("Save", color = Color.White, fontFamily = montserratFamily, fontSize = 16.sp, fontWeight = FontWeight.ExtraBold)
@@ -810,7 +819,7 @@ fun CreateRecipeView(navController: NavController) {
 
 @SuppressLint("UnusedTransitionTargetStateParameter")
 @Composable
-fun Ingredient(ingredient: IngredientModel, isRevealed: Boolean, onExpand: () -> Unit, onCollapse: () -> Unit,
+fun Ingredient(ingredient: Ingredient, isRevealed: Boolean, onExpand: () -> Unit, onCollapse: () -> Unit,
                onDelete: () -> Unit) {
     var ingredientXOffset = remember { mutableStateOf(0f) }
     var showItem by remember { mutableStateOf(true) }
@@ -884,15 +893,23 @@ fun Ingredient(ingredient: IngredientModel, isRevealed: Boolean, onExpand: () ->
                 .background(Color.White)
                 .padding(10.dp)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.salad_ingredient),
+                AsyncImage(
+                    model = ingredient.imageUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .height(80.dp)
                         .width(80.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                )
+                        .clip(RoundedCornerShape(12.dp)))
+//                Image(
+//                    painter = painterResource(id = R.drawable.salad_ingredient),
+//                    contentDescription = null,
+//                    contentScale = ContentScale.Crop,
+//                    modifier = Modifier
+//                        .height(80.dp)
+//                        .width(80.dp)
+//                        .clip(RoundedCornerShape(12.dp))
+//                )
                 Box(
                     modifier = Modifier
                         .padding(start = 95.dp)
@@ -904,7 +921,7 @@ fun Ingredient(ingredient: IngredientModel, isRevealed: Boolean, onExpand: () ->
                         .width(105.dp)
                         .align(Alignment.CenterStart) ) {
                         Text(
-                            text = ingredient.title,
+                            text = ingredient.type,
                             modifier = Modifier
                                 .align(Alignment.TopStart),
                             fontFamily = montserratFamily,
@@ -915,20 +932,21 @@ fun Ingredient(ingredient: IngredientModel, isRevealed: Boolean, onExpand: () ->
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Image(
                                 painter = painterResource(id = R.drawable.baseline_arrow_left_24),
-                                contentDescription = "Profile Image",
+                                contentDescription = "",
                                 modifier = Modifier
                                     .size(35.dp)
                                     .padding(end = 5.dp)
                             )
                             Text(
-                                "200g",
+                                ingredient.quantity.toString() +
+                                        ValueParser.quantityUnitToString(ingredient.unit),
                                 color = Color.Black,
                                 fontFamily = montserratFamily,
                                 fontSize = 14.sp
                             )
                             Image(
                                 painter = painterResource(id = R.drawable.baseline_arrow_right_24),
-                                contentDescription = "Profile Image",
+                                contentDescription = "",
                                 modifier = Modifier
                                     .size(35.dp)
                                     .padding(start = 5.dp)
