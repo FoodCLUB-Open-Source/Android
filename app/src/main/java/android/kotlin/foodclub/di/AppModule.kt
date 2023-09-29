@@ -43,8 +43,11 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideBasket(@Named("basketPreferences") basketPreferences: SharedPreferences): MyBasketCache {
-        return MyBasketCache(basketPreferences)
+    fun provideBasket(
+        @Named("basketPreferences") basketPreferences: SharedPreferences,
+        sessionCache: SessionCache
+    ): MyBasketCache {
+        return MyBasketCache(basketPreferences, sessionCache)
     }
 
     @Provides
