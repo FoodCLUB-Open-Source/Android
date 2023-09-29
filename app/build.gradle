@@ -122,6 +122,10 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.44")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
+    //implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
+
+    implementation 'io.github.grizzi91:bouquet:1.1.2'
+
 }
 
 // Allow references to generated code

@@ -14,6 +14,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,6 +36,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -48,12 +51,29 @@ fun SignUpWithEmailView(
 ) {
     Column(Modifier.fillMaxSize().padding(start = 32.dp, end = 32.dp, top = 100.dp, bottom = 32.dp)) {
         Column(Modifier.weight(1F)) {
-            Image(
-                painter = painterResource(R.drawable.back_icon),
-                contentDescription = "go back",
-                modifier = Modifier.width(36.dp).height(36.dp).offset(x = (-8).dp)
-                    .clickable { onBackButtonClick() }
-            )
+            Button(
+                shape = RectangleShape,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(15.dp))
+                    .width(20.dp)
+                    .height(40.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White,
+                    contentColor = Color.White
+                ), contentPadding = PaddingValues(5.dp),
+                onClick = {
+                    onBackButtonClick()
+                }
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.back_icon),
+                    contentDescription = "Back",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .width(20.dp)
+                        .height(20.dp)
+                )
+            }
             Column(Modifier.padding(top = 32.dp)) {
                 Text(
                     text = "New Here?",
@@ -121,31 +141,31 @@ fun SignUpWithEmailView(
                 }
             }
 
-            Image(
-                painterResource(id = R.drawable.login_with),
-                contentDescription = "or login with",
-                modifier = Modifier.fillMaxWidth().height(20.dp),
-                alignment = Alignment.Center
-            )
+//            Image(
+//                painterResource(id = R.drawable.login_with),
+//                contentDescription = "or login with",
+//                modifier = Modifier.fillMaxWidth().height(20.dp),
+//                alignment = Alignment.Center
+//            )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
-            ) {
-                AlternativeLoginOption(
-                    image = painterResource(R.drawable.facebook_ic),
-                    contentDescription = "Log in using facebook"
-                )
-                AlternativeLoginOption(
-                    image = painterResource(R.drawable.google_ic),
-                    contentDescription = "Log in using google"
-                )
-                AlternativeLoginOption(
-                    image = painterResource(R.mipmap.instagram_icon),
-                    contentDescription = "Log in using instagram"
-                )
-
-            }
+//            Row(
+//                modifier = Modifier.fillMaxWidth(),
+//                horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
+//            ) {
+//                AlternativeLoginOption(
+//                    image = painterResource(R.drawable.facebook_ic),
+//                    contentDescription = "Log in using facebook"
+//                )
+//                AlternativeLoginOption(
+//                    image = painterResource(R.drawable.google_ic),
+//                    contentDescription = "Log in using google"
+//                )
+//                AlternativeLoginOption(
+//                    image = painterResource(R.mipmap.instagram_icon),
+//                    contentDescription = "Log in using instagram"
+//                )
+//
+//            }
 
         }
         Box(Modifier.weight(1F)) { TermsAndConditionsInfoFooter() }

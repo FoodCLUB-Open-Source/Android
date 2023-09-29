@@ -18,12 +18,10 @@ class ForgotPasswordViewModel : ViewModel() {
             try {
                 val response = RetrofitInstance.retrofitApi.sendVerificationCodePassword(
                     VerificationCodeResendData(username)
+
                 )
-
                 if(response.isSuccessful) {
-
                     navController.navigate(route = AuthScreen.ChangePassword.route + "/" + username)
-
                 }
 
             } catch(e: IOException) {

@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.ui.theme.Montserrat
 import android.kotlin.foodclub.ui.theme.PlusJakartaSans
 import android.kotlin.foodclub.ui.theme.textFieldCustomColors
 import android.kotlin.foodclub.utils.helpers.FieldsValidation
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -269,23 +271,30 @@ fun AlternativeLoginOption(
 
 @Composable
 fun TermsAndConditionsInfoFooter() {
-    Box(Modifier.fillMaxSize()){
-        Row(modifier = Modifier.align(Alignment.BottomCenter)) {
-            Text(
-                text = "By using FoodClub you agree to our ",
-                fontSize = 12.sp,
-                color = Color(0xFF1E232C).copy(alpha = 0.5F)
+    Column(
+        Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            color = Color.Gray,
+            text = "By using FoodCLUB you agree to our",
+            fontFamily = Montserrat,
+            fontSize = 10.sp
+        )
+
+        ClickableText(
+            text = AnnotatedString("Terms & Conditions"),
+            onClick={
+
+            },
+            style = TextStyle(
+                color = Color.Gray,
+                fontFamily = Montserrat,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Bold,
+                textDecoration = TextDecoration.Underline
             )
-            ClickableText(
-                text = AnnotatedString("Terms & Conditions"),
-                onClick = {},
-                style = TextStyle(
-                    textDecoration = TextDecoration.Underline,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp,
-                    color = Color(0xFF1E232C).copy(alpha = 0.5F)
-                )
-            )
-        }
+        )
     }
 }

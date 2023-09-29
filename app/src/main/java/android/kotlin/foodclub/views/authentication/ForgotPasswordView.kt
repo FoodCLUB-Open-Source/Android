@@ -40,6 +40,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import android.kotlin.foodclub.viewmodels.authentication.ForgotPasswordViewModel
+import androidx.compose.ui.Alignment
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,25 +60,25 @@ fun ForgotPasswordView(navController: NavHostController) {
         )
 
     Column(
-        modifier = Modifier
+        Modifier
             .fillMaxSize()
-            .padding(top = 60.dp, start = 30.dp, end = 30.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+            .background(Color.White)
+            .padding(start = 30.dp, end = 30.dp, top = 120.dp, bottom = 50.dp),
+        verticalArrangement = Arrangement.spacedBy(35.dp)
 
     ) {
         Button(
             shape = RectangleShape,
             modifier = Modifier
                 .clip(RoundedCornerShape(15.dp))
-                .width(40.dp)
-                .padding(top = 30.dp).
-                 height(40.dp),
+                .width(20.dp)
+                .height(40.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.White,
                 contentColor = Color.White
             ), contentPadding = PaddingValues(5.dp),
             onClick = {
-                navController.navigateUp()
+                navController.popBackStack()
             }
         ) {
             Image(
@@ -85,8 +86,8 @@ fun ForgotPasswordView(navController: NavHostController) {
                 contentDescription = "Back",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .width(36.dp)
-                    .height(36.dp)
+                    .width(20.dp)
+                    .height(20.dp)
             )
         }
 
