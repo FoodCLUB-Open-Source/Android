@@ -2,10 +2,13 @@ package android.kotlin.foodclub.views.home
 
 import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.data.models.Ingredient
 import android.kotlin.foodclub.data.models.IngredientModel
 import android.kotlin.foodclub.data.models.Recipe
 import android.kotlin.foodclub.utils.composables.Picker
 import android.kotlin.foodclub.utils.composables.rememberPickerState
+import android.kotlin.foodclub.utils.enums.QuantityUnit
+import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.viewmodels.home.CreateRecipeViewModel
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -100,6 +103,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -153,8 +157,12 @@ fun BottomSheetCategories(onDismiss: () -> Unit) {
         dragHandle = { BottomSheetDefaults.DragHandle() },
     ) {
 
-        Box( modifier = Modifier.fillMaxWidth().height(screenHeight) ) {
-            Box(modifier = Modifier.fillMaxWidth().padding(start = 30.dp, end = 17.dp),
+        Box( modifier = Modifier
+            .fillMaxWidth()
+            .height(screenHeight) ) {
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 30.dp, end = 17.dp),
                 contentAlignment = Alignment.CenterStart) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -178,7 +186,9 @@ fun BottomSheetCategories(onDismiss: () -> Unit) {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.SpaceBetween,
-                                    modifier = Modifier.fillMaxWidth().padding(bottom = 30.dp)
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 30.dp)
                                 ) {
                                     TextField(
                                         value = searchText,
@@ -226,7 +236,11 @@ fun BottomSheetCategories(onDismiss: () -> Unit) {
 
                                         Button(
                                             modifier = Modifier
-                                                .border(1.dp, Color.White, shape = RoundedCornerShape(15.dp))
+                                                .border(
+                                                    1.dp,
+                                                    Color.White,
+                                                    shape = RoundedCornerShape(15.dp)
+                                                )
                                                 .wrapContentWidth()
                                                 .clip(RoundedCornerShape(15.dp)),
                                             colors = ButtonDefaults.buttonColors(
@@ -258,12 +272,25 @@ fun BottomSheetCategories(onDismiss: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
-fun CreateRecipeBottomSheetIngredients(onDismiss: () -> Unit) {
+fun CreateRecipeBottomSheetIngredients(onDismiss: () -> Unit, onSave: (ingredient: Ingredient) -> Unit = {}) {
+    val ingredientList = listOf(
+        Ingredient(1, "Olive Oil", 0, QuantityUnit.MILLILITERS, ""),
+        Ingredient(2, "Tomato", 120, QuantityUnit.GRAMS, ""),
+        Ingredient(3, "Lettuce", 50, QuantityUnit.GRAMS, ""),
+        Ingredient(4, "Broccoli", 0, QuantityUnit.GRAMS, ""),
+        Ingredient(5, "Carrot", 0, QuantityUnit.GRAMS, ""),
+        Ingredient(6, "Flour", 0, QuantityUnit.GRAMS, ""),
+        Ingredient(7, "Milk", 0, QuantityUnit.MILLILITERS, "")
+    )
+
+    var editedIngredient by remember { mutableStateOf(ingredientList[0]) }
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 150.dp
     var searchText by remember { mutableStateOf("") }
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var contentState = remember { mutableStateOf(DrawerContentState.IngredientListContent) }
-    val values = remember { (1..99).map { (it * 10).toString() + "g" } }
+    var values = remember { (1..99).map {
+        (it * 10).toString() + ValueParser.quantityUnitToString(editedIngredient.unit) }
+    }
     val valuesPickerState = rememberPickerState()
 
     ModalBottomSheet(
@@ -293,8 +320,12 @@ fun CreateRecipeBottomSheetIngredients(onDismiss: () -> Unit) {
         ) { contentState ->
             when (contentState.value) {
                 DrawerContentState.IngredientListContent -> {
-                    Box( modifier = Modifier.fillMaxWidth().height(screenHeight) ) {
-                        Box(modifier = Modifier.fillMaxWidth().padding(start = 17.dp, end = 17.dp),
+                    Box( modifier = Modifier
+                        .fillMaxWidth()
+                        .height(screenHeight) ) {
+                        Box(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 17.dp, end = 17.dp),
                             contentAlignment = Alignment.CenterStart) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
@@ -314,7 +345,9 @@ fun CreateRecipeBottomSheetIngredients(onDismiss: () -> Unit) {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.SpaceBetween,
-                                    modifier = Modifier.fillMaxWidth().padding(20.dp)
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(20.dp)
                                 ) {
                                     TextField(
                                         value = searchText,
@@ -349,8 +382,10 @@ fun CreateRecipeBottomSheetIngredients(onDismiss: () -> Unit) {
                                     Spacer(modifier = Modifier.width(20.dp))
                                 }
                             }
-                            items(5) {
-                                AddItemComposable("Tomato paste", R.drawable.story_user, onClick = {
+                            items(ingredientList.size) {
+                                AddItemComposable(ingredientList[it], onClick = {
+                                    editedIngredient = it
+
                                     contentState.value = DrawerContentState.IngredientAmountSelection
                                 })
                             }
@@ -358,20 +393,31 @@ fun CreateRecipeBottomSheetIngredients(onDismiss: () -> Unit) {
                     }
                 }
                 DrawerContentState.IngredientAmountSelection -> {
-                    Box( modifier = Modifier.fillMaxWidth().height(screenHeight) ) {
+                    Box( modifier = Modifier
+                        .fillMaxWidth()
+                        .height(screenHeight) ) {
                         Column(
-                            modifier = Modifier.fillMaxWidth().padding(start = 17.dp, end = 17.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 17.dp, end = 17.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.SpaceBetween,
                         ) {
                             Box(
-                                modifier = Modifier.height(50.dp).fillMaxWidth()
+                                modifier = Modifier
+                                    .height(50.dp)
+                                    .fillMaxWidth()
                             ) {
                                 Image(
                                     painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
                                     contentDescription = "Left Arrow",
-                                    modifier = Modifier.size(24.dp).align(Alignment.CenterStart)
-                                        .clickable(onClick = { contentState.value = DrawerContentState.IngredientListContent })
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                        .align(Alignment.CenterStart)
+                                        .clickable(onClick = {
+                                            contentState.value =
+                                                DrawerContentState.IngredientListContent
+                                        })
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
@@ -384,8 +430,17 @@ fun CreateRecipeBottomSheetIngredients(onDismiss: () -> Unit) {
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     verticalArrangement = Arrangement.SpaceBetween,
-                                    modifier = Modifier.fillMaxSize().padding(top = 30.dp, bottom = 40.dp)
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(top = 30.dp, bottom = 40.dp)
                                 ) {
+//                                    AsyncImage(
+//                                        model = editedIngredient.imageUrl,
+//                                        contentDescription = null,
+//                                        modifier = Modifier
+//                                            .size(130.dp)
+//                                            .clip(CircleShape)
+//                                    )
                                     Image(
                                         painter = painterResource(id = R.drawable.tomato_ingredient),
                                         contentDescription = "Circular Image",
@@ -405,14 +460,31 @@ fun CreateRecipeBottomSheetIngredients(onDismiss: () -> Unit) {
                                     Button(
                                         shape = RectangleShape,
                                         modifier = Modifier
-                                            .border(1.dp, Color(126, 198, 11, 255), shape = RoundedCornerShape(15.dp))
+                                            .border(
+                                                1.dp,
+                                                Color(126, 198, 11, 255),
+                                                shape = RoundedCornerShape(15.dp)
+                                            )
                                             .clip(RoundedCornerShape(15.dp))
                                             .fillMaxWidth(),
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = Color(126, 198, 11, 255),
                                             contentColor = Color.White
                                         ), contentPadding = PaddingValues(15.dp),
-                                        onClick = {}
+                                        onClick = {
+                                            onSave(
+                                                Ingredient(
+                                                    editedIngredient.id,
+                                                    editedIngredient.type,
+                                                    ValueParser.quantityStringToInt(
+                                                        valuesPickerState.selectedItem,
+                                                        editedIngredient.unit
+                                                    ),
+                                                    editedIngredient.unit,
+                                                    editedIngredient.imageUrl
+                                                )
+                                            )
+                                        }
                                     ) {
                                         Text("Save", color = Color.White, fontFamily = montserratFamily, fontSize = 16.sp, fontWeight = FontWeight.ExtraBold)
                                     }
@@ -611,7 +683,8 @@ fun CreateRecipeView(navController: NavController) {
                                 Button(
                                     modifier = Modifier
                                         //.border(1.dp, Color.Transparent, shape = RoundedCornerShape(15.dp))
-                                        .wrapContentWidth().height(30.dp)
+                                        .wrapContentWidth()
+                                        .height(30.dp)
                                         .clip(RoundedCornerShape(15.dp)),
                                     colors = ButtonDefaults.buttonColors(
                                         containerColor = color,
@@ -629,8 +702,13 @@ fun CreateRecipeView(navController: NavController) {
                                         fontFamily = montserratFamily)
                                     Button(
                                         modifier = Modifier
-                                            .border(2.dp, Color.White, shape = RoundedCornerShape(15.dp))
-                                            .width(20.dp).height(30.dp)
+                                            .border(
+                                                2.dp,
+                                                Color.White,
+                                                shape = RoundedCornerShape(15.dp)
+                                            )
+                                            .width(20.dp)
+                                            .height(30.dp)
                                             .clip(RoundedCornerShape(15.dp)),
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = color,
@@ -772,35 +850,35 @@ fun Ingredient(ingredient: IngredientModel, isRevealed: Boolean, onExpand: () ->
         }
         Column {
             Box(modifier = Modifier
-                    .offset {
-                        IntOffset((ingredientXOffset.value + offsetTransition).roundToInt(), 0)
-                    }
-                    .pointerInput("") {
-                        detectHorizontalDragGestures { change, dragAmount ->
-                            val original = Offset(ingredientXOffset.value, 0f)
-                            val summed = original + Offset(x = dragAmount, y = 0f)
-                            val newValue = Offset(summed.x.coerceIn(-300f, 0f), 0f)
-                            if (newValue.x <= -20f) {
-                                onExpand()
-                                return@detectHorizontalDragGestures
-                            } else if (newValue.x >= 0) {
-                                onCollapse()
-                                return@detectHorizontalDragGestures
-                            }
-                            if (change.positionChange() != Offset.Zero) change.consume()
-                            ingredientXOffset.value = newValue.x
+                .offset {
+                    IntOffset((ingredientXOffset.value + offsetTransition).roundToInt(), 0)
+                }
+                .pointerInput("") {
+                    detectHorizontalDragGestures { change, dragAmount ->
+                        val original = Offset(ingredientXOffset.value, 0f)
+                        val summed = original + Offset(x = dragAmount, y = 0f)
+                        val newValue = Offset(summed.x.coerceIn(-300f, 0f), 0f)
+                        if (newValue.x <= -20f) {
+                            onExpand()
+                            return@detectHorizontalDragGestures
+                        } else if (newValue.x >= 0) {
+                            onCollapse()
+                            return@detectHorizontalDragGestures
                         }
+                        if (change.positionChange() != Offset.Zero) change.consume()
+                        ingredientXOffset.value = newValue.x
                     }
-                    .fillMaxWidth()
-                    .height(100.dp)
-                    .border(
-                        1.dp,
-                        Color(android.graphics.Color.parseColor("#E8E8E8")),
-                        shape = RoundedCornerShape(15.dp)
-                    )
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(Color.White)
-                    .padding(10.dp)
+                }
+                .fillMaxWidth()
+                .height(100.dp)
+                .border(
+                    1.dp,
+                    Color(android.graphics.Color.parseColor("#E8E8E8")),
+                    shape = RoundedCornerShape(15.dp)
+                )
+                .clip(RoundedCornerShape(10.dp))
+                .background(Color.White)
+                .padding(10.dp)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.salad_ingredient),
@@ -869,16 +947,15 @@ fun Ingredient(ingredient: IngredientModel, isRevealed: Boolean, onExpand: () ->
 
 @Composable
 fun AddItemComposable(
-    ingredientName: String,
-    ingredientImage: Int,
-    onClick: () -> Unit
+    ingredient: Ingredient,
+    onClick: (Ingredient) -> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(70.dp)
             .padding(start = 20.dp, top = 20.dp)
-            .clickable(onClick = { onClick() })
+            .clickable(onClick = { onClick(ingredient) })
     ) {
         Row(
             modifier = Modifier
@@ -886,8 +963,8 @@ fun AddItemComposable(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
         ) {
-            Image(
-                painter = painterResource(id = ingredientImage),
+            AsyncImage(
+                model = ingredient.imageUrl,
                 contentDescription = null,
                 modifier = Modifier
                     .size(40.dp)
@@ -895,7 +972,7 @@ fun AddItemComposable(
             )
             Spacer(modifier = Modifier.width(15.dp))
             Text(
-                text = ingredientName,
+                text = ingredient.type,
                 color = Color.White,
                 fontFamily = montserratFamily
             )
