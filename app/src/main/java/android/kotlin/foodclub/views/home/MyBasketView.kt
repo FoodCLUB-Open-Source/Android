@@ -24,12 +24,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -39,15 +41,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-//import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -55,16 +53,17 @@ import androidx.compose.ui.text.TextStyle
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import kotlinx.coroutines.delay
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyBasketView(navController: NavController) {
     val viewModel: MyBasketViewModel = hiltViewModel()
     val systemUiController = rememberSystemUiController()
     var showSheet by remember { mutableStateOf(false) }
     val productsList = viewModel.productsList.collectAsState()
-    val selectedProductsIds = viewModel.selectedProducts.collectAsState()
+    val selectedProductsIds = viewModel.selectedProductsList.collectAsState()
+    var deleteSelected by remember { mutableStateOf(false) }
 
     val triggerBottomSheetModal: () -> Unit = {
         showSheet = !showSheet
@@ -127,7 +126,7 @@ fun MyBasketView(navController: NavController) {
                             containerColor = Color(0xFFF5F5F5),
                             contentColor = Color.White
                         ), contentPadding = PaddingValues(5.dp),
-                        onClick = { viewModel.deleteSelectedIngredients() }
+                        onClick = { deleteSelected = true }
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.delete_bin_5_line__2_),
@@ -169,55 +168,74 @@ fun MyBasketView(navController: NavController) {
                 }
             }
             LazyColumn (modifier = Modifier.padding(end = 20.dp, start = 20.dp, bottom = 110.dp)) {
-                items(productsList.value.size) {
-                    val product = productsList.value[it]
+                items(
+                    items = productsList.value,
+                    key = { ingredient -> ingredient.id }
+                ) { ingredient ->
+                    val product = ingredient
                     BasketIngredient(
                         ingredient = product,
-                        isShown = selectedProductsIds.value.contains(product.id),
+                        isShown = !selectedProductsIds.value.contains(product.id) || !deleteSelected,
                         onSelectionChange = {bool ->
                             if(bool) viewModel.selectIngredient(product.id)
-                            else viewModel.unselectIngredient(product.id)
-                        }
+                            else viewModel.unselectIngredient(product.id) },
+                        onIngredientUpdate = { viewModel.saveBasket() }
                     )
-
-
                 }
             }
         }
 
     }
+
+    LaunchedEffect(deleteSelected) {
+        if(deleteSelected) {
+            delay(800)
+            viewModel.deleteSelectedIngredients()
+            deleteSelected = false
+        }
+    }
 }
 
 @Composable
 fun BasketIngredient(ingredient: Ingredient, isShown: Boolean,
-                     onSelectionChange: (isSelected: Boolean) -> Unit) {
+                     onSelectionChange: (isSelected: Boolean) -> Unit,
+                     onIngredientUpdate: () -> Unit) {
     var isSelected by remember { mutableStateOf(false) }
-    val ingredientState by remember { mutableStateOf(ingredient) }
+
+    var quantity by remember { mutableStateOf(ingredient.quantity) }
+    val type by remember { mutableStateOf(ingredient.type) }
+    val unit by remember { mutableStateOf(ingredient.unit) }
+
     var showItem by remember { mutableStateOf(true) }
+    if(!isShown) {
+        showItem = false
+    }
+
 
     AnimatedVisibility(visible = showItem, exit = shrinkOut(shrinkTowards = Alignment.TopCenter)) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(140.dp)
-                .border(
-                    1.dp,
-                    Color(android.graphics.Color.parseColor("#E8E8E8")),
-                    shape = RoundedCornerShape(15.dp)
-                )
-                .clip(RoundedCornerShape(10.dp))
-                .background(Color.White)
-                .padding(10.dp)
-        ) {
-            AsyncImage(
-                model = ingredient.imageUrl,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
+        Column {
+            Box(
                 modifier = Modifier
-                    .height(200.dp)
-                    .width(130.dp)
-                    .clip(RoundedCornerShape(12.dp))
-            )
+                    .fillMaxWidth()
+                    .height(140.dp)
+                    .border(
+                        1.dp,
+                        Color(android.graphics.Color.parseColor("#E8E8E8")),
+                        shape = RoundedCornerShape(15.dp)
+                    )
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(Color.White)
+                    .padding(10.dp)
+            ) {
+                AsyncImage(
+                    model = ingredient.imageUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .height(200.dp)
+                        .width(130.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                )
 //            Image(
 //                painter = ingredient.imageUrl,
 //                contentDescription = null,
@@ -227,80 +245,83 @@ fun BasketIngredient(ingredient: Ingredient, isShown: Boolean,
 //                    .width(130.dp)
 //                    .clip(RoundedCornerShape(12.dp))
 //            )
-            Box(
-                modifier = Modifier
-                    .size(35.dp)
-                    .align(Alignment.TopEnd)
-                    .clip(RoundedCornerShape(30.dp))
-                    .background(
-                        if (isSelected) Color(android.graphics.Color.parseColor("#7EC60B"))
-                        else Color(android.graphics.Color.parseColor("#ECECEC"))
-                    )
-                    .clickable {
-                        isSelected = !isSelected
-                        onSelectionChange(isSelected)
-                    }
-                    .padding(4.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.check),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                )
-            }
-            Box(
-                modifier = Modifier
-                    .padding(start = 140.dp, top = 10.dp)
-                    .fillMaxSize()
-            ) {
-                Box ( modifier = Modifier.width(115.dp) ) {
-                    Text(
-                        text = ingredientState.type,
-                        lineHeight = 18.sp,
-                        modifier = Modifier
-                            .align(Alignment.TopStart),
-                        fontWeight = FontWeight.Normal,
-                        fontFamily = Montserrat
+                Box(
+                    modifier = Modifier
+                        .size(35.dp)
+                        .align(Alignment.TopEnd)
+                        .clip(RoundedCornerShape(30.dp))
+                        .background(
+                            if (isSelected) Color(android.graphics.Color.parseColor("#7EC60B"))
+                            else Color(android.graphics.Color.parseColor("#ECECEC"))
+                        )
+                        .clickable {
+                            isSelected = !isSelected
+                            onSelectionChange(isSelected)
+                        }
+                        .padding(4.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.check),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
                     )
                 }
-                Box ( modifier = Modifier.align(Alignment.BottomEnd) ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Image(
-                            painter = painterResource(id = R.drawable.baseline_arrow_left_24),
-                            contentDescription = "Profile Image",
-                            modifier = Modifier
-                                .size(50.dp)
-                                .padding(end = 15.dp)
-                                .clip(RoundedCornerShape(20.dp))
-                                .clickable {
-//                                    ingredient.decrementQuantity(5)
-                                    ingredientState.decrementQuantity(5)
-                                }
-                        )
+                Box(
+                    modifier = Modifier
+                        .padding(start = 140.dp, top = 10.dp)
+                        .fillMaxSize()
+                ) {
+                    Box ( modifier = Modifier.width(115.dp) ) {
                         Text(
-                            ingredientState.quantity.toString()
-                                    + ValueParser.quantityUnitToString(ingredientState.unit),
-                            color = Color.Black,
-                            fontFamily = Montserrat,
-                            fontSize = 14.sp
-                        )
-                        Image(
-                            painter = painterResource(id = R.drawable.baseline_arrow_right_24),
-                            contentDescription = "Profile Image",
+                            text = type,
+                            lineHeight = 18.sp,
                             modifier = Modifier
-                                .size(50.dp)
-                                .padding(start = 15.dp)
-                                .clip(RoundedCornerShape(20.dp))
-                                .clickable {
-//                                    ingredient.incrementQuantity(5)
-                                    ingredientState.incrementQuantity(5)
-                                }
+                                .align(Alignment.TopStart),
+                            fontWeight = FontWeight.Normal,
+                            fontFamily = Montserrat
                         )
+                    }
+                    Box ( modifier = Modifier.align(Alignment.BottomEnd) ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Image(
+                                painter = painterResource(id = R.drawable.baseline_arrow_left_24),
+                                contentDescription = "Profile Image",
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .padding(end = 15.dp)
+                                    .clip(RoundedCornerShape(20.dp))
+                                    .clickable {
+                                        ingredient.decrementQuantity(5)
+                                        quantity = ingredient.quantity
+                                        onIngredientUpdate()
+                                    }
+                            )
+                            Text(
+                                quantity.toString()
+                                        + ValueParser.quantityUnitToString(unit),
+                                color = Color.Black,
+                                fontFamily = Montserrat,
+                                fontSize = 14.sp
+                            )
+                            Image(
+                                painter = painterResource(id = R.drawable.baseline_arrow_right_24),
+                                contentDescription = "Profile Image",
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .padding(start = 15.dp)
+                                    .clip(RoundedCornerShape(20.dp))
+                                    .clickable {
+                                        ingredient.incrementQuantity(5)
+                                        quantity = ingredient.quantity
+                                        onIngredientUpdate()
+                                    }
+                            )
+                        }
                     }
                 }
             }
+            Spacer(modifier = Modifier.height(10.dp))
         }
-        Spacer(modifier = Modifier.height(10.dp))
     }
 }
