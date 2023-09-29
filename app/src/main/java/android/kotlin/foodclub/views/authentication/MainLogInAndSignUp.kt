@@ -193,7 +193,7 @@ fun MainLogInAndSignUp(navController: NavHostController) {
             ), contentPadding = PaddingValues(15.dp),
 
             onClick = {
-                navController.navigate("SIGN_UP")
+                navController.navigate("TERMS")
             }
 
 

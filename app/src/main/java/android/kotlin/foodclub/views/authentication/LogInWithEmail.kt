@@ -66,7 +66,7 @@ fun LogInWithEmail(navController: NavHostController) {
         Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(top = 40.dp, start = 30.dp, end = 30.dp),
+            .padding(start = 30.dp, end = 30.dp, top = 80.dp, bottom = 50.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(35.dp)
     ) {
@@ -197,6 +197,33 @@ fun LogInWithEmail(navController: NavHostController) {
                 )
             }
 
+            Column(
+                Modifier.fillMaxHeight(),
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    color = Color.Gray,
+                    text = "By using FoodCLUB you agree to our",
+                    fontFamily = Montserrat,
+                    fontSize = 10.sp
+                )
+
+                ClickableText(
+                    text = AnnotatedString("Terms & Conditions"),
+                    onClick={
+
+                    },
+                    style = TextStyle(
+                        color = Color.Gray,
+                        fontFamily = Montserrat,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        textDecoration = TextDecoration.Underline
+                    )
+                )
+            }
+
 //            Image(
 //                painterResource(id = R.drawable.login_with),
 //                contentDescription = "app_title",
@@ -257,32 +284,7 @@ fun LogInWithEmail(navController: NavHostController) {
 //                }
 //            }
 
-            Column(
-                Modifier.fillMaxHeight(),
-                verticalArrangement = Arrangement.Bottom,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    color = Color.Gray,
-                    text = "By using FoodCLUB you agree to our",
-                    fontFamily = Montserrat,
-                    fontSize = 10.sp
-                )
 
-                ClickableText(
-                    text = AnnotatedString("Terms & Conditions"),
-                    onClick={
-
-                    },
-                    style = TextStyle(
-                        color = Color.Gray,
-                        fontFamily = Montserrat,
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold,
-                        textDecoration = TextDecoration.Underline
-                    )
-                )
-            }
 
 
         }
