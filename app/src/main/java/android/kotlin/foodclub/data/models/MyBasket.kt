@@ -7,7 +7,7 @@ class MyBasket {
     var selectedIngredients: MutableList<Int> = mutableListOf()
         private set
 
-    private var idIndex = 1
+    private var idIndex = ingredients.size
     private var removedIds = ArrayList<Int>()
 
     fun addIngredient(ingredient: Ingredient) {
@@ -38,6 +38,10 @@ class MyBasket {
         val removeList = ingredients.filter { selectedIngredients.contains(it.id) }
         ingredients.removeAll(removeList)
         removedIds.addAll(removeList.map { it.id })
+        selectedIngredients = mutableListOf()
+    }
+
+    fun clearSelectedIngredients() {
         selectedIngredients = mutableListOf()
     }
 }
