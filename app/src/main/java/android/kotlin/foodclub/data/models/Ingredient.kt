@@ -3,9 +3,8 @@ package android.kotlin.foodclub.data.models
 import android.kotlin.foodclub.utils.enums.QuantityUnit
 
 class Ingredient constructor(
-    id: Int, type: String, quantity: Int, unit: QuantityUnit, imageUrl: Any = ""
+    var id: Int, type: String, quantity: Int, unit: QuantityUnit, imageUrl: Any = ""
 ) {
-    var id: Int = id
     var type: String = type
         private set
 
