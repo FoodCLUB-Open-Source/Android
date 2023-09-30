@@ -1,6 +1,8 @@
 package android.kotlin.foodclub.views.authentication
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.viewmodels.authentication.EmailSentViewModel
+import android.kotlin.foodclub.viewmodels.authentication.ForgotPasswordViewModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -26,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -33,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
@@ -40,25 +44,43 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun EmailSentView(navController: NavHostController) {
 
+    val viewModel: EmailSentViewModel = viewModel()
+
     val montserratFamily = FontFamily(
          Font(R.font.montserratregular, FontWeight.Normal),
     )
 
     Column(
-        modifier = Modifier
+        Modifier
             .fillMaxSize()
-            .padding(top = 60.dp, start = 30.dp, end = 30.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+            .background(Color.White)
+            .padding(start = 30.dp, end = 30.dp, top = 120.dp, bottom = 50.dp),
+        verticalArrangement = Arrangement.spacedBy(35.dp)
 
     ) {
-        Image(
-            painterResource(id = R.drawable.back_icon),
-            contentDescription = "back_icon",
+        Button(
+            shape = RectangleShape,
             modifier = Modifier
-                .width(35.dp)
-                .height(35.dp)
-
-        )
+                .clip(RoundedCornerShape(15.dp))
+                .width(20.dp)
+                .height(40.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.White,
+                contentColor = Color.White
+            ), contentPadding = PaddingValues(5.dp),
+            onClick = {
+                navController.popBackStack()
+            }
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.back_icon),
+                contentDescription = "Back",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .width(20.dp)
+                    .height(20.dp)
+            )
+        }
 
         Text(
             text = "Password Changed", fontSize = 30.sp,
@@ -81,7 +103,9 @@ fun EmailSentView(navController: NavHostController) {
             ), contentPadding = PaddingValues(15.dp),
 
             onClick = {
+             //   viewModel.goToLogin(navController);
                 navController.navigate("LOGIN")
+
             }
 
         ) {
