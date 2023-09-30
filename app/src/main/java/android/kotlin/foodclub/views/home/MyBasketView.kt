@@ -3,6 +3,7 @@ package android.kotlin.foodclub.views.home
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.data.models.Ingredient
 import android.kotlin.foodclub.ui.theme.Montserrat
+import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.viewmodels.home.MyBasketViewModel
 import androidx.compose.animation.AnimatedVisibility
@@ -28,7 +29,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -67,14 +67,8 @@ fun MyBasketView(navController: NavController) {
 
     val triggerBottomSheetModal: () -> Unit = {
         showSheet = !showSheet
-        systemUiController.setStatusBarColor(
-            color = Color(android.graphics.Color.parseColor("#ACACAC")),
-            darkIcons = true
-        )
-        systemUiController.setNavigationBarColor(
-            color = Color.Black,
-            darkIcons = true
-        )
+        systemUiController.setStatusBarColor(color = Color(0x00ACACAC), darkIcons = true)
+        systemUiController.setNavigationBarColor(color = Color.Black, darkIcons = true)
     }
     SideEffect {
         if (!showSheet) {
@@ -86,7 +80,7 @@ fun MyBasketView(navController: NavController) {
     }
 
     if (showSheet) {
-        CreateRecipeBottomSheetIngredients(triggerBottomSheetModal) { viewModel.addIngredient(it) }
+        IngredientsBottomSheet(triggerBottomSheetModal) { viewModel.addIngredient(it) }
     }
     Column(
         modifier = Modifier
