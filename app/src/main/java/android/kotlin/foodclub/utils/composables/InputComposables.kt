@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -302,6 +301,28 @@ fun TermsAndConditionsInfoFooter(onClick: () -> Unit = {}) {
                 fontWeight = FontWeight.Bold,
                 textDecoration = TextDecoration.Underline
             )
+        )
+    }
+}
+
+@Composable
+fun ConfirmButton(enabled: Boolean, text: String, onClick: () -> Unit) {
+    Button(
+        shape = RoundedCornerShape(10.dp),
+        modifier = Modifier.height(56.dp).clip(RoundedCornerShape(10.dp)).fillMaxWidth(),
+        enabled = enabled,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(0xFF7EC60B),
+            disabledContainerColor = Color(0xFFC9C9C9),
+            disabledContentColor = Color.White,
+            contentColor = Color.White
+        ),
+        onClick = { onClick() }
+    ) {
+        Text(
+            text = text,
+            fontFamily = Montserrat,
+            fontSize = 16.sp
         )
     }
 }
