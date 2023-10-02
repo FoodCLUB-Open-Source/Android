@@ -3,9 +3,8 @@ package com.example.foodclub.views.home
 import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.data.models.UserPostsModel
-import android.kotlin.foodclub.data.models.UserProfileModel
 import android.kotlin.foodclub.data.models.VideoModel
-import android.kotlin.foodclub.views.home.CreateRecipeBottomSheetIngredients
+import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -324,7 +323,7 @@ fun DiscoverView(navController: NavController) {
             }
         }
         if (showSheet) {
-            CreateRecipeBottomSheetIngredients(triggerBottomSheetModal)
+            IngredientsBottomSheet(triggerBottomSheetModal)
         }
         if (tabIndex == 2) {
             Button(shape = RectangleShape,
