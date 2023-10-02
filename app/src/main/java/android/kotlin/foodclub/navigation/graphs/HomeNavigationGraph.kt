@@ -65,9 +65,6 @@ import androidx.navigation.navigation
         composable(route = HomeOtherRoutes.CreateRecipeView.route) {
             CreateRecipeView(navController = navController)
         }
-        composable(route = HomeOtherRoutes.ChangePasswordView.route) {
-            ChangePasswordView(navController = navController)
-        }
         composable(route = HomeOtherRoutes.DeleteRecipeView.route  + "/{postId}",
             arguments = listOf(
                 navArgument("postId") { defaultValue = 0L
@@ -118,7 +115,6 @@ import androidx.navigation.navigation
 
 sealed class HomeOtherRoutes(val route: String) {
     object DeleteRecipeView : HomeOtherRoutes(route = "DELETE_RECIPE")
-    object ChangePasswordView : HomeOtherRoutes(route = "CHANGE_PASSWORD")
     object SettingsView : HomeOtherRoutes(route = "SETTINGS")
     object CameraView : HomeOtherRoutes(route = "CAMERA_VIEW")
     object CreateRecipeView : HomeOtherRoutes(route = "CREATE_RECIPE_VIEW")
