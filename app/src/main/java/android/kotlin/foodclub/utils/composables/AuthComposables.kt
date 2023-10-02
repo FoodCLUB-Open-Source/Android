@@ -270,24 +270,22 @@ fun AlternativeLoginOption(
 }
 
 @Composable
-fun TermsAndConditionsInfoFooter() {
-    Column(
+fun TermsAndConditionsInfoFooter(onClick: () -> Unit = {}) {
+    Row(
         Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally
+        verticalAlignment = Alignment.Bottom,
+        horizontalArrangement = Arrangement.Center
     ) {
         Text(
             color = Color.Gray,
-            text = "By using FoodCLUB you agree to our",
+            text = "By using FoodCLUB you agree to our ",
             fontFamily = Montserrat,
             fontSize = 10.sp
         )
 
         ClickableText(
             text = AnnotatedString("Terms & Conditions"),
-            onClick={
-
-            },
+            onClick={ onClick() },
             style = TextStyle(
                 color = Color.Gray,
                 fontFamily = Montserrat,
