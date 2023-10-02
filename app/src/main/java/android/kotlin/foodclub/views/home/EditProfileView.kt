@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.views.home
 
+import android.kotlin.foodclub.utils.composables.ConfirmButton
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -31,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
+val colorLightGray = Color(0xFFDADADA)
 
 //The main function of this EditProfile file. This arranges all components to build the screen
 @Composable
@@ -48,7 +47,9 @@ fun EditProfileSetting(navController: NavController){
         Spacer(modifier = Modifier.height(15.dp))
         EditProfileInputRow(boxType = "Email")
         Spacer(modifier = Modifier.height(30.dp))
-        SaveButton()
+        ConfirmButton(enabled = true, text = "Save") {
+
+        }
     }
 }
 
