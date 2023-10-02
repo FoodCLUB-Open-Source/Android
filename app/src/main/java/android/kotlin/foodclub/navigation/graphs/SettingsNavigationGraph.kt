@@ -31,7 +31,10 @@ fun NavGraphBuilder.settingsNavigationGraph(navController: NavHostController) {
         composable(SettingsScreen.ChangePassword.route) {entry ->
             val viewModel = entry.sharedHiltViewModel<SettingsViewModel>(navController)
 
-            ChangePasswordSettings(null) { oldPassword, newPassword -> {} }
+            ChangePasswordSettings(null, { navController.popBackStack() }) {
+                    oldPassword, newPassword -> {
+
+            } }
         }
     }
 }

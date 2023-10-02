@@ -22,9 +22,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun ChangePasswordSettings(error: String?, sendData: (oldPassword: String, newPassword: String) -> Unit) {
+fun ChangePasswordSettings(error: String?, onBackAction: () -> Unit,
+                           sendData: (oldPassword: String, newPassword: String) -> Unit) {
 
-    SettingsLayout(label = "Password", onBackAction = { /*TODO*/ }) {
+    SettingsLayout(label = "Password", onBackAction = { onBackAction() }) {
         var oldPassword by remember { mutableStateOf("") }
         var newPassword by remember { mutableStateOf("") }
 
