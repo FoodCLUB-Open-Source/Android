@@ -304,7 +304,7 @@ fun CameraView(
                                     .border(2.dp, Color.White, RoundedCornerShape(5.dp))
                             )
                             .clickable {
-                                navController.navigate("GALLERY_VIEW/${(R.drawable.app_logo).toByte()}")
+                                navController.navigate("GALLERY_VIEW")
                             }
                     )
                 }

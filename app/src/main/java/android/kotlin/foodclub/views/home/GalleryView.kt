@@ -62,7 +62,7 @@ import java.nio.charset.StandardCharsets
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-public fun GalleryView(navController: NavController, firstImage: String, itemsPerRow: Int = 3) {
+public fun GalleryView(navController: NavController, itemsPerRow: Int = 3) {
     val viewModel: GalleryViewModel = viewModel()
     //val str = firstImage.toString()
 
@@ -116,6 +116,7 @@ public fun GalleryView(navController: NavController, firstImage: String, itemsPe
         mutableStateOf(true)
     }
 
+    /*
     if (firstImage == "image")
     {
         OnOptionSelected(true)
@@ -124,6 +125,8 @@ public fun GalleryView(navController: NavController, firstImage: String, itemsPe
     {
         OnOptionSelected(false)
     }
+
+     */
 
     PermissionsRequired(
         multiplePermissionsState = permissionState,

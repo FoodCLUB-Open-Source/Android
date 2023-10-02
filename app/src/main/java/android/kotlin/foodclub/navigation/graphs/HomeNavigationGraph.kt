@@ -90,8 +90,7 @@ fun NavGraphBuilder.homeNavigationGraph(navController: NavHostController, showSh
                 }
                 composable(route = HomeOtherRoutes.GalleryView.route) {
                     GalleryView(
-                        navController = navController,
-                        it.arguments?.getString("firstImage") ?: ""
+                        navController = navController
                     )
                 }
                 composable(route = HomeOtherRoutes.EditProfileSetting.route) {
@@ -159,7 +158,7 @@ sealed class HomeOtherRoutes(val route: String) {
     object CameraView : HomeOtherRoutes(route = "CAMERA_VIEW")
     object CreateRecipeView : HomeOtherRoutes(route = "CREATE_RECIPE_VIEW")
     object CameraPreviewView : HomeOtherRoutes(route = "CAMERA_PREVIEW_VIEW/{uri}")
-    object GalleryView : HomeOtherRoutes(route = "GALLERY_VIEW/{firstImage}")
+    object GalleryView : HomeOtherRoutes(route = "GALLERY_VIEW")
     object FollowerView : HomeOtherRoutes(route = "FOLLOWER_VIEW")
 
     object FollowingView : HomeOtherRoutes(route = "FOLLOWING_VIEW")
