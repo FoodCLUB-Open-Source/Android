@@ -2,7 +2,6 @@ package android.kotlin.foodclub.navigation.graphs
 
 import android.kotlin.foodclub.views.home.CameraPreviewView
 import android.kotlin.foodclub.views.home.CameraView
-import android.kotlin.foodclub.views.home.ChangePasswordView
 import android.kotlin.foodclub.views.home.CreateRecipeView
 import android.kotlin.foodclub.views.home.DeleteRecipeView
 import android.kotlin.foodclub.views.home.FollowerView
