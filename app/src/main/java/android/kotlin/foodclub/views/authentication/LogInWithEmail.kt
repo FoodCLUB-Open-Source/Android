@@ -66,7 +66,7 @@ fun LogInWithEmail(navController: NavHostController) {
         Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(top = 40.dp, start = 30.dp, end = 30.dp),
+            .padding(start = 30.dp, end = 30.dp, top = 80.dp, bottom = 50.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(35.dp)
     ) {
@@ -197,66 +197,6 @@ fun LogInWithEmail(navController: NavHostController) {
                 )
             }
 
-            Image(
-                painterResource(id = R.drawable.login_with),
-                contentDescription = "app_title",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(15.dp)
-
-
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(15.dp,Alignment.CenterHorizontally),
-            ) {
-                Button(
-                    shape = RectangleShape,
-                    modifier = Modifier
-                        .width(80.dp)
-                        .border(1.dp, Color(230, 230, 230, 255), shape = RoundedCornerShape(10.dp))
-                        .clip(RoundedCornerShape(10.dp)),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(218, 218, 218, 70)
-
-                    ), contentPadding = PaddingValues(15.dp),
-
-                    onClick = {
-
-                    }
-
-                ) {
-                    Image(
-                        painterResource(id = R.mipmap.facebook_icon),
-                        contentDescription = "",
-                        Modifier.size(20.dp)
-                    )
-                }
-
-                Button(
-                    shape = RectangleShape,
-                    modifier = Modifier
-                        .width(80.dp)
-                        .border(1.dp, Color(230, 230, 230, 255), shape = RoundedCornerShape(10.dp))
-                        .clip(RoundedCornerShape(10.dp)),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(218, 218, 218, 70)
-                    ), contentPadding = PaddingValues(15.dp),
-
-                    onClick = {
-
-                    }
-
-                ) {
-                    Image(
-                        painterResource(id = R.mipmap.instagram_icon),
-                        contentDescription = "",
-                        Modifier.size(20.dp)
-                    )
-                }
-            }
-
             Column(
                 Modifier.fillMaxHeight(),
                 verticalArrangement = Arrangement.Bottom,
@@ -283,6 +223,68 @@ fun LogInWithEmail(navController: NavHostController) {
                     )
                 )
             }
+
+//            Image(
+//                painterResource(id = R.drawable.login_with),
+//                contentDescription = "app_title",
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(15.dp)
+//
+//
+//            )
+
+//            Row(
+//                modifier = Modifier.fillMaxWidth(),
+//                horizontalArrangement = Arrangement.spacedBy(15.dp,Alignment.CenterHorizontally),
+//            ) {
+//                Button(
+//                    shape = RectangleShape,
+//                    modifier = Modifier
+//                        .width(80.dp)
+//                        .border(1.dp, Color(230, 230, 230, 255), shape = RoundedCornerShape(10.dp))
+//                        .clip(RoundedCornerShape(10.dp)),
+//                    colors = ButtonDefaults.buttonColors(
+//                        containerColor = Color(218, 218, 218, 70)
+//
+//                    ), contentPadding = PaddingValues(15.dp),
+//
+//                    onClick = {
+//
+//                    }
+//
+//                ) {
+//                    Image(
+//                        painterResource(id = R.mipmap.facebook_icon),
+//                        contentDescription = "",
+//                        Modifier.size(20.dp)
+//                    )
+//                }
+//
+//                Button(
+//                    shape = RectangleShape,
+//                    modifier = Modifier
+//                        .width(80.dp)
+//                        .border(1.dp, Color(230, 230, 230, 255), shape = RoundedCornerShape(10.dp))
+//                        .clip(RoundedCornerShape(10.dp)),
+//                    colors = ButtonDefaults.buttonColors(
+//                        containerColor = Color(218, 218, 218, 70)
+//                    ), contentPadding = PaddingValues(15.dp),
+//
+//                    onClick = {
+//
+//                    }
+//
+//                ) {
+//                    Image(
+//                        painterResource(id = R.mipmap.instagram_icon),
+//                        contentDescription = "",
+//                        Modifier.size(20.dp)
+//                    )
+//                }
+//            }
+
+
 
 
         }

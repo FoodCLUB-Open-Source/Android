@@ -8,6 +8,7 @@ import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.utils.helpers.SessionCache
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class DiscoverViewModel @Inject constructor(
     private val repository: PostRepository,
-    private val profileRepo: ProfileRepository
+    private val profileRepo: ProfileRepository,
+    private val sessionCache: SessionCache
 ):ViewModel() {
 
     private val _postList = MutableStateFlow<List<VideoModel>>(listOf())
@@ -32,12 +34,16 @@ class DiscoverViewModel @Inject constructor(
     private val _myFridgePosts = MutableStateFlow<List<UserPostsModel>>(listOf())
     val myFridgePosts: StateFlow<List<UserPostsModel>> get() = _myFridgePosts
 
-    private val _profileData = MutableStateFlow<List<UserProfileModel>>(listOf())
-    val profileData: MutableStateFlow<List<UserProfileModel>> get() = _profileData
+    private val _sessionUserId = MutableStateFlow<String>("")
+    val sessionUserId: MutableStateFlow<String> get() = _sessionUserId
 
-    lateinit var session:SessionCache
+    private val _sessionUserName = MutableStateFlow<String>("")
+    val sessionUserName: MutableStateFlow<String> get() = _sessionUserName
 
     fun getPostsByWorld(worldCategory: Long) {
+
+        _sessionUserId.value = sessionCache.getActiveSession()!!.userId.toString()
+
 
         viewModelScope.launch(Dispatchers.Main) {
             when(val resource = repository.getWorldCategoryPosts(worldCategory, 10, 1)) {
@@ -54,12 +60,14 @@ class DiscoverViewModel @Inject constructor(
 
     }
 
-    fun getUserData(){
+
+    fun getPostData(postId:Long){
         viewModelScope.launch {
 
-            when (val resource = profileRepo.retrieveProfileData(5)) {
+
+            when (val resource = repository.getPost(postId)) {
                 is Resource.Success -> {
-                    _profileData.value = listOf( resource.data!!)
+                    _sessionUserName.value =  resource.data!!.authorDetails
                 }
 
                 is Resource.Error -> {
@@ -70,10 +78,10 @@ class DiscoverViewModel @Inject constructor(
         }
     }
 
-    fun getPostsByUserId(id: Long) {
+    fun getPostsByUserId() {
 
         viewModelScope.launch {
-            when(val resource = repository.getHomepagePosts(id, 10, 1)) {
+            when(val resource = repository.getHomepagePosts(sessionUserId.value.toLong(), 10, 1)) {
                 is Resource.Success -> {
                     _postList.value = resource.data!!
                 }
@@ -86,11 +94,11 @@ class DiscoverViewModel @Inject constructor(
 
     }
 
-    fun myFridgePosts(id: Long) {
+    fun myFridgePosts() {
 
         viewModelScope.launch(Dispatchers.Main) {
             try {
-                val response = RetrofitInstance.retrofitApi.retrieveProfileData(id, 1, 1)
+                val response = RetrofitInstance.retrofitApi.retrieveProfileData(sessionUserId.value.toLong(), 1, 1)
 
                 if (response.isSuccessful) {
                     _myFridgePosts.value = response.body()!!.data.userPosts

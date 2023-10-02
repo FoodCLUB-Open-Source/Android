@@ -76,7 +76,7 @@ class LogInWithEmailViewModel @Inject constructor(
                         when{
                             errorString?.contains("Incorrect username or password.") == true -> _loginStatus.postValue(LoginErrorCodes.WRONG_CREDENTIALS)
                             errorString?.contains("User is not confirmed.") == true ->  {
-                                navController.navigate("VERIFY_SIGN_UP/${userEmail}?resendCode=${true}")
+                                navController.navigate("VERIFY_SIGN_UP/${userEmail}?password=$userPassword")
                             }
                             errorString?.contains("account_not_found") == true-> _loginStatus.postValue(LoginErrorCodes.ACCOUNT_NOT_FOUND)
                             else -> _loginStatus.postValue(LoginErrorCodes.UNKNOWN_ERROR)

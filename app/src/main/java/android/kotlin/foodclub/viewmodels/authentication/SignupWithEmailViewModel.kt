@@ -60,7 +60,10 @@ class SignupWithEmailViewModel() : ViewModel() {
                  val response = RetrofitInstance.retrofitApi.postUser(_userSignUpInformation.value)
 
                  if(response.isSuccessful){
-                     navController.navigate(route = AuthScreen.VerifySignup.route + "/" + _userSignUpInformation.value.username) {
+                     navController.navigate(
+                         route = AuthScreen.VerifySignup.route + "/${_userSignUpInformation.value.username}"
+                         + "?password=${_userSignUpInformation.value.password}"
+                     ) {
                          popUpTo(AuthScreen.SignUp.route) {
                              inclusive = true
                          }
