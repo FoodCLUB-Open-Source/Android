@@ -11,8 +11,6 @@ import android.net.Uri
 import android.os.Build
 import android.util.Size
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -73,40 +71,17 @@ public fun GalleryView(navController: NavController, firstImage: String, itemsPe
 
     val permissionState = rememberMultiplePermissionsState(
         permissions = listOf(
-            //Manifest.permission.CAMERA,
-            //Manifest.permission.RECORD_AUDIO,
             Manifest.permission.READ_MEDIA_IMAGES,
             Manifest.permission.READ_MEDIA_VIDEO
         )
     )
 
-    //val ResourceIds : MutableList<Pair<String, String>> = remember{viewModel.ResourceIds.toMutableList()}
     val ResourceIds: MutableList<Pair<Uri, String>> = mutableListOf()
-    //ResourceIds.add(Pair(firstImage, "Video"))
-    var ResourceDrawables: MutableList<Uri> = mutableListOf<Uri>();
-    var ResourceURI: MutableList<Uri> = mutableListOf<Uri>();
-
-
-    val getContent = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetMultipleContents(),
-        onResult = { uris ->
-            for (uri in uris) {
-                //val drawable = Drawable.createFromStream(context.contentResolver.openInputStream(uri), uri.toString())
-                //ResourceIds.add(Pair(uri.toString(), "Image"))
-                val type = context.contentResolver.getType(uri)
-                val s = type?.let { type.substring(0, it.indexOf("/")) }
-                ResourceIds.add(Pair(uri, s) as Pair<Uri, String>)
-                //ResourceDrawables.add(drawable as BitmapDrawable)
-            }
-            //Log.i("CameraView", uri.toString())
-        }
-    )
+    val ResourceDrawables: MutableList<Uri> = mutableListOf<Uri>();
+    val ResourceURI: MutableList<Uri> = mutableListOf<Uri>();
 
     LaunchedEffect(Unit) {
         permissionState.launchMultiplePermissionRequest()
-        //getContent.launch("*")
-        //getContent.launch("video/*")
-        //getContent.launch("image/*")
     }
 
 
@@ -115,25 +90,14 @@ public fun GalleryView(navController: NavController, firstImage: String, itemsPe
     uris.addAll(viewModel.getVideoMediaContent(context = context, limitSize = true, 150))
     val y = 0;
     for (uri in uris) {
-        //val drawable = Drawable.createFromStream(context.contentResolver.openInputStream(uri), uri.toString())
-        //ResourceIds.add(Pair(uri.toString(), "Image"))
         val type = context.contentResolver.getType(uri)
         val s = type?.let { type.substring(0, it.indexOf("/")) }
         ResourceIds.add(Pair(uri, s) as Pair<Uri, String>)
-        //ResourceDrawables.add(drawable as BitmapDrawable)
     }
     val x = 0;
 
     ResourceIds.forEach()
     { (name, type) ->
-
-        /*
-        if (name.contains("mp4"))
-        {
-            ResourceURI.add(name)
-        }
-         */
-
         if (type == "image") {
             //val drawable = Drawable.createFromStream(context.contentResolver.openInputStream(name.toUri()), name)
             ResourceDrawables.add(name)
@@ -150,6 +114,15 @@ public fun GalleryView(navController: NavController, firstImage: String, itemsPe
     //Toggles between Image and Video options
     val (selectedImageOption, OnOptionSelected) = remember {
         mutableStateOf(true)
+    }
+
+    if (firstImage == "image")
+    {
+        OnOptionSelected(true)
+    }
+    else if (firstImage == "video")
+    {
+        OnOptionSelected(false)
     }
 
     PermissionsRequired(
@@ -318,7 +291,7 @@ public fun GalleryView(navController: NavController, firstImage: String, itemsPe
 }
 
 @Composable
-fun <E> GalleryTab(items: List<E>, itemsPerRow: Int = 3, navController: NavController) {
+fun <E> GalleryTab(items: List<E>, itemsPerRow: Int = 3, context: Context,  navController: NavController, itemType: String) {
     var itemRows: MutableList<MutableList<E>> = arrayListOf()
     val itemRow: MutableList<E> = arrayListOf()
     var count: Int = 0
@@ -351,8 +324,18 @@ fun <E> GalleryTab(items: List<E>, itemsPerRow: Int = 3, navController: NavContr
             {
                 val ratioModifier: Modifier = Modifier.weight(1f);
 
-                for (item in itemLine) {
-                    VideoItem(ratioModifier, item.toString().toUri(), navController)
+                if (itemType === "image")
+                {
+                    for (item in itemLine)
+                    {
+                        ImageItem(modifier = ratioModifier, imageID = (context).contentResolver.loadThumbnail(item.toString().toUri(), Size(480, 480), null).asImageBitmap())
+                    }
+                }
+                else
+                {
+                    for (item in itemLine) {
+                        VideoItem(ratioModifier, item.toString().toUri(), navController)
+                    }
                 }
             }
         }
