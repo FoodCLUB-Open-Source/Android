@@ -5,6 +5,7 @@ import android.kotlin.foodclub.api.authentication.UserSignUpInformation
 import android.kotlin.foodclub.ui.theme.Montserrat
 import android.kotlin.foodclub.ui.theme.PlusJakartaSans
 import android.kotlin.foodclub.utils.composables.AlternativeLoginOption
+import android.kotlin.foodclub.utils.composables.ConfirmButton
 import android.kotlin.foodclub.utils.composables.CustomPasswordTextField
 import android.kotlin.foodclub.utils.composables.CustomTextField
 import android.kotlin.foodclub.utils.composables.TermsAndConditionsInfoFooter
@@ -49,7 +50,10 @@ fun SignUpWithEmailView(
     onValuesUpdate: (String, String) -> Unit, onBackButtonClick: () -> Unit,
     userSignUpInformation: State<UserSignUpInformation>
 ) {
-    Column(Modifier.fillMaxSize().padding(start = 32.dp, end = 32.dp, top = 100.dp, bottom = 32.dp)) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(start = 32.dp, end = 32.dp, top = 100.dp, bottom = 32.dp)) {
         Column(Modifier.weight(1F)) {
             Button(
                 shape = RectangleShape,
@@ -91,7 +95,9 @@ fun SignUpWithEmailView(
         }
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.weight(2F).fillMaxSize()) {
+            modifier = Modifier
+                .weight(2F)
+                .fillMaxSize()) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 var userEmail by remember { mutableStateOf(userSignUpInformation.value.email) }
                 var userPassword by remember { mutableStateOf(userSignUpInformation.value.password) }
@@ -120,25 +126,33 @@ fun SignUpWithEmailView(
                     },
                     onValueChange = { userPassword = it })
 
-                Button(
-                    shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier.height(56.dp).clip(RoundedCornerShape(10.dp)).fillMaxWidth(),
+                ConfirmButton(
                     enabled = (filledEmail || initialEmailCorrectnessState)
                             && (filledPassword || initialPasswordCorrectnessState),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF7EC60B),
-                        disabledContainerColor = Color(0xFFC9C9C9),
-                        disabledContentColor = Color.White,
-                        contentColor = Color.White
-                    ),
-                    onClick = { onValuesUpdate(userEmail, userPassword) }
-                ) {
-                    Text(
-                        text = "Sign Up",
-                        fontFamily = Montserrat,
-                        fontSize = 16.sp
-                    )
-                }
+                    text = "Sign Up"
+                ) { onValuesUpdate(userEmail, userPassword) }
+//                Button(
+//                    shape = RoundedCornerShape(10.dp),
+//                    modifier = Modifier
+//                        .height(56.dp)
+//                        .clip(RoundedCornerShape(10.dp))
+//                        .fillMaxWidth(),
+//                    enabled = (filledEmail || initialEmailCorrectnessState)
+//                            && (filledPassword || initialPasswordCorrectnessState),
+//                    colors = ButtonDefaults.buttonColors(
+//                        containerColor = Color(0xFF7EC60B),
+//                        disabledContainerColor = Color(0xFFC9C9C9),
+//                        disabledContentColor = Color.White,
+//                        contentColor = Color.White
+//                    ),
+//                    onClick = { onValuesUpdate(userEmail, userPassword) }
+//                ) {
+//                    Text(
+//                        text = "Sign Up",
+//                        fontFamily = Montserrat,
+//                        fontSize = 16.sp
+//                    )
+//                }
             }
 
 //            Image(

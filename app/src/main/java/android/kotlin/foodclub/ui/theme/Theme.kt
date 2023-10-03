@@ -88,6 +88,8 @@ fun textFieldCustomColors(
     textColor: Color = Color(0xFF939393),
     cursorColor: Color = Color(0xFF7EC60B),
     focusedIndicatorColor: Color = Color.Transparent,
+    unfocusedLabelColor: Color = Color(0xFF000000).copy(alpha = 0.4F),
+    focusedLabelColor: Color = Color(0xFF000000).copy(alpha = 0.4F),
     unfocusedIndicatorColor: Color = Color.Transparent,
     disabledIndicatorColor: Color = Color.Transparent
 ) = TextFieldDefaults.textFieldColors(
@@ -95,6 +97,8 @@ fun textFieldCustomColors(
     unfocusedTextColor = textColor,
     focusedTextColor = textColor,
     cursorColor = cursorColor,
+    unfocusedLabelColor = unfocusedLabelColor,
+    focusedLabelColor = focusedLabelColor,
     focusedIndicatorColor = focusedIndicatorColor,
     unfocusedIndicatorColor = unfocusedIndicatorColor,
     disabledIndicatorColor = disabledIndicatorColor

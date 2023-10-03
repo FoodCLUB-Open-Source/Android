@@ -2,6 +2,7 @@ package android.kotlin.foodclub.utils.composables
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
@@ -16,4 +17,15 @@ inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(
         navController.getBackStackEntry(navGraphRoute)
     }
     return viewModel(parentEntry)
+}
+
+@Composable
+inline fun <reified T : ViewModel> NavBackStackEntry.sharedHiltViewModel(
+    navController: NavHostController,
+): T {
+    val navGraphRoute = destination.parent?.route ?: return hiltViewModel()
+    val parentEntry = remember(this) {
+        navController.getBackStackEntry(navGraphRoute)
+    }
+    return hiltViewModel(parentEntry)
 }
