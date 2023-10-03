@@ -3,6 +3,9 @@ package android.kotlin.foodclub.navigation.graphs
 import android.kotlin.foodclub.views.home.CameraPreviewView
 import android.kotlin.foodclub.views.home.CameraView
 import android.kotlin.foodclub.views.home.CreateRecipeView
+import android.kotlin.foodclub.views.home.GalleryView
+//import android.kotlin.foodclub.views.home.PlayView
+//import android.kotlin.foodclub.views.home.StoryView
 import android.kotlin.foodclub.views.home.DeleteRecipeView
 import android.kotlin.foodclub.views.home.FollowerView
 import android.kotlin.foodclub.views.home.HomeView
@@ -10,14 +13,18 @@ import android.kotlin.foodclub.views.home.MyBasketView
 import android.kotlin.foodclub.views.home.SearchView
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import android.kotlin.foodclub.navigation.graphs.Graph
+//import com.example.foodclub.navigation.graphs.Graph
 import com.example.foodclub.ui.theme.BottomBarScreenObject
 import com.example.foodclub.views.home.CreateView
 import com.example.foodclub.views.home.DiscoverView
 import android.kotlin.foodclub.views.home.ProfileView
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+
 
     fun NavGraphBuilder.homeNavigationGraph(navController: NavHostController, showSheet: Boolean,
                                             triggerBottomSheetModal: () -> Unit,
@@ -79,38 +86,42 @@ import androidx.navigation.navigation
             DeleteRecipeView(navController = navController, postId = postId)
         }
 
-        composable(route = HomeOtherRoutes.FollowerView.route + "/{userId}",
-            arguments = listOf(
-                navArgument("userId") { nullable = true }
-            )
-        ) {
-            it.arguments?.getString("userId")?.let { it1 ->
-                FollowerView(navController = navController, viewType = "followers",
-                    userId = it1.toLong())
+                composable(route = HomeOtherRoutes.FollowerView.route + "/{userId}",
+                    arguments = listOf(
+                        navArgument("userId") { nullable = true }
+                    )
+                ) {
+                    it.arguments?.getString("userId")?.let { it1 ->
+                        FollowerView(
+                            navController = navController, viewType = "followers",
+                            userId = it1.toLong()
+                        )
+                    }
+                }
+
+                composable(route = HomeOtherRoutes.FollowingView.route + "/{userId}",
+                    arguments = listOf(
+                        navArgument("userId") { nullable = true }
+                    )
+                ) {
+                    it.arguments?.getString("userId")?.let { it1 ->
+                        FollowerView(
+                            navController = navController, viewType = "following",
+                            userId = it1.toLong()
+                        )
+                    }
+                }
+
+                composable(route = HomeOtherRoutes.MyBasketView.route) {
+                    MyBasketView(navController = navController)
+                }
+
+                composable(route = HomeOtherRoutes.MySearchView.route) {
+                    SearchView(navController = navController)
+                }
             }
         }
 
-        composable(route = HomeOtherRoutes.FollowingView.route + "/{userId}",
-            arguments = listOf(
-                navArgument("userId") { nullable = true }
-            )
-        ) {
-            it.arguments?.getString("userId")?.let { it1 ->
-                FollowerView(navController = navController, viewType = "following",
-                    userId = it1.toLong())
-            }
-        }
-
-        composable(route = HomeOtherRoutes.MyBasketView.route) {
-            MyBasketView(navController = navController)
-        }
-
-        composable(route = HomeOtherRoutes.MySearchView.route) {
-            SearchView(navController = navController)
-        }
-
-    }
-}
 
 sealed class HomeOtherRoutes(val route: String) {
     object DeleteRecipeView : HomeOtherRoutes(route = "DELETE_RECIPE")
@@ -118,7 +129,7 @@ sealed class HomeOtherRoutes(val route: String) {
     object CameraView : HomeOtherRoutes(route = "CAMERA_VIEW")
     object CreateRecipeView : HomeOtherRoutes(route = "CREATE_RECIPE_VIEW")
     object CameraPreviewView : HomeOtherRoutes(route = "CAMERA_PREVIEW_VIEW/{uri}")
-
+    object GalleryView : HomeOtherRoutes(route = "GALLERY_VIEW")
     object FollowerView : HomeOtherRoutes(route = "FOLLOWER_VIEW")
 
     object FollowingView : HomeOtherRoutes(route = "FOLLOWING_VIEW")
