@@ -19,6 +19,8 @@ import com.example.foodclub.ui.theme.BottomBarScreenObject
 import com.example.foodclub.views.home.CreateView
 import com.example.foodclub.views.home.DiscoverView
 import android.kotlin.foodclub.views.home.ProfileView
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -26,6 +28,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     fun NavGraphBuilder.homeNavigationGraph(navController: NavHostController, showSheet: Boolean,
                                             triggerBottomSheetModal: () -> Unit,
                                             triggerStory: () -> Unit,

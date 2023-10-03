@@ -22,6 +22,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -34,16 +35,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChangePasswordView(navController:NavHostController, username: String?){
 
     val viewModel: ChangePasswordViewModel = viewModel()
+    val errorStatus by viewModel.errorStatus.observeAsState(null)
 
     val montserratFamily = FontFamily(
 
@@ -101,6 +105,7 @@ fun ChangePasswordView(navController:NavHostController, username: String?){
 
         TextField(
             value = verificationCode,
+            isError = errorStatus!=null && verificationCode!="",
             onValueChange = {
                 verificationCode = it;
             },
@@ -121,8 +126,11 @@ fun ChangePasswordView(navController:NavHostController, username: String?){
 
         )
 
+
+
         TextField(
             value = password,
+            isError = errorStatus!=null && verificationCode!="",
             onValueChange = {
                 password = it;
             },
@@ -143,6 +151,13 @@ fun ChangePasswordView(navController:NavHostController, username: String?){
 
         )
 
+        if(errorStatus!=null && verificationCode!=""){
+            Text(
+                text = errorStatus ?: "",
+                fontSize = 11.sp,
+                color = Color.Red
+            )
+        }
 
         Button(
             shape = RectangleShape,
