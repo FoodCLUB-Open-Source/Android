@@ -1,11 +1,7 @@
 package android.kotlin.foodclub.views.home
 
-import android.net.Uri
+import android.kotlin.foodclub.navigation.graphs.Graph
 import android.view.ViewGroup
-import androidx.media3.common.MediaItem
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.ui.AspectRatioFrameLayout
-import androidx.media3.ui.PlayerView
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -20,13 +16,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.C
+import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.AspectRatioFrameLayout
+import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
 
 @Composable
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 fun CameraPreviewView(
     uri: String,
+    state:String,
     navController: NavController // NEED NAV CONTROLLER
 ) {
     val context = LocalContext.current
@@ -80,7 +81,7 @@ fun CameraPreviewView(
             onClick = {
                 navController.navigate(
                     // URI ROUTE ON CLICK
-                    route = "CreateRecipeRoute/${Uri.encode(uri)}"
+                    route = if (state.contains("recipe")) "CREATE_RECIPE_VIEW" else Graph.HOME//"CreateRecipeRoute/${Uri.encode(uri)}"
                 )
             },
             modifier = Modifier

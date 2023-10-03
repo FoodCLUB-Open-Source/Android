@@ -45,7 +45,6 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -56,18 +55,29 @@ import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionsRequired
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import okio.ByteString.Companion.encodeUtf8
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-public fun GalleryView(navController: NavController, itemsPerRow: Int = 3) {
+public fun GalleryView(navController: NavController, stateEncoded:String, itemsPerRow: Int = 3) {
     val viewModel: GalleryViewModel = viewModel()
     //val str = firstImage.toString()
 
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
+
+    var state:String = ""
+
+    if (stateEncoded.contains("story"))
+    {
+        state = "story"
+    }
+    if (stateEncoded.contains("recipe"))
+    {
+        state = "recipe"
+    }
 
     val permissionState = rememberMultiplePermissionsState(
         permissions = listOf(
@@ -150,7 +160,7 @@ public fun GalleryView(navController: NavController, itemsPerRow: Int = 3) {
                 {
                     Button(
                         onClick = {
-                            navController.navigate("CAMERA_VIEW")
+                            navController.popBackStack()
                         },
                         shape = RoundedCornerShape(10.dp),
                         colors = ButtonDefaults.buttonColors(Color(0xFF7EC60B)),
@@ -281,7 +291,8 @@ public fun GalleryView(navController: NavController, itemsPerRow: Int = 3) {
                             videos = ResourceURI,
                             itemsPerRow = itemsPerRow,
                             navController = navController,
-                            context = context
+                            context = context,
+                            state = state,
                         )
                     }
 
@@ -294,7 +305,7 @@ public fun GalleryView(navController: NavController, itemsPerRow: Int = 3) {
 }
 
 @Composable
-fun <E> GalleryTab(items: List<E>, itemsPerRow: Int = 3, context: Context,  navController: NavController, itemType: String) {
+fun <E> GalleryTab(items: List<E>, itemsPerRow: Int = 3, context: Context,  navController: NavController, itemType: String, state:String) {
     var itemRows: MutableList<MutableList<E>> = arrayListOf()
     val itemRow: MutableList<E> = arrayListOf()
     var count: Int = 0
@@ -337,7 +348,7 @@ fun <E> GalleryTab(items: List<E>, itemsPerRow: Int = 3, context: Context,  navC
                 else
                 {
                     for (item in itemLine) {
-                        VideoItem(ratioModifier, item.toString().toUri(), navController)
+                        VideoItem(ratioModifier, item.toString().toUri(), navController, state)
                     }
                 }
             }
@@ -428,7 +439,8 @@ fun GalleryVideoTab(
     videos: List<Uri>,
     itemsPerRow: Int = 3,
     navController: NavController,
-    context: Context
+    context: Context,
+    state: String
 ) {
     var videoRows: MutableList<MutableList<Uri>> = arrayListOf()
     val videoRow: MutableList<Uri> = arrayListOf()
@@ -463,7 +475,7 @@ fun GalleryVideoTab(
                 val ratioModifier: Modifier = Modifier.weight(1f);
 
                 for (video in videoLine) {
-                    VideoItem(ratioModifier, video, navController)
+                    VideoItem(ratioModifier, video, navController, state)
                 }
             }
         }
@@ -484,7 +496,7 @@ fun createVideoThumb(context: Context, uri: Uri): Bitmap? {
 }
 
 @Composable
-fun VideoItem(modifier: Modifier, videoID: Uri = ("").toUri(), navController: NavController) {
+fun VideoItem(modifier: Modifier, videoID: Uri = ("").toUri(), navController: NavController, state:String) {
     val context = LocalContext.current
     val bitmap = createVideoThumb(context = context, videoID)?.asImageBitmap()
     //To be altered with intrinsic measurements
@@ -502,7 +514,7 @@ fun VideoItem(modifier: Modifier, videoID: Uri = ("").toUri(), navController: Na
                     videoID.toString(),
                     StandardCharsets.UTF_8.toString()
                 )
-                navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}")
+                navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
             }
             .then(modifier)
     ) {

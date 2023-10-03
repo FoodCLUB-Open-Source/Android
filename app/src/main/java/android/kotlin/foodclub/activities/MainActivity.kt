@@ -13,6 +13,8 @@ import androidx.navigation.compose.rememberNavController
 import android.kotlin.foodclub.navigation.graphs.RootNavigationGraph
 import android.kotlin.foodclub.utils.composables.MainLayout
 import android.kotlin.foodclub.viewmodels.home.DeleteRecipeViewModel
+import android.os.Build
+import androidx.annotation.RequiresApi
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,6 +31,7 @@ class MainActivity : ComponentActivity() {
         fun deleteRecipeViewModelFactory(): DeleteRecipeViewModel.Factory
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
