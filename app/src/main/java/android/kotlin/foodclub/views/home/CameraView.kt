@@ -206,6 +206,7 @@ fun CameraView(
                         //.blur(radius = 20.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
                         .clickable {
                             // Do something when the box is clicked
+                            navController.popBackStack()
                         }
                 ) {
                     Image(
