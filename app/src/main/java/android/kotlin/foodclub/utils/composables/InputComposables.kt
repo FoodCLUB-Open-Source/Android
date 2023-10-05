@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,6 +27,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -97,7 +97,7 @@ fun CustomCodeTextField(onFillCallback: (Boolean, String) -> Unit) {
                             .size(52.dp, 72.dp)
                             .border(
                                 1.dp,
-                                color = if(text.length == index) Color(0xFF7EC60B)
+                                color = if (text.length == index) Color(0xFF7EC60B)
                                 else Color(0xFF000000).copy(alpha = 0.3f),
                                 shape = RoundedCornerShape(16.dp)
                             ),
@@ -170,12 +170,21 @@ fun CustomTextField(initialValue: String = "",
 fun CustomPasswordTextField(initialValue: String = "",
     placeholder: String, strengthValidation: Boolean = true,
     onCorrectnessStateChange: () -> Unit,
-    onValueChange: (text: String) -> Unit = {}, modifier: Modifier = Modifier
+    onValueChange: (text: String) -> Unit = {},
+                            label: String? = null,
+                            textFieldColors: TextFieldColors = textFieldCustomColors(),
+                            errorTextFieldColors: TextFieldColors = textFieldCustomColors(
+                                focusedIndicatorColor = Color.Red,
+                                unfocusedIndicatorColor = Color.Red
+                            )
 ) {
     var password by remember { mutableStateOf(initialValue) }
     var passVisible by remember { mutableStateOf(false) }
     var passValid by remember { mutableStateOf(false) }
     var errorMessage: String? by remember { mutableStateOf(null) }
+
+    val composableLabel: @Composable (() -> Unit)? = if(!label.isNullOrBlank()) {
+        @Composable { Text(text = label) } } else null
 
     Column {
         TextField(
@@ -195,11 +204,9 @@ fun CustomPasswordTextField(initialValue: String = "",
                 onValueChange(it.trim())
                 passValid = passValidCurrent
             },
+            label = composableLabel,
             placeholder = { Text(text = placeholder, color = Color(0xFF939393)) },
-            colors = if (errorMessage.isNullOrBlank()) textFieldCustomColors() else textFieldCustomColors(
-                focusedIndicatorColor = Color.Red,
-                unfocusedIndicatorColor = Color.Red
-            ),
+            colors = if (errorMessage.isNullOrBlank()) textFieldColors else errorTextFieldColors,
             modifier = Modifier
                 .border(1.dp, Color(0xFFDADADA), RoundedCornerShape(percent = 20))
                 .clip(RoundedCornerShape(10.dp))
@@ -230,7 +237,7 @@ fun CustomPasswordTextField(initialValue: String = "",
                 }
             },
             visualTransformation = if (passVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         )
 
         Text(
@@ -254,7 +261,8 @@ fun AlternativeLoginOption(
         shape = RoundedCornerShape(10.dp),
         modifier = Modifier
             .border(1.dp, Color(0xFFDADADA), RoundedCornerShape(percent = 20))
-            .height(56.dp).width(105.dp)
+            .height(56.dp)
+            .width(105.dp)
             .clip(RoundedCornerShape(10.dp)),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.White,
@@ -293,6 +301,28 @@ fun TermsAndConditionsInfoFooter(onClick: () -> Unit = {}) {
                 fontWeight = FontWeight.Bold,
                 textDecoration = TextDecoration.Underline
             )
+        )
+    }
+}
+
+@Composable
+fun ConfirmButton(enabled: Boolean, text: String, onClick: () -> Unit) {
+    Button(
+        shape = RoundedCornerShape(10.dp),
+        modifier = Modifier.height(56.dp).clip(RoundedCornerShape(10.dp)).fillMaxWidth(),
+        enabled = enabled,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(0xFF7EC60B),
+            disabledContainerColor = Color(0xFFC9C9C9),
+            disabledContentColor = Color.White,
+            contentColor = Color.White
+        ),
+        onClick = { onClick() }
+    ) {
+        Text(
+            text = text,
+            fontFamily = Montserrat,
+            fontSize = 16.sp
         )
     }
 }
