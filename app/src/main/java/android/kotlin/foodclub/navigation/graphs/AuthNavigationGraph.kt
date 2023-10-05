@@ -27,7 +27,7 @@ fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, setBot
 
             setBottomBarVisibility(false)
             MainLogInAndSignUp(navController)
-            //DiscoverView(navController = navController)
+
         }
         composable(route = AuthScreen.Login.route) {
             LogInWithEmail(navController)

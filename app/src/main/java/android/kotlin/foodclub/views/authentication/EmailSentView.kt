@@ -103,9 +103,7 @@ fun EmailSentView(navController: NavHostController) {
             ), contentPadding = PaddingValues(15.dp),
 
             onClick = {
-             //   viewModel.goToLogin(navController);
-                navController.navigate("LOGIN")
-
+                 navController.navigate("LOGIN")
             }
 
         ) {
