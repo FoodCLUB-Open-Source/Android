@@ -15,7 +15,7 @@ import android.kotlin.foodclub.views.home.SettingsView
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.example.foodclub.ui.theme.BottomBarScreenObject
-import com.example.foodclub.views.home.CreateView
+import android.kotlin.foodclub.views.home.CreateView
 import com.example.foodclub.views.home.DiscoverView
 import android.kotlin.foodclub.views.home.ProfileView
 import androidx.navigation.NavGraphBuilder
@@ -34,6 +34,7 @@ import androidx.navigation.navigation
         composable(route = BottomBarScreenObject.Home.route) {
             setBottomBarVisibility(true)
             HomeView(navController = navController, triggerStoryView = triggerStory)
+
         }
         composable(route = BottomBarScreenObject.Profile.route + "?userId={userId}",
             arguments = listOf(navArgument("userId") { defaultValue = 0L
