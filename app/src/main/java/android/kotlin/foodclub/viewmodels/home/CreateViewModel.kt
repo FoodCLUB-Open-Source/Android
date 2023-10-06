@@ -2,9 +2,9 @@ package android.kotlin.foodclub.viewmodels.home
 
 import androidx.lifecycle.ViewModel
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
-import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Handler
@@ -35,6 +35,7 @@ class CreateViewModel : ViewModel() {
 
     private val TAG = "CreateViewModel"
     var application: Application? = null
+    @SuppressLint("StaticFieldLeak")
     var activity: Activity? = null
     private var trimStartMs: Long = 0
     private var trimEndMs: Long = 0
@@ -46,7 +47,7 @@ class CreateViewModel : ViewModel() {
         this.trimEndMs = trimEndMs
     }
 
-    @OptIn(markerClass = arrayOf(UnstableApi::class))
+    @OptIn(markerClass = [UnstableApi::class])
     public fun startExport() {
         var externalCacheFile: File? = null
         val transformer: Transformer? = null
@@ -96,7 +97,7 @@ class CreateViewModel : ViewModel() {
         return file
     }
 
-    fun createMediaItem(uri: Uri): androidx.media3.common.MediaItem {
+    private fun createMediaItem(uri: Uri): androidx.media3.common.MediaItem {
         val mediaItemBuilder = androidx.media3.common.MediaItem.Builder().setUri(uri)
         if (trimStartMs != C.TIME_UNSET && trimEndMs != C.TIME_UNSET) {
             mediaItemBuilder.setClippingConfiguration(
