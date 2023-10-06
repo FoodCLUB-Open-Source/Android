@@ -2,6 +2,7 @@ package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.data.models.Ingredient
+import android.kotlin.foodclub.data.models.ProductsData
 import android.kotlin.foodclub.ui.theme.Montserrat
 import android.kotlin.foodclub.utils.enums.DrawerContentState
 import android.kotlin.foodclub.utils.enums.QuantityUnit
@@ -47,6 +48,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -68,11 +70,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
-fun IngredientsBottomSheet(onDismiss: () -> Unit, onSave: (ingredient: Ingredient) -> Unit = {}) {
+fun IngredientsBottomSheet(onDismiss: () -> Unit, productsDataFlow: StateFlow<ProductsData>,
+                           onSave: (ingredient: Ingredient) -> Unit = {}) {
 
     var editedIngredient by remember { mutableStateOf<Ingredient?>(null) }
 
@@ -115,6 +119,7 @@ fun IngredientsBottomSheet(onDismiss: () -> Unit, onSave: (ingredient: Ingredien
                     IngredientListView(
                         screenHeight = screenHeight,
                         savedSearchText = savedSearchText,
+                        productsDataFlow = productsDataFlow,
                         onDismiss = {
                             coroutineScope.launch {
                                 bottomSheetState.hide()
@@ -256,31 +261,28 @@ fun IngredientSelectedView(
 fun IngredientListView(
     screenHeight: Dp,
     savedSearchText: String,
+    productsDataFlow: StateFlow<ProductsData>,
     onDismiss: () -> Unit,
     onIngredientSelect: (ingredient: Ingredient, searchText: String) -> Unit
 ) {
-    val ingredientList = listOf(
-        Ingredient(1, "Olive Oil", 0, QuantityUnit.MILLILITERS, "https://kretu.sts3.pl/foodclub_drawable/tomato_ingredient.png"),
-        Ingredient(2, "Tomato", 120, QuantityUnit.GRAMS, "https://kretu.sts3.pl/foodclub_drawable/tomato_ingredient.png"),
-        Ingredient(3, "Lettuce", 50, QuantityUnit.GRAMS, "https://kretu.sts3.pl/foodclub_drawable/salad_ingredient.png"),
-        Ingredient(4, "Broccoli", 0, QuantityUnit.GRAMS, "https://kretu.sts3.pl/foodclub_drawable/salad_ingredient.png"),
-        Ingredient(5, "Carrot", 0, QuantityUnit.GRAMS, "https://kretu.sts3.pl/foodclub_drawable/salad_ingredient.png"),
-        Ingredient(6, "Flour", 0, QuantityUnit.GRAMS, "https://kretu.sts3.pl/foodclub_drawable/tomato_ingredient.png"),
-        Ingredient(7, "Milk", 0, QuantityUnit.MILLILITERS, "https://kretu.sts3.pl/foodclub_drawable/tomato_ingredient.png")
-    )
+    val productsData = productsDataFlow.collectAsState()
     var searchText by remember { mutableStateOf(savedSearchText) }
     var showingList by remember { mutableStateOf(
         if(searchText.length > 3) {
-            ingredientList.filter { it.type.lowercase().contains(searchText) }
+            productsData.value.productsList.filter { it.type.lowercase().contains(searchText) }
         } else {
-            ingredientList
+            productsData.value.productsList
         }
     ) }
 
 
-    Box(modifier = Modifier.fillMaxWidth().height(screenHeight)) {
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .height(screenHeight)) {
         Box(
-            modifier = Modifier.fillMaxWidth().padding(start = 17.dp, end = 17.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 17.dp, end = 17.dp),
             contentAlignment = Alignment.CenterStart
         ) {
             Row(
@@ -307,7 +309,9 @@ fun IngredientListView(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth().padding(20.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp)
                 ) {
                     TextField(
                         value = searchText,
@@ -325,7 +329,9 @@ fun IngredientListView(
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent
                         ),
-                        modifier = Modifier.weight(1f).height(51.dp)
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(51.dp)
                     )
                     Spacer(modifier = Modifier.width(20.dp))
                     Text(
@@ -354,9 +360,9 @@ fun IngredientListView(
     LaunchedEffect(searchText) {
         delay(1500)
         showingList = if(searchText.length > 3) {
-            ingredientList.filter { it.type.lowercase().contains(searchText) }
+            productsData.value.productsList.filter { it.type.lowercase().contains(searchText) }
         } else {
-            ingredientList
+            productsData.value.productsList
         }
     }
 }
@@ -367,8 +373,11 @@ fun IngredientComposable(
     onClick: (Ingredient) -> Unit
 ) {
     Box(
-        modifier = Modifier.fillMaxWidth().height(70.dp)
-            .padding(start = 20.dp, top = 20.dp).clickable(onClick = { onClick(ingredient) })
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(70.dp)
+            .padding(start = 20.dp, top = 20.dp)
+            .clickable(onClick = { onClick(ingredient) })
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -378,7 +387,9 @@ fun IngredientComposable(
             AsyncImage(
                 model = ingredient.imageUrl,
                 contentDescription = null,
-                modifier = Modifier.size(40.dp).clip(CircleShape)
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
             )
             Spacer(modifier = Modifier.width(15.dp))
             Text(

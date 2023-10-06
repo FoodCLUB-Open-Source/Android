@@ -1,10 +1,12 @@
 package android.kotlin.foodclub.viewmodels.home
 
 import android.kotlin.foodclub.api.retrofit.RetrofitInstance
+import android.kotlin.foodclub.data.models.ProductsData
 import android.kotlin.foodclub.data.models.UserPostsModel
 import android.kotlin.foodclub.data.models.UserProfileModel
 import android.kotlin.foodclub.data.models.VideoModel
 import android.kotlin.foodclub.repositories.PostRepository
+import android.kotlin.foodclub.repositories.ProductRepository
 import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.utils.helpers.SessionCache
@@ -22,6 +24,7 @@ import javax.inject.Inject
 class DiscoverViewModel @Inject constructor(
     private val repository: PostRepository,
     private val profileRepo: ProfileRepository,
+    private val productsRepo: ProductRepository,
     private val sessionCache: SessionCache
 ):ViewModel() {
 
@@ -39,6 +42,30 @@ class DiscoverViewModel @Inject constructor(
 
     private val _sessionUserName = MutableStateFlow<String>("")
     val sessionUserName: MutableStateFlow<String> get() = _sessionUserName
+
+    private val _productsDatabase = MutableStateFlow(ProductsData("", listOf()))
+    val productsDatabase: StateFlow<ProductsData> get() = _productsDatabase
+
+    private val _error = MutableStateFlow("")
+
+    init {
+        fetchProductsDatabase("")
+    }
+
+    private fun fetchProductsDatabase(searchText: String) {
+        viewModelScope.launch() {
+            when(val resource = productsRepo.getProductsList(searchText)) {
+                is Resource.Success -> {
+                    _error.value = ""
+                    _productsDatabase.value = resource.data!!
+                }
+                is Resource.Error -> {
+                    _error.value = resource.message!!
+                }
+            }
+        }
+
+    }
 
     fun getPostsByWorld(worldCategory: Long) {
 

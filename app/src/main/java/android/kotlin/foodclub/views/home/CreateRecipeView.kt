@@ -88,6 +88,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
@@ -256,7 +257,7 @@ fun BottomSheetCategories(onDismiss: () -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateRecipeView(navController: NavController) {
-    val viewModel: CreateRecipeViewModel = viewModel()
+    val viewModel: CreateRecipeViewModel = hiltViewModel()
     val title = viewModel.title.value ?: "Loading..."
     val ingredientList by viewModel.ingredients.collectAsState()
     val revealedIngredientId by viewModel.revealedIngredientId.collectAsState()
@@ -312,7 +313,7 @@ fun CreateRecipeView(navController: NavController) {
             .padding(start = 15.dp, top = 0.dp, end = 15.dp, bottom = 70.dp)
     ) {
         if (showSheet) {
-            IngredientsBottomSheet(triggerBottomSheetModal)
+            IngredientsBottomSheet(triggerBottomSheetModal, viewModel.productsDatabase)
         }
         if (showCategorySheet) {
             BottomSheetCategories(triggerCategoryBottomSheetModal)
