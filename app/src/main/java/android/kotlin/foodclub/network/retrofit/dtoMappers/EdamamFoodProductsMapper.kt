@@ -17,7 +17,7 @@ class EdamamFoodProductsMapper: DomainMapper<EdamamFoodProductsDto, ProductsData
                     type = dtoEntity.food.label,
                     quantity = 10,
                     unit = determineDefaultUnit(dtoEntity.measures),
-                    imageUrl = dtoEntity.food.image
+                    imageUrl = dtoEntity.food.image ?: ""
                 )
             }
         )
@@ -28,7 +28,8 @@ class EdamamFoodProductsMapper: DomainMapper<EdamamFoodProductsDto, ProductsData
     }
 
     private fun determineDefaultUnit(measures: List<EdamamFoodProductMeasuresDto>):QuantityUnit {
-        val units = measures.map { measure -> QuantityUnit.parseUnit(measure.label) }
+        if(measures.isEmpty()) return QuantityUnit.GRAMS
+        val units = measures.map { measure -> QuantityUnit.parseUnit(measure.label ?: "Grams") }
         return if(units.any { it == QuantityUnit.MILLILITERS }) QuantityUnit.MILLILITERS
             else QuantityUnit.GRAMS
     }
