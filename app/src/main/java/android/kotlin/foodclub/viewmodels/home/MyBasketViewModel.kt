@@ -28,7 +28,7 @@ class MyBasketViewModel @Inject constructor(
     private val _selectedProductsList = MutableStateFlow<List<String>>(listOf())
     val selectedProductsList: StateFlow<List<String>> get() = _selectedProductsList
 
-    private val _productsDatabase = MutableStateFlow<ProductsData>(ProductsData("", listOf()))
+    private val _productsDatabase = MutableStateFlow(ProductsData("", "", listOf()))
     val productsDatabase: StateFlow<ProductsData> get() = _productsDatabase
 
     private val _error = MutableStateFlow("")
@@ -86,6 +86,31 @@ class MyBasketViewModel @Inject constructor(
                 }
             }
         }
+    }
 
+    fun fetchMoreProducts(searchText: String, onJobComplete: () -> Unit) {
+        val job = viewModelScope.launch() {
+            when(
+                val resource = productRepository.getProductsList(
+                    searchText,
+                    _productsDatabase.value.getSessionIdFromUrl()
+                )
+            ) {
+                is Resource.Success -> {
+                    _error.value = ""
+                    val response = resource.data!!
+                    _productsDatabase.value = ProductsData(
+                        searchText = _productsDatabase.value.searchText,
+                        productsList = _productsDatabase.value.productsList + response.productsList,
+                        nextUrl = response.nextUrl
+                    )
+                }
+                is Resource.Error -> {
+                    _error.value = resource.message!!
+                    Log.d("MyBasketViewModel", "error: ${_error.value}")
+                }
+            }
+        }
+        job.invokeOnCompletion { onJobComplete() }
     }
 }
