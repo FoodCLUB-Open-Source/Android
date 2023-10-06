@@ -5,7 +5,6 @@ import android.kotlin.foodclub.data.models.Ingredient
 import android.kotlin.foodclub.data.models.ProductsData
 import android.kotlin.foodclub.ui.theme.Montserrat
 import android.kotlin.foodclub.utils.enums.DrawerContentState
-import android.kotlin.foodclub.utils.enums.QuantityUnit
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.views.home.montserratFamily
 import androidx.compose.animation.AnimatedContent
@@ -33,6 +32,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -49,6 +49,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -76,6 +77,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun IngredientsBottomSheet(onDismiss: () -> Unit, productsDataFlow: StateFlow<ProductsData>,
+                           loadMoreObjects: (searchText: String, onLoadCompleted: () -> Unit)
+                           -> Unit = { searchText, onLoadCompleted -> },
                            onListUpdate: (searchText: String) -> Unit = {},
                            onSave: (ingredient: Ingredient) -> Unit = {}) {
 
@@ -127,6 +130,7 @@ fun IngredientsBottomSheet(onDismiss: () -> Unit, productsDataFlow: StateFlow<Pr
                                 onDismiss()
                             }
                         },
+                        loadMoreObjects = loadMoreObjects,
                         onListUpdate = onListUpdate,
                         onIngredientSelect = { ingredient, searchText ->
                             editedIngredient = ingredient
@@ -266,18 +270,13 @@ fun IngredientListView(
     productsDataFlow: StateFlow<ProductsData>,
     onDismiss: () -> Unit,
     onListUpdate: (searchText: String) -> Unit,
+    loadMoreObjects: (searchText: String, onLoadCompleted: () -> Unit) -> Unit,
     onIngredientSelect: (ingredient: Ingredient, searchText: String) -> Unit
 ) {
     val productsData = productsDataFlow.collectAsState()
     var searchText by remember { mutableStateOf(savedSearchText) }
-//    var showingList by remember { mutableStateOf(
-//        if(searchText.length > 3) {
-//            productsData.value.productsList.filter { it.type.lowercase().contains(searchText) }
-//        } else {
-//            productsData.value.productsList
-//        }
-//    ) }
     val showingList = productsData.value
+    val lazyListState = rememberLazyListState()
 
 
     Box(modifier = Modifier
@@ -308,7 +307,10 @@ fun IngredientListView(
             }
         }
 
-        LazyColumn(modifier = Modifier.padding(top = 30.dp)) {
+        LazyColumn(
+            state = lazyListState,
+            modifier = Modifier.padding(top = 30.dp)
+        ) {
             item {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -361,14 +363,23 @@ fun IngredientListView(
         }
     }
 
+    var listLoading by remember { mutableStateOf(false) }
+    val loadMore by remember {
+        derivedStateOf {
+            lazyListState.firstVisibleItemIndex > productsDataFlow.value.productsList.size - 10
+        }
+    }
+
     LaunchedEffect(searchText) {
         delay(1500)
         if(searchText.length > 3) { onListUpdate(searchText) }
-//        showingList = if(searchText.length > 3) {
-//            productsData.value.productsList.filter { it.type.lowercase().contains(searchText) }
-//        } else {
-//            productsData.value.productsList
-//        }
+    }
+
+    LaunchedEffect(loadMore) {
+        if(!listLoading) {
+            listLoading = true
+            loadMoreObjects(searchText) { listLoading = false }
+        }
     }
 }
 
