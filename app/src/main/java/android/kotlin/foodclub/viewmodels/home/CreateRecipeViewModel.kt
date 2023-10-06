@@ -33,7 +33,7 @@ class CreateRecipeViewModel @Inject constructor(
     private val _revealedIngredientId = MutableStateFlow("")
     val revealedIngredientId: StateFlow<String> get() = _revealedIngredientId
 
-    private val _productsDatabase = MutableStateFlow(ProductsData("", listOf()))
+    private val _productsDatabase = MutableStateFlow(ProductsData("", "", listOf()))
     val productsDatabase: StateFlow<ProductsData> get() = _productsDatabase
 
     private val _error = MutableStateFlow("")
