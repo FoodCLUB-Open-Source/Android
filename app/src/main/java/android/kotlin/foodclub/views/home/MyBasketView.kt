@@ -80,7 +80,13 @@ fun MyBasketView(navController: NavController) {
     }
 
     if (showSheet) {
-        IngredientsBottomSheet(triggerBottomSheetModal, viewModel.productsDatabase) { viewModel.addIngredient(it) }
+        IngredientsBottomSheet(
+            triggerBottomSheetModal,
+            viewModel.productsDatabase,
+            { viewModel.fetchProductsDatabase(it)})
+        {
+            viewModel.addIngredient(it)
+        }
     }
     Column(
         modifier = Modifier

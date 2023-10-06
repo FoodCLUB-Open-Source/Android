@@ -76,6 +76,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun IngredientsBottomSheet(onDismiss: () -> Unit, productsDataFlow: StateFlow<ProductsData>,
+                           onListUpdate: (searchText: String) -> Unit = {},
                            onSave: (ingredient: Ingredient) -> Unit = {}) {
 
     var editedIngredient by remember { mutableStateOf<Ingredient?>(null) }
@@ -126,6 +127,7 @@ fun IngredientsBottomSheet(onDismiss: () -> Unit, productsDataFlow: StateFlow<Pr
                                 onDismiss()
                             }
                         },
+                        onListUpdate = onListUpdate,
                         onIngredientSelect = { ingredient, searchText ->
                             editedIngredient = ingredient
                             savedSearchText = searchText
@@ -263,17 +265,19 @@ fun IngredientListView(
     savedSearchText: String,
     productsDataFlow: StateFlow<ProductsData>,
     onDismiss: () -> Unit,
+    onListUpdate: (searchText: String) -> Unit,
     onIngredientSelect: (ingredient: Ingredient, searchText: String) -> Unit
 ) {
     val productsData = productsDataFlow.collectAsState()
     var searchText by remember { mutableStateOf(savedSearchText) }
-    var showingList by remember { mutableStateOf(
-        if(searchText.length > 3) {
-            productsData.value.productsList.filter { it.type.lowercase().contains(searchText) }
-        } else {
-            productsData.value.productsList
-        }
-    ) }
+//    var showingList by remember { mutableStateOf(
+//        if(searchText.length > 3) {
+//            productsData.value.productsList.filter { it.type.lowercase().contains(searchText) }
+//        } else {
+//            productsData.value.productsList
+//        }
+//    ) }
+    val showingList = productsData.value
 
 
     Box(modifier = Modifier
@@ -343,10 +347,10 @@ fun IngredientListView(
                 }
             }
             items(
-                items = showingList,
+                items = productsDataFlow.value.productsList,
                 key = { it.id }
             ) {
-                if(showingList.contains(it)){
+                if(showingList.productsList.contains(it)){
                     IngredientComposable(
                         ingredient = it,
                         onClick = { ingredient -> onIngredientSelect(ingredient, searchText) }
@@ -359,11 +363,12 @@ fun IngredientListView(
 
     LaunchedEffect(searchText) {
         delay(1500)
-        showingList = if(searchText.length > 3) {
-            productsData.value.productsList.filter { it.type.lowercase().contains(searchText) }
-        } else {
-            productsData.value.productsList
-        }
+        if(searchText.length > 3) { onListUpdate(searchText) }
+//        showingList = if(searchText.length > 3) {
+//            productsData.value.productsList.filter { it.type.lowercase().contains(searchText) }
+//        } else {
+//            productsData.value.productsList
+//        }
     }
 }
 
