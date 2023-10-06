@@ -1,8 +1,11 @@
 package android.kotlin.foodclub.di
 
 import android.kotlin.foodclub.api.authentication.API
+import android.kotlin.foodclub.network.retrofit.apiInterfaces.ProductsService
+import android.kotlin.foodclub.network.retrofit.dtoMappers.EdamamFoodProductsMapper
 import android.kotlin.foodclub.repositories.AuthRepository
 import android.kotlin.foodclub.repositories.PostRepository
+import android.kotlin.foodclub.repositories.ProductRepository
 import android.kotlin.foodclub.repositories.ProfileRepository
 import dagger.Module
 import dagger.Provides
@@ -29,5 +32,11 @@ object RepositoriesModule {
     @Singleton
     fun provideAuthRepository(api: API): AuthRepository {
         return AuthRepository(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideProductRepository(api: ProductsService, mapper: EdamamFoodProductsMapper): ProductRepository {
+        return ProductRepository(api, mapper)
     }
 }
