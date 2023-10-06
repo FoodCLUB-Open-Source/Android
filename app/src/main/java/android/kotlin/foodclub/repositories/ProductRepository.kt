@@ -12,9 +12,9 @@ class ProductRepository(
 ) {
     private val APP_ID = "2c8da0a4"
     private val APP_KEY = "eae6a559369343cff81b31a2cda90caf"
-    suspend fun getProductsList(searchText: String): Resource<ProductsData> {
+    suspend fun getProductsList(searchText: String, session: Int? = null): Resource<ProductsData> {
         val response = try {
-            api.getFoodProducts(APP_ID, APP_KEY, searchText)
+            api.getFoodProducts(session, APP_ID, APP_KEY, searchText)
         } catch (e: IOException) {
             return Resource.Error("Cannot retrieve data. Check your internet connection and try again.")
         } catch (e: Exception) {
