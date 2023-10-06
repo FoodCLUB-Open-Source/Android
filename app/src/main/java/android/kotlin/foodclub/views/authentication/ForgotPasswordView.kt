@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.views.authentication
 
+import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -40,12 +41,17 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import android.kotlin.foodclub.viewmodels.authentication.ForgotPasswordViewModel
+import android.util.Log
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ForgotPasswordView(navController: NavHostController) {
     val viewModel: ForgotPasswordViewModel = viewModel()
+
+    val errorStatus by viewModel.errorStatus.observeAsState(null)
 
     val montserratFamily = FontFamily(
 
@@ -67,6 +73,8 @@ fun ForgotPasswordView(navController: NavHostController) {
         verticalArrangement = Arrangement.spacedBy(35.dp)
 
     ) {
+
+
         Button(
             shape = RectangleShape,
             modifier = Modifier
@@ -108,8 +116,10 @@ fun ForgotPasswordView(navController: NavHostController) {
 
         TextField(
             value = userName,
+            isError = errorStatus!=null && userName!="",
             onValueChange = {
-                userName = it;
+                userName = it
+
             },
             modifier = Modifier
                 .background(Color(218, 218, 218, 1))
@@ -119,7 +129,7 @@ fun ForgotPasswordView(navController: NavHostController) {
 
             placeholder = {
                 Text(text = "Username", color = Color(218, 218, 218, 228))
-            },
+                },
 
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = Color(218, 218, 218, 128),
@@ -127,6 +137,15 @@ fun ForgotPasswordView(navController: NavHostController) {
             )
 
         )
+        if(errorStatus!=null && userName!=""){
+              Text(
+                     text = errorStatus ?: "",
+                     fontSize = 11.sp,
+                     color = Color.Red
+                 )
+        }
+
+
 
         Button(
             shape = RectangleShape,

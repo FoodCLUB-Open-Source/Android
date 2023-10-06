@@ -62,7 +62,8 @@ class SignupWithEmailViewModel() : ViewModel() {
                  if(response.isSuccessful){
                      navController.navigate(
                          route = AuthScreen.VerifySignup.route + "/${_userSignUpInformation.value.username}"
-                         + "?password=${_userSignUpInformation.value.password}"
+                         + "?password=${_userSignUpInformation.value.password}&email="
+                         + _userSignUpInformation.value.email
                      ) {
                          popUpTo(AuthScreen.SignUp.route) {
                              inclusive = true

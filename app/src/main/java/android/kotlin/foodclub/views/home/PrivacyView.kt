@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.navigation.graphs.SettingsScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -39,7 +40,7 @@ fun PrivacySetting(navController: NavController) {
 
         SettingsTopBar(label = "Privacy", navController)
         Spacer(modifier = Modifier.height(50.dp))
-        ChangePasswordButton()
+        ChangePasswordButton(navController = navController)
         Spacer(modifier = Modifier.height(60.dp))
         SettingsText(
             text = "If you would like to get sent your data, make changes to it or delete it, send an email to tech@foodclub.live",
@@ -52,10 +53,10 @@ fun PrivacySetting(navController: NavController) {
 
 // The Change Password button of this screen
 @Composable
-fun ChangePasswordButton(){
+fun ChangePasswordButton(navController: NavController){
     Row(
         modifier = Modifier
-            .clickable { /* TO DO */ }
+            .clickable { navController.navigate(SettingsScreen.ChangePassword.route) }
             .fillMaxWidth()
             .background(Color.Transparent)
     ){

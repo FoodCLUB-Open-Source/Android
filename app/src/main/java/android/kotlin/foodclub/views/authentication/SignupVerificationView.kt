@@ -47,7 +47,7 @@ import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 
 @Composable
-fun SignupVerification(navController: NavHostController, username: String?, password: String?) {
+fun SignupVerification(navController: NavHostController, email: String?, username: String?, password: String?) {
     val viewModel: SignupVerificationViewModel = hiltViewModel()
 
     LaunchedEffect(Unit) {
@@ -59,14 +59,14 @@ fun SignupVerification(navController: NavHostController, username: String?, pass
             .fillMaxSize()
             .padding(start = 25.dp, end = 25.dp, top = 80.dp, bottom = 50.dp),
     ) {
-        SignupVerificationTopLayout(navController, modifier = Modifier.weight(1F))
+        SignupVerificationTopLayout(navController, email, modifier = Modifier.weight(1F))
         SignupVerificationMainLayout(viewModel, modifier = Modifier.weight(2F))
         Box(Modifier.weight(1F)) { TermsAndConditionsInfoFooter() }
     }
 }
 
 @Composable
-fun SignupVerificationTopLayout(navController: NavHostController, modifier: Modifier = Modifier) {
+fun SignupVerificationTopLayout(navController: NavHostController, email: String?, modifier: Modifier = Modifier) {
     Box(modifier.fillMaxHeight()) {
         Column {
             Image(
@@ -80,10 +80,10 @@ fun SignupVerificationTopLayout(navController: NavHostController, modifier: Modi
             )
             Box(modifier = Modifier.padding(top = 32.dp)) {
                 Column(verticalArrangement = Arrangement.spacedBy(28.dp)) {
-                    Text(text = "Enter code", textAlign = TextAlign.Left,
+                    Text(text = "Verify your email", textAlign = TextAlign.Left,
                         fontWeight = FontWeight.Bold, fontSize = 30.sp, fontFamily = PlusJakartaSans
                     )
-                    Text(text = "We’ve sent an SMS with an activation code to your phone +44 7503759410",
+                    Text(text = "Please enter the code we've sent to ${email ?: "your email associated with this account"}",
                         textAlign = TextAlign.Left, fontWeight = FontWeight.Normal, fontSize = 16.sp,
                         fontFamily = Montserrat
                     )
@@ -99,7 +99,7 @@ fun SignupVerificationMainLayout(viewModel: SignupVerificationViewModel, modifie
     Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(top = 20.dp, bottom = 80.dp),
+            .padding(bottom = 80.dp),
         contentAlignment = Alignment.Center
     ) {
         Column(verticalArrangement = Arrangement.SpaceBetween, modifier = modifier.fillMaxSize()) {

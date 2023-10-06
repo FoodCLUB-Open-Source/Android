@@ -27,7 +27,7 @@ fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, setBot
 
             setBottomBarVisibility(false)
             MainLogInAndSignUp(navController)
-            //DiscoverView(navController = navController)
+
         }
         composable(route = AuthScreen.Login.route) {
             LogInWithEmail(navController)
@@ -43,7 +43,7 @@ fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, setBot
             TermsAndConditions(navController)
         }
         
-        composable(route = AuthScreen.VerifySignup.route + "/{username}?password={password}",
+        composable(route = AuthScreen.VerifySignup.route + "/{username}?password={password}&email={email}",
 
             arguments = listOf(
                 navArgument("username") { type = NavType.StringType },
@@ -51,8 +51,10 @@ fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, setBot
                     type = NavType.StringType }
             )
         ) {backStackEntry ->
-            SignupVerification(navController, backStackEntry.arguments?.getString("username"),
+            SignupVerification(navController,backStackEntry.arguments?.getString("email"),
+            backStackEntry.arguments?.getString("username"),
                 backStackEntry.arguments?.getString("password"))
+
         }
 
         composable(route = AuthScreen.ForgotEmailSent.route) {

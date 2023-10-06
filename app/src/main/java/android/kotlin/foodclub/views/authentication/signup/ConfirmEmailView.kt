@@ -66,7 +66,7 @@ fun ConfirmEmailView(onValuesUpdate: (String) -> Unit, onBackButtonClick: (Strin
                 Column(Modifier.padding(top = 32.dp)) {
                     // USERNAME TEXTVIEW
                     Text(
-                        text = "Check email!",
+                        text = "Confirm email",
                         fontSize = 32.sp,
                         fontFamily = PlusJakartaSans,  // AS ITS A CLEAN CUT FONT
                         fontWeight = FontWeight.Bold       // TO MAKE IT STAND OUT
