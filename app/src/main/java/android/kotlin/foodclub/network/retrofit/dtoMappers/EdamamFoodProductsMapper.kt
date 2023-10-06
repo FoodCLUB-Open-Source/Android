@@ -19,7 +19,8 @@ class EdamamFoodProductsMapper: DomainMapper<EdamamFoodProductsDto, ProductsData
                     unit = determineDefaultUnit(dtoEntity.measures),
                     imageUrl = dtoEntity.food.image ?: ""
                 )
-            }
+            },
+            nextUrl = entity.links["next"]?.href ?: ""
         )
     }
 
