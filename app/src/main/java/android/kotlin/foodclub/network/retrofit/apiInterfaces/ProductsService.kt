@@ -8,6 +8,7 @@ import retrofit2.http.Query
 interface ProductsService {
     @GET("api/food-database/v2/parser")
     suspend fun getFoodProducts(
+        @Query("session") session: Int?,
         @Query("app_id") appId: String,
         @Query("app_key") appKey: String,
         @Query("ingr") searchString: String
