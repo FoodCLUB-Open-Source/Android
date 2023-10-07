@@ -323,7 +323,7 @@ fun DiscoverView(navController: NavController) {
             }
         }
         if (showSheet) {
-            IngredientsBottomSheet(triggerBottomSheetModal)
+            IngredientsBottomSheet(triggerBottomSheetModal, viewModel.productsDatabase)
         }
         if (tabIndex == 2) {
             Button(shape = RectangleShape,

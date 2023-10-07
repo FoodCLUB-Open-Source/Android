@@ -4,33 +4,31 @@ class MyBasket {
     var ingredients: MutableList<Ingredient> = mutableListOf()
         private set
 
-    var selectedIngredients: MutableList<Int> = mutableListOf()
+    var selectedIngredients: MutableList<String> = mutableListOf()
         private set
 
-    private var idIndex = ingredients.size + 1
-    private var removedIds = ArrayList<Int>()
+    private var removedIds = ArrayList<String>()
 
     fun addIngredient(ingredient: Ingredient) {
-        if(removedIds.isNotEmpty()) {
-            idIndex = removedIds[0]
-            removedIds.removeAt(0)
+        val repeatedIngredients = ingredients.filter { element -> element.id == ingredient.id }
+        if(repeatedIngredients.isNotEmpty()) {
+            repeatedIngredients.get(0).incrementQuantity(ingredient.quantity)
+            return
         }
-        ingredient.id = idIndex
         ingredients.add(ingredient)
-        idIndex = ingredients.size + 1
     }
 
-    fun removeIngredient(id: Int) {
+    fun removeIngredient(id: String) {
         val removeList = ingredients.filter { it.id == id }
         ingredients.remove(removeList[0])
         removedIds.add(id)
     }
 
-    fun selectIngredient(id: Int) {
+    fun selectIngredient(id: String) {
         selectedIngredients.add(id)
     }
 
-    fun unselectIngredient(id: Int) {
+    fun unselectIngredient(id: String) {
         selectedIngredients.remove(id)
     }
 
