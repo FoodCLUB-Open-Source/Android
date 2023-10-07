@@ -50,5 +50,20 @@ class ValueParser {
                 "Unknown error occurred."
             }
         }
+
+        fun extractQueriesFromUri(uri: String): Map<String, String> {
+            val queriesMap = mutableMapOf<String, String>()
+            if(uri.isBlank()) return queriesMap
+
+            val baseAndQueriesList = uri.split("?")
+            if(baseAndQueriesList.size < 2) return queriesMap
+
+            val queriesString = baseAndQueriesList[1]
+            queriesString.split("&").forEach {
+                val queryList = it.split("=")
+                if (queryList.size > 1) queriesMap[queryList[0]] = queryList[1]
+            }
+            return queriesMap
+        }
     }
 }
