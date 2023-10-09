@@ -63,6 +63,7 @@ import com.google.accompanist.permissions.PermissionsRequired
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
+import okio.ByteString.Companion.encodeUtf8
 import java.io.File
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -107,10 +108,22 @@ fun RecordingButton(isRecording: Boolean) {
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun CameraView(
-    navController: NavController
+    navController: NavController,
+    stateEncoded: String
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+
+    var state:String = ""
+
+    if (stateEncoded.contains("story"))
+    {
+        state = "story"
+    }
+    if (stateEncoded.contains("recipe"))
+    {
+        state = "recipe"
+    }
 
     val permissionState = rememberMultiplePermissionsState(
         permissions = listOf(
@@ -139,7 +152,7 @@ fun CameraView(
                 StandardCharsets.UTF_8.toString()
             )
             Log.i("CameraView", uri.toString())
-            navController.navigate("GALLERY_VIEW/${uriEncoded}")
+            //navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}")
         }
     )
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp + 10.dp
@@ -193,6 +206,7 @@ fun CameraView(
                         //.blur(radius = 20.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
                         .clickable {
                             // Do something when the box is clicked
+                            navController.popBackStack()
                         }
                 ) {
                     Image(
@@ -262,7 +276,8 @@ fun CameraView(
                                                 uri.toString(),
                                                 StandardCharsets.UTF_8.toString()
                                             )
-                                            navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}")
+
+                                            navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
                                             //navController.navigate("GALLERY_VIEW/${uriEncoded}")
                                         }
                                     }
@@ -304,7 +319,7 @@ fun CameraView(
                                     .border(2.dp, Color.White, RoundedCornerShape(5.dp))
                             )
                             .clickable {
-                                navController.navigate("GALLERY_VIEW")
+                                navController.navigate("GALLERY_VIEW/${state.encodeUtf8()}")
                             }
                     )
                 }

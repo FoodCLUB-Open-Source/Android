@@ -1,10 +1,13 @@
 package android.kotlin.foodclub.navigation.graphs
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 
 
+  @RequiresApi(Build.VERSION_CODES.TIRAMISU)
   @Composable
 fun RootNavigationGraph(navController: NavHostController, showSheet: Boolean,
                         triggerBottomSheetModal:  () -> Unit, triggerStory: () -> Unit,
