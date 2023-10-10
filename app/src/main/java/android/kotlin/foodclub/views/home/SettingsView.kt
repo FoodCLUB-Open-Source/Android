@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -45,36 +46,71 @@ val colorRed= Color(android.graphics.Color.parseColor("#C64E0B"))
 @Composable
 fun SettingsView(navController: NavHostController){
     val screenSizeHeight = LocalConfiguration.current.screenHeightDp.dp //added screenSizeHeight so page is adaptable to all screen size
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+    Box(
+        modifier =Modifier.fillMaxWidth()
             .background(Color.White),
-        verticalArrangement = Arrangement.Center
     ) {
-        SettingsTopBar("Settings", navController)
-        Spacer(modifier = Modifier.height(25.dp))
-        SettingsProfile(userName = "Jake Rayner", userImage = painterResource(id = R.drawable.story_user))
-        Spacer(modifier = Modifier.height(screenSizeHeight * 0.1f))
-        SettingRow(text = "Edit profile information", iconId = R.drawable.editprofile, Color.Black, 0,
-        Color.Gray, "SETTINGS_EDIT_PROFILE", navController)
-        SettingRow(text = "Privacy settings", iconId = R.drawable.privacysettings, Color.Black, 0,
-            Color.Gray, "SETTINGS_PRIVACY", navController)
-        Spacer(modifier = Modifier.height(screenSizeHeight * 0.03f))
         Column(
             modifier = Modifier
-                .border(width = 1.dp, color = colorGray, shape = RoundedCornerShape(8.dp))
+                .fillMaxSize()
+                .padding(16.dp)
+                .background(Color.White),
+            verticalArrangement = Arrangement.Center
         ) {
-            SettingRow(text = "Help & Support", iconId = R.drawable.helpandsupport, Color.Black,
-                bordersize = 0, bordercolor = Color.Transparent, "SETTINGS_PRIVACY", navController)
-            SettingRow(text = "Contact Us", iconId = R.drawable.contactus, Color.Black,
-                bordersize = 0, bordercolor = Color.Transparent, "SETTINGS_PRIVACY", navController)
-            SettingRow(text = "Privacy Policy", iconId = R.drawable.privacypolicy, Color.Black,
-                bordersize = 0, bordercolor = Color.Transparent, "SETTINGS_PRIVACY", navController)
+            SettingsTopBar("Settings", navController)
+            Spacer(modifier = Modifier.height(25.dp))
+            SettingsProfile(
+                userName = "Jake Rayner",
+                userImage = painterResource(id = R.drawable.story_user)
+            )
+            Spacer(modifier = Modifier.height(screenSizeHeight * 0.1f))
+            SettingRow(
+                text = "Edit profile information", iconId = R.drawable.editprofile, Color.Black, 0,
+                Color.Gray, "SETTINGS_EDIT_PROFILE", navController
+            )
+            SettingRow(
+                text = "Privacy settings", iconId = R.drawable.privacysettings, Color.Black, 0,
+                Color.Gray, "SETTINGS_PRIVACY", navController
+            )
+            Spacer(modifier = Modifier.height(screenSizeHeight * 0.03f))
+            Column(
+                modifier = Modifier
+                    .border(width = 1.dp, color = colorGray, shape = RoundedCornerShape(8.dp))
+            ) {
+                SettingRow(
+                    text = "Help & Support",
+                    iconId = R.drawable.helpandsupport,
+                    Color.Black,
+                    bordersize = 0,
+                    bordercolor = Color.Transparent,
+                    "SETTINGS_PRIVACY",
+                    navController
+                )
+                SettingRow(
+                    text = "Contact Us",
+                    iconId = R.drawable.contactus,
+                    Color.Black,
+                    bordersize = 0,
+                    bordercolor = Color.Transparent,
+                    "SETTINGS_PRIVACY",
+                    navController
+                )
+                SettingRow(
+                    text = "Privacy Policy",
+                    iconId = R.drawable.privacypolicy,
+                    Color.Black,
+                    bordersize = 0,
+                    bordercolor = Color.Transparent,
+                    "SETTINGS_PRIVACY",
+                    navController
+                )
+            }
+            Spacer(modifier = Modifier.height(screenSizeHeight * 0.03f))
+            SettingRow(
+                text = "Log Out", iconId = R.drawable.logout, fontC = colorRed, 0,
+                Color.Black, Graph.AUTHENTICATION, navController
+            )
         }
-        Spacer(modifier = Modifier.height(screenSizeHeight * 0.03f))
-        SettingRow(text = "Log Out", iconId = R.drawable.logout, fontC = colorRed, 0,
-            Color.Black, Graph.AUTHENTICATION, navController)
     }
 }
 
