@@ -31,23 +31,29 @@ import androidx.navigation.compose.rememberNavController
 //The main function of this PrivacyView file. This arranges all components to build the screen
 @Composable
 fun PrivacySetting(navController: NavController) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .padding(top = 80.dp)
+    Box(
+        modifier =Modifier.fillMaxWidth()
+            .background(Color.White),
     ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .padding(top = 80.dp)
+                .background(Color.White),
+        ) {
 
-        SettingsTopBar(label = "Privacy", navController)
-        Spacer(modifier = Modifier.height(50.dp))
-        ChangePasswordButton(navController = navController)
-        Spacer(modifier = Modifier.height(60.dp))
-        SettingsText(
-            text = "If you would like to get sent your data, make changes to it or delete it, send an email to tech@foodclub.live",
-            size = 16,
-            weight = FontWeight.W600,
-            textAlign = TextAlign.Left
-        )
+            SettingsTopBar(label = "Privacy", navController)
+            Spacer(modifier = Modifier.height(50.dp))
+            ChangePasswordButton(navController = navController)
+            Spacer(modifier = Modifier.height(60.dp))
+            SettingsText(
+                text = "If you would like to get sent your data, make changes to it or delete it, send an email to tech@foodclub.live",
+                size = 16,
+                weight = FontWeight.W600,
+                textAlign = TextAlign.Left
+            )
+        }
     }
 }
 
