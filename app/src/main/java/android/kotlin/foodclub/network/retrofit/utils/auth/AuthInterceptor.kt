@@ -1,5 +1,6 @@
-package android.kotlin.foodclub.utils.helpers
+package android.kotlin.foodclub.network.retrofit.utils.auth
 
+import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
