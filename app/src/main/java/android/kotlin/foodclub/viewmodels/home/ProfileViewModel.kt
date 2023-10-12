@@ -5,7 +5,7 @@ import android.kotlin.foodclub.data.models.UserProfileModel
 import android.kotlin.foodclub.data.models.MyRecipeModel
 import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.helpers.Resource
-import android.kotlin.foodclub.utils.helpers.SessionCache
+import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -25,7 +25,7 @@ class ProfileViewModel @AssistedInject constructor(
     @Assisted private val navController: NavController
 ) : ViewModel() {
 
-    private val _myUserId = MutableStateFlow(sessionCache.getActiveSession()?.userId ?: 0)
+    private val _myUserId = MutableStateFlow(sessionCache.getActiveSession()?.sessionUser?.userId ?: 0)
     val myUserId: StateFlow<Long> get() = _myUserId
 
     private val _profileModel = MutableStateFlow<UserProfileModel?>(null)
@@ -41,12 +41,12 @@ class ProfileViewModel @AssistedInject constructor(
     val isFollowedByUser: StateFlow<Boolean> get() = _isFollowedByUser
 
     init {
-        if(sessionCache.getActiveSession()?.userId == null) {
+        if(sessionCache.getActiveSession()?.sessionUser?.userId == null) {
             navController.navigate(Graph.AUTHENTICATION) {
                 popUpTo(Graph.HOME) { inclusive = true }
             }
         } else {
-            val id = if(userId != 0L) userId else sessionCache.getActiveSession()!!.userId
+            val id = if(userId != 0L) userId else sessionCache.getActiveSession()!!.sessionUser.userId
             getProfileModel(id)
             getBookmarkedPosts(id)
         }
@@ -66,7 +66,7 @@ class ProfileViewModel @AssistedInject constructor(
 
     fun setUser(newUserId: Long) {
         if(newUserId != userId) {
-            getProfileModel(if(newUserId != 0L) newUserId else sessionCache.getActiveSession()!!.userId)
+            getProfileModel(if(newUserId != 0L) newUserId else sessionCache.getActiveSession()!!.sessionUser.userId)
         }
     }
 

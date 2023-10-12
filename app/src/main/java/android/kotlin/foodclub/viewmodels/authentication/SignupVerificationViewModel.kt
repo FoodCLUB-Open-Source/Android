@@ -1,6 +1,5 @@
 package android.kotlin.foodclub.viewmodels.authentication
 
-import android.kotlin.foodclub.api.authentication.SignUpResponseMessage
 import android.kotlin.foodclub.api.authentication.VerificationCodeRequestData
 import android.kotlin.foodclub.api.authentication.VerificationCodeResendData
 import android.kotlin.foodclub.api.retrofit.RetrofitInstance
@@ -13,10 +12,10 @@ import androidx.navigation.NavHostController
 import android.kotlin.foodclub.navigation.graphs.AuthScreen
 import android.kotlin.foodclub.navigation.graphs.Graph
 import android.kotlin.foodclub.repositories.AuthRepository
+import android.kotlin.foodclub.network.retrofit.utils.auth.JWTManager
 import android.kotlin.foodclub.utils.helpers.Resource
-import android.kotlin.foodclub.utils.helpers.SessionCache
+import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.utils.helpers.ValueParser
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -137,7 +136,7 @@ class SignupVerificationViewModel @Inject constructor(
     private fun setSession(userId: Long) {
 //        if(sessionCache == null) return
         if(sessionCache.getActiveSession() != null) sessionCache.clearSession()
-        sessionCache.saveSession(Session(userId))
+        sessionCache.saveSession(Session(JWTManager.createJWT(userId)!!))
         Log.d("AccountVerification", "Logged in user: $userId")
     }
 

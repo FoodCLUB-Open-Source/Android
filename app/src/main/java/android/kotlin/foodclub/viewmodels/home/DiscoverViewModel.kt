@@ -3,14 +3,12 @@ package android.kotlin.foodclub.viewmodels.home
 import android.kotlin.foodclub.api.retrofit.RetrofitInstance
 import android.kotlin.foodclub.data.models.ProductsData
 import android.kotlin.foodclub.data.models.UserPostsModel
-import android.kotlin.foodclub.data.models.UserProfileModel
 import android.kotlin.foodclub.data.models.VideoModel
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.repositories.ProductRepository
 import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.helpers.Resource
-import android.kotlin.foodclub.utils.helpers.SessionCache
-import android.util.Log
+import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -69,7 +67,7 @@ class DiscoverViewModel @Inject constructor(
 
     fun getPostsByWorld(worldCategory: Long) {
 
-        _sessionUserId.value = sessionCache.getActiveSession()!!.userId.toString()
+        _sessionUserId.value = sessionCache.getActiveSession()!!.sessionUser.userId.toString()
 
 
         viewModelScope.launch(Dispatchers.Main) {

@@ -37,7 +37,7 @@ class ValueParser {
 
         }
 
-        fun <T : Any> errorResponseToMessage(response: Response<T>): String {
+        fun <T> errorResponseToMessage(response: Response<T>): String {
             if(response.errorBody() == null) return "Unknown error occurred."
 
             val errorResponse = Gson().fromJson(response.errorBody()?.string(), DefaultErrorResponse::class.java)
