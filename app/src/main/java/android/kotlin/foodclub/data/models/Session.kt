@@ -1,13 +1,17 @@
 package android.kotlin.foodclub.data.models
 
+import android.util.Log
 import com.auth0.android.jwt.JWT
 
 class Session(val token: String) {
-    var sessionUser: SessionUser? = null
+    var sessionUser: SessionUser = SessionUser(0, 0)
         private set
 
     init {
         decodeToken()
+        Log.d("Session", "token: $token")
+        Log.d("Session", "userId: ${sessionUser.userId}")
+        Log.d("Session", "expiryAt: ${sessionUser.expiryAt}")
     }
 
     private fun decodeToken() {
