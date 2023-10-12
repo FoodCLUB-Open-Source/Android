@@ -128,6 +128,7 @@ dependencies {
     //implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
 
     implementation 'io.github.grizzi91:bouquet:1.1.2'
+    implementation 'com.auth0.android:jwtdecode:2.0.2'
 
 
 
