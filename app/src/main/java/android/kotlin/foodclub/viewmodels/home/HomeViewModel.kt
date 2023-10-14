@@ -33,6 +33,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun getPostListData() {
+        if(sessionCache.getActiveSession()?.sessionUser == null) return
         viewModelScope.launch {
             when(val resource = repository.getHomepagePosts(sessionCache.getActiveSession()!!.sessionUser.userId)) {
                 is Resource.Success -> {
