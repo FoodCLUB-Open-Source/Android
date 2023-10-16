@@ -15,7 +15,7 @@ fun RootNavigationGraph(navController: NavHostController, showSheet: Boolean,
     NavHost(
         navController = navController,
         route = Graph.ROOT,
-        startDestination = Graph.AUTHENTICATION
+        startDestination = Graph.HOME
     ) {
         onBoardingNavigationGraph(navController = navController, setBottomBarVisibility)
         authNavigationGraph(navController = navController, setBottomBarVisibility)

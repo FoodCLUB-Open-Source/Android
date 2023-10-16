@@ -3,7 +3,7 @@ package android.kotlin.foodclub.viewmodels.home
 import android.kotlin.foodclub.data.models.VideoModel
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.utils.helpers.Resource
-import android.kotlin.foodclub.utils.helpers.SessionCache
+import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -33,8 +33,9 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun getPostListData() {
+        if(sessionCache.getActiveSession()?.sessionUser == null) return
         viewModelScope.launch {
-            when(val resource = repository.getHomepagePosts(sessionCache.getActiveSession()!!.userId)) {
+            when(val resource = repository.getHomepagePosts(sessionCache.getActiveSession()!!.sessionUser.userId)) {
                 is Resource.Success -> {
                     _error.value = ""
                     _postListData.value = resource.data!!
