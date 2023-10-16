@@ -185,7 +185,8 @@ fun ConfirmPhoneNumMainLayout(
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(text = "Sync Contacts")
                 Switch(checked = syncContacts, onCheckedChange = { onSyncUpdate(it) })
