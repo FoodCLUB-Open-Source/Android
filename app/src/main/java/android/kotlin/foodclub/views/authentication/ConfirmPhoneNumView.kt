@@ -8,6 +8,7 @@ import android.kotlin.foodclub.views.home.montserratFamily
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,14 +31,17 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TextFieldDefaults.indicatorLine
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -114,8 +118,8 @@ fun ConfirmPhoneNumMainLayout(
         mutableStateOf(false)
     }
 
-    val (enableButton, onButtonUpdate) = remember {
-        mutableStateOf(true)
+    val (enableButton, onButtonUpdate) = rememberSaveable {
+        mutableStateOf(false)
     }
 
     if (phoneNum.isNotEmpty() && countryCode.isNotEmpty()) {
@@ -124,11 +128,13 @@ fun ConfirmPhoneNumMainLayout(
         onButtonUpdate(false)
     }
 
-    val (isError, onErrorUpdate) = remember { mutableStateOf(false) }
+    val (isError, onErrorUpdate) = rememberSaveable { mutableStateOf(false) }
+    val interactionSource = remember { MutableInteractionSource() }
 
     Box(modifier) {
         Column {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding()) {
+                /*
                 Image(
                     painter = painterResource(id = R.drawable.nav_create_icon),
                     contentDescription = "CountryCode",
@@ -137,6 +143,7 @@ fun ConfirmPhoneNumMainLayout(
                         .width(30.dp),
                     contentScale = ContentScale.Crop
                 )
+                 */
 
 
                 /*
@@ -153,8 +160,10 @@ fun ConfirmPhoneNumMainLayout(
 
                  */
 
-
-                BasicTextField(modifier = Modifier.padding(0.dp).width(60.dp),
+                Text(text="+", fontFamily= montserratFamily, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                BasicTextField(modifier = Modifier
+                    .padding(0.dp)
+                    .width(40.dp),
                     value = countryCode,
                     singleLine = true,
                     onValueChange = { onCodeUpdate(it.take(3)) },
@@ -165,31 +174,59 @@ fun ConfirmPhoneNumMainLayout(
 
 
 
-                Text(text = "|", fontSize = 30.sp, fontFamily = Montserrat, color = Color.Gray)
-                BasicTextField(value = phoneNum,
+                Text(text = "|", fontSize = 25.sp, fontFamily = Montserrat, color = Color.LightGray, modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp))
+                BasicTextField(
+                    value = phoneNum,
                     singleLine = true,
                     onValueChange = { onPhoneUpdate(it.take(18)) },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                     //colors = TextFieldDefaults.textFieldColors(containerColor = Color.Transparent), ,
-                    modifier = Modifier.padding(0.dp).fillMaxWidth(),
-                    textStyle = LocalTextStyle.current.copy(fontFamily = montserratFamily, fontSize = 18.sp, color = Color.DarkGray),
+                    modifier = Modifier
+                        .padding(0.dp)
+                        .fillMaxWidth()
+                        .indicatorLine(
+                            enabled = isError,
+                            interactionSource = interactionSource,
+                            isError = true
+                            ,colors = TextFieldDefaults.textFieldColors(MaterialTheme.colorScheme.error)
+                        ),
+                    textStyle = LocalTextStyle.current.copy(
+                        fontFamily = montserratFamily,
+                        fontSize = 18.sp,
+                        color = Color.DarkGray
+                    ),
                 )
             }
             Divider()
-            if (isError) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = "Invalid number",
-                    color = MaterialTheme.colorScheme.error
-                )
+            Box(modifier = Modifier.height(20.dp))
+            {
+                if (isError) {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 70.dp, top = 2.dp),
+                        text = "Invalid number",
+                        color = MaterialTheme.colorScheme.error,
+                        fontFamily = montserratFamily
+                    )
+                }
             }
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "Sync Contacts")
-                Switch(checked = syncContacts, onCheckedChange = { onSyncUpdate(it) })
+                Text(text = "Sync Contacts", fontFamily = montserratFamily, fontWeight = FontWeight.Bold)
+                Switch(checked = syncContacts,
+                    onCheckedChange = { onSyncUpdate(it) },
+                    colors = SwitchDefaults.colors(checkedTrackColor = Color(0xFF7EC60B),
+                        uncheckedTrackColor = Color.LightGray,
+                        checkedThumbColor = Color.White,
+                        uncheckedThumbColor = Color.White,
+                        uncheckedBorderColor = Color.LightGray,
+                        checkedBorderColor = Color(0xFF7EC60B))
+                )
             }
 
             Button(
@@ -204,6 +241,11 @@ fun ConfirmPhoneNumMainLayout(
                         if (phoneNum.length >= 9) {
                             onErrorUpdate(false)
                         }
+                        else
+                        {
+                            onErrorUpdate(true)
+                        }
+
                     } else {
                         onErrorUpdate(true)
                     }
