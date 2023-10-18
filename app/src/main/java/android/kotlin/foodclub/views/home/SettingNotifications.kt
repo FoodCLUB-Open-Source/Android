@@ -44,16 +44,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
-/**
- * now write me similar code like the ProfileView.kt in kotlin for a UI design using jetpack compose that can
- * run in andriod studio: this kotlin file is named SettingNotifications, it should display the title Notifications, and a small grey arrow box like the one in the EditProfile,
- * this box should be beside the title Notification on the left hand side
- * (i.e. in the same place as the Edit Profile), and should have four rows names 'General notifications',
- * 'System & Service update', 'App updates' and 'Payment request', at the end of each row, it should have a sliding buttom
- */
-
 @Composable
 fun BlackArrow() {
+    //need to fix the arrow thing
     Box(
         modifier = Modifier
             .size(24.dp)
