@@ -19,12 +19,13 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -32,9 +33,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.foodclub.ui.theme.BottomBarScreenObject
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.text.font.FontWeight
+import okio.ByteString.Companion.encodeUtf8
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,14 +64,15 @@ fun BottomSheet(onDismiss: () -> Unit, navController: NavHostController) {
                 icon = R.drawable.story_bottom_sheet_icon,
                 text = "Create a Story",
                 onDismiss,
-                onClick = { navController.navigate("CAMERA_VIEW") }
+                onClick = { navController.navigate("CAMERA_VIEW/${"story".encodeUtf8()}") }
 
             )
             BottomSheetItem(
                 icon = R.drawable.recipe_bottom_sheet_icon,
                 text = "Create a Recipe",
                 onDismiss,
-                onClick = { navController.navigate("CREATE_RECIPE_VIEW") }
+//                onClick = { navController.navigate("CAMERA_VIEW/${"recipe".encodeUtf8()}")}//"CREATE_RECIPE_VIEW") }
+                onClick = { navController.navigate("VIDEOTRIMMER")}//"CREATE_RECIPE_VIEW") }
             )
             Spacer(modifier = Modifier.height(25.dp))
         }
