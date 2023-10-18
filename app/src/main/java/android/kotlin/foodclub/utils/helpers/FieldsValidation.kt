@@ -7,6 +7,8 @@ class FieldsValidation {
                 return "At least 8 characters with no space"
             if(!Regex("[A-Z]+").containsMatchIn(content))
                 return "At least 1 upper case letter"
+            if(!Regex("[0-9]+").containsMatchIn(content))
+                return "At least 1 number"
             if(!Regex("^(?=.*[!@#\$%^&*])").containsMatchIn(content))
                 return "At least 1 special character"
             return null
