@@ -4,7 +4,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import android.kotlin.foodclub.views.authentication.ForgotPasswordView
 
 fun NavGraphBuilder.onBoardingNavigationGraph(navController: NavHostController,
                                               setBottomBarVisibility: (Boolean) -> Unit) {
@@ -13,7 +12,7 @@ fun NavGraphBuilder.onBoardingNavigationGraph(navController: NavHostController,
         startDestination = OnBoardingScreen.Menu.route
     ) {
         composable(route = OnBoardingScreen.Menu.route) {
-            ForgotPasswordView(navController)
+
         }
     }
 }
