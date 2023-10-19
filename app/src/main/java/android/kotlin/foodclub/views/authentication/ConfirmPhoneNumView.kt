@@ -5,6 +5,8 @@ import android.kotlin.foodclub.ui.theme.Montserrat
 import android.kotlin.foodclub.ui.theme.PlusJakartaSans
 import android.kotlin.foodclub.views.home.fontFamily
 import android.kotlin.foodclub.views.home.montserratFamily
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,33 +35,37 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TextFieldDefaults.indicatorLine
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 
 @Composable
 fun ConfirmPhoneNumView(navController: NavHostController) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 25.dp, end = 25.dp, top = 80.dp, bottom = 50.dp),
-    ) {
-        ConfirmPhoneNumTopLayout(navController = navController, modifier = Modifier.weight(1F))
-        ConfirmPhoneNumMainLayout(navController = navController, modifier = Modifier.weight(1F))
+    Box(modifier = Modifier.background(Color.White))
+    {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(start = 25.dp, end = 25.dp, top = 80.dp, bottom = 50.dp)
+        ) {
+            ConfirmPhoneNumTopLayout()//modifier = Modifier.weight(1F))
+            ConfirmPhoneNumMainLayout()//modifier = Modifier.weight(1F))
+        }
     }
 }
 
@@ -68,7 +74,7 @@ fun ConfirmPhoneNumTopLayout(
     navController: NavHostController? = null,
     modifier: Modifier = Modifier
 ) {
-    Box(modifier.fillMaxHeight()) {
+    Box(modifier.fillMaxHeight(0.3f)) {
         Column {
             Image(
                 painter = painterResource(R.drawable.back_icon),
@@ -131,8 +137,22 @@ fun ConfirmPhoneNumMainLayout(
     val (isError, onErrorUpdate) = rememberSaveable { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
 
+
+    /*
+    val (test, testChange) = remember { mutableStateOf(false) }
+
+    Button(onClick = {testChange(!test)})
+    {
+        Text(text="Test")
+    }
+
+     */
+
+
+
     Box(modifier) {
         Column {
+
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding()) {
                 /*
                 Image(
@@ -173,8 +193,18 @@ fun ConfirmPhoneNumMainLayout(
                 )
 
 
+                /*
+                val mod: Modifier = if (isError) Modifier.indicatorLine(
+                    enabled = true,
+                    interactionSource = interactionSource,
+                    isError = true,
+                    colors = TextFieldDefaults.textFieldColors(MaterialTheme.colorScheme.error),
+                    focusedIndicatorLineThickness = 3.dp,
+                    unfocusedIndicatorLineThickness = 3.dp
+                ) else Modifier
 
-                Text(text = "|", fontSize = 25.sp, fontFamily = Montserrat, color = Color.LightGray, modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp))
+                 */
+                Text(text = "|", fontSize = 25.sp, fontFamily = Montserrat, color = Color.LightGray, modifier = Modifier.padding(vertical = 3.dp, horizontal = 10.dp))
                 BasicTextField(
                     value = phoneNum,
                     singleLine = true,
@@ -184,17 +214,31 @@ fun ConfirmPhoneNumMainLayout(
                     modifier = Modifier
                         .padding(0.dp)
                         .fillMaxWidth()
-                        .indicatorLine(
-                            enabled = isError,
-                            interactionSource = interactionSource,
-                            isError = true
-                            ,colors = TextFieldDefaults.textFieldColors(MaterialTheme.colorScheme.error)
-                        ),
+                        //.then(mod)
+                       ,
                     textStyle = LocalTextStyle.current.copy(
                         fontFamily = montserratFamily,
                         fontSize = 18.sp,
                         color = Color.DarkGray
                     ),
+                )
+            }
+
+
+            val offset: Dp by animateDpAsState(if (isError) 0.dp else 130.dp, label = "")
+            Box(modifier = Modifier
+                .padding(start = 74.dp + offset, bottom = 3.dp)
+                .width(280.dp - offset)
+                .height(3.dp))
+            {
+                val len: Float by animateFloatAsState(if (isError) 1f else 0.1666f, label = "")
+                val alpha: Float by animateFloatAsState(if (isError) 1f else 0f, label = "")
+                Box(
+                    Modifier
+                        .fillMaxWidth(len)
+                        .fillMaxHeight()
+                        .graphicsLayer(alpha = alpha)
+                        .background(Color.Red)
                 )
             }
             Divider()
@@ -204,7 +248,7 @@ fun ConfirmPhoneNumMainLayout(
                     Text(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 70.dp, top = 2.dp),
+                            .padding(start = 75.dp, top = 2.dp),
                         text = "Invalid number",
                         color = MaterialTheme.colorScheme.error,
                         fontFamily = montserratFamily
@@ -285,8 +329,8 @@ fun ConfirmPhoneNumPreview() {
                 .fillMaxSize()
                 .padding(start = 25.dp, end = 25.dp, top = 80.dp, bottom = 50.dp)
         ) {
-            ConfirmPhoneNumTopLayout(modifier = Modifier.weight(1F))
-            ConfirmPhoneNumMainLayout(modifier = Modifier.weight(1F))
+            ConfirmPhoneNumTopLayout()//modifier = Modifier.weight(1F))
+            ConfirmPhoneNumMainLayout()//modifier = Modifier.weight(1F))
         }
     }
 
