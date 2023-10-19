@@ -2,10 +2,13 @@ package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.navigation.graphs.Graph
+import android.kotlin.foodclub.viewmodels.home.SettingsViewModel
+import android.kotlin.foodclub.utils.composables.SettingsLayout
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,8 +37,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
@@ -43,39 +46,64 @@ val colorGray= Color(android.graphics.Color.parseColor("#D0D0D0"))
 val colorRed= Color(android.graphics.Color.parseColor("#C64E0B"))
 
 @Composable
-fun SettingsView(navController: NavHostController){
-    val screenSizeHeight = LocalConfiguration.current.screenHeightDp.dp //added screenSizeHeight so page is adaptable to all screen size
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .background(Color.White),
-        verticalArrangement = Arrangement.Center
-    ) {
-        SettingsTopBar("Settings", navController)
-        Spacer(modifier = Modifier.height(25.dp))
-        SettingsProfile(userName = "Jake Rayner", userImage = painterResource(id = R.drawable.story_user))
+fun SettingsView(navController: NavHostController, viewModel: SettingsViewModel){
+    SettingsLayout(label = "Settings", onBackAction = { navController.navigateUp()}) {
+        val screenSizeHeight =
+            LocalConfiguration.current.screenHeightDp.dp //added screenSizeHeight so page is adaptable to all screen size
+
+        SettingsProfile( 
+            userName = "Jake Rayner",
+            userImage = painterResource(id = R.drawable.story_user)
+        )
         Spacer(modifier = Modifier.height(screenSizeHeight * 0.1f))
-        SettingRow(text = "Edit profile information", iconId = R.drawable.editprofile, Color.Black, 0,
-        Color.Gray, "SETTINGS_EDIT_PROFILE", navController)
-        SettingRow(text = "Privacy settings", iconId = R.drawable.privacysettings, Color.Black, 0,
-            Color.Gray, "SETTINGS_PRIVACY", navController)
+        SettingRow(
+            text = "Edit profile information", iconId = R.drawable.editprofile, Color.Black, 0,
+            Color.Gray, "SETTINGS_EDIT_PROFILE", navController
+        )
+        SettingRow(
+            text = "Privacy settings", iconId = R.drawable.privacysettings, Color.Black, 0,
+            Color.Gray, "SETTINGS_PRIVACY", navController
+        )
         Spacer(modifier = Modifier.height(screenSizeHeight * 0.03f))
         Column(
             modifier = Modifier
                 .border(width = 1.dp, color = colorGray, shape = RoundedCornerShape(8.dp))
         ) {
-            SettingRow(text = "Help & Support", iconId = R.drawable.helpandsupport, Color.Black,
-                bordersize = 0, bordercolor = Color.Transparent, "SETTINGS_PRIVACY", navController)
-            SettingRow(text = "Contact Us", iconId = R.drawable.contactus, Color.Black,
-                bordersize = 0, bordercolor = Color.Transparent, "SETTINGS_PRIVACY", navController)
-            SettingRow(text = "Privacy Policy", iconId = R.drawable.privacypolicy, Color.Black,
-                bordersize = 0, bordercolor = Color.Transparent, "SETTINGS_PRIVACY", navController)
+            SettingRow(
+                text = "Help & Support",
+                iconId = R.drawable.helpandsupport,
+                Color.Black,
+                bordersize = 0,
+                bordercolor = Color.Transparent,
+                "SETTINGS_PRIVACY",
+                navController
+            )
+            SettingRow(
+                text = "Contact Us",
+                iconId = R.drawable.contactus,
+                Color.Black,
+                bordersize = 0,
+                bordercolor = Color.Transparent,
+                "SETTINGS_PRIVACY",
+                navController
+            )
+            SettingRow(
+                text = "Privacy Policy",
+                iconId = R.drawable.privacypolicy,
+                Color.Black,
+                bordersize = 0,
+                bordercolor = Color.Transparent,
+                "SETTINGS_PRIVACY",
+                navController
+            )
         }
         Spacer(modifier = Modifier.height(screenSizeHeight * 0.03f))
         SettingRow(text = "Log Out", iconId = R.drawable.logout, fontC = colorRed, 0,
-            Color.Black, Graph.AUTHENTICATION, navController)
+            Color.Black, Graph.AUTHENTICATION, navController
+        ) { viewModel.logout() }
     }
+//        }
+//    }
 }
 
 // Common icon composable to enter the parameters to create icons in this screen
@@ -114,7 +142,7 @@ fun SettingsTopBar(label:String, navController: NavController) {
             IconButton(
                 onClick = { navController.navigateUp() },
                 modifier = Modifier
-                    .background(color=colorGray, RoundedCornerShape(8.dp))
+                    .background(color = colorGray, RoundedCornerShape(8.dp))
                     .size(35.dp),
                 content = {
                     SettingsIcons(size = 20, icon =  R.drawable.back_icon)
@@ -165,7 +193,8 @@ fun SettingsProfile(userName: String, userImage: Painter){
 // A reused composable to create each setting button row
 @Composable
 fun SettingRow(text: String, iconId: Int, fontC:  Color=Color.Black,
-               bordersize: Int=1, bordercolor: Color= colorGray, destination: String, navController: NavController) {
+               bordersize: Int=1, bordercolor: Color= colorGray, destination: String,
+               navController: NavController, onClick: () -> Unit = {}) {
    val rowSize=65.dp
     Row(
         modifier = Modifier
@@ -174,7 +203,10 @@ fun SettingRow(text: String, iconId: Int, fontC:  Color=Color.Black,
         verticalAlignment = Alignment.CenterVertically
     ){
         Button(
-            onClick = { navController.navigate(destination) },
+            onClick = {
+                onClick()
+                navController.navigate(destination)
+                      },
             colors= ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = Color.Black),
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier
@@ -197,7 +229,7 @@ fun SettingRow(text: String, iconId: Int, fontC:  Color=Color.Black,
 @Composable
 @Preview
 fun SettingsView() {
-    SettingsView(rememberNavController())
+    SettingsView(rememberNavController(), hiltViewModel())
 }
 
 

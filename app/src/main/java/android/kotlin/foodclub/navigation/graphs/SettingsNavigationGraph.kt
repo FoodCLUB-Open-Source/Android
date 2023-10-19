@@ -18,7 +18,7 @@ fun NavGraphBuilder.settingsNavigationGraph(navController: NavHostController) {
     ) {
         composable(SettingsScreen.Main.route) {entry ->
             val viewModel = entry.sharedHiltViewModel<SettingsViewModel>(navController)
-            SettingsView(navController = navController)
+            SettingsView(navController = navController, viewModel = viewModel)
         }
         composable(SettingsScreen.EditProfile.route) {entry ->
             val viewModel = entry.sharedHiltViewModel<SettingsViewModel>(navController)

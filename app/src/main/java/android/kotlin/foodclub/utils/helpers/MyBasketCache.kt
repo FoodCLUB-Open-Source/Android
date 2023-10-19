@@ -2,6 +2,7 @@ package android.kotlin.foodclub.utils.helpers
 
 import android.content.SharedPreferences
 import android.kotlin.foodclub.data.models.MyBasket
+import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import com.google.gson.Gson
 
 class MyBasketCache(
@@ -9,7 +10,7 @@ class MyBasketCache(
     private val sessionCache: SessionCache
 ) {
     private val gson = Gson().getAdapter(MyBasket::class.java)
-    private var userId = sessionCache.getActiveSession()?.userId ?: 0
+    private var userId = sessionCache.getActiveSession()?.sessionUser?.userId?.toInt() ?: 0
 
     fun saveBasket(basket: MyBasket) {
         getUserId()
@@ -28,6 +29,6 @@ class MyBasketCache(
     }
 
     private fun getUserId() {
-        userId = sessionCache.getActiveSession()?.userId ?: 0
+        userId = sessionCache.getActiveSession()?.sessionUser?.userId?.toInt() ?: 0
     }
 }

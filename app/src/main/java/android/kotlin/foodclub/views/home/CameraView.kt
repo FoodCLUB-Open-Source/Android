@@ -48,6 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -114,14 +115,12 @@ fun CameraView(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    var state:String = ""
+    var state: String = ""
 
-    if (stateEncoded.contains("story"))
-    {
+    if (stateEncoded.contains("story")) {
         state = "story"
     }
-    if (stateEncoded.contains("recipe"))
-    {
+    if (stateEncoded.contains("recipe")) {
         state = "recipe"
     }
 
@@ -304,24 +303,38 @@ fun CameraView(
                     )*/
                 }
                 if (!recordingStarted.value) {
-
-                    val bitmap = loadCurrentThumbnail(context = context).asImageBitmap()
-                    Image(
-                        bitmap = bitmap,
-                        contentScale = ContentScale.Crop,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .clip(RoundedCornerShape(5.dp))
-                            .then(
-                                Modifier
-                                    .size(64.dp)
-                                    .border(2.dp, Color.White, RoundedCornerShape(5.dp))
-                            )
-                            .clickable {
-                                navController.navigate("GALLERY_VIEW/${state.encodeUtf8()}")
-                            }
-                    )
+                    val bitmapCheck = loadCurrentThumbnail(context = context)
+                    val bitmap: ImageBitmap
+                    if (bitmapCheck != null) {
+                        bitmap = bitmapCheck.asImageBitmap()
+                        Image(
+                            bitmap = bitmap,
+                            contentScale = ContentScale.Crop,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .align(Alignment.BottomStart)
+                                .clip(RoundedCornerShape(5.dp))
+                                .then(
+                                    Modifier
+                                        .size(64.dp)
+                                        .border(2.dp, Color.White, RoundedCornerShape(5.dp))
+                                )
+                                .clickable {
+                                    navController.navigate("GALLERY_VIEW/${state.encodeUtf8()}")
+                                }
+                        )
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.BottomStart)
+                                .clip(RoundedCornerShape(5.dp))
+                                .then(
+                                    Modifier
+                                        .size(64.dp)
+                                        .border(2.dp, Color.White, RoundedCornerShape(5.dp))
+                                )
+                        )
+                    }
                 }
                 Image(
                     painter = painterResource(id = R.drawable.baseline_cameraswitch_24),
@@ -351,7 +364,7 @@ fun CameraView(
 }
 
 
-fun loadCurrentThumbnail(context: Context): Bitmap {
+fun loadCurrentThumbnail(context: Context): Bitmap? {
     val imageProjection = arrayOf(
         MediaStore.Images.Media._ID,
         MediaStore.Images.Media.DATE_TAKEN
@@ -439,5 +452,5 @@ fun loadCurrentThumbnail(context: Context): Bitmap {
         }
     }
 
-    return context.contentResolver.loadThumbnail(uri, Size(240, 240), null)
+    return if (uri.toString().isEmpty()) null else context.contentResolver.loadThumbnail(uri, Size(240, 240), null)
 }

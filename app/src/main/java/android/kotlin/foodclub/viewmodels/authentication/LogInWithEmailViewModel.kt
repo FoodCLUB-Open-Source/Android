@@ -5,7 +5,8 @@ import android.kotlin.foodclub.api.authentication.UserCredentials
 import android.kotlin.foodclub.api.retrofit.RetrofitInstance
 import android.kotlin.foodclub.data.models.Session
 import android.kotlin.foodclub.navigation.graphs.Graph
-import android.kotlin.foodclub.utils.helpers.SessionCache
+import android.kotlin.foodclub.network.retrofit.utils.auth.JWTManager
+import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,7 +15,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 import javax.inject.Inject
@@ -49,7 +49,7 @@ class LogInWithEmailViewModel @Inject constructor(
     private fun setSession(userId: Long) {
 //        if(sessionCache == null) return
         if(sessionCache.getActiveSession() != null) sessionCache.clearSession()
-        sessionCache.saveSession(Session(userId))
+        sessionCache.saveSession(Session(JWTManager.createJWT(userId)!!))
         Log.d("LoginWithEmailViewModel", "Logged in user: $userId")
     }
 

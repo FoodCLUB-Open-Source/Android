@@ -135,8 +135,8 @@ dependencies {
 
     implementation 'io.github.grizzi91:bouquet:1.1.2'
 
-
-
+    implementation 'com.auth0.android:jwtdecode:2.0.2'
+    implementation 'com.auth0:java-jwt:4.4.0'
 
 
 }

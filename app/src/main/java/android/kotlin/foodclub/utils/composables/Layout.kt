@@ -2,6 +2,7 @@ package android.kotlin.foodclub.utils.composables
 
 import android.annotation.SuppressLint
 import android.kotlin.foodclub.navigation.graphs.Graph
+import android.kotlin.foodclub.viewmodels.BaseViewModel
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -15,11 +16,21 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import android.kotlin.foodclub.views.home.BottomBar
 import android.kotlin.foodclub.views.home.BottomSheet
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainLayout(navController: NavHostController,
                rootNavigationGraph: @Composable (Boolean, () -> Unit, () -> Unit, (Boolean) -> Unit) -> Unit) {
+    //Check if user is logged in, otherwise - redirect to auth navigation graph
+    val baseViewModel: BaseViewModel = hiltViewModel()
+    val currentSessionState = baseViewModel.currentSession.collectAsState()
+    LaunchedEffect(currentSessionState.value) {
+        baseViewModel.checkSession(navController = navController)
+    }
+
     var showSheet by remember { mutableStateOf(false) }
     val triggerBottomSheetModal: () -> Unit = {
         showSheet = !showSheet

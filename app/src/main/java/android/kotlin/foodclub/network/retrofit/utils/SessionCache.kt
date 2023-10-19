@@ -1,13 +1,19 @@
-package android.kotlin.foodclub.utils.helpers
+package android.kotlin.foodclub.network.retrofit.utils
 
 import android.content.SharedPreferences
 import android.kotlin.foodclub.data.models.Session
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class SessionCache(private val sharedPreferences: SharedPreferences) {
     private val gson = Gson().getAdapter(Session::class.java)
 
+    private val _session = MutableStateFlow(getActiveSession())
+    val session: StateFlow<Session?> get() = _session
+
     fun saveSession(session: Session) {
+        _session.value = session
         sharedPreferences.edit().putString("session", gson.toJson(session)).apply()
     }
 
@@ -17,6 +23,7 @@ class SessionCache(private val sharedPreferences: SharedPreferences) {
     }
 
     fun clearSession() {
+        _session.value = null
         sharedPreferences.edit().remove("session").apply()
     }
 }

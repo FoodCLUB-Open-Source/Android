@@ -1,6 +1,6 @@
 package android.kotlin.foodclub.viewmodels.home
 
-import android.kotlin.foodclub.utils.helpers.SessionCache
+import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -9,6 +9,9 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     val sessionCache: SessionCache
 ) : ViewModel() {
+    fun logout() {
+        sessionCache.clearSession()
+    }
     fun changePassword() {
 
     }
