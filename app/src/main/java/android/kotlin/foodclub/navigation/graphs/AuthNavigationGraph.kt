@@ -9,12 +9,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import android.kotlin.foodclub.views.authentication.ChangePasswordView
-import android.kotlin.foodclub.views.authentication.EmailSentView
 import com.example.foodclub.views.authentication.ConfirmIdentityView
-import android.kotlin.foodclub.views.authentication.ForgotPasswordView
 import android.kotlin.foodclub.views.authentication.TermsAndConditions
-import com.example.foodclub.views.home.DiscoverView
 
 fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, setBottomBarVisibility: (Boolean) -> Unit) {
     navigation(
@@ -22,6 +18,7 @@ fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, setBot
         startDestination = AuthScreen.MainLogInAndSignUp.route
     ) {
         signupNavigationGraph(navController)
+        forgotPasswordNavigationGraph(navController)
 
         composable(route = AuthScreen.MainLogInAndSignUp.route) {
 
@@ -31,9 +28,6 @@ fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, setBot
         }
         composable(route = AuthScreen.Login.route) {
             LogInWithEmail(navController)
-        }
-        composable(route = AuthScreen.Forgot.route) {
-            ForgotPasswordView(navController)
         }
         composable(route = AuthScreen.ConfirmId.route) {
             ConfirmIdentityView()
@@ -56,17 +50,6 @@ fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, setBot
                 backStackEntry.arguments?.getString("password"))
 
         }
-
-        composable(route = AuthScreen.ForgotEmailSent.route) {
-            EmailSentView()
-        }
-
-        composable(route = AuthScreen.ChangePassword.route + "/{username}",
-            arguments = listOf(navArgument("username") { type = NavType.StringType })
-        ) {backStackEntry ->
-            ChangePasswordView(navController,backStackEntry.arguments?.getString("username"))
-        }
-
     }
 }
 
@@ -75,10 +58,6 @@ sealed class AuthScreen(val route: String) {
     object Login : AuthScreen(route = "LOGIN")
     object SignUp : AuthScreen(route = "SIGN_UP")
     object Forgot : AuthScreen(route = "FORGOT")
-
-    object ForgotEmailSent : AuthScreen(route = "FORGOT_EMAIL_SENT")
-
-    object ChangePassword : AuthScreen(route = "CHANGE_PASSWORD")
 
     object ConfirmId : AuthScreen(route = "CONFIRM_ID")
     object VerifySignup : AuthScreen(route = "VERIFY_SIGN_UP")
