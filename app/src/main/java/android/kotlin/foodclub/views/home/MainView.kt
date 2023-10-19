@@ -71,7 +71,8 @@ fun BottomSheet(onDismiss: () -> Unit, navController: NavHostController) {
                 icon = R.drawable.recipe_bottom_sheet_icon,
                 text = "Create a Recipe",
                 onDismiss,
-                onClick = { navController.navigate("CAMERA_VIEW/${"recipe".encodeUtf8()}")}//"CREATE_RECIPE_VIEW") }
+//                onClick = { navController.navigate("CAMERA_VIEW/${"recipe".encodeUtf8()}")}//"CREATE_RECIPE_VIEW") }
+                onClick = { navController.navigate("VIDEOTRIMMER")}//"CREATE_RECIPE_VIEW") }
             )
             Spacer(modifier = Modifier.height(25.dp))
         }

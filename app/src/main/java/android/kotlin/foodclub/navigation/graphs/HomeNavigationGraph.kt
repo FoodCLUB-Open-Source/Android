@@ -71,6 +71,12 @@ fun NavGraphBuilder.homeNavigationGraph(
             val state = it.arguments?.getString("state") ?: ""
             CameraView(navController = navController, stateEncoded = state)
         }
+        composable(route = HomeOtherRoutes.VideoTrimmerView.route) {
+            val state = it.arguments?.getString("state") ?: ""
+//            CameraView(navController = navController, stateEncoded = state)
+
+            CreateView()
+        }
         composable(route = HomeOtherRoutes.CameraPreviewView.route) { backStackEntry ->
             val uri = backStackEntry.arguments?.getString("uri") ?: ""
             val state = backStackEntry.arguments?.getString("state") ?: ""
@@ -82,13 +88,14 @@ fun NavGraphBuilder.homeNavigationGraph(
         }
         composable(route = HomeOtherRoutes.CreateRecipeView.route) {
             CreateRecipeView(navController = navController)
+
+//            CreateView()
         }
 
         composable(route = HomeOtherRoutes.GalleryView.route) {
             val state = it.arguments?.getString("state") ?: ""
             GalleryView(navController = navController, stateEncoded = state)
         }
-
         composable(route = HomeOtherRoutes.DeleteRecipeView.route + "/{postId}",
             arguments = listOf(
                 navArgument("postId") {
@@ -156,4 +163,6 @@ sealed class HomeOtherRoutes(val route: String) {
     object MyBasketView : HomeOtherRoutes(route = "BASKET_VIEW")
 
     object MySearchView : HomeOtherRoutes(route = "SEARCH_VIEW")
+
+    object VideoTrimmerView : HomeOtherRoutes(route = "VIDEOTRIMMER")
 }
