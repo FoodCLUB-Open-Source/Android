@@ -93,6 +93,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.draw.alpha
 import androidx.hilt.navigation.compose.hiltViewModel
 
 
@@ -367,6 +368,8 @@ fun HomeView(
         showIngredientSheet = !showIngredientSheet
     }
 
+    var showFeedOnUI by remember { mutableStateOf(true) }
+
     SideEffect {
         systemUiController.setSystemBarsColor(
             color = Color.Transparent,
@@ -376,30 +379,72 @@ fun HomeView(
             color = if (storyViewMode) Color.Black else Color.White
         )
     }
-    Box(modifier = Modifier.padding(top = 55.dp).zIndex(1f)) {
-        StoriesContainerView(stories = listOf(
-            R.drawable.story_user,
-            R.drawable.story_user,
-            R.drawable.story_user,
-            R.drawable.story_user
-        ), callbackEnableStoryView = {
-            // Here we are going to put all information about the story - author, time created and story content
-            currentStoryOffset = it
-            storyViewMode = true
-            systemUiController.setNavigationBarColor(
-                color = Color.Black
+
+    Box(
+        modifier = Modifier
+            .padding(top = 55.dp)
+            .fillMaxWidth()
+            .zIndex(1f),
+        contentAlignment = Alignment.Center // Center the content horizontally
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                modifier = modifier.clickable { showFeedOnUI = true },
+                text = "Feed",
+                fontFamily = Montserrat,
+                fontSize = 18.sp,
+                style = TextStyle(color = Color.White),
+                lineHeight = 21.94.sp,
+                fontWeight = if (showFeedOnUI) FontWeight.Bold else FontWeight.Medium
             )
-            triggerStoryView()
-        }, navController)
+            Text(
+                modifier = Modifier.padding(8.dp).alpha(0.7f),
+                text = "|",
+                fontFamily = Montserrat,
+                fontSize = 18.sp,
+                style = TextStyle(color = Color.LightGray),
+                lineHeight = 21.94.sp
+            )
+            Text(
+                modifier = modifier
+                    .alpha(0.7f)
+                    .clickable {
+                    showFeedOnUI = false
+                    currentStoryOffset = IntOffset(0, 0) // story is opening up from the top left corner
+                    systemUiController.setNavigationBarColor(
+                        color = Color.Black
+                    )
+                    storyViewMode = true
+                    triggerStoryView()
+                },
+                text = "Snaps",
+                fontFamily = Montserrat,
+                fontSize = 18.sp,
+                style = TextStyle(color = Color.White),
+                lineHeight = 21.94.sp,
+                fontWeight = if (!showFeedOnUI) FontWeight.Bold else FontWeight.Medium
+            )
+        }
     }
+
     //Story view screen
     Box(modifier = Modifier.zIndex(2f)) {
-        StoryView(storyEnabled = storyViewMode, storyDetails = currentStory,
+        StoryView(
+            storyEnabled = storyViewMode,
+            storyDetails = currentStory,
             callbackDisableStory = {
+                showFeedOnUI = true
                 storyViewMode = false
                 triggerStoryView()
-                                   }, currentStoryOffset, modifier = Modifier.fillMaxSize())
+            },
+            currentStoryOffset,
+            modifier = Modifier.fillMaxSize()
+        )
     }
+
     Column(
         modifier = Modifier
             .height(screenHeightMinusBottomNavItem)
@@ -506,7 +551,7 @@ fun HomeView(
                     ) {
                         Column {
                             Button(
-                                modifier = Modifier.width(60.dp).height(25.dp),
+                                modifier = Modifier.width(60.dp).height(25.dp).alpha(0.7f),
                                 onClick = { /*TODO*/ },
                                 contentPadding = PaddingValues(0.dp),
                                 colors = ButtonDefaults.buttonColors(
@@ -525,13 +570,13 @@ fun HomeView(
                                 Image(
                                     painter = painterResource(id = R.drawable.story_user),
                                     contentDescription = "Profile Image",
-                                    modifier = Modifier.size(35.dp).clip(CircleShape)
+                                    modifier = Modifier.size(35.dp).clip(CircleShape).alpha(0.7f)
                                 )
                                 Spacer(modifier = Modifier.width(10.dp))
                                 Text(
                                     videosState.value[it].authorDetails, color = Color.White,
                                     fontFamily = Montserrat, fontSize = 18.sp,
-                                    modifier = Modifier.padding(2.dp)
+                                    modifier = Modifier.padding(2.dp).alpha(0.7f)
                                 )
                             }
                         }
@@ -554,13 +599,15 @@ fun HomeView(
                                             .clip(RoundedCornerShape(35.dp))
                                             .background(Color.Black.copy(alpha = 0.5f))
                                             .blur(radius = 5.dp)
+                                            .alpha(0.7f)
                                     ) {}
                                     Image(
                                         painter = painterResource(id = R.drawable.save),
                                         modifier = Modifier
                                             .size(22.dp)
                                             .align(Alignment.Center)
-                                            .zIndex(1f),
+                                            .zIndex(1f)
+                                            .alpha(0.7f),
                                         contentDescription = "save"
                                     )
                                 }
@@ -583,11 +630,13 @@ fun HomeView(
                                             .clip(RoundedCornerShape(30.dp))
                                             .background(Color.Black.copy(alpha = 0.5f))
                                             .blur(radius = 5.dp)
+                                            .alpha(0.7f)
                                     ) {}
                                     Column(
                                         horizontalAlignment = Alignment.CenterHorizontally,
                                         verticalArrangement = Arrangement.Center,
-                                        modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(30.dp)).clickable {
+                                        modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(30.dp))                                            .alpha(0.7f)
+                                            .clickable {
                                                 isLiked = !isLiked
                                                 videosState.value[it].currentViewerInteraction.isLikedByYou = !isLiked
                                             }
@@ -600,7 +649,8 @@ fun HomeView(
                                                 maxSize.at(190)
                                                 16.dp.at(330)
                                                 22.dp.at(400).with(FastOutLinearInEasing)
-                                            })
+                                            }, label = ""
+                                        )
 
                                         LaunchedEffect(key1 = doubleTapState) {
                                             if (doubleTapState.first != Offset.Unspecified && doubleTapState.second) {
@@ -611,7 +661,7 @@ fun HomeView(
                                             painter = painterResource(id = R.drawable.like),
                                             contentDescription = null,
                                             tint = if (isLiked) Color(android.graphics.Color.parseColor("#7EC60B")) else Color.White,
-                                            modifier = Modifier.size(iconSize)
+                                            modifier = Modifier.size(iconSize).alpha(0.7f)
                                         )
                                         Spacer(modifier = Modifier.height(3.dp))
                                         Text(
@@ -632,11 +682,11 @@ fun HomeView(
                                 onClick = { triggerIngredientBottomSheetModal() },
                                 colors = ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#7EC60B"))),
                                 shape = RoundedCornerShape(15.dp),
-                                modifier = Modifier.width(120.dp).height(35.dp),
+                                modifier = Modifier.width(120.dp).height(35.dp).alpha(0.7f),
                                 contentPadding = PaddingValues(0.dp)
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text("Ingredients", fontFamily = Montserrat, fontSize = 14.sp) }
+                                    Text("Info", fontFamily = Montserrat, fontSize = 14.sp) }
                             }
                         }
                     }

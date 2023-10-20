@@ -303,7 +303,6 @@ fun CameraView(
                     )*/
                 }
                 if (!recordingStarted.value) {
-
                     val bitmapCheck = loadCurrentThumbnail(context = context)
                     val bitmap: ImageBitmap
                     if (bitmapCheck != null) {

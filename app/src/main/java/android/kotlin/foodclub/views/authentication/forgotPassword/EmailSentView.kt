@@ -1,28 +1,23 @@
-package android.kotlin.foodclub.views.authentication
+package android.kotlin.foodclub.views.authentication.forgotPassword
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.viewmodels.authentication.EmailSentViewModel
-import android.kotlin.foodclub.viewmodels.authentication.ForgotPasswordViewModel
+import android.kotlin.foodclub.ui.theme.Montserrat
+import android.kotlin.foodclub.utils.composables.CustomAuthButton
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,47 +25,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EmailSentView(navController: NavHostController) {
-
-    val viewModel: EmailSentViewModel = viewModel()
-
-    val montserratFamily = FontFamily(
-         Font(R.font.montserratregular, FontWeight.Normal),
-    )
-
+fun EmailSentView(onClick: () -> Unit, onBackButtonClick: () -> Unit) {
     Column(
-        Modifier
-            .fillMaxSize()
-            .background(Color.White)
+        Modifier.fillMaxSize().background(Color.White)
             .padding(start = 30.dp, end = 30.dp, top = 120.dp, bottom = 50.dp),
         verticalArrangement = Arrangement.spacedBy(35.dp)
 
     ) {
         Button(
             shape = RectangleShape,
-            modifier = Modifier
-                .clip(RoundedCornerShape(15.dp))
-                .width(20.dp)
-                .height(40.dp),
+            modifier = Modifier.clip(RoundedCornerShape(15.dp)).width(20.dp).height(40.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.White,
                 contentColor = Color.White
             ), contentPadding = PaddingValues(5.dp),
-            onClick = {
-                navController.popBackStack()
-            }
+            onClick = { onBackButtonClick() }
         ) {
             Image(
                 painter = painterResource(id = R.drawable.back_icon),
@@ -85,7 +59,7 @@ fun EmailSentView(navController: NavHostController) {
         Text(
             text = "Password Changed", fontSize = 30.sp,
             fontWeight = FontWeight.SemiBold,
-            fontFamily = montserratFamily,
+            fontFamily = Montserrat,
             modifier = Modifier.padding(top = 20.dp, start = 10.dp)
         )
 
@@ -102,25 +76,20 @@ fun EmailSentView(navController: NavHostController) {
                 contentColor = Color.White
             ), contentPadding = PaddingValues(15.dp),
 
-            onClick = {
-                 navController.navigate("LOGIN")
-            }
+            onClick = { onClick() }
 
         ) {
 
             Text(
                 color = Color.White,
                 text = "Log in",
-                fontFamily = montserratFamily,
+                fontFamily = Montserrat,
                 fontWeight = FontWeight.Bold
             )
         }
+
+        //Check which button fits better
+        CustomAuthButton(enabled = true, title = "Log in") { onClick() }
     }
 
-}
-
-@Composable
-@Preview
-fun EmailSentView(){
-    EmailSentView(rememberNavController())
 }
