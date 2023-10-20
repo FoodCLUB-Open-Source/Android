@@ -32,11 +32,11 @@ fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, setBot
         composable(route = AuthScreen.ConfirmId.route) {
             ConfirmIdentityView()
         }
-        
+
         composable(route = AuthScreen.TermsAndConditions.route) {
             TermsAndConditions(navController)
         }
-        
+
         composable(route = AuthScreen.VerifySignup.route + "/{username}?password={password}&email={email}",
 
             arguments = listOf(
@@ -46,7 +46,7 @@ fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, setBot
             )
         ) {backStackEntry ->
             SignupVerification(navController,backStackEntry.arguments?.getString("email"),
-            backStackEntry.arguments?.getString("username"),
+                backStackEntry.arguments?.getString("username"),
                 backStackEntry.arguments?.getString("password"))
 
         }
