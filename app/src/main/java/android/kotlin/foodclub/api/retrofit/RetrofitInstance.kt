@@ -1,9 +1,7 @@
 package android.kotlin.foodclub.api.retrofit
 
 import android.kotlin.foodclub.api.authentication.API
-import android.kotlin.foodclub.api.authentication.UserSignUpInformation
 import android.kotlin.foodclub.api.retrofit.post.RecipeAPI
-import retrofit2.CallAdapter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
