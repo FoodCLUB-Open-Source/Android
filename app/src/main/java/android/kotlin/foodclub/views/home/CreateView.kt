@@ -1,29 +1,33 @@
 package com.example.foodclub.views.home
 
-import android.Manifest
 import android.app.Activity
-import android.app.Application
-import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.viewmodels.home.CreateViewModel
+import android.media.MediaMetadataRetriever
+import android.util.Log
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.annotation.OptIn
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -33,17 +37,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.MediaItem
-import androidx.media3.common.util.UnstableApi
-import androidx.media3.common.util.Util
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
+
+
 //import com.google.android.exoplayer2.ExoPlayer
 //import com.google.android.exoplayer2.MediaItem
 //import com.google.android.exoplayer2.ui.PlayerView
@@ -57,13 +64,30 @@ fun CreateView() {
     var trimStartMs: Long = 1000
     var trimEndMs: Long = 2000
 
+    var framesList = mutableListOf<Bitmap?>()
+
+
     var activity = LocalContext.current as Activity
+
+    var mediaMeta = MediaMetadataRetriever()
+    mediaMeta.setDataSource("https://storage.googleapis.com/exoplayer-test-media-1/mp4/portrait_avc_aac.mp4")
+    val duration: Long = mediaMeta.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)!!.toLong() * 1000
+
+        var time: Long = 0
+        while (time < duration) {
+            val frame: Bitmap? = mediaMeta.getFrameAtTime(time, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
+            //imageView.setImageBitmap(frame)
+            framesList.add(frame)
+            time += 250000
+        }
+
+
 
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color.Black
     ) {
-        Box {
+        Box{
             val context = LocalContext.current
             var playWhenReady by remember { mutableStateOf(true) }
             val exoPlayer = remember {
@@ -117,14 +141,20 @@ fun CreateView() {
                     )
                 }
             }
+
+
             Box(modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(20.dp)) {
                 Column(horizontalAlignment = Alignment.End) {
+
+
                     val mainViewModel: CreateViewModel = viewModel()
 
                     Button(
-                        modifier = Modifier.height(50.dp).width(80.dp),
+                        modifier = Modifier
+                            .height(50.dp)
+                            .width(80.dp),
                         onClick = {
                             mainViewModel.setApplicationData( activity,trimStartMs,trimEndMs)
                             mainViewModel.startExport()
@@ -142,6 +172,22 @@ fun CreateView() {
 
                         )
                     }
+
+                    LazyRow(modifier = Modifier
+                        .fillMaxWidth()
+                        .height(100.dp).background(Color.White)){
+
+
+                        items(framesList){item ->
+
+                            Image(bitmap = item!!.asImageBitmap(),
+                                contentDescription = "", modifier = Modifier.height(100.dp).width(100.dp).border(1.dp,
+                                    Color.White, RectangleShape),
+                                contentScale = ContentScale.FillBounds)
+                        }
+
+                    }
+
                     var sliderPosition by remember { mutableStateOf(1f..2f) }
                     var valueRange : ClosedFloatingPointRange<Float> = 0.00f.rangeTo(3.00f)
 
