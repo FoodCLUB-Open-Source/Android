@@ -7,6 +7,7 @@ import android.kotlin.foodclub.repositories.AuthRepository
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.repositories.ProductRepository
 import android.kotlin.foodclub.repositories.ProfileRepository
+import android.kotlin.foodclub.repositories.StoryRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,5 +39,11 @@ object RepositoriesModule {
     @Singleton
     fun provideProductRepository(api: ProductsService, mapper: EdamamFoodProductsMapper): ProductRepository {
         return ProductRepository(api, mapper)
+    }
+
+    @Provides
+    @Singleton
+    fun provideStoryRepository(api: API): StoryRepository {
+        return StoryRepository(api)
     }
 }

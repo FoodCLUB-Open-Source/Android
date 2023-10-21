@@ -9,6 +9,7 @@ import android.kotlin.foodclub.api.responses.RetrieveFollowerListResponse
 import android.kotlin.foodclub.api.responses.RetrieveFollowingListResponse
 import android.kotlin.foodclub.api.responses.RetrieveHomepagePostList
 import android.kotlin.foodclub.api.responses.RetrieveProfileResponse
+import android.kotlin.foodclub.api.responses.RetrieveUserFriendsStoriesResponse
 import android.kotlin.foodclub.api.responses.RetrieveWorldCategoryPostList
 import android.kotlin.foodclub.data.models.SignUpError
 import com.google.gson.annotations.SerializedName
@@ -180,4 +181,9 @@ interface API {
         @Query("page_size") pageSize: Int?,
         @Query("page_number") pageNo: Int?
     ): Response<RetrieveBookmarkedPostsResponse>
+
+    @GET("stories/{userId}/following_stories")
+    suspend fun getUserFriendStories(
+        @Path("userId") userId: Long,
+        ): Response<RetrieveUserFriendsStoriesResponse>
 }
