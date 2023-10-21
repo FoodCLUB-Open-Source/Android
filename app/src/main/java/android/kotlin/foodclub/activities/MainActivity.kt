@@ -10,7 +10,7 @@ import android.os.Looper
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
-import android.kotlin.foodclub.navigation.graphs.RootNavigationGraph
+import android.kotlin.foodclub.navigation.RootNavigationGraph
 import android.kotlin.foodclub.utils.composables.MainLayout
 import android.kotlin.foodclub.viewmodels.home.DeleteRecipeViewModel
 import android.os.Build

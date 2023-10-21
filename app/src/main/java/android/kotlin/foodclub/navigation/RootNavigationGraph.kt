@@ -1,5 +1,6 @@
-package android.kotlin.foodclub.navigation.graphs
+package android.kotlin.foodclub.navigation
 
+import android.kotlin.foodclub.navigation.auth.authNavigationGraph
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable

@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.utils.helpers
 
 import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorResponse
-import android.kotlin.foodclub.utils.enums.QuantityUnit
+import android.kotlin.foodclub.domain.enums.QuantityUnit
 import com.google.gson.Gson
 import retrofit2.Response
 

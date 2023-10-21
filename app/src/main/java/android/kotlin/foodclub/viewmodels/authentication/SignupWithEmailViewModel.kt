@@ -1,11 +1,11 @@
 package android.kotlin.foodclub.viewmodels.authentication
 
 import android.kotlin.foodclub.domain.models.auth.SignUpUser
-import android.kotlin.foodclub.utils.enums.ApiCallStatus
+import android.kotlin.foodclub.domain.enums.ApiCallStatus
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import android.kotlin.foodclub.navigation.graphs.AuthScreen
+import android.kotlin.foodclub.navigation.auth.AuthScreen
 import android.kotlin.foodclub.repositories.AuthRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -3,7 +3,7 @@ package android.kotlin.foodclub.di
 import android.content.SharedPreferences
 import android.kotlin.foodclub.api.authentication.API
 import android.kotlin.foodclub.network.retrofit.utils.auth.RefreshTokenManager
-import android.kotlin.foodclub.utils.helpers.MyBasketCache
+import android.kotlin.foodclub.domain.models.products.MyBasketCache
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import dagger.Module
 import dagger.Provides

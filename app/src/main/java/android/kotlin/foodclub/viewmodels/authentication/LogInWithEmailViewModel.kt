@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.viewmodels.authentication
 
 import android.kotlin.foodclub.domain.models.session.Session
-import android.kotlin.foodclub.navigation.graphs.Graph
+import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.network.retrofit.utils.auth.JWTManager
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.repositories.AuthRepository

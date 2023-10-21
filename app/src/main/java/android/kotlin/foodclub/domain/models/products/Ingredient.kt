@@ -1,6 +1,6 @@
 package android.kotlin.foodclub.domain.models.products
 
-import android.kotlin.foodclub.utils.enums.QuantityUnit
+import android.kotlin.foodclub.domain.enums.QuantityUnit
 
 class Ingredient constructor(
     var id: String, type: String, quantity: Int, unit: QuantityUnit, imageUrl: Any = ""

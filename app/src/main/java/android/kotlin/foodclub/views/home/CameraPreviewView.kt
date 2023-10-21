@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.navigation.graphs.Graph
+import android.kotlin.foodclub.navigation.Graph
 import android.view.ViewGroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box

@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.navigation.graphs
+package android.kotlin.foodclub.navigation.auth
 
 import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
 import android.kotlin.foodclub.viewmodels.authentication.SignupWithEmailViewModel

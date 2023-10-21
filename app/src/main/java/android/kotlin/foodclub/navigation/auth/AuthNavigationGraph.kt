@@ -1,5 +1,6 @@
-package android.kotlin.foodclub.navigation.graphs
+package android.kotlin.foodclub.navigation.auth
 
+import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.views.authentication.LogInWithEmail
 import android.kotlin.foodclub.views.authentication.MainLogInAndSignUp
 import android.kotlin.foodclub.views.authentication.SignupVerification

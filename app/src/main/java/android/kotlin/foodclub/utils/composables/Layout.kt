@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.utils.composables
 
 import android.annotation.SuppressLint
-import android.kotlin.foodclub.navigation.graphs.Graph
+import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.viewmodels.BaseViewModel
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically

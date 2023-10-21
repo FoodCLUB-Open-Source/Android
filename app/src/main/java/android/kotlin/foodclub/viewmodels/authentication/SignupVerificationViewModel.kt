@@ -1,13 +1,13 @@
 package android.kotlin.foodclub.viewmodels.authentication
 
 import android.kotlin.foodclub.domain.models.session.Session
-import android.kotlin.foodclub.utils.enums.ApiCallStatus
+import android.kotlin.foodclub.domain.enums.ApiCallStatus
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import android.kotlin.foodclub.navigation.graphs.AuthScreen
-import android.kotlin.foodclub.navigation.graphs.Graph
+import android.kotlin.foodclub.navigation.auth.AuthScreen
+import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.repositories.AuthRepository
 import android.kotlin.foodclub.network.retrofit.utils.auth.JWTManager
 import android.kotlin.foodclub.utils.helpers.Resource

@@ -6,7 +6,7 @@ import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.data.models.Recipe
 import android.kotlin.foodclub.data.models.RecipeRepository
 import android.kotlin.foodclub.repositories.ProductRepository
-import android.kotlin.foodclub.utils.enums.QuantityUnit
+import android.kotlin.foodclub.domain.enums.QuantityUnit
 import android.kotlin.foodclub.utils.helpers.Resource
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

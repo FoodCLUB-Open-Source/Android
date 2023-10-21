@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.utils.enums
+package android.kotlin.foodclub.domain.enums
 
 enum class QuantityUnit {
     GRAMS, KILOGRAMS, MILLILITERS, LITERS;

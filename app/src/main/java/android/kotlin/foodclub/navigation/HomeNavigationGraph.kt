@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.navigation.graphs
+package android.kotlin.foodclub.navigation
 
 //import android.kotlin.foodclub.views.home.PlayView
 //import android.kotlin.foodclub.views.home.StoryView
@@ -59,7 +59,7 @@ fun NavGraphBuilder.homeNavigationGraph(
 
         }
         composable(route = BottomBarScreenObject.Discover.route) {
-            MyBasketView(navController = navController)
+            MyBasketView()
         }
         composable(route = BottomBarScreenObject.Create.route) {
             CreateView()
@@ -139,7 +139,7 @@ fun NavGraphBuilder.homeNavigationGraph(
         }
 
         composable(route = HomeOtherRoutes.MyBasketView.route) {
-            MyBasketView(navController = navController)
+            MyBasketView()
         }
 
         composable(route = HomeOtherRoutes.MySearchView.route) {

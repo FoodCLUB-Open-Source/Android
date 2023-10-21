@@ -3,7 +3,7 @@ package android.kotlin.foodclub.viewmodels.home
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.repositories.ProductRepository
-import android.kotlin.foodclub.utils.helpers.MyBasketCache
+import android.kotlin.foodclub.domain.models.products.MyBasketCache
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.util.Log
 import androidx.lifecycle.ViewModel

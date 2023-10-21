@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.navigation.graphs
+package android.kotlin.foodclub.navigation
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController

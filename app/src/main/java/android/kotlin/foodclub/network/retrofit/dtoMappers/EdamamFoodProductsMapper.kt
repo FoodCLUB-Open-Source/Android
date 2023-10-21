@@ -5,7 +5,7 @@ import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.network.retrofit.dtoModels.edamam.EdamamFoodProductsDto
 import android.kotlin.foodclub.network.retrofit.dtoModels.edamam.EdamamFoodProductMeasuresDto
 import android.kotlin.foodclub.network.retrofit.utils.DomainMapper
-import android.kotlin.foodclub.utils.enums.QuantityUnit
+import android.kotlin.foodclub.domain.enums.QuantityUnit
 
 class EdamamFoodProductsMapper: DomainMapper<EdamamFoodProductsDto, ProductsData> {
     override fun mapToDomainModel(entity: EdamamFoodProductsDto): ProductsData {
@@ -28,7 +28,7 @@ class EdamamFoodProductsMapper: DomainMapper<EdamamFoodProductsDto, ProductsData
         TODO("Not yet implemented")
     }
 
-    private fun determineDefaultUnit(measures: List<EdamamFoodProductMeasuresDto>):QuantityUnit {
+    private fun determineDefaultUnit(measures: List<EdamamFoodProductMeasuresDto>): QuantityUnit {
         if(measures.isEmpty()) return QuantityUnit.GRAMS
         val units = measures.map { measure -> QuantityUnit.parseUnit(measure.label ?: "Grams") }
         return if(units.any { it == QuantityUnit.MILLILITERS }) QuantityUnit.MILLILITERS

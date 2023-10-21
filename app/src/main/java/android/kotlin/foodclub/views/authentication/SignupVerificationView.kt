@@ -41,7 +41,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import android.kotlin.foodclub.navigation.graphs.Graph
+import android.kotlin.foodclub.navigation.Graph
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit

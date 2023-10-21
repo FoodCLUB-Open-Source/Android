@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.navigation.graphs
+package android.kotlin.foodclub.navigation
 
 import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
 import android.kotlin.foodclub.viewmodels.home.SettingsViewModel
@@ -16,19 +16,19 @@ fun NavGraphBuilder.settingsNavigationGraph(navController: NavHostController) {
         route = HomeOtherRoutes.SettingsView.route,
         startDestination = SettingsScreen.Main.route
     ) {
-        composable(SettingsScreen.Main.route) {entry ->
+        composable(SettingsScreen.Main.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<SettingsViewModel>(navController)
             SettingsView(navController = navController, viewModel = viewModel)
         }
-        composable(SettingsScreen.EditProfile.route) {entry ->
+        composable(SettingsScreen.EditProfile.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<SettingsViewModel>(navController)
             EditProfileSetting(navController = navController)
         }
-        composable(SettingsScreen.Privacy.route) {entry ->
+        composable(SettingsScreen.Privacy.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<SettingsViewModel>(navController)
             PrivacySetting(navController = navController)
         }
-        composable(SettingsScreen.ChangePassword.route) {entry ->
+        composable(SettingsScreen.ChangePassword.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<SettingsViewModel>(navController)
 
             ChangePasswordSettings(null, { navController.popBackStack() }) {

@@ -4,7 +4,7 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.ui.theme.Montserrat
-import android.kotlin.foodclub.utils.enums.DrawerContentState
+import android.kotlin.foodclub.domain.enums.DrawerContentState
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.views.home.montserratFamily
 import androidx.compose.animation.AnimatedContent
