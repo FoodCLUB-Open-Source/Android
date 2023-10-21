@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.data.models.Ingredient
+import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.ui.theme.Montserrat
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
 import android.kotlin.foodclub.utils.helpers.ValueParser
@@ -51,13 +51,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.TextStyle
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 
 
 @Composable
-fun MyBasketView(navController: NavController) {
+fun MyBasketView() {
     val viewModel: MyBasketViewModel = hiltViewModel()
     val systemUiController = rememberSystemUiController()
     var showSheet by remember { mutableStateOf(false) }

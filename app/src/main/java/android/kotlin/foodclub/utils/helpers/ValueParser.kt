@@ -1,9 +1,7 @@
 package android.kotlin.foodclub.utils.helpers
 
-import android.kotlin.foodclub.api.authentication.SignUpResponseMessage
-import android.kotlin.foodclub.api.responses.DefaultErrorResponse
+import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorResponse
 import android.kotlin.foodclub.utils.enums.QuantityUnit
-import android.util.Log
 import com.google.gson.Gson
 import retrofit2.Response
 
@@ -40,12 +38,13 @@ class ValueParser {
         fun <T> errorResponseToMessage(response: Response<T>): String {
             if(response.errorBody() == null) return "Unknown error occurred."
 
+
             val errorResponse = Gson().fromJson(response.errorBody()?.string(), DefaultErrorResponse::class.java)
 
-            return if(errorResponse.errors.isNotEmpty()) {
-                "Input data are invalid. Check mistakes and try again."
-            } else if(errorResponse.message.isNotEmpty()) {
+            return if(!errorResponse.message.isNullOrEmpty()) {
                 errorResponse.message
+            } else if(errorResponse.errors.isNotEmpty()) {
+                "Input data are invalid. Check mistakes and try again."
             } else {
                 "Unknown error occurred."
             }

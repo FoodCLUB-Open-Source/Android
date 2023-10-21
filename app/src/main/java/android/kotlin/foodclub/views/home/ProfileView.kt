@@ -3,7 +3,7 @@ package android.kotlin.foodclub.views.home
 import android.app.Activity
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.activities.MainActivity
-import android.kotlin.foodclub.data.models.BottomSheetItem
+import android.kotlin.foodclub.domain.models.others.BottomSheetItem
 import android.kotlin.foodclub.data.models.UserPostsModel
 import android.kotlin.foodclub.ui.theme.Montserrat
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -81,7 +81,7 @@ fun ProfileView(navController: NavController, userId: Long) {
         factory = ProfileViewModel.provideFactory(factory, userId, navController)
     )
 
-    val error = viewModel.error.collectAsState()
+//    val error = viewModel.error.collectAsState()
     val profileModelState = viewModel.profileModel.collectAsState()
     val bookmarkedPostsState = viewModel.bookmaredPosts.collectAsState()
     val sessionUserId = viewModel.myUserId.collectAsState()
@@ -103,7 +103,7 @@ fun ProfileView(navController: NavController, userId: Long) {
     }
     val scope = rememberCoroutineScope()
 
-    val pagerState = rememberPagerState() { 2 };
+    val pagerState = rememberPagerState() { 2 }
 
     if(profileModelState.value == null) {
         Text(text = "Loading...")
@@ -279,7 +279,7 @@ fun ProfileView(navController: NavController, userId: Long) {
                 var tabItems = listOf<UserPostsModel>()
 
                 if(pagerState.currentPage == 0){
-                    tabItems = viewModel.getListOfMyRecipes();
+                    tabItems = viewModel.getListOfMyRecipes()
                 }
                 else if(pagerState.currentPage == 1){
                     tabItems = bookmarkedPosts

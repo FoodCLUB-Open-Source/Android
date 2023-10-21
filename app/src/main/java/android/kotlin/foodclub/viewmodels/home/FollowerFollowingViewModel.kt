@@ -3,17 +3,14 @@ package android.kotlin.foodclub.viewmodels.home
 import android.kotlin.foodclub.data.models.FollowerUserModel
 import android.kotlin.foodclub.data.models.FollowingUserModel
 import android.kotlin.foodclub.data.models.SimpleUserModel
-import android.kotlin.foodclub.data.models.User
 import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.helpers.Resource
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.lang.Thread.State
 import javax.inject.Inject
 
 @HiltViewModel

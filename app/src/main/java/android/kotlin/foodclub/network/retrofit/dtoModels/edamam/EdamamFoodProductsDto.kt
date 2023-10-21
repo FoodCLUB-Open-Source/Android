@@ -1,7 +1,5 @@
-package android.kotlin.foodclub.network.retrofit.dtoModels
+package android.kotlin.foodclub.network.retrofit.dtoModels.edamam
 
-import android.kotlin.foodclub.network.retrofit.dtoModels.subModels.EdamamFoodProductContainerDto
-import android.kotlin.foodclub.network.retrofit.dtoModels.subModels.EdamamFoodProductLinkDto
 import com.google.gson.annotations.SerializedName
 
 

@@ -9,7 +9,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.example.foodclub.views.authentication.ConfirmIdentityView
 import android.kotlin.foodclub.views.authentication.TermsAndConditions
 
 fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, setBottomBarVisibility: (Boolean) -> Unit) {
@@ -28,9 +27,6 @@ fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, setBot
         }
         composable(route = AuthScreen.Login.route) {
             LogInWithEmail(navController)
-        }
-        composable(route = AuthScreen.ConfirmId.route) {
-            ConfirmIdentityView()
         }
 
         composable(route = AuthScreen.TermsAndConditions.route) {
@@ -59,7 +55,6 @@ sealed class AuthScreen(val route: String) {
     object SignUp : AuthScreen(route = "SIGN_UP")
     object Forgot : AuthScreen(route = "FORGOT")
 
-    object ConfirmId : AuthScreen(route = "CONFIRM_ID")
     object VerifySignup : AuthScreen(route = "VERIFY_SIGN_UP")
 
     object TermsAndConditions : AuthScreen(route = "TERMS")

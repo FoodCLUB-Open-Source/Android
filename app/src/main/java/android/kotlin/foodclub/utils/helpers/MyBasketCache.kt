@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.utils.helpers
 
 import android.content.SharedPreferences
-import android.kotlin.foodclub.data.models.MyBasket
+import android.kotlin.foodclub.domain.models.products.MyBasket
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import com.google.gson.Gson
 

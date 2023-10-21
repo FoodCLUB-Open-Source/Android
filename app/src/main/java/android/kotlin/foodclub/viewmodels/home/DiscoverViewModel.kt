@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.viewmodels.home
 
 import android.kotlin.foodclub.api.retrofit.RetrofitInstance
-import android.kotlin.foodclub.data.models.ProductsData
+import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.data.models.UserPostsModel
 import android.kotlin.foodclub.data.models.VideoModel
 import android.kotlin.foodclub.repositories.PostRepository

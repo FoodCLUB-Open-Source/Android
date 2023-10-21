@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.data.models
+package android.kotlin.foodclub.domain.models.session
 
 import android.util.Log
 import com.auth0.android.jwt.JWT

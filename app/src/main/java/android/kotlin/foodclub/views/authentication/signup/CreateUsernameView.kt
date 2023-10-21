@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.views.authentication.signup
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.api.authentication.UserSignUpInformation
+import android.kotlin.foodclub.domain.models.auth.SignUpUser
 import android.kotlin.foodclub.ui.theme.Montserrat
 import android.kotlin.foodclub.ui.theme.PlusJakartaSans
 import android.kotlin.foodclub.utils.composables.CustomTextField
@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun UsernameView(onValuesUpdate: (String) -> Unit, onBackButtonClick: (String) -> Unit,
-                 userSignUpInformation: State<UserSignUpInformation>, error: String) {
+                 userSignUpInformation: State<SignUpUser>, error: String) {
     var username by remember { mutableStateOf(userSignUpInformation.value.username) }
     var initialUsernameCorrectnessState = FieldsValidation.checkUsername(username) == null
     var filledUsername by remember { mutableStateOf(false) }

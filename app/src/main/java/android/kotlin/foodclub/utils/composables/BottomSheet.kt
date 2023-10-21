@@ -1,6 +1,6 @@
 package android.kotlin.foodclub.utils.composables
 
-import android.kotlin.foodclub.data.models.BottomSheetItem
+import android.kotlin.foodclub.domain.models.others.BottomSheetItem
 import android.kotlin.foodclub.ui.theme.Montserrat
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable

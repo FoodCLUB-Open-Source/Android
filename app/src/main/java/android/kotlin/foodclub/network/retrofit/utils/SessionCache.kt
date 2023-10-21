@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.network.retrofit.utils
 
 import android.content.SharedPreferences
-import android.kotlin.foodclub.data.models.Session
+import android.kotlin.foodclub.domain.models.session.Session
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

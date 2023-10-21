@@ -1,6 +1,6 @@
 package android.kotlin.foodclub.navigation.graphs
 
-import android.kotlin.foodclub.utils.composables.sharedViewModel
+import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
 import android.kotlin.foodclub.viewmodels.authentication.SignupWithEmailViewModel
 import android.kotlin.foodclub.views.authentication.signup.ConfirmEmailView
 import android.kotlin.foodclub.views.authentication.signup.CreateFullNameView
@@ -18,7 +18,7 @@ fun NavGraphBuilder.signupNavigationGraph(navController: NavHostController) {
         startDestination = "signup_page_1"
     ) {
         composable("signup_page_1") {entry ->
-            val viewModel = entry.sharedViewModel<SignupWithEmailViewModel>(navController)
+            val viewModel = entry.sharedHiltViewModel<SignupWithEmailViewModel>(navController)
             val userSignUpInformation = viewModel.userSignUpInformation.collectAsState()
             val repeatedEmail = viewModel.repeatedEmail.collectAsState()
 
@@ -37,7 +37,7 @@ fun NavGraphBuilder.signupNavigationGraph(navController: NavHostController) {
             )
         }
         composable("signup_page_2") {entry ->
-            val viewModel = entry.sharedViewModel<SignupWithEmailViewModel>(navController)
+            val viewModel = entry.sharedHiltViewModel<SignupWithEmailViewModel>(navController)
             val userSignUpInformation = viewModel.userSignUpInformation.collectAsState()
             val error = viewModel.error.collectAsState()
             val repeatedEmail = viewModel.repeatedEmail.collectAsState()
@@ -55,7 +55,7 @@ fun NavGraphBuilder.signupNavigationGraph(navController: NavHostController) {
             )
         }
         composable("signup_page_3") {entry ->
-            val viewModel = entry.sharedViewModel<SignupWithEmailViewModel>(navController)
+            val viewModel = entry.sharedHiltViewModel<SignupWithEmailViewModel>(navController)
             val userSignUpInformation = viewModel.userSignUpInformation.collectAsState()
             val error = viewModel.error.collectAsState()
 
@@ -72,7 +72,7 @@ fun NavGraphBuilder.signupNavigationGraph(navController: NavHostController) {
             )
         }
         composable("signup_page_4") {entry ->
-            val viewModel = entry.sharedViewModel<SignupWithEmailViewModel>(navController)
+            val viewModel = entry.sharedHiltViewModel<SignupWithEmailViewModel>(navController)
             val userSignUpInformation = viewModel.userSignUpInformation.collectAsState()
             val error = viewModel.error.collectAsState()
 

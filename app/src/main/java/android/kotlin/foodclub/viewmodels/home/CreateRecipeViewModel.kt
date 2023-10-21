@@ -1,8 +1,8 @@
 package android.kotlin.foodclub.viewmodels.home
 
 import android.kotlin.foodclub.api.retrofit.RetrofitInstance
-import android.kotlin.foodclub.data.models.Ingredient
-import android.kotlin.foodclub.data.models.ProductsData
+import android.kotlin.foodclub.domain.models.products.Ingredient
+import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.data.models.Recipe
 import android.kotlin.foodclub.data.models.RecipeRepository
 import android.kotlin.foodclub.repositories.ProductRepository
@@ -23,7 +23,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CreateRecipeViewModel @Inject constructor(
-    val productsRepository: ProductRepository
+    private val productsRepository: ProductRepository
 ) : ViewModel() {
     private val _title = MutableLiveData("CreateRecipeViewModel View")
     val title: LiveData<String> get() = _title

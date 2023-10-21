@@ -1,9 +1,9 @@
 package android.kotlin.foodclub.network.retrofit.dtoMappers
 
-import android.kotlin.foodclub.data.models.Ingredient
-import android.kotlin.foodclub.data.models.ProductsData
-import android.kotlin.foodclub.network.retrofit.dtoModels.EdamamFoodProductsDto
-import android.kotlin.foodclub.network.retrofit.dtoModels.subModels.EdamamFoodProductMeasuresDto
+import android.kotlin.foodclub.domain.models.products.Ingredient
+import android.kotlin.foodclub.domain.models.products.ProductsData
+import android.kotlin.foodclub.network.retrofit.dtoModels.edamam.EdamamFoodProductsDto
+import android.kotlin.foodclub.network.retrofit.dtoModels.edamam.EdamamFoodProductMeasuresDto
 import android.kotlin.foodclub.network.retrofit.utils.DomainMapper
 import android.kotlin.foodclub.utils.enums.QuantityUnit
 

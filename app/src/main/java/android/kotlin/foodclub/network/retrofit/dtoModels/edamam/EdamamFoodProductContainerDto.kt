@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.network.retrofit.dtoModels.subModels
+package android.kotlin.foodclub.network.retrofit.dtoModels.edamam
 
 data class EdamamFoodProductContainerDto(
     val food: EdamamFoodProductFoodDto,

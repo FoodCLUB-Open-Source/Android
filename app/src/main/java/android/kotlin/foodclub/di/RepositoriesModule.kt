@@ -1,8 +1,12 @@
 package android.kotlin.foodclub.di
 
 import android.kotlin.foodclub.api.authentication.API
+import android.kotlin.foodclub.network.retrofit.apiInterfaces.AuthenticationService
 import android.kotlin.foodclub.network.retrofit.apiInterfaces.ProductsService
 import android.kotlin.foodclub.network.retrofit.dtoMappers.EdamamFoodProductsMapper
+import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.ForgotChangePasswordMapper
+import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.SignInUserMapper
+import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.SignUpUserMapper
 import android.kotlin.foodclub.repositories.AuthRepository
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.repositories.ProductRepository
@@ -31,8 +35,15 @@ object RepositoriesModule {
 
     @Provides
     @Singleton
-    fun provideAuthRepository(api: API): AuthRepository {
-        return AuthRepository(api)
+    fun provideAuthRepository(
+        api: AuthenticationService,
+        signInUserMapper: SignInUserMapper,
+        forgotChangePasswordMapper: ForgotChangePasswordMapper,
+        signUpUserMapper: SignUpUserMapper
+    ): AuthRepository {
+        return AuthRepository(
+            api, signInUserMapper, forgotChangePasswordMapper, signUpUserMapper
+        )
     }
 
     @Provides

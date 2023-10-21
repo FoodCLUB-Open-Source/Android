@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.data.models
+package android.kotlin.foodclub.domain.models.others
 
 data class BottomSheetItem(
     val id: Int,

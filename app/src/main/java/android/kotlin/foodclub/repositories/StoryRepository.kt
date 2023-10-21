@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.repositories
 
 import android.kotlin.foodclub.api.authentication.API
+import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorResponse
 import android.kotlin.foodclub.data.models.FriendsStory
 import android.kotlin.foodclub.data.models.VideoModel
 import android.kotlin.foodclub.utils.helpers.Resource
@@ -28,7 +29,7 @@ class StoryRepository(
         )
     }
 
-    suspend fun getUserFriendsStories(id: Long): Resource<List<VideoModel>> {
+    suspend fun getUserFriendsStories(id: Long): Resource<List<VideoModel>, DefaultErrorResponse> {
         try {
             val response = api.getUserFriendStories(id)
             delay(500)

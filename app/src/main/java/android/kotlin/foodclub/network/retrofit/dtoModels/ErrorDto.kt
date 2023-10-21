@@ -1,8 +1,8 @@
-package android.kotlin.foodclub.data.models
+package android.kotlin.foodclub.network.retrofit.dtoModels
 
 import com.google.gson.annotations.SerializedName
 
-data class SignUpError(
+data class ErrorDto(
     val type: String,
     val value: String,
     @SerializedName("msg")
@@ -10,3 +10,4 @@ data class SignUpError(
     val path: String,
     val location: String
 )
+

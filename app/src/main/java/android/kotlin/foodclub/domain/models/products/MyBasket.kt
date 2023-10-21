@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.data.models
+package android.kotlin.foodclub.domain.models.products
 
 class MyBasket {
     var ingredients: MutableList<Ingredient> = mutableListOf()
