@@ -4,6 +4,8 @@ import android.kotlin.foodclub.data.models.VideoModel
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
+import android.kotlin.foodclub.repositories.StoryRepository
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,10 +15,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.random.Random
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    val repository: PostRepository,
+    val postRepository: PostRepository,
+    val storyRepository: StoryRepository,
     private val sessionCache: SessionCache
 ) : ViewModel() {
     private val _title = MutableLiveData("HomeViewModel View")
@@ -25,17 +29,21 @@ class HomeViewModel @Inject constructor(
     private val _postListData = MutableStateFlow<List<VideoModel>>(listOf())
     val postListData: StateFlow<List<VideoModel>> get() = _postListData
 
+    private val _storyListData = MutableStateFlow<List<VideoModel>>(listOf())
+    val storyListData: StateFlow<List<VideoModel>> get() = _storyListData
+
     private val _error = MutableStateFlow("")
     val error: StateFlow<String> get() = _error
 
     init {
         getPostListData()
+        getUserFollowerStories()
     }
 
     private fun getPostListData() {
         if(sessionCache.getActiveSession()?.sessionUser == null) return
         viewModelScope.launch {
-            when(val resource = repository.getHomepagePosts(sessionCache.getActiveSession()!!.sessionUser.userId)) {
+            when(val resource = postRepository.getHomepagePosts(sessionCache.getActiveSession()!!.sessionUser.userId)) {
                 is Resource.Success -> {
                     _error.value = ""
                     _postListData.value = resource.data!!
@@ -55,6 +63,40 @@ class HomeViewModel @Inject constructor(
                 "https://kretu.sts3.pl/foodclub_videos/daniel_vid2.mp4",
                 it.currentViewerInteraction, it.description, it.createdAt,
                 "https://kretu.sts3.pl/foodclub_thumbnails/daniel_vid2-thumbnail.jpg")
+        }
+    }
+
+    private fun getUserFollowerStories(){
+        viewModelScope.launch {
+            when(val resource = storyRepository.getUserFriendsStories(8)) {
+                is Resource.Success -> {
+                    _error.value = ""
+                    val originalList = resource.data
+                    if (originalList?.size == 1) {
+                        // ***** for testing purposes only *****
+                        // If the original list has only one item,
+                        // duplicate it five times with different IDs
+                        val duplicatedList = mutableListOf<VideoModel>()
+                        val originalItem = originalList[0]
+
+                        for (i in 1..5) {
+                            val duplicatedItem = originalItem.copy(
+                                videoId = Random.nextLong()
+                            )
+                            duplicatedList.add(duplicatedItem)
+                        }
+
+                        _storyListData.value = duplicatedList
+                    } else {
+                        _storyListData.value = originalList!!
+                    }
+
+                    Log.i("MYTAG", "stories value: ${_storyListData.value}")
+                }
+                is Resource.Error -> {
+                    _error.value = resource.message!!
+                }
+            }
         }
     }
 

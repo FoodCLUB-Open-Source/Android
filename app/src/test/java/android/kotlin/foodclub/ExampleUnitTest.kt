@@ -1,5 +1,7 @@
 package android.kotlin.foodclub
 
+import android.kotlin.foodclub.api.responses.RetrieveUserFriendsStoriesResponse
+import com.google.gson.Gson
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -13,5 +15,51 @@ class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
+    }
+
+    @Test
+    fun createDummyResponse() {
+        // Given
+        val json = """
+    {
+        "stories": [
+            {
+                "user_id": 3,
+                "profile_picture": "empty",
+                "username": "User3",
+                "stories": [
+                    {
+                        "story_id": "string",
+                        "thumbnail_url": "https link",
+                        "video_url": "https link"
+                    }
+                ]
+            },
+            {
+                "user_id": 3,
+                "profile_picture": "empty",
+                "username": "User3",
+                "stories": [
+                    {
+                        "story_id": "string",
+                        "thumbnail_url": "https link",
+                        "video_url": "https link"
+                    }
+                ]
+            }
+        ]
+    }
+    """
+
+        val gson = Gson()
+        val response = gson.fromJson(json, RetrieveUserFriendsStoriesResponse::class.java)
+
+        // Then (perform specific assertions)
+        assertEquals(3, response.stories[0].userId)
+        assertEquals("empty", response.stories[0].profilePicture)
+        assertEquals("User3", response.stories[0].username)
+        // Add more assertions as needed for other fields and objects
+
+        println("Response: $response testing")
     }
 }
