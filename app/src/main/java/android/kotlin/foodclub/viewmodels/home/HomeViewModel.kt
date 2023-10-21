@@ -41,9 +41,9 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun getPostListData() {
-        if(sessionCache.getActiveSession()?.sessionUser == null) return
+        val user = sessionCache.getActiveSession()?.sessionUser ?: return
         viewModelScope.launch {
-            when(val resource = postRepository.getHomepagePosts(sessionCache.getActiveSession()!!.sessionUser.userId)) {
+            when(val resource = postRepository.getHomepagePosts(user.userId)) {
                 is Resource.Success -> {
                     _error.value = ""
                     _postListData.value = resource.data!!
