@@ -31,7 +31,7 @@ class StoryRepository(
     suspend fun getUserFriendsStories(id: Long): Resource<List<VideoModel>> {
         try {
             val response = api.getUserFriendStories(id)
-            delay(100)
+            delay(500)
             if (response.isSuccessful && response.body()?.stories != null) {
                 val responseBody = response.body()
                 if (responseBody != null) {
