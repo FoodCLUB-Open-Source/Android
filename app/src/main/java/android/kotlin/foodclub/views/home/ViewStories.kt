@@ -1,10 +1,11 @@
 package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.ui.theme.Montserrat
+import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.utils.composables.VideoScroller
 import android.kotlin.foodclub.utils.helpers.ValueParser
-import android.kotlin.foodclub.viewmodels.home.HomeViewModel
+import android.kotlin.foodclub.viewModels.home.HomeViewModel
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearEasing
@@ -285,25 +286,19 @@ fun ViewStories(modifier: Modifier){
                                     Icon(
                                         painter = painterResource(id = R.drawable.like),
                                         contentDescription = null,
-                                        tint = if (isLiked) Color(
-                                            android.graphics.Color.parseColor(
-                                                "#7EC60B"
-                                            )
-                                        ) else Color.White,
+                                        tint = if (isLiked) foodClubGreen else Color.White,
                                         modifier = Modifier
                                             .size(iconSize)
                                             .alpha(0.7f)
                                     )
                                     Spacer(modifier = Modifier.height(3.dp))
                                     Text(
-                                        text = ValueParser.numberToThousands(videosState.value[it].videoStats.like),
+                                        text = ValueParser.numberToThousands(
+                                            videosState.value[it].videoStats.like
+                                        ),
                                         fontSize = 13.sp,
                                         fontFamily = Montserrat,
-                                        color = if (isLiked) Color(
-                                            android.graphics.Color.parseColor(
-                                                "#7EC60B"
-                                            )
-                                        ) else Color.White
+                                        color = if (isLiked) foodClubGreen else Color.White
                                     )
                                 }
                             }

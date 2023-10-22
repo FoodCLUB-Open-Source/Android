@@ -6,6 +6,7 @@ import android.content.ContentUris
 import android.content.Context
 import android.graphics.Bitmap
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.utils.composables.engine.createVideoCaptureUseCase
 import android.kotlin.foodclub.utils.composables.engine.startRecordingVideo
 import android.net.Uri
@@ -94,11 +95,11 @@ fun RecordingButton(isRecording: Boolean) {
         CircularProgressIndicator(
             progress = progress,
             strokeWidth = 5.dp,
-            color = Color(android.graphics.Color.parseColor("#7EC60B")),
+            color = foodClubGreen,
             modifier = Modifier.size(80.dp)
         )
         Canvas(modifier = Modifier.size(60.dp)) {
-            drawCircle(color = Color(android.graphics.Color.parseColor("#CACBCB")))
+            drawCircle(color = Color(0xFFCACBCB))
         }
         // Record button
     }
@@ -115,7 +116,7 @@ fun CameraView(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    var state: String = ""
+    var state = ""
 
     if (stateEncoded.contains("story")) {
         state = "story"
@@ -263,7 +264,10 @@ fun CameraView(
                                     context = context,
                                     filenameFormat = "yyyy-MM-dd-HH-mm-ss-SSS",
                                     videoCapture = videoCapture,
-                                    outputDirectory = if (mediaDir != null && mediaDir.exists()) mediaDir else context.filesDir,
+                                    outputDirectory = if (mediaDir != null && mediaDir.exists())
+                                        mediaDir
+                                    else
+                                        context.filesDir,
                                     executor = context.mainExecutor,
                                     audioEnabled = audioEnabled.value
                                 ) { event ->
@@ -290,9 +294,7 @@ fun CameraView(
 
                         //navController.navigate("GALLERY_VIEW")
                     },
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .size(80.dp)
+                    modifier = Modifier.align(Alignment.BottomCenter).size(80.dp)
                 ) {
 
                     RecordingButton(isRecording = recordingStarted.value)
@@ -375,10 +377,10 @@ fun loadCurrentThumbnail(context: Context): Bitmap? {
         MediaStore.Video.Media.DATE_TAKEN
     )
 
-    var uri: Uri = Uri.EMPTY;
-    var timeSinceEpoch = "0";
+    var uri: Uri = Uri.EMPTY
+    var timeSinceEpoch = "0"
 
-    val selectionImageArgs: Bundle = Bundle()
+    val selectionImageArgs = Bundle()
     selectionImageArgs.putInt(ContentResolver.QUERY_ARG_LIMIT, 1)
     val sortArgs = arrayOf(MediaStore.Images.ImageColumns.DATE_TAKEN)
     selectionImageArgs.putStringArray(ContentResolver.QUERY_ARG_SORT_COLUMNS, sortArgs)
@@ -409,12 +411,12 @@ fun loadCurrentThumbnail(context: Context): Bitmap? {
                 uri = contentUri
                 timeSinceEpoch = date //can't parse as Int
             }
-        } ?: kotlin.run {
+        } ?: run {
             Log.e("TAG", "Cursor is null!")
         }
     }
 
-    val selectionVideoArgs: Bundle = Bundle()
+    val selectionVideoArgs = Bundle()
     selectionVideoArgs.putInt(ContentResolver.QUERY_ARG_LIMIT, 1)
     val sortVideoArgs = arrayOf(MediaStore.Video.VideoColumns.DATE_TAKEN)
     selectionVideoArgs.putStringArray(ContentResolver.QUERY_ARG_SORT_COLUMNS, sortVideoArgs)
@@ -447,7 +449,7 @@ fun loadCurrentThumbnail(context: Context): Bitmap? {
                     uri = contentUri
                 }
             }
-        } ?: kotlin.run {
+        } ?: run {
             Log.e("TAG", "Cursor is null!")
         }
     }

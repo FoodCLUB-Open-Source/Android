@@ -1,11 +1,10 @@
-package com.example.foodclub.views.home
+package android.kotlin.foodclub.views.home
 
 import android.app.Activity
 import android.graphics.Bitmap
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.viewmodels.home.CreateViewModel
+import android.kotlin.foodclub.viewModels.home.CreateViewModel
 import android.media.MediaMetadataRetriever
-import android.util.Log
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.compose.foundation.Image
@@ -27,7 +26,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -37,7 +35,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -134,9 +131,7 @@ fun CreateView() {
                     Image(
                         painter = painterResource(id = R.drawable.close_icon),
                         contentDescription = "Image",
-                        modifier = Modifier
-                            .height(15.dp)
-                            .width(15.dp)
+                        modifier = Modifier.height(15.dp).width(15.dp)
 
                     )
                 }

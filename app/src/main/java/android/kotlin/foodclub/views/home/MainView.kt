@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.ui.theme.Montserrat
+import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.utils.composables.BottomSheetItem
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,7 +32,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.foodclub.ui.theme.BottomBarScreenObject
+import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import okio.ByteString.Companion.encodeUtf8
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,46 +79,6 @@ fun BottomSheet(onDismiss: () -> Unit, navController: NavHostController) {
 
     }
 }
-
-//@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-//@Composable
-//fun MainView(navController: NavHostController = rememberNavController()) {
-//    val viewModel: HomeViewModel = viewModel()
-//    var showSheet by remember { mutableStateOf(false) }
-//
-//    val storyModel = StoryModel(painterResource(R.drawable.story_user), 1692815790, "Julien", painterResource(R.drawable.foodsnap))
-//    var currentStory by remember { mutableStateOf(storyModel) }
-//    var currentStoryOffset by remember { mutableStateOf(IntOffset(0, 0)) }
-//    var storyViewMode by remember { mutableStateOf(false) }
-//    val systemUiController = rememberSystemUiController()
-//
-//    val triggerBottomSheetModal: () -> Unit = {
-//        showSheet = !showSheet
-//    }
-//
-//    Scaffold(
-//        bottomBar = { BottomBar(navController = navController, triggerBottomSheetModal) }
-//    ) {
-//        if (showSheet) {
-//            BottomSheet(triggerBottomSheetModal, navController)
-//        }
-//        HomeNavigationGraph(navController = navController, showSheet = showSheet, triggerBottomSheetModal,
-//            callbackEnableStoryView = {
-//                // Here we are going to put all information about the story - author, time created and story content
-//                currentStoryOffset = it
-//                storyViewMode = true
-//                systemUiController.setNavigationBarColor(
-//                    color = Color.Black
-//                )
-//            }, storyViewMode = storyViewMode)
-//    }
-//    //Story view screen
-//    Box(modifier = Modifier.zIndex(2f)) {
-//        StoryView(storyEnabled = storyViewMode, storyDetails = currentStory,
-//            callbackDisableStory = { storyViewMode = false }, currentStoryOffset, modifier = Modifier.fillMaxSize())
-//    }
-//}
-
 
 @Composable
 fun BottomBar(navController: NavHostController, triggerBottomSheetModal: () -> Unit) {

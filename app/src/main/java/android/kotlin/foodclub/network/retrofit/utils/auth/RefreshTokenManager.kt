@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.network.retrofit.utils.auth
 
 import android.content.SharedPreferences
-import android.kotlin.foodclub.data.models.RefreshToken
+import android.kotlin.foodclub.domain.models.session.RefreshToken
 import com.google.gson.Gson
 
 class RefreshTokenManager(private val sharedPreferences: SharedPreferences) {

@@ -1,9 +1,9 @@
 package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.ui.theme.Montserrat
-import android.kotlin.foodclub.ui.theme.PlusJakartaSans
-import android.kotlin.foodclub.ui.theme.textFieldCustomColors
+import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.PlusJakartaSans
+import android.kotlin.foodclub.config.ui.textFieldCustomColors
 import android.kotlin.foodclub.utils.helpers.FieldsValidation
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -11,10 +11,12 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -37,7 +39,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -49,27 +53,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-@Composable
-fun CustomAuthButton(enabled: Boolean, title: String, onClick: () -> Unit){
-    Button(
-        onClick = { onClick() },
-        shape = RoundedCornerShape(10.dp),
-        modifier = Modifier
-            .height(56.dp)
-            .clip(RoundedCornerShape(10.dp))
-            .fillMaxWidth(),
-        enabled = enabled,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFF7EC60B),
-            disabledContainerColor = Color(0xFFC9C9C9),
-            disabledContentColor = Color.White,
-            contentColor = Color.White
-        )
-    ) {
-        Text(text = title, fontSize = 16.sp)
-    }
-}
 
 @Composable
 fun CustomCodeTextField(onFillCallback: (Boolean, String) -> Unit) {
@@ -117,7 +100,7 @@ fun CustomCodeTextField(onFillCallback: (Boolean, String) -> Unit) {
 @Composable
 fun CustomTextField(initialValue: String = "",
     placeholder: String, keyboardType: KeyboardType, textValidation: Boolean = false, allowSpace: Boolean = false,
-    validationMethod: (text: String) -> String? = { text -> text.toString() },
+    validationMethod: (text: String) -> String? = { text -> text },
     onCorrectnessStateChange: () -> Unit = {}, onValueChange: (text: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -168,9 +151,9 @@ fun CustomTextField(initialValue: String = "",
 
 @Composable
 fun CustomPasswordTextField(initialValue: String = "",
-    placeholder: String, strengthValidation: Boolean = true,
-    onCorrectnessStateChange: () -> Unit,
-    onValueChange: (text: String) -> Unit = {},
+                            placeholder: String, strengthValidation: Boolean = true,
+                            onCorrectnessStateChange: () -> Unit,
+                            onValueChange: (text: String) -> Unit = {},
                             label: String? = null,
                             textFieldColors: TextFieldColors = textFieldCustomColors(),
                             errorTextFieldColors: TextFieldColors = textFieldCustomColors(
@@ -249,6 +232,28 @@ fun CustomPasswordTextField(initialValue: String = "",
 
     }
 
+}
+
+@Composable
+fun BackButton(onBackButtonClick: () -> Unit) {
+    Button(
+        shape = RectangleShape,
+        modifier = Modifier.clip(RoundedCornerShape(15.dp))
+            .width(36.dp).height(36.dp).offset(x = (-8).dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.White,
+            contentColor = Color.White
+        ),
+        contentPadding = PaddingValues(0.dp),
+        onClick = { onBackButtonClick() }
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.back_icon),
+            contentDescription = "Back",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.width(36.dp).height(36.dp)
+        )
+    }
 }
 
 @Composable

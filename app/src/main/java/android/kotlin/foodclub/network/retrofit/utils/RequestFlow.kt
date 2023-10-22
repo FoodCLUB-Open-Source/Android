@@ -1,11 +1,13 @@
 package android.kotlin.foodclub.network.retrofit.utils
 
+import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorResponse
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.utils.helpers.ValueParser
+import com.google.gson.Gson
 import retrofit2.Response
 import java.io.IOException
 
-suspend fun<T> apiRequestFlow(call: suspend () -> Response<T>): Resource<Response<T>> {
+inline fun<T, reified E> apiRequestFlow(call: () -> Response<T>): Resource<Response<T>, E> {
     val response = try {
         call()
     } catch (e: IOException) {
@@ -17,5 +19,12 @@ suspend fun<T> apiRequestFlow(call: suspend () -> Response<T>): Resource<Respons
     if(response.isSuccessful && response.body() != null){
         return Resource.Success(response)
     }
-    return Resource.Error(ValueParser.errorResponseToMessage(response), response)
+
+    val message = if(E::class.java == DefaultErrorResponse::class.java) {
+        ValueParser.errorResponseToMessage(response)
+    } else {
+        ""
+    }
+
+    return Resource.Error(message, Gson().fromJson(response.errorBody()?.string(), E::class.java))
 }

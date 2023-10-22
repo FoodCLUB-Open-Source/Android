@@ -1,66 +1,136 @@
 package android.kotlin.foodclub.repositories
 
-import android.kotlin.foodclub.api.authentication.API
-import android.kotlin.foodclub.api.authentication.ChangePasswordInformation
-import android.kotlin.foodclub.api.authentication.UserCredentials
-import android.kotlin.foodclub.api.authentication.VerificationCodeForPasswordData
-import android.kotlin.foodclub.api.authentication.VerificationCodeResendData
-import android.kotlin.foodclub.api.responses.LoginUserData
+import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorResponse
+import android.kotlin.foodclub.domain.models.auth.ForgotChangePassword
+import android.kotlin.foodclub.domain.models.auth.SignInUser
+import android.kotlin.foodclub.domain.models.auth.SignUpUser
+import android.kotlin.foodclub.network.retrofit.services.AuthenticationService
+import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.ForgotChangePasswordMapper
+import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.SignInUserMapper
+import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.SignUpUserMapper
+import android.kotlin.foodclub.network.retrofit.dtoModels.auth.SignInUserCredentialsDto
+import android.kotlin.foodclub.network.retrofit.dtoModels.auth.ResendVerificationCodeDto
+import android.kotlin.foodclub.network.retrofit.dtoModels.auth.VerificationCodeDto
+import android.kotlin.foodclub.network.retrofit.responses.auth.LoginResponse
+import android.kotlin.foodclub.network.retrofit.responses.general.SingleMessageResponse
+import android.kotlin.foodclub.network.retrofit.utils.apiRequestFlow
 import android.kotlin.foodclub.utils.helpers.Resource
-import android.kotlin.foodclub.utils.helpers.ValueParser
-import java.io.IOException
 
 class AuthRepository(
-    private val api: API
+    private val api: AuthenticationService,
+    private val signInMapper: SignInUserMapper,
+    private val forgotChangePasswordMapper: ForgotChangePasswordMapper,
+    private val signUpUserMapper: SignUpUserMapper
 ) {
-    suspend fun signIn(username: String, password: String): Resource<LoginUserData> {
-        val response = try {
-            api.loginUser(UserCredentials(username, password))
-        } catch (e: IOException) {
-            return Resource.Error("Cannot retrieve data. Check your internet connection and try again.")
-        } catch (e: Exception) {
-            return Resource.Error("Unknown error occurred.")
-        }
+    suspend fun signIn(
+        username: String, password: String
+    ): Resource<SignInUser, DefaultErrorResponse> {
+        return when(
+            val resource = apiRequestFlow<LoginResponse, DefaultErrorResponse> {
+                api.loginUser(SignInUserCredentialsDto(username, password))
+            }
+        ) {
+            is Resource.Success -> {
+                Resource.Success(
+                    signInMapper.mapToDomainModel(resource.data!!.body()!!.user)
+                )
+            }
 
-        if (response.isSuccessful && response.body() != null && response.body()?.user != null) {
-            return Resource.Success(response.body()!!.user)
+            is Resource.Error -> {
+                Resource.Error(resource.message!!)
+            }
         }
-        return Resource.Error(ValueParser.errorResponseToMessage(response))
+    }
+
+    suspend fun signUp(
+        signUpUser: SignUpUser
+    ): Resource<SingleMessageResponse, DefaultErrorResponse> {
+        return when(
+            val resource = apiRequestFlow<SingleMessageResponse, DefaultErrorResponse> {
+                api.signUpUser(signUpUserMapper.mapFromDomainModel(signUpUser))
+            }
+        ) {
+            is Resource.Success -> {
+                Resource.Success(resource.data!!.body()!!)
+            }
+
+            is Resource.Error -> {
+                Resource.Error(resource.message!!)
+            }
+        }
+    }
+
+    suspend fun verifyAccount(
+        username: String, code: String
+    ): Resource<SingleMessageResponse, DefaultErrorResponse> {
+        return when(
+            val resource = apiRequestFlow<SingleMessageResponse, DefaultErrorResponse> {
+                api.verifyUserAccount(VerificationCodeDto(username, code))
+            }
+        ) {
+            is Resource.Success -> {
+                Resource.Success(resource.data!!.body()!!)
+            }
+
+            is Resource.Error -> {
+                Resource.Error(resource.message!!)
+            }
+        }
+    }
+
+    suspend fun resendAccountVerificationCode(
+        username: String
+    ): Resource<SingleMessageResponse, DefaultErrorResponse> {
+        return when(
+            val resource = apiRequestFlow<SingleMessageResponse, DefaultErrorResponse> {
+                api.resendVerificationCode(ResendVerificationCodeDto(username))
+            }
+        ) {
+            is Resource.Success -> {
+                Resource.Success(resource.data!!.body()!!)
+            }
+
+            is Resource.Error -> {
+                Resource.Error(resource.message!!)
+            }
+        }
     }
 
     suspend fun confirmForgotPasswordChange(
-        username: String, verificationCode: String, password: String
-    ): Resource<VerificationCodeForPasswordData> {
-        val response = try {
-            api.changePassword(
-                ChangePasswordInformation(username, verificationCode, password)
-            )
-        } catch (e: IOException) {
-            return Resource.Error("Cannot post data. Check your internet connection and try again.")
-        } catch (e: Exception) {
-            return Resource.Error("Unknown error occurred.")
-        }
+        forgotChangePasswordData: ForgotChangePassword
+    ): Resource<SingleMessageResponse, DefaultErrorResponse> {
+        return when(
+            val resource = apiRequestFlow<SingleMessageResponse, DefaultErrorResponse> {
+                api.changePassword(
+                    forgotChangePasswordMapper.mapFromDomainModel(forgotChangePasswordData)
+                )
+            }
+        ) {
+            is Resource.Success -> {
+                Resource.Success(resource.data!!.body()!!)
+            }
 
-        if (response.isSuccessful && response.body() != null) {
-            return Resource.Success(response.body()!!)
+            is Resource.Error -> {
+                Resource.Error(resource.message!!)
+            }
         }
-        return Resource.Error(ValueParser.errorResponseToMessage(response))
     }
 
-    suspend fun sendForgotPasswordCode(email: String): Resource<VerificationCodeForPasswordData> {
-        val response = try {
-            api.sendVerificationCodePassword(VerificationCodeResendData(email))
-        } catch (e: IOException) {
-            return Resource.Error(
-                "Cannot post data. Check your internet connection and try again."
-            )
-        } catch (e: Exception) {
-            return Resource.Error("Unknown error occurred.")
-        }
+    suspend fun sendForgotPasswordCode(
+        email: String
+    ): Resource<SingleMessageResponse, DefaultErrorResponse> {
+        return when(
+            val resource = apiRequestFlow<SingleMessageResponse, DefaultErrorResponse> {
+                api.sendForgotPasswordVerificationCode(ResendVerificationCodeDto(email))
+            }
+        ) {
+            is Resource.Success -> {
+                Resource.Success(resource.data!!.body()!!)
+            }
 
-        if (response.isSuccessful && response.body() != null) {
-            return Resource.Success(response.body()!!)
+            is Resource.Error -> {
+                Resource.Error(resource.message!!)
+            }
         }
-        return Resource.Error(ValueParser.errorResponseToMessage(response))
     }
 }

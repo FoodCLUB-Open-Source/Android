@@ -1,6 +1,6 @@
 package android.kotlin.foodclub.network.retrofit
 
-import android.kotlin.foodclub.network.retrofit.apiInterfaces.AuthenticationService
+import android.kotlin.foodclub.network.retrofit.services.AuthenticationService
 import android.kotlin.foodclub.network.retrofit.utils.auth.RefreshTokenManager
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.network.retrofit.utils.auth.AuthAuthenticator

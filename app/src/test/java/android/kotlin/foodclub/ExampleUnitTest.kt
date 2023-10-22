@@ -1,6 +1,6 @@
 package android.kotlin.foodclub
 
-import android.kotlin.foodclub.api.responses.RetrieveUserFriendsStoriesResponse
+import android.kotlin.foodclub.network.retrofit.responses.stories.RetrieveUserFriendsStoriesResponse
 import com.google.gson.Gson
 import org.junit.Test
 

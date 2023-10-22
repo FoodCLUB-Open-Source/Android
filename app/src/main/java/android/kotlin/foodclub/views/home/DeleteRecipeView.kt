@@ -2,11 +2,12 @@ package android.kotlin.foodclub.views.home
 
 import android.app.Activity
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.activities.MainActivity
-import android.kotlin.foodclub.data.models.VideoModel
-import android.kotlin.foodclub.ui.theme.Montserrat
+import android.kotlin.foodclub.MainActivity
+import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.defaultButtonColors
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.utils.composables.VideoPlayer
-import android.kotlin.foodclub.viewmodels.home.DeleteRecipeViewModel
+import android.kotlin.foodclub.viewModels.home.DeleteRecipeViewModel
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.Spring
@@ -44,7 +45,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -97,31 +97,24 @@ fun HeaderImage(modifier: Modifier) {
 }
 
 @Composable
-fun ComfirmDeleteDialog(
-    title: String?="Delete video?",
-    desc: String?="lorem ipsum lorem ipsum lorem ipsum lorem ipsu" +
-            " lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsumm",
+fun ConfirmDeleteDialog(
+    title: String,
+    desc: String,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {
     Dialog(
         onDismissRequest = onDismiss
     ) {
-        Box(
-            modifier = Modifier
-                .height(450.dp)
-        ) {
-            Column(
-                modifier = Modifier
-            ) {
+        Box(modifier = Modifier.height(450.dp)) {
+            Column {
                 Spacer(modifier = Modifier.height(130.dp))
-                Box(
-                    modifier = Modifier
-                        .height(490.dp)
-                        .background(
-                            color = Color.White,
-                            shape = RoundedCornerShape(25.dp, 10.dp, 25.dp, 10.dp)
-                        )
+                Box(modifier = Modifier
+                    .height(490.dp)
+                    .background(
+                        color = Color.White,
+                        shape = RoundedCornerShape(25.dp, 10.dp, 25.dp, 10.dp)
+                    )
                 ) {
                     Column(
                         modifier = Modifier.padding(16.dp),
@@ -131,7 +124,7 @@ fun ComfirmDeleteDialog(
                         Spacer(modifier = Modifier.height(24.dp))
 
                         Text(
-                            text = title!!,
+                            text = title,
                             textAlign = TextAlign.Center,
                             modifier = Modifier
                                 .padding(top = 10.dp)
@@ -144,7 +137,7 @@ fun ComfirmDeleteDialog(
 
 
                         Text(
-                            text = desc!!,
+                            text = desc,
                             textAlign = TextAlign.Center,
                             modifier = Modifier
                                 .padding(top = 10.dp, start = 25.dp, end = 25.dp)
@@ -158,9 +151,8 @@ fun ComfirmDeleteDialog(
 
                         Button(
                             onClick = onDismiss,
-                            colors= ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#7EC60B"))),
-                            modifier = Modifier
-                                .fillMaxWidth()
+                            colors = defaultButtonColors(),
+                            modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
                                 text = "No",
@@ -170,7 +162,7 @@ fun ComfirmDeleteDialog(
                         }
                         ElevatedButton(
                             onClick = onConfirm,
-                            colors= ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#7EC60B"))),
+                            colors = defaultButtonColors(),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(5.dp))
@@ -214,7 +206,6 @@ fun DeleteRecipeView(navController: NavController, postId: Long) {
 
     val post = viewModel.postData.collectAsState()
     val coroutineScope = rememberCoroutineScope()
-    val screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.95f
     val localDensity = LocalDensity.current
     val infoDialog = remember { mutableStateOf(false) }
     val systemUiController = rememberSystemUiController()
@@ -233,7 +224,9 @@ fun DeleteRecipeView(navController: NavController, postId: Long) {
     }
 
     Column(
-        modifier = Modifier.fillMaxHeight().padding(bottom = 40.dp)
+        modifier = Modifier
+            .fillMaxHeight()
+            .padding(bottom = 40.dp)
     ) {
             var pauseButtonVisibility by remember { mutableStateOf(false) }
             var doubleTapState by remember {
@@ -246,7 +239,7 @@ fun DeleteRecipeView(navController: NavController, postId: Long) {
                 )
             }
         if (infoDialog.value) {
-            ComfirmDeleteDialog(
+            ConfirmDeleteDialog(
                 title = "Delete video?",
                 desc = "Are you sure you want to delete this video? This action cannot be undone.",
                 onDismiss = {
@@ -312,13 +305,14 @@ fun DeleteRecipeView(navController: NavController, postId: Long) {
                             painter = painterResource(id = R.drawable.liked),
                             contentDescription = null,
                             tint = Color.Unspecified,
-                            modifier = Modifier
-                                .size(iconSize)
+                            modifier = Modifier.size(iconSize)
                         )
                     }
                 }
                 Column(
-                    modifier = Modifier.fillMaxSize().padding(top = 30.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 30.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -335,18 +329,22 @@ fun DeleteRecipeView(navController: NavController, postId: Long) {
                         )
                     }
                 }
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(20.dp)
-                ) {
+                Box(modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(20.dp)) {
                     Column {
                         Button(
-                            modifier = Modifier.width(78.dp).height(32.dp),
+                            modifier = Modifier
+                                .width(78.dp)
+                                .height(32.dp),
                             onClick = { /*TODO*/ },
-                            colors = ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#D95978")))
+                            colors = ButtonDefaults.buttonColors(Color(0xFFD95978))
                         ) {
-                            Text("Meat", fontSize = 12.sp,style = TextStyle(color = Color.White))
+                            Text(
+                                "Meat",
+                                fontSize = 12.sp,
+                                style = TextStyle(color = Color.White)
+                            )
                         }
 
                         Spacer(modifier = Modifier.height(20.dp))
@@ -366,7 +364,9 @@ fun DeleteRecipeView(navController: NavController, postId: Long) {
                     }
                 }
                 Box(
-                    modifier = Modifier.background(Color.Transparent).padding(start = 10.dp, top = 60.dp),
+                    modifier = Modifier
+                        .background(Color.Transparent)
+                        .padding(start = 10.dp, top = 60.dp),
                     contentAlignment = Alignment.Center,
                 ) {
                     Button(
@@ -384,7 +384,7 @@ fun DeleteRecipeView(navController: NavController, postId: Long) {
                         onClick = { navController.navigateUp() }
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
+                            painter = painterResource(R.drawable.baseline_arrow_back_ios_new_24),
                             contentDescription = "Back",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
@@ -394,7 +394,9 @@ fun DeleteRecipeView(navController: NavController, postId: Long) {
                     }
                 }
                 Box(
-                    modifier = Modifier.padding(end = 20.dp, top = 60.dp).align(Alignment.TopEnd),
+                    modifier = Modifier
+                        .padding(end = 20.dp, top = 60.dp)
+                        .align(Alignment.TopEnd),
                 ) {
                     Button(
                         shape = RectangleShape,
@@ -435,13 +437,13 @@ fun DeleteRecipeView(navController: NavController, postId: Long) {
                                 .width(65.dp)
                                 .height(65.dp)
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .width(65.dp)
-                                    .height(65.dp)
-                            ) {
+                            Box(modifier = Modifier
+                                .width(65.dp)
+                                .height(65.dp)) {
                                 Box(
-                                    modifier = Modifier.width(65.dp).height(65.dp)
+                                    modifier = Modifier
+                                        .width(65.dp)
+                                        .height(65.dp)
                                         .clip(RoundedCornerShape(35.dp))
                                         .background(Color.Transparent)
                                         .blur(radius = 5.dp)
@@ -459,16 +461,22 @@ fun DeleteRecipeView(navController: NavController, postId: Long) {
                         Spacer(modifier = Modifier.height(10.dp))
 
                         Column(horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.align(Alignment.End)
-                                .width(60.dp).height(80.dp),
+                            modifier = Modifier
+                                .align(Alignment.End)
+                                .width(60.dp)
+                                .height(80.dp),
                         ) {
                             Spacer(Modifier.weight(1f))
                             Box(
-                                modifier = Modifier.width(60.dp).height(80.dp),
+                                modifier = Modifier
+                                    .width(60.dp)
+                                    .height(80.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Box(
-                                    modifier = Modifier.width(60.dp).height(80.dp)
+                                    modifier = Modifier
+                                        .width(60.dp)
+                                        .height(80.dp)
                                         .clip(RoundedCornerShape(30.dp))
                                         .background(Color.Transparent)
                                         .blur(radius = 5.dp)
@@ -476,34 +484,44 @@ fun DeleteRecipeView(navController: NavController, postId: Long) {
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     verticalArrangement = Arrangement.Center,
-                                    modifier = Modifier.fillMaxSize().clickable {
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .clickable {
                                             isLiked = !isLiked
-                                            post.value!!.currentViewerInteraction.isLikedByYou = !isLiked
+                                            post.value!!.currentViewerInteraction.isLikedByYou =
+                                                !isLiked
                                         }
                                 ) {
                                     val maxSize = 32.dp
-                                    val iconSize by animateDpAsState(targetValue = if (isLiked) 22.dp else 21.dp,
+                                    val iconSize by animateDpAsState(
+                                        targetValue = if (isLiked) 22.dp else 21.dp,
                                         animationSpec = keyframes {
                                             durationMillis = 400
                                             14.dp.at(50)
                                             maxSize.at(190)
                                             16.dp.at(330)
                                             22.dp.at(400).with(FastOutLinearInEasing)
-                                        })
+                                        }, label = ""
+                                    )
 
                                     LaunchedEffect(key1 = doubleTapState) {
-                                        if (doubleTapState.first != Offset.Unspecified && doubleTapState.second) {
+                                        if (doubleTapState.first != Offset.Unspecified &&
+                                            doubleTapState.second) {
                                             isLiked = doubleTapState.second
                                         }
                                     }
                                     Icon(
                                         painter = painterResource(id = R.drawable.like),
                                         contentDescription = null,
-                                        tint = if (isLiked) Color(android.graphics.Color.parseColor("#7EC60B")) else Color.White,
+                                        tint = if (isLiked) foodClubGreen else Color.White,
                                         modifier = Modifier.size(iconSize)
                                     )
                                     Spacer(modifier = Modifier.height(3.dp))
-                                    Text("4.2k", fontSize = 13.sp, color = if (isLiked) Color(android.graphics.Color.parseColor("#7EC60B")) else Color.White)
+                                    Text(
+                                        "4.2k",
+                                        fontSize = 13.sp,
+                                        color = if (isLiked) foodClubGreen else Color.White
+                                    )
                                 }
                             }
                             Spacer(Modifier.weight(1f))
@@ -514,7 +532,7 @@ fun DeleteRecipeView(navController: NavController, postId: Long) {
 
                         Button(
                             onClick = { /*TODO*/ },
-                            colors = ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#7EC60B"))),
+                            colors = defaultButtonColors(),
                             shape = RoundedCornerShape(15.dp)
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
