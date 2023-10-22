@@ -1,15 +1,14 @@
 package android.kotlin.foodclub.views.authentication
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.ui.theme.Montserrat
-import android.kotlin.foodclub.ui.theme.PlusJakartaSans
+import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.PlusJakartaSans
 import android.kotlin.foodclub.utils.composables.CustomPasswordTextField
 import android.kotlin.foodclub.utils.composables.CustomTextField
 import android.kotlin.foodclub.viewmodels.authentication.LogInWithEmailViewModel
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 
 import androidx.compose.foundation.layout.Column
@@ -21,7 +20,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape

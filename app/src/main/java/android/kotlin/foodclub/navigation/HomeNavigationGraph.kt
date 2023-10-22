@@ -21,7 +21,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.example.foodclub.ui.theme.BottomBarScreenObject
+import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import com.example.foodclub.views.home.CreateView
 import android.kotlin.foodclub.views.home.DiscoverView
 

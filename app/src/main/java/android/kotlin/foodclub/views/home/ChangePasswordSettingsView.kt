@@ -1,6 +1,6 @@
 package android.kotlin.foodclub.views.home
 
-import android.kotlin.foodclub.ui.theme.textFieldCustomColors
+import android.kotlin.foodclub.config.ui.textFieldCustomColors
 import android.kotlin.foodclub.utils.composables.CustomPasswordTextField
 import android.kotlin.foodclub.utils.composables.SettingsLayout
 import androidx.compose.foundation.layout.Spacer

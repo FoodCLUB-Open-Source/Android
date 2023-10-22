@@ -1,8 +1,8 @@
 package android.kotlin.foodclub.views.authentication
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.ui.theme.Montserrat
-import android.kotlin.foodclub.ui.theme.PlusJakartaSans
+import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.PlusJakartaSans
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image

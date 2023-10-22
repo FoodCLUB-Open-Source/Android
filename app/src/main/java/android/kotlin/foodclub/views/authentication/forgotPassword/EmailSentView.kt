@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.views.authentication.forgotPassword
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.ui.theme.Montserrat
+import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.utils.composables.CustomAuthButton
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

@@ -2,8 +2,8 @@ package android.kotlin.foodclub.views.authentication.signup
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.auth.SignUpUser
-import android.kotlin.foodclub.ui.theme.Montserrat
-import android.kotlin.foodclub.ui.theme.PlusJakartaSans
+import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.PlusJakartaSans
 import android.kotlin.foodclub.utils.composables.CustomTextField
 import android.kotlin.foodclub.utils.composables.TermsAndConditionsInfoFooter
 import android.kotlin.foodclub.utils.helpers.FieldsValidation

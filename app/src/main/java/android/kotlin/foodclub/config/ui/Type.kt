@@ -1,11 +1,24 @@
-package android.kotlin.foodclub.views.authentication.ui.theme
+package android.kotlin.foodclub.config.ui
 
+import android.kotlin.foodclub.R
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
+val Montserrat = FontFamily(
+    Font(R.font.montserratregular),
+    Font(R.font.montserratbold, FontWeight.Bold),
+    Font(R.font.montserratsemibold, FontWeight.SemiBold),
+    Font(R.font.montserratmedium, FontWeight.Medium)
+)
+
+val PlusJakartaSans = FontFamily(
+    Font(R.font.plusjakartasans_regular),
+    Font(R.font.plusjakartasans_bold, FontWeight.Bold)
+)
 // Set of Material typography styles to start with
 val Typography = Typography(
     bodyLarge = TextStyle(

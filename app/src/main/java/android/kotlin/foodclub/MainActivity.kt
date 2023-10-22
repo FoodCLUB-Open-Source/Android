@@ -1,9 +1,9 @@
-package android.kotlin.foodclub.activities
+package android.kotlin.foodclub
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import android.kotlin.foodclub.ui.theme.FoodClubTheme
+import android.kotlin.foodclub.config.ui.FoodClubTheme
 import android.kotlin.foodclub.viewmodels.home.ProfileViewModel
 import android.os.Handler
 import android.os.Looper

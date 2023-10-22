@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.ui.theme
+package android.kotlin.foodclub.config.ui
 
 import androidx.compose.ui.graphics.Color
 

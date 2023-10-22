@@ -2,10 +2,10 @@ package android.kotlin.foodclub.views.home
 
 import android.app.Activity
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.activities.MainActivity
+import android.kotlin.foodclub.MainActivity
 import android.kotlin.foodclub.domain.models.others.BottomSheetItem
 import android.kotlin.foodclub.domain.models.profile.UserPosts
-import android.kotlin.foodclub.ui.theme.Montserrat
+import android.kotlin.foodclub.config.ui.Montserrat
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

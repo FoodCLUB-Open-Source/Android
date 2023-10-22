@@ -43,7 +43,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.example.foodclub.ui.theme.BottomBarScreenObject
+import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 val avenir = FontFamily(

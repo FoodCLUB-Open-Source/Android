@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.ui.theme.Montserrat
+import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.utils.composables.VideoScroller
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.viewmodels.home.HomeViewModel

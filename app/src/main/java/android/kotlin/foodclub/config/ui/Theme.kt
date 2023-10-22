@@ -1,8 +1,7 @@
-package android.kotlin.foodclub.ui.theme
+package android.kotlin.foodclub.config.ui
 
 import android.app.Activity
 import android.os.Build
-import android.view.WindowInsetsController
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -68,7 +67,7 @@ fun FoodClubTheme(
                 it.isAppearanceLightStatusBars = !darkTheme
                 it.isAppearanceLightNavigationBars = !darkTheme
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    it.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_BARS_BY_TOUCH
+                    it.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
                 }
             }
         }

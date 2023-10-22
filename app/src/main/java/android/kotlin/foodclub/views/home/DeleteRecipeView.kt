@@ -2,8 +2,8 @@ package android.kotlin.foodclub.views.home
 
 import android.app.Activity
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.activities.MainActivity
-import android.kotlin.foodclub.ui.theme.Montserrat
+import android.kotlin.foodclub.MainActivity
+import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.utils.composables.VideoPlayer
 import android.kotlin.foodclub.viewmodels.home.DeleteRecipeViewModel
 import androidx.compose.animation.AnimatedVisibility

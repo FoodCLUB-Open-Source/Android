@@ -1,9 +1,9 @@
 package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.ui.theme.Montserrat
-import android.kotlin.foodclub.ui.theme.PlusJakartaSans
-import android.kotlin.foodclub.ui.theme.textFieldCustomColors
+import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.PlusJakartaSans
+import android.kotlin.foodclub.config.ui.textFieldCustomColors
 import android.kotlin.foodclub.utils.helpers.FieldsValidation
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -168,9 +168,9 @@ fun CustomTextField(initialValue: String = "",
 
 @Composable
 fun CustomPasswordTextField(initialValue: String = "",
-    placeholder: String, strengthValidation: Boolean = true,
-    onCorrectnessStateChange: () -> Unit,
-    onValueChange: (text: String) -> Unit = {},
+                            placeholder: String, strengthValidation: Boolean = true,
+                            onCorrectnessStateChange: () -> Unit,
+                            onValueChange: (text: String) -> Unit = {},
                             label: String? = null,
                             textFieldColors: TextFieldColors = textFieldCustomColors(),
                             errorTextFieldColors: TextFieldColors = textFieldCustomColors(

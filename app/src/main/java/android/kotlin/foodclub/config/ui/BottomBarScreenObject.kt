@@ -1,14 +1,7 @@
-package com.example.foodclub.ui.theme
+package android.kotlin.foodclub.config.ui
 
 import android.kotlin.foodclub.R
 import androidx.annotation.DrawableRes
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 
 
 sealed class BottomBarScreenObject(

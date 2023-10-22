@@ -2,7 +2,7 @@ package android.kotlin.foodclub.views.authentication.signup
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.auth.SignUpUser
-import android.kotlin.foodclub.ui.theme.PlusJakartaSans
+import android.kotlin.foodclub.config.ui.PlusJakartaSans
 import android.kotlin.foodclub.utils.composables.ConfirmButton
 import android.kotlin.foodclub.utils.composables.CustomPasswordTextField
 import android.kotlin.foodclub.utils.composables.CustomTextField
