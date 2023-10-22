@@ -1,11 +1,11 @@
 package android.kotlin.foodclub.di
 
-import android.kotlin.foodclub.network.retrofit.apiInterfaces.AuthenticationService
-import android.kotlin.foodclub.network.retrofit.apiInterfaces.PostsService
-import android.kotlin.foodclub.network.retrofit.apiInterfaces.ProductsService
-import android.kotlin.foodclub.network.retrofit.apiInterfaces.ProfileService
-import android.kotlin.foodclub.network.retrofit.apiInterfaces.RecipeService
-import android.kotlin.foodclub.network.retrofit.apiInterfaces.StoriesService
+import android.kotlin.foodclub.network.retrofit.services.AuthenticationService
+import android.kotlin.foodclub.network.retrofit.services.PostsService
+import android.kotlin.foodclub.network.retrofit.services.ProductsService
+import android.kotlin.foodclub.network.retrofit.services.ProfileService
+import android.kotlin.foodclub.network.retrofit.services.RecipeService
+import android.kotlin.foodclub.network.retrofit.services.StoriesService
 import android.kotlin.foodclub.network.retrofit.dtoMappers.edamam.EdamamFoodProductsMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.posts.PostToVideoMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.ForgotChangePasswordMapper

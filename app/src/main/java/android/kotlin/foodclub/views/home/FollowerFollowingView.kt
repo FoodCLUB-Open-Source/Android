@@ -3,7 +3,7 @@ package android.kotlin.foodclub.views.home
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Avenir
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
-import android.kotlin.foodclub.viewmodels.home.FollowerFollowingViewModel
+import android.kotlin.foodclub.viewModels.home.FollowerFollowingViewModel
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text

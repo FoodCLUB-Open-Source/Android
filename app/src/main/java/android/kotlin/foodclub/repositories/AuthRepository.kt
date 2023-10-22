@@ -4,7 +4,7 @@ import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorRe
 import android.kotlin.foodclub.domain.models.auth.ForgotChangePassword
 import android.kotlin.foodclub.domain.models.auth.SignInUser
 import android.kotlin.foodclub.domain.models.auth.SignUpUser
-import android.kotlin.foodclub.network.retrofit.apiInterfaces.AuthenticationService
+import android.kotlin.foodclub.network.retrofit.services.AuthenticationService
 import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.ForgotChangePasswordMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.SignInUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.SignUpUserMapper

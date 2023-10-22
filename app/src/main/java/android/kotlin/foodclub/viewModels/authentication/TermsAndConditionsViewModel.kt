@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.viewmodels.authentication
+package android.kotlin.foodclub.viewModels.authentication
 
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController

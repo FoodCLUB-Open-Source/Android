@@ -1,9 +1,7 @@
-package android.kotlin.foodclub.viewmodels.home
+package android.kotlin.foodclub.viewModels.home
 
 import android.Manifest
 import android.app.Activity
-import android.app.Application
-import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Handler
@@ -11,8 +9,6 @@ import android.os.Looper
 import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.media3.common.C
 import androidx.media3.common.MimeTypes

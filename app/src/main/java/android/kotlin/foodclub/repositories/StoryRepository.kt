@@ -2,7 +2,7 @@ package android.kotlin.foodclub.repositories
 
 import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorResponse
 import android.kotlin.foodclub.domain.models.home.VideoModel
-import android.kotlin.foodclub.network.retrofit.apiInterfaces.StoriesService
+import android.kotlin.foodclub.network.retrofit.services.StoriesService
 import android.kotlin.foodclub.network.retrofit.dtoMappers.stories.StoryMapper
 import android.kotlin.foodclub.network.retrofit.responses.stories.RetrieveUserFriendsStoriesResponse
 import android.kotlin.foodclub.network.retrofit.utils.apiRequestFlow

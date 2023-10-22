@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.network.retrofit.apiInterfaces
+package android.kotlin.foodclub.network.retrofit.services
 
 import dagger.Module
 import dagger.Provides

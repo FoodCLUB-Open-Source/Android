@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.navigation.auth
 
 import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
-import android.kotlin.foodclub.viewmodels.authentication.SignupWithEmailViewModel
+import android.kotlin.foodclub.viewModels.authentication.SignupWithEmailViewModel
 import android.kotlin.foodclub.views.authentication.signup.ConfirmEmailView
 import android.kotlin.foodclub.views.authentication.signup.CreateFullNameView
 import android.kotlin.foodclub.views.authentication.signup.SignUpWithEmailView

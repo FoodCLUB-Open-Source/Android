@@ -3,7 +3,7 @@ package android.kotlin.foodclub.views.home
 import android.app.Activity
 import android.graphics.Bitmap
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.viewmodels.home.CreateViewModel
+import android.kotlin.foodclub.viewModels.home.CreateViewModel
 import android.media.MediaMetadataRetriever
 import android.view.ViewGroup
 import android.widget.FrameLayout

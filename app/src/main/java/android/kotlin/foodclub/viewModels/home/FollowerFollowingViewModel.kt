@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.viewmodels.home
+package android.kotlin.foodclub.viewModels.home
 
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.repositories.ProfileRepository

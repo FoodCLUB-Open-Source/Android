@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.viewmodels.authentication
+package android.kotlin.foodclub.viewModels.authentication
 
 import android.kotlin.foodclub.domain.models.auth.SignUpUser
 import android.kotlin.foodclub.domain.enums.ApiCallStatus

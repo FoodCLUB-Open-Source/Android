@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.repositories
 
 import android.kotlin.foodclub.domain.models.recipes.Recipe
-import android.kotlin.foodclub.network.retrofit.apiInterfaces.RecipeService
+import android.kotlin.foodclub.network.retrofit.services.RecipeService
 import android.kotlin.foodclub.network.retrofit.dtoMappers.recipes.RecipeMapper
 import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorResponse
 import android.kotlin.foodclub.network.retrofit.utils.apiRequestFlow

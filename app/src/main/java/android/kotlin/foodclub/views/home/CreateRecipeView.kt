@@ -6,7 +6,7 @@ import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.recipes.Recipe
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
 import android.kotlin.foodclub.utils.helpers.ValueParser
-import android.kotlin.foodclub.viewmodels.home.CreateRecipeViewModel
+import android.kotlin.foodclub.viewModels.home.CreateRecipeViewModel
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.AnimationSpec

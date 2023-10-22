@@ -5,7 +5,7 @@ import android.Manifest
 import android.content.Context
 import android.graphics.Bitmap
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.viewmodels.home.GalleryViewModel
+import android.kotlin.foodclub.viewModels.home.GalleryViewModel
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build

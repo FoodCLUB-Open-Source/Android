@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.viewmodels.home
+package android.kotlin.foodclub.viewModels.home
 
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import androidx.lifecycle.ViewModel

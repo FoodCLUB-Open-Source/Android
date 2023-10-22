@@ -2,7 +2,7 @@ package android.kotlin.foodclub.repositories
 
 import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorResponse
 import android.kotlin.foodclub.domain.models.products.ProductsData
-import android.kotlin.foodclub.network.retrofit.apiInterfaces.ProductsService
+import android.kotlin.foodclub.network.retrofit.services.ProductsService
 import android.kotlin.foodclub.network.retrofit.dtoMappers.edamam.EdamamFoodProductsMapper
 import android.kotlin.foodclub.network.retrofit.dtoModels.edamam.EdamamFoodProductsDto
 import android.kotlin.foodclub.network.retrofit.utils.apiRequestFlow

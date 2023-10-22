@@ -7,7 +7,7 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.utils.composables.VideoPlayer
-import android.kotlin.foodclub.viewmodels.home.DeleteRecipeViewModel
+import android.kotlin.foodclub.viewModels.home.DeleteRecipeViewModel
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.Spring

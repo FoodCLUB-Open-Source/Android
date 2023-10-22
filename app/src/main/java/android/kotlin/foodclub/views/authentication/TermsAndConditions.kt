@@ -2,7 +2,7 @@ package android.kotlin.foodclub.views.authentication
 
 import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.viewmodels.authentication.TermsAndConditionsViewModel
+import android.kotlin.foodclub.viewModels.authentication.TermsAndConditionsViewModel
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
