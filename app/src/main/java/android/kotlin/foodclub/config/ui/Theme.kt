@@ -3,6 +3,7 @@ package android.kotlin.foodclub.config.ui
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextFieldDefaults
@@ -63,7 +64,7 @@ fun FoodClubTheme(
             val window = (view.context as Activity).window
             window.statusBarColor = Color.Transparent.toArgb()
             window.navigationBarColor = Color.White.toArgb()
-            WindowCompat.getInsetsController(window, view)?.let {
+            WindowCompat.getInsetsController(window, view).let {
                 it.isAppearanceLightStatusBars = !darkTheme
                 it.isAppearanceLightNavigationBars = !darkTheme
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -101,4 +102,17 @@ fun textFieldCustomColors(
     focusedIndicatorColor = focusedIndicatorColor,
     unfocusedIndicatorColor = unfocusedIndicatorColor,
     disabledIndicatorColor = disabledIndicatorColor
+)
+
+@Composable
+fun defaultButtonColors(
+    containerColor: Color = foodClubGreen,
+    disabledContainerColor: Color = Color(0xFFC9C9C9),
+    disabledContentColor: Color = Color.White,
+    contentColor: Color = Color.White
+) = ButtonDefaults.buttonColors(
+    containerColor = containerColor,
+    disabledContainerColor = disabledContainerColor,
+    disabledContentColor = disabledContentColor,
+    contentColor = contentColor
 )

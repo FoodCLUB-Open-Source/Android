@@ -10,9 +10,10 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface PostsService {
-    @GET("posts/{postId}")
+    @GET("posts/{postId}/{userId}")
     suspend fun getPost(
-        @Path("postId") postId: Long
+        @Path("postId") postId: Long,
+        @Path("userId") userId: Long
     ): Response<GetPostResponse>
 
     @GET("posts/homepage/{userId}")

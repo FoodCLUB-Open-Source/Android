@@ -1,9 +1,10 @@
-package android.kotlin.foodclub.views.home
+package android.kotlin.foodclub.views.settings
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.viewmodels.home.SettingsViewModel
 import android.kotlin.foodclub.utils.composables.SettingsLayout
+import android.kotlin.foodclub.views.home.montserratFamily
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -48,59 +49,69 @@ fun SettingsView(navController: NavHostController, viewModel: SettingsViewModel)
         val screenSizeHeight =
             LocalConfiguration.current.screenHeightDp.dp //added screenSizeHeight so page is adaptable to all screen size
 
-        SettingsProfile( 
+        SettingsProfile(
             userName = "Jake Rayner",
             userImage = painterResource(id = R.drawable.story_user)
         )
         Spacer(modifier = Modifier.height(screenSizeHeight * 0.1f))
         SettingRow(
-            text = "Edit profile information", iconId = R.drawable.editprofile, Color.Black, 0,
-            Color.Gray, "SETTINGS_EDIT_PROFILE", navController
+            text = "Edit profile information",
+            iconId = R.drawable.editprofile,
+            fontC = Color.Black,
+            borderSize = 0,
+            borderColor = Color.Gray,
+            destination = "SETTINGS_EDIT_PROFILE", navController
         )
         SettingRow(
-            text = "Privacy settings", iconId = R.drawable.privacysettings, Color.Black, 0,
-            Color.Gray, "SETTINGS_PRIVACY", navController
+            text = "Privacy settings",
+            iconId = R.drawable.privacysettings,
+            fontC = Color.Black,
+            borderSize = 0,
+            borderColor = Color.Gray,
+            destination = "SETTINGS_PRIVACY", navController
         )
         Spacer(modifier = Modifier.height(screenSizeHeight * 0.03f))
-        Column(
-            modifier = Modifier
-                .border(width = 1.dp, color = colorGray, shape = RoundedCornerShape(8.dp))
-        ) {
+        Column(modifier = Modifier.border(width = 1.dp, colorGray, RoundedCornerShape(8.dp))) {
             SettingRow(
                 text = "Help & Support",
                 iconId = R.drawable.helpandsupport,
                 Color.Black,
-                bordersize = 0,
-                bordercolor = Color.Transparent,
-                "SETTINGS_PRIVACY",
-                navController
+                borderSize = 0,
+                borderColor = Color.Transparent,
+                destination = "SETTINGS_PRIVACY",
+                navController = navController
             )
             SettingRow(
                 text = "Contact Us",
                 iconId = R.drawable.contactus,
-                Color.Black,
-                bordersize = 0,
-                bordercolor = Color.Transparent,
-                "SETTINGS_PRIVACY",
-                navController
+                fontC = Color.Black,
+                borderSize = 0,
+                borderColor = Color.Transparent,
+                destination = "SETTINGS_PRIVACY",
+                navController = navController
             )
             SettingRow(
                 text = "Privacy Policy",
                 iconId = R.drawable.privacypolicy,
-                Color.Black,
-                bordersize = 0,
-                bordercolor = Color.Transparent,
-                "SETTINGS_PRIVACY",
-                navController
+                fontC = Color.Black,
+                borderSize = 0,
+                borderColor = Color.Transparent,
+                destination = "SETTINGS_PRIVACY",
+                navController = navController
             )
         }
         Spacer(modifier = Modifier.height(screenSizeHeight * 0.03f))
-        SettingRow(text = "Log Out", iconId = R.drawable.logout, fontC = colorRed, 0,
-            Color.Black, Graph.AUTHENTICATION, navController
-        ) { viewModel.logout() }
+        SettingRow(
+            text = "Log Out",
+            iconId = R.drawable.logout,
+            fontC = colorRed,
+            borderSize = 0,
+            borderColor = Color.Black,
+            destination = Graph.AUTHENTICATION,
+            navController = navController,
+            onClick = { viewModel.logout() }
+        )
     }
-//        }
-//    }
 }
 
 // Common icon composable to enter the parameters to create icons in this screen
@@ -109,14 +120,16 @@ fun SettingsIcons(size: Int, icon: Int){
     Icon(
         painter = painterResource(id = icon),
         contentDescription = "Back",
-        modifier = Modifier
-            .size(size.dp)
+        modifier = Modifier.size(size.dp)
     )
 }
 
 // Common text composable to create text according to the parameters entered in this screen
 @Composable
-fun SettingsText(text:String, size: Int, weight:FontWeight, fontC: Color=Color.Black, textAlign: TextAlign = TextAlign.Center){
+fun SettingsText(
+    text: String, size: Int, weight: FontWeight, fontC: Color = Color.Black,
+    textAlign: TextAlign = TextAlign.Center
+){
     Text(
         text = text,
         fontSize = size.sp,
@@ -131,16 +144,13 @@ fun SettingsText(text:String, size: Int, weight:FontWeight, fontC: Color=Color.B
 @Composable
 fun SettingsTopBar(label:String, navController: NavController) {
    Row(
-        modifier = Modifier
-            .fillMaxWidth(),
+       modifier = Modifier.fillMaxWidth(),
        verticalAlignment = Alignment.CenterVertically
     ) {
         Column{
             IconButton(
                 onClick = { navController.navigateUp() },
-                modifier = Modifier
-                    .background(color = colorGray, RoundedCornerShape(8.dp))
-                    .size(35.dp),
+                modifier = Modifier.background(colorGray, RoundedCornerShape(8.dp)).size(35.dp),
                 content = {
                     SettingsIcons(size = 20, icon =  R.drawable.back_icon)
                 }
@@ -158,29 +168,23 @@ fun SettingsTopBar(label:String, navController: NavController) {
 // The middle user profile group - the profile picture and the name. Parameters are used so this can be used to vary according to the user that is logged in
 @Composable
 fun SettingsProfile(userName: String, userImage: Painter){
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Row(
             horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         ) {
-                Image(
-                    contentDescription = "User Images",
-                    painter = userImage,
-                    modifier = Modifier
-                        .size(120.dp)
-                        .clip(RoundedCornerShape(100.dp))
-                )
+            Image(
+                contentDescription = "User Images",
+                painter = userImage,
+                modifier = Modifier.size(120.dp).clip(RoundedCornerShape(100.dp))
+            )
         }
 
         Spacer(modifier = Modifier.height(15.dp)) // Added spacer instead to give space between image and name
 
         Row(
             horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         ) {
             SettingsText(text = userName, size = 24, weight = FontWeight.ExtraBold)
         }
@@ -189,28 +193,29 @@ fun SettingsProfile(userName: String, userImage: Painter){
 
 // A reused composable to create each setting button row
 @Composable
-fun SettingRow(text: String, iconId: Int, fontC:  Color=Color.Black,
-               bordersize: Int=1, bordercolor: Color= colorGray, destination: String,
+fun SettingRow(text: String, iconId: Int, fontC:  Color = Color.Black,
+               borderSize: Int = 1, borderColor: Color = colorGray, destination: String,
                navController: NavController, onClick: () -> Unit = {}) {
    val rowSize=65.dp
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(rowSize),
+        modifier = Modifier.fillMaxWidth().height(rowSize),
         verticalAlignment = Alignment.CenterVertically
     ){
         Button(
             onClick = {
                 onClick()
                 navController.navigate(destination)
-                      },
-            colors= ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = Color.Black),
+            },
+            colors= ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent,
+                contentColor = Color.Black
+            ),
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier
                 .height(rowSize)
                 .border(
-                    width = bordersize.dp,
-                    color = bordercolor,
+                    width = borderSize.dp,
+                    color = borderColor,
                     shape = RoundedCornerShape(8.dp)
                 )
 

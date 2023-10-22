@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.views.home
+package android.kotlin.foodclub.views.settings
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.navigation.SettingsScreen
@@ -19,18 +19,11 @@ import androidx.navigation.compose.rememberNavController
 //The main function of this PrivacyView file. This arranges all components to build the screen
 @Composable
 fun PrivacySetting(navController: NavController) {
-    Box(
-        modifier =Modifier.fillMaxWidth()
-            .background(Color.White),
-    ) {
+    Box(modifier =Modifier.fillMaxWidth().background(Color.White),) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-                .padding(top = 80.dp)
+            modifier = Modifier.fillMaxSize().padding(16.dp).padding(top = 80.dp)
                 .background(Color.White),
         ) {
-
             SettingsTopBar(label = "Privacy", navController)
             Spacer(modifier = Modifier.height(50.dp))
             ChangePasswordButton(navController = navController)
@@ -48,11 +41,9 @@ fun PrivacySetting(navController: NavController) {
 // The Change Password button of this screen
 @Composable
 fun ChangePasswordButton(navController: NavController){
-    Row(
-        modifier = Modifier
+    Row(modifier = Modifier
             .clickable { navController.navigate(SettingsScreen.ChangePassword.route) }
-            .fillMaxWidth()
-            .background(Color.Transparent)
+            .fillMaxWidth().background(Color.Transparent)
     ){
         SettingsText(text = "Change Password", size = 16, weight = FontWeight.W600, textAlign = TextAlign.Left)
         Spacer(modifier = Modifier.weight(1f))

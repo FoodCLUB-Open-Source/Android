@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.Avenir
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.viewmodels.home.FollowerFollowingViewModel
 import androidx.compose.foundation.layout.Column
@@ -37,23 +38,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
+import android.kotlin.foodclub.config.ui.Raleway
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
-val avenir = FontFamily(
-    Font(R.font.avenirblack, FontWeight.Bold),
-    Font(R.font.avenirbook, FontWeight.Medium)
-)
-
-val raleway = FontFamily(
-    Font(R.font.ralewayextrabold, FontWeight.ExtraBold),
-)
 
 @Composable
 fun FollowerView(navController: NavController, viewType: String, userId: Long) {
@@ -75,53 +67,39 @@ fun FollowerView(navController: NavController, viewType: String, userId: Long) {
     val titleState = viewModel.title.collectAsState()
     val followersListState = viewModel.followersList.collectAsState()
     val followingListState = viewModel.followingList.collectAsState()
-    val error = viewModel.error.collectAsState()
 
     Box(modifier = Modifier
         .fillMaxSize()
         .background(Color.White)) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 55.dp)
-                .background(Color.White)
-        ) {
+        Column(modifier = Modifier.fillMaxSize().padding(top = 55.dp).background(Color.White)) {
             Box(
-                modifier = Modifier
-                    .background(Color.Transparent)
-                    .padding(start = 20.dp),
+                modifier = Modifier.background(Color.Transparent).padding(start = 20.dp),
                 contentAlignment = Alignment.Center,
             ) {
-                Button(                                                                                  //current
+                Button(
                     shape = RectangleShape,
                     modifier = Modifier
                         .border(1.dp, Color(0xFFB8B8B8), shape = RoundedCornerShape(15.dp))
-                        .clip(RoundedCornerShape(15.dp))
-                        .align(Alignment.BottomCenter)
-                        .width(40.dp)
-                        .height(40.dp),
+                        .clip(RoundedCornerShape(15.dp)).align(Alignment.BottomCenter)
+                        .width(40.dp).height(40.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFFB8B8B8),
                         contentColor = Color.White
                     ), contentPadding = PaddingValues(5.dp),
-                    onClick = {
-                        navController.navigateUp()
-                    }
+                    onClick = { navController.navigateUp() }
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
+                        painter = painterResource(id = R.drawable.back_icon),
                         contentDescription = "Back",
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .width(20.dp)
-                            .height(20.dp)
+                        modifier = Modifier.width(20.dp).height(20.dp)
                     )
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = titleState.value, fontWeight = FontWeight.ExtraBold,
-                fontFamily = raleway,
+                fontFamily = Raleway,
                 fontSize = 20.sp,
                 modifier = Modifier.padding(start = 20.dp),
             )
@@ -150,13 +128,17 @@ fun FollowerView(navController: NavController, viewType: String, userId: Long) {
 }
 
 @Composable
-fun Follower(navController: NavController, userId: Int, imageUrl: String, username: String, completeName: String) {
+fun Follower(
+    navController: NavController, userId: Int, imageUrl: String,
+    username: String, completeName: String
+) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(75.dp)
-            .padding(vertical = 4.dp)
-            .clickable { navController.navigate(BottomBarScreenObject.Profile.route + "?userId=$userId") },
+        modifier = Modifier.fillMaxWidth().height(75.dp).padding(vertical = 4.dp)
+            .clickable {
+                navController.navigate(
+                    BottomBarScreenObject.Profile.route + "?userId=$userId"
+                )
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
 
@@ -165,23 +147,22 @@ fun Follower(navController: NavController, userId: Int, imageUrl: String, userna
         AsyncImage(
             model = imageUrl,
             contentDescription = null,
-            modifier = Modifier
-                .size(50.dp)
-                .clip(CircleShape)
-                .background(Color.White)
+            modifier = Modifier.size(50.dp).clip(CircleShape).background(Color.White)
         )
-//            Image(
-//                painter = painterResource(id = imageRes),
-//                contentDescription = null,
-//                modifier = Modifier
-//                    .size(50.dp)
-//                    .clip(CircleShape)
-//                    .background(Color.White)
-//            )
             Spacer(modifier = Modifier.width(12.dp))
             Column {
-                Text(text = username, fontSize = 15.sp, fontWeight = FontWeight.Bold, fontFamily = avenir)
-                Text(text = completeName, fontSize = 15.sp, fontWeight = FontWeight.Medium, fontFamily = avenir)
+                Text(
+                    text = username,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = Avenir
+                )
+                Text(
+                    text = completeName,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Medium,
+                    fontFamily = Avenir
+                )
             }
 
     }

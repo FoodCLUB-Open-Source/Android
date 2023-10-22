@@ -80,8 +80,9 @@ class DiscoverViewModel @Inject constructor(
 
 
     fun getPostData(postId:Long){
+        val userId = sessionCache.getActiveSession()?.sessionUser?.userId ?: return
         viewModelScope.launch {
-            when (val resource = postRepository.getPost(postId)) {
+            when (val resource = postRepository.getPost(postId, userId)) {
                 is Resource.Success -> {
                     _sessionUserName.value =  resource.data!!.authorDetails
                 }

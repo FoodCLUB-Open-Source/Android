@@ -2,6 +2,9 @@ package android.kotlin.foodclub.views.home
 
 import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.Satoshi
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.profile.UserPosts
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
@@ -61,8 +64,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
@@ -72,6 +73,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import android.kotlin.foodclub.viewmodels.home.DiscoverViewModel
+import androidx.compose.runtime.mutableIntStateOf
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -83,10 +85,8 @@ fun DiscoverView(navController: NavController) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 240.dp
 
     var isSmallScreen by remember { mutableStateOf(false) }
+    if (screenHeight <= 440.dp) { isSmallScreen = true }
 
-    if (screenHeight <= 440.dp) {
-        isSmallScreen = true
-    }
     val systemUiController = rememberSystemUiController()
     SideEffect {
         systemUiController.setSystemBarsColor(
@@ -94,44 +94,28 @@ fun DiscoverView(navController: NavController) {
         )
     }
 
-
-    val montserratFamily1 = FontFamily(
-
-        Font(R.font.montserratbold, FontWeight.Bold),
-        Font(R.font.montserratmedium, FontWeight.Medium)
-
-    )
-
-
     val viewModel: DiscoverViewModel = hiltViewModel()
 
     viewModel.getPostsByWorld(197)
     viewModel.getPostsByUserId()
     viewModel.myFridgePosts()
 
-
-
-
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .background(Color.White),
-        horizontalAlignment = Alignment.CenterHorizontally) {
-
+    Column(
+        modifier = Modifier.fillMaxSize().background(Color.White),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 60.dp, end = 20.dp, start = 20.dp, bottom = 20.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-
-            Column(  ) {
-
+            Column {
                 Text(
                     color = Color.Black,
                     text = "Hi Emily,",
-
-                    fontFamily = montserratFamily1,
-                    fontSize = if (isSmallScreen == true) 22.sp else 25.sp,
+                    fontFamily = Montserrat,
+                    fontSize = if (isSmallScreen) 22.sp else 25.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 7.dp),
                     style = TextStyle(letterSpacing = -1.sp)
@@ -140,8 +124,8 @@ fun DiscoverView(navController: NavController) {
                 Text(
                     color = Color.Black,
                     text = "Let's get cooking!",
-                    fontFamily = montserratFamily1,
-                    fontSize = if (isSmallScreen == true) 20.sp else 23.sp,
+                    fontFamily = Montserrat,
+                    fontSize = if (isSmallScreen) 20.sp else 23.sp,
                     fontWeight = FontWeight.Medium,
                     style = TextStyle(letterSpacing = -1.sp)
                 )
@@ -180,41 +164,26 @@ fun DiscoverView(navController: NavController) {
 
                 }
 
-                Button(shape = CircleShape,
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .height(40.dp)
-                        .width(40.dp),
-
+                Button(
+                    shape = CircleShape,
+                    modifier = Modifier.clip(CircleShape).height(40.dp).width(40.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(245, 245, 245, 255),
-
                         ),
                     contentPadding = PaddingValues(),
-
-                    onClick = {
-
-                        navController.navigate("BASKET_VIEW")
-
-                    }
-
+                    onClick = { navController.navigate("BASKET_VIEW") }
                 ) {
-
                     Image(
-
                         painter = painterResource(id = R.drawable.vector__1_),
-                        contentDescription = "",
-
+                        contentDescription = ""
                         )
-
                 }
-
             }
         }
 
-        val initialPage: Int? = 0;
+        val initialPage = 0
         val pagerState1 = rememberPagerState(
-            initialPage = initialPage ?: 0,
+            initialPage = initialPage,
             initialPageOffsetFraction = 0f
         ) {
             4
@@ -242,7 +211,7 @@ fun DiscoverView(navController: NavController) {
         )
 
 
-        var tabIndex by remember { mutableStateOf(0) }
+        var tabIndex by remember { mutableIntStateOf(0) }
 
         TabRow(
             selectedTabIndex = tabIndex, modifier = Modifier
@@ -269,9 +238,11 @@ fun DiscoverView(navController: NavController) {
                     onClick = {
                         tabIndex = index
                     }, text = {
-                        Text(text = data,
+                        Text(
+                            text = data,
                             fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-                            color = if (selected) Color.Black else Color(android.graphics.Color.parseColor("#C2C2C2")))
+                            color = if (selected) Color.Black else Color(0xFFC2C2C2)
+                        )
                     })
 
             }
@@ -309,7 +280,7 @@ fun DiscoverView(navController: NavController) {
         val triggerBottomSheetModal: () -> Unit = {
             showSheet = !showSheet
             systemUiController.setStatusBarColor(
-                color = Color(android.graphics.Color.parseColor("#ACACAC")), darkIcons = true
+                color = Color(0xFFACACAC), darkIcons = true
             )
             systemUiController.setNavigationBarColor(
                 color = Color.Black, darkIcons = true
@@ -328,22 +299,19 @@ fun DiscoverView(navController: NavController) {
         if (tabIndex == 2) {
             Button(shape = RectangleShape,
                 modifier = Modifier
-                    .border(
-                        1.dp, Color(126, 198, 11, 255), shape = RoundedCornerShape(20.dp)
-                    )
-                    .clip(RoundedCornerShape(20.dp))
-                    .width(125.dp),
+                    .border(1.dp, foodClubGreen, RoundedCornerShape(20.dp))
+                    .clip(RoundedCornerShape(20.dp)).width(125.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White, contentColor = Color(126, 198, 11, 255)
+                    containerColor = Color.White, contentColor = foodClubGreen
                 ),
                 contentPadding = PaddingValues(15.dp),
                 onClick = {
                     triggerBottomSheetModal()
                 }) {
                 Text(
-                    "Add items +",
+                    text = "Add items +",
                     fontSize = 13.sp,
-                    fontFamily = montserratFamily,
+                    fontFamily = Montserrat,
                     color = Color(126, 198, 11, 255),
                 )
             }
@@ -354,42 +322,30 @@ fun DiscoverView(navController: NavController) {
         HorizontalPager(
             beyondBoundsPageCount = 1,
             flingBehavior = fling,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 0.dp),
+            modifier = Modifier.fillMaxSize().padding(top = 0.dp),
             state = pagerState1
-        ) { index ->
-
-            Box(
-                Modifier
-                    .fillMaxWidth()
+        ) {
+            Box(Modifier.fillMaxWidth()
                     .padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 100.dp)
-
             ) {
-
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                ) {
-
+                LazyVerticalGrid(columns = GridCells.Fixed(2),) {
                     if(homePosts!=null){
-                        items(homePosts!!.value) { dataItem ->
+                        items(homePosts.value) { dataItem ->
                             viewModel.getPostData(dataItem.videoId)
                             GridItem2(navController,dataItem,viewModel.sessionUserName.value)
                         }
                     }
 
                     else if(worldPosts!=null){
-
-                        items(worldPosts!!.value) { dataItem ->
+                        items(worldPosts.value) { dataItem ->
                             
                             viewModel.getPostData(dataItem.videoId)
                             GridItem2(navController,dataItem,viewModel.sessionUserName.value)
                         }
-
                     }
 
                     else if(myFridgePosts!=null){
-                        items(myFridgePosts!!.value) { dataItem ->
+                        items(myFridgePosts.value) { dataItem ->
                             viewModel.getPostData(dataItem.id.toLong())
                             GridItem2(navController,dataItem,viewModel.sessionUserName.value)
                         }
@@ -441,8 +397,14 @@ fun TabHomeDiscover(
                     Text(
 
                         text = AnnotatedString(item), style = TextStyle(
-                            fontWeight = if (pagerState1.currentPage == index) FontWeight.Bold else FontWeight.Normal,
-                            color = if (pagerState1.currentPage == index) Color.Black else Color(android.graphics.Color.parseColor("#C2C2C2")),
+                            fontWeight = if (pagerState1.currentPage == index)
+                                FontWeight.Bold
+                            else
+                                FontWeight.Normal,
+                            color = if (pagerState1.currentPage == index)
+                                Color.Black
+                            else
+                                Color(0xFFC2C2C2),
                             fontSize = fontSize,
                             textAlign = TextAlign.Center,
                         )
@@ -455,46 +417,30 @@ fun TabHomeDiscover(
 
 @Composable
 fun GridItem2(navController: NavController, dataItem: VideoModel, userName:String) {
-
-    val satoshiFamily = FontFamily(
-        Font(R.font.satoshi, FontWeight.Medium)
-    )
-
-    Card(
-        modifier = Modifier
-            .height(272.dp)
-            .width(178.dp)
+    Card(modifier = Modifier.height(272.dp).width(178.dp)
             .padding(10.dp), shape = RoundedCornerShape(15.dp)
     ) {
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-        ) {
+        Box(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
             Image(
                 painter = rememberAsyncImagePainter(dataItem.thumbnailLink),
                 contentDescription = "",
-                Modifier
-                    .fillMaxSize()
-                    .clickable { navController.navigate("DELETE_RECIPE/${dataItem.videoId}") },
+                Modifier.fillMaxSize()
+                    .clickable { navController.navigate("DELETE_RECIPE/${dataItem.videoId}")},
                 contentScale = ContentScale.FillHeight
             )
             Column(
-                Modifier
-                    .fillMaxSize()
-                    .padding(10.dp)
-                    , verticalArrangement = Arrangement.Bottom
+                modifier = Modifier.fillMaxSize().padding(10.dp),
+                verticalArrangement = Arrangement.Bottom
             ) {
                 Text(
                     text = userName,
-                    fontFamily = satoshiFamily,
+                    fontFamily = Satoshi,
                     color = Color.White,
                     fontSize = 15.sp
                 )
                 Text(
                     text =  dataItem.createdAt ,
-                    fontFamily = satoshiFamily,
+                    fontFamily = Satoshi,
                     fontSize = 13.sp,
                     color= Color.White
                 )
@@ -505,40 +451,25 @@ fun GridItem2(navController: NavController, dataItem: VideoModel, userName:Strin
 }
 
 @Composable
-fun GridItem2(navController: NavController, dataItem: UserPosts, userName:String) {
-
-    val satoshiFamily = FontFamily(
-        Font(R.font.satoshi, FontWeight.Medium)
-    )
-
-    Card(
-        modifier = Modifier
-            .height(272.dp)
-            .width(178.dp)
+fun GridItem2(navController: NavController, dataItem: UserPosts, userName: String) {
+    Card(modifier = Modifier.height(272.dp).width(178.dp)
             .padding(10.dp), shape = RoundedCornerShape(15.dp)
     ) {
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-        ) {
+        Box(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
             Image(
                 painter = rememberAsyncImagePainter(dataItem.thumbnailUrl),
                 contentDescription = "",
-                Modifier
-                    .fillMaxSize()
+                Modifier.fillMaxSize()
                     .clickable { navController.navigate("DELETE_RECIPE/${dataItem.id}") },
                 contentScale = ContentScale.FillHeight
             )
             Column(
-                Modifier
-                    .fillMaxSize()
-                    .padding(10.dp), verticalArrangement = Arrangement.Bottom
+                Modifier.fillMaxSize().padding(10.dp), verticalArrangement = Arrangement.Bottom
             ) {
                 Text(
                     text = dataItem.totalLikes.toString() ,
-                    fontFamily = satoshiFamily,
+                    fontFamily = Satoshi,
                     color = Color.White,
                     fontSize = 15.sp
                 )

@@ -15,10 +15,10 @@ class PostRepository(
     private val postToVideoMapper: PostToVideoMapper
 ) {
 
-    suspend fun getPost(id: Long): Resource<VideoModel, DefaultErrorResponse> {
+    suspend fun getPost(id: Long, userId: Long): Resource<VideoModel, DefaultErrorResponse> {
         return when(
             val resource = apiRequestFlow<GetPostResponse, DefaultErrorResponse> {
-                api.getPost(id)
+                api.getPost(id, userId)
             }
         ) {
             is Resource.Success -> {

@@ -6,6 +6,7 @@ import android.kotlin.foodclub.MainActivity
 import android.kotlin.foodclub.domain.models.others.BottomSheetItem
 import android.kotlin.foodclub.domain.models.profile.UserPosts
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.utils.composables.CustomBottomSheet
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -177,7 +178,7 @@ fun ProfileView(navController: NavController, userId: Long) {
                     fontSize = 23.sp,
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.padding(top = 5.dp),
-                    letterSpacing = -1.sp
+                    letterSpacing = (-1).sp
                 )
                 Row(
                     modifier = Modifier
@@ -288,11 +289,9 @@ fun ProfileView(navController: NavController, userId: Long) {
                 HorizontalPager(
                     state = pagerState,
                     beyondBoundsPageCount = 10,
-                ) { page ->
+                ) {
                     Box(
-                        Modifier
-                            .fillMaxSize()
-                            .background(Color.White)
+                        Modifier.fillMaxSize().background(Color.White)
                             .padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 110.dp)
                     ) {
                         LazyVerticalGrid(
@@ -308,7 +307,7 @@ fun ProfileView(navController: NavController, userId: Long) {
         }
 
         if(userId == 0L && showBottomSheet) {
-            android.kotlin.foodclub.utils.composables.BottomSheet(
+            CustomBottomSheet(
                 itemList = listOf(
                     BottomSheetItem(1, "Select From Gallery", R.drawable.select_from_gallery) {},
                     BottomSheetItem(2, "Take Photo", R.drawable.take_photo) {}
@@ -334,10 +333,15 @@ fun GridItem(navController: NavController, dataItem: UserPosts){
         Box(modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()){
-            Image(painter = painterResource(id = R.drawable.salad_ingredient), contentDescription = "",
-                Modifier
-                    .fillMaxSize()
-                    .clickable { navController.navigate("DELETE_RECIPE/${dataItem.id.toLong()}") }, contentScale = ContentScale.FillHeight)
+            Image(
+                painter = painterResource(id = R.drawable.salad_ingredient),
+                contentDescription = "",
+                contentScale = ContentScale.FillHeight,
+                modifier = Modifier.fillMaxSize()
+                    .clickable {
+                        navController.navigate("DELETE_RECIPE/${dataItem.id.toLong()}")
+                    }
+            )
         }
 
     }
@@ -346,21 +350,21 @@ fun GridItem(navController: NavController, dataItem: UserPosts){
 @Composable
 fun FollowButton(isFollowed: Boolean, viewModel: ProfileViewModel, sessionUserId: Long, userId: Long) {
     val colors = if(isFollowed)
-        ButtonDefaults.buttonColors(containerColor = Color(0xFFFFFFFF), contentColor = Color.Black)
-
+        ButtonDefaults.buttonColors(
+            containerColor = Color(0xFFFFFFFF),
+            contentColor = Color.Black
+        )
     else
-        ButtonDefaults.buttonColors(containerColor = Color(0xFF7EC60B), contentColor = Color.White)
+        ButtonDefaults.buttonColors(
+            containerColor = Color(0xFF7EC60B),
+            contentColor = Color.White
+        )
 
     val content = if(isFollowed) "Unfollow" else "Follow"
 
-    val modifier = if(isFollowed) Modifier
-        .width(130.dp)
-        .height(40.dp)
-        .border(1.dp, Color.Black, RoundedCornerShape(40.dp))
-        .clip(RoundedCornerShape(40.dp))
-    else Modifier
-        .width(130.dp)
-        .height(40.dp)
+    val modifier = if(isFollowed) Modifier.width(130.dp).height(40.dp)
+        .border(1.dp, Color.Black, RoundedCornerShape(40.dp)).clip(RoundedCornerShape(40.dp))
+    else Modifier.width(130.dp).height(40.dp)
 
     Button(
         onClick = { if(isFollowed) viewModel.unfollowUser(sessionUserId, userId)

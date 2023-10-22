@@ -19,6 +19,20 @@ val PlusJakartaSans = FontFamily(
     Font(R.font.plusjakartasans_regular),
     Font(R.font.plusjakartasans_bold, FontWeight.Bold)
 )
+
+val Avenir = FontFamily(
+    Font(R.font.avenirblack, FontWeight.Bold),
+    Font(R.font.avenirbook, FontWeight.Medium)
+)
+
+val Raleway = FontFamily(
+    Font(R.font.ralewayextrabold, FontWeight.ExtraBold),
+)
+
+val Satoshi = FontFamily(
+    Font(R.font.satoshi, FontWeight.Medium)
+)
+
 // Set of Material typography styles to start with
 val Typography = Typography(
     bodyLarge = TextStyle(

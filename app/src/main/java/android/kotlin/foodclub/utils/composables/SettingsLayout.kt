@@ -2,7 +2,7 @@ package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
-import android.kotlin.foodclub.views.home.colorGray
+import android.kotlin.foodclub.views.settings.colorGray
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

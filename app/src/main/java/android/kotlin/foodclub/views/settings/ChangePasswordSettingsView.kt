@@ -1,14 +1,11 @@
-package android.kotlin.foodclub.views.home
+package android.kotlin.foodclub.views.settings
 
 import android.kotlin.foodclub.config.ui.textFieldCustomColors
+import android.kotlin.foodclub.utils.composables.ConfirmButton
 import android.kotlin.foodclub.utils.composables.CustomPasswordTextField
 import android.kotlin.foodclub.utils.composables.SettingsLayout
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,7 +13,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -65,19 +61,10 @@ fun ChangePasswordSettings(error: String?, onBackAction: () -> Unit,
             color = Color.Red
         )
 
-        Button(
-            onClick = { sendData(oldPassword, newPassword) },
-            shape = RoundedCornerShape(10.dp),
-            modifier = Modifier.height(56.dp).clip(RoundedCornerShape(10.dp)).fillMaxWidth(),
+        ConfirmButton(
             enabled = filledOldPassword && filledNewPassword,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF7EC60B),
-                disabledContainerColor = Color(0xFFC9C9C9),
-                disabledContentColor = Color.White,
-                contentColor = Color.White
-            )
-        ) {
-            Text(text = "Save", fontSize = 16.sp)
+            text = "Save") {
+            sendData(oldPassword, newPassword)
         }
     }
 }

@@ -48,11 +48,7 @@ fun CameraPreviewView(
             setMediaItem(MediaItem.fromUri(uri))
             playWhenReady = true
             prepare()
-            addListener(object : Player.Listener {
-                override fun onRenderedFirstFrame() {
-                    super.onRenderedFirstFrame()
-                }
-            })
+            addListener(object : Player.Listener {})
         }
     }
 

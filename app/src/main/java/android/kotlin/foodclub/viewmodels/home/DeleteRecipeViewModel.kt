@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.viewmodels.home
 
 import android.kotlin.foodclub.domain.models.home.VideoModel
+import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.util.Log
@@ -18,6 +19,7 @@ import kotlinx.coroutines.launch
 
 class DeleteRecipeViewModel @AssistedInject constructor(
     private val repository: PostRepository,
+    private val sessionCache: SessionCache,
     @Assisted private val postId: Long
 ): ViewModel() {
     private val _title = MutableLiveData("HomeViewModel View")
@@ -34,8 +36,10 @@ class DeleteRecipeViewModel @AssistedInject constructor(
     }
 
     private fun getPostData() {
+        val userId = sessionCache.getActiveSession()?.sessionUser?.userId ?: return
+
         viewModelScope.launch {
-            when(val resource = repository.getPost(postId)) {
+            when(val resource = repository.getPost(postId, userId)) {
                 is Resource.Success -> {
                     _error.value = ""
                     _postData.value = resource.data
@@ -90,10 +94,6 @@ class DeleteRecipeViewModel @AssistedInject constructor(
         val recipesVideosList = listOf(
             recipe_vid1,
         )
-    }
-
-    val deleteVideoExemple = arrayListOf<VideoModel>().apply {
-        addAll(RecipesVideos.recipesVideosList)
     }
 
     @AssistedFactory

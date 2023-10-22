@@ -28,9 +28,9 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheet(itemList: List<BottomSheetItem>, sheetTitle: String,
-                modifier: Modifier = Modifier, enableDragHandle: Boolean = false,
-                onDismiss: () -> Unit = {}) {
+fun CustomBottomSheet(itemList: List<BottomSheetItem>, sheetTitle: String,
+                      modifier: Modifier = Modifier, enableDragHandle: Boolean = false,
+                      onDismiss: () -> Unit = {}) {
     ModalBottomSheet(
         containerColor = Color.White,
         onDismissRequest = { onDismiss() },
