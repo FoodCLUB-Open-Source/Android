@@ -1,9 +1,8 @@
 package android.kotlin.foodclub.views.authentication
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.ui.theme.Montserrat
-import android.kotlin.foodclub.ui.theme.PlusJakartaSans
-import android.kotlin.foodclub.utils.composables.CustomAuthButton
+import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.PlusJakartaSans
 import android.kotlin.foodclub.utils.composables.CustomCodeTextField
 import android.kotlin.foodclub.utils.composables.TermsAndConditionsInfoFooter
 import android.kotlin.foodclub.viewmodels.authentication.SignupVerificationViewModel
@@ -41,7 +40,14 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import android.kotlin.foodclub.navigation.graphs.Graph
+import android.kotlin.foodclub.navigation.Graph
+import android.kotlin.foodclub.navigation.auth.AuthScreen
+import android.kotlin.foodclub.utils.composables.AuthLayout
+import android.kotlin.foodclub.utils.composables.ConfirmButton
+import android.kotlin.foodclub.utils.composables.CustomTextField
+import android.kotlin.foodclub.utils.helpers.FieldsValidation
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
@@ -54,70 +60,29 @@ fun SignupVerification(navController: NavHostController, email: String?, usernam
         viewModel.setData(navController, username, password)
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 25.dp, end = 25.dp, top = 80.dp, bottom = 50.dp),
-    ) {
-        SignupVerificationTopLayout(navController, email, modifier = Modifier.weight(1F))
-        SignupVerificationMainLayout(viewModel, modifier = Modifier.weight(2F))
-        Box(Modifier.weight(1F)) { TermsAndConditionsInfoFooter() }
-    }
-}
+    val errorOccurred = viewModel.errorOccurred.collectAsState()
+    val message = viewModel.message.collectAsState()
 
-@Composable
-fun SignupVerificationTopLayout(navController: NavHostController, email: String?, modifier: Modifier = Modifier) {
-    Box(modifier.fillMaxHeight()) {
-        Column {
-            Image(
-                painter = painterResource(R.drawable.back_icon),
-                contentDescription = "go back",
-                modifier = Modifier
-                    .width(32.dp)
-                    .height(32.dp)
-                    .offset(x = (-8).dp)
-                    .clickable { navController.navigate(Graph.AUTHENTICATION) }
-            )
-            Box(modifier = Modifier.padding(top = 32.dp)) {
-                Column(verticalArrangement = Arrangement.spacedBy(28.dp)) {
-                    Text(text = "Verify your email", textAlign = TextAlign.Left,
-                        fontWeight = FontWeight.Bold, fontSize = 30.sp, fontFamily = PlusJakartaSans
-                    )
-                    Text(text = "Please enter the code we've sent to ${email ?: "your email associated with this account"}",
-                        textAlign = TextAlign.Left, fontWeight = FontWeight.Normal, fontSize = 16.sp,
-                        fontFamily = Montserrat
-                    )
-                }
-            }
-
-        }
-    }
-}
-
-@Composable
-fun SignupVerificationMainLayout(viewModel: SignupVerificationViewModel, modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(bottom = 80.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(verticalArrangement = Arrangement.SpaceBetween, modifier = modifier.fillMaxSize()) {
+    AuthLayout(header = "Verify your email",
+        subHeading = "Please enter the code we've sent to " +
+                (email ?: "your email associated with this account"),
+        errorOccurred = errorOccurred.value, message = message.value,
+        onBackButtonClick = {
+            navController.navigate(AuthScreen.Login.route) {
+                popUpTo(Graph.AUTHENTICATION) { inclusive = true } }
+        }) {
+        Column(verticalArrangement = Arrangement.SpaceBetween) {
             var enableButton by remember { mutableStateOf(false) }
             var isTimerRunning by remember { mutableStateOf(true) }
-            var currentTime by remember { mutableStateOf(TimeUnit.SECONDS.toMillis(62)) }
+            var currentTime by remember {
+                mutableLongStateOf(TimeUnit.SECONDS.toMillis(62))
+            }
             var currentCode by remember { mutableStateOf("") }
 
-            val errorOccurred = viewModel.errorOccurred.collectAsState()
-            val message = viewModel.message.collectAsState()
-
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(bottom = 12.dp)) {
-                //Error or info messages
-                Text(text = (if(errorOccurred.value) "Error: " else "") + message.value,
-                    textAlign = TextAlign.Left, fontWeight = FontWeight.Normal, fontSize = 16.sp,
-                    fontFamily = Montserrat,
-                    color = if(errorOccurred.value) Color.Red else Color.Black
-                )
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(bottom = 12.dp)
+            ) {
                 CustomCodeTextField { isEnabled, code ->
                     enableButton = isEnabled
                     currentCode = code
@@ -125,14 +90,16 @@ fun SignupVerificationMainLayout(viewModel: SignupVerificationViewModel, modifie
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
-                CustomAuthButton(enabled = enableButton, "Verify") {
+                ConfirmButton(enabled = enableButton, "Verify") {
                     viewModel.verifyCode(currentCode)
                     enableButton = false
                 }
                 Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        text = if(isTimerRunning) "Wait " + TimeUnit.MILLISECONDS.toSeconds(currentTime)
-                                + " seconds to " else "I didn't receive a code ",
+                        text = if(isTimerRunning)
+                                "Wait ${TimeUnit.MILLISECONDS.toSeconds(currentTime)} seconds to "
+                            else
+                                "I didn't receive a code ",
                         fontSize = 12.sp,
                         fontFamily = Montserrat,
                         color = Color(0xFF1E232C).copy(alpha = 0.5F)
@@ -164,6 +131,118 @@ fun SignupVerificationMainLayout(viewModel: SignupVerificationViewModel, modifie
                 if(currentTime <= 0) isTimerRunning = false
             }
         }
-
     }
+
+//    Column(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .padding(start = 25.dp, end = 25.dp, top = 80.dp, bottom = 50.dp),
+//    ) {
+//        SignupVerificationTopLayout(navController, email, modifier = Modifier.weight(1F))
+//        SignupVerificationMainLayout(viewModel, modifier = Modifier.weight(2F))
+//        Box(Modifier.weight(1F)) { TermsAndConditionsInfoFooter() }
+//    }
 }
+//
+//@Composable
+//fun SignupVerificationTopLayout(navController: NavHostController, email: String?, modifier: Modifier = Modifier) {
+//    Box(modifier.fillMaxHeight()) {
+//        Column {
+//            Image(
+//                painter = painterResource(R.drawable.back_icon),
+//                contentDescription = "go back",
+//                modifier = Modifier
+//                    .width(32.dp)
+//                    .height(32.dp)
+//                    .offset(x = (-8).dp)
+//                    .clickable { navController.navigate(Graph.AUTHENTICATION) }
+//            )
+//            Box(modifier = Modifier.padding(top = 32.dp)) {
+//                Column(verticalArrangement = Arrangement.spacedBy(28.dp)) {
+//                    Text(text = "Verify your email", textAlign = TextAlign.Left,
+//                        fontWeight = FontWeight.Bold, fontSize = 30.sp, fontFamily = PlusJakartaSans
+//                    )
+//                    Text(text = "Please enter the code we've sent to ${email ?: "your email associated with this account"}",
+//                        textAlign = TextAlign.Left, fontWeight = FontWeight.Normal, fontSize = 16.sp,
+//                        fontFamily = Montserrat
+//                    )
+//                }
+//            }
+//
+//        }
+//    }
+//}
+//
+//@Composable
+//fun SignupVerificationMainLayout(viewModel: SignupVerificationViewModel, modifier: Modifier = Modifier) {
+//    Box(
+//        modifier = modifier
+//            .fillMaxSize()
+//            .padding(bottom = 80.dp),
+//        contentAlignment = Alignment.Center
+//    ) {
+//        Column(verticalArrangement = Arrangement.SpaceBetween, modifier = modifier.fillMaxSize()) {
+//            var enableButton by remember { mutableStateOf(false) }
+//            var isTimerRunning by remember { mutableStateOf(true) }
+//            var currentTime by remember { mutableStateOf(TimeUnit.SECONDS.toMillis(62)) }
+//            var currentCode by remember { mutableStateOf("") }
+//
+//            val errorOccurred = viewModel.errorOccurred.collectAsState()
+//            val message = viewModel.message.collectAsState()
+//
+//            Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(bottom = 12.dp)) {
+//                //Error or info messages
+//                Text(text = (if(errorOccurred.value) "Error: " else "") + message.value,
+//                    textAlign = TextAlign.Left, fontWeight = FontWeight.Normal, fontSize = 16.sp,
+//                    fontFamily = Montserrat,
+//                    color = if(errorOccurred.value) Color.Red else Color.Black
+//                )
+//                CustomCodeTextField { isEnabled, code ->
+//                    enableButton = isEnabled
+//                    currentCode = code
+//                }
+//            }
+//
+//            Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
+//                CustomAuthButton(enabled = enableButton, "Verify") {
+//                    viewModel.verifyCode(currentCode)
+//                    enableButton = false
+//                }
+//                Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
+//                    Text(
+//                        text = if(isTimerRunning) "Wait " + TimeUnit.MILLISECONDS.toSeconds(currentTime)
+//                                + " seconds to " else "I didn't receive a code ",
+//                        fontSize = 12.sp,
+//                        fontFamily = Montserrat,
+//                        color = Color(0xFF1E232C).copy(alpha = 0.5F)
+//                    )
+//                    ClickableText(
+//                        text = AnnotatedString("Resend"),
+//                        onClick = { if(!isTimerRunning) {
+//                            viewModel.sendVerificationCode()
+//                            currentTime = TimeUnit.SECONDS.toMillis(61)
+//                            isTimerRunning = true
+//                        } },
+//                        style = TextStyle(
+//                            textDecoration = TextDecoration.Underline,
+//                            fontWeight = FontWeight.Bold,
+//                            fontFamily = Montserrat,
+//                            fontSize = 12.sp,
+//                            color = if(isTimerRunning) Color(0xFF1E232C).copy(alpha = 0.5F)
+//                            else Color(0xFF7EC60B)
+//                        )
+//                    )
+//                }
+//            }
+//
+//            LaunchedEffect(key1 = currentTime, key2 = isTimerRunning) {
+//                if(currentTime > 0 && isTimerRunning) {
+//                    delay(100L)
+//                    currentTime -= 100L
+//                }
+//                if(currentTime <= 0) isTimerRunning = false
+//            }
+//        }
+//
+//    }
+//}

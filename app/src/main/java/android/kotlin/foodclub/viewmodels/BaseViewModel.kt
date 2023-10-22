@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.viewmodels
 
-import android.kotlin.foodclub.data.models.Session
-import android.kotlin.foodclub.navigation.graphs.Graph
+import android.kotlin.foodclub.domain.models.session.Session
+import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController

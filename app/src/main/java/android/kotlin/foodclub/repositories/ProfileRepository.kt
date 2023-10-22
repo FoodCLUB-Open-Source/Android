@@ -1,108 +1,149 @@
 package android.kotlin.foodclub.repositories
 
-import android.kotlin.foodclub.api.authentication.API
-import android.kotlin.foodclub.api.responses.FollowUnfollowResponse
-import android.kotlin.foodclub.api.retrofit.RetrofitInstance
-import android.kotlin.foodclub.data.models.FollowerUserModel
-import android.kotlin.foodclub.data.models.FollowingUserModel
-import android.kotlin.foodclub.data.models.UserPostsModel
-import android.kotlin.foodclub.data.models.UserProfileModel
+import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
+import android.kotlin.foodclub.domain.models.profile.UserPosts
+import android.kotlin.foodclub.domain.models.profile.UserProfile
+import android.kotlin.foodclub.network.retrofit.apiInterfaces.ProfileService
+import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.FollowerUserMapper
+import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.FollowingUserMapper
+import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserPostsMapper
+import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserProfileMapper
+import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorResponse
+import android.kotlin.foodclub.network.retrofit.responses.profile.FollowUnfollowResponse
+import android.kotlin.foodclub.network.retrofit.responses.profile.RetrieveFollowerListResponse
+import android.kotlin.foodclub.network.retrofit.responses.profile.RetrieveFollowingListResponse
+import android.kotlin.foodclub.network.retrofit.responses.profile.RetrievePostsListResponse
+import android.kotlin.foodclub.network.retrofit.responses.profile.RetrieveProfileResponse
+import android.kotlin.foodclub.network.retrofit.utils.apiRequestFlow
 import android.kotlin.foodclub.utils.helpers.Resource
-import java.io.IOException
 
 class ProfileRepository(
-    private val api: API
+    private val api: ProfileService,
+    private val profileMapper: UserProfileMapper,
+    private val userPostsMapper: UserPostsMapper,
+    private val followerUserMapper: FollowerUserMapper,
+    private val followingUserMapper: FollowingUserMapper
 ) {
 
-    suspend fun retrieveProfileData(userId: Long): Resource<UserProfileModel> {
-        val response = try {
-            api.retrieveProfileData(userId, null, null)
-        } catch (e: IOException) {
-            return Resource.Error("Cannot retrieve data. Check your internet connection and try again.")
-        } catch (e: Exception) {
-            return Resource.Error("Unknown error occurred.")
-        }
+    suspend fun retrieveProfileData(
+        userId: Long, pageNo: Int? = null, pageSize: Int? = null
+    ): Resource<UserProfile, DefaultErrorResponse> {
+        return when(
+            val resource = apiRequestFlow<RetrieveProfileResponse, DefaultErrorResponse> {
+                api.retrieveProfileData(userId, pageNo, pageSize)
+            }
+        ) {
+            is Resource.Success -> {
+                Resource.Success(
+                    profileMapper.mapToDomainModel(resource.data!!.body()!!.data)
+                )
+            }
 
-        if(response.isSuccessful && response.body() != null && response.body()?.data != null){
-            return Resource.Success(response.body()!!.data)
+            is Resource.Error -> {
+                Resource.Error(resource.message!!)
+            }
         }
-        return Resource.Error("Unknown error occurred.")
     }
 
     suspend fun retrieveBookmaredPosts(
         userId: Long, pageSize: Int? = null, pageNo: Int? = null
-    ): Resource<List<UserPostsModel>> {
-        val response = try {
-            api.getBookmarkedPosts(userId, pageSize, pageNo)
-        } catch (e: IOException) {
-            return Resource.Error("Cannot retrieve data. Check your internet connection and try again.")
-        } catch (e: Exception) {
-            return Resource.Error("Unknown error occurred.")
-        }
+    ): Resource<List<UserPosts>, DefaultErrorResponse> {
+        return when(
+            val resource = apiRequestFlow<RetrievePostsListResponse, DefaultErrorResponse> {
+                api.getBookmarkedPosts(userId, pageNo, pageSize)
+            }
+        ) {
+            is Resource.Success -> {
+                Resource.Success(
+                    resource.data!!.body()!!.data.map {
+                        userPostsMapper.mapToDomainModel(it)
+                    }
+                )
+            }
 
-        if(response.isSuccessful && response.body() != null && response.body()?.data != null){
-            return Resource.Success(response.body()!!.data)
+            is Resource.Error -> {
+                Resource.Error(resource.message!!)
+            }
         }
-        return Resource.Error("Unknown error occurred.")
     }
 
-    suspend fun retrieveProfileFollowers(userId: Long): Resource<List<FollowerUserModel>> {
-        val response = try {
-            api.retrieveProfileFollowers(userId, null, null)
-        } catch (e: IOException) {
-            return Resource.Error("Cannot retrieve data. Check your internet connection and try again.")
-        } catch (e: Exception) {
-            return Resource.Error("Unknown error occurred.")
-        }
+    suspend fun retrieveProfileFollowers(
+        userId: Long, pageSize: Int? = null, pageNo: Int? = null
+    ): Resource<List<SimpleUserModel>, DefaultErrorResponse> {
+        return when(
+            val resource = apiRequestFlow<RetrieveFollowerListResponse, DefaultErrorResponse> {
+                api.retrieveProfileFollowers(userId, pageNo, pageSize)
+            }
+        ) {
+            is Resource.Success -> {
+                Resource.Success(
+                    resource.data!!.body()!!.data.map {
+                        followerUserMapper.mapToDomainModel(it)
+                    }
+                )
+            }
 
-        if(response.isSuccessful && response.body() != null && response.body()?.data != null){
-            return Resource.Success(response.body()!!.data)
+            is Resource.Error -> {
+                Resource.Error(resource.message!!)
+            }
         }
-        return Resource.Error("Unknown error occurred.")
     }
 
-    suspend fun retrieveProfileFollowing(userId: Long): Resource<List<FollowingUserModel>> {
-        val response = try {
-            api.retrieveProfileFollowing(userId, null, null)
-        } catch (e: IOException) {
-            return Resource.Error("Cannot retrieve data. Check your internet connection and try again.")
-        } catch (e: Exception) {
-            return Resource.Error("Unknown error occurred.")
-        }
+    suspend fun retrieveProfileFollowing(
+        userId: Long, pageSize: Int? = null, pageNo: Int? = null
+    ): Resource<List<SimpleUserModel>, DefaultErrorResponse> {
+        return when(
+            val resource = apiRequestFlow<RetrieveFollowingListResponse, DefaultErrorResponse> {
+                api.retrieveProfileFollowing(userId, pageNo, pageSize)
+            }
+        ) {
+            is Resource.Success -> {
+                Resource.Success(
+                    resource.data!!.body()!!.data.map {
+                        followingUserMapper.mapToDomainModel(it)
+                    }
+                )
+            }
 
-        if(response.isSuccessful && response.body() != null && response.body()?.data != null){
-            return Resource.Success(response.body()!!.data)
+            is Resource.Error -> {
+                Resource.Error(resource.message!!)
+            }
         }
-        return Resource.Error("Unknown error occurred.")
     }
 
-    suspend fun followUser(followerId: Long, userId: Long): Resource<FollowUnfollowResponse> {
-        val response = try {
-            api.followUser(followerId, userId)
-        } catch (e: IOException) {
-            return Resource.Error("Cannot retrieve data. Check your internet connection and try again.")
-        } catch (e: Exception) {
-            return Resource.Error("Unknown error occurred.")
-        }
+    suspend fun followUser(
+        followerId: Long, userId: Long
+    ): Resource<FollowUnfollowResponse, DefaultErrorResponse> {
+        return when(
+            val resource = apiRequestFlow<FollowUnfollowResponse, DefaultErrorResponse> {
+                api.followUser(followerId, userId)
+            }
+        ) {
+            is Resource.Success -> {
+                Resource.Success(resource.data!!.body()!!)
+            }
 
-        if(response.isSuccessful && response.body() != null){
-            return Resource.Success(response.body()!!)
+            is Resource.Error -> {
+                Resource.Error(resource.message!!)
+            }
         }
-        return Resource.Error("Unknown error occurred.")
     }
 
-    suspend fun unfollowUser(followerId: Long, userId: Long): Resource<FollowUnfollowResponse> {
-        val response = try {
-            api.unfollowUser(followerId, userId)
-        } catch (e: IOException) {
-            return Resource.Error("Cannot retrieve data. Check your internet connection and try again.")
-        } catch (e: Exception) {
-            return Resource.Error("Unknown error occurred.")
-        }
+    suspend fun unfollowUser(
+        followerId: Long, userId: Long
+    ): Resource<FollowUnfollowResponse, DefaultErrorResponse> {
+        return when(
+            val resource = apiRequestFlow<FollowUnfollowResponse, DefaultErrorResponse> {
+                api.unfollowUser(followerId, userId)
+            }
+        ) {
+            is Resource.Success -> {
+                Resource.Success(resource.data!!.body()!!)
+            }
 
-        if(response.isSuccessful && response.body() != null){
-            return Resource.Success(response.body()!!)
+            is Resource.Error -> {
+                Resource.Error(resource.message!!)
+            }
         }
-        return Resource.Error("Unknown error occurred.")
     }
 }

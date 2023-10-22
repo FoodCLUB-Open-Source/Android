@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.viewmodels.authentication
 
+import android.kotlin.foodclub.domain.models.auth.ForgotChangePassword
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import android.kotlin.foodclub.repositories.AuthRepository
@@ -51,7 +52,7 @@ class ForgotPasswordViewModel @Inject constructor(
         viewModelScope.launch {
             when(
                 val resource = repository.confirmForgotPasswordChange(
-                    _email.value!!, verificationCode, password
+                    ForgotChangePassword(_email.value, verificationCode, password)
                 )
             ) {
                 is Resource.Success -> {

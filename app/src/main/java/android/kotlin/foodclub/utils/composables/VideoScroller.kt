@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.content.res.AssetFileDescriptor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.kotlin.foodclub.data.models.VideoModel
+import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.views.home.ProgressionBar
 import android.media.MediaMetadataRetriever
 import android.net.Uri
@@ -128,7 +128,7 @@ fun VideoScroller(
                 context.assets.openFd(video.videoLink.substring(9)), 1
             )  else {
                 try {
-                    BitmapFactory.decodeStream(URL(video.thumbnailLink).openConnection().getInputStream());
+                    BitmapFactory.decodeStream(URL(video.thumbnailLink).openConnection().getInputStream())
                 } catch (e: IOException) {
                     Log.d("VideoPlayer", "Cannot fetch thumbnail. No connection")
                     null

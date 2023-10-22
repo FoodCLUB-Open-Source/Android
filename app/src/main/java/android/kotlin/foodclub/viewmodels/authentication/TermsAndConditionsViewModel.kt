@@ -1,12 +1,9 @@
 package android.kotlin.foodclub.viewmodels.authentication
 
-import android.kotlin.foodclub.data.models.VideoModel
 import androidx.lifecycle.ViewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
 
 class TermsAndConditionsViewModel: ViewModel() {
 

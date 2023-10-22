@@ -1,8 +1,7 @@
 package android.kotlin.foodclub.viewmodels.home
 
-import android.kotlin.foodclub.data.models.UserPostsModel
-import android.kotlin.foodclub.data.models.UserProfileModel
-import android.kotlin.foodclub.data.models.MyRecipeModel
+import android.kotlin.foodclub.domain.models.profile.UserPosts
+import android.kotlin.foodclub.domain.models.profile.UserProfile
 import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
@@ -10,7 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import android.kotlin.foodclub.navigation.graphs.Graph
+import android.kotlin.foodclub.navigation.Graph
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -25,14 +24,16 @@ class ProfileViewModel @AssistedInject constructor(
     @Assisted private val navController: NavController
 ) : ViewModel() {
 
-    private val _myUserId = MutableStateFlow(sessionCache.getActiveSession()?.sessionUser?.userId ?: 0)
+    private val _myUserId = MutableStateFlow(
+        sessionCache.getActiveSession()?.sessionUser?.userId ?: 0
+    )
     val myUserId: StateFlow<Long> get() = _myUserId
 
-    private val _profileModel = MutableStateFlow<UserProfileModel?>(null)
-    val profileModel: StateFlow<UserProfileModel?> get() = _profileModel
+    private val _profileModel = MutableStateFlow<UserProfile?>(null)
+    val profileModel: StateFlow<UserProfile?> get() = _profileModel
 
-    private val _bookmarkedPosts = MutableStateFlow<List<UserPostsModel>>(listOf())
-    val bookmaredPosts: StateFlow<List<UserPostsModel>> get() = _bookmarkedPosts
+    private val _bookmarkedPosts = MutableStateFlow<List<UserPosts>>(listOf())
+    val bookmaredPosts: StateFlow<List<UserPosts>> get() = _bookmarkedPosts
 
     private val _error = MutableStateFlow("")
     val error: StateFlow<String> get() = _error
@@ -46,27 +47,23 @@ class ProfileViewModel @AssistedInject constructor(
                 popUpTo(Graph.HOME) { inclusive = true }
             }
         } else {
-            val id = if(userId != 0L) userId else sessionCache.getActiveSession()!!.sessionUser.userId
+            val id = if(userId != 0L)
+                userId
+            else
+                sessionCache.getActiveSession()!!.sessionUser.userId
+
             getProfileModel(id)
             getBookmarkedPosts(id)
         }
     }
 
-    val tabItems = listOf(
-        MyRecipeModel(
-            "image", "0", true
-        ), MyRecipeModel(
-            "image", "0", false
-        ), MyRecipeModel(
-            "image", "0", true
-        ), MyRecipeModel(
-            "image", "0", false
-        )
-    )
 
     fun setUser(newUserId: Long) {
         if(newUserId != userId) {
-            getProfileModel(if(newUserId != 0L) newUserId else sessionCache.getActiveSession()!!.sessionUser.userId)
+            getProfileModel(
+                if(newUserId != 0L) newUserId
+                else sessionCache.getActiveSession()!!.sessionUser.userId
+            )
         }
     }
 
@@ -138,7 +135,9 @@ class ProfileViewModel @AssistedInject constructor(
             when(val resource = repository.retrieveProfileFollowers(userId)) {
                 is Resource.Success -> {
                     _error.value = ""
-                    _isFollowedByUser.value = resource.data!!.any { it.userId.toLong() == followerId }
+                    _isFollowedByUser.value = resource.data!!.any {
+                        it.userId.toLong() == followerId
+                    }
                 }
                 is Resource.Error -> {
                     _error.value = resource.message!!
@@ -147,11 +146,11 @@ class ProfileViewModel @AssistedInject constructor(
         }
     }
 
-    fun getListOfMyRecipes(): List<UserPostsModel> {
+    fun getListOfMyRecipes(): List<UserPosts> {
         return _profileModel.value!!.userPosts
     }
 
-    fun getListOfBookmarkedRecipes(): List<UserPostsModel> {
+    fun getListOfBookmarkedRecipes(): List<UserPosts> {
         return _profileModel.value!!.userPosts
 //        return tabItems.filter { unit -> return@filter (unit.bookMarked == true) };
 

@@ -3,8 +3,10 @@
 package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.data.models.StoryModel
-import android.kotlin.foodclub.ui.theme.Montserrat
+import android.kotlin.foodclub.domain.models.stories.StoryModel
+import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.defaultButtonColors
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.utils.composables.VideoScroller
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.util.Log
@@ -94,13 +96,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.ui.draw.alpha
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.media3.common.util.UnstableApi
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 240.dp
-    var searchText by remember { mutableStateOf("") }
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var sliderPosition by remember { mutableStateOf(0f) }
     var isSmallScreen by remember { mutableStateOf(false) }
@@ -114,43 +116,41 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
         sheetState = bottomSheetState,
         dragHandle = { BottomSheetDefaults.DragHandle() },
     ) {
-        Column(modifier = Modifier.height(screenHeight).padding(start = 16.dp, end = 16.dp)) {
+        Column(modifier = Modifier
+            .height(screenHeight)
+            .padding(start = 16.dp, end = 16.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 16.dp)
-                ) {
+                Box(modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 16.dp)) {
                     Text("Chicken broth and meatballs",
                         color = Color.Black,
                         fontFamily = Montserrat,
-                        fontSize = if (isSmallScreen == true) 18.sp else 22.sp,
+                        fontSize = if (isSmallScreen) 18.sp else 22.sp,
                         fontWeight = FontWeight.Bold)
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 Box(
-                    modifier = Modifier
-                        .padding(end = 16.dp, bottom = 16.dp)
+                    modifier = Modifier.padding(end = 16.dp, bottom = 16.dp)
                 ) {
                     Button(
                         shape = RectangleShape,
                         modifier = Modifier
                             .border(
-                                1.dp,
-                                Color(android.graphics.Color.parseColor("#3A7CA8")),
-                                shape = RoundedCornerShape(20.dp)
+                                1.dp, Color(0xFF3A7CA8), shape = RoundedCornerShape(20.dp)
                             )
                             .clip(RoundedCornerShape(20.dp))
                             .width(80.dp)
                             .height(30.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.White,
-                            contentColor = Color(android.graphics.Color.parseColor("#3A7CA8"))
-                        ), contentPadding = PaddingValues(bottom = 2.dp),
+                            contentColor = Color(0xFF3A7CA8)
+                        ),
+                        contentPadding = PaddingValues(bottom = 2.dp),
                         onClick = {}
                     ) {
                         Text(
@@ -158,7 +158,7 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             fontFamily = Montserrat,
-                            color = Color(android.graphics.Color.parseColor("#3A7CA8")),
+                            color = Color(0xFF3A7CA8),
                         )
                     }
                 }
@@ -166,32 +166,30 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(if (isSmallScreen == true) 0.dp else 16.dp),
+                    .padding(if (isSmallScreen) 0.dp else 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(start = if (isSmallScreen == true) 16.dp else 0.dp)
+                        .padding(start = if (isSmallScreen) 16.dp else 0.dp)
                 ) {
                     Text("Serving Size",
                         color = Color.Black,
                         fontFamily = Montserrat,
-                        fontSize = if (isSmallScreen == true) 14.sp else 17.sp)
+                        fontSize = if (isSmallScreen) 14.sp else 17.sp)
                 }
                 Box(
-                    modifier = Modifier
-                        .padding(end = if (isSmallScreen == true) 10.dp else 0.dp)
+                    modifier = Modifier.padding(end = if (isSmallScreen) 10.dp else 0.dp)
                 ) {
                     Slider(
-                        modifier = Modifier
-                            .width(if (isSmallScreen == true) 150.dp else 200.dp),
+                        modifier = Modifier.width(if (isSmallScreen) 150.dp else 200.dp),
                         value = sliderPosition,
                         onValueChange = { sliderPosition = it },
                         valueRange = 0f..10f,
                         steps = 4,
                         colors = SliderDefaults.colors(
-                            thumbColor = Color(android.graphics.Color.parseColor("#7EC60B")),
+                            thumbColor = Color(0xFF7EC60B),
                             activeTrackColor = Color.Black,
                             inactiveTrackColor = Color.Black
                         ),
@@ -202,24 +200,19 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 16.dp)
-                ) {
+                Box(modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 16.dp)) {
                     Text("Ingredients", color = Color.Black,
                         fontFamily = Montserrat,
-                        fontSize = if (isSmallScreen == true) 13.sp else 16.sp,
+                        fontSize = if (isSmallScreen) 13.sp else 16.sp,
                         fontWeight = FontWeight.Bold)
                 }
-                Spacer(modifier = Modifier.width(if (isSmallScreen == true) 10.dp else 16.dp))
-                Box(
-                    modifier = Modifier
-                        .padding(end = if (isSmallScreen == true) 16.dp else 16.dp)
-                ) {
-                    Text("Clear", color = Color(android.graphics.Color.parseColor("#7EC60B")),
+                Spacer(modifier = Modifier.width(if (isSmallScreen) 10.dp else 16.dp))
+                Box(modifier = Modifier.padding(end = if (isSmallScreen) 16.dp else 16.dp)) {
+                    Text("Clear", color = Color(0xFF7EC60B),
                         fontFamily = Montserrat,
-                        fontSize = if (isSmallScreen == true) 13.sp else 16.sp,
+                        fontSize = if (isSmallScreen) 13.sp else 16.sp,
                         fontWeight = FontWeight.Bold)
                 }
 
@@ -228,7 +221,7 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(if (isSmallScreen == true) 210.dp else 300.dp),
+                    .height(if (isSmallScreen) 210.dp else 300.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 LazyColumn {
@@ -239,20 +232,19 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
             }
             Spacer(modifier = Modifier.height(20.dp))
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Button(
                     shape = RectangleShape,
                     modifier = Modifier
-                        .border(1.dp, Color(126, 198, 11, 255), shape = RoundedCornerShape(15.dp))
+                        .border(
+                            1.dp, Color(126, 198, 11), RoundedCornerShape(15.dp)
+                        )
                         .clip(RoundedCornerShape(15.dp))
                         .fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(126, 198, 11, 255),
-                        contentColor = Color.White
-                    ), contentPadding = PaddingValues(15.dp),
+                    colors = defaultButtonColors(),
+                    contentPadding = PaddingValues(15.dp),
                     onClick = {}
                 ) {
                     Text(
@@ -274,8 +266,7 @@ fun BlurImage(content: @Composable () -> Unit) {
         content()
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
+                .fillMaxSize()
                 .drawWithContent {
                     val path = Path()
                     path.addRoundRect(
@@ -328,7 +319,7 @@ fun BlurImage(content: @Composable () -> Unit) {
 }
 
 @OptIn(ExperimentalFoundationApi::class)
-@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+@androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 fun HomeView(
     modifier: Modifier = Modifier,
@@ -339,13 +330,11 @@ fun HomeView(
     var showIngredientSheet by remember { mutableStateOf(false) }
 
     val viewModel: HomeViewModel = hiltViewModel()
-    val title = viewModel.title.value ?: "Loading..."
     val localDensity = LocalDensity.current
 
     val videosState = viewModel.postListData.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     var screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.94f
 
     if (screenHeightMinusBottomNavItem <= 650.dp) {
@@ -369,7 +358,7 @@ fun HomeView(
     val storyModel = StoryModel(painterResource(R.drawable.story_user), 1692815790, "Julien", painterResource(R.drawable.foodsnap))
     val currentStory by remember { mutableStateOf(storyModel) }
     var currentStoryOffset by remember { mutableStateOf(IntOffset(0, 0)) }
-    var storyViewMode by remember { mutableStateOf(false) }
+    val storyViewMode by remember { mutableStateOf(false) }
 
     val triggerIngredientBottomSheetModal: () -> Unit = {
         showIngredientSheet = !showIngredientSheet
@@ -390,10 +379,7 @@ fun HomeView(
     }
 
     Box(
-        modifier = Modifier
-            .padding(top = 55.dp)
-            .fillMaxWidth()
-            .zIndex(1f),
+        modifier = Modifier.padding(top = 55.dp).fillMaxWidth().zIndex(1f),
         contentAlignment = Alignment.Center // Center the content horizontally
     ) {
         Row(
@@ -560,10 +546,7 @@ fun HomeView(
                                         .alpha(0.7f),
                                     onClick = { /*TODO*/ },
                                     contentPadding = PaddingValues(0.dp),
-                                    colors = ButtonDefaults.buttonColors(
-                                        Color(android.graphics.Color.parseColor("#D95978")
-                                        )
-                                    )
+                                    colors = ButtonDefaults.buttonColors(Color(0xFFD95978))
                                 ) {
                                     Text(
                                         "Meat", fontFamily = Montserrat,
@@ -585,31 +568,21 @@ fun HomeView(
                                     Text(
                                         videosState.value[it].authorDetails, color = Color.White,
                                         fontFamily = Montserrat, fontSize = 18.sp,
-                                        modifier = Modifier
-                                            .padding(2.dp)
-                                            .alpha(0.7f)
+                                        modifier = Modifier.padding(2.dp).alpha(0.7f)
                                     )
                                 }
                             }
                         }
 
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .padding(15.dp)
-                        ) {
+                        Box(modifier = Modifier.align(Alignment.BottomEnd).padding(15.dp)) {
                             Column {
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     modifier = Modifier
-                                        .align(Alignment.End)
-                                        .width(50.dp)
-                                        .height(50.dp)
+                                        .align(Alignment.End).width(50.dp).height(50.dp)
                                 ) {
                                     Box(
-                                        modifier = Modifier
-                                            .width(55.dp)
-                                            .height(55.dp)
+                                        modifier = Modifier.width(55.dp).height(55.dp)
                                     ) {
                                         Box(
                                             modifier = Modifier
@@ -665,40 +638,46 @@ fun HomeView(
                                                 .alpha(0.7f)
                                                 .clickable {
                                                     isLiked = !isLiked
-                                                    videosState.value[it].currentViewerInteraction.isLikedByYou =
+                                                    videosState.value[it]
+                                                        .currentViewerInteraction.isLikedByYou =
                                                         !isLiked
                                                 }
                                         ) {
                                             val maxSize = 32.dp
-                                            val iconSize by animateDpAsState(targetValue = if (isLiked) 22.dp else 21.dp,
+                                            val iconSize by animateDpAsState(
+                                                targetValue = if (isLiked) 22.dp else 21.dp,
                                                 animationSpec = keyframes {
                                                     durationMillis = 400
                                                     14.dp.at(50)
                                                     maxSize.at(190)
                                                     16.dp.at(330)
-                                                    22.dp.at(400).with(FastOutLinearInEasing)
+                                                    22.dp.at(400)
+                                                        .with(FastOutLinearInEasing)
                                                 }, label = ""
                                             )
 
                                             LaunchedEffect(key1 = doubleTapState) {
-                                                if (doubleTapState.first != Offset.Unspecified && doubleTapState.second) {
+                                                if (doubleTapState.first != Offset.Unspecified &&
+                                                    doubleTapState.second) {
                                                     isLiked = doubleTapState.second
                                                 }
                                             }
                                             Icon(
                                                 painter = painterResource(id = R.drawable.like),
                                                 contentDescription = null,
-                                                tint = if (isLiked) Color(android.graphics.Color.parseColor("#7EC60B")) else Color.White,
+                                                tint = if (isLiked) foodClubGreen else Color.White,
                                                 modifier = Modifier
                                                     .size(iconSize)
                                                     .alpha(0.7f)
                                             )
                                             Spacer(modifier = Modifier.height(3.dp))
                                             Text(
-                                                text = ValueParser.numberToThousands(videosState.value[it].videoStats.like),
+                                                text = ValueParser.numberToThousands(
+                                                    videosState.value[it].videoStats.like
+                                                ),
                                                 fontSize = 13.sp,
                                                 fontFamily = Montserrat,
-                                                color = if (isLiked) Color(android.graphics.Color.parseColor("#7EC60B")) else Color.White
+                                                color = if (isLiked) foodClubGreen else Color.White
                                             )
                                         }
                                     }
@@ -710,16 +689,18 @@ fun HomeView(
 
                                 Button(
                                     onClick = { triggerIngredientBottomSheetModal() },
-                                    colors = ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#7EC60B"))),
+                                    colors = defaultButtonColors(),
                                     shape = RoundedCornerShape(15.dp),
-                                    modifier = Modifier
-                                        .width(120.dp)
-                                        .height(35.dp)
-                                        .alpha(0.7f),
+                                    modifier = Modifier.width(120.dp).height(35.dp).alpha(0.7f),
                                     contentPadding = PaddingValues(0.dp)
                                 ) {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Text("Info", fontFamily = Montserrat, fontSize = 14.sp) }
+                                        Text(
+                                            text = "Info",
+                                            fontFamily = Montserrat,
+                                            fontSize = 14.sp
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -746,12 +727,8 @@ fun HomeIngredient(ingredientTitle: String, ingredientImage: Int) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(if (isSmallScreen == true) 100.dp else 130.dp)
-            .border(
-                1.dp,
-                Color(android.graphics.Color.parseColor("#E8E8E8")),
-                shape = RoundedCornerShape(15.dp)
-            )
+            .height(if (isSmallScreen) 100.dp else 130.dp)
+            .border(1.dp, Color(0xFFE8E8E8), RoundedCornerShape(15.dp))
             .clip(RoundedCornerShape(10.dp))
             .background(Color.White)
             .padding(10.dp)
@@ -762,7 +739,7 @@ fun HomeIngredient(ingredientTitle: String, ingredientImage: Int) {
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .height(110.dp)
-                .width(if (isSmallScreen == true) 85.dp else 100.dp)
+                .width(if (isSmallScreen) 85.dp else 100.dp)
                 .clip(RoundedCornerShape(12.dp))
         )
         Box(
@@ -771,8 +748,8 @@ fun HomeIngredient(ingredientTitle: String, ingredientImage: Int) {
                 .align(Alignment.TopEnd)
                 .clip(RoundedCornerShape(30.dp))
                 .background(
-                    if (isSelected) Color(android.graphics.Color.parseColor("#7EC60B"))
-                    else Color(android.graphics.Color.parseColor("#ECECEC"))
+                    if (isSelected) foodClubGreen
+                    else Color(0xFFECECEC)
                 )
                 .clickable { isSelected = !isSelected }
                 .padding(4.dp),
@@ -784,10 +761,9 @@ fun HomeIngredient(ingredientTitle: String, ingredientImage: Int) {
                 contentScale = ContentScale.Crop,
             )
         }
-        Box(
-            modifier = Modifier
-                .padding(start = if (isSmallScreen == true) 90.dp else 110.dp, top = 10.dp)
-                .fillMaxSize()
+        Box(modifier = Modifier
+            .padding(start = if (isSmallScreen) 90.dp else 110.dp, top = 10.dp)
+            .fillMaxSize()
         ) {
             Box(modifier = Modifier
                 .width(115.dp)
@@ -831,5 +807,5 @@ fun HomeIngredient(ingredientTitle: String, ingredientImage: Int) {
             }
         }
     }
-    Spacer(modifier = Modifier.height(if (isSmallScreen == true) 10.dp else 20.dp))
+    Spacer(modifier = Modifier.height(if (isSmallScreen) 10.dp else 20.dp))
 }

@@ -2,8 +2,8 @@ package android.kotlin.foodclub.views.home
 
 import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.data.models.Ingredient
-import android.kotlin.foodclub.data.models.Recipe
+import android.kotlin.foodclub.domain.models.products.Ingredient
+import android.kotlin.foodclub.domain.models.recipes.Recipe
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.viewmodels.home.CreateRecipeViewModel
@@ -61,7 +61,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions

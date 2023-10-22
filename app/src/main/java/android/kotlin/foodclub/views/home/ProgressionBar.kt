@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.views.home
 
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -31,8 +33,6 @@ import androidx.compose.ui.unit.offset
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-val colorGreen= Color(android.graphics.Color.parseColor("#7EC60B"))
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProgressionBar(
@@ -42,13 +42,13 @@ fun ProgressionBar(
     totalDuration: () -> Long,
     onSeekChanged: (timeMs: Float) -> Unit
 ) {
-    var progress by remember { mutableStateOf(0f) }
-    var timeDelay: Long = 10
-    var iterations = durationTime / timeDelay
-    var changeIterations = 0
+    var progress by remember { mutableFloatStateOf(0f) }
+    val timeDelay: Long = 10
+    val iterations = durationTime / timeDelay
+    val changeIterations = 0
     val progressionRate = (1f / iterations)
     val coroutineScope = rememberCoroutineScope()
-    var isChecked by remember { mutableStateOf(true) }
+    val isChecked by remember { mutableStateOf(true) }
 
     // new states passed from the video state
     val duration = remember(totalDuration()) { totalDuration() }
@@ -64,14 +64,7 @@ fun ProgressionBar(
         }
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(10.dp)
-            .padding(top = 6.dp),
-        //contentAlignment = Alignment.Center
-    ) {
-
+    Column(modifier = modifier.fillMaxWidth().height(10.dp).padding(top = 6.dp)) {
         Slider(
             // new working version
             value = videoTime.toFloat(),
@@ -84,22 +77,15 @@ fun ProgressionBar(
                 progress = it
                 changeIterations = (it / progressionRate).toInt()
             },*/
-            modifier = Modifier
-                .fillMaxWidth()
-                .negativeMargin((-16).dp)
-                .padding(0.dp),
+            modifier = Modifier.fillMaxWidth().negativeMargin((-16).dp).padding(0.dp),
             colors = SliderDefaults.colors(
                 thumbColor = Color.Transparent,
-                activeTrackColor = colorGreen,
-                inactiveTrackColor = colorGray,
+                activeTrackColor = foodClubGreen,
+                inactiveTrackColor = foodClubGreen,
             ),
             thumb = {
-                Box(
-                    modifier = Modifier
-                        .size(0.dp)
-                        .shadow(0.dp, clip = true)
-                        .background(colorGreen)
-
+                Box(modifier = Modifier.size(0.dp).shadow(0.dp, clip = true)
+                        .background(foodClubGreen)
                 )
             }
         )
