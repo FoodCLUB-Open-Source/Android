@@ -72,7 +72,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import android.kotlin.foodclub.viewmodels.home.DiscoverViewModel
+import android.kotlin.foodclub.viewModels.home.DiscoverViewModel
 import androidx.compose.runtime.mutableIntStateOf
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope

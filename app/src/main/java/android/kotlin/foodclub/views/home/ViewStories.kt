@@ -5,7 +5,7 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.utils.composables.VideoScroller
 import android.kotlin.foodclub.utils.helpers.ValueParser
-import android.kotlin.foodclub.viewmodels.home.HomeViewModel
+import android.kotlin.foodclub.viewModels.home.HomeViewModel
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearEasing

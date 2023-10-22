@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.viewmodels
+package android.kotlin.foodclub.viewModels
 
 import android.kotlin.foodclub.domain.models.session.Session
 import android.kotlin.foodclub.navigation.Graph

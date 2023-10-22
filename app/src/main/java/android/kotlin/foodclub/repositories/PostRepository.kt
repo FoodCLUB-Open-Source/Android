@@ -2,7 +2,7 @@ package android.kotlin.foodclub.repositories
 
 import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorResponse
 import android.kotlin.foodclub.domain.models.home.VideoModel
-import android.kotlin.foodclub.network.retrofit.apiInterfaces.PostsService
+import android.kotlin.foodclub.network.retrofit.services.PostsService
 import android.kotlin.foodclub.network.retrofit.dtoMappers.posts.PostToVideoMapper
 import android.kotlin.foodclub.network.retrofit.responses.posts.DeletePostResponse
 import android.kotlin.foodclub.network.retrofit.responses.posts.GetHomepagePostsResponse

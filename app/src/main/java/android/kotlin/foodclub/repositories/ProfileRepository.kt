@@ -3,7 +3,7 @@ package android.kotlin.foodclub.repositories
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.domain.models.profile.UserPosts
 import android.kotlin.foodclub.domain.models.profile.UserProfile
-import android.kotlin.foodclub.network.retrofit.apiInterfaces.ProfileService
+import android.kotlin.foodclub.network.retrofit.services.ProfileService
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.FollowerUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.FollowingUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserPostsMapper

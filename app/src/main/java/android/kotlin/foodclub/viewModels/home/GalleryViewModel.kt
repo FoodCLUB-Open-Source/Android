@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.viewmodels.home
+package android.kotlin.foodclub.viewModels.home
 
 import android.content.ContentResolver
 import android.content.ContentUris

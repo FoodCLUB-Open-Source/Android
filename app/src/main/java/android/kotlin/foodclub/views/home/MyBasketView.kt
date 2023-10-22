@@ -5,7 +5,7 @@ import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
 import android.kotlin.foodclub.utils.helpers.ValueParser
-import android.kotlin.foodclub.viewmodels.home.MyBasketViewModel
+import android.kotlin.foodclub.viewModels.home.MyBasketViewModel
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.Image

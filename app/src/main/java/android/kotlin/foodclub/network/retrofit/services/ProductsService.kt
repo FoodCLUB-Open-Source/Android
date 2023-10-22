@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.network.retrofit.apiInterfaces
+package android.kotlin.foodclub.network.retrofit.services
 
 import android.kotlin.foodclub.network.retrofit.dtoModels.edamam.EdamamFoodProductsDto
 import retrofit2.Response

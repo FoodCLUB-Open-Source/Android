@@ -5,7 +5,7 @@ import android.kotlin.foodclub.utils.composables.AuthLayout
 import android.kotlin.foodclub.utils.composables.ConfirmButton
 import android.kotlin.foodclub.utils.composables.CustomPasswordTextField
 import android.kotlin.foodclub.utils.composables.CustomTextField
-import android.kotlin.foodclub.viewmodels.authentication.LogInWithEmailViewModel
+import android.kotlin.foodclub.viewModels.authentication.LogInWithEmailViewModel
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

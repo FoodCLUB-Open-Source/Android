@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.navigation.auth
 
 import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
-import android.kotlin.foodclub.viewmodels.authentication.ForgotPasswordViewModel
+import android.kotlin.foodclub.viewModels.authentication.ForgotPasswordViewModel
 import android.kotlin.foodclub.views.authentication.forgotPassword.ChangePasswordView
 import android.kotlin.foodclub.views.authentication.forgotPassword.EmailSentView
 import android.kotlin.foodclub.views.authentication.forgotPassword.ForgotPasswordView

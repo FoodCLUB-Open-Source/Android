@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.navigation
 
 import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
-import android.kotlin.foodclub.viewmodels.home.SettingsViewModel
+import android.kotlin.foodclub.viewModels.home.SettingsViewModel
 import android.kotlin.foodclub.views.settings.ChangePasswordSettings
 import android.kotlin.foodclub.views.settings.EditProfileSetting
 import android.kotlin.foodclub.views.settings.PrivacySetting

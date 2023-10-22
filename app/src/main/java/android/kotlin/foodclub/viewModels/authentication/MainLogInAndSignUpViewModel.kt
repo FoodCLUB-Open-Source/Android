@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.viewmodels.authentication
+package android.kotlin.foodclub.viewModels.authentication
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

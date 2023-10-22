@@ -2,7 +2,7 @@ package android.kotlin.foodclub.views.settings
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.navigation.Graph
-import android.kotlin.foodclub.viewmodels.home.SettingsViewModel
+import android.kotlin.foodclub.viewModels.home.SettingsViewModel
 import android.kotlin.foodclub.utils.composables.SettingsLayout
 import android.kotlin.foodclub.views.home.montserratFamily
 import androidx.compose.foundation.Image

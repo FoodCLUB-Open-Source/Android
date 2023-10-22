@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.PlusJakartaSans
 import android.kotlin.foodclub.navigation.Graph
-import android.kotlin.foodclub.viewmodels.BaseViewModel
+import android.kotlin.foodclub.viewModels.BaseViewModel
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
