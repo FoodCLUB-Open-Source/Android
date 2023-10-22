@@ -24,7 +24,9 @@ class ProfileViewModel @AssistedInject constructor(
     @Assisted private val navController: NavController
 ) : ViewModel() {
 
-    private val _myUserId = MutableStateFlow(sessionCache.getActiveSession()?.sessionUser?.userId ?: 0)
+    private val _myUserId = MutableStateFlow(
+        sessionCache.getActiveSession()?.sessionUser?.userId ?: 0
+    )
     val myUserId: StateFlow<Long> get() = _myUserId
 
     private val _profileModel = MutableStateFlow<UserProfile?>(null)
@@ -45,7 +47,11 @@ class ProfileViewModel @AssistedInject constructor(
                 popUpTo(Graph.HOME) { inclusive = true }
             }
         } else {
-            val id = if(userId != 0L) userId else sessionCache.getActiveSession()!!.sessionUser.userId
+            val id = if(userId != 0L)
+                userId
+            else
+                sessionCache.getActiveSession()!!.sessionUser.userId
+
             getProfileModel(id)
             getBookmarkedPosts(id)
         }
@@ -54,7 +60,10 @@ class ProfileViewModel @AssistedInject constructor(
 
     fun setUser(newUserId: Long) {
         if(newUserId != userId) {
-            getProfileModel(if(newUserId != 0L) newUserId else sessionCache.getActiveSession()!!.sessionUser.userId)
+            getProfileModel(
+                if(newUserId != 0L) newUserId
+                else sessionCache.getActiveSession()!!.sessionUser.userId
+            )
         }
     }
 
@@ -126,7 +135,9 @@ class ProfileViewModel @AssistedInject constructor(
             when(val resource = repository.retrieveProfileFollowers(userId)) {
                 is Resource.Success -> {
                     _error.value = ""
-                    _isFollowedByUser.value = resource.data!!.any { it.userId.toLong() == followerId }
+                    _isFollowedByUser.value = resource.data!!.any {
+                        it.userId.toLong() == followerId
+                    }
                 }
                 is Resource.Error -> {
                     _error.value = resource.message!!

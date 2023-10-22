@@ -44,11 +44,12 @@ fun NavGraphBuilder.signupNavigationGraph(navController: NavHostController) {
 
             ConfirmEmailView(
                 onValuesUpdate = {
-                    viewModel.saveRepeatedEmail(it)
-                    navController.navigate("signup_page_3") { popUpTo("signup_page_2") { inclusive = true } }
+                    navController.navigate("signup_page_3") {
+                        popUpTo("signup_page_2") { inclusive = true }
+                    }
                 },
-                onBackButtonClick = {
-                    navController.popBackStack() },
+                saveData = { viewModel.saveRepeatedEmail(it) },
+                onBackButtonClick = { navController.popBackStack() },
                 userSignUpInformation = userSignUpInformation,
                 repeatedEmailState = repeatedEmail,
                 error = error.value
@@ -60,13 +61,12 @@ fun NavGraphBuilder.signupNavigationGraph(navController: NavHostController) {
             val error = viewModel.error.collectAsState()
 
             CreateFullNameView(
-                onValuesUpdate = {
-                    viewModel.saveFullName(it)
-                    navController.navigate("signup_page_4")
-                },
+                onValuesUpdate = { navController.navigate("signup_page_4") },
+                saveData = { viewModel.saveFullName(it) },
                 onBackButtonClick = {
-                    viewModel.saveFullName(it)
-                    navController.navigate("signup_page_1") { popUpTo("signup_page_1") { inclusive = true } } },
+                    navController.navigate("signup_page_1") {
+                        popUpTo("signup_page_1") { inclusive = true }
+                    } },
                 userSignUpInformation = userSignUpInformation,
                 error = error.value
             )
@@ -77,13 +77,9 @@ fun NavGraphBuilder.signupNavigationGraph(navController: NavHostController) {
             val error = viewModel.error.collectAsState()
 
             UsernameView(
-                onValuesUpdate = {
-                    viewModel.saveUsername(it)
-                    viewModel.signUpUser(navController)
-                },
-                onBackButtonClick = {
-                    viewModel.saveUsername(it)
-                    navController.popBackStack() },
+                onValuesUpdate = { viewModel.signUpUser(navController) },
+                saveData = { viewModel.saveUsername(it) },
+                onBackButtonClick = { navController.popBackStack() },
                 userSignUpInformation = userSignUpInformation,
                 error = error.value
             )

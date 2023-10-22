@@ -28,7 +28,7 @@ fun NavGraphBuilder.forgotPasswordNavigationGraph(navController: NavHostControll
                         navController.navigate("forgot_password_page_2")
                     } },
                 onBackButtonClick = { navController.navigate(AuthScreen.Login.route) {
-                    popUpTo(AuthScreen.Forgot.route) { inclusive = true } }
+                    popUpTo(AuthScreen.Login.route) { inclusive = true } }
                                     },
                 email = email.value,
                 errorOccurred = errorOccurred,
@@ -56,9 +56,9 @@ fun NavGraphBuilder.forgotPasswordNavigationGraph(navController: NavHostControll
         composable("forgot_password_page_3") {
             EmailSentView(
                 onClick = { navController.navigate(AuthScreen.Login.route) {
-                    popUpTo(AuthScreen.Forgot.route) { inclusive = true } } },
+                    popUpTo(AuthScreen.Login.route) { inclusive = true } } },
                 onBackButtonClick = { navController.navigate(AuthScreen.Login.route) {
-                    popUpTo(AuthScreen.Forgot.route) { inclusive = true } } }
+                    popUpTo(AuthScreen.Login.route) { inclusive = true } } }
             )
         }
     }

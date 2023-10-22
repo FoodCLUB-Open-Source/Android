@@ -78,7 +78,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun IngredientsBottomSheet(onDismiss: () -> Unit, productsDataFlow: StateFlow<ProductsData>,
                            loadMoreObjects: (searchText: String, onLoadCompleted: () -> Unit)
-                           -> Unit = { searchText, onLoadCompleted -> },
+                           -> Unit = { _, _ -> },
                            onListUpdate: (searchText: String) -> Unit = {},
                            onSave: (ingredient: Ingredient) -> Unit = {}) {
 

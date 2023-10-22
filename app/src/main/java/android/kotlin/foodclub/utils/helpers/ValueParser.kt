@@ -47,7 +47,7 @@ class ValueParser {
 
             return if(!errorResponse.message.isNullOrEmpty()) {
                 errorResponse.message
-            } else if(errorResponse.errors.isNotEmpty()) {
+            } else if(!errorResponse.errors.isNullOrEmpty()) {
                 "Input data are invalid. Check mistakes and try again."
             } else {
                 "Unknown error occurred."
