@@ -4,7 +4,7 @@ import android.app.Activity
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.activities.MainActivity
 import android.kotlin.foodclub.domain.models.others.BottomSheetItem
-import android.kotlin.foodclub.data.models.UserPostsModel
+import android.kotlin.foodclub.domain.models.profile.UserPosts
 import android.kotlin.foodclub.ui.theme.Montserrat
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -276,7 +276,7 @@ fun ProfileView(navController: NavController, userId: Long) {
                 }
 
 
-                var tabItems = listOf<UserPostsModel>()
+                var tabItems = listOf<UserPosts>()
 
                 if(pagerState.currentPage == 0){
                     tabItems = viewModel.getListOfMyRecipes()
@@ -324,7 +324,7 @@ fun ProfileView(navController: NavController, userId: Long) {
 }
 
 @Composable
-fun GridItem(navController: NavController, dataItem: UserPostsModel){
+fun GridItem(navController: NavController, dataItem: UserPosts){
     Card(modifier = Modifier
         .height(272.dp)
         .width(178.dp)

@@ -1,10 +1,9 @@
 package android.kotlin.foodclub.viewmodels.home
 
-import android.kotlin.foodclub.api.retrofit.RetrofitInstance
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.ProductsData
-import android.kotlin.foodclub.data.models.Recipe
-import android.kotlin.foodclub.data.models.RecipeRepository
+import android.kotlin.foodclub.domain.models.recipes.Recipe
+import android.kotlin.foodclub.repositories.RecipeRepository
 import android.kotlin.foodclub.repositories.ProductRepository
 import android.kotlin.foodclub.domain.enums.QuantityUnit
 import android.kotlin.foodclub.utils.helpers.Resource
@@ -23,7 +22,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CreateRecipeViewModel @Inject constructor(
-    private val productsRepository: ProductRepository
+    private val productsRepository: ProductRepository,
+    private val recipeRepository: RecipeRepository
 ) : ViewModel() {
     private val _title = MutableLiveData("CreateRecipeViewModel View")
     val title: LiveData<String> get() = _title
@@ -38,12 +38,9 @@ class CreateRecipeViewModel @Inject constructor(
 
     private val _error = MutableStateFlow("")
 
-    // FOR CREATE RECIPE
-    private val repository: RecipeRepository = RecipeRepository(RetrofitInstance.recipeAPI)
-
     init {
 //        getTestData()
-        fetchProductsDatabase("")
+        fetchProductsDatabase()
     }
 
     private fun getTestData() {
@@ -57,7 +54,7 @@ class CreateRecipeViewModel @Inject constructor(
             }
         }
     }
-    private fun fetchProductsDatabase(searchText: String) {
+    private fun fetchProductsDatabase(searchText: String = "") {
         viewModelScope.launch() {
             when(val resource = productsRepository.getProductsList(searchText)) {
                 is Resource.Success -> {
@@ -93,13 +90,7 @@ class CreateRecipeViewModel @Inject constructor(
 
     // CREATE RECIPE FUNCTION
     suspend fun createRecipe(recipe: Recipe, userId: String): Boolean {
-        try {
-            // CREATES RECIPE + USER ID
-            return repository.createRecipe(recipe, userId)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return false
-        }
+        return recipeRepository.createRecipe(recipe, userId)
     }
 
 }

@@ -1,9 +1,9 @@
-package com.example.foodclub.views.home
+package android.kotlin.foodclub.views.home
 
 import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.data.models.UserPostsModel
-import android.kotlin.foodclub.data.models.VideoModel
+import android.kotlin.foodclub.domain.models.home.VideoModel
+import android.kotlin.foodclub.domain.models.profile.UserPosts
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -218,7 +218,7 @@ fun DiscoverView(navController: NavController) {
             initialPageOffsetFraction = 0f
         ) {
             4
-        };
+        }
 
         val fling = PagerDefaults.flingBehavior(
             state = pagerState1, lowVelocityAnimationSpec = tween(
@@ -226,7 +226,7 @@ fun DiscoverView(navController: NavController) {
             )
         )
 
-        val scope = rememberCoroutineScope();
+        val scope = rememberCoroutineScope()
 
 
         val tabItems1 = listOf(
@@ -277,9 +277,9 @@ fun DiscoverView(navController: NavController) {
             }
         }
 
-        var homePosts: State<List<VideoModel>>? = null;
-        var worldPosts: State<List<VideoModel>>? = null;
-        var myFridgePosts: State<List<UserPostsModel>>? = null;
+        var homePosts: State<List<VideoModel>>? = null
+        var worldPosts: State<List<VideoModel>>? = null
+        var myFridgePosts: State<List<UserPosts>>? = null
 
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -343,7 +343,7 @@ fun DiscoverView(navController: NavController) {
                 Text(
                     "Add items +",
                     fontSize = 13.sp,
-                    fontFamily = android.kotlin.foodclub.views.home.montserratFamily,
+                    fontFamily = montserratFamily,
                     color = Color(126, 198, 11, 255),
                 )
             }
@@ -373,7 +373,7 @@ fun DiscoverView(navController: NavController) {
 
                     if(homePosts!=null){
                         items(homePosts!!.value) { dataItem ->
-                            viewModel.getPostData(dataItem.videoId);
+                            viewModel.getPostData(dataItem.videoId)
                             GridItem2(navController,dataItem,viewModel.sessionUserName.value)
                         }
                     }
@@ -382,7 +382,7 @@ fun DiscoverView(navController: NavController) {
 
                         items(worldPosts!!.value) { dataItem ->
                             
-                            viewModel.getPostData(dataItem.videoId);
+                            viewModel.getPostData(dataItem.videoId)
                             GridItem2(navController,dataItem,viewModel.sessionUserName.value)
                         }
 
@@ -390,7 +390,7 @@ fun DiscoverView(navController: NavController) {
 
                     else if(myFridgePosts!=null){
                         items(myFridgePosts!!.value) { dataItem ->
-                            viewModel.getPostData(dataItem.id.toLong());
+                            viewModel.getPostData(dataItem.id.toLong())
                             GridItem2(navController,dataItem,viewModel.sessionUserName.value)
                         }
                     }
@@ -454,7 +454,7 @@ fun TabHomeDiscover(
 }
 
 @Composable
-fun GridItem2(navController: NavController, dataItem: VideoModel,userName:String) {
+fun GridItem2(navController: NavController, dataItem: VideoModel, userName:String) {
 
     val satoshiFamily = FontFamily(
         Font(R.font.satoshi, FontWeight.Medium)
@@ -505,7 +505,7 @@ fun GridItem2(navController: NavController, dataItem: VideoModel,userName:String
 }
 
 @Composable
-fun GridItem2(navController: NavController, dataItem: UserPostsModel,userName:String) {
+fun GridItem2(navController: NavController, dataItem: UserPosts, userName:String) {
 
     val satoshiFamily = FontFamily(
         Font(R.font.satoshi, FontWeight.Medium)

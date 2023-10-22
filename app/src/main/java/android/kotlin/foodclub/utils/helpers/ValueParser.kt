@@ -39,7 +39,11 @@ class ValueParser {
             if(response.errorBody() == null) return "Unknown error occurred."
 
 
-            val errorResponse = Gson().fromJson(response.errorBody()?.string(), DefaultErrorResponse::class.java)
+            val errorResponse = try {
+                Gson().fromJson(response.errorBody()?.string(), DefaultErrorResponse::class.java)
+            } catch (e: Exception) {
+                DefaultErrorResponse(message = "${response.code()} ${response.message()}")
+            }
 
             return if(!errorResponse.message.isNullOrEmpty()) {
                 errorResponse.message

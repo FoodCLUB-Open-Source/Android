@@ -1,6 +1,6 @@
 package android.kotlin.foodclub.viewmodels.home
 
-import android.kotlin.foodclub.data.models.VideoModel
+import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache

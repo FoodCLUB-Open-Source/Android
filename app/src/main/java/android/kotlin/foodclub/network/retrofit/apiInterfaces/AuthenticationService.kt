@@ -6,7 +6,7 @@ import android.kotlin.foodclub.network.retrofit.dtoModels.auth.SignInUserCredent
 import android.kotlin.foodclub.network.retrofit.dtoModels.auth.ResendVerificationCodeDto
 import android.kotlin.foodclub.network.retrofit.dtoModels.auth.SignUpUserDto
 import android.kotlin.foodclub.network.retrofit.dtoModels.auth.VerificationCodeDto
-import android.kotlin.foodclub.network.retrofit.responses.LoginResponse
+import android.kotlin.foodclub.network.retrofit.responses.auth.LoginResponse
 import android.kotlin.foodclub.network.retrofit.responses.general.SingleMessageResponse
 import retrofit2.Response
 import retrofit2.http.Body

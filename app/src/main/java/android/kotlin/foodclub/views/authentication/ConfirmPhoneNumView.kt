@@ -3,8 +3,6 @@ package android.kotlin.foodclub.views.authentication
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.ui.theme.Montserrat
 import android.kotlin.foodclub.ui.theme.PlusJakartaSans
-import android.kotlin.foodclub.views.home.fontFamily
-import android.kotlin.foodclub.views.home.montserratFamily
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
@@ -180,7 +178,7 @@ fun ConfirmPhoneNumMainLayout(
 
                  */
 
-                Text(text="+", fontFamily= montserratFamily, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text(text="+", fontFamily= Montserrat, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 BasicTextField(modifier = Modifier
                     .padding(0.dp)
                     .width(40.dp),
@@ -189,7 +187,7 @@ fun ConfirmPhoneNumMainLayout(
                     onValueChange = { onCodeUpdate(it.take(3)) },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                     //colors = TextFieldDefaults.textFieldColors(containerColor = Color.Transparent),
-                    textStyle = LocalTextStyle.current.copy(fontFamily = montserratFamily, fontSize = 18.sp, fontWeight = FontWeight.Bold),
+                    textStyle = LocalTextStyle.current.copy(fontFamily = Montserrat, fontSize = 18.sp, fontWeight = FontWeight.Bold),
                 )
 
 
@@ -217,7 +215,7 @@ fun ConfirmPhoneNumMainLayout(
                         //.then(mod)
                        ,
                     textStyle = LocalTextStyle.current.copy(
-                        fontFamily = montserratFamily,
+                        fontFamily = Montserrat,
                         fontSize = 18.sp,
                         color = Color.DarkGray
                     ),
@@ -251,7 +249,7 @@ fun ConfirmPhoneNumMainLayout(
                             .padding(start = 75.dp, top = 2.dp),
                         text = "Invalid number",
                         color = MaterialTheme.colorScheme.error,
-                        fontFamily = montserratFamily
+                        fontFamily = Montserrat
                     )
                 }
             }
@@ -261,7 +259,7 @@ fun ConfirmPhoneNumMainLayout(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "Sync Contacts", fontFamily = montserratFamily, fontWeight = FontWeight.Bold)
+                Text(text = "Sync Contacts", fontFamily = Montserrat, fontWeight = FontWeight.Bold)
                 Switch(checked = syncContacts,
                     onCheckedChange = { onSyncUpdate(it) },
                     colors = SwitchDefaults.colors(checkedTrackColor = Color(0xFF7EC60B),
@@ -307,7 +305,7 @@ fun ConfirmPhoneNumMainLayout(
                     text = "Continue",
                     fontSize = 15.sp,
                     color = Color.White,
-                    fontFamily = fontFamily
+                    fontFamily = Montserrat
                 )
             }
         }

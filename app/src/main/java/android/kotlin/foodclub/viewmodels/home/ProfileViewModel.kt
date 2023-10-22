@@ -1,8 +1,7 @@
 package android.kotlin.foodclub.viewmodels.home
 
-import android.kotlin.foodclub.data.models.UserPostsModel
-import android.kotlin.foodclub.data.models.UserProfileModel
-import android.kotlin.foodclub.data.models.MyRecipeModel
+import android.kotlin.foodclub.domain.models.profile.UserPosts
+import android.kotlin.foodclub.domain.models.profile.UserProfile
 import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
@@ -28,11 +27,11 @@ class ProfileViewModel @AssistedInject constructor(
     private val _myUserId = MutableStateFlow(sessionCache.getActiveSession()?.sessionUser?.userId ?: 0)
     val myUserId: StateFlow<Long> get() = _myUserId
 
-    private val _profileModel = MutableStateFlow<UserProfileModel?>(null)
-    val profileModel: StateFlow<UserProfileModel?> get() = _profileModel
+    private val _profileModel = MutableStateFlow<UserProfile?>(null)
+    val profileModel: StateFlow<UserProfile?> get() = _profileModel
 
-    private val _bookmarkedPosts = MutableStateFlow<List<UserPostsModel>>(listOf())
-    val bookmaredPosts: StateFlow<List<UserPostsModel>> get() = _bookmarkedPosts
+    private val _bookmarkedPosts = MutableStateFlow<List<UserPosts>>(listOf())
+    val bookmaredPosts: StateFlow<List<UserPosts>> get() = _bookmarkedPosts
 
     private val _error = MutableStateFlow("")
     val error: StateFlow<String> get() = _error
@@ -52,17 +51,6 @@ class ProfileViewModel @AssistedInject constructor(
         }
     }
 
-    val tabItems = listOf(
-        MyRecipeModel(
-            "image", "0", true
-        ), MyRecipeModel(
-            "image", "0", false
-        ), MyRecipeModel(
-            "image", "0", true
-        ), MyRecipeModel(
-            "image", "0", false
-        )
-    )
 
     fun setUser(newUserId: Long) {
         if(newUserId != userId) {
@@ -147,11 +135,11 @@ class ProfileViewModel @AssistedInject constructor(
         }
     }
 
-    fun getListOfMyRecipes(): List<UserPostsModel> {
+    fun getListOfMyRecipes(): List<UserPosts> {
         return _profileModel.value!!.userPosts
     }
 
-    fun getListOfBookmarkedRecipes(): List<UserPostsModel> {
+    fun getListOfBookmarkedRecipes(): List<UserPosts> {
         return _profileModel.value!!.userPosts
 //        return tabItems.filter { unit -> return@filter (unit.bookMarked == true) };
 

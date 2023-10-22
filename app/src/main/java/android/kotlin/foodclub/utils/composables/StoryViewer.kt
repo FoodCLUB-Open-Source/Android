@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.data.models.StoryModel
+import android.kotlin.foodclub.domain.models.stories.StoryModel
 import android.kotlin.foodclub.domain.enums.DragValue
 import android.kotlin.foodclub.utils.helpers.TimeUtil
 import androidx.compose.animation.AnimatedVisibility

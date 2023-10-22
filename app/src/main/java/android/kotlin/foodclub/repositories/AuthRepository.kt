@@ -11,7 +11,7 @@ import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.SignUpUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoModels.auth.SignInUserCredentialsDto
 import android.kotlin.foodclub.network.retrofit.dtoModels.auth.ResendVerificationCodeDto
 import android.kotlin.foodclub.network.retrofit.dtoModels.auth.VerificationCodeDto
-import android.kotlin.foodclub.network.retrofit.responses.LoginResponse
+import android.kotlin.foodclub.network.retrofit.responses.auth.LoginResponse
 import android.kotlin.foodclub.network.retrofit.responses.general.SingleMessageResponse
 import android.kotlin.foodclub.network.retrofit.utils.apiRequestFlow
 import android.kotlin.foodclub.utils.helpers.Resource

@@ -23,7 +23,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.foodclub.ui.theme.BottomBarScreenObject
 import com.example.foodclub.views.home.CreateView
-import com.example.foodclub.views.home.DiscoverView
+import android.kotlin.foodclub.views.home.DiscoverView
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)

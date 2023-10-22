@@ -1,9 +1,8 @@
 package android.kotlin.foodclub.viewmodels.home
 
-import android.kotlin.foodclub.api.retrofit.RetrofitInstance
 import android.kotlin.foodclub.domain.models.products.ProductsData
-import android.kotlin.foodclub.data.models.UserPostsModel
-import android.kotlin.foodclub.data.models.VideoModel
+import android.kotlin.foodclub.domain.models.home.VideoModel
+import android.kotlin.foodclub.domain.models.profile.UserPosts
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.repositories.ProductRepository
 import android.kotlin.foodclub.repositories.ProfileRepository
@@ -20,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DiscoverViewModel @Inject constructor(
-    private val repository: PostRepository,
+    private val postRepository: PostRepository,
     private val profileRepo: ProfileRepository,
     private val productsRepo: ProductRepository,
     private val sessionCache: SessionCache
@@ -32,8 +31,8 @@ class DiscoverViewModel @Inject constructor(
     private val _postListPerCategory = MutableStateFlow<List<VideoModel>>(listOf())
     val postListPerCategory: StateFlow<List<VideoModel>> get() = _postListPerCategory
 
-    private val _myFridgePosts = MutableStateFlow<List<UserPostsModel>>(listOf())
-    val myFridgePosts: StateFlow<List<UserPostsModel>> get() = _myFridgePosts
+    private val _myFridgePosts = MutableStateFlow<List<UserPosts>>(listOf())
+    val myFridgePosts: StateFlow<List<UserPosts>> get() = _myFridgePosts
 
     private val _sessionUserId = MutableStateFlow<String>("")
     val sessionUserId: MutableStateFlow<String> get() = _sessionUserId
@@ -47,10 +46,10 @@ class DiscoverViewModel @Inject constructor(
     private val _error = MutableStateFlow("")
 
     init {
-        fetchProductsDatabase("")
+        fetchProductsDatabase()
     }
 
-    private fun fetchProductsDatabase(searchText: String) {
+    private fun fetchProductsDatabase(searchText: String = "") {
         viewModelScope.launch() {
             when(val resource = productsRepo.getProductsList(searchText)) {
                 is Resource.Success -> {
@@ -62,16 +61,13 @@ class DiscoverViewModel @Inject constructor(
                 }
             }
         }
-
     }
 
     fun getPostsByWorld(worldCategory: Long) {
-
         _sessionUserId.value = sessionCache.getActiveSession()!!.sessionUser.userId.toString()
 
-
         viewModelScope.launch(Dispatchers.Main) {
-            when(val resource = repository.getWorldCategoryPosts(worldCategory, 10, 1)) {
+            when(val resource = postRepository.getWorldCategoryPosts(worldCategory, 10, 1)) {
                 is Resource.Success -> {
                     _postListPerCategory.value = resource.data!!
                 }
@@ -79,18 +75,13 @@ class DiscoverViewModel @Inject constructor(
 
                 }
             }
-
         }
-
-
     }
 
 
     fun getPostData(postId:Long){
         viewModelScope.launch {
-
-
-            when (val resource = repository.getPost(postId)) {
+            when (val resource = postRepository.getPost(postId)) {
                 is Resource.Success -> {
                     _sessionUserName.value =  resource.data!!.authorDetails
                 }
@@ -104,9 +95,8 @@ class DiscoverViewModel @Inject constructor(
     }
 
     fun getPostsByUserId() {
-
         viewModelScope.launch {
-            when(val resource = repository.getHomepagePosts(sessionUserId.value.toLong(), 10, 1)) {
+            when(val resource = postRepository.getHomepagePosts(sessionUserId.value.toLong(), 10, 1)) {
                 is Resource.Success -> {
                     _postList.value = resource.data!!
                 }
@@ -114,25 +104,20 @@ class DiscoverViewModel @Inject constructor(
 
                 }
             }
-
         }
 
     }
 
     fun myFridgePosts() {
-
-        viewModelScope.launch(Dispatchers.Main) {
-            try {
-                val response = RetrofitInstance.retrofitApi.retrieveProfileData(sessionUserId.value.toLong(), 1, 1)
-
-                if (response.isSuccessful) {
-                    _myFridgePosts.value = response.body()!!.data.userPosts
+        viewModelScope.launch {
+            when(val resource = profileRepo.retrieveProfileData(sessionUserId.value.toLong(), 10, 1)) {
+                is Resource.Success -> {
+                    _myFridgePosts.value = resource.data!!.userPosts
                 }
+                is Resource.Error -> {
 
-            } catch (e: Exception) {
-
+                }
             }
-
         }
 
     }
