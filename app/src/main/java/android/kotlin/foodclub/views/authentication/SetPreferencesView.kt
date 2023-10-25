@@ -3,6 +3,7 @@ package android.kotlin.foodclub.views.authentication
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.PlusJakartaSans
+import android.kotlin.foodclub.utils.composables.ConfirmButton
 import android.kotlin.foodclub.views.home.montserratFamily
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -11,16 +12,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -91,43 +93,79 @@ fun SetPreferencesTopLayout(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SetPreferencesMainLayout()
 {
     val preferencesOptions = arrayListOf("Italian", "Mexican", "Indian", "Chinese", "Vegan", "Vegetarian"
-        , "Paleo", "Japanese", "low-carb", "Vietnamese", "Thai", "Gluten-free")
+        , "Paleo", "Japanese", "low-carb", "Vietnamese", "Thai", "Gluten-free")//, "Llllllllllllllllllllooooooooonnnnnnnnggggggggggggg")
     val selectedPreferences = remember{mutableListOf<String>()}
 
     Column {
         Box()
         {
-            LazyVerticalGrid(columns = GridCells.Adaptive(minSize = 80.dp))
+
+            Column()
             {
-                items(preferencesOptions){
-
-                    val (selectedOption, onOptionSelected) = remember {
-                        mutableStateOf(false)
-                    }
-
-                    Card(shape = RoundedCornerShape(5.dp), modifier = Modifier.padding(5.dp), colors = if (selectedOption) CardDefaults.cardColors(Color(0xFF9922DD)) else CardDefaults.cardColors(
-                        Color(0xFFEEEEEE)), onClick = {
-                        onOptionSelected(!selectedOption)
-                    },
-                        border = BorderStroke(1.dp, Color.LightGray)
-                        ) {
-                        Text(text = it, fontFamily = montserratFamily,fontSize = 13.sp, color = if (selectedOption) Color.White else Color.Gray, modifier = Modifier.padding(5.dp))
+                Column(modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .weight(1F)) {
+                    FlowRow {
+                        preferencesOptions.forEach {
+                            PreferenceItem(text = it)
+                        }
+                        preferencesOptions.forEach {
+                            PreferenceItem(text = it)
+                        }
+                        preferencesOptions.forEach {
+                            PreferenceItem(text = it)
+                        }
+                        preferencesOptions.forEach {
+                            PreferenceItem(text = it)
+                        }
+                        preferencesOptions.forEach {
+                            PreferenceItem(text = it)
+                        }
                     }
                 }
+
+                ConfirmButton(enabled = true, text = "Test") {
+                    
+                }
             }
+
+
+            /*
+            LazyColumn()
+            {
+                /*
+                items(preferencesOptions){
+                    PreferenceItem(text = it)
+                }
+
+                 */
+            }
+             */
+
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PreferenceOption()
+fun PreferenceItem(text: String)
 {
-
+    val (selectedOption, onOptionSelected) = remember {
+        mutableStateOf(false)
+    }
+    Card(shape = RoundedCornerShape(5.dp), modifier = Modifier.padding(5.dp), colors = if (selectedOption) CardDefaults.cardColors(Color(0xFF7EC60B)) else CardDefaults.cardColors(
+        Color(0xFFEEEEEE)), onClick = {
+        onOptionSelected(!selectedOption)
+    },
+        border = BorderStroke(1.dp, Color.LightGray)
+    ) {
+        Text(text = text, fontFamily = montserratFamily,fontSize = 13.sp, color = if (selectedOption) Color.White else Color.Gray, modifier = Modifier.padding(5.dp), maxLines = 1)
+    }
 }
 
 @Composable
