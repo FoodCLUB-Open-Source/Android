@@ -13,7 +13,7 @@ class StoryMapper: DomainMapper<FriendStoryDto, List<VideoModel>> {
                 authorDetails = entity.username,
                 videoStats = VideoModel.VideoStats(
                     15,
-                    0L,
+                    281L,
                     0L,
                     0L,
                     10
