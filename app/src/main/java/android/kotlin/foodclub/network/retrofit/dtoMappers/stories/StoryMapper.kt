@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.network.retrofit.dtoMappers.stories
 
 import android.kotlin.foodclub.domain.models.home.VideoModel
+import android.kotlin.foodclub.domain.models.home.VideoStats
 import android.kotlin.foodclub.network.retrofit.dtoModels.stories.FriendStoryDto
 import android.kotlin.foodclub.network.retrofit.utils.DomainMapper
 import kotlin.random.Random
@@ -11,7 +12,7 @@ class StoryMapper: DomainMapper<FriendStoryDto, List<VideoModel>> {
             VideoModel(
                 videoId = Random.nextLong(),// use random for now because json data is not long causing NumberFormatException
                 authorDetails = entity.username,
-                videoStats = VideoModel.VideoStats(
+                videoStats = VideoStats(
                     15,
                     281L,
                     0L,
