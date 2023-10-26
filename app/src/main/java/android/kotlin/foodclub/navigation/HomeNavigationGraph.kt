@@ -6,7 +6,6 @@ package android.kotlin.foodclub.navigation
 import android.kotlin.foodclub.views.home.CameraPreviewView
 import android.kotlin.foodclub.views.home.CameraView
 import android.kotlin.foodclub.views.home.CreateRecipeView
-import android.kotlin.foodclub.views.home.DeleteRecipeView
 import android.kotlin.foodclub.views.home.FollowerView
 import android.kotlin.foodclub.views.home.GalleryView
 import android.kotlin.foodclub.views.home.HomeView
@@ -95,21 +94,6 @@ fun NavGraphBuilder.homeNavigationGraph(
         composable(route = HomeOtherRoutes.GalleryView.route) {
             val state = it.arguments?.getString("state") ?: ""
             GalleryView(navController = navController, stateEncoded = state)
-        }
-        composable(route = HomeOtherRoutes.DeleteRecipeView.route + "/{postId}",
-            arguments = listOf(
-                navArgument("postId") {
-                    defaultValue = 0L
-                    type = NavType.LongType
-                }
-            )
-        ) {
-            val postId = it.arguments?.getLong("postId")
-            if (postId == null || postId == 0L) {
-                navController.popBackStack()
-                return@composable
-            }
-            DeleteRecipeView(navController = navController, postId = postId)
         }
 
         composable(route = HomeOtherRoutes.FollowerView.route + "/{userId}",
