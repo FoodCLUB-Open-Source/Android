@@ -9,7 +9,7 @@ class SignInUserMapper: DomainMapper<SignInUserDto, SignInUser> {
         return SignInUser(
             id = entity.id,
             username = entity.username,
-            profileImageUrl = entity.profileImageUrl
+            profileImageUrl = entity.profileImageUrl ?: ""
         )
     }
 

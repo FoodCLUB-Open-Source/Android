@@ -17,11 +17,13 @@ import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserPostsMapp
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserProfileMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.recipes.RecipeMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.stories.StoryMapper
+import android.kotlin.foodclub.network.retrofit.services.SettingsService
 import android.kotlin.foodclub.repositories.AuthRepository
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.repositories.ProductRepository
 import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.repositories.RecipeRepository
+import android.kotlin.foodclub.repositories.SettingsRepository
 import android.kotlin.foodclub.repositories.StoryRepository
 import dagger.Module
 import dagger.Provides
@@ -85,5 +87,11 @@ object RepositoriesModule {
     @Singleton
     fun provideRecipeRepository(api: RecipeService, recipeMapper: RecipeMapper): RecipeRepository {
         return RecipeRepository(api, recipeMapper)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSettingsRepository(api: SettingsService): SettingsRepository {
+        return SettingsRepository(api)
     }
 }

@@ -7,5 +7,5 @@ data class SignInUserDto(
     val username: String,
 
     @SerializedName("profile_picture")
-    val profileImageUrl: String
+    val profileImageUrl: String?
 )
