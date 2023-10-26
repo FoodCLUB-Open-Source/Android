@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.config.ui
 
 import android.app.Activity
+import android.kotlin.foodclub.R
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ButtonDefaults
@@ -41,6 +42,8 @@ private val LightColorScheme = lightColorScheme(
     onSurface = Color(0xFF1C1B1F),
     */
 )
+
+val defaultProfileImage = R.drawable.story_user
 
 @Composable
 fun FoodClubTheme(
