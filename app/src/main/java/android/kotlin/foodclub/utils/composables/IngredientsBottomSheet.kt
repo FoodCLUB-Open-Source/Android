@@ -1,10 +1,10 @@
 package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.data.models.Ingredient
-import android.kotlin.foodclub.data.models.ProductsData
-import android.kotlin.foodclub.ui.theme.Montserrat
-import android.kotlin.foodclub.utils.enums.DrawerContentState
+import android.kotlin.foodclub.domain.models.products.Ingredient
+import android.kotlin.foodclub.domain.models.products.ProductsData
+import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.domain.enums.DrawerContentState
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.views.home.montserratFamily
 import androidx.compose.animation.AnimatedContent
@@ -78,7 +78,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun IngredientsBottomSheet(onDismiss: () -> Unit, productsDataFlow: StateFlow<ProductsData>,
                            loadMoreObjects: (searchText: String, onLoadCompleted: () -> Unit)
-                           -> Unit = { searchText, onLoadCompleted -> },
+                           -> Unit = { _, _ -> },
                            onListUpdate: (searchText: String) -> Unit = {},
                            onSave: (ingredient: Ingredient) -> Unit = {}) {
 

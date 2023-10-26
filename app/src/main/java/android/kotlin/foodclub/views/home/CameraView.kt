@@ -6,6 +6,7 @@ import android.content.ContentUris
 import android.content.Context
 import android.graphics.Bitmap
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.utils.composables.engine.createVideoCaptureUseCase
 import android.kotlin.foodclub.utils.composables.engine.startRecordingVideo
 import android.net.Uri
@@ -48,6 +49,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -93,11 +95,11 @@ fun RecordingButton(isRecording: Boolean) {
         CircularProgressIndicator(
             progress = progress,
             strokeWidth = 5.dp,
-            color = Color(android.graphics.Color.parseColor("#7EC60B")),
+            color = foodClubGreen,
             modifier = Modifier.size(80.dp)
         )
         Canvas(modifier = Modifier.size(60.dp)) {
-            drawCircle(color = Color(android.graphics.Color.parseColor("#CACBCB")))
+            drawCircle(color = Color(0xFFCACBCB))
         }
         // Record button
     }
@@ -114,14 +116,12 @@ fun CameraView(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    var state:String = ""
+    var state = ""
 
-    if (stateEncoded.contains("story"))
-    {
+    if (stateEncoded.contains("story")) {
         state = "story"
     }
-    if (stateEncoded.contains("recipe"))
-    {
+    if (stateEncoded.contains("recipe")) {
         state = "recipe"
     }
 
@@ -264,7 +264,10 @@ fun CameraView(
                                     context = context,
                                     filenameFormat = "yyyy-MM-dd-HH-mm-ss-SSS",
                                     videoCapture = videoCapture,
-                                    outputDirectory = if (mediaDir != null && mediaDir.exists()) mediaDir else context.filesDir,
+                                    outputDirectory = if (mediaDir != null && mediaDir.exists())
+                                        mediaDir
+                                    else
+                                        context.filesDir,
                                     executor = context.mainExecutor,
                                     audioEnabled = audioEnabled.value
                                 ) { event ->
@@ -291,9 +294,7 @@ fun CameraView(
 
                         //navController.navigate("GALLERY_VIEW")
                     },
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .size(80.dp)
+                    modifier = Modifier.align(Alignment.BottomCenter).size(80.dp)
                 ) {
 
                     RecordingButton(isRecording = recordingStarted.value)
@@ -304,24 +305,38 @@ fun CameraView(
                     )*/
                 }
                 if (!recordingStarted.value) {
-
-                    val bitmap = loadCurrentThumbnail(context = context).asImageBitmap()
-                    Image(
-                        bitmap = bitmap,
-                        contentScale = ContentScale.Crop,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .clip(RoundedCornerShape(5.dp))
-                            .then(
-                                Modifier
-                                    .size(64.dp)
-                                    .border(2.dp, Color.White, RoundedCornerShape(5.dp))
-                            )
-                            .clickable {
-                                navController.navigate("GALLERY_VIEW/${state.encodeUtf8()}")
-                            }
-                    )
+                    val bitmapCheck = loadCurrentThumbnail(context = context)
+                    val bitmap: ImageBitmap
+                    if (bitmapCheck != null) {
+                        bitmap = bitmapCheck.asImageBitmap()
+                        Image(
+                            bitmap = bitmap,
+                            contentScale = ContentScale.Crop,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .align(Alignment.BottomStart)
+                                .clip(RoundedCornerShape(5.dp))
+                                .then(
+                                    Modifier
+                                        .size(64.dp)
+                                        .border(2.dp, Color.White, RoundedCornerShape(5.dp))
+                                )
+                                .clickable {
+                                    navController.navigate("GALLERY_VIEW/${state.encodeUtf8()}")
+                                }
+                        )
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.BottomStart)
+                                .clip(RoundedCornerShape(5.dp))
+                                .then(
+                                    Modifier
+                                        .size(64.dp)
+                                        .border(2.dp, Color.White, RoundedCornerShape(5.dp))
+                                )
+                        )
+                    }
                 }
                 Image(
                     painter = painterResource(id = R.drawable.baseline_cameraswitch_24),
@@ -351,7 +366,7 @@ fun CameraView(
 }
 
 
-fun loadCurrentThumbnail(context: Context): Bitmap {
+fun loadCurrentThumbnail(context: Context): Bitmap? {
     val imageProjection = arrayOf(
         MediaStore.Images.Media._ID,
         MediaStore.Images.Media.DATE_TAKEN
@@ -362,10 +377,10 @@ fun loadCurrentThumbnail(context: Context): Bitmap {
         MediaStore.Video.Media.DATE_TAKEN
     )
 
-    var uri: Uri = Uri.EMPTY;
-    var timeSinceEpoch = "0";
+    var uri: Uri = Uri.EMPTY
+    var timeSinceEpoch = "0"
 
-    val selectionImageArgs: Bundle = Bundle()
+    val selectionImageArgs = Bundle()
     selectionImageArgs.putInt(ContentResolver.QUERY_ARG_LIMIT, 1)
     val sortArgs = arrayOf(MediaStore.Images.ImageColumns.DATE_TAKEN)
     selectionImageArgs.putStringArray(ContentResolver.QUERY_ARG_SORT_COLUMNS, sortArgs)
@@ -396,12 +411,12 @@ fun loadCurrentThumbnail(context: Context): Bitmap {
                 uri = contentUri
                 timeSinceEpoch = date //can't parse as Int
             }
-        } ?: kotlin.run {
+        } ?: run {
             Log.e("TAG", "Cursor is null!")
         }
     }
 
-    val selectionVideoArgs: Bundle = Bundle()
+    val selectionVideoArgs = Bundle()
     selectionVideoArgs.putInt(ContentResolver.QUERY_ARG_LIMIT, 1)
     val sortVideoArgs = arrayOf(MediaStore.Video.VideoColumns.DATE_TAKEN)
     selectionVideoArgs.putStringArray(ContentResolver.QUERY_ARG_SORT_COLUMNS, sortVideoArgs)
@@ -434,10 +449,10 @@ fun loadCurrentThumbnail(context: Context): Bitmap {
                     uri = contentUri
                 }
             }
-        } ?: kotlin.run {
+        } ?: run {
             Log.e("TAG", "Cursor is null!")
         }
     }
 
-    return context.contentResolver.loadThumbnail(uri, Size(240, 240), null)
+    return if (uri.toString().isEmpty()) null else context.contentResolver.loadThumbnail(uri, Size(240, 240), null)
 }

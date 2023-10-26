@@ -1,9 +1,10 @@
 package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.ui.theme.Montserrat
-import android.kotlin.foodclub.views.home.colorGray
+import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.views.settings.colorGray
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,12 +32,18 @@ import androidx.compose.ui.unit.sp
 //The main function of this PrivacyView file. This arranges all components to build the screen
 @Composable
 fun SettingsLayout(label: String, onBackAction: () -> Unit, content: @Composable() (() -> Unit)) {
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp).padding(top = 80.dp)
+    Box(
+        modifier =Modifier.fillMaxWidth()
+            .background(Color.White),
     ) {
-        SettingsTopBar(label = label, onBackAction = onBackAction)
-        Spacer(modifier = Modifier.height(50.dp))
-        content()
+        Column(
+            modifier = Modifier.fillMaxSize().padding(16.dp).padding(top = 80.dp)
+                .background(Color.White),
+        ) {
+            SettingsTopBar(label = label, onBackAction = onBackAction)
+            Spacer(modifier = Modifier.height(50.dp))
+            content()
+        }
     }
 }
 
