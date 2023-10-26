@@ -260,7 +260,7 @@ fun DeleteRecipeView(
                 },
                     onDoubleTap = { exoPlayer, offset ->
                         coroutineScope.launch {
-                            post.value!!.currentViewerInteraction.isLikedByYou = true
+                            post.value!!.currentViewerInteraction.isLiked = true
                             val rotationAngle = (-10..10).random()
                             doubleTapState = Triple(offset, true, rotationAngle.toFloat())
                             delay(400)
@@ -272,7 +272,7 @@ fun DeleteRecipeView(
                     controlPoint = controlPoint.value
                 )
                 var isLiked by remember {
-                    mutableStateOf(post.value!!.currentViewerInteraction.isLikedByYou)
+                    mutableStateOf(post.value!!.currentViewerInteraction.isLiked)
                 }
                 hasVideoLoaded.value = true
 
@@ -485,7 +485,7 @@ fun DeleteRecipeView(
                                         .fillMaxSize()
                                         .clickable {
                                             isLiked = !isLiked
-                                            post.value!!.currentViewerInteraction.isLikedByYou =
+                                            post.value!!.currentViewerInteraction.isLiked =
                                                 !isLiked
                                         }
                                 ) {
