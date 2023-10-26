@@ -38,25 +38,18 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
-class FutureTopicVoteView : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            FoodClubTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    FutureTopicVoteView("Android")
-                }
-            }
-        }
-    }
+@Composable
+fun FutureTopicVoteView(
+    navController: NavController,
+) {
+    FutureTopicVoteViewUI(".")
 }
 
 @Composable
-fun FutureTopicVoteView(name: String, modifier: Modifier = Modifier) {
+fun FutureTopicVoteViewUI(name: String, modifier: Modifier = Modifier) {
 
     // LIST FOR RICE CULIVATION BUTTON
     val RiceTextButton = listOf("Rice cultivation", "Rice cultivation", "Rice cultivation", "Rice cultivation", "Rice cultivation")
@@ -238,8 +231,9 @@ fun FutureTopicVoteView(name: String, modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun FutureTopicVotePreview() {
+fun FutureTopicVoteViewPreview() {
     FoodClubTheme {
-        FutureTopicVoteView("Android")
+        val navController = rememberNavController()
+        FutureTopicVoteView(navController)
     }
 }

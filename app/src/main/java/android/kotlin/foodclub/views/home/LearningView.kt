@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.ui.theme.PlusJakartaSans
+import android.kotlin.foodclub.config.ui.PlusJakartaSans
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -42,33 +42,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-
-class LearningView : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            FoodClubTheme {
-
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting("Android")
-                }
-            }
-        }
-    }
-}
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun Greeting(name: String) {
+fun LearningView(
+    navController: NavController,
+) {
+    LearningViewUI(".")
+}
+
+
+@Composable
+fun LearningViewUI(name: String) {
 
     // FONT
     val montserratFontFamily = FontFamily(
         Font(R.font.montserratbold, FontWeight.ExtraLight)
     )
-
-
 
     // GREEN
     val customGreenColor = Color(0xFF80C40C)
@@ -764,9 +755,10 @@ fun Greeting(name: String) {
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun LearningViewPreview() {
     FoodClubTheme {
-        Greeting("Android")
+        val navController = rememberNavController()
+        LearningView(navController)
     }
 }
 

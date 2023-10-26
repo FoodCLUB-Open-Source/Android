@@ -39,25 +39,18 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
-class KitchenTools : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            FoodClubTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    KitchenTools("Android")
-                }
-            }
-        }
-    }
+@Composable
+fun KitchenTools(
+    navController: NavController,
+) {
+    KitchenToolsUI(".")
 }
 
 @Composable
-fun KitchenTools(name: String, modifier: Modifier = Modifier) {
+fun KitchenToolsUI(name: String, modifier: Modifier = Modifier) {
 
     // LIST FOR CARD TITLES
     val cardTitle = listOf("Kitchen Tools", "Can Opening", "Food Preparation Tools")
@@ -231,6 +224,7 @@ fun KitchenTools(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun KitchenToolsPreview() {
     FoodClubTheme {
-        KitchenTools("Android")
+        val navController = rememberNavController()
+        KitchenTools(navController)
     }
 }
