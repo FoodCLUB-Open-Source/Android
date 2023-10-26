@@ -440,10 +440,10 @@ fun HomeView(
                 ) }
 
                 Box(modifier = Modifier.fillMaxSize()) {
-//                    if (videosState.value.isNotEmpty()) {
-                    if (viewModel.videosList.isNotEmpty()) {
-//                        val currentVideo = videosState.value[it]
-                        val currentVideo = viewModel.videosList[it]
+                    if (videosState.value.isNotEmpty()) {
+//                    if (viewModel.videosList.isNotEmpty()) {
+                        val currentVideo = videosState.value[it]
+//                        val currentVideo = viewModel.videosList[it]
                         val authorDetails = SimpleUserModel(
                             userId = 1,
                             username = currentVideo.authorDetails,
