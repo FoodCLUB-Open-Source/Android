@@ -72,4 +72,14 @@ object ServicesModule {
             .build()
             .create(RecipeService::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideSettingsService(
+        @Named("defaultRetrofit") defaultRetrofit: Retrofit.Builder
+    ): SettingsService {
+        return defaultRetrofit
+            .build()
+            .create(SettingsService::class.java)
+    }
 }
