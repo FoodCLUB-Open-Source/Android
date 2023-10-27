@@ -3,29 +3,25 @@ package android.kotlin.foodclub.views.authentication
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.PlusJakartaSans
+import android.kotlin.foodclub.utils.composables.AuthLayout
+import android.kotlin.foodclub.utils.composables.ConfirmButton
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalTextStyle
@@ -56,6 +52,7 @@ import androidx.navigation.NavHostController
 fun ConfirmPhoneNumView(navController: NavHostController) {
     Box(modifier = Modifier.background(Color.White))
     {
+        /*
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -63,6 +60,14 @@ fun ConfirmPhoneNumView(navController: NavHostController) {
         ) {
             ConfirmPhoneNumTopLayout()//modifier = Modifier.weight(1F))
             ConfirmPhoneNumMainLayout()//modifier = Modifier.weight(1F))
+        }
+         */
+
+        AuthLayout(
+            header = "Confirm your Identity",
+            subHeading = "Please confirm your country code and enter in your phone number",
+            onBackButtonClick = { navController.popBackStack() }) {
+            ConfirmPhoneNumMainLayout()
         }
     }
 }
@@ -133,76 +138,42 @@ fun ConfirmPhoneNumMainLayout(
     }
 
     val (isError, onErrorUpdate) = rememberSaveable { mutableStateOf(false) }
-    val interactionSource = remember { MutableInteractionSource() }
 
+    Column(verticalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxHeight()) {
 
-    /*
-    val (test, testChange) = remember { mutableStateOf(false) }
-
-    Button(onClick = {testChange(!test)})
-    {
-        Text(text="Test")
-    }
-
-     */
-
-
-
-    Box(modifier) {
         Column {
 
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding()) {
-                /*
-                Image(
-                    painter = painterResource(id = R.drawable.nav_create_icon),
-                    contentDescription = "CountryCode",
+
+                Text(
+                    text = "+",
+                    fontFamily = Montserrat,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                BasicTextField(
                     modifier = Modifier
-                        .height(30.dp)
-                        .width(30.dp),
-                    contentScale = ContentScale.Crop
-                )
-                 */
-
-
-                /*
-                BasicTextField(value = countryCode,
-                    onValueChange = {
-                        Log.d("TAG", countryCode)
-                        onCodeUpdate(it.take(3))},
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                    modifier = Modifier.width(60.dp),
-                    textStyle = LocalTextStyle.current.copy(color = Color.Blue, fontFamily = montserratFamily, fontSize = 10.sp, fontWeight = FontWeight.Bold),
-
-                )
-
-                 */
-
-                Text(text="+", fontFamily= Montserrat, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                BasicTextField(modifier = Modifier
-                    .padding(0.dp)
-                    .width(40.dp),
+                        .padding(0.dp)
+                        .width(40.dp),
                     value = countryCode,
                     singleLine = true,
                     onValueChange = { onCodeUpdate(it.take(3)) },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                     //colors = TextFieldDefaults.textFieldColors(containerColor = Color.Transparent),
-                    textStyle = LocalTextStyle.current.copy(fontFamily = Montserrat, fontSize = 18.sp, fontWeight = FontWeight.Bold),
+                    textStyle = LocalTextStyle.current.copy(
+                        fontFamily = Montserrat,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    ),
                 )
 
-
-                /*
-                val mod: Modifier = if (isError) Modifier.indicatorLine(
-                    enabled = true,
-                    interactionSource = interactionSource,
-                    isError = true,
-                    colors = TextFieldDefaults.textFieldColors(MaterialTheme.colorScheme.error),
-                    focusedIndicatorLineThickness = 3.dp,
-                    unfocusedIndicatorLineThickness = 3.dp
-                ) else Modifier
-
-                 */
-                Text(text = "|", fontSize = 25.sp, fontFamily = Montserrat, color = Color.LightGray, modifier = Modifier.padding(vertical = 3.dp, horizontal = 10.dp))
+                Text(
+                    text = "|",
+                    fontSize = 25.sp,
+                    fontFamily = Montserrat,
+                    color = Color.LightGray,
+                    modifier = Modifier.padding(vertical = 3.dp, horizontal = 10.dp)
+                )
                 BasicTextField(
                     value = phoneNum,
                     singleLine = true,
@@ -211,9 +182,8 @@ fun ConfirmPhoneNumMainLayout(
                     //colors = TextFieldDefaults.textFieldColors(containerColor = Color.Transparent), ,
                     modifier = Modifier
                         .padding(0.dp)
-                        .fillMaxWidth()
-                        //.then(mod)
-                       ,
+                        .fillMaxWidth(),
+                    //.then(mod)
                     textStyle = LocalTextStyle.current.copy(
                         fontFamily = Montserrat,
                         fontSize = 18.sp,
@@ -224,10 +194,12 @@ fun ConfirmPhoneNumMainLayout(
 
 
             val offset: Dp by animateDpAsState(if (isError) 0.dp else 130.dp, label = "")
-            Box(modifier = Modifier
-                .padding(start = 74.dp + offset, bottom = 3.dp)
-                .width(280.dp - offset)
-                .height(3.dp))
+            Box(
+                modifier = Modifier
+                    .padding(start = 74.dp + offset, bottom = 3.dp)
+                    .width(280.dp - offset)
+                    .height(3.dp)
+            )
             {
                 val len: Float by animateFloatAsState(if (isError) 1f else 0.1666f, label = "")
                 val alpha: Float by animateFloatAsState(if (isError) 1f else 0f, label = "")
@@ -257,59 +229,41 @@ fun ConfirmPhoneNumMainLayout(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
             ) {
                 Text(text = "Sync Contacts", fontFamily = Montserrat, fontWeight = FontWeight.Bold)
-                Switch(checked = syncContacts,
+                Switch(
+                    checked = syncContacts,
                     onCheckedChange = { onSyncUpdate(it) },
-                    colors = SwitchDefaults.colors(checkedTrackColor = Color(0xFF7EC60B),
+                    colors = SwitchDefaults.colors(
+                        checkedTrackColor = Color(0xFF7EC60B),
                         uncheckedTrackColor = Color.LightGray,
                         checkedThumbColor = Color.White,
                         uncheckedThumbColor = Color.White,
                         uncheckedBorderColor = Color.LightGray,
-                        checkedBorderColor = Color(0xFF7EC60B))
-                )
-            }
-
-            Button(
-                shape = RoundedCornerShape(10.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 15.dp)
-                    .padding(top = 40.dp)
-                    .padding(horizontal = 10.dp),
-                onClick = {
-                    if ((isValidNumber(countryCode) && isValidNumber(phoneNum))) {
-                        if (phoneNum.length >= 9) {
-                            onErrorUpdate(false)
-                        }
-                        else
-                        {
-                            onErrorUpdate(true)
-                        }
-
-                    } else {
-                        onErrorUpdate(true)
-                    }
-
-
-                }, colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF7EC60B),
-                    contentColor = Color(0xFF7EC60B)
-                ),
-                contentPadding = PaddingValues(0.dp),
-                enabled = enableButton
-            )
-            {
-                Text(
-                    text = "Continue",
-                    fontSize = 15.sp,
-                    color = Color.White,
-                    fontFamily = Montserrat
+                        checkedBorderColor = Color(0xFF7EC60B)
+                    )
                 )
             }
         }
+
+        ConfirmButton(enabled = enableButton, text = "Continue") {
+            if ((isValidNumber(countryCode) && isValidNumber(phoneNum))) {
+                if (phoneNum.length >= 9) {
+                    onErrorUpdate(false)
+                } else {
+                    onErrorUpdate(true)
+                }
+
+            } else {
+                onErrorUpdate(true)
+            }
+
+        }
+
     }
+
 }
 
 fun isValidNumber(text: String): Boolean {
@@ -322,6 +276,7 @@ fun isValidNumber(text: String): Boolean {
 fun ConfirmPhoneNumPreview() {
     Box(modifier = Modifier.background(Color.White))
     {
+        /*
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -329,6 +284,13 @@ fun ConfirmPhoneNumPreview() {
         ) {
             ConfirmPhoneNumTopLayout()//modifier = Modifier.weight(1F))
             ConfirmPhoneNumMainLayout()//modifier = Modifier.weight(1F))
+        }
+         */
+        AuthLayout(
+            header = "Confirm your Identity",
+            subHeading = "Please confirm your country code and enter in your phone number",
+            onBackButtonClick = { /*TODO*/ }) {
+            ConfirmPhoneNumMainLayout()
         }
     }
 
