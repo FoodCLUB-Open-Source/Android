@@ -18,13 +18,9 @@ fun RootNavigationGraph(navController: NavHostController, showSheet: Boolean,
         route = Graph.ROOT,
         startDestination = Graph.HOME
     ) {
-        onBoardingNavigationGraph(navController = navController, setBottomBarVisibility)
+        onBoardingNavigationGraph()
         authNavigationGraph(navController = navController, setBottomBarVisibility)
         homeNavigationGraph(navController, showSheet, triggerBottomSheetModal, triggerStory, setBottomBarVisibility)
-
-//        composable(route = Graph.HOME) {
-//            MainView()
-//        }
     }
 }
 
@@ -33,6 +29,4 @@ object Graph {
     const val AUTHENTICATION = "auth_graph"
     const val HOME = "home_graph"
     const val ON_BOARDING = "onBoarding_graph"
-
-
 }
