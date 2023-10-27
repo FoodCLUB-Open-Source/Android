@@ -1,13 +1,12 @@
 package android.kotlin.foodclub.views.home
 
-import android.app.Activity
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.MainActivity
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.utils.composables.VideoPlayer
-import android.kotlin.foodclub.viewModels.home.DeleteRecipeViewModel
+import android.kotlin.foodclub.viewModels.home.ProfileViewModel
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.Spring
@@ -48,7 +47,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.Image
@@ -70,19 +68,16 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
-import androidx.navigation.NavController
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import dagger.hilt.android.EntryPointAccessors
 
 @Composable
 fun HeaderImage(modifier: Modifier) {
@@ -196,14 +191,12 @@ fun ConfirmDeleteDialog(
 
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
-fun DeleteRecipeView(navController: NavController, postId: Long) {
-    val factory = EntryPointAccessors.fromActivity(
-        LocalContext.current as Activity,
-        MainActivity.ViewModelFactoryProvider::class.java).deleteRecipeViewModelFactory()
-    val viewModel: DeleteRecipeViewModel = viewModel(
-        factory = DeleteRecipeViewModel.provideFactory(factory, postId)
-    )
-
+fun DeleteRecipeView(
+    postId: Long,
+    viewModel: ProfileViewModel,
+    onPostDeleted: () -> Unit,
+    onBackPressed: () -> Unit
+) {
     val post = viewModel.postData.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val localDensity = LocalDensity.current
@@ -221,6 +214,10 @@ fun DeleteRecipeView(navController: NavController, postId: Long) {
         systemUiController.setNavigationBarColor(
             color = Color.Black
         )
+    }
+
+    BackHandler {
+        onBackPressed()
     }
 
     Column(
@@ -247,9 +244,9 @@ fun DeleteRecipeView(navController: NavController, postId: Long) {
                 },
                 onConfirm = {
                     infoDialog.value = false
-                    viewModel.deleteCurrentPost()
-                    navController.popBackStack()
-                }
+                    viewModel.deleteCurrentPost(postId)
+                    onPostDeleted()
+                    }
             )
         }
         if(post.value != null) {
@@ -263,7 +260,7 @@ fun DeleteRecipeView(navController: NavController, postId: Long) {
                 },
                     onDoubleTap = { exoPlayer, offset ->
                         coroutineScope.launch {
-                            post.value!!.currentViewerInteraction.isLikedByYou = true
+                            post.value!!.currentViewerInteraction.isLiked = true
                             val rotationAngle = (-10..10).random()
                             doubleTapState = Triple(offset, true, rotationAngle.toFloat())
                             delay(400)
@@ -275,7 +272,7 @@ fun DeleteRecipeView(navController: NavController, postId: Long) {
                     controlPoint = controlPoint.value
                 )
                 var isLiked by remember {
-                    mutableStateOf(post.value!!.currentViewerInteraction.isLikedByYou)
+                    mutableStateOf(post.value!!.currentViewerInteraction.isLiked)
                 }
                 hasVideoLoaded.value = true
 
@@ -381,7 +378,7 @@ fun DeleteRecipeView(navController: NavController, postId: Long) {
                             containerColor = Color.Transparent,
                             contentColor = Color.Transparent
                         ), contentPadding = PaddingValues(5.dp),
-                        onClick = { navController.navigateUp() }
+                        onClick = { onBackPressed() }  // Just close this composable
                     ) {
                         Image(
                             painter = painterResource(R.drawable.baseline_arrow_back_ios_new_24),
@@ -488,7 +485,7 @@ fun DeleteRecipeView(navController: NavController, postId: Long) {
                                         .fillMaxSize()
                                         .clickable {
                                             isLiked = !isLiked
-                                            post.value!!.currentViewerInteraction.isLikedByYou =
+                                            post.value!!.currentViewerInteraction.isLiked =
                                                 !isLiked
                                         }
                                 ) {

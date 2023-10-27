@@ -3,6 +3,7 @@ package android.kotlin.foodclub.utils.composables
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.PlusJakartaSans
+import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.config.ui.textFieldCustomColors
 import android.kotlin.foodclub.utils.helpers.FieldsValidation
 import androidx.compose.foundation.Image
@@ -238,8 +239,11 @@ fun CustomPasswordTextField(initialValue: String = "",
 fun BackButton(onBackButtonClick: () -> Unit) {
     Button(
         shape = RectangleShape,
-        modifier = Modifier.clip(RoundedCornerShape(15.dp))
-            .width(36.dp).height(36.dp).offset(x = (-8).dp),
+        modifier = Modifier
+            .clip(RoundedCornerShape(15.dp))
+            .width(36.dp)
+            .height(36.dp)
+            .offset(x = (-8).dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.White,
             contentColor = Color.White
@@ -251,7 +255,9 @@ fun BackButton(onBackButtonClick: () -> Unit) {
             painter = painterResource(id = R.drawable.back_icon),
             contentDescription = "Back",
             contentScale = ContentScale.Crop,
-            modifier = Modifier.width(36.dp).height(36.dp)
+            modifier = Modifier
+                .width(36.dp)
+                .height(36.dp)
         )
     }
 }
@@ -316,12 +322,7 @@ fun ConfirmButton(enabled: Boolean, text: String, onClick: () -> Unit) {
         shape = RoundedCornerShape(10.dp),
         modifier = Modifier.height(56.dp).clip(RoundedCornerShape(10.dp)).fillMaxWidth(),
         enabled = enabled,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFF7EC60B),
-            disabledContainerColor = Color(0xFFC9C9C9),
-            disabledContentColor = Color.White,
-            contentColor = Color.White
-        ),
+        colors = defaultButtonColors(),
         onClick = { onClick() }
     ) {
         Text(

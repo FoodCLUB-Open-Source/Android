@@ -6,6 +6,7 @@ import android.kotlin.foodclub.views.settings.ChangePasswordSettings
 import android.kotlin.foodclub.views.settings.EditProfileSetting
 import android.kotlin.foodclub.views.settings.PrivacySetting
 import android.kotlin.foodclub.views.settings.SettingsView
+import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -30,11 +31,11 @@ fun NavGraphBuilder.settingsNavigationGraph(navController: NavHostController) {
         }
         composable(SettingsScreen.ChangePassword.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<SettingsViewModel>(navController)
+            val errorType = viewModel.errorType.collectAsState();
 
-            ChangePasswordSettings(null, { navController.popBackStack() }) {
-                    oldPassword, newPassword -> {
-
-            } }
+            ChangePasswordSettings(errorType.value, { navController.popBackStack() }) {
+                    oldPassword, newPassword -> viewModel.changePassword(oldPassword, newPassword)
+            }
         }
     }
 }

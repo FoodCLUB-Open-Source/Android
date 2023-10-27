@@ -4,7 +4,6 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.utils.composables.VideoScroller
-import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.viewModels.home.HomeViewModel
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
@@ -111,7 +110,7 @@ fun ViewStories(modifier: Modifier){
                 },
                     onDoubleTap = { exoPlayer, offset ->
                         coroutineScope.launch {
-                            videosState.value[it].currentViewerInteraction.isLikedByYou =
+                            videosState.value[it].currentViewerInteraction.isLiked =
                                 true
                             val rotationAngle = (-10..10).random()
                             doubleTapState = Triple(offset, true, rotationAngle.toFloat())
@@ -126,7 +125,7 @@ fun ViewStories(modifier: Modifier){
 
 
                 var isLiked by remember {
-                    mutableStateOf(videosState.value[it].currentViewerInteraction.isLikedByYou)
+                    mutableStateOf(videosState.value[it].currentViewerInteraction.isLiked)
                 }
 
                 Column() {
@@ -262,7 +261,7 @@ fun ViewStories(modifier: Modifier){
                                         .alpha(0.7f)
                                         .clickable {
                                             isLiked = !isLiked
-                                            videosState.value[0].currentViewerInteraction.isLikedByYou =
+                                            videosState.value[0].currentViewerInteraction.isLiked =
                                                 !isLiked
                                         }
                                 ) {
@@ -293,9 +292,7 @@ fun ViewStories(modifier: Modifier){
                                     )
                                     Spacer(modifier = Modifier.height(3.dp))
                                     Text(
-                                        text = ValueParser.numberToThousands(
-                                            videosState.value[it].videoStats.like
-                                        ),
+                                        text = videosState.value[it].videoStats.displayLike,
                                         fontSize = 13.sp,
                                         fontFamily = Montserrat,
                                         color = if (isLiked) foodClubGreen else Color.White

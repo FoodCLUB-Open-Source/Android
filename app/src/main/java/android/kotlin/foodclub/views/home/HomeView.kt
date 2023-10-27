@@ -2,26 +2,21 @@
 
 package android.kotlin.foodclub.views.home
 
+import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.stories.StoryModel
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.domain.models.others.AnimatedIcon
+import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
+import android.kotlin.foodclub.utils.composables.LikeButton
+import android.kotlin.foodclub.utils.composables.PlayPauseButton
+import android.kotlin.foodclub.utils.composables.VideoLayout
 import android.kotlin.foodclub.utils.composables.VideoScroller
-import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.keyframes
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,7 +27,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.PagerDefaults
@@ -51,7 +45,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
@@ -59,7 +52,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import android.kotlin.foodclub.viewModels.home.HomeViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -68,14 +60,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
@@ -318,6 +308,7 @@ fun BlurImage(content: @Composable () -> Unit) {
     }
 }
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalFoundationApi::class)
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
@@ -379,7 +370,10 @@ fun HomeView(
     }
 
     Box(
-        modifier = Modifier.padding(top = 55.dp).fillMaxWidth().zIndex(1f),
+        modifier = Modifier
+            .padding(top = 55.dp)
+            .fillMaxWidth()
+            .zIndex(1f),
         contentAlignment = Alignment.Center // Center the content horizontally
     ) {
         Row(
@@ -429,10 +423,7 @@ fun HomeView(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .height(screenHeightMinusBottomNavItem)
-    ) {
+    Column(modifier = Modifier.height(screenHeightMinusBottomNavItem)) {
         if (showIngredientSheet) {
             HomeBottomSheetIngredients(triggerIngredientBottomSheetModal)
         }
@@ -444,266 +435,60 @@ fun HomeView(
                 modifier = modifier
             ) {
                 var pauseButtonVisibility by remember { mutableStateOf(false) }
-                var doubleTapState by remember {
-                    mutableStateOf(
-                        Triple(
-                            Offset.Unspecified, //offset
-                            false, //double tap anim start
-                            0f //rotation angle
-                        )
-                    )
-                }
+                val doubleTapState by remember { mutableStateOf(
+                    AnimatedIcon(R.drawable.liked, 110.dp, localDensity)
+                ) }
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
+                Box(modifier = Modifier.fillMaxSize()) {
                     if (videosState.value.isNotEmpty()) {
-                        //BlurImage{
-                        VideoScroller(videosState.value[it], pagerState, it, onSingleTap = {
+//                    if (viewModel.videosList.isNotEmpty()) {
+                        val currentVideo = videosState.value[it]
+//                        val currentVideo = viewModel.videosList[it]
+                        val authorDetails = SimpleUserModel(
+                            userId = 1,
+                            username = currentVideo.authorDetails,
+                            profilePictureUrl = null
+                        )
+
+                        VideoScroller(currentVideo, pagerState, it, onSingleTap = {
                             pauseButtonVisibility = it.isPlaying
                             it.playWhenReady = !it.isPlaying
                         },
                             onDoubleTap = { exoPlayer, offset ->
                                 coroutineScope.launch {
-                                    videosState.value[it].currentViewerInteraction.isLikedByYou = true
-                                    val rotationAngle = (-10..10).random()
-                                    doubleTapState = Triple(offset, true, rotationAngle.toFloat())
-                                    delay(400)
-                                    doubleTapState = Triple(offset, false, rotationAngle.toFloat())
+                                    currentVideo.currentViewerInteraction.isLiked = true
+                                    doubleTapState.animate(offset)
                                 }
                             },
                             onVideoDispose = { pauseButtonVisibility = false },
                             onVideoGoBackground = { pauseButtonVisibility = false }
                         )
-                        //}
-
 
                         var isLiked by remember {
-                            mutableStateOf(videosState.value[it].currentViewerInteraction.isLikedByYou)
+                            mutableStateOf(currentVideo.currentViewerInteraction.isLiked)
                         }
-
-                        Column() {
-                            val iconSize = 110.dp
-                            AnimatedVisibility(visible = doubleTapState.second,
-                                enter = scaleIn(
-                                    spring(Spring.DampingRatioMediumBouncy),
-                                    initialScale = 1.3f
-                                ),
-                                exit = scaleOut(
-                                    tween(600), targetScale = 1.58f
-                                ) + fadeOut(tween(600)) + slideOutVertically(
-                                    tween(600)
-                                ),
-                                modifier = Modifier.run {
-                                    if (doubleTapState.first != Offset.Unspecified) {
-                                        this.offset(x = localDensity.run {
-                                            doubleTapState.first.x.toInt().toDp().plus(-iconSize.div(2))
-                                        }, y = localDensity.run {
-                                            doubleTapState.first.y.toInt().toDp().plus(-iconSize.div(2))
-                                        })
-                                    } else this
-                                }) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.liked),
-                                    contentDescription = null,
-                                    tint = Color.Unspecified,
-                                    modifier = Modifier
-                                        .size(iconSize)
-                                )
-                            }
-                        }
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(top = 30.dp),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            AnimatedVisibility(
-                                visible = pauseButtonVisibility,
-                                enter = scaleIn(spring(Spring.DampingRatioMediumBouncy), initialScale = 1.5f),
-                                exit = scaleOut(tween(150)),
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.pause_video_button),
-                                    contentDescription = null,
-                                    tint = Color.Unspecified,
-                                    modifier = Modifier.size(36.dp)
-                                )
-                            }
-                        }
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.BottomStart)
-                                .padding(15.dp)
-                        ) {
-                            Column {
-                                Button(
-                                    modifier = Modifier
-                                        .width(60.dp)
-                                        .height(25.dp)
-                                        .alpha(0.7f),
-                                    onClick = { /*TODO*/ },
-                                    contentPadding = PaddingValues(0.dp),
-                                    colors = ButtonDefaults.buttonColors(Color(0xFFD95978))
-                                ) {
-                                    Text(
-                                        "Meat", fontFamily = Montserrat,
-                                        fontSize = 12.sp, style = TextStyle(color = Color.White)
-                                    )
-                                }
-                                Spacer(modifier = Modifier.height(20.dp))
-
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.story_user),
-                                        contentDescription = "Profile Image",
-                                        modifier = Modifier
-                                            .size(35.dp)
-                                            .clip(CircleShape)
-                                            .alpha(0.7f)
-                                    )
-                                    Spacer(modifier = Modifier.width(10.dp))
-                                    Text(
-                                        videosState.value[it].authorDetails, color = Color.White,
-                                        fontFamily = Montserrat, fontSize = 18.sp,
-                                        modifier = Modifier.padding(2.dp).alpha(0.7f)
-                                    )
-                                }
-                            }
-                        }
-
-                        Box(modifier = Modifier.align(Alignment.BottomEnd).padding(15.dp)) {
-                            Column {
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    modifier = Modifier
-                                        .align(Alignment.End).width(50.dp).height(50.dp)
-                                ) {
-                                    Box(
-                                        modifier = Modifier.width(55.dp).height(55.dp)
-                                    ) {
-                                        Box(
-                                            modifier = Modifier
-                                                .width(55.dp)
-                                                .height(55.dp)
-                                                .clip(RoundedCornerShape(35.dp))
-                                                .background(Color.Black.copy(alpha = 0.5f))
-                                                .blur(radius = 5.dp)
-                                                .alpha(0.7f)
-                                        ) {}
-                                        Image(
-                                            painter = painterResource(id = R.drawable.save),
-                                            modifier = Modifier
-                                                .size(22.dp)
-                                                .align(Alignment.Center)
-                                                .zIndex(1f)
-                                                .alpha(0.7f),
-                                            contentDescription = "save"
-                                        )
-                                    }
-                                }
-                                Spacer(modifier = Modifier.height(10.dp))
-
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    modifier = Modifier
-                                        .align(Alignment.End)
-                                        .width(50.dp)
-                                        .height(80.dp),
-                                ) {
-                                    Spacer(Modifier.weight(1f))
-                                    Box(
-                                        modifier = Modifier
-                                            .width(50.dp)
-                                            .height(80.dp),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Box(
-                                            modifier = Modifier
-                                                .width(50.dp)
-                                                .height(80.dp)
-                                                .clip(RoundedCornerShape(30.dp))
-                                                .background(Color.Black.copy(alpha = 0.5f))
-                                                .blur(radius = 5.dp)
-                                                .alpha(0.7f)
-                                        ) {}
-                                        Column(
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            verticalArrangement = Arrangement.Center,
-                                            modifier = Modifier
-                                                .fillMaxSize()
-                                                .clip(RoundedCornerShape(30.dp))
-                                                .alpha(0.7f)
-                                                .clickable {
-                                                    isLiked = !isLiked
-                                                    videosState.value[it]
-                                                        .currentViewerInteraction.isLikedByYou =
-                                                        !isLiked
-                                                }
-                                        ) {
-                                            val maxSize = 32.dp
-                                            val iconSize by animateDpAsState(
-                                                targetValue = if (isLiked) 22.dp else 21.dp,
-                                                animationSpec = keyframes {
-                                                    durationMillis = 400
-                                                    14.dp.at(50)
-                                                    maxSize.at(190)
-                                                    16.dp.at(330)
-                                                    22.dp.at(400)
-                                                        .with(FastOutLinearInEasing)
-                                                }, label = ""
-                                            )
-
-                                            LaunchedEffect(key1 = doubleTapState) {
-                                                if (doubleTapState.first != Offset.Unspecified &&
-                                                    doubleTapState.second) {
-                                                    isLiked = doubleTapState.second
-                                                }
-                                            }
-                                            Icon(
-                                                painter = painterResource(id = R.drawable.like),
-                                                contentDescription = null,
-                                                tint = if (isLiked) foodClubGreen else Color.White,
-                                                modifier = Modifier
-                                                    .size(iconSize)
-                                                    .alpha(0.7f)
-                                            )
-                                            Spacer(modifier = Modifier.height(3.dp))
-                                            Text(
-                                                text = ValueParser.numberToThousands(
-                                                    videosState.value[it].videoStats.like
-                                                ),
-                                                fontSize = 13.sp,
-                                                fontFamily = Montserrat,
-                                                color = if (isLiked) foodClubGreen else Color.White
-                                            )
-                                        }
-                                    }
-                                    Spacer(Modifier.weight(1f))
-                                }
+                        var isBookmarked by remember { mutableStateOf(false) }
 
 
-                                Spacer(modifier = Modifier.height(10.dp))
-
-                                Button(
-                                    onClick = { triggerIngredientBottomSheetModal() },
-                                    colors = defaultButtonColors(),
-                                    shape = RoundedCornerShape(15.dp),
-                                    modifier = Modifier.width(120.dp).height(35.dp).alpha(0.7f),
-                                    contentPadding = PaddingValues(0.dp)
-                                ) {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Text(
-                                            text = "Info",
-                                            fontFamily = Montserrat,
-                                            fontSize = 14.sp
-                                        )
-                                    }
-                                }
-                            }
-                        }
+                        LikeButton(doubleTapState) { isLiked = true }
+                        PlayPauseButton(buttonVisibility = pauseButtonVisibility)
+                        VideoLayout(
+                            userDetails = authorDetails,
+                            videoStats = currentVideo.videoStats,
+                            likeState = isLiked,
+                            bookMarkState = isBookmarked,
+                            category = "Meat",
+                            opacity = 0.7f,
+                            onLikeClick = {
+                                isLiked = !isLiked
+                                currentVideo.currentViewerInteraction.isLiked = !isLiked
+                            },
+                            onBookmarkClick = {
+                                isBookmarked = !isBookmarked
+                            },
+                            onInfoClick = {},
+                            modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter)
+                        )
                     }
                 }
             }

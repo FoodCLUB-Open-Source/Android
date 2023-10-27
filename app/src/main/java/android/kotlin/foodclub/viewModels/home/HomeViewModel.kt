@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.viewModels.home
 
 import android.kotlin.foodclub.domain.models.home.VideoModel
+import android.kotlin.foodclub.domain.models.home.VideoStats
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
@@ -19,8 +20,8 @@ import kotlin.random.Random
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    val postRepository: PostRepository,
-    val storyRepository: StoryRepository,
+    private val postRepository: PostRepository,
+    private val storyRepository: StoryRepository,
     private val sessionCache: SessionCache
 ) : ViewModel() {
     private val _title = MutableLiveData("HomeViewModel View")
@@ -106,7 +107,7 @@ class HomeViewModel @Inject constructor(
             videoId = 1,
             authorDetails = "kylieJenner",
             videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
-            videoStats = VideoModel.VideoStats(
+            videoStats = VideoStats(
                 like = 409876,
                 comment = 8356,
                 share = 3000,
@@ -119,7 +120,7 @@ class HomeViewModel @Inject constructor(
             videoId = 2,
             authorDetails = "kylieJenner",
             videoLink = "https://kretu.sts3.pl/foodclub_videos/daniel_vid2.mp4",
-            videoStats = VideoModel.VideoStats(
+            videoStats = VideoStats(
                 like = 564572,
                 comment = 8790,
                 share = 2000,
@@ -132,7 +133,7 @@ class HomeViewModel @Inject constructor(
             videoId = 3,
             authorDetails = "kylieJenner",
             videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
-            videoStats = VideoModel.VideoStats(
+            videoStats = VideoStats(
                 like = 2415164,
                 comment = 5145,
                 share = 5000,
@@ -145,7 +146,7 @@ class HomeViewModel @Inject constructor(
             videoId = 4,
             authorDetails = "kylieJenner",
             videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
-            videoStats = VideoModel.VideoStats(
+            videoStats = VideoStats(
                 like = 51626,
                 comment = 1434,
                 share = 167,
@@ -158,7 +159,7 @@ class HomeViewModel @Inject constructor(
             videoId = 5,
             authorDetails = "kylieJenner",
             videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
-            videoStats = VideoModel.VideoStats(
+            videoStats = VideoStats(
                 like = 547819,
                 comment = 79131,
                 share = 8921,
@@ -171,7 +172,7 @@ class HomeViewModel @Inject constructor(
             videoId = 6,
             authorDetails = "kylieJenner",
             videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
-            videoStats = VideoModel.VideoStats(
+            videoStats = VideoStats(
                 like = 4512340,
                 comment = 65901,
                 share = 8165,
@@ -185,7 +186,7 @@ class HomeViewModel @Inject constructor(
             videoId = 7,
             authorDetails = "kylieJenner",
             videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
-            videoStats = VideoModel.VideoStats(
+            videoStats = VideoStats(
                 like = 612907,
                 comment = 7643,
                 share = 1291,
