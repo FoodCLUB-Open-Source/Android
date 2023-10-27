@@ -17,7 +17,8 @@ val Montserrat = FontFamily(
 
 val PlusJakartaSans = FontFamily(
     Font(R.font.plusjakartasans_regular),
-    Font(R.font.plusjakartasans_bold, FontWeight.Bold)
+    Font(R.font.plusjakartasans_bold, FontWeight.Bold),
+    Font(R.font.plusjakartasans_semibold, FontWeight.SemiBold)
 )
 
 val Avenir = FontFamily(
