@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.Montserrat
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -37,6 +38,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -66,11 +69,7 @@ fun KitchenToolsUI(name: String, modifier: Modifier = Modifier) {
 
     // LIST FOR QUIZ BUTTONS
     val Quizbuttons = listOf("Quiz", "Quiz", "Quiz")
-
-    // THE FONT WE'LL USE
-    val montserratFontFamily = FontFamily(
-        Font(R.font.montserratbold, FontWeight.Normal)
-    )
+    
 
     // QUIZ BUTTON GREY COLOUR
     val customGreyColor = Color(0xFFE7E7E7)
@@ -82,8 +81,10 @@ fun KitchenToolsUI(name: String, modifier: Modifier = Modifier) {
     // KITCHEN TOOL TITLE TEXT
     Text(
         text = "Kitchen Tools",
-        fontSize = 20.sp,
-        fontFamily = montserratFontFamily,
+        fontSize = 24.sp,
+        fontFamily = Montserrat,
+        fontWeight = FontWeight.SemiBold,
+        letterSpacing = TextUnit(-0.96f, TextUnitType.Sp),
         modifier = Modifier.padding(top = 32.dp, start = 70.dp)
     )
 
@@ -129,8 +130,10 @@ fun KitchenToolsUI(name: String, modifier: Modifier = Modifier) {
                 // TITLE TEXTS SETTINGS
                 Text(
                     text = cardTitle.getOrNull(index) ?: "Default Text",
-                    fontFamily = montserratFontFamily,
+                    fontFamily = Montserrat,
                     fontSize = 20.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    letterSpacing = TextUnit(-0.8f, TextUnitType.Sp),
                     color = Color.Black,
                     modifier = Modifier
                         .padding(top = 25.dp)
@@ -152,8 +155,9 @@ fun KitchenToolsUI(name: String, modifier: Modifier = Modifier) {
                 // SUB TEXTS SETTINGS
                 Text(
                     text = cardSubText.getOrNull(index) ?: "Default Text",
-                    fontFamily = montserratFontFamily,
-                    fontSize = 11.sp,
+                    fontFamily = Montserrat,
+                    fontSize = 12.sp,
+                    letterSpacing = TextUnit(-0.8f, TextUnitType.Sp),
                     color = Color.Black,
                     modifier = Modifier
                         .padding(top = 78.dp)
@@ -162,7 +166,7 @@ fun KitchenToolsUI(name: String, modifier: Modifier = Modifier) {
 
                 // LEARN MORE BUTTON SETTINGS
                 Button(
-                    shape = RoundedCornerShape(9.dp),
+                    shape = RoundedCornerShape(12.dp),
                     modifier = Modifier
                         .padding(start = 55.dp, bottom = 15.dp)
                         .height(35.dp)
@@ -180,6 +184,8 @@ fun KitchenToolsUI(name: String, modifier: Modifier = Modifier) {
                     )
                 ) {
                     Text(text = Learnbuttons.getOrNull(index) ?: "",
+                        fontFamily = Montserrat,
+                        letterSpacing = TextUnit(-0.64f, TextUnitType.Sp),
                         color = Color.White,
                         fontSize = 13.sp
 
@@ -188,7 +194,7 @@ fun KitchenToolsUI(name: String, modifier: Modifier = Modifier) {
 
                 // QUIZ BUTTON SETTINGS
                 Button(
-                    shape = RoundedCornerShape(9.dp),
+                    shape = RoundedCornerShape(12.dp),
                     modifier = Modifier
                         .padding(end = 55.dp, bottom = 15.dp)
                         .height(35.dp)
@@ -206,6 +212,8 @@ fun KitchenToolsUI(name: String, modifier: Modifier = Modifier) {
                     )
                 ) {
                     Text(text = Quizbuttons.getOrNull(index) ?: "",
+                        fontFamily = Montserrat,
+                        letterSpacing = TextUnit(-0.64f, TextUnitType.Sp),
                         color = Color.Black,
                         fontSize = 13.sp
 
