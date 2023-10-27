@@ -1,13 +1,13 @@
 package android.kotlin.foodclub.views.v1.learning
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.FoodClubTheme
 import android.kotlin.foodclub.config.ui.PlusJakartaSans
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import android.kotlin.foodclub.views.home.ui.theme.FoodClubTheme
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
