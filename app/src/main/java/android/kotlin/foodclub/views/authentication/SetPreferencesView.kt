@@ -91,7 +91,7 @@ fun PreferenceItem(text: String, selectedPreferences: MutableList<String>) {
     }
     Card(
         shape = RoundedCornerShape(5.dp),
-        modifier = Modifier.padding(5.dp),
+        modifier = Modifier.padding(3.dp),
         colors = if (selectedOption) CardDefaults.cardColors(Color(0xFF7EC60B)) else CardDefaults.cardColors(
             Color(0xFFEEEEEE)
         ),
@@ -110,7 +110,7 @@ fun PreferenceItem(text: String, selectedPreferences: MutableList<String>) {
             fontFamily = montserratFamily,
             fontSize = 13.sp,
             color = if (selectedOption) Color.White else Color.Gray,
-            modifier = Modifier.padding(5.dp),
+            modifier = Modifier.padding(8.dp),
             maxLines = 1
         )
     }
