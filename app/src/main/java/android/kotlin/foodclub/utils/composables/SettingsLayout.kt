@@ -29,7 +29,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 
-//The main function of this PrivacyView file. This arranges all components to build the screen
+/**
+ * Settings Layout
+ *
+ * Settings layout used for every Settings screen in FoodCLUB app.
+ * This arranges all components to build the screen
+ *
+ * @param label Label of the screen displayed on the very top.
+ * @param onBackAction Executes when back button is clicked.
+ * @param content [Composable] content of the screen
+ */
 @Composable
 fun SettingsLayout(label: String, onBackAction: () -> Unit, content: @Composable() (() -> Unit)) {
     Box(
@@ -49,7 +58,7 @@ fun SettingsLayout(label: String, onBackAction: () -> Unit, content: @Composable
 
 // The top bar composable - Back button and the "Settings" text
 @Composable
-fun SettingsTopBar(label: String, onBackAction: () -> Unit) {
+private fun SettingsTopBar(label: String, onBackAction: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -77,7 +86,7 @@ fun SettingsTopBar(label: String, onBackAction: () -> Unit) {
 
 // Common icon composable to enter the parameters to create icons in this screen
 @Composable
-fun SettingsIcons(size: Int, icon: Int){
+private fun SettingsIcons(size: Int, icon: Int){
     Icon(
         painter = painterResource(id = icon),
         contentDescription = "Back",
@@ -88,7 +97,9 @@ fun SettingsIcons(size: Int, icon: Int){
 
 // Common text composable to create text according to the parameters entered in this screen
 @Composable
-fun SettingsText(text:String, size: Int, weight:FontWeight, fontC: Color = Color.Black, textAlign: TextAlign = TextAlign.Center){
+private fun SettingsText(
+    text: String, size: Int, weight: FontWeight, fontC: Color = Color.Black,
+    textAlign: TextAlign = TextAlign.Center){
     Text(
         text = text,
         fontSize = size.sp,

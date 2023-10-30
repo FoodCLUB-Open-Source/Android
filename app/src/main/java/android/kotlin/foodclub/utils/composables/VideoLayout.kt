@@ -57,6 +57,17 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
 
+/**
+ * Like Button
+ *
+ * Like Button is actually animated Like Button which should show after double click on the video.
+ * It is displayed in the location defined in [AnimatedIcon] which should be defined by location
+ * of the mouse when double click is performed.
+ *
+ * @param animatedIcon [AnimatedIcon] containing all information including where the user clicked
+ * and current state of the button (if the button should be shown or not)
+ * @param onLikeExecution Executes when the animation finishes
+ */
 @Composable
 fun LikeButton(animatedIcon: AnimatedIcon, onLikeExecution: () -> Unit) {
     val isAnimatingState = animatedIcon.startAnimation.collectAsState()
@@ -94,6 +105,14 @@ fun LikeButton(animatedIcon: AnimatedIcon, onLikeExecution: () -> Unit) {
     }
 }
 
+/**
+ * Play Pause Button
+ *
+ * Play Pause Button is button which should be displayed on Video state change. So when the video
+ * is paused it should show up and otherwise - disappear
+ *
+ * @param buttonVisibility Boolean which determines if the button should be visible
+ */
 @Composable
 fun PlayPauseButton(buttonVisibility: Boolean) {
     Column(
@@ -118,11 +137,35 @@ fun PlayPauseButton(buttonVisibility: Boolean) {
     }
 }
 
+/**
+ * Video layout
+ *
+ * Video layout including Info, category, user details (username and profile photo), like button
+ * with number of likes and bookmark button. These components may be optional except user details
+ *
+ * @param userDetails [SimpleUserModel] containing all information about user to display
+ * (username, profile picture url and id used to navigate to user profile after click)
+ * @param modifier Optional [Modifier] to properly put the Layout as Box on the screen
+ * @param videoStats Optional [VideoStats] object which is necessary in order to enable
+ * functionalities like Bookmark or Like
+ * @param likeState Optional boolean which determines if the like button should be shown.
+ * If not provided, like button will not be displayed. True and false determine state of the button
+ * @param bookMarkState Optional boolean which determines if the bookmark button should be shown.
+ * If not provided, bookmark button will not be displayed. True and false determine state of the
+ * button
+ * @param category Optional category name. If not provided, no category would be displayed.
+ * @param opacity Optional opacity which changes transparency level of the whole layout.
+ * @param onLikeClick Executes when like button is clicked
+ * @param onBookmarkClick Executes when bookmark button is clicked
+ * @param onInfoClick Executes when Info button is clicked
+ * @param onProfileClick Executes when profile photo or name is clicked
+ * @param onCategoryClick Executes when category is clicked
+ */
 @Composable
 fun VideoLayout(
     userDetails: SimpleUserModel,
-    videoStats: VideoStats?,
     modifier: Modifier = Modifier,
+    videoStats: VideoStats? = null,
     likeState: Boolean? = null,
     bookMarkState: Boolean? = null,
     category: String? = null,
