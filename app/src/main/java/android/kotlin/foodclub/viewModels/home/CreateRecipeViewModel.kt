@@ -6,6 +6,7 @@ import android.kotlin.foodclub.domain.models.recipes.Recipe
 import android.kotlin.foodclub.repositories.RecipeRepository
 import android.kotlin.foodclub.repositories.ProductRepository
 import android.kotlin.foodclub.domain.enums.QuantityUnit
+import android.kotlin.foodclub.domain.models.recipes.Category
 import android.kotlin.foodclub.utils.helpers.Resource
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -36,10 +37,16 @@ class CreateRecipeViewModel @Inject constructor(
     private val _productsDatabase = MutableStateFlow(ProductsData("", "", listOf()))
     val productsDatabase: StateFlow<ProductsData> get() = _productsDatabase
 
+    private val _categories = MutableStateFlow(listOf<Category>())
+    val categories: StateFlow<List<Category>> get() = _categories
+
+    private val _chosenCategories = MutableStateFlow(listOf<Category>())
+    val chosenCategories: StateFlow<List<Category>> get() = _chosenCategories
+
     private val _error = MutableStateFlow("")
 
     init {
-//        getTestData()
+        getTestData()
         fetchProductsDatabase()
     }
 
@@ -53,6 +60,11 @@ class CreateRecipeViewModel @Inject constructor(
                 _ingredients.emit(testIngredientsList)
             }
         }
+        _chosenCategories.value = listOf(
+            Category(1, "Meat"), Category(2, "Keto"), Category(3, "High-protein"),
+            Category(4, "Vegan"), Category(5, "Low-fat"), Category(6,"Fat-reduction"),
+            Category(7, "Italian"), Category(8, "Chinese")
+        )
     }
     private fun fetchProductsDatabase(searchText: String = "") {
         viewModelScope.launch() {
@@ -86,6 +98,12 @@ class CreateRecipeViewModel @Inject constructor(
             mutableList.remove(ingredient)
             mutableList
         }
+    }
+
+    fun unselectCategory(category: Category) {
+        val newCategories = ArrayList(_chosenCategories.value)
+        newCategories.remove(category)
+        _chosenCategories.update { newCategories }
     }
 
     // CREATE RECIPE FUNCTION
