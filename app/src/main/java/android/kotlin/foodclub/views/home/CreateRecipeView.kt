@@ -2,6 +2,8 @@ package android.kotlin.foodclub.views.home
 
 import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.recipes.Recipe
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
@@ -23,6 +25,8 @@ import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -63,9 +67,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
@@ -87,6 +94,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -253,10 +262,9 @@ fun BottomSheetCategories(onDismiss: () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun CreateRecipeView(navController: NavController) {
-    val viewModel: CreateRecipeViewModel = hiltViewModel()
+fun CreateRecipeView(navController: NavController, viewModel: CreateRecipeViewModel) {
     val title = viewModel.title.value ?: "Loading..."
     val ingredientList by viewModel.ingredients.collectAsState()
     val revealedIngredientId by viewModel.revealedIngredientId.collectAsState()
@@ -265,7 +273,9 @@ fun CreateRecipeView(navController: NavController) {
     var showCategorySheet by remember { mutableStateOf(false) }
     val codeTriggered = remember { mutableStateOf(false) }
     var sliderPosition by remember { mutableStateOf(0f) }
+    var recipeName by remember { mutableStateOf("") }
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 240.dp
+    val categories = viewModel.chosenCategories.collectAsState()
     val rows = listOf(
         listOf("fzfe", "fefez", "fzeffezfze"),
         listOf("Button", "Button"),
@@ -318,7 +328,7 @@ fun CreateRecipeView(navController: NavController) {
             BottomSheetCategories(triggerCategoryBottomSheetModal)
         }
 
-        if (ingredientList != null) {
+
         LazyColumn(
             modifier = Modifier
                 .padding(bottom = 70.dp)
@@ -363,27 +373,28 @@ fun CreateRecipeView(navController: NavController) {
                         }
                     }
                     Text(
-                        "New Recipe",
+                        "My New Recipe",
                         modifier = Modifier.padding(start = 8.dp),
-                        fontFamily = montserratFamily,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 20.sp
+                        fontFamily = Montserrat,
+                        fontWeight = FontWeight.SemiBold,
+                        letterSpacing = TextUnit(-1.12f, TextUnitType.Sp),
+                        fontSize = 28.sp
                     )
                 }
                 OutlinedTextField(
-                    value = "",
-                    onValueChange = {},
+                    value = recipeName,
+                    onValueChange = { recipeName = it },
                     placeholder = {
                         Text(
                             "Add my recipe’s name", fontFamily = montserratFamily, fontSize = 15.sp,
-                            color = Color(android.graphics.Color.parseColor("#B3B3B3"))
+                            color = Color(0xFFB3B3B3)
                         )
                     },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedBorderColor = Color.Black,
-                        unfocusedBorderColor = Color(android.graphics.Color.parseColor("#E8E8E8"))
+                        unfocusedBorderColor = Color(0xFFE8E8E8)
                     )
                 )
                 Row(
@@ -392,24 +403,28 @@ fun CreateRecipeView(navController: NavController) {
                         .height(80.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Serving Size: 1", fontFamily = montserratFamily, fontSize = 14.sp)
+                    Text(
+                        text = "Serving Size: ${sliderPosition.toInt()}",
+                        fontFamily = Montserrat,
+                        fontSize = 14.sp
+                    )
                     Spacer(modifier = Modifier.weight(1f))
                     Slider(
                         modifier = Modifier
-                            .width(if (isSmallScreen == true) 150.dp else 200.dp),
+                            .width(if (isSmallScreen) 150.dp else 200.dp),
                         value = sliderPosition,
                         onValueChange = { sliderPosition = it },
                         valueRange = 0f..10f,
-                        steps = 0,
+                        steps = 10,
                         colors = SliderDefaults.colors(
-                            thumbColor = Color(android.graphics.Color.parseColor("#7EC60B")),
-                            activeTrackColor = Color(android.graphics.Color.parseColor("#D9D9D9")),
-                            inactiveTrackColor = Color(android.graphics.Color.parseColor("#D9D9D9"))
+                            thumbColor = foodClubGreen,
+                            activeTrackColor = Color(0xFFD9D9D9),
+                            inactiveTrackColor = Color(0xFFD9D9D9)
                         ),
                     )
                 }
                 Divider(
-                    color = Color(android.graphics.Color.parseColor("#E8E8E8")),
+                    color = Color(0xFFE8E8E8),
                     thickness = 1.dp
                 )
                 Spacer(modifier = Modifier.height(15.dp))
@@ -419,77 +434,130 @@ fun CreateRecipeView(navController: NavController) {
                     icon = Icons.Default.KeyboardArrowDown,
                     onClick = triggerCategoryBottomSheetModal
                 )
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(1),
-                    contentPadding = PaddingValues(8.dp),
-                    modifier = Modifier
-                        .padding(top = 2.dp)
-                        .height(100.dp)
-                )  {
-                    items(rows.size) { rowIndex ->
-                        val row = rows[rowIndex]
-                        Row(
-                            horizontalArrangement = Arrangement.Start,
-                            modifier = Modifier.fillMaxWidth()
+                val purpleColor = Color(0xFFA059D9)
+                FlowRow {
+                    categories.value.forEachIndexed { _, content ->
+                        Card(
+                            shape = RoundedCornerShape(30.dp),
+                            modifier = Modifier
+                                .padding(5.dp)
+                                .height(32.dp),
+                            colors = CardDefaults.cardColors(purpleColor),
                         ) {
-                            row.forEachIndexed { buttonIndex, buttonText ->
-                                val flatIndex = rowIndex * 3 + buttonIndex
-                                val color = Color(android.graphics.Color.parseColor("#A059D9"))
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(horizontal = 8.dp)
+                            ) {
+                                Text(
+                                    text = content.name,
+                                    fontFamily = Montserrat,
+                                    fontSize = 12.sp,
+                                    color = Color.White,
+                                    modifier = Modifier.padding(8.dp),
+                                    maxLines = 1
+                                )
                                 Button(
                                     modifier = Modifier
-                                        //.border(1.dp, Color.Transparent, shape = RoundedCornerShape(15.dp))
-                                        .wrapContentWidth()
-                                        .height(30.dp)
-                                        .clip(RoundedCornerShape(15.dp)),
+                                        .border(
+                                            2.dp,
+                                            Color.White,
+                                            shape = CircleShape
+                                        )
+                                        .size(22.dp),
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = color,
+                                        containerColor = Color.Transparent,
                                         contentColor = Color.White
-                                    ), contentPadding = PaddingValues(5.dp),
-                                    shape = RoundedCornerShape(15.dp),
-
+                                    ), contentPadding = PaddingValues(0.dp),
+                                    shape = CircleShape,
                                     onClick = {
+                                        viewModel.unselectCategory(content)
                                         //selectedButtonsState[flatIndex] = !isSelected
                                     }
                                 ) {
-                                    Text(text = buttonText,
-                                        fontSize = 10.sp,
-                                        modifier = Modifier.padding(start = 1.dp, end = 1.dp),
-                                        fontFamily = montserratFamily)
-                                    Button(
+                                    Image(
+                                        painter = painterResource(id = R.drawable.baseline_clear_24),
+                                        contentDescription = null,
+                                        contentScale = ContentScale.Crop,
                                         modifier = Modifier
-                                            .border(
-                                                2.dp,
-                                                Color.White,
-                                                shape = RoundedCornerShape(15.dp)
-                                            )
-                                            .width(20.dp)
-                                            .height(30.dp)
-                                            .clip(RoundedCornerShape(15.dp)),
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = color,
-                                            contentColor = Color.White
-                                        ), contentPadding = PaddingValues(0.dp),
-                                        shape = RoundedCornerShape(15.dp),
-                                        onClick = {
-                                            //selectedButtonsState[flatIndex] = !isSelected
-                                        }
-                                    ) {
-                                        Image(
-                                            painter = painterResource(id = R.drawable.baseline_clear_24),
-                                            contentDescription = null,
-                                            contentScale = ContentScale.Crop,
-                                            modifier = Modifier
-                                                .size(15.dp)
-                                                .clip(RoundedCornerShape(12.dp))
-                                        )
-                                    }
+                                            .size(15.dp)
+                                            .clip(RoundedCornerShape(12.dp))
+                                    )
                                 }
-                                Spacer(modifier = Modifier.width(10.dp))
                             }
                         }
-                        Spacer(modifier = Modifier.height(40.dp))
                     }
                 }
+//                LazyVerticalGrid(
+//                    columns = GridCells.Fixed(1),
+//                    contentPadding = PaddingValues(8.dp),
+//                    modifier = Modifier
+//                        .padding(top = 2.dp)
+//                        .height(100.dp)
+//                )  {
+//                    items(rows.size) { rowIndex ->
+//                        val row = rows[rowIndex]
+//                        Row(
+//                            horizontalArrangement = Arrangement.Start,
+//                            modifier = Modifier.fillMaxWidth()
+//                        ) {
+//                            row.forEachIndexed { buttonIndex, buttonText ->
+//                                val flatIndex = rowIndex * 3 + buttonIndex
+//                                val color = Color(0xFFA059D9)
+//                                Button(
+//                                    modifier = Modifier
+//                                        //.border(1.dp, Color.Transparent, shape = RoundedCornerShape(15.dp))
+//                                        .wrapContentWidth()
+//                                        .height(30.dp)
+//                                        .clip(RoundedCornerShape(15.dp)),
+//                                    colors = ButtonDefaults.buttonColors(
+//                                        containerColor = color,
+//                                        contentColor = Color.White
+//                                    ), contentPadding = PaddingValues(5.dp),
+//                                    shape = RoundedCornerShape(15.dp),
+//
+//                                    onClick = {
+//                                        //selectedButtonsState[flatIndex] = !isSelected
+//                                    }
+//                                ) {
+//                                    Text(text = buttonText,
+//                                        fontSize = 10.sp,
+//                                        modifier = Modifier.padding(start = 1.dp, end = 1.dp),
+//                                        fontFamily = montserratFamily)
+//                                    Button(
+//                                        modifier = Modifier
+//                                            .border(
+//                                                2.dp,
+//                                                Color.White,
+//                                                shape = RoundedCornerShape(15.dp)
+//                                            )
+//                                            .width(20.dp)
+//                                            .height(30.dp)
+//                                            .clip(RoundedCornerShape(15.dp)),
+//                                        colors = ButtonDefaults.buttonColors(
+//                                            containerColor = color,
+//                                            contentColor = Color.White
+//                                        ), contentPadding = PaddingValues(0.dp),
+//                                        shape = RoundedCornerShape(15.dp),
+//                                        onClick = {
+//                                            //selectedButtonsState[flatIndex] = !isSelected
+//                                        }
+//                                    ) {
+//                                        Image(
+//                                            painter = painterResource(id = R.drawable.baseline_clear_24),
+//                                            contentDescription = null,
+//                                            contentScale = ContentScale.Crop,
+//                                            modifier = Modifier
+//                                                .size(15.dp)
+//                                                .clip(RoundedCornerShape(12.dp))
+//                                        )
+//                                    }
+//                                }
+//                                Spacer(modifier = Modifier.width(10.dp))
+//                            }
+//                        }
+//                        Spacer(modifier = Modifier.height(40.dp))
+//                    }
+//                }
                 Divider(
                     color = Color(android.graphics.Color.parseColor("#E8E8E8")),
                     thickness = 1.dp
@@ -540,7 +608,7 @@ fun CreateRecipeView(navController: NavController) {
                     )
             }
         }
-    }
+
         Button(
             shape = RectangleShape,
             modifier = Modifier
@@ -822,5 +890,6 @@ fun onRecipeSubmit(
 @Preview
 fun CreateRecipeViewPreview() {
     val navController = rememberNavController()
-    CreateRecipeView(navController)
+    val viewModel: CreateRecipeViewModel = hiltViewModel()
+    CreateRecipeView(navController, viewModel)
 }
