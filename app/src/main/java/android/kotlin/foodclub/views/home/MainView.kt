@@ -74,7 +74,8 @@ fun BottomSheet(onDismiss: () -> Unit, navController: NavHostController) {
                 text = "Create a Recipe",
 //                onClick = { navController.navigate("CAMERA_VIEW/${"recipe".encodeUtf8()}")}//"CREATE_RECIPE_VIEW") }
                 onClick = {
-                    navController.navigate("VIDEOTRIMMER")//"CREATE_RECIPE_VIEW")
+//                    navController.navigate("VIDEOTRIMMER")
+                    navController.navigate("CREATE_RECIPE_VIEW")
                     onDismiss()
                 }
             )
