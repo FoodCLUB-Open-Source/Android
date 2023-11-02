@@ -8,4 +8,6 @@
     <string name="title_activity_learning_view">LearningView</string>
     <string name="title_activity_kitchen_tools">KitchenTools</string>
     <string name="title_activity_future_topic_vote_view">FutureTopicVoteView</string>
+    <string name="title_activity_uploading_view">UploadingView</string>
+    <string name="title_activity_uploaded_view">UploadedView</string>
 </resources>
