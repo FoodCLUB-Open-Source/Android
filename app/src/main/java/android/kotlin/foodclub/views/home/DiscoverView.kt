@@ -237,6 +237,9 @@ fun DiscoverView(navController: NavController) {
                     selectedContentColor = Color.Black,
                     onClick = {
                         tabIndex = index
+                        if (index == 2){
+                            navController.navigate("MY_FRIDGE_VIEW")
+                        }
                     }, text = {
                         Text(
                             text = data,
@@ -250,8 +253,6 @@ fun DiscoverView(navController: NavController) {
 
         var homePosts: State<List<VideoModel>>? = null
         var worldPosts: State<List<VideoModel>>? = null
-        var myFridgePosts: State<List<UserPosts>>? = null
-
 
         Spacer(modifier = Modifier.height(10.dp))
 
@@ -264,12 +265,6 @@ fun DiscoverView(navController: NavController) {
             TabHomeDiscover(tabItems3, pagerState1, scope, 12.sp)
             worldPosts = viewModel.postListPerCategory.collectAsState()
         }
-
-        else if(tabIndex == 2){
-            TabHomeDiscover(tabItems2, pagerState1, scope, 12.sp)
-            myFridgePosts = viewModel.myFridgePosts.collectAsState()
-        }
-
 
 
         Spacer(modifier = Modifier.height(if (tabIndex == 2) 5.dp else 0.dp))
@@ -296,28 +291,6 @@ fun DiscoverView(navController: NavController) {
         if (showSheet) {
             IngredientsBottomSheet(triggerBottomSheetModal, viewModel.productsDatabase)
         }
-        if (tabIndex == 2) {
-            Button(shape = RectangleShape,
-                modifier = Modifier
-                    .border(1.dp, foodClubGreen, RoundedCornerShape(20.dp))
-                    .clip(RoundedCornerShape(20.dp)).width(125.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White, contentColor = foodClubGreen
-                ),
-                contentPadding = PaddingValues(15.dp),
-                onClick = {
-                    triggerBottomSheetModal()
-                }) {
-                Text(
-                    text = "Add items +",
-                    fontSize = 13.sp,
-                    fontFamily = Montserrat,
-                    color = Color(126, 198, 11, 255),
-                )
-            }
-        }
-
-
 
         HorizontalPager(
             beyondBoundsPageCount = 1,
@@ -340,13 +313,6 @@ fun DiscoverView(navController: NavController) {
                         items(worldPosts.value) { dataItem ->
                             
                             viewModel.getPostData(dataItem.videoId)
-                            GridItem2(navController,dataItem,viewModel.sessionUserName.value)
-                        }
-                    }
-
-                    else if(myFridgePosts!=null){
-                        items(myFridgePosts.value) { dataItem ->
-                            viewModel.getPostData(dataItem.id.toLong())
                             GridItem2(navController,dataItem,viewModel.sessionUserName.value)
                         }
                     }
