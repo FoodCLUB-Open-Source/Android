@@ -23,6 +23,7 @@ import androidx.navigation.navigation
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.views.home.CreateView
 import android.kotlin.foodclub.views.home.DiscoverView
+import android.kotlin.foodclub.views.home.MyFridgeView
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -131,6 +132,10 @@ fun NavGraphBuilder.homeNavigationGraph(
         composable(route = HomeOtherRoutes.MySearchView.route) {
             SearchView(navController = navController)
         }
+        composable(route = HomeOtherRoutes.MyFridgeView.route) {
+            MyFridgeView(navController = navController)
+        }
+
     }
 }
 
@@ -147,7 +152,7 @@ sealed class HomeOtherRoutes(val route: String) {
     object FollowingView : HomeOtherRoutes(route = "FOLLOWING_VIEW")
 
     object MyBasketView : HomeOtherRoutes(route = "BASKET_VIEW")
-
+    object MyFridgeView : HomeOtherRoutes(route = "MY_FRIDGE_VIEW")
     object MySearchView : HomeOtherRoutes(route = "SEARCH_VIEW")
 
     object VideoTrimmerView : HomeOtherRoutes(route = "VIDEOTRIMMER")
