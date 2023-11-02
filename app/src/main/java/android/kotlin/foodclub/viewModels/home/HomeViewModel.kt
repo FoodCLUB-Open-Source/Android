@@ -48,7 +48,7 @@ class HomeViewModel @Inject constructor(
                 is Resource.Success -> {
                     _error.value = ""
                     _postListData.value = resource.data!!
-                    setTestData()
+//                    setTestData()
                 }
                 is Resource.Error -> {
                     _error.value = resource.message!!
