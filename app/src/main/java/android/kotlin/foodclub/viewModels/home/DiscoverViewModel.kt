@@ -2,6 +2,7 @@ package android.kotlin.foodclub.viewModels.home
 
 import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.domain.models.home.VideoModel
+import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.profile.UserPosts
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.repositories.ProductRepository
@@ -13,7 +14,11 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -43,13 +48,41 @@ class DiscoverViewModel @Inject constructor(
     private val _productsDatabase = MutableStateFlow(ProductsData("", "", listOf()))
     val productsDatabase: StateFlow<ProductsData> get() = _productsDatabase
 
+    private val _searchText = MutableStateFlow("")
+    var searchText = _searchText.asStateFlow()
+
+    // filter products db list with search text
+    var displayedProducts: StateFlow<List<Ingredient>> = combine(
+        searchText,
+        _productsDatabase
+    ) { query, productsData ->
+        if (query.isBlank()) {
+            productsData.productsList
+        } else {
+            val matchingProducts = productsData.productsList.filter { product ->
+                product.type.contains(query, ignoreCase = true)
+            }
+            matchingProducts
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
+
+
+
     private val _error = MutableStateFlow("")
 
     init {
-        fetchProductsDatabase()
+        fetchProductsDatabase(searchText.value)
     }
 
-    private fun fetchProductsDatabase(searchText: String = "") {
+    fun onSearchTextChange(text: String) {
+        _searchText.value = text
+    }
+
+    private fun fetchProductsDatabase(searchText: String) {
         viewModelScope.launch() {
             when(val resource = productsRepo.getProductsList(searchText)) {
                 is Resource.Success -> {

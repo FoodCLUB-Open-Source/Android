@@ -17,6 +17,7 @@ import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetValue.Hidden
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,6 +27,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
+/**
+ * Custom Material Design modal bottom sheet.
+ *
+ * Modal bottom sheets are used as an alternative to inline menus or simple dialogs on mobile,
+ * especially when offering a long list of action items, or when items require longer descriptions
+ * and icons. Like dialogs, modal bottom sheets appear in front of app content, disabling all other
+ * app functionality when they appear, and remaining on screen until confirmed, dismissed, or a
+ * required action has been taken.
+ *
+ * ![Bottom sheet image](https://developer.android.com/images/reference/androidx/compose/material3/bottom_sheet.png)
+ *
+ * @param itemList List of items included in the bottom sheet column
+ * @param sheetTitle Header visible on the top of the bottom sheet
+ * @param modifier Optional [Modifier] for the bottom sheet.
+ * @param enableDragHandle Optional visual marker to swipe the bottom sheet.
+ * @param onDismiss Executes when the user clicks outside of the bottom sheet, after sheet
+ *  * animates to [Hidden].
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomBottomSheet(itemList: List<BottomSheetItem>, sheetTitle: String,
@@ -57,8 +76,7 @@ fun CustomBottomSheet(itemList: List<BottomSheetItem>, sheetTitle: String,
                 BottomSheetItem(
                     icon = it.resourceId,
                     text = it.title,
-                    onDismiss = onDismiss,
-                    onClick = it.onClick
+                    onClick = { it.onClick(); onDismiss() }
                 )
             }
             Spacer(modifier = Modifier.height(25.dp))
@@ -67,12 +85,26 @@ fun CustomBottomSheet(itemList: List<BottomSheetItem>, sheetTitle: String,
     }
 }
 
+/**
+ * Custom Material Design modal bottom sheet item.
+ *
+ * Modal bottom sheets are used as an alternative to inline menus or simple dialogs on mobile,
+ * especially when offering a long list of action items, or when items require longer descriptions
+ * and icons. Like dialogs, modal bottom sheets appear in front of app content, disabling all other
+ * app functionality when they appear, and remaining on screen until confirmed, dismissed, or a
+ * required action has been taken. Item when created can be put into the list with other items and
+ * put into [CustomBottomSheet] as an argument. Then items in the list are displayed in a column
+ * with layout predefined in [CustomBottomSheet].
+ *
+ * @param icon Id of an icon resource
+ * @param text Text describing the element
+ * @param onClick Executes when user clicks on the given element and animates sheet to [Hidden]
+ */
 @Composable
-fun BottomSheetItem(icon: Int, text: String,
-                    onDismiss: () -> Unit, onClick: () -> Unit) {
+fun BottomSheetItem(icon: Int, text: String, onClick: () -> Unit) {
     Row(
         modifier = Modifier
-            .clickable { onClick(); onDismiss() }
+            .clickable { onClick() }
             .fillMaxWidth()
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically

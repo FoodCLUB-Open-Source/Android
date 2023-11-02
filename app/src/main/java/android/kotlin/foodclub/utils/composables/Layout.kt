@@ -78,6 +78,23 @@ fun MainLayout(navController: NavHostController,
 
 }
 
+/**
+ * Auth Layout
+ *
+ * Layout repeated in all auth screens. You only need to make a code for middle contents of
+ * the screen. The rest is generated based on the params you provide (including screen title,
+ * subheading, back button and footer)
+ *
+ * @param header Main screen title text. Can put multiple line text by using "\n" as a divisor
+ * @param subHeading Grey subheading displayed under the title. When the text length is bigger than
+ * 50, the text will be divided into two lines
+ * @param message Message like acceptance or error which would be displayed under the subheading.
+ * If no message provided, nothing would be displayed
+ * @param errorOccurred Boolean if the provided message is an error or not. This boolean changes
+ * message colour and adds "Error" prefix if true
+ * @param onBackButtonClick Executes when back button is clicked
+ * @param content All composables which should be displayed in the middle of the screen
+ */
 @Composable
 fun AuthLayout(header: String, subHeading: String? = null,
                message: String = "", errorOccurred: Boolean = false,
