@@ -1,8 +1,8 @@
 package android.kotlin.foodclub.views.authentication
 
+import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.utils.composables.AuthLayout
 import android.kotlin.foodclub.utils.composables.ConfirmButton
-import android.kotlin.foodclub.views.home.montserratFamily
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -107,7 +107,7 @@ fun PreferenceItem(text: String, selectedPreferences: MutableList<String>) {
     ) {
         Text(
             text = text,
-            fontFamily = montserratFamily,
+            fontFamily = Montserrat,
             fontSize = 13.sp,
             color = if (selectedOption) Color.White else Color.Gray,
             modifier = Modifier.padding(8.dp),

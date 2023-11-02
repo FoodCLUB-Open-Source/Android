@@ -6,7 +6,9 @@ import android.kotlin.foodclub.domain.models.recipes.Recipe
 import android.kotlin.foodclub.repositories.RecipeRepository
 import android.kotlin.foodclub.repositories.ProductRepository
 import android.kotlin.foodclub.domain.enums.QuantityUnit
+import android.kotlin.foodclub.domain.models.recipes.Category
 import android.kotlin.foodclub.utils.helpers.Resource
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,7 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CreateRecipeViewModel @Inject constructor(
     private val productsRepository: ProductRepository,
-    private val recipeRepository: RecipeRepository
+    private val recipeRepository: RecipeRepository,
 ) : ViewModel() {
     private val _title = MutableLiveData("CreateRecipeViewModel View")
     val title: LiveData<String> get() = _title
@@ -36,10 +38,16 @@ class CreateRecipeViewModel @Inject constructor(
     private val _productsDatabase = MutableStateFlow(ProductsData("", "", listOf()))
     val productsDatabase: StateFlow<ProductsData> get() = _productsDatabase
 
+    private val _categories = MutableStateFlow(listOf<Category>())
+    val categories: StateFlow<List<Category>> get() = _categories
+
+    private val _chosenCategories = MutableStateFlow(listOf<Category>())
+    val chosenCategories: StateFlow<List<Category>> get() = _chosenCategories
+
     private val _error = MutableStateFlow("")
 
     init {
-//        getTestData()
+        getTestData()
         fetchProductsDatabase()
     }
 
@@ -53,9 +61,18 @@ class CreateRecipeViewModel @Inject constructor(
                 _ingredients.emit(testIngredientsList)
             }
         }
+        _categories.value = listOf(
+            Category(1, "Meat"), Category(2, "Keto"), Category(3, "High-protein"),
+            Category(4, "Vegan"), Category(5, "Low-fat"), Category(6,"Fat-reduction"),
+            Category(7, "Italian"), Category(8, "Chinese"), Category(9, "Vegetarian")
+        )
+        _chosenCategories.value = listOf(
+            Category(1, "Meat"), Category(6,"Fat-reduction"),
+            Category(7, "Italian")
+        )
     }
-    private fun fetchProductsDatabase(searchText: String = "") {
-        viewModelScope.launch() {
+    fun fetchProductsDatabase(searchText: String = "") {
+        viewModelScope.launch {
             when(val resource = productsRepository.getProductsList(searchText)) {
                 is Resource.Success -> {
                     _error.value = ""
@@ -67,6 +84,12 @@ class CreateRecipeViewModel @Inject constructor(
             }
         }
 
+    }
+
+    fun addIngredient(ingredient: Ingredient) {
+        val newIngredients = ArrayList(_ingredients.value)
+        newIngredients.add(ingredient)
+        _ingredients.update { newIngredients }
     }
 
     fun onIngredientExpanded(ingredientId: String) {
@@ -81,11 +104,48 @@ class CreateRecipeViewModel @Inject constructor(
 
     fun onIngredientDeleted(ingredient: Ingredient) {
         if(!_ingredients.value.contains(ingredient)) return
-        _ingredients.update {
-            val mutableList = it.toMutableList()
-            mutableList.remove(ingredient)
-            mutableList
+        val newIngredients = ArrayList(_ingredients.value)
+        newIngredients.remove(ingredient)
+        _ingredients.update { newIngredients }
+
+    }
+
+    fun unselectCategory(category: Category) {
+        val newCategories = ArrayList(_chosenCategories.value)
+        newCategories.remove(category)
+        _chosenCategories.update { newCategories }
+    }
+
+    fun selectCategory(category: Category) {
+        val newCategories = ArrayList(_chosenCategories.value)
+        newCategories.add(category)
+        _chosenCategories.update { newCategories }
+    }
+
+    fun fetchMoreProducts(searchText: String, onJobComplete: () -> Unit) {
+        val job = viewModelScope.launch() {
+            when(
+                val resource = productsRepository.getProductsList(
+                    searchText,
+                    _productsDatabase.value.getSessionIdFromUrl()
+                )
+            ) {
+                is Resource.Success -> {
+                    _error.value = ""
+                    val response = resource.data!!
+                    _productsDatabase.value = ProductsData(
+                        searchText = _productsDatabase.value.searchText,
+                        productsList = _productsDatabase.value.productsList + response.productsList,
+                        nextUrl = response.nextUrl
+                    )
+                }
+                is Resource.Error -> {
+                    _error.value = resource.message!!
+                    Log.d("MyBasketViewModel", "error: ${_error.value}")
+                }
+            }
         }
+        job.invokeOnCompletion { onJobComplete() }
     }
 
     // CREATE RECIPE FUNCTION

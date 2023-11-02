@@ -5,6 +5,7 @@ import android.Manifest
 import android.content.Context
 import android.graphics.Bitmap
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.viewModels.home.GalleryViewModel
 import android.media.MediaMetadataRetriever
 import android.net.Uri
@@ -180,7 +181,7 @@ public fun GalleryView(navController: NavController, stateEncoded:String, itemsP
                     Text(
                         fontSize = 30.sp,
                         text = "Gallery",
-                        fontFamily = montserratFamily,
+                        fontFamily = Montserrat,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(25.dp),
                         color = Color.White
@@ -231,7 +232,7 @@ public fun GalleryView(navController: NavController, stateEncoded:String, itemsP
                         {
                             Text(
                                 text = "Images",
-                                fontFamily = montserratFamily,
+                                fontFamily = Montserrat,
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
@@ -272,7 +273,7 @@ public fun GalleryView(navController: NavController, stateEncoded:String, itemsP
                         {
                             Text(
                                 text = "Video",
-                                fontFamily = montserratFamily,
+                                fontFamily = Montserrat,
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White

@@ -38,6 +38,7 @@ fun NavGraphBuilder.homeNavigationGraph(
         startDestination = BottomBarScreenObject.Home.route
     ) {
         settingsNavigationGraph(navController)
+        createRecipeNavigationGraph(navController, setBottomBarVisibility)
 
         composable(route = BottomBarScreenObject.Home.route) {
             setBottomBarVisibility(true)
@@ -86,11 +87,12 @@ fun NavGraphBuilder.homeNavigationGraph(
                 state = state
             ) // **CHANGED THIS**
         }
-        composable(route = HomeOtherRoutes.CreateRecipeView.route) {
-            CreateRecipeView(navController = navController)
-
-//            CreateView()
-        }
+//        composable(route = HomeOtherRoutes.CreateRecipeView.route) {
+//            setBottomBarVisibility(false)
+//            CreateRecipeView(navController = navController)
+//
+////            CreateView()
+//        }
 
         composable(route = HomeOtherRoutes.GalleryView.route) {
             val state = it.arguments?.getString("state") ?: ""

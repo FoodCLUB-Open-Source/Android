@@ -136,7 +136,7 @@ fun MyFridgeView(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     lineHeight = 48.sp,
-                    fontFamily = montserratFamily,
+                    fontFamily = Montserrat,
                 ) },
                 navigationIcon = {
                     IconButton(
@@ -321,7 +321,7 @@ fun TitlesSection(modifier: Modifier){
             fontWeight = FontWeight.Bold,
             fontSize = 16.sp,
             lineHeight = 19.5.sp,
-            fontFamily = montserratFamily,
+            fontFamily = Montserrat,
             color = Color.Black
         )
         Text(
@@ -330,7 +330,7 @@ fun TitlesSection(modifier: Modifier){
             fontWeight = FontWeight(500),
             fontSize = 16.sp,
             lineHeight = 19.5.sp,
-            fontFamily = montserratFamily,
+            fontFamily = Montserrat,
             color = Color.Gray
         )
         Text(
@@ -338,7 +338,7 @@ fun TitlesSection(modifier: Modifier){
             fontWeight = FontWeight(500),
             fontSize = 16.sp,
             lineHeight = 19.5.sp,
-            fontFamily = montserratFamily,
+            fontFamily = Montserrat,
             color = Color.Gray
         )
     }
@@ -487,7 +487,7 @@ fun SingleIngredientItem(
                     fontWeight = FontWeight(500),
                     fontSize = 16.sp,
                     lineHeight = 19.5.sp,
-                    fontFamily = montserratFamily,
+                    fontFamily = Montserrat,
                     color = Color.Gray
                 )
             }
@@ -508,7 +508,7 @@ fun SingleIngredientItem(
                     textAlign = TextAlign.Start,
                     fontSize = 16.sp,
                     lineHeight = 19.5.sp,
-                    fontFamily = montserratFamily,
+                    fontFamily = Montserrat,
                     color = Color.Gray
                 )
                 Box(
@@ -572,7 +572,7 @@ fun EditIngredientView(ingredient: Ingredient){
                 fontSize = 22.sp,
                 fontWeight = FontWeight(600),
                 color = Color.Black,
-                fontFamily = montserratFamily
+                fontFamily = Montserrat
                 )
         }
         Box(

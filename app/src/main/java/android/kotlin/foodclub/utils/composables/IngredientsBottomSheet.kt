@@ -6,7 +6,6 @@ import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.domain.enums.DrawerContentState
 import android.kotlin.foodclub.utils.helpers.ValueParser
-import android.kotlin.foodclub.views.home.montserratFamily
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
@@ -429,7 +428,7 @@ private fun IngredientComposable(
             Text(
                 text = ingredient.type,
                 color = Color.White,
-                fontFamily = montserratFamily
+                fontFamily = Montserrat
             )
         }
     }
