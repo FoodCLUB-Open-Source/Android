@@ -41,12 +41,26 @@ class PickerState {
     var selectedItem by mutableStateOf("")
 }
 
+/**
+ * Picker
+ *
+ * Custom picker where you can define how many elements should be shown on the screen and which
+ * item (index) should be displayed first
+ *
+ * @param items List of items (Strings) available to pick
+ * @param modifier Optional [Modifier] for the picker
+ * @param state Optional [PickerState]
+ * @param startIndex Optional index of the item in the list which should be displayed first
+ * @param visibleItemsCount Number of items displayed in the picker (default = 3)
+ * @param textModifier Optional [Modifier] for the text
+ * @param dividerColor Optional divider [Color]
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Picker(
     items: List<String>,
-    state: PickerState = rememberPickerState(),
     modifier: Modifier = Modifier,
+    state: PickerState = rememberPickerState(),
     startIndex: Int = 0,
     visibleItemsCount: Int = 3,
     textModifier: Modifier = Modifier,

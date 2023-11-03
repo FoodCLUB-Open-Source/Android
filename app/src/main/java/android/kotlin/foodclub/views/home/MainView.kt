@@ -63,16 +63,21 @@ fun BottomSheet(onDismiss: () -> Unit, navController: NavHostController) {
             BottomSheetItem(
                 icon = R.drawable.story_bottom_sheet_icon,
                 text = "Create a Story",
-                onDismiss,
-                onClick = { navController.navigate("CAMERA_VIEW/${"story".encodeUtf8()}") }
+                onClick = {
+                    navController.navigate("CAMERA_VIEW/${"story".encodeUtf8()}")
+                    onDismiss()
+                }
 
             )
             BottomSheetItem(
                 icon = R.drawable.recipe_bottom_sheet_icon,
                 text = "Create a Recipe",
-                onDismiss,
 //                onClick = { navController.navigate("CAMERA_VIEW/${"recipe".encodeUtf8()}")}//"CREATE_RECIPE_VIEW") }
-                onClick = { navController.navigate("VIDEOTRIMMER")}//"CREATE_RECIPE_VIEW") }
+                onClick = {
+//                    navController.navigate("VIDEOTRIMMER")
+                    navController.navigate("CREATE_RECIPE_VIEW")
+                    onDismiss()
+                }
             )
             Spacer(modifier = Modifier.height(25.dp))
         }

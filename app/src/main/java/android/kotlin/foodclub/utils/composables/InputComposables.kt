@@ -55,6 +55,13 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+/**
+ * Custom code verification text field
+ *
+ * Custom code verification text field is a text field for 6-digit verification code
+ *
+ * @param onFillCallback Executes when all 6 fields were filled with numbers
+ */
 @Composable
 fun CustomCodeTextField(onFillCallback: (Boolean, String) -> Unit) {
     var text by remember { mutableStateOf("") }
@@ -98,12 +105,31 @@ fun CustomCodeTextField(onFillCallback: (Boolean, String) -> Unit) {
         })
 }
 
+/**
+ * Custom text field
+ *
+ * Custom text field is a FoodCLUB style text field which can be used for data like email, name
+ * and other similar. You can use verification function to validate filled text and disable
+ * whitespaces.
+ *
+ * @param placeholder Text field placeholder
+ * @param keyboardType [KeyboardType] which should be allowed for this text field
+ * @param modifier Optional [Modifier] for the text field
+ * @param initialValue Optional initial value of the text field
+ * @param textValidation Boolean if the text validation should true of false
+ * @param allowSpace Boolean if the whitespaces can be typed
+ * @param validationMethod Executes every time text changes. Should return null if text is valid,
+ * otherwise should return Error message displayed under the text field.
+ * @param onCorrectnessStateChange Executes when valid state changes (from false to true or
+ * the other way around)
+ * @param onValueChange Executes when text changes
+ */
 @Composable
-fun CustomTextField(initialValue: String = "",
-    placeholder: String, keyboardType: KeyboardType, textValidation: Boolean = false, allowSpace: Boolean = false,
-    validationMethod: (text: String) -> String? = { text -> text },
+fun CustomTextField(
+    placeholder: String, keyboardType: KeyboardType, modifier: Modifier = Modifier,
+    initialValue: String = "", textValidation: Boolean = false,
+    allowSpace: Boolean = false, validationMethod: (text: String) -> String? = { text -> text },
     onCorrectnessStateChange: () -> Unit = {}, onValueChange: (text: String) -> Unit,
-    modifier: Modifier = Modifier
 ) {
     var text by remember { mutableStateOf(initialValue) }
     var textValid by remember { mutableStateOf(false) }
@@ -150,17 +176,30 @@ fun CustomTextField(initialValue: String = "",
     }
 }
 
+/**
+ * Custom password text field
+ *
+ * Custom password text field is a FoodCLUB style text field which can be used for passwords.
+ * You can use verification function to validate password strength.
+ *
+ * @param initialValue Optional initial value of the text field
+ * @param placeholder Text field placeholder
+ * @param strengthValidation Boolean if the password strength should be checked
+ * @param onCorrectnessStateChange Executes when valid state changes (from false to true or
+ * the other way around)
+ * @param onValueChange Optional function which executes when text changes
+ * @param label Optional [String] which adds text field label
+ * @param textFieldColors Optional [TextFieldColors]
+ */
 @Composable
-fun CustomPasswordTextField(initialValue: String = "",
-                            placeholder: String, strengthValidation: Boolean = true,
-                            onCorrectnessStateChange: () -> Unit,
-                            onValueChange: (text: String) -> Unit = {},
-                            label: String? = null,
-                            textFieldColors: TextFieldColors = textFieldCustomColors(),
-                            errorTextFieldColors: TextFieldColors = textFieldCustomColors(
-                                focusedIndicatorColor = Color.Red,
-                                unfocusedIndicatorColor = Color.Red
-                            )
+fun CustomPasswordTextField(
+    initialValue: String = "", placeholder: String, strengthValidation: Boolean = true,
+    onCorrectnessStateChange: () -> Unit, onValueChange: (text: String) -> Unit = {},
+    label: String? = null, textFieldColors: TextFieldColors = textFieldCustomColors(),
+    errorTextFieldColors: TextFieldColors = textFieldCustomColors(
+        focusedIndicatorColor = Color.Red,
+        unfocusedIndicatorColor = Color.Red
+    )
 ) {
     var password by remember { mutableStateOf(initialValue) }
     var passVisible by remember { mutableStateOf(false) }
@@ -235,6 +274,13 @@ fun CustomPasswordTextField(initialValue: String = "",
 
 }
 
+/**
+ * Custom back button (left black arrow icon)
+ *
+ * Back button used in many composables. It's a left black arrow.
+ *
+ * @param onBackButtonClick Executes when the button is clicked.
+ */
 @Composable
 fun BackButton(onBackButtonClick: () -> Unit) {
     Button(
@@ -288,6 +334,14 @@ fun AlternativeLoginOption(
     }
 }
 
+/**
+ * Terms and Conditions Footer
+ *
+ * Footer with text "By using FoodClub you agree to our Terms & Conditions" with clickable
+ * "Terms & Conditions". When clicked, it opens screen where user can read FoodCLUB T&C.
+ *
+ * @param onClick Optional function which is executed when clicked on the clickable text
+ */
 @Composable
 fun TermsAndConditionsInfoFooter(onClick: () -> Unit = {}) {
     Row(
@@ -316,6 +370,16 @@ fun TermsAndConditionsInfoFooter(onClick: () -> Unit = {}) {
     }
 }
 
+/**
+ * Confirm Button
+ *
+ * FoodCLUB styled big green confirm button used in many composables. You can enable/disable
+ * the button and set what should be displayed inside it.
+ *
+ * @param enabled Boolean if the button should be enabled
+ * @param text Text which should be displayed inside the button
+ * @param onClick Executes when button is clicked
+ */
 @Composable
 fun ConfirmButton(enabled: Boolean, text: String, onClick: () -> Unit) {
     Button(

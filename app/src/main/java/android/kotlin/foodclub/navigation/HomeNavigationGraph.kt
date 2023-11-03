@@ -23,6 +23,7 @@ import androidx.navigation.navigation
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.views.home.CreateView
 import android.kotlin.foodclub.views.home.DiscoverView
+import android.kotlin.foodclub.views.home.MyFridgeView
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -37,6 +38,7 @@ fun NavGraphBuilder.homeNavigationGraph(
         startDestination = BottomBarScreenObject.Home.route
     ) {
         settingsNavigationGraph(navController)
+        createRecipeNavigationGraph(navController, setBottomBarVisibility)
 
         composable(route = BottomBarScreenObject.Home.route) {
             setBottomBarVisibility(true)
@@ -85,11 +87,12 @@ fun NavGraphBuilder.homeNavigationGraph(
                 state = state
             ) // **CHANGED THIS**
         }
-        composable(route = HomeOtherRoutes.CreateRecipeView.route) {
-            CreateRecipeView(navController = navController)
-
-//            CreateView()
-        }
+//        composable(route = HomeOtherRoutes.CreateRecipeView.route) {
+//            setBottomBarVisibility(false)
+//            CreateRecipeView(navController = navController)
+//
+////            CreateView()
+//        }
 
         composable(route = HomeOtherRoutes.GalleryView.route) {
             val state = it.arguments?.getString("state") ?: ""
@@ -129,6 +132,10 @@ fun NavGraphBuilder.homeNavigationGraph(
         composable(route = HomeOtherRoutes.MySearchView.route) {
             SearchView(navController = navController)
         }
+        composable(route = HomeOtherRoutes.MyFridgeView.route) {
+            MyFridgeView(navController = navController)
+        }
+
     }
 }
 
@@ -145,7 +152,7 @@ sealed class HomeOtherRoutes(val route: String) {
     object FollowingView : HomeOtherRoutes(route = "FOLLOWING_VIEW")
 
     object MyBasketView : HomeOtherRoutes(route = "BASKET_VIEW")
-
+    object MyFridgeView : HomeOtherRoutes(route = "MY_FRIDGE_VIEW")
     object MySearchView : HomeOtherRoutes(route = "SEARCH_VIEW")
 
     object VideoTrimmerView : HomeOtherRoutes(route = "VIDEOTRIMMER")

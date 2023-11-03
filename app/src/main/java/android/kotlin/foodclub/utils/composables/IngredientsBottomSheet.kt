@@ -6,7 +6,6 @@ import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.domain.enums.DrawerContentState
 import android.kotlin.foodclub.utils.helpers.ValueParser
-import android.kotlin.foodclub.views.home.montserratFamily
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
@@ -74,6 +73,24 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+/**
+ * Ingredients Bottom Sheet
+ *
+ * Ingredients bottom sheet is a pop up containing list of ingredients which can be used to execute
+ * function on chosen by user [Ingredient]. For example user can select 340 grams of Tomato and add
+ * it to their cart.
+ *
+ * @param onDismiss Executes when the user clicks outside of the bottom sheet or when user clicks
+ * back button
+ * @param productsDataFlow [ProductsData] StateFlow which contains list of the products currently
+ * loaded using the API
+ * @param loadMoreObjects Optional function which executes loading further list of products based on
+ * text put in "search" field and passes callback function which should be called when the list is
+ * loaded
+ * @param onListUpdate Optional function which executes when text in "search" field is changed
+ * @param onSave Optional function which executes when user clicks "On Save" button and provides
+ * [Ingredient] object
+ */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun IngredientsBottomSheet(onDismiss: () -> Unit, productsDataFlow: StateFlow<ProductsData>,
@@ -165,7 +182,7 @@ fun IngredientsBottomSheet(onDismiss: () -> Unit, productsDataFlow: StateFlow<Pr
 }
 
 @Composable
-fun IngredientSelectedView(
+private fun IngredientSelectedView(
     screenHeight: Dp, selectedIngredient: Ingredient,
     onDismiss: () -> Unit, onSave: (ingredient: Ingredient) -> Unit
 ) {
@@ -264,7 +281,7 @@ fun IngredientSelectedView(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun IngredientListView(
+private fun IngredientListView(
     screenHeight: Dp,
     savedSearchText: String,
     productsDataFlow: StateFlow<ProductsData>,
@@ -384,7 +401,7 @@ fun IngredientListView(
 }
 
 @Composable
-fun IngredientComposable(
+private fun IngredientComposable(
     ingredient: Ingredient,
     onClick: (Ingredient) -> Unit
 ) {
@@ -411,7 +428,7 @@ fun IngredientComposable(
             Text(
                 text = ingredient.type,
                 color = Color.White,
-                fontFamily = montserratFamily
+                fontFamily = Montserrat
             )
         }
     }
