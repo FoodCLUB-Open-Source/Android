@@ -240,7 +240,8 @@ fun OnBoardingScreen4() {
             text = "Be the first to savor insights into foodSNAPS, foodMAPS, foodSCHOOL, and our detectable AI-driven innovations."
         )
 
-        val link = "https://discord.com/channels/@me/1156229349570252830/1169700860415185026"
+        val link = "https://discord.gg/dA83mnQMqr"
+
         val localUriHandler = LocalUriHandler.current
 
         Button(
