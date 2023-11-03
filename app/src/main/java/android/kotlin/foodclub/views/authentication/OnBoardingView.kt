@@ -5,7 +5,6 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.others.OnBoardingItems
-import android.kotlin.foodclub.views.home.montserratFamily
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -114,13 +113,13 @@ fun OnBoardingScreen1() {
         )
         Text(
             text = "FoodCLUB",
-            fontFamily = montserratFamily,
+            fontFamily = Montserrat,
             fontWeight = FontWeight.Black,
             fontSize = 35.sp
         )
         Text(
             text = "The Art of Food is Here",
-            fontFamily = montserratFamily,
+            fontFamily = Montserrat,
             fontSize = 20.sp,
             color = Color.Gray
         )
@@ -162,13 +161,13 @@ fun OnBoardingScreen3() {
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
         Text(
-            fontFamily = montserratFamily,
+            fontFamily = Montserrat,
             fontWeight = FontWeight.ExtraBold,
             text = "Our Mission",
             fontSize = 40.sp
         )
         Text(
-            fontFamily = montserratFamily,
+            fontFamily = Montserrat,
             fontWeight = FontWeight.Bold,
             text = "Did you know?",
             fontSize = 27.5.sp,
@@ -194,7 +193,7 @@ fun OnBoardingScreen3() {
         )
 
         Text(
-            fontFamily = montserratFamily,
+            fontFamily = Montserrat,
             fontWeight = FontWeight.Bold,
             text = "You're now part of our mission.",
             fontSize = 21.5.sp,
@@ -213,7 +212,7 @@ fun OnBoardingScreen4() {
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
         Text(
-            fontFamily = montserratFamily,
+            fontFamily = Montserrat,
             fontWeight = FontWeight.Bold,
             text = "Join Our Discord VIP Community",
             fontSize = 40.sp
@@ -251,7 +250,7 @@ fun OnBoardingScreen4() {
         ) {
             Text(
                 text = "Join the VIP Discord Server",
-                fontFamily = montserratFamily,
+                fontFamily = Montserrat,
                 color = Color.White,
                 fontSize = 24.sp
             )
@@ -275,7 +274,7 @@ fun InfoRow(imageID: Int, text: String) {
             modifier = Modifier.size(55.dp)
         )
         Text(
-            text = text, fontFamily = montserratFamily, modifier = Modifier
+            text = text, fontFamily = Montserrat, modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp), color = Color.Gray, fontSize = 16.sp
         )
