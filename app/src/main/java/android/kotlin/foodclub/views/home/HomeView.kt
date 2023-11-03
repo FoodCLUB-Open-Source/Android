@@ -449,6 +449,10 @@ fun HomeView(
                             username = currentVideo.authorDetails,
                             profilePictureUrl = null
                         )
+                        var isLiked by remember {
+                            mutableStateOf(currentVideo.currentViewerInteraction.isLiked)
+                        }
+                        var isBookmarked by remember { mutableStateOf(false) }
 
                         VideoScroller(currentVideo, pagerState, it, onSingleTap = {
                             pauseButtonVisibility = it.isPlaying
@@ -456,7 +460,6 @@ fun HomeView(
                         },
                             onDoubleTap = { exoPlayer, offset ->
                                 coroutineScope.launch {
-                                    currentVideo.currentViewerInteraction.isLiked = true
                                     doubleTapState.animate(offset)
                                 }
                             },
@@ -464,13 +467,14 @@ fun HomeView(
                             onVideoGoBackground = { pauseButtonVisibility = false }
                         )
 
-                        var isLiked by remember {
-                            mutableStateOf(currentVideo.currentViewerInteraction.isLiked)
+
+
+                        LikeButton(doubleTapState) {
+                            isLiked = !isLiked
+                            coroutineScope.launch {
+                                viewModel.updatePostLikeStatus(currentVideo.videoId, isLiked)
+                            }
                         }
-                        var isBookmarked by remember { mutableStateOf(false) }
-
-
-                        LikeButton(doubleTapState) { isLiked = true }
                         PlayPauseButton(buttonVisibility = pauseButtonVisibility)
                         VideoLayout(
                             userDetails = authorDetails,
@@ -481,13 +485,17 @@ fun HomeView(
                             opacity = 0.7f,
                             onLikeClick = {
                                 isLiked = !isLiked
-                                currentVideo.currentViewerInteraction.isLiked = !isLiked
+                                coroutineScope.launch {
+                                    viewModel.updatePostLikeStatus(currentVideo.videoId, isLiked)
+                                }
                             },
                             onBookmarkClick = {
                                 isBookmarked = !isBookmarked
                             },
                             onInfoClick = {},
-                            modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.BottomCenter)
                         )
                     }
                 }

@@ -5,6 +5,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
+import retrofit2.Retrofit.Builder
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Named
 import javax.inject.Singleton
@@ -81,5 +82,15 @@ object ServicesModule {
         return defaultRetrofit
             .build()
             .create(SettingsService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideLikesService(
+        @Named("defaultRetrofit") defaultRetrofit: Retrofit.Builder
+    ): LikesService {
+        return defaultRetrofit
+            .build()
+            .create(LikesService::class.java)
     }
 }
