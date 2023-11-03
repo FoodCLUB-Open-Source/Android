@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -175,20 +176,20 @@ fun OnBoardingScreen3() {
         )
 
         InfoRow(
-            imageID = R.drawable.app_logo,
+            imageID = R.drawable.carbon_footprint,
             text = "25% of climate change and 70% of fresh water is linked to food production"
         )
         InfoRow(
-            imageID = R.drawable.app_logo,
+            imageID = R.drawable.sad_heart,
             text = "70% of disease and illness are caused by nutrition"
         )
         InfoRow(
-            imageID = R.drawable.app_logo,
+            imageID = R.drawable.globe,
             text = "We produce food across the glob to wipe out global hunger - but 40% of that food goes to waste"
         )
-        InfoRow(imageID = R.drawable.app_logo, text = "1 in 10 people have a food disorder")
+        InfoRow(imageID = R.drawable._00m, text = "1 in 10 people have a food disorder")
         InfoRow(
-            imageID = R.drawable.app_logo,
+            imageID = R.drawable.loneliness,
             text = "Social media has left us unconnected in our communities and our cultures"
         )
 
@@ -219,29 +220,32 @@ fun OnBoardingScreen4() {
         )
 
         InfoRow(
-            imageID = R.drawable.app_logo,
+            imageID = R.drawable.crown,
             text = "Join our community for exclusive content and insight into the tech and business world"
         )
         Divider()
-        InfoRow(imageID = R.drawable.app_logo, text = "Engage in lively discussions and events.")
+        InfoRow(imageID = R.drawable.crown, text = "Engage in lively discussions and events.")
         Divider()
         InfoRow(
-            imageID = R.drawable.app_logo,
+            imageID = R.drawable.innovation,
             text = "Shape the future of food: help decide new features and innovation."
         )
         Divider()
         InfoRow(
-            imageID = R.drawable.app_logo,
+            imageID = R.drawable.giveaways,
             text = "Participate in special contests and giveaways."
         )
         Divider()
         InfoRow(
-            imageID = R.drawable.app_logo,
+            imageID = R.drawable.gold_medal,
             text = "Be the first to savor insights into foodSNAPS, foodMAPS, foodSCHOOL, and our detectable AI-driven innovations."
         )
 
+        val link = "https://discord.com/channels/@me/1156229349570252830/1169700860415185026"
+        val localUriHandler = LocalUriHandler.current
+
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { localUriHandler.openUri(link) },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3A7CA8)),
             shape = RoundedCornerShape(10.dp)
         ) {
