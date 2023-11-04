@@ -5,6 +5,7 @@ import android.kotlin.foodclub.domain.models.home.VideoStats
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
+import android.kotlin.foodclub.repositories.BookmarkRepository
 import android.kotlin.foodclub.repositories.LikesRepository
 import android.kotlin.foodclub.repositories.StoryRepository
 import android.util.Log
@@ -24,6 +25,7 @@ class HomeViewModel @Inject constructor(
     private val postRepository: PostRepository,
     private val storyRepository: StoryRepository,
     private val likesRepository: LikesRepository,
+    private val bookmarkRepository: BookmarkRepository,
     private val sessionCache: SessionCache
 ) : ViewModel() {
     private val _title = MutableLiveData("HomeViewModel View")
@@ -131,6 +133,40 @@ class HomeViewModel @Inject constructor(
         for (videoModel in currentList) {
             if (videoModel.videoId == postId) {
                 videoModel.currentViewerInteraction.isLiked = isLiked
+                break // Exit the loop after finding and updating the specific item
+            }
+        }
+
+        _postListData.value = currentList // Update with the modified list
+    }
+
+    suspend fun updatePostBookmarkStatus(postId: Long, isBookmarked: Boolean){
+        val userId = sessionCache.getActiveSession()?.sessionUser?.userId
+        viewModelScope.launch {
+            when(
+                val resource = bookmarkRepository.updateBookmarkStatus(
+                    postId = postId,
+                    userId = userId!!,
+                    isBookmarked
+                )
+            ){
+                is Resource.Success -> {
+                    Log.i("MYTAG","success: ${resource.data}")
+                }
+                is Resource.Error -> {
+                    Log.i("MYTAG","error: ${resource.message}")
+                }
+            }
+        }
+        updateBookmarkStatus(postId, isBookmarked)
+    }
+
+    private fun updateBookmarkStatus(postId: Long, isBookmarked: Boolean) {
+        val currentList = _postListData.value.toMutableList() // Convert to a mutable list
+
+        for (videoModel in currentList) {
+            if (videoModel.videoId == postId) {
+                videoModel.currentViewerInteraction.isBookmarked = isBookmarked
                 break // Exit the loop after finding and updating the specific item
             }
         }

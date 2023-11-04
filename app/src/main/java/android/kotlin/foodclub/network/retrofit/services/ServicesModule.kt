@@ -93,4 +93,14 @@ object ServicesModule {
             .build()
             .create(LikesService::class.java)
     }
+    @Provides
+    @Singleton
+    fun provideBookmarkService(
+        @Named("defaultRetrofit") defaultRetrofit: Retrofit.Builder
+    ): BookmarksService {
+        return defaultRetrofit
+            .build()
+            .create(BookmarksService::class.java)
+    }
+
 }
