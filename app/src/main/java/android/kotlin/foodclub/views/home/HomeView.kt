@@ -452,7 +452,9 @@ fun HomeView(
                         var isLiked by remember {
                             mutableStateOf(currentVideo.currentViewerInteraction.isLiked)
                         }
-                        var isBookmarked by remember { mutableStateOf(false) }
+                        var isBookmarked by remember { mutableStateOf(
+                            currentVideo.currentViewerInteraction.isBookmarked)
+                        }
 
                         VideoScroller(currentVideo, pagerState, it, onSingleTap = {
                             pauseButtonVisibility = it.isPlaying
@@ -491,6 +493,9 @@ fun HomeView(
                             },
                             onBookmarkClick = {
                                 isBookmarked = !isBookmarked
+                                coroutineScope.launch {
+                                    viewModel.updatePostBookmarkStatus(currentVideo.videoId, isBookmarked)
+                                }
                             },
                             onInfoClick = {},
                             modifier = Modifier
