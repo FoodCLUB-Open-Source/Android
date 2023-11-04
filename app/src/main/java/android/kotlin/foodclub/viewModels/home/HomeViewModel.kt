@@ -5,6 +5,7 @@ import android.kotlin.foodclub.domain.models.home.VideoStats
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
+import android.kotlin.foodclub.repositories.LikesRepository
 import android.kotlin.foodclub.repositories.StoryRepository
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -22,6 +23,7 @@ import kotlin.random.Random
 class HomeViewModel @Inject constructor(
     private val postRepository: PostRepository,
     private val storyRepository: StoryRepository,
+    private val likesRepository: LikesRepository,
     private val sessionCache: SessionCache
 ) : ViewModel() {
     private val _title = MutableLiveData("HomeViewModel View")
@@ -100,6 +102,40 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    suspend fun updatePostLikeStatus(postId: Long, isLiked: Boolean){
+        val userId = sessionCache.getActiveSession()?.sessionUser?.userId
+        viewModelScope.launch {
+            when(
+                val resource = likesRepository.updatePostLikeStatus(
+                    postId = postId,
+                    userId = userId!!,
+                    isLiked
+                )
+            ){
+                is Resource.Success -> {
+                    Log.i("MYTAG","${resource.data}")
+                }
+                is Resource.Error -> {
+                    Log.i("MYTAG","${resource.message}")
+                }
+            }
+        }
+        updatePostById(postId, isLiked)
+    }
+
+    private fun updatePostById(postId: Long, isLiked: Boolean) {
+        val currentList = _postListData.value.toMutableList() // Convert to a mutable list
+
+        for (videoModel in currentList) {
+            if (videoModel.videoId == postId) {
+                videoModel.currentViewerInteraction.isLiked = isLiked
+                break // Exit the loop after finding and updating the specific item
+            }
+        }
+
+        _postListData.value = currentList // Update with the modified list
     }
 
     object RecipesVideos {
