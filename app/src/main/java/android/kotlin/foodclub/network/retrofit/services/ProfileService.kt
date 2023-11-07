@@ -5,10 +5,16 @@ import android.kotlin.foodclub.network.retrofit.responses.profile.RetrievePostsL
 import android.kotlin.foodclub.network.retrofit.responses.profile.RetrieveFollowerListResponse
 import android.kotlin.foodclub.network.retrofit.responses.profile.RetrieveFollowingListResponse
 import android.kotlin.foodclub.network.retrofit.responses.profile.RetrieveProfileResponse
+import android.kotlin.foodclub.network.retrofit.responses.profile.RetrieveUserDetailsResponse
+import android.kotlin.foodclub.network.retrofit.responses.profile.UpdateUserProfileImageResponse
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -19,6 +25,18 @@ interface ProfileService {
         @Query("page_number") pageNo: Int?,
         @Query("page_size") pageSize: Int?
     ): Response<RetrieveProfileResponse>
+
+    @GET("profile/{user_id}/details")
+    suspend fun retrieveUserDetails(
+        @Path("user_id") userId: Long
+    ): Response<RetrieveUserDetailsResponse>
+
+    @PUT("profile/profile_picture/{user_id}")
+    @Multipart
+    suspend fun updateUserProfileImage(
+        @Path("user_id") userId: Long,
+        @Part imagePart: MultipartBody.Part
+    ): Response<UpdateUserProfileImageResponse>
 
     @GET("bookmarks/{userId}")
     suspend fun getBookmarkedPosts(

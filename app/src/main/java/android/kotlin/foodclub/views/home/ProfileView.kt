@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.views.home
 
+import android.content.Intent
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.others.BottomSheetItem
 import android.kotlin.foodclub.domain.models.profile.UserPosts
@@ -7,6 +8,7 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.utils.composables.CustomBottomSheet
 import android.kotlin.foodclub.utils.helpers.UiEvent
+import android.kotlin.foodclub.utils.helpers.uriToFile
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -55,6 +57,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import android.kotlin.foodclub.viewModels.home.ProfileViewModel
+import android.net.Uri
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.LaunchedEffect
@@ -64,7 +70,9 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 import kotlin.math.PI
@@ -84,6 +92,21 @@ fun ProfileView(
     val profileModelState = viewModel.profileModel.collectAsState()
     val bookmarkedPostsState = viewModel.bookmarkedPosts.collectAsState()
     val sessionUserId = viewModel.myUserId.collectAsState()
+    val context = LocalContext.current
+    val dataStore = viewModel.storeData
+    var imageUri: Uri? by remember { mutableStateOf(null) }
+
+    // get image data from DataStore and set user profile image
+    LaunchedEffect(key1 = true) {
+        dataStore.getImage().collect { image->
+            if (image != null) {
+                imageUri = Uri.parse(image)
+            }else{
+                imageUri = null // Set imageUri to null or a default value
+                Log.i("MYTAG", "NULL IMG")
+            }
+        }
+    }
 
     LaunchedEffect(userId) {
         viewModel.setUser(userId)
@@ -126,6 +149,28 @@ fun ProfileView(
         val bookmarkedPosts = bookmarkedPostsState.value
         var showBottomSheet by remember { mutableStateOf(false) }
 
+        val galleryLauncher =
+            rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocument()) {
+                it?.let { uri ->
+                    context.contentResolver
+                        .takePersistableUriPermission(
+                            uri,
+                            Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        )
+                    // store selected image to DataStore until backend sends profile picture data as url
+                    scope.launch {
+                        dataStore.storeImage(uri.toString())
+                    }
+                    // convert selected image uri to File to send with PUT request
+                    val file = uriToFile(uri, context)
+                    viewModel.updateUserProfileImage(
+                        id = viewModel.myUserId.value,
+                        file = file!!,
+                        uri = uri
+                    )
+                }
+            }
+
         var showDeleteRecipe by remember {
             mutableStateOf(false)
         }
@@ -159,13 +204,15 @@ fun ProfileView(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Box(if(userId == 0L) Modifier.clickable { showBottomSheet = true } else Modifier) {
-                        Image(
-                            painterResource(id = R.drawable.story_user),
+                        AsyncImage(
+                            model = imageUri,
                             contentDescription = "profile_picture",
                             modifier = Modifier
                                 .clip(RoundedCornerShape(60.dp))
                                 .height(124.dp)
-                                .width(124.dp))
+                                .width(124.dp),
+                            contentScale = ContentScale.Crop
+                        )
                         if(userId == 0L){
                             Image(
                                 painter = painterResource(R.drawable.profile_picture_change_icon),
@@ -173,7 +220,6 @@ fun ProfileView(
                                 modifier = Modifier
                                     .height(46.dp)
                                     .width(46.dp)
-                                    //Use trigonometry to move icon to right bottom corner of profile picture
                                     .offset(
                                         x = (cos(PI / 4) * 62 + 39).dp,
                                         y = (sin(PI / 4) * 62 + 39).dp
@@ -348,8 +394,12 @@ fun ProfileView(
         if(userId == 0L && showBottomSheet) {
             CustomBottomSheet(
                 itemList = listOf(
-                    BottomSheetItem(1, "Select From Gallery", R.drawable.select_from_gallery) {},
-                    BottomSheetItem(2, "Take Photo", R.drawable.take_photo) {}
+                    BottomSheetItem(1, "Select From Gallery", R.drawable.select_from_gallery) {
+                        galleryLauncher.launch(arrayOf("image/*"))
+                    },
+                    BottomSheetItem(2, "Take Photo", R.drawable.take_photo) {
+                        navController.navigate("TAKE_PROFILE_PHOTO_VIEW")
+                    }
                 ),
                 sheetTitle = "Upload Photo",
 //                enableDragHandle = true,
@@ -358,7 +408,6 @@ fun ProfileView(
             )
         }
     }
-
 }
 
 @Composable
