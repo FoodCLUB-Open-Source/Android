@@ -10,8 +10,16 @@ class UserDetailsMapper: DomainMapper<UserDetailsDto, UserDetailsModel> {
             id = entity.id,
             userName = entity.userName,
             email = entity.email,
+            phoneNumber = entity.phoneNumber,
             profilePicture = entity.profilePicture,
-            createdAt = entity.createdAt
+            userBio = entity.userBio,
+            gender = entity.gender,
+            createdAt = entity.createdAt,
+            dateOfBirth = entity.dateOfBirth,
+            dietaryPrefs = entity.dietaryPrefs,
+            country = null,
+            shippingAddress = null,
+            fullName = null
         )
     }
 
@@ -20,12 +28,16 @@ class UserDetailsMapper: DomainMapper<UserDetailsDto, UserDetailsModel> {
             id = domainModel.id,
             userName = domainModel.userName,
             email = domainModel.email,
-            phoneNumber = null,
+            phoneNumber = domainModel.phoneNumber,
             profilePicture = domainModel.profilePicture,
-            userBio = null,
+            userBio = domainModel.userBio,
+            gender = domainModel.gender,
             createdAt = domainModel.createdAt,
-            dateOfBirth = null,
-            dietaryPrefs = null
+            dateOfBirth = domainModel.dateOfBirth,
+            dietaryPrefs = domainModel.dietaryPrefs,
+            country = null,
+            shippingAddress = null,
+            fullName = null
         )
     }
 }

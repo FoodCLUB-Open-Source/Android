@@ -23,7 +23,8 @@ fun NavGraphBuilder.settingsNavigationGraph(navController: NavHostController) {
         }
         composable(SettingsScreen.EditProfile.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<SettingsViewModel>(navController)
-            EditProfileSetting(navController = navController)
+            val userState = viewModel.userDetails.collectAsState()
+            EditProfileSetting(navController = navController, userState = userState, viewModel = viewModel)
         }
         composable(SettingsScreen.Privacy.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<SettingsViewModel>(navController)

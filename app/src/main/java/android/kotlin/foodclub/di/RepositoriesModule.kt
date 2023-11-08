@@ -97,8 +97,8 @@ object RepositoriesModule {
 
     @Provides
     @Singleton
-    fun provideSettingsRepository(api: SettingsService): SettingsRepository {
-        return SettingsRepository(api)
+    fun provideSettingsRepository(api: SettingsService, userDetailsMapper: UserDetailsMapper): SettingsRepository {
+        return SettingsRepository(api, userDetailsMapper)
     }
 
     @Provides
