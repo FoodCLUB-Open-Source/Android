@@ -51,6 +51,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -106,6 +107,88 @@ fun RecordingButton(isRecording: Boolean) {
 
 }
 
+@Composable
+fun RecordingClipsButton(isRecording: Boolean) {
+
+    val (rememberProgress, progressUpdate) = remember {
+        mutableFloatStateOf(0f)
+    }
+
+    val clipArcs = remember {
+        mutableListOf<Float>()
+    }
+
+    val progress by animateFloatAsState(
+        targetValue = if (isRecording) 1f else rememberProgress,
+        animationSpec = infiniteRepeatable(
+            animation = tween(20000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ), label = ""
+    )
+
+    if (!isRecording)
+    {
+        if (progress != 0f)
+        {
+            clipArcs.add(progress)
+        }
+
+        progressUpdate(progress)
+    }
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.size(80.dp)
+    ) {
+        // Background circle
+        /*
+        CircularProgressIndicator(
+            progress = 1f,
+            strokeWidth = 5.dp,
+            color = Color.White,
+            modifier = Modifier.size(80.dp)
+        )
+         */
+
+        Canvas(modifier = Modifier.fillMaxSize())
+        {
+            drawArc(color = Color(0x55FFFFFF), startAngle = -90f, sweepAngle = 360f, useCenter = false, style = Stroke(width = 25f))
+        }
+
+        // Animated circle
+        CircularProgressIndicator(
+            progress = progress,
+            strokeWidth = 5.dp,
+            color = foodClubGreen,
+            modifier = Modifier.size(80.dp)
+        )
+
+        Canvas(modifier = Modifier.fillMaxSize())
+        {
+            val offset:Float = 0.005f
+            clipArcs.forEach{
+                drawArc(color = Color.White, startAngle = (360f * it) -90f, sweepAngle = 3f, useCenter = false, style = Stroke(width = 25f))
+            }
+
+        }
+
+        /*
+        Canvas(modifier = Modifier.fillMaxSize())
+        {
+            clipArcs.forEach {
+                drawArc(color = Color.White, startAngle = (it + 270f), sweepAngle = 3f, useCenter = false)
+            }
+        }
+
+         */
+
+        Canvas(modifier = Modifier.size(60.dp)) {
+            drawCircle(color = Color(0xFFCACBCB))
+        }
+        // Record button
+    }
+
+}
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -280,7 +363,7 @@ fun CameraView(
                                                 StandardCharsets.UTF_8.toString()
                                             )
 
-                                            navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
+                                            //navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
                                             //navController.navigate("GALLERY_VIEW/${uriEncoded}")
                                         }
                                     }
@@ -294,10 +377,12 @@ fun CameraView(
 
                         //navController.navigate("GALLERY_VIEW")
                     },
-                    modifier = Modifier.align(Alignment.BottomCenter).size(80.dp)
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .size(80.dp)
                 ) {
 
-                    RecordingButton(isRecording = recordingStarted.value)
+                    RecordingClipsButton(isRecording = recordingStarted.value)
                     /*Icon(
                         painter = painterResource(if (recordingStarted.value) R.drawable.story_user else R.drawable.save),
                         contentDescription = "",
