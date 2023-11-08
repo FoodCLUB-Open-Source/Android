@@ -140,7 +140,7 @@ class HomeViewModel @Inject constructor(
                     Log.i("MYTAG", "Viewed Post Successfully")
                 }
                 is Resource.Error -> {
-                    // ERROR
+                    // ERROR HANDLING
                     Log.e("MYTAG", "Failed to View Post: ${resource.message}")
                 }
             }
