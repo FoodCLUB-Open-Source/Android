@@ -3,6 +3,7 @@ package android.kotlin.foodclub.di
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
+import android.kotlin.foodclub.utils.helpers.StoreData
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,4 +35,11 @@ object SharedPreferencesModule {
     fun provideSharedTokenPreferences(@ApplicationContext context: Context): SharedPreferences {
         return context.getSharedPreferences("refresh_token_prefs", MODE_PRIVATE)
     }
+
+    @Provides
+    @Singleton
+    fun provideStoreData(@ApplicationContext context: Context): StoreData {
+        return StoreData(context)
+    }
+
 }

@@ -32,4 +32,10 @@ object ProfileMappersModule {
     fun provideFollowingUserMapper(): FollowingUserMapper {
         return FollowingUserMapper()
     }
+
+    @Provides
+    @Singleton
+    fun provideUserDetailsMapper(): UserDetailsMapper {
+        return UserDetailsMapper()
+    }
 }

@@ -24,6 +24,7 @@ import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.views.home.CreateView
 import android.kotlin.foodclub.views.home.DiscoverView
 import android.kotlin.foodclub.views.home.MyFridgeView
+import android.kotlin.foodclub.views.home.TakeProfilePhotoView
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -135,6 +136,9 @@ fun NavGraphBuilder.homeNavigationGraph(
         composable(route = HomeOtherRoutes.MyFridgeView.route) {
             MyFridgeView(navController = navController)
         }
+        composable(route = HomeOtherRoutes.TakeProfilePhotoView.route) {
+            TakeProfilePhotoView(navController = navController)
+        }
 
     }
 }
@@ -156,4 +160,5 @@ sealed class HomeOtherRoutes(val route: String) {
     object MySearchView : HomeOtherRoutes(route = "SEARCH_VIEW")
 
     object VideoTrimmerView : HomeOtherRoutes(route = "VIDEOTRIMMER")
+    object TakeProfilePhotoView: HomeOtherRoutes(route = "TAKE_PROFILE_PHOTO_VIEW")
 }

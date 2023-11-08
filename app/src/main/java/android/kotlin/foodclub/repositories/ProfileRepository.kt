@@ -1,11 +1,13 @@
 package android.kotlin.foodclub.repositories
 
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
+import android.kotlin.foodclub.domain.models.profile.UserDetailsModel
 import android.kotlin.foodclub.domain.models.profile.UserPosts
 import android.kotlin.foodclub.domain.models.profile.UserProfile
 import android.kotlin.foodclub.network.retrofit.services.ProfileService
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.FollowerUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.FollowingUserMapper
+import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserDetailsMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserPostsMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserProfileMapper
 import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorResponse
@@ -14,15 +16,22 @@ import android.kotlin.foodclub.network.retrofit.responses.profile.RetrieveFollow
 import android.kotlin.foodclub.network.retrofit.responses.profile.RetrieveFollowingListResponse
 import android.kotlin.foodclub.network.retrofit.responses.profile.RetrievePostsListResponse
 import android.kotlin.foodclub.network.retrofit.responses.profile.RetrieveProfileResponse
+import android.kotlin.foodclub.network.retrofit.responses.profile.RetrieveUserDetailsResponse
+import android.kotlin.foodclub.network.retrofit.responses.profile.UpdateUserProfileImageResponse
 import android.kotlin.foodclub.network.retrofit.utils.apiRequestFlow
 import android.kotlin.foodclub.utils.helpers.Resource
+import android.util.Log
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 
 class ProfileRepository(
     private val api: ProfileService,
     private val profileMapper: UserProfileMapper,
     private val userPostsMapper: UserPostsMapper,
     private val followerUserMapper: FollowerUserMapper,
-    private val followingUserMapper: FollowingUserMapper
+    private val followingUserMapper: FollowingUserMapper,
+    private val userDetailsMapper: UserDetailsMapper
 ) {
 
     suspend fun retrieveProfileData(
@@ -45,7 +54,52 @@ class ProfileRepository(
         }
     }
 
-    suspend fun retrieveBookmaredPosts(
+    suspend fun retrieveUserDetails(userId: Long): Resource<UserDetailsModel, DefaultErrorResponse> {
+        return when (val resource = apiRequestFlow<RetrieveUserDetailsResponse, DefaultErrorResponse> {
+            api.retrieveUserDetails(userId)
+        }) {
+            is Resource.Success -> {
+                val userDetailsDto = resource.data?.body()?.data
+                if (userDetailsDto != null) {
+                    val userDetailsModel = userDetailsMapper.mapToDomainModel(userDetailsDto)
+                    Resource.Success(userDetailsModel)
+                } else {
+                    Log.i("MYTAG","Response body or data is null")
+                    Resource.Error("Response body or data is null")
+                }
+            }
+            is Resource.Error -> {
+                Log.i("MYTAG","${resource.message}")
+                Resource.Error(resource.message ?: "Unknown error")
+            }
+        }
+    }
+
+    suspend fun updateUserProfileImage(
+        userId: Long,
+        file: File
+    ): Resource<UpdateUserProfileImageResponse, DefaultErrorResponse> {
+        return when (val resource = apiRequestFlow<UpdateUserProfileImageResponse, DefaultErrorResponse> {
+            api.updateUserProfileImage(
+                userId,
+                imagePart = MultipartBody.Part
+                    .createFormData(
+                        "image",
+                        file.name,
+                        file.asRequestBody()
+                    )
+            )
+        }) {
+            is Resource.Success -> {
+                Resource.Success(resource.data!!.body()!!)
+            }
+            is Resource.Error -> {
+                Resource.Error(resource.message!!)
+            }
+        }
+    }
+
+    suspend fun retrieveBookmarkedPosts(
         userId: Long, pageSize: Int? = null, pageNo: Int? = null
     ): Resource<List<UserPosts>, DefaultErrorResponse> {
         return when(

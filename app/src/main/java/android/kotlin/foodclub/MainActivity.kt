@@ -13,7 +13,10 @@ import android.kotlin.foodclub.navigation.RootNavigationGraph
 import android.kotlin.foodclub.utils.composables.MainLayout
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import dagger.hilt.android.AndroidEntryPoint
+import android.Manifest
+import android.kotlin.foodclub.utils.helpers.checkPermissions
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -29,6 +32,15 @@ class MainActivity : ComponentActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
             keepSplashOnScreen = false }, delay)
         setContent {
+
+            // this is for taking profile picture with camera
+            // later move this to an appropriate place
+            if (!checkPermissions(context = applicationContext)) {
+                ActivityCompat.requestPermissions(
+                    this, arrayOf(Manifest.permission.CAMERA), 0
+                )
+            }
+
             FoodClubTheme {
                 val navController = rememberNavController()
                 MainLayout(navController = navController) { showSheet, triggerBottomSheetModal,
