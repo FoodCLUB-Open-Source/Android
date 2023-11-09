@@ -34,7 +34,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -42,9 +45,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,13 +66,11 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionsRequired
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import kotlinx.coroutines.launch
 import okio.ByteString.Companion.encodeUtf8
 import java.io.File
 import java.net.URLEncoder
@@ -108,7 +113,7 @@ fun RecordingButton(isRecording: Boolean) {
 }
 
 @Composable
-fun RecordingClipsButton(isRecording: Boolean) {
+fun RecordingClipsButton(isRecording: Boolean, removeClip: Boolean = false, removeUpdate: (Boolean) -> Unit = {}) {
 
     val (rememberProgress, progressUpdate) = remember {
         mutableFloatStateOf(0f)
@@ -126,14 +131,19 @@ fun RecordingClipsButton(isRecording: Boolean) {
         ), label = ""
     )
 
-    if (!isRecording)
-    {
-        if (progress != 0f)
-        {
+    if (!isRecording) {
+        if (progress != 0f) {
             clipArcs.add(progress)
         }
 
         progressUpdate(progress)
+    }
+
+    if (removeClip)
+    {
+        clipArcs.removeAt(clipArcs.lastIndex)
+        progressUpdate(clipArcs[clipArcs.lastIndex])
+        removeUpdate(false)
     }
 
     Box(
@@ -152,7 +162,13 @@ fun RecordingClipsButton(isRecording: Boolean) {
 
         Canvas(modifier = Modifier.fillMaxSize())
         {
-            drawArc(color = Color(0x55FFFFFF), startAngle = -90f, sweepAngle = 360f, useCenter = false, style = Stroke(width = 25f))
+            drawArc(
+                color = Color(0x55FFFFFF),
+                startAngle = -90f,
+                sweepAngle = 360f,
+                useCenter = false,
+                style = Stroke(width = 25f)
+            )
         }
 
         // Animated circle
@@ -165,9 +181,15 @@ fun RecordingClipsButton(isRecording: Boolean) {
 
         Canvas(modifier = Modifier.fillMaxSize())
         {
-            val offset:Float = 0.005f
-            clipArcs.forEach{
-                drawArc(color = Color.White, startAngle = (360f * it) -90f, sweepAngle = 3f, useCenter = false, style = Stroke(width = 25f))
+            val offset: Float = 0.005f
+            clipArcs.forEach {
+                drawArc(
+                    color = Color.White,
+                    startAngle = (360f * it) - 90f,
+                    sweepAngle = 3f,
+                    useCenter = false,
+                    style = Stroke(width = 25f)
+                )
             }
 
         }
@@ -189,6 +211,7 @@ fun RecordingClipsButton(isRecording: Boolean) {
     }
 
 }
+
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -239,6 +262,14 @@ fun CameraView(
         }
     )
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp + 10.dp
+
+    val uris = remember {
+        mutableStateListOf<String>()
+    }
+
+    val (removeClip, removeUpdate) = rememberSaveable {
+        mutableStateOf(false)
+    }
 
     LaunchedEffect(Unit) {
         permissionState.launchMultiplePermissionRequest()
@@ -365,6 +396,7 @@ fun CameraView(
 
                                             //navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
                                             //navController.navigate("GALLERY_VIEW/${uriEncoded}")
+                                            uris.add(uriEncoded)
                                         }
                                     }
                                 }
@@ -423,27 +455,78 @@ fun CameraView(
                         )
                     }
                 }
-                Image(
-                    painter = painterResource(id = R.drawable.baseline_cameraswitch_24),
-                    contentDescription = "Story",
-                    contentScale = ContentScale.Crop,
+                Row(
                     modifier = Modifier
-                        .width(40.dp)
-                        .height(40.dp)
                         .align(Alignment.BottomEnd)
-                        .clickable {
-                            cameraSelector.value =
-                                if (cameraSelector.value == CameraSelector.DEFAULT_BACK_CAMERA) CameraSelector.DEFAULT_FRONT_CAMERA
-                                else CameraSelector.DEFAULT_BACK_CAMERA
-                            lifecycleOwner.lifecycleScope.launch {
-                                videoCapture.value = context.createVideoCaptureUseCase(
-                                    lifecycleOwner = lifecycleOwner,
-                                    cameraSelector = cameraSelector.value,
-                                    previewView = previewView
-                                )
-                            }
-                        }
+                        .height(80.dp)
+                        .fillMaxWidth(0.3f),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 )
+                {
+                    if (uris.isNotEmpty()) {
+                        Box(
+                            modifier = Modifier
+                                .width(40.dp)
+                                .height(38.dp)
+                                .background(Color.Gray, shape = RoundedCornerShape(10.dp))
+                                .clip(
+                                    RoundedCornerShape(10.dp)
+                                )
+                                .clickable {
+                                    uris.removeAt(uris.lastIndex)
+                                    removeUpdate(true)
+                                },
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.delete_left_fill_1),
+                                contentDescription = null,
+                                contentScale = ContentScale.FillWidth,
+                                modifier = Modifier
+                                    .height(25.dp)
+                                    .width(25.dp)
+                                    .align(Alignment.Center)
+                            )
+                        }
+
+                        Button(
+                            onClick = { /*TODO*/ }, colors = ButtonDefaults.buttonColors(
+                                foodClubGreen
+                            ),
+                            shape = RoundedCornerShape(10.dp),
+                            contentPadding = PaddingValues(0.dp),
+                            modifier = Modifier.height(38.dp)
+                        ) {
+                            Text(text = "continue", color = Color.White)
+                        }
+
+                    }
+
+                    /*
+                    Image(
+                        painter = painterResource(id = R.drawable.baseline_cameraswitch_24),
+                        contentDescription = "Story",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .width(40.dp)
+                            .height(40.dp)
+                            //.align(Alignment.BottomEnd)
+                            .clickable {
+                                cameraSelector.value =
+                                    if (cameraSelector.value == CameraSelector.DEFAULT_BACK_CAMERA) CameraSelector.DEFAULT_FRONT_CAMERA
+                                    else CameraSelector.DEFAULT_BACK_CAMERA
+                                lifecycleOwner.lifecycleScope.launch {
+                                    videoCapture.value = context.createVideoCaptureUseCase(
+                                        lifecycleOwner = lifecycleOwner,
+                                        cameraSelector = cameraSelector.value,
+                                        previewView = previewView
+                                    )
+                                }
+                            }
+                    )
+
+                     */
+                }
 
             }
         }
@@ -539,5 +622,9 @@ fun loadCurrentThumbnail(context: Context): Bitmap? {
         }
     }
 
-    return if (uri.toString().isEmpty()) null else context.contentResolver.loadThumbnail(uri, Size(240, 240), null)
+    return if (uri.toString().isEmpty()) null else context.contentResolver.loadThumbnail(
+        uri,
+        Size(240, 240),
+        null
+    )
 }
