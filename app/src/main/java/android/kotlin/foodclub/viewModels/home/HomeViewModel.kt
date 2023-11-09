@@ -148,7 +148,7 @@ class HomeViewModel @Inject constructor(
     }
 
     /* FOR FUTURE
-    fun onViewPostClicked(postId: Long, userId: Long) {
+    fun onViewedPost(postId: Long, userId: Long) {
         viewModelScope.launch {
             userViewsPost(postId, userId)
         }

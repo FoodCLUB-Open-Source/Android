@@ -82,6 +82,7 @@ import androidx.navigation.NavHostController
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.ui.draw.alpha
@@ -317,6 +318,10 @@ fun HomeView(
     initialPage: Int? = 0,
     navController: NavHostController,
     triggerStoryView: () -> Unit,
+    postId: Long,
+    userId: Long,
+    storyId: String? = null,
+    storyUserId: Long? = null
 ) {
     var showIngredientSheet by remember { mutableStateOf(false) }
 
@@ -338,6 +343,17 @@ fun HomeView(
         4
     }
 
+    // USER VIEWS POST
+    LaunchedEffect(Unit) {
+        viewModel.userViewsPost(postId, userId)
+    }
+
+    // WHEN USER VIEWS STORY
+    LaunchedEffect(Unit) {
+        if (storyId != null && storyUserId != null) {
+            viewModel.userViewsStory(storyId, storyUserId)
+        }
+    }
 
     val fling = PagerDefaults.flingBehavior(
         state = pagerState, lowVelocityAnimationSpec = tween(

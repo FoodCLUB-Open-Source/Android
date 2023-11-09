@@ -64,7 +64,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ViewStories(modifier: Modifier){
+fun ViewStories(modifier: Modifier) {
     val viewModel: HomeViewModel = hiltViewModel()
     // green screen issue is not happening when we use postListData instead of storyListData as below:
     // val videosState = viewModel.postListData.collectAsState()
