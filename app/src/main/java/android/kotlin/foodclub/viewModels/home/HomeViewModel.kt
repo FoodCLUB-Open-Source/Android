@@ -122,14 +122,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    /* FOR THE FUTURE
-    fun onViewStoryClicked(storyId: String, userId: Long) {
-        viewModelScope.launch {
-            userViewsStory(storyId, userId)
-        }
-    }
-     */
-
 
     // USER VIEWS A POST
     suspend fun userViewsPost(postId: Long, userId: Long) {
@@ -146,14 +138,6 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-
-    /* FOR FUTURE
-    fun onViewedPost(postId: Long, userId: Long) {
-        viewModelScope.launch {
-            userViewsPost(postId, userId)
-        }
-    }
-     */
 
     suspend fun updatePostLikeStatus(postId: Long, isLiked: Boolean){
         val userId = sessionCache.getActiveSession()?.sessionUser?.userId
