@@ -4,6 +4,14 @@ data class UserDetailsModel(
     val id: Long,
     val userName: String,
     val email: String,
+    val phoneNumber: String? = null,
     var profilePicture: String,
-    val createdAt: String
+    val userBio: String? = null,
+    val gender: String? = null,
+    val createdAt: String,
+    val dateOfBirth: String? = null,
+    val dietaryPrefs: List<String>? = null,
+    val country: String? = null,
+    val shippingAddress: String? = null,
+    val fullName: String? = null
 )

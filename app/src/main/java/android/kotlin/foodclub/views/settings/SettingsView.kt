@@ -23,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,27 +33,31 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 
 val colorGray= Color(android.graphics.Color.parseColor("#D0D0D0"))
 val colorRed= Color(android.graphics.Color.parseColor("#C64E0B"))
 
 @Composable
-fun SettingsView(navController: NavHostController, viewModel: SettingsViewModel){
+fun SettingsView(
+    navController: NavHostController,
+    viewModel: SettingsViewModel
+){
+    val user = viewModel.userDetails.collectAsState()
+
     SettingsLayout(label = "Settings", onBackAction = { navController.navigateUp()}) {
         val screenSizeHeight =
             LocalConfiguration.current.screenHeightDp.dp //added screenSizeHeight so page is adaptable to all screen size
 
-        SettingsProfile(
-            userName = "Jake Rayner",
-            userImage = painterResource(id = R.drawable.story_user)
-        )
+        user.value?.let {
+            SettingsProfile(
+                userName = it.userName,
+                userImage = painterResource(id = R.drawable.story_user)
+            )
+        }
         Spacer(modifier = Modifier.height(screenSizeHeight * 0.1f))
         SettingRow(
             text = "Edit profile information",
@@ -150,7 +155,9 @@ fun SettingsTopBar(label:String, navController: NavController) {
         Column{
             IconButton(
                 onClick = { navController.navigateUp() },
-                modifier = Modifier.background(colorGray, RoundedCornerShape(8.dp)).size(35.dp),
+                modifier = Modifier
+                    .background(colorGray, RoundedCornerShape(8.dp))
+                    .size(35.dp),
                 content = {
                     SettingsIcons(size = 20, icon =  R.drawable.back_icon)
                 }
@@ -176,7 +183,9 @@ fun SettingsProfile(userName: String, userImage: Painter){
             Image(
                 contentDescription = "User Images",
                 painter = userImage,
-                modifier = Modifier.size(120.dp).clip(RoundedCornerShape(100.dp))
+                modifier = Modifier
+                    .size(120.dp)
+                    .clip(RoundedCornerShape(100.dp))
             )
         }
 
@@ -198,7 +207,9 @@ fun SettingRow(text: String, iconId: Int, fontC:  Color = Color.Black,
                navController: NavController, onClick: () -> Unit = {}) {
    val rowSize=65.dp
     Row(
-        modifier = Modifier.fillMaxWidth().height(rowSize),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(rowSize),
         verticalAlignment = Alignment.CenterVertically
     ){
         Button(
@@ -228,19 +239,3 @@ fun SettingRow(text: String, iconId: Int, fontC:  Color = Color.Black,
         }
     }
 }
-@Composable
-@Preview
-fun SettingsView() {
-    SettingsView(rememberNavController(), hiltViewModel())
-}
-
-
-
-
-
-
-
-
-
-
-
