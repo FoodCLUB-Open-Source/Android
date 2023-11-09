@@ -6,6 +6,7 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.recipes.Recipe
+import android.kotlin.foodclub.utils.composables.CustomSlider
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.viewModels.home.CreateRecipeViewModel
@@ -31,6 +32,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -87,6 +89,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
@@ -126,7 +129,10 @@ fun BottomSheetCategories(onDismiss: () -> Unit, viewModel: CreateRecipeViewMode
         sheetState = bottomSheetState,
         dragHandle = { BottomSheetDefaults.DragHandle() },
     ) {
-        Column(Modifier.fillMaxWidth().height(screenHeight)) {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .height(screenHeight)) {
             Box(modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 30.dp, end = 17.dp),
@@ -225,8 +231,9 @@ fun CreateRecipeView(navController: NavController, viewModel: CreateRecipeViewMo
     var showSheet by remember { mutableStateOf(false) }
     var showCategorySheet by remember { mutableStateOf(false) }
     val codeTriggered = remember { mutableStateOf(false) }
-    var sliderPosition by remember { mutableStateOf(0f) }
+    var servingSize by remember { mutableStateOf(0) }
     var recipeName by remember { mutableStateOf("") }
+    var recipeDescription by remember { mutableStateOf("") }
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 240.dp
     val categories = viewModel.chosenCategories.collectAsState()
     val rows = listOf(
@@ -268,8 +275,11 @@ fun CreateRecipeView(navController: NavController, viewModel: CreateRecipeViewMo
         )
     }
 
-    Box(Modifier.fillMaxSize().background(Color.White)
-        .padding(start = 15.dp, top = 0.dp, end = 15.dp, bottom = 70.dp)) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .padding(start = 15.dp, top = 0.dp, end = 15.dp, bottom = 70.dp)) {
         if (showSheet) {
             IngredientsBottomSheet(
                 onDismiss = triggerBottomSheetModal,
@@ -287,190 +297,201 @@ fun CreateRecipeView(navController: NavController, viewModel: CreateRecipeViewMo
 
         LazyColumn(
             modifier = Modifier
-                .padding(bottom = 70.dp)
-                .background(Color.White)
+                .padding(bottom = 70.dp, start = 8.dp, end = 8.dp)
+                .background(Color.White),
         ) {
             item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 55.dp, bottom = 20.dp)
-                        .height(50.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
+                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Row(
                         modifier = Modifier
-                            .padding(end = 10.dp)
-                            .background(Color.Transparent),
-                        contentAlignment = Alignment.Center,
+                            .fillMaxWidth()
+                            .padding(top = 55.dp, bottom = 20.dp)
+                            .height(50.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Button(
-                            shape = RectangleShape,
+                        Box(
                             modifier = Modifier
-                                .border(1.dp, Color(0xFFB8B8B8), shape = RoundedCornerShape(15.dp))
-                                .clip(RoundedCornerShape(15.dp))
-                                .align(Alignment.BottomCenter)
-                                .width(40.dp)
-                                .height(40.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFFB8B8B8),
-                                contentColor = Color.White
-                            ), contentPadding = PaddingValues(5.dp),
-                            onClick = { navController.navigateUp() }
+                                .padding(end = 10.dp)
+                                .background(Color.Transparent),
+                            contentAlignment = Alignment.Center,
                         ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
-                                contentDescription = "Back",
-                                contentScale = ContentScale.Crop,
+                            Button(
+                                shape = RectangleShape,
                                 modifier = Modifier
-                                    .width(20.dp)
-                                    .height(20.dp)
-                            )
-                        }
-                    }
-                    Text(
-                        "My New Recipe",
-                        modifier = Modifier.padding(start = 8.dp),
-                        fontFamily = Montserrat,
-                        fontWeight = FontWeight.SemiBold,
-                        letterSpacing = TextUnit(-1.12f, TextUnitType.Sp),
-                        fontSize = 28.sp
-                    )
-                }
-                OutlinedTextField(
-                    value = recipeName,
-                    onValueChange = { recipeName = it },
-                    placeholder = {
-                        Text(
-                            "Add my recipe’s name", fontFamily = Montserrat, fontSize = 15.sp,
-                            color = Color(0xFFB3B3B3)
-                        )
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = Color.Black,
-                        unfocusedBorderColor = Color(0xFFE8E8E8)
-                    )
-                )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(80.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Serving Size: ${sliderPosition.toInt()}",
-                        fontFamily = Montserrat,
-                        fontSize = 14.sp
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    Slider(
-                        modifier = Modifier
-                            .width(if (isSmallScreen) 150.dp else 200.dp),
-                        value = sliderPosition,
-                        onValueChange = { sliderPosition = it },
-                        valueRange = 0f..10f,
-                        steps = 10,
-                        colors = SliderDefaults.colors(
-                            thumbColor = foodClubGreen,
-                            activeTrackColor = Color(0xFFD9D9D9),
-                            inactiveTrackColor = Color(0xFFD9D9D9)
-                        ),
-                    )
-                }
-                Divider(
-                    color = Color(0xFFE8E8E8),
-                    thickness = 1.dp
-                )
-                Spacer(modifier = Modifier.height(15.dp))
-                SectionItem(
-                    title = "Categories",
-                    action = "Vegan",
-                    icon = Icons.Default.KeyboardArrowDown,
-                    onClick = triggerCategoryBottomSheetModal
-                )
-                val purpleColor = Color(0xFFA059D9)
-                FlowRow {
-                    categories.value.forEachIndexed { _, content ->
-                        Card(
-                            shape = RoundedCornerShape(30.dp),
-                            modifier = Modifier
-                                .padding(5.dp)
-                                .height(32.dp),
-                            colors = CardDefaults.cardColors(purpleColor),
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.padding(horizontal = 8.dp)
-                            ) {
-                                Text(
-                                    text = content.name,
-                                    fontFamily = Montserrat,
-                                    fontSize = 12.sp,
-                                    color = Color.White,
-                                    modifier = Modifier.padding(8.dp),
-                                    maxLines = 1
-                                )
-                                Button(
-                                    modifier = Modifier
-                                        .border(2.dp, Color.White, shape = CircleShape)
-                                        .size(22.dp),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = Color.Transparent,
-                                        contentColor = Color.White
-                                    ), contentPadding = PaddingValues(0.dp),
-                                    shape = CircleShape,
-                                    onClick = { viewModel.unselectCategory(content) }
-                                ) {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.baseline_clear_24),
-                                        contentDescription = null,
-                                        contentScale = ContentScale.Crop,
-                                        modifier = Modifier
-                                            .size(15.dp)
-                                            .clip(RoundedCornerShape(12.dp))
+                                    .border(
+                                        1.dp,
+                                        Color(0xFFB8B8B8),
+                                        shape = RoundedCornerShape(15.dp)
                                     )
+                                    .clip(RoundedCornerShape(15.dp))
+                                    .align(Alignment.BottomCenter)
+                                    .width(40.dp)
+                                    .height(40.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(0xFFB8B8B8),
+                                    contentColor = Color.White
+                                ), contentPadding = PaddingValues(5.dp),
+                                onClick = { navController.navigateUp() }
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
+                                    contentDescription = "Back",
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .width(20.dp)
+                                        .height(20.dp)
+                                )
+                            }
+                        }
+                        Text(
+                            "My New Recipe",
+                            modifier = Modifier.padding(start = 8.dp),
+                            fontFamily = Montserrat,
+                            fontWeight = FontWeight.SemiBold,
+                            letterSpacing = TextUnit(-1.12f, TextUnitType.Sp),
+                            fontSize = 28.sp
+                        )
+                    }
+                    OutlinedTextField(
+                        value = recipeName,
+                        onValueChange = { recipeName = it },
+                        placeholder = {
+                            Text(
+                                "Add recipe’s name", fontFamily = Montserrat, fontSize = 15.sp,
+                                color = Color(0xFFB3B3B3)
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedBorderColor = Color.Black,
+                            unfocusedBorderColor = Color(0xFFE8E8E8)
+                        )
+                    )
+                    OutlinedTextField(
+                        value = recipeDescription,
+                        onValueChange = { recipeDescription = it },
+                        placeholder = {
+                            Text(
+                                "Add a description", fontFamily = Montserrat, fontSize = 15.sp,
+                                color = Color(0xFFB3B3B3)
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedBorderColor = Color.Black,
+                            unfocusedBorderColor = Color(0xFFE8E8E8)
+                        )
+                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(60.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Serving Size",
+                            fontFamily = Montserrat,
+                            fontWeight = FontWeight.SemiBold,
+                            letterSpacing = TextUnit(-0.72f, TextUnitType.Sp),
+                            fontSize = 18.sp
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        CustomSlider(
+                            sliderWidth = if (isSmallScreen) 150.dp else 200.dp,
+                            maxValue = 10f,
+                            onValueChange = { servingSize = it }
+                        )
+                    }
+                    SectionItem(
+                        title = "Categories",
+                        action = "Vegan",
+                        icon = Icons.Default.KeyboardArrowDown,
+                        onClick = triggerCategoryBottomSheetModal
+                    )
+                    FlowRow {
+                        categories.value.forEachIndexed { _, content ->
+                            Card(
+                                shape = RoundedCornerShape(30.dp),
+                                modifier = Modifier
+                                    .padding(5.dp)
+                                    .height(32.dp),
+                                colors = CardDefaults.cardColors(foodClubGreen),
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.padding(horizontal = 8.dp)
+                                ) {
+                                    Text(
+                                        text = content.name,
+                                        fontFamily = Montserrat,
+                                        fontSize = 12.sp,
+                                        color = Color.White,
+                                        modifier = Modifier.padding(8.dp),
+                                        maxLines = 1
+                                    )
+                                    Button(
+                                        modifier = Modifier
+                                            .border(2.dp, Color.White, shape = CircleShape)
+                                            .size(22.dp),
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = Color.Transparent,
+                                            contentColor = Color.White
+                                        ), contentPadding = PaddingValues(0.dp),
+                                        shape = CircleShape,
+                                        onClick = { viewModel.unselectCategory(content) }
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.baseline_clear_24),
+                                            contentDescription = null,
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier
+                                                .size(15.dp)
+                                                .clip(RoundedCornerShape(12.dp))
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                Spacer(modifier = Modifier.height(10.dp))
-                Divider(
-                    color = Color(0xFFE8E8E8),
-                    thickness = 1.dp
-                )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(80.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text("Ingredients", fontFamily = Montserrat, fontSize = 14.sp)
-                    Spacer(modifier = Modifier.weight(1f))
-                    Button(
-                        shape = RectangleShape,
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Divider(
+                        color = Color(0xFFE8E8E8),
+                        thickness = 1.dp
+                    )
+                    Row(
                         modifier = Modifier
-                            .border(1.dp, foodClubGreen, RoundedCornerShape(20.dp))
-                            .clip(RoundedCornerShape(20.dp))
-                            .width(120.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.White,
-                            contentColor = Color(126, 198, 11, 255)
-                        ), contentPadding = PaddingValues(15.dp),
-
-                        onClick = { triggerBottomSheetModal() }
+                            .fillMaxWidth()
+                            .height(80.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            "Add +",
-                            color = Color(126, 198, 11, 255),
-                            fontFamily = Montserrat,
-                            fontSize = 14.sp
-                        )
+                        Text("Ingredients", fontFamily = Montserrat, fontSize = 14.sp)
+                        Spacer(modifier = Modifier.weight(1f))
+                        Button(
+                            shape = RectangleShape,
+                            modifier = Modifier
+                                .border(1.dp, foodClubGreen, RoundedCornerShape(20.dp))
+                                .clip(RoundedCornerShape(20.dp))
+                                .width(120.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.White,
+                                contentColor = Color(126, 198, 11, 255)
+                            ), contentPadding = PaddingValues(15.dp),
+
+                            onClick = { triggerBottomSheetModal() }
+                        ) {
+                            Text(
+                                "Add +",
+                                color = Color(126, 198, 11, 255),
+                                fontFamily = Montserrat,
+                                fontSize = 14.sp
+                            )
+                        }
                     }
+                    Spacer(modifier = Modifier.height(2.dp))
                 }
-                Spacer(modifier = Modifier.height(10.dp))
+
             }
             items(items = ingredientList, key = { it.id }) { ingredient ->
                 Ingredient(ingredient = ingredient,
@@ -609,7 +630,8 @@ fun Ingredient(ingredient: Ingredient, isRevealed: Boolean, onExpand: () -> Unit
                                 painter = painterResource(id = R.drawable.baseline_arrow_left_24),
                                 contentDescription = "",
                                 modifier = Modifier
-                                    .size(35.dp).padding(end = 5.dp)
+                                    .size(35.dp)
+                                    .padding(end = 5.dp)
                                     .clickable {
                                         ingredient.decrementQuantity(5)
                                         quantity = ingredient.quantity
@@ -625,7 +647,8 @@ fun Ingredient(ingredient: Ingredient, isRevealed: Boolean, onExpand: () -> Unit
                                 painter = painterResource(id = R.drawable.baseline_arrow_right_24),
                                 contentDescription = "",
                                 modifier = Modifier
-                                    .size(35.dp).padding(start = 5.dp)
+                                    .size(35.dp)
+                                    .padding(start = 5.dp)
                                     .clickable {
                                         ingredient.incrementQuantity(5)
                                         quantity = ingredient.quantity
