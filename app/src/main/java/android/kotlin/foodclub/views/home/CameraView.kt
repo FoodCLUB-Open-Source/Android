@@ -113,38 +113,61 @@ fun RecordingButton(isRecording: Boolean) {
 }
 
 @Composable
-fun RecordingClipsButton(isRecording: Boolean, removeClip: Boolean = false, removeUpdate: (Boolean) -> Unit = {}) {
+fun RecordingClipsButton(isRecording: Boolean, removeClip: Boolean = false, removeUpdate: (Boolean) -> Unit = {}, addClip:Boolean = false, clipUpdate: (Boolean) -> Unit = {}) {
 
     val (rememberProgress, progressUpdate) = remember {
         mutableFloatStateOf(0f)
     }
 
+    /*
+    val (addClip, clipUpdate) = remember {
+        mutableStateOf(false)
+    }
+
+     */
+
     val clipArcs = remember {
         mutableListOf<Float>()
     }
 
+    var animationTime = 20000
+
+    if (removeClip)
+    {
+        if (clipArcs.size > 1)
+        {
+            clipArcs.removeAt(clipArcs.lastIndex)
+            progressUpdate(clipArcs[clipArcs.lastIndex])
+        }
+        else if (clipArcs.isNotEmpty())
+        {
+            clipArcs.removeAt(clipArcs.lastIndex)
+            progressUpdate(0f)
+        }
+
+        animationTime = 1
+        removeUpdate(false)
+    }
+
+
     val progress by animateFloatAsState(
         targetValue = if (isRecording) 1f else rememberProgress,
         animationSpec = infiniteRepeatable(
-            animation = tween(20000, easing = LinearEasing),
+            animation = tween(animationTime, easing = LinearEasing),
             repeatMode = RepeatMode.Restart
         ), label = ""
     )
 
     if (!isRecording) {
-        if (progress != 0f) {
-            clipArcs.add(progress)
+        if (progress != 0f && addClip) {
+            clipArcs.add(progress) //Constantly adding to clip Arcs should only add at one point
+            clipUpdate(false)
         }
 
         progressUpdate(progress)
     }
 
-    if (removeClip)
-    {
-        clipArcs.removeAt(clipArcs.lastIndex)
-        progressUpdate(clipArcs[clipArcs.lastIndex])
-        removeUpdate(false)
-    }
+
 
     Box(
         contentAlignment = Alignment.Center,
@@ -265,6 +288,10 @@ fun CameraView(
 
     val uris = remember {
         mutableStateListOf<String>()
+    }
+
+    val (addClip, clipUpdate) = rememberSaveable {
+        mutableStateOf(false)
     }
 
     val (removeClip, removeUpdate) = rememberSaveable {
@@ -396,6 +423,7 @@ fun CameraView(
 
                                             //navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
                                             //navController.navigate("GALLERY_VIEW/${uriEncoded}")
+                                            clipUpdate(true)
                                             uris.add(uriEncoded)
                                         }
                                     }
@@ -414,7 +442,7 @@ fun CameraView(
                         .size(80.dp)
                 ) {
 
-                    RecordingClipsButton(isRecording = recordingStarted.value)
+                    RecordingClipsButton(isRecording = recordingStarted.value, removeClip = removeClip, removeUpdate = removeUpdate, addClip = addClip, clipUpdate = clipUpdate)
                     /*Icon(
                         painter = painterResource(if (recordingStarted.value) R.drawable.story_user else R.drawable.save),
                         contentDescription = "",
