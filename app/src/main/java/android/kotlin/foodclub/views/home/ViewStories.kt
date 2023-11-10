@@ -3,6 +3,8 @@ package android.kotlin.foodclub.views.home
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.di.SharedPreferencesModule.provideSharedPreferences
+import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.utils.composables.VideoScroller
 import android.kotlin.foodclub.viewModels.home.HomeViewModel
 import androidx.compose.animation.AnimatedVisibility
@@ -61,10 +63,18 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import android.content.Context
+import android.content.SharedPreferences
+import androidx.compose.ui.platform.LocalContext
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ViewStories(modifier: Modifier) {
+fun ViewStories(
+    modifier: Modifier,
+    storyId: String? = null,
+    storyUserId: Long? = null,
+
+) {
     val viewModel: HomeViewModel = hiltViewModel()
     // green screen issue is not happening when we use postListData instead of storyListData as below:
     // val videosState = viewModel.postListData.collectAsState()
@@ -84,6 +94,23 @@ fun ViewStories(modifier: Modifier) {
             easing = LinearEasing, durationMillis = 300
         )
     )
+
+    // GETTING CONTEXT + SESSION
+    val context = LocalContext.current
+    val sessionCache = SessionCache(provideSharedPreferences(context))
+
+    // GETTING ACTIVE SESSIONS USER ID + NULL CHECK
+    val userId = sessionCache.getActiveSession()?.sessionUser?.userId
+
+    // IF USER ID IS NULL, RETURN
+    if (userId == null || storyId == null || storyUserId == null) {
+        return
+    }
+
+    // WHEN USER VIEWS STORY
+    LaunchedEffect(Unit) {
+        viewModel.userViewsStory(storyId, userId)
+    }
 
     VerticalPager(
         state = storyPagerState,

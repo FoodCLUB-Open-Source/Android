@@ -10,6 +10,7 @@ import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.others.AnimatedIcon
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
+import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.utils.composables.LikeButton
 import android.kotlin.foodclub.utils.composables.PlayPauseButton
 import android.kotlin.foodclub.utils.composables.VideoLayout
@@ -343,17 +344,22 @@ fun HomeView(
         4
     }
 
-    // USER VIEWS POST
-    LaunchedEffect(Unit) {
-        viewModel.userViewsPost(postId, userId)
-    }
+    // **USER VIEWS POST**
+    val videoPostViewModel: HomeViewModel = hiltViewModel()
+    val videoPostState = videoPostViewModel.postListData.collectAsState()
 
-    // WHEN USER VIEWS STORY
-    LaunchedEffect(Unit) {
-        if (storyId != null && storyUserId != null) {
-            viewModel.userViewsStory(storyId, storyUserId)
+    // TRACKING CURRENT VIDEO
+    var currentVideoIndex by remember { mutableStateOf(initialPage ?: 0) }
+
+    // LAUNCHED EFFECT
+    LaunchedEffect(currentVideoIndex) {
+        val videos = videoPostState.value
+        if (currentVideoIndex >= 0 && currentVideoIndex < videos.size) {
+            val currentVideo = videos[currentVideoIndex]
+            videoPostViewModel.userViewsPost(currentVideo.videoId, userId)
         }
     }
+
 
     val fling = PagerDefaults.flingBehavior(
         state = pagerState, lowVelocityAnimationSpec = tween(
