@@ -318,11 +318,7 @@ fun HomeView(
     modifier: Modifier = Modifier,
     initialPage: Int? = 0,
     navController: NavHostController,
-    triggerStoryView: () -> Unit,
-    postId: Long,
-    userId: Long,
-    storyId: String? = null,
-    storyUserId: Long? = null
+    triggerStoryView: () -> Unit
 ) {
     var showIngredientSheet by remember { mutableStateOf(false) }
 
@@ -337,41 +333,8 @@ fun HomeView(
     if (screenHeightMinusBottomNavItem <= 650.dp) {
         screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.96f
     }
-    val pagerState = rememberPagerState(
-        initialPage = initialPage ?: 0,
-        initialPageOffsetFraction = 0f
-    ) {
-        4
-    }
 
-    // **USER VIEWS POST**
-    val videoPostViewModel: HomeViewModel = hiltViewModel()
-    val videoPostState = videoPostViewModel.postListData.collectAsState()
-
-    // TRACKING CURRENT VIDEO
-    var currentVideoIndex by remember { mutableStateOf(initialPage ?: 0) }
-
-    // LAUNCHED EFFECT
-    LaunchedEffect(currentVideoIndex) {
-        val videos = videoPostState.value
-        if (currentVideoIndex >= 0 && currentVideoIndex < videos.size) {
-            val currentVideo = videos[currentVideoIndex]
-            videoPostViewModel.userViewsPost(currentVideo.videoId, userId)
-        }
-    }
-
-
-    val fling = PagerDefaults.flingBehavior(
-        state = pagerState, lowVelocityAnimationSpec = tween(
-            easing = LinearEasing, durationMillis = 300
-        )
-    )
     val systemUiController = rememberSystemUiController()
-
-    val storyModel = StoryModel(painterResource(R.drawable.story_user), 1692815790, "Julien", painterResource(R.drawable.foodsnap))
-    val currentStory by remember { mutableStateOf(storyModel) }
-    var currentStoryOffset by remember { mutableStateOf(IntOffset(0, 0)) }
-    val storyViewMode by remember { mutableStateOf(false) }
 
     val triggerIngredientBottomSheetModal: () -> Unit = {
         showIngredientSheet = !showIngredientSheet
@@ -387,7 +350,7 @@ fun HomeView(
             darkIcons = false
         )
         systemUiController.setNavigationBarColor(
-            color = if (storyViewMode) Color.Black else Color.White
+            color = Color.White
         )
     }
 
@@ -450,81 +413,106 @@ fun HomeView(
             HomeBottomSheetIngredients(triggerIngredientBottomSheetModal)
         }
         if (showFeedOnUI){
-            VerticalPager(
-                state = pagerState,
-                flingBehavior = fling,
-                beyondBoundsPageCount = 1,
-                modifier = modifier
-            ) {
-                var pauseButtonVisibility by remember { mutableStateOf(false) }
-                val doubleTapState by remember { mutableStateOf(
-                    AnimatedIcon(R.drawable.liked, 110.dp, localDensity)
-                ) }
+            if (videosState.value.isNotEmpty()) {
+                val pagerState = rememberPagerState(
+                    initialPage = initialPage ?: 0,
+                    initialPageOffsetFraction = 0f
+                ) {
+                    videosState.value.size
+                }
 
-                Box(modifier = Modifier.fillMaxSize()) {
-                    if (videosState.value.isNotEmpty()) {
-//                    if (viewModel.videosList.isNotEmpty()) {
-                        val currentVideo = videosState.value[it]
-//                        val currentVideo = viewModel.videosList[it]
-                        val authorDetails = SimpleUserModel(
-                            userId = 1,
-                            username = currentVideo.authorDetails,
-                            profilePictureUrl = null
-                        )
-                        var isLiked by remember {
-                            mutableStateOf(currentVideo.currentViewerInteraction.isLiked)
-                        }
-                        var isBookmarked by remember { mutableStateOf(
-                            currentVideo.currentViewerInteraction.isBookmarked)
-                        }
+                val fling = PagerDefaults.flingBehavior(
+                    state = pagerState, lowVelocityAnimationSpec = tween(
+                        easing = LinearEasing, durationMillis = 300
+                    )
+                )
 
-                        VideoScroller(currentVideo, pagerState, it, onSingleTap = {
-                            pauseButtonVisibility = it.isPlaying
-                            it.playWhenReady = !it.isPlaying
-                        },
-                            onDoubleTap = { exoPlayer, offset ->
-                                coroutineScope.launch {
-                                    doubleTapState.animate(offset)
-                                }
-                            },
-                            onVideoDispose = { pauseButtonVisibility = false },
-                            onVideoGoBackground = { pauseButtonVisibility = false }
-                        )
+                var videoViewed by remember { mutableStateOf(false) }
 
+                LaunchedEffect(pagerState.currentPage) { videoViewed = false }
+                LaunchedEffect(videoViewed) {
+                    if(videoViewed) {
+                        viewModel.userViewsPost(videosState.value[pagerState.currentPage].videoId)
+                    }
+                }
 
+                VerticalPager(
+                    state = pagerState,
+                    flingBehavior = fling,
+                    beyondBoundsPageCount = 1,
+                    modifier = modifier
+                ) {
+                    var pauseButtonVisibility by remember { mutableStateOf(false) }
+                    val doubleTapState by remember { mutableStateOf(
+                        AnimatedIcon(R.drawable.liked, 110.dp, localDensity)
+                    ) }
 
-                        LikeButton(doubleTapState) {
-                            isLiked = !isLiked
-                            coroutineScope.launch {
-                                viewModel.updatePostLikeStatus(currentVideo.videoId, isLiked)
+                    Box(modifier = Modifier.fillMaxSize()) {
+    //                    if (viewModel.videosList.isNotEmpty()) {
+                            val currentVideo = videosState.value[it]
+    //                        val currentVideo = viewModel.videosList[it]
+                            val authorDetails = SimpleUserModel(
+                                userId = 1,
+                                username = currentVideo.authorDetails,
+                                profilePictureUrl = null
+                            )
+                            var isLiked by remember {
+                                mutableStateOf(currentVideo.currentViewerInteraction.isLiked)
                             }
-                        }
-                        PlayPauseButton(buttonVisibility = pauseButtonVisibility)
-                        VideoLayout(
-                            userDetails = authorDetails,
-                            videoStats = currentVideo.videoStats,
-                            likeState = isLiked,
-                            bookMarkState = isBookmarked,
-                            category = "Meat",
-                            opacity = 0.7f,
-                            onLikeClick = {
+                            var isBookmarked by remember { mutableStateOf(
+                                currentVideo.currentViewerInteraction.isBookmarked)
+                            }
+
+                            VideoScroller(currentVideo, pagerState, it, onSingleTap = {
+                                pauseButtonVisibility = it.isPlaying
+                                it.playWhenReady = !it.isPlaying
+                            },
+                                onDoubleTap = { exoPlayer, offset ->
+                                    coroutineScope.launch {
+                                        doubleTapState.animate(offset)
+                                    }
+                                },
+                                onVideoDispose = {
+                                    pauseButtonVisibility = false
+                                    videoViewed = true
+                                                 },
+                                onVideoGoBackground = { pauseButtonVisibility = false }
+                            )
+
+
+
+                            LikeButton(doubleTapState) {
                                 isLiked = !isLiked
                                 coroutineScope.launch {
                                     viewModel.updatePostLikeStatus(currentVideo.videoId, isLiked)
                                 }
-                            },
-                            onBookmarkClick = {
-                                isBookmarked = !isBookmarked
-                                coroutineScope.launch {
-                                    viewModel.updatePostBookmarkStatus(currentVideo.videoId, isBookmarked)
-                                }
-                            },
-                            onInfoClick = {},
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .align(Alignment.BottomCenter)
-                        )
-                    }
+                            }
+                            PlayPauseButton(buttonVisibility = pauseButtonVisibility)
+                            VideoLayout(
+                                userDetails = authorDetails,
+                                videoStats = currentVideo.videoStats,
+                                likeState = isLiked,
+                                bookMarkState = isBookmarked,
+                                category = "Meat",
+                                opacity = 0.7f,
+                                onLikeClick = {
+                                    isLiked = !isLiked
+                                    coroutineScope.launch {
+                                        viewModel.updatePostLikeStatus(currentVideo.videoId, isLiked)
+                                    }
+                                },
+                                onBookmarkClick = {
+                                    isBookmarked = !isBookmarked
+                                    coroutineScope.launch {
+                                        viewModel.updatePostBookmarkStatus(currentVideo.videoId, isBookmarked)
+                                    }
+                                },
+                                onInfoClick = {},
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .align(Alignment.BottomCenter)
+                            )
+                        }
                 }
             }
         }else{

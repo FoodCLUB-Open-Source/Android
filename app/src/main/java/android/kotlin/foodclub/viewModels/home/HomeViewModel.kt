@@ -107,9 +107,10 @@ class HomeViewModel @Inject constructor(
     }
 
     // USER VIEWS A STORY
-    suspend fun userViewsStory(storyId: String, userId: Long) {
+    suspend fun userViewsStory(storyId: Long) {
+        val user = sessionCache.getActiveSession()?.sessionUser ?: return
         viewModelScope.launch {
-            when (val resource = storyRepository.userViewsStory(storyId, userId)) {
+            when (val resource = storyRepository.userViewsStory(storyId, user.userId)) {
                 is Resource.Success -> {
                     // LOG MESSAGE
                     Log.i("MYTAG", "User Viewed the Story Successfully")
@@ -124,9 +125,10 @@ class HomeViewModel @Inject constructor(
 
 
     // USER VIEWS A POST
-    suspend fun userViewsPost(postId: Long, userId: Long) {
+    suspend fun userViewsPost(postId: Long) {
+        val user = sessionCache.getActiveSession()?.sessionUser ?: return
         viewModelScope.launch {
-            when (val resource = postRepository.userViewsPost(postId, userId)) {
+            when (val resource = postRepository.userViewsPost(postId, user.userId)) {
                 is Resource.Success -> {
                     // ON SUCCESS
                     Log.i("MYTAG", "Viewed Post Successfully")

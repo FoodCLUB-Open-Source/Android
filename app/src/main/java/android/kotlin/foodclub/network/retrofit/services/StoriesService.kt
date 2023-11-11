@@ -16,7 +16,7 @@ interface StoriesService {
     // USER VIEWS A STORY
     @POST("likes_views/story/{storyId}/view/{userId}")
     suspend fun userViewsStory(
-        @Path("storyId") storyId: String,
+        @Path("storyId") storyId: Long,
         @Path("userId") userId: Long
     ): Response<RetrieveUserViewedStoryResponse>
 }
