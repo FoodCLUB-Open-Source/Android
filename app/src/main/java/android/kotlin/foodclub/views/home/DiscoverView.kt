@@ -69,8 +69,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import android.kotlin.foodclub.viewModels.home.DiscoverViewModel
-import android.util.Log
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -90,7 +88,9 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.font.FontVariation.width
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.Dp
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -161,6 +161,7 @@ fun DiscoverView(navController: NavController) {
         )
     )
     var mainTabIndex by remember { mutableIntStateOf(0) }
+    val mainTabItemsList = listOf("My Kitchen", "World", "Categories")
 
     LazyColumn(
         modifier = Modifier
@@ -172,18 +173,17 @@ fun DiscoverView(navController: NavController) {
         item {
             MainSearchBar(
                 searchTextValue = mainSearchText,
-                onSearch = { input->
-                    viewModel.onMainSearchTextChange(input)
-                }
+                navController = navController
             )
         }
 
         item {
             MainTabRow(
-                onTabChanged = {
-                    mainTabIndex = it
-                }
-            )
+                tabsList = mainTabItemsList,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                mainTabIndex = it
+            }
         }
 
         item {
@@ -330,7 +330,7 @@ fun DiscoverView(navController: NavController) {
 @Composable
 fun MainSearchBar(
     searchTextValue: String,
-    onSearch: (String) -> Unit
+    navController: NavController
 ){
     Row(
         modifier = Modifier
@@ -344,16 +344,9 @@ fun MainSearchBar(
                 .fillMaxWidth(0.85f)
                 .clip(
                     RoundedCornerShape(15.dp)
-                ).pointerInput(Unit) {
-                    detectTapGestures { offset ->
-                        // Check if the offset is within the bounds of the text field
-                        if (
-                            offset.x >= 0 && offset.x < size.width && offset.y >= 0 && offset.y < size.height) {
-                            // Handle the click event here
-                            // The user clicked on the text field
-                            Log.i("MYTAG","Text Field Clicked")
-                        }
-                    }
+                )
+                .pointerInput(Unit) {
+                    navController.navigate("SEARCH_VIEW")
                 }
             ,
             colors = TextFieldDefaults.textFieldColors(
@@ -364,7 +357,7 @@ fun MainSearchBar(
             ),
             value = searchTextValue,
             onValueChange = {
-                    onSearch(it) // Call the onSearch callback when text changes
+
             },
             placeholder = {
                 Text(
@@ -422,18 +415,20 @@ fun MainSearchBar(
 
 
 @Composable
-fun MainTabRow(onTabChanged: (Int) -> Unit) {
+fun MainTabRow(
+    tabsList: List<String>,
+    horizontalArrangement: Arrangement.Horizontal,
+    onTabChanged: (Int) -> Unit) {
     var mainTabIndex by remember { mutableIntStateOf(0) }
-    val mainTabItemsList = listOf("My Kitchen", "World", "Categories")
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 10.dp)
         ,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = horizontalArrangement
     ) {
-        mainTabItemsList.forEachIndexed { index, data ->
+        tabsList.forEachIndexed { index, data ->
             val isSelected = index == mainTabIndex
 
             Text(
@@ -465,6 +460,9 @@ fun MainTabRow(onTabChanged: (Int) -> Unit) {
                 textAlign = TextAlign.Start,
                 fontFamily = Montserrat
             )
+            if (tabsList[0] != "My Kitchen"){
+                Spacer(modifier = Modifier.width(50.dp))
+            }
         }
     }
 }
@@ -599,7 +597,7 @@ fun SubTabRow(
                     textAlign = TextAlign.Start,
                     fontFamily = Montserrat
                 )
-                Spacer(modifier = Modifier.width(45.dp)) // Add spacing
+                Spacer(modifier = Modifier.width(50.dp)) // Add spacing
             }
         }
     )
