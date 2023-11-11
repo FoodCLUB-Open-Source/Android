@@ -5,7 +5,6 @@ package android.kotlin.foodclub.navigation
 //import com.example.foodclub.navigation.graphs.Graph
 import android.kotlin.foodclub.views.home.CameraPreviewView
 import android.kotlin.foodclub.views.home.CameraView
-import android.kotlin.foodclub.views.home.CreateRecipeView
 import android.kotlin.foodclub.views.home.FollowerView
 import android.kotlin.foodclub.views.home.GalleryView
 import android.kotlin.foodclub.views.home.HomeView
@@ -23,7 +22,7 @@ import androidx.navigation.navigation
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.views.home.CreateView
 import android.kotlin.foodclub.views.home.DiscoverView
-import android.kotlin.foodclub.views.home.MyFridgeView
+import android.kotlin.foodclub.views.home.MyDigitalPantryView
 import android.kotlin.foodclub.views.home.TakeProfilePhotoView
 
 
@@ -133,8 +132,8 @@ fun NavGraphBuilder.homeNavigationGraph(
         composable(route = HomeOtherRoutes.MySearchView.route) {
             SearchView(navController = navController)
         }
-        composable(route = HomeOtherRoutes.MyFridgeView.route) {
-            MyFridgeView(navController = navController)
+        composable(route = HomeOtherRoutes.MyDigitalPantryView.route) {
+            MyDigitalPantryView(navController = navController)
         }
         composable(route = HomeOtherRoutes.TakeProfilePhotoView.route) {
             TakeProfilePhotoView(navController = navController)
@@ -156,7 +155,7 @@ sealed class HomeOtherRoutes(val route: String) {
     object FollowingView : HomeOtherRoutes(route = "FOLLOWING_VIEW")
 
     object MyBasketView : HomeOtherRoutes(route = "BASKET_VIEW")
-    object MyFridgeView : HomeOtherRoutes(route = "MY_FRIDGE_VIEW")
+    object MyDigitalPantryView : HomeOtherRoutes(route = "MY_DIGITAL_PANTRY_VIEW")
     object MySearchView : HomeOtherRoutes(route = "SEARCH_VIEW")
 
     object VideoTrimmerView : HomeOtherRoutes(route = "VIDEOTRIMMER")

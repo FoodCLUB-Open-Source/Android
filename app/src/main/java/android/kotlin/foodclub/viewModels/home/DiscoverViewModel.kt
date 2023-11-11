@@ -39,21 +39,25 @@ class DiscoverViewModel @Inject constructor(
     private val _myFridgePosts = MutableStateFlow<List<UserPosts>>(listOf())
     val myFridgePosts: StateFlow<List<UserPosts>> get() = _myFridgePosts
 
-    private val _sessionUserId = MutableStateFlow<String>("")
+    private val _sessionUserId = MutableStateFlow("")
     val sessionUserId: MutableStateFlow<String> get() = _sessionUserId
 
-    private val _sessionUserName = MutableStateFlow<String>("")
+    private val _sessionUserName = MutableStateFlow("")
     val sessionUserName: MutableStateFlow<String> get() = _sessionUserName
 
     private val _productsDatabase = MutableStateFlow(ProductsData("", "", listOf()))
     val productsDatabase: StateFlow<ProductsData> get() = _productsDatabase
 
-    private val _searchText = MutableStateFlow("")
-    var searchText = _searchText.asStateFlow()
+    private val _mainSearchText = MutableStateFlow("")
+    var mainSearchText = _mainSearchText.asStateFlow()
+
+    private val _ingredientsSearchText = MutableStateFlow("")
+    var ingredientsSearchText = _ingredientsSearchText.asStateFlow()
+
 
     // filter products db list with search text
     var displayedProducts: StateFlow<List<Ingredient>> = combine(
-        searchText,
+        ingredientsSearchText,
         _productsDatabase
     ) { query, productsData ->
         if (query.isBlank()) {
@@ -75,15 +79,19 @@ class DiscoverViewModel @Inject constructor(
     private val _error = MutableStateFlow("")
 
     init {
-        fetchProductsDatabase(searchText.value)
+        fetchProductsDatabase(mainSearchText.value)
     }
 
-    fun onSearchTextChange(text: String) {
-        _searchText.value = text
+    fun onMainSearchTextChange(text: String) {
+        _mainSearchText.value = text
     }
+    fun onSubSearchTextChange(text: String) {
+        _ingredientsSearchText.value = text
+    }
+
 
     private fun fetchProductsDatabase(searchText: String) {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             when(val resource = productsRepo.getProductsList(searchText)) {
                 is Resource.Success -> {
                     _error.value = ""

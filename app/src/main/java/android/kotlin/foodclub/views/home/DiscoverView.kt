@@ -1,19 +1,19 @@
 package android.kotlin.foodclub.views.home
 
-import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.Satoshi
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.home.VideoModel
+import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.profile.UserPosts
+import android.kotlin.foodclub.utils.composables.CustomDatePicker
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -35,7 +34,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -52,13 +50,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
@@ -73,13 +69,33 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import android.kotlin.foodclub.viewModels.home.DiscoverViewModel
+import android.util.Log
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.style.TextDecoration
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@SuppressLint("StateFlowValueCalledInComposition")
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun DiscoverView(navController: NavController) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 240.dp
@@ -96,232 +112,522 @@ fun DiscoverView(navController: NavController) {
 
     val viewModel: DiscoverViewModel = hiltViewModel()
 
+    val mainSearchText by viewModel.mainSearchText.collectAsState()
+    val ingredientsSearchText by viewModel.ingredientsSearchText.collectAsState()
+
+    val displayedProducts = viewModel.displayedProducts.collectAsState()
+    val dbProducts = viewModel.productsDatabase.collectAsState()
+
+    val productsList = displayedProducts.value.ifEmpty {
+        dbProducts.value.productsList
+    }
+
+    var ingredientToEdit: Ingredient? = null
+
+    var homePosts: State<List<VideoModel>>?
+    val worldPosts: State<List<VideoModel>>? = null
+
+    var isDatePickerVisible by remember { mutableStateOf(false) }
+    val datePickerState = rememberDatePickerState()
+    var selectedDate by remember { mutableStateOf("") }
+
+    val datePickerDialogColors = DatePickerDefaults.colors(
+        containerColor = Color.White,
+        titleContentColor = Color.White,
+        headlineContentColor = Color.White,
+    )
+    val datePickerColors = DatePickerDefaults.colors(
+        weekdayContentColor = Color.Gray,
+        selectedDayContainerColor = Color.Red,
+        todayDateBorderColor = Color.Red,
+        todayContentColor = Color.Red
+    )
+
     viewModel.getPostsByWorld(197)
     viewModel.getPostsByUserId()
     viewModel.myFridgePosts()
 
-    Column(
-        modifier = Modifier.fillMaxSize().background(Color.White),
+    val initialPage = 0
+    val pagerState1 = rememberPagerState(
+        initialPage = initialPage,
+        initialPageOffsetFraction = 0f
+    ) {
+        4
+    }
+
+    val fling = PagerDefaults.flingBehavior(
+        state = pagerState1, lowVelocityAnimationSpec = tween(
+            easing = LinearEasing, durationMillis = 300
+        )
+    )
+    var mainTabIndex by remember { mutableIntStateOf(0) }
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 60.dp, end = 20.dp, start = 20.dp, bottom = 20.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column {
-                Text(
-                    color = Color.Black,
-                    text = "Hi Emily,",
-                    fontFamily = Montserrat,
-                    fontSize = if (isSmallScreen) 22.sp else 25.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 7.dp),
-                    style = TextStyle(letterSpacing = -1.sp)
-                )
 
-                Text(
-                    color = Color.Black,
-                    text = "Let's get cooking!",
-                    fontFamily = Montserrat,
-                    fontSize = if (isSmallScreen) 20.sp else 23.sp,
-                    fontWeight = FontWeight.Medium,
-                    style = TextStyle(letterSpacing = -1.sp)
-                )
-            }
+        item {
+            MainSearchBar(
+                searchTextValue = mainSearchText,
+                onSearch = { input->
+                    viewModel.onMainSearchTextChange(input)
+                }
+            )
+        }
 
-            Spacer(modifier = Modifier.weight(1f))
+        item {
+            MainTabRow(
+                onTabChanged = {
+                    mainTabIndex = it
+                }
+            )
+        }
 
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(5.dp)
-            ) {
+        item {
+            SubSearchBar(
+                searchTextValue = ingredientsSearchText,
+                onSearch = { input->
+                    viewModel.onSubSearchTextChange(input)
+                }
+            )
+        }
 
-                Button(shape = CircleShape,
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .height(40.dp)
-                        .width(40.dp),
+        item {
+            var subTabIndex by remember { mutableIntStateOf(0) }
+            SubTabRow(
+                onTabChanged = {
+                    subTabIndex = it
+                }
+            )
+        }
 
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(245, 245, 245, 255),
-
-                        ),
-                    contentPadding = PaddingValues(),
-
-                    onClick = {
-
-                        navController.navigate("SEARCH_VIEW")
-
-                    }
-
+        item {
+            if (isDatePickerVisible) {
+                Box(
+                    modifier = Modifier,
+                    contentAlignment = Alignment.Center
                 ) {
+                    CustomDatePicker(
+                        modifier = Modifier.shadow(5.dp),
+                        shape = RoundedCornerShape(6.dp),
+                        datePickerState = datePickerState,
+                        datePickerColors = datePickerColors,
+                        datePickerDialogColors = datePickerDialogColors,
+                        onDismiss = { isDatePickerVisible = false },
+                        onSave = { date ->
+                            if (date != null){
+                                selectedDate = date
+                            }
+                        }
+                    )
+                }
+            }
+        }
 
-                    Image(
-                        painter = painterResource(id = R.drawable.frame_1171275072),
+        item {
+            if (mainTabIndex == 0){
+                homePosts = viewModel.postList.collectAsState()
+
+                IngredientsList(
+                    Modifier,
+                    productsList,
+                    onAddDateClicked = { isDatePickerVisible = true },
+                    onEditClicked = {
+                            item->
+                        ingredientToEdit = item
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        modifier = Modifier.clickable {
+                            navController.navigate("MY_DIGITAL_PANTRY_VIEW")
+                        },
+                        text = "See All",
+                        color = foodClubGreen,
+                        fontWeight = FontWeight.Bold,
+                        style = TextStyle(
+                            textDecoration = TextDecoration.Underline
+                        ),
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+
+                HorizontalPager(
+                    beyondBoundsPageCount = 1,
+                    flingBehavior = fling,
+                    modifier = Modifier
+                        .height(500.dp)
+                        .padding(top = 0.dp),
+                    state = pagerState1
+                ) {
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 100.dp)
+                    ) {
+                        LazyVerticalGrid(columns = GridCells.Fixed(2)) {
+                            val userName = viewModel.sessionUserName.value
+
+                            if(homePosts!=null){
+                                items(homePosts!!.value) { dataItem ->
+                                    viewModel.getPostData(dataItem.videoId)
+                                    GridItem2(navController, dataItem, userName)
+                                }
+                            }
+
+                            else if(worldPosts!=null){
+                                items(worldPosts.value) { dataItem ->
+
+                                    viewModel.getPostData(dataItem.videoId)
+                                    GridItem2(navController, dataItem, userName)
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
+    var showSheet by remember { mutableStateOf(false) }
+
+    val triggerBottomSheetModal: () -> Unit = {
+        showSheet = !showSheet
+        systemUiController.setStatusBarColor(
+            color = Color(0xFFACACAC), darkIcons = true
+        )
+        systemUiController.setNavigationBarColor(
+            color = Color.Black, darkIcons = true
+        )
+    }
+    SideEffect {
+        if (!showSheet) {
+            systemUiController.setSystemBarsColor(
+                color = Color.White, darkIcons = true
+            )
+        }
+    }
+    if (showSheet) {
+        IngredientsBottomSheet(triggerBottomSheetModal, viewModel.productsDatabase)
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MainSearchBar(
+    searchTextValue: String,
+    onSearch: (String) -> Unit
+){
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 60.dp, end = 20.dp, start = 20.dp, bottom = 10.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        TextField(
+            modifier = Modifier
+                .fillMaxWidth(0.85f)
+                .clip(
+                    RoundedCornerShape(15.dp)
+                ).pointerInput(Unit) {
+                    detectTapGestures { offset ->
+                        // Check if the offset is within the bounds of the text field
+                        if (
+                            offset.x >= 0 && offset.x < size.width && offset.y >= 0 && offset.y < size.height) {
+                            // Handle the click event here
+                            // The user clicked on the text field
+                            Log.i("MYTAG","Text Field Clicked")
+                        }
+                    }
+                }
+            ,
+            colors = TextFieldDefaults.textFieldColors(
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent,
+                containerColor = Color(0xFFF5F5F5)
+            ),
+            value = searchTextValue,
+            onValueChange = {
+                    onSearch(it) // Call the onSearch callback when text changes
+            },
+            placeholder = {
+                Text(
+                    modifier = Modifier.padding(top = 3.dp),
+                    text = "Search for recipes, usernames...",
+                    color = Color.Gray,
+                    textAlign = TextAlign.Center
+                )
+            },
+            leadingIcon = {
+                IconButton(
+                    onClick = {}
+                ) {
+                    Icon(
+                        painterResource(id = R.drawable.search_icon_ingredients),
                         contentDescription = "",
                     )
-
-                }
-
-                Button(
-                    shape = CircleShape,
-                    modifier = Modifier.clip(CircleShape).height(40.dp).width(40.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(245, 245, 245, 255),
-                        ),
-                    contentPadding = PaddingValues(),
-                    onClick = { navController.navigate("BASKET_VIEW") }
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.vector__1_),
-                        contentDescription = ""
-                        )
                 }
             }
-        }
-
-        val initialPage = 0
-        val pagerState1 = rememberPagerState(
-            initialPage = initialPage,
-            initialPageOffsetFraction = 0f
-        ) {
-            4
-        }
-
-        val fling = PagerDefaults.flingBehavior(
-            state = pagerState1, lowVelocityAnimationSpec = tween(
-                easing = LinearEasing, durationMillis = 300
-            )
         )
 
-        val scope = rememberCoroutineScope()
+        Spacer(modifier = Modifier.width(5.dp))
 
-
-        val tabItems1 = listOf(
-            "Categories", "World", "My Fridge"
-        )
-
-        val tabItems2 = listOf(
-            "Proteins", "Carbs", "Plant Based", "Drinks"
-        )
-
-        val tabItems3 = listOf(
-            "England", "Italy", "France", "Germany"
-        )
-
-
-        var tabIndex by remember { mutableIntStateOf(0) }
-
-        TabRow(
-            selectedTabIndex = tabIndex, modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .background(Color.White),
-            containerColor = Color.White,
-            contentColor = Color.White,
-            divider = {},
-            indicator = { tabPositions ->
-                TabRowDefaults.Indicator(
-                    modifier = Modifier.tabIndicatorOffset(tabPositions[tabIndex]),
-                    height = 2.dp,
-                    color = Color.Black
-                )
+        Button(
+            shape = RoundedCornerShape(corner = CornerSize(25.dp)),
+            modifier = Modifier
+                .height(56.dp)
+                .width(56.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(245, 245, 245, 255),
+            ),
+            contentPadding = PaddingValues(),
+            onClick = {
+                // TODO impl search - this can be done
             }
         ) {
-            tabItems1.forEachIndexed { index, data ->
-                val selected = tabIndex == index
 
-                Tab(selected = selected,
-                    modifier = Modifier.background(Color.White),
-                    selectedContentColor = Color.Black,
-                    onClick = {
-                        tabIndex = index
-                        if (index == 2){
-                            navController.navigate("MY_FRIDGE_VIEW")
-                        }
-                    }, text = {
-                        Text(
-                            text = data,
-                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-                            color = if (selected) Color.Black else Color(0xFFC2C2C2)
-                        )
-                    })
-
-            }
-        }
-
-        var homePosts: State<List<VideoModel>>? = null
-        var worldPosts: State<List<VideoModel>>? = null
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        if (tabIndex == 0){
-            TabHomeDiscover(tabItems2, pagerState1, scope, 12.sp)
-            homePosts = viewModel.postList.collectAsState()
-        }
-
-        else if (tabIndex == 1){
-            TabHomeDiscover(tabItems3, pagerState1, scope, 12.sp)
-            worldPosts = viewModel.postListPerCategory.collectAsState()
-        }
-
-
-        Spacer(modifier = Modifier.height(if (tabIndex == 2) 5.dp else 0.dp))
-
-        val systemUiController = rememberSystemUiController()
-        var showSheet by remember { mutableStateOf(false) }
-
-        val triggerBottomSheetModal: () -> Unit = {
-            showSheet = !showSheet
-            systemUiController.setStatusBarColor(
-                color = Color(0xFFACACAC), darkIcons = true
-            )
-            systemUiController.setNavigationBarColor(
-                color = Color.Black, darkIcons = true
-            )
-        }
-        SideEffect {
-            if (!showSheet) {
-                systemUiController.setSystemBarsColor(
-                    color = Color.White, darkIcons = true
-                )
-            }
-        }
-        if (showSheet) {
-            IngredientsBottomSheet(triggerBottomSheetModal, viewModel.productsDatabase)
-        }
-
-        HorizontalPager(
-            beyondBoundsPageCount = 1,
-            flingBehavior = fling,
-            modifier = Modifier.fillMaxSize().padding(top = 0.dp),
-            state = pagerState1
-        ) {
-            Box(Modifier.fillMaxWidth()
-                    .padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 100.dp)
+            BadgedBox(
+                badge = {
+                    Badge(
+                        modifier = Modifier.offset(x = (-5).dp, y = 5.dp),
+                        containerColor = foodClubGreen)
+                    { Text(text = "5", color = Color.Black) }
+                }
             ) {
-                LazyVerticalGrid(columns = GridCells.Fixed(2),) {
-                    if(homePosts!=null){
-                        items(homePosts.value) { dataItem ->
-                            viewModel.getPostData(dataItem.videoId)
-                            GridItem2(navController,dataItem,viewModel.sessionUserName.value)
-                        }
-                    }
-
-                    else if(worldPosts!=null){
-                        items(worldPosts.value) { dataItem ->
-                            
-                            viewModel.getPostData(dataItem.videoId)
-                            GridItem2(navController,dataItem,viewModel.sessionUserName.value)
-                        }
-                    }
-                }
-
+                Icon(
+                    painterResource(id = R.drawable.vector__1_),
+                    contentDescription = "Add to Basket",
+                    tint = Color.Black
+                )
             }
+        }
+    }
+}
 
+
+@Composable
+fun MainTabRow(onTabChanged: (Int) -> Unit) {
+    var mainTabIndex by remember { mutableIntStateOf(0) }
+    val mainTabItemsList = listOf("My Kitchen", "World", "Categories")
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 10.dp)
+        ,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        mainTabItemsList.forEachIndexed { index, data ->
+            val isSelected = index == mainTabIndex
+
+            Text(
+                text = data,
+                modifier = Modifier
+                    .clickable {
+                        onTabChanged(index)
+                        mainTabIndex = index
+                    }
+                    .drawBehind {
+                        if (isSelected) {
+                            val strokeWidthPx = 2.dp.toPx()
+                            val topPaddingPx = 4.dp.toPx()
+                            val underlineHeight = 2.dp.toPx()
+                            val verticalOffset = size.height - (underlineHeight / 2) + topPaddingPx
+                            drawLine(
+                                color = Color.Black,
+                                strokeWidth = strokeWidthPx,
+                                start = Offset(0f, verticalOffset),
+                                end = Offset(size.width, verticalOffset)
+                            )
+                        }
+                    },
+
+                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                color = if (isSelected) Color.Black else Color(0xFFC2C2C2),
+                fontSize = 20.sp,
+                lineHeight = 24.38.sp,
+                textAlign = TextAlign.Start,
+                fontFamily = Montserrat
+            )
+        }
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SubSearchBar(
+    searchTextValue: String,
+    onSearch: (String) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 20.dp, end = 20.dp, start = 20.dp, bottom = 15.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        TextField(
+            modifier = Modifier
+                .fillMaxWidth(0.68f)
+                .clip(
+                    RoundedCornerShape(15.dp)
+                ),
+            colors = TextFieldDefaults.textFieldColors(
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent,
+                containerColor = Color(0xFFF5F5F5)
+            ),
+            value = searchTextValue,
+            onValueChange = {
+                onSearch(it)
+            },
+            placeholder = {
+                Text(
+                    modifier = Modifier.padding(top = 3.dp),
+                    text = "Search to find or add...",
+                    color = Color.Gray,
+                    textAlign = TextAlign.Center
+                )
+            },
+            leadingIcon = {
+                IconButton(
+                    onClick = {
+                        // TODO impl search
+                    }
+                ) {
+                    Icon(
+                        painterResource(id = R.drawable.search_icon_ingredients),
+                        contentDescription = "",
+                    )
+                }
+            }
+        )
+
+        Button(
+            shape = RoundedCornerShape(corner = CornerSize(25.dp)),
+            modifier = Modifier
+                .height(56.dp)
+                .width(56.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = foodClubGreen,
+            ),
+            contentPadding = PaddingValues(),
+            onClick = {
+                // TODO impl camera
+            }
+        ) {
+            Icon(painterResource(id = R.drawable.camera_icon), contentDescription = "")
+        }
+        Button(
+            shape = RoundedCornerShape(corner = CornerSize(25.dp)),
+            modifier = Modifier
+                .height(56.dp)
+                .width(56.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = foodClubGreen,
+            ),
+            contentPadding = PaddingValues(),
+            onClick = {
+                // TODO impl microphone
+            }
+        ) {
+            Icon(painterResource(id = R.drawable.mic_icon), contentDescription = "")
         }
 
+    }
+}
+@Composable
+fun SubTabRow(
+    onTabChanged: (Int) -> Unit
+) {
+    val subTabItemsList = listOf("Veg & Fruits", "Grains & Cereals", "Dairy & Alternatives")
+    var subTabIndex by remember { mutableIntStateOf(0) }
+
+    LazyRow(
+        modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 5.dp, top = 10.dp),
+        content = {
+            itemsIndexed(subTabItemsList) { index, data ->
+                val selected = subTabIndex == index
+
+                Text(
+                    modifier = Modifier
+                        .drawBehind {
+                            if (selected) {
+                                val strokeWidthPx = 2.dp.toPx()
+                                val topPaddingPx =
+                                    4.dp.toPx() // Adjust the top padding as needed
+                                val underlineHeight =
+                                    2.dp.toPx() // Adjust the underline height as needed
+                                val verticalOffset =
+                                    size.height - (underlineHeight / 2) + topPaddingPx
+                                drawLine(
+                                    color = Color.Black,
+                                    strokeWidth = strokeWidthPx,
+                                    start = Offset(0f, verticalOffset),
+                                    end = Offset(size.width, verticalOffset)
+                                )
+                            }
+                        }
+                        .clickable {
+                            subTabIndex = index
+                            onTabChanged(index)
+                        }
+                    ,
+                    text = data,
+                    fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                    color = if (selected) Color.Black else Color(0xFFC2C2C2),
+                    fontSize = 17.sp,
+                    lineHeight = 20.88.sp,
+                    textAlign = TextAlign.Start,
+                    fontFamily = Montserrat
+                )
+                Spacer(modifier = Modifier.width(45.dp)) // Add spacing
+            }
+        }
+    )
+}
+
+@Composable
+fun IngredientsList(
+    modifier: Modifier,
+    productsList: List<Ingredient>,
+    onAddDateClicked: () -> Unit,
+    onEditClicked: (Ingredient) -> Unit
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.57f)
+            .background(
+                color = Color.White
+            )
+    ) {
+        TitlesSection(modifier, view = "DiscoverView")
+        SwipeableItemsLazyColumn(
+            modifier = modifier,
+            height = 275,
+            productsList = productsList,
+            onEditClicked = onEditClicked,
+            onAddDateClicked = onAddDateClicked,
+        )
     }
 }
 
@@ -361,7 +667,6 @@ fun TabHomeDiscover(
 
                 text = {
                     Text(
-
                         text = AnnotatedString(item), style = TextStyle(
                             fontWeight = if (pagerState1.currentPage == index)
                                 FontWeight.Bold
@@ -383,19 +688,26 @@ fun TabHomeDiscover(
 
 @Composable
 fun GridItem2(navController: NavController, dataItem: VideoModel, userName:String) {
-    Card(modifier = Modifier.height(272.dp).width(178.dp)
-            .padding(10.dp), shape = RoundedCornerShape(15.dp)
+    Card(modifier = Modifier
+        .height(272.dp)
+        .width(178.dp)
+        .padding(10.dp), shape = RoundedCornerShape(15.dp)
     ) {
-        Box(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()) {
             Image(
                 painter = rememberAsyncImagePainter(dataItem.thumbnailLink),
                 contentDescription = "",
-                Modifier.fillMaxSize()
-                    .clickable { navController.navigate("DELETE_RECIPE/${dataItem.videoId}")},
+                Modifier
+                    .fillMaxSize()
+                    .clickable { navController.navigate("DELETE_RECIPE/${dataItem.videoId}") },
                 contentScale = ContentScale.FillHeight
             )
             Column(
-                modifier = Modifier.fillMaxSize().padding(10.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(10.dp),
                 verticalArrangement = Arrangement.Bottom
             ) {
                 Text(
@@ -412,26 +724,32 @@ fun GridItem2(navController: NavController, dataItem: VideoModel, userName:Strin
                 )
             }
         }
-
     }
 }
 
 @Composable
 fun GridItem2(navController: NavController, dataItem: UserPosts, userName: String) {
-    Card(modifier = Modifier.height(272.dp).width(178.dp)
-            .padding(10.dp), shape = RoundedCornerShape(15.dp)
+    Card(modifier = Modifier
+        .height(272.dp)
+        .width(178.dp)
+        .padding(10.dp), shape = RoundedCornerShape(15.dp)
     ) {
 
-        Box(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()) {
             Image(
                 painter = rememberAsyncImagePainter(dataItem.thumbnailUrl),
                 contentDescription = "",
-                Modifier.fillMaxSize()
+                Modifier
+                    .fillMaxSize()
                     .clickable { navController.navigate("DELETE_RECIPE/${dataItem.id}") },
                 contentScale = ContentScale.FillHeight
             )
             Column(
-                Modifier.fillMaxSize().padding(10.dp), verticalArrangement = Arrangement.Bottom
+                Modifier
+                    .fillMaxSize()
+                    .padding(10.dp), verticalArrangement = Arrangement.Bottom
             ) {
                 Text(
                     text = dataItem.totalLikes.toString() ,
