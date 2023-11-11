@@ -5,6 +5,7 @@ import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.network.retrofit.services.StoriesService
 import android.kotlin.foodclub.network.retrofit.dtoMappers.stories.StoryMapper
 import android.kotlin.foodclub.network.retrofit.responses.stories.RetrieveUserFriendsStoriesResponse
+import android.kotlin.foodclub.network.retrofit.responses.stories.RetrieveUserViewedStoryResponse
 import android.kotlin.foodclub.network.retrofit.utils.apiRequestFlow
 import android.kotlin.foodclub.utils.helpers.Resource
 
@@ -34,6 +35,23 @@ class StoryRepository(
                 Resource.Error(resource.message!!)
             }
         }
+    }
+
+    // USER VIEWS STORY FUNCTION
+    suspend fun userViewsStory(storyId: Long, userId: Long): Resource<RetrieveUserViewedStoryResponse, DefaultErrorResponse> {
+        try {
+            val response = api.userViewsStory(storyId, userId)
+            if (response.isSuccessful) {
+                val responseBody = response.body()
+                if (responseBody != null) {
+                    return Resource.Success(responseBody)
+                }
+            }
+        } catch (e: Exception) {
+            return Resource.Error("Failed to View Story: ${e.message}")
+        }
+
+        return Resource.Error("Failed to View Story")
     }
 
 }
