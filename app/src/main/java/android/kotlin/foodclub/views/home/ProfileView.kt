@@ -151,6 +151,7 @@ fun ProfileView(
         val bookmarkedPosts = bookmarkedPostsState.value
         val tabItems = stringArrayResource(id = R.array.profile_tabs)
         var showBottomSheet by remember { mutableStateOf(false) }
+        var showUserOptionsSheet by remember { mutableStateOf(false) }
 
         val galleryLauncher =
             rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocument()) {
@@ -240,19 +241,50 @@ fun ProfileView(
                         }
                     }
                     Spacer(modifier = Modifier.width(40.dp))
-                    Button(shape = CircleShape,
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .height(53.dp)
-                            .width(53.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(255, 255, 255, 255)),
-                        contentPadding = PaddingValues(),
-                        onClick = { navController.navigate("SETTINGS") }
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.vector_1_),
-                            contentDescription = null,
-                        )
+                    if(userId ==0L) {
+                        Button(shape = CircleShape,
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .height(53.dp)
+                                .width(53.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(
+                                    255,
+                                    255,
+                                    255,
+                                    255
+                                )
+                            ),
+                            contentPadding = PaddingValues(),
+                            onClick = { navController.navigate("SETTINGS") }
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.vector_1_),
+                                contentDescription = "",
+                            )
+                        }
+                    }else{
+                        Button(shape = CircleShape,
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .height(53.dp)
+                                .width(53.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(
+                                    255,
+                                    255,
+                                    255,
+                                    255
+                                )
+                            ),
+                            contentPadding = PaddingValues(),
+                            onClick = { showUserOptionsSheet=true }
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.dots),
+                                contentDescription = "",
+                            )
+                        }
                     }
                 }
                 Column(
@@ -413,6 +445,22 @@ fun ProfileView(
                 onDismiss = { showBottomSheet = false },
                 modifier = Modifier.padding(bottom = 110.dp),
             )
+        } else {
+            if(showUserOptionsSheet){
+                android.kotlin.foodclub.utils.composables.BottomSheet(
+                    itemList = listOf(
+                        BottomSheetItem(1, "Block",null) {},
+                        BottomSheetItem(2, "Report",null) {},
+                        BottomSheetItem(3, "Hide your FoodSNAPS",null) {},
+                        BottomSheetItem(4, "Copy profile URL",null) {},
+                        BottomSheetItem(5, "Share this Profile",null) {}
+                    ),
+                    sheetTitle = "User Options",
+//                enableDragHandle = true,
+                    onDismiss = { showBottomSheet = false },
+                    modifier = Modifier.padding(bottom = 110.dp)
+                )
+            }
         }
     }
 }
