@@ -34,6 +34,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -113,7 +115,13 @@ fun RecordingButton(isRecording: Boolean) {
 }
 
 @Composable
-fun RecordingClipsButton(isRecording: Boolean, removeClip: Boolean = false, removeUpdate: (Boolean) -> Unit = {}, addClip:Boolean = false, clipUpdate: (Boolean) -> Unit = {}) {
+fun RecordingClipsButton(
+    isRecording: Boolean,
+    removeClip: Boolean = false,
+    removeUpdate: (Boolean) -> Unit = {},
+    addClip: Boolean = false,
+    clipUpdate: (Boolean) -> Unit = {}
+) {
 
     val (rememberProgress, progressUpdate) = remember {
         mutableFloatStateOf(0f)
@@ -132,20 +140,16 @@ fun RecordingClipsButton(isRecording: Boolean, removeClip: Boolean = false, remo
 
     var animationTime = 20000
 
-    if (removeClip)
-    {
-        if (clipArcs.size > 1)
-        {
+    if (removeClip) {
+        if (clipArcs.size > 1) {
             clipArcs.removeAt(clipArcs.lastIndex)
             progressUpdate(clipArcs[clipArcs.lastIndex])
-        }
-        else if (clipArcs.isNotEmpty())
-        {
+        } else if (clipArcs.isNotEmpty()) {
             clipArcs.removeAt(clipArcs.lastIndex)
             progressUpdate(0f)
         }
 
-        animationTime = 1
+        animationTime = 100
         removeUpdate(false)
     }
 
@@ -286,6 +290,8 @@ fun CameraView(
     )
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp + 10.dp
 
+    val interactionSource = remember { MutableInteractionSource() }
+
     val uris = remember {
         mutableStateListOf<String>()
     }
@@ -385,12 +391,14 @@ fun CameraView(
                         )
                     }
                 }
+                val isPressed by interactionSource.collectIsPressedAsState()
                 IconButton(
 
                     onClick = {
 
                         //Temporarily ignore recording code
 
+                        /*
                         if (!recordingStarted.value) {
                             videoCapture.value?.let { videoCapture ->
                                 recordingStarted.value = true
@@ -434,15 +442,73 @@ fun CameraView(
                             recording?.stop()
                         }
 
+                         */
+
 
                         //navController.navigate("GALLERY_VIEW")
                     },
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .size(80.dp)
+                        .size(80.dp),
+                    interactionSource = interactionSource
                 ) {
 
-                    RecordingClipsButton(isRecording = recordingStarted.value, removeClip = removeClip, removeUpdate = removeUpdate, addClip = addClip, clipUpdate = clipUpdate)
+                    if (isPressed) {
+                        if (!recordingStarted.value) {
+
+                            videoCapture.value?.let { videoCapture ->
+                                recordingStarted.value = true
+                                val mediaDir = context.externalCacheDirs.firstOrNull()?.let {
+                                    File(
+                                        it,
+                                        context.getString(R.string.app_name)
+                                    ).apply { mkdirs() }
+                                }
+
+                                recording = startRecordingVideo(
+                                    context = context,
+                                    filenameFormat = "yyyy-MM-dd-HH-mm-ss-SSS",
+                                    videoCapture = videoCapture,
+                                    outputDirectory = if (mediaDir != null && mediaDir.exists())
+                                        mediaDir
+                                    else
+                                        context.filesDir,
+                                    executor = context.mainExecutor,
+                                    audioEnabled = audioEnabled.value
+                                ) { event ->
+                                    if (event is VideoRecordEvent.Finalize) {
+                                        val uri = event.outputResults.outputUri
+                                        if (uri != Uri.EMPTY) {
+
+                                            val uriEncoded = URLEncoder.encode(
+                                                uri.toString(),
+                                                StandardCharsets.UTF_8.toString()
+                                            )
+
+                                            //navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
+                                            //navController.navigate("GALLERY_VIEW/${uriEncoded}")
+                                            clipUpdate(true)
+                                            uris.add(uriEncoded)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        if (recordingStarted.value) {
+                            recordingStarted.value = false
+                            recording?.stop()
+                        }
+
+                    }
+
+                    RecordingClipsButton(
+                        isRecording = isPressed,
+                        removeClip = removeClip,
+                        removeUpdate = removeUpdate,
+                        addClip = addClip,
+                        clipUpdate = clipUpdate
+                    )
                     /*Icon(
                         painter = painterResource(if (recordingStarted.value) R.drawable.story_user else R.drawable.save),
                         contentDescription = "",
