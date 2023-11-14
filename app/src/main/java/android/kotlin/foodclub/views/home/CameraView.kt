@@ -28,6 +28,7 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -78,6 +79,7 @@ import java.io.File
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
+
 @Composable
 fun RecordingButton(isRecording: Boolean) {
     val progress by animateFloatAsState(
@@ -127,18 +129,9 @@ fun RecordingClipsButton(
         mutableFloatStateOf(0f)
     }
 
-    /*
-    val (addClip, clipUpdate) = remember {
-        mutableStateOf(false)
-    }
-
-     */
-
     val clipArcs = remember {
         mutableListOf<Float>()
     }
-
-    var animationTime = 20000
 
     if (removeClip) {
         if (clipArcs.size > 1) {
@@ -149,26 +142,29 @@ fun RecordingClipsButton(
             progressUpdate(0f)
         }
 
-        animationTime = 100
         removeUpdate(false)
     }
 
-
     val progress by animateFloatAsState(
         targetValue = if (isRecording) 1f else rememberProgress,
-        animationSpec = infiniteRepeatable(
-            animation = tween(animationTime, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ), label = ""
+        animationSpec = if (isRecording) {infiniteRepeatable<Float>(
+            animation = tween<Float>( 20000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        )}
+        else
+        {
+            snap<Float>(250)
+        }
+       , label = ""
     )
 
     if (!isRecording) {
         if (progress != 0f && addClip) {
             clipArcs.add(progress) //Constantly adding to clip Arcs should only add at one point
+            progressUpdate(progress)
             clipUpdate(false)
         }
-
-        progressUpdate(progress)
+        //progressUpdate(progress)
     }
 
 
@@ -398,52 +394,50 @@ fun CameraView(
 
                         //Temporarily ignore recording code
 
-                        /*
-                        if (!recordingStarted.value) {
-                            videoCapture.value?.let { videoCapture ->
-                                recordingStarted.value = true
-                                val mediaDir = context.externalCacheDirs.firstOrNull()?.let {
-                                    File(
-                                        it,
-                                        context.getString(R.string.app_name)
-                                    ).apply { mkdirs() }
-                                }
+                        if(false) {
+                            if (!recordingStarted.value) {
+                                videoCapture.value?.let { videoCapture ->
+                                    recordingStarted.value = true
+                                    val mediaDir = context.externalCacheDirs.firstOrNull()?.let {
+                                        File(
+                                            it,
+                                            context.getString(R.string.app_name)
+                                        ).apply { mkdirs() }
+                                    }
 
-                                recording = startRecordingVideo(
-                                    context = context,
-                                    filenameFormat = "yyyy-MM-dd-HH-mm-ss-SSS",
-                                    videoCapture = videoCapture,
-                                    outputDirectory = if (mediaDir != null && mediaDir.exists())
-                                        mediaDir
-                                    else
-                                        context.filesDir,
-                                    executor = context.mainExecutor,
-                                    audioEnabled = audioEnabled.value
-                                ) { event ->
-                                    if (event is VideoRecordEvent.Finalize) {
-                                        val uri = event.outputResults.outputUri
-                                        if (uri != Uri.EMPTY) {
+                                    recording = startRecordingVideo(
+                                        context = context,
+                                        filenameFormat = "yyyy-MM-dd-HH-mm-ss-SSS",
+                                        videoCapture = videoCapture,
+                                        outputDirectory = if (mediaDir != null && mediaDir.exists())
+                                            mediaDir
+                                        else
+                                            context.filesDir,
+                                        executor = context.mainExecutor,
+                                        audioEnabled = audioEnabled.value
+                                    ) { event ->
+                                        if (event is VideoRecordEvent.Finalize) {
+                                            val uri = event.outputResults.outputUri
+                                            if (uri != Uri.EMPTY) {
 
-                                            val uriEncoded = URLEncoder.encode(
-                                                uri.toString(),
-                                                StandardCharsets.UTF_8.toString()
-                                            )
+                                                val uriEncoded = URLEncoder.encode(
+                                                    uri.toString(),
+                                                    StandardCharsets.UTF_8.toString()
+                                                )
 
-                                            //navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
-                                            //navController.navigate("GALLERY_VIEW/${uriEncoded}")
-                                            clipUpdate(true)
-                                            uris.add(uriEncoded)
+                                                //navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
+                                                //navController.navigate("GALLERY_VIEW/${uriEncoded}")
+                                                clipUpdate(true)
+                                                uris.add(uriEncoded)
+                                            }
                                         }
                                     }
                                 }
+                            } else {
+                                recordingStarted.value = false
+                                recording?.stop()
                             }
-                        } else {
-                            recordingStarted.value = false
-                            recording?.stop()
                         }
-
-                         */
-
 
                         //navController.navigate("GALLERY_VIEW")
                     },
@@ -453,57 +447,58 @@ fun CameraView(
                     interactionSource = interactionSource
                 ) {
 
-                    if (isPressed) {
-                        if (!recordingStarted.value) {
+                    if (true) {
+                        if (isPressed) {
+                            if (!recordingStarted.value) {
 
-                            videoCapture.value?.let { videoCapture ->
-                                recordingStarted.value = true
-                                val mediaDir = context.externalCacheDirs.firstOrNull()?.let {
-                                    File(
-                                        it,
-                                        context.getString(R.string.app_name)
-                                    ).apply { mkdirs() }
-                                }
+                                videoCapture.value?.let { videoCapture ->
+                                    recordingStarted.value = true
+                                    val mediaDir = context.externalCacheDirs.firstOrNull()?.let {
+                                        File(
+                                            it,
+                                            context.getString(R.string.app_name)
+                                        ).apply { mkdirs() }
+                                    }
 
-                                recording = startRecordingVideo(
-                                    context = context,
-                                    filenameFormat = "yyyy-MM-dd-HH-mm-ss-SSS",
-                                    videoCapture = videoCapture,
-                                    outputDirectory = if (mediaDir != null && mediaDir.exists())
-                                        mediaDir
-                                    else
-                                        context.filesDir,
-                                    executor = context.mainExecutor,
-                                    audioEnabled = audioEnabled.value
-                                ) { event ->
-                                    if (event is VideoRecordEvent.Finalize) {
-                                        val uri = event.outputResults.outputUri
-                                        if (uri != Uri.EMPTY) {
+                                    recording = startRecordingVideo(
+                                        context = context,
+                                        filenameFormat = "yyyy-MM-dd-HH-mm-ss-SSS",
+                                        videoCapture = videoCapture,
+                                        outputDirectory = if (mediaDir != null && mediaDir.exists())
+                                            mediaDir
+                                        else
+                                            context.filesDir,
+                                        executor = context.mainExecutor,
+                                        audioEnabled = audioEnabled.value
+                                    ) { event ->
+                                        if (event is VideoRecordEvent.Finalize) {
+                                            val uri = event.outputResults.outputUri
+                                            if (uri != Uri.EMPTY) {
 
-                                            val uriEncoded = URLEncoder.encode(
-                                                uri.toString(),
-                                                StandardCharsets.UTF_8.toString()
-                                            )
+                                                val uriEncoded = URLEncoder.encode(
+                                                    uri.toString(),
+                                                    StandardCharsets.UTF_8.toString()
+                                                )
 
-                                            //navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
-                                            //navController.navigate("GALLERY_VIEW/${uriEncoded}")
-                                            clipUpdate(true)
-                                            uris.add(uriEncoded)
+                                                //navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
+                                                //navController.navigate("GALLERY_VIEW/${uriEncoded}")
+                                                clipUpdate(true)
+                                                uris.add(uriEncoded)
+                                            }
                                         }
                                     }
                                 }
                             }
+                        } else {
+                            if (recordingStarted.value) {
+                                recordingStarted.value = false
+                                recording?.stop()
+                            }
                         }
-                    } else {
-                        if (recordingStarted.value) {
-                            recordingStarted.value = false
-                            recording?.stop()
-                        }
-
                     }
 
                     RecordingClipsButton(
-                        isRecording = isPressed,
+                        isRecording = recordingStarted.value,
                         removeClip = removeClip,
                         removeUpdate = removeUpdate,
                         addClip = addClip,
