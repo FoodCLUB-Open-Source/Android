@@ -70,6 +70,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import android.kotlin.foodclub.viewModels.home.DiscoverViewModel
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.heightIn
@@ -239,7 +240,6 @@ fun DiscoverView(navController: NavController, viewModel: DiscoverViewModel) {
                     ingredient = viewModel.ingredientToEdit.value!!,
                     onDismissRequest = { isSheetOpen = it},
                     onEdit = {
-                        viewModel.ingredientToEdit.value = it
                         viewModel.updateIngredient(it)
                     }
                 )
@@ -289,7 +289,7 @@ fun DiscoverView(navController: NavController, viewModel: DiscoverViewModel) {
                         onEditQuantityClicked = {
                             isSheetOpen = true
                             viewModel.ingredientToEdit.value = it
-                            viewModel.updateIngredient(it)
+//                            viewModel.updateIngredient(it)
                         },
                         onDateClicked = {
                             viewModel.ingredientToEdit.value = it
@@ -805,7 +805,6 @@ fun IngredientsListColumn(
                     dismissContent = {
                         SingleSearchIngredientItem(
                             modifier = Modifier,
-                            viewModel = viewModel,
                             item =item,
                             userIngredientsList = userIngredientsList,
                             onEditQuantityClicked = {
@@ -836,7 +835,6 @@ fun IngredientsListColumn(
 @Composable
 fun SingleSearchIngredientItem(
     modifier: Modifier,
-    viewModel: DiscoverViewModel,
     item: Ingredient,
     onEditQuantityClicked: (Ingredient) -> Unit,
     onDateClicked: (Ingredient) -> Unit,
@@ -848,10 +846,7 @@ fun SingleSearchIngredientItem(
     val expirationDate = if (item.expirationDate != ""){
         item.expirationDate.split(" ").take(2).joinToString(" ")
     } else "Edit"
-    val isItemAdded =
-        if (item in userIngredientsList)
-            TextStyle(textDecoration = TextDecoration.Underline)
-        else TextStyle(textDecoration = TextDecoration.None)
+    val isItemAdded = item in userIngredientsList
 
 
     Row(
@@ -917,7 +912,7 @@ fun SingleSearchIngredientItem(
                     modifier = modifier
                         .padding(start = 10.dp)
                         .clickable {
-                        onDateClicked(item)
+                            onDateClicked(item)
                     },
                     text = expirationDate,
                     fontWeight = FontWeight(500),
@@ -928,7 +923,7 @@ fun SingleSearchIngredientItem(
                     color = Color.Gray,
                     style = if (expirationDate == "Edit") TextStyle(textDecoration = TextDecoration.Underline) else TextStyle(textDecoration = TextDecoration.None)
                 )
-                if (item !in userIngredientsList){
+                if (!isItemAdded){
                     Box(
                         modifier = Modifier
                             .size(24.dp)
@@ -1028,8 +1023,7 @@ fun AddIngredientDialog(){
                         modifier = Modifier
                             .size(34.dp)
                             .clip(CircleShape)
-                            .background(foodClubGreen)
-                            .padding(end = 5.dp),
+                            .background(foodClubGreen),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -1041,7 +1035,7 @@ fun AddIngredientDialog(){
                     }
                     Text(
                         text = "Added!",
-                        modifier = Modifier,
+                        modifier = Modifier.padding(start = 10.dp),
                         fontWeight = FontWeight(600),
                         lineHeight = 19.5.sp,
                         fontSize = 16.sp,

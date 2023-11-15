@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -118,15 +119,28 @@ class DiscoverViewModel @Inject constructor(
         Log.i("MYTAG","INGR ${ingredient.unit}")
         Log.i("MYTAG","LIST BEFORE ${_userIngredientsList.value[0].quantity}")
 
-        val updateList = _userIngredientsList.value.toMutableList()
-        updateList.forEach { item->
-            if (item.id == ingredient.id){
-                item.quantity = ingredient.quantity
-                item.unit = ingredient.unit
+        _userIngredientsList.update { currentList ->
+            currentList.map { item ->
+                if (item.id == ingredient.id) {
+                    Ingredient(
+                        id = item.id,  // Make sure to copy other properties if needed
+                        quantity = ingredient.quantity,
+                        unit = ingredient.unit,
+                        type = ingredient.type,
+                        expirationDate = ingredient.expirationDate,
+                        imageUrl = ingredient.imageUrl
+                    )
+                } else {
+                    item
+                }
             }
         }
+
+        // Now update the ingredientToEdit
         ingredientToEdit.value = ingredient
-        _userIngredientsList.value = updateList
+
+        // Now update the ingredientToEdit
+        ingredientToEdit.value = ingredient
         Log.i("MYTAG","LIST AFTER ${_userIngredientsList.value[0].quantity}")
     }
 
