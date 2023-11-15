@@ -20,6 +20,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
+import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
+import android.kotlin.foodclub.viewModels.home.DiscoverViewModel
 import android.kotlin.foodclub.views.home.CreateView
 import android.kotlin.foodclub.views.home.DiscoverView
 import android.kotlin.foodclub.views.home.MyDigitalPantryView
@@ -66,7 +68,8 @@ fun NavGraphBuilder.homeNavigationGraph(
             CreateView()
         }
         composable(route = BottomBarScreenObject.Play.route) {
-            DiscoverView(navController = navController)
+            val viewModel = it.sharedHiltViewModel<DiscoverViewModel>(navController)
+            DiscoverView(navController = navController, viewModel = viewModel)
         }
         composable(route = HomeOtherRoutes.CameraView.route) {
             val state = it.arguments?.getString("state") ?: ""
@@ -133,7 +136,8 @@ fun NavGraphBuilder.homeNavigationGraph(
             SearchView(navController = navController)
         }
         composable(route = HomeOtherRoutes.MyDigitalPantryView.route) {
-            MyDigitalPantryView(navController = navController)
+            val viewModel = it.sharedHiltViewModel<DiscoverViewModel>(navController)
+            MyDigitalPantryView(navController = navController, viewModel = viewModel)
         }
         composable(route = HomeOtherRoutes.TakeProfilePhotoView.route) {
             TakeProfilePhotoView(navController = navController)

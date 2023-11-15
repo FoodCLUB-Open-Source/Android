@@ -9,6 +9,9 @@ import android.kotlin.foodclub.repositories.ProductRepository
 import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
+import android.util.Log
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -48,12 +51,16 @@ class DiscoverViewModel @Inject constructor(
     private val _productsDatabase = MutableStateFlow(ProductsData("", "", listOf()))
     val productsDatabase: StateFlow<ProductsData> get() = _productsDatabase
 
+    private val _userIngredientsList = MutableStateFlow<List<Ingredient>>(listOf())
+    val userIngredientsList: StateFlow<List<Ingredient>> get() = _userIngredientsList
+
     private val _mainSearchText = MutableStateFlow("")
     var mainSearchText = _mainSearchText.asStateFlow()
 
     private val _ingredientsSearchText = MutableStateFlow("")
     var ingredientsSearchText = _ingredientsSearchText.asStateFlow()
 
+    var ingredientToEdit: MutableState<Ingredient?> = mutableStateOf(null)
 
     // filter products db list with search text
     var displayedProducts: StateFlow<List<Ingredient>> = combine(
@@ -74,32 +81,63 @@ class DiscoverViewModel @Inject constructor(
         initialValue = emptyList()
     )
 
-
-
     private val _error = MutableStateFlow("")
 
     init {
-        fetchProductsDatabase(mainSearchText.value)
+        viewModelScope.launch {
+            fetchProductsDatabase(mainSearchText.value)
+        }
     }
 
     fun onMainSearchTextChange(text: String) {
         _mainSearchText.value = text
     }
+
     fun onSubSearchTextChange(text: String) {
         _ingredientsSearchText.value = text
+        viewModelScope.launch {
+            fetchProductsDatabase(text)
+        }
     }
 
+    fun addToUserIngredients(ingredient: Ingredient) {
+        val updatedList = _userIngredientsList.value.toMutableList()
+        updatedList.add(ingredient)
+        _userIngredientsList.value = updatedList
+        _ingredientsSearchText.value = ""
+    }
 
-    private fun fetchProductsDatabase(searchText: String) {
-        viewModelScope.launch {
-            when(val resource = productsRepo.getProductsList(searchText)) {
-                is Resource.Success -> {
-                    _error.value = ""
-                    _productsDatabase.value = resource.data!!
-                }
-                is Resource.Error -> {
-                    _error.value = resource.message!!
-                }
+    fun deleteIngredientFromList(ingredient: Ingredient){
+        val list = _userIngredientsList.value.toMutableList()
+        list.remove(ingredient)
+        _userIngredientsList.value = list
+    }
+
+    fun updateIngredient(ingredient: Ingredient) {
+        Log.i("MYTAG","INGR ${ingredient.quantity}")
+        Log.i("MYTAG","INGR ${ingredient.unit}")
+        Log.i("MYTAG","LIST BEFORE ${_userIngredientsList.value[0].quantity}")
+
+        val updateList = _userIngredientsList.value.toMutableList()
+        updateList.forEach { item->
+            if (item.id == ingredient.id){
+                item.quantity = ingredient.quantity
+                item.unit = ingredient.unit
+            }
+        }
+        ingredientToEdit.value = ingredient
+        _userIngredientsList.value = updateList
+        Log.i("MYTAG","LIST AFTER ${_userIngredientsList.value[0].quantity}")
+    }
+
+    private suspend fun fetchProductsDatabase(searchText: String) {
+        when(val resource = productsRepo.getProductsList(searchText)) {
+            is Resource.Success -> {
+                _error.value = ""
+                _productsDatabase.value = resource.data!!
+            }
+            is Resource.Error -> {
+                _error.value = resource.message!!
             }
         }
     }
@@ -132,7 +170,6 @@ class DiscoverViewModel @Inject constructor(
 
                 }
             }
-
         }
     }
 

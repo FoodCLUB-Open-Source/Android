@@ -59,7 +59,7 @@ fun SearchView(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
     ) {
-        Search(searchTextValue = "", navController = navController)
+        SearchRow(searchTextValue = "", navController = navController)
         MainTabRow(
             mainTabItemsList,
             Arrangement.Start
@@ -73,7 +73,7 @@ fun SearchView(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Search(
+fun SearchRow(
     searchTextValue: String,
     navController: NavController
 ){

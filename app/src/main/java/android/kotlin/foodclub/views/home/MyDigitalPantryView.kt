@@ -75,34 +75,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyDigitalPantryView(
-    navController: NavController
+    navController: NavController,
+    viewModel: DiscoverViewModel
 ){
-    val viewModel: DiscoverViewModel = hiltViewModel()
-    viewModel.getPostsByWorld(197)
-    viewModel.getPostsByUserId()
-    viewModel.myFridgePosts()
-
     val modifier = Modifier
+    val userIngredients = viewModel.userIngredientsList.collectAsState()
 
     var isShowEditScreen by remember { mutableStateOf(false) }
     var topBarTitleText by remember { mutableStateOf("") }
 
-    var ingredientToEdit: Ingredient? = null
-
     val searchText by viewModel.ingredientsSearchText.collectAsState()
-    val displayedProducts = viewModel.displayedProducts.collectAsState()
-    val dbProducts = viewModel.productsDatabase.collectAsState()
-
-    val productsList = displayedProducts.value.ifEmpty {
-        dbProducts.value.productsList
-    }
 
     var isDatePickerVisible by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
@@ -179,7 +167,12 @@ fun MyDigitalPantryView(
 
                 if (isShowEditScreen){
                     topBarTitleText = "Edit Item"
-                    EditIngredientView(ingredient = ingredientToEdit!!)
+                    EditIngredientView(
+                        ingredient = viewModel.ingredientToEdit.value!!,
+                        onEditIngredient = { ingr ->
+                            viewModel.updateIngredient(ingr)
+                        }
+                    )
                 }else{
                     topBarTitleText = "All My Ingredients"
                     SearchMyIngredients(
@@ -193,11 +186,11 @@ fun MyDigitalPantryView(
 
                     MyDigitalPantryList(
                         modifier,
-                        productsList,
+                        userIngredients.value,
                         onAddDateClicked = { isDatePickerVisible = true },
                         onEditClicked = {
                                 item->
-                            ingredientToEdit = item
+                            viewModel.ingredientToEdit.value = item
                             isShowEditScreen = !isShowEditScreen
                         },
                         view = "DigitalPantry"
@@ -441,8 +434,13 @@ fun SingleIngredientItem(
     onEditClicked: (Ingredient) -> Unit
 ) {
     val title = item.type.split(",").first().trim()
-    val quantity = item.quantity.toString()
     val unit = "g" // for now
+    val quantity = if (item.quantity != 0) item.quantity.toString()+unit else "Edit"
+    val expirationDate = if (item.expirationDate != "") {
+        item.expirationDate.split(" ").take(2).joinToString(" ")
+    }else{
+        "Add Date"
+    }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -483,7 +481,7 @@ fun SingleIngredientItem(
             ) {
                 Text(
                     modifier =modifier.padding(start = 6.dp),
-                    text = quantity+unit,
+                    text = quantity,
                     fontWeight = FontWeight(500),
                     fontSize = 16.sp,
                     lineHeight = 19.5.sp,
@@ -503,7 +501,7 @@ fun SingleIngredientItem(
                         .clickable {
                             onAddDateClicked()
                         },
-                    text = "Add Date",
+                    text = expirationDate,
                     fontWeight = FontWeight(500),
                     textAlign = TextAlign.Start,
                     fontSize = 16.sp,
@@ -534,7 +532,10 @@ fun SingleIngredientItem(
 
 
 @Composable
-fun EditIngredientView(ingredient: Ingredient){
+fun EditIngredientView(
+    ingredient: Ingredient,
+    onEditIngredient: (Ingredient) -> Unit
+){
     Column(
         modifier = Modifier
             .background(Color.White)
@@ -586,9 +587,13 @@ fun EditIngredientView(ingredient: Ingredient){
                     .padding(start = 17.dp, end = 17.dp, bottom = 20.dp),
             ) {
                 EditIngredientQuantityPicker(
+                    ingredient = ingredient,
                     quantity = quantity,
                     grammage = grammage,
-                    types = types
+                    types = types,
+                    onEditIngredient = {
+                        onEditIngredient(it)
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
