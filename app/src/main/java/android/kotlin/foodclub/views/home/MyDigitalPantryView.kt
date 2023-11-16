@@ -32,7 +32,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -49,6 +48,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
@@ -75,34 +75,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyFridgeView(
-    navController: NavController
+fun MyDigitalPantryView(
+    navController: NavController,
+    viewModel: DiscoverViewModel
 ){
-    val viewModel: DiscoverViewModel = hiltViewModel()
-    viewModel.getPostsByWorld(197)
-    viewModel.getPostsByUserId()
-    viewModel.myFridgePosts()
-
     val modifier = Modifier
+    val userIngredients = viewModel.userIngredientsList.collectAsState()
 
     var isShowEditScreen by remember { mutableStateOf(false) }
     var topBarTitleText by remember { mutableStateOf("") }
 
-    var ingredientToEdit: Ingredient? = null
-
-    val searchText by viewModel.searchText.collectAsState()
-    val displayedProducts = viewModel.displayedProducts.collectAsState()
-    val dbProducts = viewModel.productsDatabase.collectAsState()
-
-    val productsList = displayedProducts.value.ifEmpty {
-        dbProducts.value.productsList
-    }
+    val searchText by viewModel.ingredientsSearchText.collectAsState()
 
     var isDatePickerVisible by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
@@ -121,31 +109,25 @@ fun MyFridgeView(
     )
 
     BackHandler {
-        if (isShowEditScreen){
-            isShowEditScreen = false
-        }else{
-            navController.popBackStack()
-        }
+        navController.popBackStack()
     }
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(
-                    text = topBarTitleText,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    lineHeight = 48.sp,
-                    fontFamily = Montserrat,
-                ) },
+                title = {
+                    Text(
+                        text = "My Digital Pantry",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        lineHeight = 48.sp,
+                        fontFamily = Montserrat
+                    )
+                        },
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            if (isShowEditScreen){
-                                isShowEditScreen = false
-                            }else{
-                                navController.popBackStack()
-                            }
+                            navController.popBackStack()
                         }
                     ){
                         Icon(
@@ -155,19 +137,20 @@ fun MyFridgeView(
                     }
                 },
                 actions = {
-                    if (isShowEditScreen){
-                        IconButton(
-                            onClick = {
-                                isShowEditScreen = false
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Close,
-                                contentDescription = "Close Edit Screen"
-                            )
+                    TextButton(
+                        onClick = {
+                            navController.popBackStack()
                         }
+                    ) {
+                        Text(
+                            text = "Save",
+                            color = foodClubGreen,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight(600),
+                            fontFamily = Montserrat
+                        )
                     }
-                }
+                },
             )
         },
         content = {
@@ -184,27 +167,33 @@ fun MyFridgeView(
 
                 if (isShowEditScreen){
                     topBarTitleText = "Edit Item"
-                    EditIngredientView(ingredient = ingredientToEdit!!)
+                    EditIngredientView(
+                        ingredient = viewModel.ingredientToEdit.value!!,
+                        onEditIngredient = { ingr ->
+                            viewModel.updateIngredient(ingr)
+                        }
+                    )
                 }else{
                     topBarTitleText = "All My Ingredients"
                     SearchMyIngredients(
                         modifier = Modifier,
                         searchTextValue = searchText,
                         onSearch = { input->
-                            viewModel.onSearchTextChange(input)
+                            viewModel.onSubSearchTextChange(input)
                         }
                     )
                     Spacer(modifier = Modifier.height(15.dp))
 
-                    IngredientsList(
+                    MyDigitalPantryList(
                         modifier,
-                        productsList,
+                        userIngredients.value,
                         onAddDateClicked = { isDatePickerVisible = true },
                         onEditClicked = {
                                 item->
-                            ingredientToEdit = item
+                            viewModel.ingredientToEdit.value = item
                             isShowEditScreen = !isShowEditScreen
-                        }
+                        },
+                        view = "DigitalPantry"
                     )
 
                     if (isDatePickerVisible) {
@@ -280,11 +269,12 @@ fun SearchMyIngredients(
 }
 
 @Composable
-fun IngredientsList(
+fun MyDigitalPantryList(
     modifier: Modifier,
     productsList: List<Ingredient>,
     onAddDateClicked: () -> Unit,
-    onEditClicked: (Ingredient) -> Unit
+    onEditClicked: (Ingredient) -> Unit,
+    view: String
 ) {
     Surface(
         shadowElevation = 8.dp,
@@ -298,9 +288,10 @@ fun IngredientsList(
                     color = Color.White
                 )
         ) {
-            TitlesSection(modifier)
+            TitlesSection(modifier, view)
             SwipeableItemsLazyColumn(
                 modifier = modifier,
+                height = Int.MAX_VALUE,
                 productsList = productsList,
                 onEditClicked = onEditClicked,
                 onAddDateClicked = onAddDateClicked
@@ -310,34 +301,34 @@ fun IngredientsList(
 }
 
 @Composable
-fun TitlesSection(modifier: Modifier){
+fun TitlesSection(modifier: Modifier, view: String){
     Row(modifier = modifier
         .fillMaxWidth()
-        .padding(start = 15.dp, end = 15.dp, top = 35.dp, bottom = 15.dp),
+        .padding(start = 20.dp, end = 20.dp, top = 15.dp, bottom = 15.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
             text = "Name",
-            fontWeight = FontWeight.Bold,
-            fontSize = 16.sp,
-            lineHeight = 19.5.sp,
+            fontWeight = if (view == "DigitalPantry") FontWeight(600) else FontWeight(500),
+            fontSize = if (view == "DigitalPantry") 16.sp else 13.7.sp,
+            lineHeight = if (view == "DigitalPantry") 19.5.sp else 16.71.sp,
             fontFamily = Montserrat,
-            color = Color.Black
+            color = if (view == "DigitalPantry") Color.Black else Color.Gray
         )
         Text(
             modifier = modifier.padding(start = 15.dp),
             text = "Quantity",
             fontWeight = FontWeight(500),
-            fontSize = 16.sp,
-            lineHeight = 19.5.sp,
+            fontSize = if (view == "DigitalPantry") 16.sp else 13.7.sp,
+            lineHeight = if (view == "DigitalPantry") 19.5.sp else 16.71.sp,
             fontFamily = Montserrat,
             color = Color.Gray
         )
         Text(
             text = "Expiration Date",
             fontWeight = FontWeight(500),
-            fontSize = 16.sp,
-            lineHeight = 19.5.sp,
+            fontSize = if (view == "DigitalPantry") 16.sp else 13.7.sp,
+            lineHeight = if (view == "DigitalPantry") 19.5.sp else 16.71.sp,
             fontFamily = Montserrat,
             color = Color.Gray
         )
@@ -348,6 +339,7 @@ fun TitlesSection(modifier: Modifier){
 @Composable
 fun SwipeableItemsLazyColumn(
     modifier: Modifier,
+    height: Int,
     productsList: List<Ingredient>,
     onEditClicked: (Ingredient) -> Unit,
     onAddDateClicked: () -> Unit
@@ -355,7 +347,8 @@ fun SwipeableItemsLazyColumn(
     LazyColumn(
         modifier = modifier
             .padding(start = 15.dp, end = 15.dp)
-            .background(Color.White),
+            .background(Color.White)
+            .height(height.dp)
     ){
         itemsIndexed(productsList){index, ingredient ->
             var notSwiped by remember { mutableStateOf(false) }
@@ -441,8 +434,13 @@ fun SingleIngredientItem(
     onEditClicked: (Ingredient) -> Unit
 ) {
     val title = item.type.split(",").first().trim()
-    val quantity = item.quantity.toString()
     val unit = "g" // for now
+    val quantity = if (item.quantity != 0) item.quantity.toString()+unit else "Edit"
+    val expirationDate = if (item.expirationDate != "") {
+        item.expirationDate.split(" ").take(2).joinToString(" ")
+    }else{
+        "Add Date"
+    }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -483,7 +481,7 @@ fun SingleIngredientItem(
             ) {
                 Text(
                     modifier =modifier.padding(start = 6.dp),
-                    text = quantity+unit,
+                    text = quantity,
                     fontWeight = FontWeight(500),
                     fontSize = 16.sp,
                     lineHeight = 19.5.sp,
@@ -503,7 +501,7 @@ fun SingleIngredientItem(
                         .clickable {
                             onAddDateClicked()
                         },
-                    text = "Add Date",
+                    text = expirationDate,
                     fontWeight = FontWeight(500),
                     textAlign = TextAlign.Start,
                     fontSize = 16.sp,
@@ -534,7 +532,10 @@ fun SingleIngredientItem(
 
 
 @Composable
-fun EditIngredientView(ingredient: Ingredient){
+fun EditIngredientView(
+    ingredient: Ingredient,
+    onEditIngredient: (Ingredient) -> Unit
+){
     Column(
         modifier = Modifier
             .background(Color.White)
@@ -586,9 +587,13 @@ fun EditIngredientView(ingredient: Ingredient){
                     .padding(start = 17.dp, end = 17.dp, bottom = 20.dp),
             ) {
                 EditIngredientQuantityPicker(
+                    ingredient = ingredient,
                     quantity = quantity,
                     grammage = grammage,
-                    types = types
+                    types = types,
+                    onEditIngredient = {
+                        onEditIngredient(it)
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))

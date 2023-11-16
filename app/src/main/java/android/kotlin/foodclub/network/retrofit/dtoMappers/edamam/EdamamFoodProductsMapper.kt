@@ -15,9 +15,10 @@ class EdamamFoodProductsMapper: DomainMapper<EdamamFoodProductsDto, ProductsData
                 Ingredient(
                     id = dtoEntity.food.foodId,
                     type = dtoEntity.food.label,
-                    quantity = 10,
+                    quantity = 0,
                     unit = determineDefaultUnit(dtoEntity.measures),
-                    imageUrl = dtoEntity.food.image ?: ""
+                    imageUrl = dtoEntity.food.image ?: "",
+                    expirationDate = ""
                 )
             },
             nextUrl = entity.links["next"]?.href ?: ""
