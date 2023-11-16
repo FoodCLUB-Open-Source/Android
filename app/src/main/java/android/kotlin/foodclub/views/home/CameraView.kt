@@ -74,6 +74,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionsRequired
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.delay
 import okio.ByteString.Companion.encodeUtf8
 import java.io.File
 import java.net.URLEncoder
@@ -153,7 +154,7 @@ fun RecordingClipsButton(
         )}
         else
         {
-            snap<Float>(250)
+            snap<Float>(500)
         }
        , label = ""
     )
@@ -300,6 +301,18 @@ fun CameraView(
         mutableStateOf(false)
     }
 
+    var canDelete by remember {
+        mutableStateOf(false)
+    }
+
+    var canAdd by remember {
+        mutableStateOf(true)
+    }
+
+    var holdOrPress by remember{
+        mutableStateOf(true)
+    }
+
     LaunchedEffect(Unit) {
         permissionState.launchMultiplePermissionRequest()
     }
@@ -309,6 +322,7 @@ fun CameraView(
             color = Color.Black
         )
     }
+
     LaunchedEffect(previewView) {
         videoCapture.value = context.createVideoCaptureUseCase(
             lifecycleOwner = lifecycleOwner,
@@ -316,6 +330,19 @@ fun CameraView(
             previewView = previewView
         )
     }
+
+    LaunchedEffect(canDelete)
+    {
+        delay(500)
+        canDelete = true
+    }
+
+    LaunchedEffect(canAdd)
+    {
+        delay(1000)
+        canAdd = true
+    }
+
     PermissionsRequired(
         multiplePermissionsState = permissionState,
         permissionsNotGrantedContent = { /* ... */ },
@@ -374,6 +401,7 @@ fun CameraView(
                             .align(Alignment.TopEnd)
                             .clickable {
                                 // Do something when the box is clicked
+                                holdOrPress = !holdOrPress
                             }
                     ) {
                         Image(
@@ -394,7 +422,7 @@ fun CameraView(
 
                         //Temporarily ignore recording code
 
-                        if(false) {
+                        if(!holdOrPress) {
                             if (!recordingStarted.value) {
                                 videoCapture.value?.let { videoCapture ->
                                     recordingStarted.value = true
@@ -447,10 +475,10 @@ fun CameraView(
                     interactionSource = interactionSource
                 ) {
 
-                    if (true) {
+                    if (holdOrPress) {
                         if (isPressed) {
-                            if (!recordingStarted.value) {
-
+                            Log.d("Recording Start","Preparing recording")
+                            if (!recordingStarted.value && canAdd) {
                                 videoCapture.value?.let { videoCapture ->
                                     recordingStarted.value = true
                                     val mediaDir = context.externalCacheDirs.firstOrNull()?.let {
@@ -490,9 +518,11 @@ fun CameraView(
                                 }
                             }
                         } else {
+                            Log.d("Recording Start","Preparing to end recording")
                             if (recordingStarted.value) {
                                 recordingStarted.value = false
                                 recording?.stop()
+                                canAdd = false
                             }
                         }
                     }
@@ -563,8 +593,13 @@ fun CameraView(
                                     RoundedCornerShape(10.dp)
                                 )
                                 .clickable {
-                                    uris.removeAt(uris.lastIndex)
-                                    removeUpdate(true)
+                                    if (canDelete)
+                                    {
+                                        uris.removeAt(uris.lastIndex)
+                                        removeUpdate(true)
+                                        canDelete = false
+                                    }
+
                                 },
                         ) {
                             Image(
