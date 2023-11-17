@@ -1,10 +1,16 @@
 package android.kotlin.foodclub.utils.composables
 
+import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.domain.enums.QuantityUnit
+import android.kotlin.foodclub.domain.models.products.Ingredient
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +20,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,9 +34,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,11 +53,13 @@ import kotlinx.coroutines.flow.map
 @Composable
 fun EditIngredientQuantityPicker(
     modifier: Modifier = Modifier,
+    ingredient: Ingredient,
     quantity: List<Int>,
     grammage: List<String>,
     types: List<String>,
     startIndex: Int = 0,
-    listScrollCount: Int = Integer.MAX_VALUE
+    listScrollCount: Int = Integer.MAX_VALUE,
+    onEditIngredient: (Ingredient) -> Unit
 ) {
     var selectedQuantityState by remember { mutableIntStateOf(quantity[0]) }
     var selectedGrammageState by remember { mutableStateOf(grammage[0]) }
@@ -71,7 +85,9 @@ fun EditIngredientQuantityPicker(
             }
             .filterNotNull()
             .distinctUntilChanged()
-            .collect { selectedQuantityState = it }
+            .collect {
+                Log.i("MYTAG","SELECTED quantity $it")
+                selectedQuantityState = it }
     }
 
     LaunchedEffect(grammageListState) {
@@ -82,7 +98,9 @@ fun EditIngredientQuantityPicker(
             }
             .filterNotNull()
             .distinctUntilChanged()
-            .collect { selectedGrammageState = it }
+            .collect {
+            Log.i("MYTAG","SELECTED GRAMMAGE $it")
+                selectedGrammageState = it }
     }
     LaunchedEffect(typeListState) {
         snapshotFlow { typeListState.firstVisibleItemIndex }
@@ -92,11 +110,13 @@ fun EditIngredientQuantityPicker(
             }
             .filterNotNull()
             .distinctUntilChanged()
-            .collect { selectedTypeState = it }
+            .collect {
+                Log.i("MYTAG","SELECTED type $it")
+                selectedTypeState = it }
     }
 
     Box(modifier = modifier.fillMaxHeight(0.6f)) {
-        Row(modifier.fillMaxSize(), horizontalArrangement = Arrangement.SpaceEvenly) {
+        Row(modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
             LazyColumn(
                 state = quantityListState,
                 flingBehavior = quantityListFling,
@@ -168,6 +188,43 @@ fun EditIngredientQuantityPicker(
             }
         }
     }
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.Bottom,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Button(
+            shape = RectangleShape,
+            modifier = Modifier
+                .padding(start = 10.dp, end = 10.dp)
+                .border(
+                    1.dp,
+                    Color(126, 198, 11, 255),
+                    shape = RoundedCornerShape(15.dp)
+                )
+                .clip(RoundedCornerShape(15.dp))
+                .fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(126, 198, 11, 255),
+                contentColor = Color.White
+            ), contentPadding = PaddingValues(15.dp),
+            onClick = {
+                ingredient.quantity = selectedQuantityState
+                ingredient.unit = QuantityUnit.parseUnit(selectedGrammageState)
+                onEditIngredient(ingredient)
+            }
+        ) {
+            Text(
+                text = "Save",
+                color = Color.White,
+                fontFamily = Montserrat,
+                fontSize = 20.sp,
+                fontWeight = FontWeight(600),
+                lineHeight = 24.38.sp,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
 }
 
 @Composable
@@ -191,10 +248,12 @@ private fun PickerRow(
             .fillMaxWidth()
             .onSizeChanged { size -> itemHeightPixels.value = size.height }
             .then(
-                Modifier.background(
-                    shape = cornerShape,
-                    color = background
-                ).padding(8.dp)
+                Modifier
+                    .background(
+                        shape = cornerShape,
+                        color = background
+                    )
+                    .padding(8.dp)
             ),
     ) {
         Box(

@@ -13,6 +13,7 @@ import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.SignInUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.SignUpUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.FollowerUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.FollowingUserMapper
+import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserDetailsMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserPostsMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserProfileMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.recipes.RecipeMapper
@@ -45,10 +46,11 @@ object RepositoriesModule {
         profileMapper: UserProfileMapper,
         userPostsMapper: UserPostsMapper,
         followerUserMapper: FollowerUserMapper,
-        followingUserMapper: FollowingUserMapper
+        followingUserMapper: FollowingUserMapper,
+        userDetailsMapper: UserDetailsMapper
     ): ProfileRepository {
         return ProfileRepository(
-            api, profileMapper, userPostsMapper, followerUserMapper, followingUserMapper
+            api, profileMapper, userPostsMapper, followerUserMapper, followingUserMapper, userDetailsMapper
         )
     }
 
@@ -95,8 +97,8 @@ object RepositoriesModule {
 
     @Provides
     @Singleton
-    fun provideSettingsRepository(api: SettingsService): SettingsRepository {
-        return SettingsRepository(api)
+    fun provideSettingsRepository(api: SettingsService, userDetailsMapper: UserDetailsMapper): SettingsRepository {
+        return SettingsRepository(api, userDetailsMapper)
     }
 
     @Provides

@@ -106,6 +106,41 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    // USER VIEWS A STORY
+    suspend fun userViewsStory(storyId: Long) {
+        val user = sessionCache.getActiveSession()?.sessionUser ?: return
+        viewModelScope.launch {
+            when (val resource = storyRepository.userViewsStory(storyId, user.userId)) {
+                is Resource.Success -> {
+                    // LOG MESSAGE
+                    Log.i("MYTAG", "User Viewed the Story Successfully")
+                }
+                is Resource.Error -> {
+                    // ERROR HANDLING
+                    Log.e("MYTAG", "Failed to View Story: ${resource.message}")
+                }
+            }
+        }
+    }
+
+
+    // USER VIEWS A POST
+    suspend fun userViewsPost(postId: Long) {
+        val user = sessionCache.getActiveSession()?.sessionUser ?: return
+        viewModelScope.launch {
+            when (val resource = postRepository.userViewsPost(postId, user.userId)) {
+                is Resource.Success -> {
+                    // ON SUCCESS
+                    Log.i("MYTAG", "Viewed Post Successfully")
+                }
+                is Resource.Error -> {
+                    // ERROR HANDLING
+                    Log.e("MYTAG", "Failed to View Post: ${resource.message}")
+                }
+            }
+        }
+    }
+
     suspend fun updatePostLikeStatus(postId: Long, isLiked: Boolean){
         val userId = sessionCache.getActiveSession()?.sessionUser?.userId
         viewModelScope.launch {

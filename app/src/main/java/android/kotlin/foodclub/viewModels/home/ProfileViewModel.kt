@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.viewModels.home
 
 import android.kotlin.foodclub.domain.models.home.VideoModel
+import android.kotlin.foodclub.domain.models.profile.UserDetailsModel
 import android.kotlin.foodclub.domain.models.profile.UserPosts
 import android.kotlin.foodclub.domain.models.profile.UserProfile
 import android.kotlin.foodclub.repositories.ProfileRepository
@@ -10,7 +11,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.repositories.PostRepository
+import android.kotlin.foodclub.utils.helpers.StoreData
 import android.kotlin.foodclub.utils.helpers.UiEvent
+import android.net.Uri
 import android.util.Log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -20,13 +23,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    val postRepository: PostRepository,
-    val profileRepository: ProfileRepository,
-    val sessionCache: SessionCache
+    private val postRepository: PostRepository,
+    private val profileRepository: ProfileRepository,
+    val sessionCache: SessionCache,
+    val storeData: StoreData
 ) : ViewModel() {
 
     private val _myUserId = MutableStateFlow(
@@ -36,6 +41,8 @@ class ProfileViewModel @Inject constructor(
 
     private val _profileModel = MutableStateFlow<UserProfile?>(null)
     val profileModel: StateFlow<UserProfile?> get() = _profileModel
+
+    private var _userDetails = MutableStateFlow<UserDetailsModel?>(null)
 
     private val _bookmarkedPosts = MutableStateFlow<List<UserPosts>>(listOf())
     val bookmarkedPosts: StateFlow<List<UserPosts>> get() = _bookmarkedPosts
@@ -62,9 +69,9 @@ class ProfileViewModel @Inject constructor(
             sendUiEvent(UiEvent.Navigate(Graph.AUTHENTICATION))
         } else {
             val id = sessionCache.getActiveSession()!!.sessionUser.userId
-
             getProfileModel(id)
             getBookmarkedPosts(id)
+            getUserDetails(id)
         }
     }
 
@@ -79,7 +86,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun getProfileModel(userId: Long) {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             when(val resource = profileRepository.retrieveProfileData(userId)) {
                 is Resource.Success -> {
                     _error.value = ""
@@ -95,9 +102,39 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    private fun getUserDetails(id: Long){
+        viewModelScope.launch {
+            when(val resource = profileRepository.retrieveUserDetails(id)){
+                is Resource.Success -> {
+                    _userDetails.value = resource.data
+                    Log.i("MYTAG","getUserDetails success: ${resource.data}")
+                }
+                is Resource.Error -> {
+                    Log.i("MYTAG","getUserDetails failed: ${resource.message}")
+                }
+            }
+        }
+    }
+
+
+    fun updateUserProfileImage(id: Long, file: File, uri: Uri) {
+        viewModelScope.launch {
+            when(val resource = profileRepository.updateUserProfileImage(id, file)){
+                is Resource.Success-> {
+                    Log.i("MYTAG", "SUCCESSFULLY UPDATED IMAGE ${resource.data}")
+                }
+                is Resource.Error -> {
+                    Log.i("MYTAG", "ERROR UPDATING IMAGE ${resource.message}")
+                }
+            }
+        }
+        _userDetails.value!!.profilePicture = uri.toString()
+        Log.i("MYTAG","USER UPDATED IMG: ${_userDetails.value!!.profilePicture}")
+    }
+
     private fun getBookmarkedPosts(userId: Long) {
-        viewModelScope.launch() {
-            when(val resource = profileRepository.retrieveBookmaredPosts(userId)) {
+        viewModelScope.launch {
+            when(val resource = profileRepository.retrieveBookmarkedPosts(userId)) {
                 is Resource.Success -> {
                     _error.value = ""
                     _bookmarkedPosts.value = resource.data!!
@@ -117,7 +154,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun unfollowUser(followerId: Long, userId: Long) {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             when(val resource = profileRepository.unfollowUser(followerId, userId)) {
                 is Resource.Success -> {
                     _error.value = ""
@@ -131,7 +168,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun followUser(followerId: Long, userId: Long) {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             when(val resource = profileRepository.followUser(followerId, userId)) {
                 is Resource.Success -> {
                     _error.value = ""
@@ -145,7 +182,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun isFollowedByUser(followerId: Long, userId: Long) {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             when(val resource = profileRepository.retrieveProfileFollowers(userId)) {
                 is Resource.Success -> {
                     _error.value = ""

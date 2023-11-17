@@ -7,6 +7,7 @@ import android.kotlin.foodclub.network.retrofit.dtoMappers.posts.PostToVideoMapp
 import android.kotlin.foodclub.network.retrofit.responses.posts.DeletePostResponse
 import android.kotlin.foodclub.network.retrofit.responses.posts.GetHomepagePostsResponse
 import android.kotlin.foodclub.network.retrofit.responses.posts.GetPostResponse
+import android.kotlin.foodclub.network.retrofit.responses.posts.ViewsPostResponse
 import android.kotlin.foodclub.network.retrofit.utils.apiRequestFlow
 import android.kotlin.foodclub.utils.helpers.Resource
 
@@ -93,6 +94,23 @@ class PostRepository(
                 Resource.Error(resource.message!!)
             }
         }
+    }
+
+    // USER VIEWS POST
+    suspend fun userViewsPost(postId: Long, userId: Long): Resource<ViewsPostResponse, DefaultErrorResponse> {
+        try {
+            val response = api.viewsPost(postId, userId)
+            if (response.isSuccessful) {
+                val responseBody = response.body()
+                if (responseBody != null) {
+                    return Resource.Success(responseBody)
+                }
+            }
+        } catch (e: Exception) {
+            return Resource.Error("Failed to View Post: ${e.message}")
+        }
+
+        return Resource.Error("Failed to View Post")
     }
 
 }

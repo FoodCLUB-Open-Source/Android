@@ -9,6 +9,9 @@ import android.kotlin.foodclub.repositories.ProductRepository
 import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
+import android.util.Log
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,6 +22,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,21 +43,29 @@ class DiscoverViewModel @Inject constructor(
     private val _myFridgePosts = MutableStateFlow<List<UserPosts>>(listOf())
     val myFridgePosts: StateFlow<List<UserPosts>> get() = _myFridgePosts
 
-    private val _sessionUserId = MutableStateFlow<String>("")
+    private val _sessionUserId = MutableStateFlow("")
     val sessionUserId: MutableStateFlow<String> get() = _sessionUserId
 
-    private val _sessionUserName = MutableStateFlow<String>("")
+    private val _sessionUserName = MutableStateFlow("")
     val sessionUserName: MutableStateFlow<String> get() = _sessionUserName
 
     private val _productsDatabase = MutableStateFlow(ProductsData("", "", listOf()))
     val productsDatabase: StateFlow<ProductsData> get() = _productsDatabase
 
-    private val _searchText = MutableStateFlow("")
-    var searchText = _searchText.asStateFlow()
+    private val _userIngredientsList = MutableStateFlow<List<Ingredient>>(listOf())
+    val userIngredientsList: StateFlow<List<Ingredient>> get() = _userIngredientsList
+
+    private val _mainSearchText = MutableStateFlow("")
+    var mainSearchText = _mainSearchText.asStateFlow()
+
+    private val _ingredientsSearchText = MutableStateFlow("")
+    var ingredientsSearchText = _ingredientsSearchText.asStateFlow()
+
+    var ingredientToEdit: MutableState<Ingredient?> = mutableStateOf(null)
 
     // filter products db list with search text
     var displayedProducts: StateFlow<List<Ingredient>> = combine(
-        searchText,
+        ingredientsSearchText,
         _productsDatabase
     ) { query, productsData ->
         if (query.isBlank()) {
@@ -70,28 +82,76 @@ class DiscoverViewModel @Inject constructor(
         initialValue = emptyList()
     )
 
-
-
     private val _error = MutableStateFlow("")
 
     init {
-        fetchProductsDatabase(searchText.value)
+        viewModelScope.launch {
+            fetchProductsDatabase(mainSearchText.value)
+        }
     }
 
-    fun onSearchTextChange(text: String) {
-        _searchText.value = text
+    fun onMainSearchTextChange(text: String) {
+        _mainSearchText.value = text
     }
 
-    private fun fetchProductsDatabase(searchText: String) {
-        viewModelScope.launch() {
-            when(val resource = productsRepo.getProductsList(searchText)) {
-                is Resource.Success -> {
-                    _error.value = ""
-                    _productsDatabase.value = resource.data!!
+    fun onSubSearchTextChange(text: String) {
+        _ingredientsSearchText.value = text
+        viewModelScope.launch {
+            fetchProductsDatabase(text)
+        }
+    }
+
+    fun addToUserIngredients(ingredient: Ingredient) {
+        val updatedList = _userIngredientsList.value.toMutableList()
+        updatedList.add(ingredient)
+        _userIngredientsList.value = updatedList
+        _ingredientsSearchText.value = ""
+    }
+
+    fun deleteIngredientFromList(ingredient: Ingredient){
+        val list = _userIngredientsList.value.toMutableList()
+        list.remove(ingredient)
+        _userIngredientsList.value = list
+    }
+
+    fun updateIngredient(ingredient: Ingredient) {
+        Log.i("MYTAG","INGR ${ingredient.quantity}")
+        Log.i("MYTAG","INGR ${ingredient.unit}")
+        Log.i("MYTAG","LIST BEFORE ${_userIngredientsList.value[0].quantity}")
+
+        _userIngredientsList.update { currentList ->
+            currentList.map { item ->
+                if (item.id == ingredient.id) {
+                    Ingredient(
+                        id = item.id,  // Make sure to copy other properties if needed
+                        quantity = ingredient.quantity,
+                        unit = ingredient.unit,
+                        type = ingredient.type,
+                        expirationDate = ingredient.expirationDate,
+                        imageUrl = ingredient.imageUrl
+                    )
+                } else {
+                    item
                 }
-                is Resource.Error -> {
-                    _error.value = resource.message!!
-                }
+            }
+        }
+
+        // Now update the ingredientToEdit
+        ingredientToEdit.value = ingredient
+
+        // Now update the ingredientToEdit
+        ingredientToEdit.value = ingredient
+        Log.i("MYTAG","LIST AFTER ${_userIngredientsList.value[0].quantity}")
+    }
+
+    private suspend fun fetchProductsDatabase(searchText: String) {
+        when(val resource = productsRepo.getProductsList(searchText)) {
+            is Resource.Success -> {
+                _error.value = ""
+                _productsDatabase.value = resource.data!!
+            }
+            is Resource.Error -> {
+                _error.value = resource.message!!
             }
         }
     }
@@ -124,7 +184,6 @@ class DiscoverViewModel @Inject constructor(
 
                 }
             }
-
         }
     }
 
