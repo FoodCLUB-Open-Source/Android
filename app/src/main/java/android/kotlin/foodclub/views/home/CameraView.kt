@@ -453,7 +453,7 @@ fun CameraView(
                                                     StandardCharsets.UTF_8.toString()
                                                 )
 
-                                                //navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
+                                                navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
                                                 //navController.navigate("GALLERY_VIEW/${uriEncoded}")
                                                 clipUpdate(true)
                                                 uris.add(uriEncoded)
@@ -534,6 +534,8 @@ fun CameraView(
                         addClip = addClip,
                         clipUpdate = clipUpdate
                     )
+
+
                     /*Icon(
                         painter = painterResource(if (recordingStarted.value) R.drawable.story_user else R.drawable.save),
                         contentDescription = "",
