@@ -28,13 +28,19 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -42,15 +48,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -58,17 +69,17 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionsRequired
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 import okio.ByteString.Companion.encodeUtf8
 import java.io.File
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
+
 
 @Composable
 fun RecordingButton(isRecording: Boolean) {
@@ -98,6 +109,125 @@ fun RecordingButton(isRecording: Boolean) {
             color = foodClubGreen,
             modifier = Modifier.size(80.dp)
         )
+        Canvas(modifier = Modifier.size(60.dp)) {
+            drawCircle(color = Color(0xFFCACBCB))
+        }
+        // Record button
+    }
+
+}
+
+@Composable
+fun RecordingClipsButton(
+    isRecording: Boolean,
+    removeClip: Boolean = false,
+    removeUpdate: (Boolean) -> Unit = {},
+    addClip: Boolean = false,
+    clipUpdate: (Boolean) -> Unit = {}
+) {
+
+    val (rememberProgress, progressUpdate) = remember {
+        mutableFloatStateOf(0f)
+    }
+
+    val clipArcs = remember {
+        mutableListOf<Float>()
+    }
+
+    if (removeClip) {
+        if (clipArcs.size > 1) {
+            clipArcs.removeAt(clipArcs.lastIndex)
+            progressUpdate(clipArcs[clipArcs.lastIndex])
+        } else if (clipArcs.isNotEmpty()) {
+            clipArcs.removeAt(clipArcs.lastIndex)
+            progressUpdate(0f)
+        }
+
+        removeUpdate(false)
+    }
+
+    val progress by animateFloatAsState(
+        targetValue = if (isRecording) 1f else rememberProgress,
+        animationSpec = if (isRecording) {infiniteRepeatable<Float>(
+            animation = tween<Float>( 20000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        )}
+        else
+        {
+            snap<Float>(500)
+        }
+       , label = ""
+    )
+
+    if (!isRecording) {
+        if (progress != 0f && addClip) {
+            clipArcs.add(progress) //Constantly adding to clip Arcs should only add at one point
+            progressUpdate(progress)
+            clipUpdate(false)
+        }
+        //progressUpdate(progress)
+    }
+
+
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.size(80.dp)
+    ) {
+        // Background circle
+        /*
+        CircularProgressIndicator(
+            progress = 1f,
+            strokeWidth = 5.dp,
+            color = Color.White,
+            modifier = Modifier.size(80.dp)
+        )
+         */
+
+        Canvas(modifier = Modifier.fillMaxSize())
+        {
+            drawArc(
+                color = Color(0x55FFFFFF),
+                startAngle = -90f,
+                sweepAngle = 360f,
+                useCenter = false,
+                style = Stroke(width = 25f)
+            )
+        }
+
+        // Animated circle
+        CircularProgressIndicator(
+            progress = progress,
+            strokeWidth = 5.dp,
+            color = foodClubGreen,
+            modifier = Modifier.size(80.dp)
+        )
+
+        Canvas(modifier = Modifier.fillMaxSize())
+        {
+            val offset: Float = 0.005f
+            clipArcs.forEach {
+                drawArc(
+                    color = Color.White,
+                    startAngle = (360f * it) - 90f,
+                    sweepAngle = 3f,
+                    useCenter = false,
+                    style = Stroke(width = 25f)
+                )
+            }
+
+        }
+
+        /*
+        Canvas(modifier = Modifier.fillMaxSize())
+        {
+            clipArcs.forEach {
+                drawArc(color = Color.White, startAngle = (it + 270f), sweepAngle = 3f, useCenter = false)
+            }
+        }
+
+         */
+
         Canvas(modifier = Modifier.size(60.dp)) {
             drawCircle(color = Color(0xFFCACBCB))
         }
@@ -157,6 +287,32 @@ fun CameraView(
     )
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp + 10.dp
 
+    val interactionSource = remember { MutableInteractionSource() }
+
+    val uris = remember {
+        mutableStateListOf<String>()
+    }
+
+    val (addClip, clipUpdate) = rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    val (removeClip, removeUpdate) = rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    var canDelete by remember {
+        mutableStateOf(false)
+    }
+
+    var canAdd by remember {
+        mutableStateOf(true)
+    }
+
+    var holdOrPress by remember{
+        mutableStateOf(true)
+    }
+
     LaunchedEffect(Unit) {
         permissionState.launchMultiplePermissionRequest()
     }
@@ -166,6 +322,7 @@ fun CameraView(
             color = Color.Black
         )
     }
+
     LaunchedEffect(previewView) {
         videoCapture.value = context.createVideoCaptureUseCase(
             lifecycleOwner = lifecycleOwner,
@@ -173,6 +330,19 @@ fun CameraView(
             previewView = previewView
         )
     }
+
+    LaunchedEffect(canDelete)
+    {
+        delay(500)
+        canDelete = true
+    }
+
+    LaunchedEffect(canAdd)
+    {
+        delay(1000)
+        canAdd = true
+    }
+
     PermissionsRequired(
         multiplePermissionsState = permissionState,
         permissionsNotGrantedContent = { /* ... */ },
@@ -231,6 +401,7 @@ fun CameraView(
                             .align(Alignment.TopEnd)
                             .clickable {
                                 // Do something when the box is clicked
+                                holdOrPress = !holdOrPress
                             }
                     ) {
                         Image(
@@ -244,60 +415,127 @@ fun CameraView(
                         )
                     }
                 }
+                val isPressed by interactionSource.collectIsPressedAsState()
                 IconButton(
 
                     onClick = {
 
                         //Temporarily ignore recording code
 
-                        if (!recordingStarted.value) {
-                            videoCapture.value?.let { videoCapture ->
-                                recordingStarted.value = true
-                                val mediaDir = context.externalCacheDirs.firstOrNull()?.let {
-                                    File(
-                                        it,
-                                        context.getString(R.string.app_name)
-                                    ).apply { mkdirs() }
+                        if(!holdOrPress) {
+                            if (!recordingStarted.value) {
+                                videoCapture.value?.let { videoCapture ->
+                                    recordingStarted.value = true
+                                    val mediaDir = context.externalCacheDirs.firstOrNull()?.let {
+                                        File(
+                                            it,
+                                            context.getString(R.string.app_name)
+                                        ).apply { mkdirs() }
+                                    }
+
+                                    recording = startRecordingVideo(
+                                        context = context,
+                                        filenameFormat = "yyyy-MM-dd-HH-mm-ss-SSS",
+                                        videoCapture = videoCapture,
+                                        outputDirectory = if (mediaDir != null && mediaDir.exists())
+                                            mediaDir
+                                        else
+                                            context.filesDir,
+                                        executor = context.mainExecutor,
+                                        audioEnabled = audioEnabled.value
+                                    ) { event ->
+                                        if (event is VideoRecordEvent.Finalize) {
+                                            val uri = event.outputResults.outputUri
+                                            if (uri != Uri.EMPTY) {
+
+                                                val uriEncoded = URLEncoder.encode(
+                                                    uri.toString(),
+                                                    StandardCharsets.UTF_8.toString()
+                                                )
+
+                                                navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
+                                                //navController.navigate("GALLERY_VIEW/${uriEncoded}")
+                                                clipUpdate(true)
+                                                uris.add(uriEncoded)
+                                            }
+                                        }
+                                    }
                                 }
+                            } else {
+                                recordingStarted.value = false
+                                recording?.stop()
+                            }
+                        }
 
-                                recording = startRecordingVideo(
-                                    context = context,
-                                    filenameFormat = "yyyy-MM-dd-HH-mm-ss-SSS",
-                                    videoCapture = videoCapture,
-                                    outputDirectory = if (mediaDir != null && mediaDir.exists())
-                                        mediaDir
-                                    else
-                                        context.filesDir,
-                                    executor = context.mainExecutor,
-                                    audioEnabled = audioEnabled.value
-                                ) { event ->
-                                    if (event is VideoRecordEvent.Finalize) {
-                                        val uri = event.outputResults.outputUri
-                                        if (uri != Uri.EMPTY) {
+                        //navController.navigate("GALLERY_VIEW")
+                    },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .size(80.dp),
+                    interactionSource = interactionSource
+                ) {
 
-                                            val uriEncoded = URLEncoder.encode(
-                                                uri.toString(),
-                                                StandardCharsets.UTF_8.toString()
-                                            )
+                    if (holdOrPress) {
+                        if (isPressed) {
+                            Log.d("Recording Start","Preparing recording")
+                            if (!recordingStarted.value && canAdd) {
+                                videoCapture.value?.let { videoCapture ->
+                                    recordingStarted.value = true
+                                    val mediaDir = context.externalCacheDirs.firstOrNull()?.let {
+                                        File(
+                                            it,
+                                            context.getString(R.string.app_name)
+                                        ).apply { mkdirs() }
+                                    }
 
-                                            navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
-                                            //navController.navigate("GALLERY_VIEW/${uriEncoded}")
+                                    recording = startRecordingVideo(
+                                        context = context,
+                                        filenameFormat = "yyyy-MM-dd-HH-mm-ss-SSS",
+                                        videoCapture = videoCapture,
+                                        outputDirectory = if (mediaDir != null && mediaDir.exists())
+                                            mediaDir
+                                        else
+                                            context.filesDir,
+                                        executor = context.mainExecutor,
+                                        audioEnabled = audioEnabled.value
+                                    ) { event ->
+                                        if (event is VideoRecordEvent.Finalize) {
+                                            val uri = event.outputResults.outputUri
+                                            if (uri != Uri.EMPTY) {
+
+                                                val uriEncoded = URLEncoder.encode(
+                                                    uri.toString(),
+                                                    StandardCharsets.UTF_8.toString()
+                                                )
+
+                                                //navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
+                                                //navController.navigate("GALLERY_VIEW/${uriEncoded}")
+                                                clipUpdate(true)
+                                                uris.add(uriEncoded)
+                                            }
                                         }
                                     }
                                 }
                             }
                         } else {
-                            recordingStarted.value = false
-                            recording?.stop()
+                            Log.d("Recording Start","Preparing to end recording")
+                            if (recordingStarted.value) {
+                                recordingStarted.value = false
+                                recording?.stop()
+                                canAdd = false
+                            }
                         }
+                    }
+
+                    RecordingClipsButton(
+                        isRecording = recordingStarted.value,
+                        removeClip = removeClip,
+                        removeUpdate = removeUpdate,
+                        addClip = addClip,
+                        clipUpdate = clipUpdate
+                    )
 
 
-                        //navController.navigate("GALLERY_VIEW")
-                    },
-                    modifier = Modifier.align(Alignment.BottomCenter).size(80.dp)
-                ) {
-
-                    RecordingButton(isRecording = recordingStarted.value)
                     /*Icon(
                         painter = painterResource(if (recordingStarted.value) R.drawable.story_user else R.drawable.save),
                         contentDescription = "",
@@ -338,27 +576,83 @@ fun CameraView(
                         )
                     }
                 }
-                Image(
-                    painter = painterResource(id = R.drawable.baseline_cameraswitch_24),
-                    contentDescription = "Story",
-                    contentScale = ContentScale.Crop,
+                Row(
                     modifier = Modifier
-                        .width(40.dp)
-                        .height(40.dp)
                         .align(Alignment.BottomEnd)
-                        .clickable {
-                            cameraSelector.value =
-                                if (cameraSelector.value == CameraSelector.DEFAULT_BACK_CAMERA) CameraSelector.DEFAULT_FRONT_CAMERA
-                                else CameraSelector.DEFAULT_BACK_CAMERA
-                            lifecycleOwner.lifecycleScope.launch {
-                                videoCapture.value = context.createVideoCaptureUseCase(
-                                    lifecycleOwner = lifecycleOwner,
-                                    cameraSelector = cameraSelector.value,
-                                    previewView = previewView
-                                )
-                            }
-                        }
+                        .height(80.dp)
+                        .fillMaxWidth(0.3f),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 )
+                {
+                    if (uris.isNotEmpty()) {
+                        Box(
+                            modifier = Modifier
+                                .width(40.dp)
+                                .height(38.dp)
+                                .background(Color.Gray, shape = RoundedCornerShape(10.dp))
+                                .clip(
+                                    RoundedCornerShape(10.dp)
+                                )
+                                .clickable {
+                                    if (canDelete)
+                                    {
+                                        uris.removeAt(uris.lastIndex)
+                                        removeUpdate(true)
+                                        canDelete = false
+                                    }
+
+                                },
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.delete_left_fill_1),
+                                contentDescription = null,
+                                contentScale = ContentScale.FillWidth,
+                                modifier = Modifier
+                                    .height(25.dp)
+                                    .width(25.dp)
+                                    .align(Alignment.Center)
+                            )
+                        }
+
+                        Button(
+                            onClick = { /*TODO*/ }, colors = ButtonDefaults.buttonColors(
+                                foodClubGreen
+                            ),
+                            shape = RoundedCornerShape(10.dp),
+                            contentPadding = PaddingValues(0.dp),
+                            modifier = Modifier.height(38.dp)
+                        ) {
+                            Text(text = "continue", color = Color.White)
+                        }
+
+                    }
+
+                    /*
+                    Image(
+                        painter = painterResource(id = R.drawable.baseline_cameraswitch_24),
+                        contentDescription = "Story",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .width(40.dp)
+                            .height(40.dp)
+                            //.align(Alignment.BottomEnd)
+                            .clickable {
+                                cameraSelector.value =
+                                    if (cameraSelector.value == CameraSelector.DEFAULT_BACK_CAMERA) CameraSelector.DEFAULT_FRONT_CAMERA
+                                    else CameraSelector.DEFAULT_BACK_CAMERA
+                                lifecycleOwner.lifecycleScope.launch {
+                                    videoCapture.value = context.createVideoCaptureUseCase(
+                                        lifecycleOwner = lifecycleOwner,
+                                        cameraSelector = cameraSelector.value,
+                                        previewView = previewView
+                                    )
+                                }
+                            }
+                    )
+
+                     */
+                }
 
             }
         }
@@ -454,5 +748,9 @@ fun loadCurrentThumbnail(context: Context): Bitmap? {
         }
     }
 
-    return if (uri.toString().isEmpty()) null else context.contentResolver.loadThumbnail(uri, Size(240, 240), null)
+    return if (uri.toString().isEmpty()) null else context.contentResolver.loadThumbnail(
+        uri,
+        Size(240, 240),
+        null
+    )
 }
