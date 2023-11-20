@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.utils.composables
 
 import android.annotation.SuppressLint
+import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.PlusJakartaSans
 import android.kotlin.foodclub.navigation.Graph
@@ -28,6 +29,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -128,7 +130,7 @@ fun AuthLayout(header: String, subHeading: String? = null,
             }
 
             Text(
-                text = if(errorOccurred && message.isNotEmpty()) "Error: $message" else message,
+                text = if(errorOccurred && message.isNotEmpty()) stringResource(id = R.string.error_message, message) else message,
                 fontFamily = Montserrat,
                 color = if(errorOccurred) Color.Red else Color.Green,
                 modifier = Modifier.padding(bottom = 4.dp)

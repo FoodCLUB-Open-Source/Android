@@ -10,4 +10,9 @@
     <string name="title_activity_future_topic_vote_view">FutureTopicVoteView</string>
     <string name="title_activity_uploading_view">UploadingView</string>
     <string name="title_activity_uploaded_view">UploadedView</string>
+
+    Errors
+    <string name="error_message">Error %s</string>
+
+
 </resources>
