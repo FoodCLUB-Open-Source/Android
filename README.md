@@ -76,3 +76,11 @@ This can be implemented in many ways, but we decided to divide the Model into pa
 - We create repository class to contain methods like getPost, createPost, editPost, getPostsList etc.
 
 > :memo: **Note:** Inside these methods we should call our data source instance to get dtoModel and map it using mapper functions to base model. Also, all error handling should be put inside repository and if response is not successful, we should parse dtoModel to errorModel. Repository method returns either Response.Success<baseModel> or Response.Error<Any object we need for our usecase>
+
+## Testing
+
+In order to test your app, please login using following credentials:
+Login: User1
+Password: P4$$word
+
+This user has userid = 1, so please bear in mind what userid you're using for posting some information to the backend via Postman.
