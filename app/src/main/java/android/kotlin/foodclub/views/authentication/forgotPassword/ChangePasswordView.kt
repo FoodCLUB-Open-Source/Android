@@ -19,9 +19,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ChangePasswordView(onValuesUpdate: (password: String, code: String) -> Unit,
-                       onBackButtonClick: () -> Unit,
-                       email: String, errorOccurred: State<Boolean>, message: State<String>
+fun ChangePasswordView(
+    onValuesUpdate: (password: String, code: String) -> Unit,
+    onBackButtonClick: () -> Unit,
+    email: String, errorOccurred: State<Boolean>, message: State<String>
 ){
     var verificationCode by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -36,8 +37,8 @@ fun ChangePasswordView(onValuesUpdate: (password: String, code: String) -> Unit,
         subHeading = stringResource(id = R.string.change_password_subheading, email),
         errorOccurred = errorOccurred.value, message = message.value,
         onBackButtonClick = { onBackButtonClick() }) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
             CustomTextField(
                 initialValue = verificationCode,
                 placeholder = stringResource(id = R.string.verification_code),

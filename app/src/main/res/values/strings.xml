@@ -27,6 +27,17 @@
     <string name="email">Email</string>
     <string name="send_code">Send Code</string>
     - Sign up
-
+    <string name="sign_up">Sign Up</string>
+    <string name="confirm_email">Confirm Email</string>
+    <string name="confirm_email_subheading">So that you are sure you haven\'t mistyped it!</string>
+    <string name="continue_text">Continue</string>
+    <string name="put_your_name">Put your name</string>
+    <string name="put_your_name_subheading">So others know how to call you</string>
+    <string name="full_name">Full Name</string>
+    <string name="create">Create</string>
+    <string name="username">Username</string>
+    <string name="create_username">Create a username!</string>
+    <string name="create_username_subheading">So everyone can find you!</string>
+    <string name="new_here">New here?\nNo Problem</string>
 
 </resources>

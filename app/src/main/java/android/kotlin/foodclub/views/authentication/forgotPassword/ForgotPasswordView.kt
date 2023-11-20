@@ -20,9 +20,10 @@ import android.kotlin.foodclub.R
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun ForgotPasswordView(onValuesUpdate: (email: String) -> Unit,
-                       onBackButtonClick: () -> Unit, email: String,
-                       errorOccurred: State<Boolean>, message: State<String>
+fun ForgotPasswordView(
+    onValuesUpdate: (email: String) -> Unit,
+    onBackButtonClick: () -> Unit, email: String,
+    errorOccurred: State<Boolean>, message: State<String>
 ) {
     var userEmail by remember { mutableStateOf(email) }
 
@@ -33,7 +34,8 @@ fun ForgotPasswordView(onValuesUpdate: (email: String) -> Unit,
         header = stringResource(id = R.string.forgot_password),
         subHeading = stringResource(id = R.string.forgot_password_subheading),
         errorOccurred = errorOccurred.value, message = message.value,
-        onBackButtonClick = { onBackButtonClick() }) {
+        onBackButtonClick = { onBackButtonClick() }
+    ) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             CustomTextField(initialValue = userEmail,
                 placeholder = stringResource(id = R.string.email),

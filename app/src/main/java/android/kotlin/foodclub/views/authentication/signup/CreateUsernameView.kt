@@ -15,33 +15,47 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import android.kotlin.foodclub.R
+import androidx.compose.ui.res.stringResource
 
 @Composable
-fun UsernameView(onValuesUpdate: () -> Unit, saveData: (String) -> Unit,
-                 onBackButtonClick: () -> Unit, userSignUpInformation: State<SignUpUser>,
-                 error: String) {
+fun UsernameView(
+    onValuesUpdate: () -> Unit, saveData: (String) -> Unit,
+    onBackButtonClick: () -> Unit, userSignUpInformation: State<SignUpUser>,
+    error: String
+) {
     var username by remember { mutableStateOf(userSignUpInformation.value.username) }
     var initialUsernameCorrectnessState = FieldsValidation.checkUsername(username) == null
     var filledUsername by remember { mutableStateOf(false) }
 
-    AuthLayout(header = "Create a username!", subHeading = "So everyone can find you!",
+    AuthLayout(
+        header = stringResource(id = R.string.create_username),
+        subHeading = stringResource(id = R.string.create_username_subheading),
         errorOccurred = true, message = error,
         onBackButtonClick = {
             saveData(username)
             onBackButtonClick()
-        }) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            CustomTextField(initialValue = username,
-                placeholder = "Username", keyboardType = KeyboardType.Text,
+        }
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            CustomTextField(
+                initialValue = username,
+                placeholder = stringResource(id = R.string.username),
+                keyboardType = KeyboardType.Text,
                 onCorrectnessStateChange = { filledUsername = !filledUsername },
-                onValueChange = { username = it
-                    initialUsernameCorrectnessState = false }, textValidation = true,
+                onValueChange = {
+                    username = it
+                    initialUsernameCorrectnessState = false
+                },
+                textValidation = true,
                 validationMethod = { text -> FieldsValidation.checkUsername(text) }
             )
 
             ConfirmButton(
                 enabled = filledUsername || initialUsernameCorrectnessState,
-                text = "Create") {
+                text = stringResource(id = R.string.create)
+            ) {
                 saveData(username)
                 onValuesUpdate()
             }
