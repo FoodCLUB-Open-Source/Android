@@ -14,5 +14,19 @@
     Errors
     <string name="error_message">Error %s</string>
 
+    Authentication Screens
+    - Forgot Password
+    <string name="change_password">Change Password</string>
+    <string name="change_password_subheading">We\'ve sent an email with password reset link to %s</string>
+    <string name="verification_code">Verification Code</string>
+    <string name="password">Password</string>
+    <string name="password_changed">Password Changed</string>
+    <string name="log_in">Log In</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="forgot_password_subheading">Don’t worry! It happens. Please enter the email associated with your account.</string>
+    <string name="email">Email</string>
+    <string name="send_code">Send Code</string>
+    - Sign up
+
 
 </resources>

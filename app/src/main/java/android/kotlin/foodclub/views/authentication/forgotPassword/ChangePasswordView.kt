@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.views.authentication.forgotPassword
 
+import android.kotlin.foodclub.R
 import android.kotlin.foodclub.utils.composables.AuthLayout
 import android.kotlin.foodclub.utils.composables.ConfirmButton
 import android.kotlin.foodclub.utils.composables.CustomPasswordTextField
@@ -13,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
@@ -29,14 +31,16 @@ fun ChangePasswordView(onValuesUpdate: (password: String, code: String) -> Unit,
     var filledVerificationCode by remember { mutableStateOf(false) }
     var filledPassword by remember { mutableStateOf(false) }
 
-    AuthLayout(header = "Change Password",
-        subHeading = "We've sent an email with password reset link to $email",
+    AuthLayout(
+        header = stringResource(id = R.string.change_password),
+        subHeading = stringResource(id = R.string.change_password_subheading, email),
         errorOccurred = errorOccurred.value, message = message.value,
         onBackButtonClick = { onBackButtonClick() }) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
 
-            CustomTextField(initialValue = verificationCode,
-                placeholder = "Verification code",
+            CustomTextField(
+                initialValue = verificationCode,
+                placeholder = stringResource(id = R.string.verification_code),
                 keyboardType = KeyboardType.NumberPassword,
                 onCorrectnessStateChange = { filledVerificationCode = !filledVerificationCode },
                 onValueChange = {
@@ -46,7 +50,9 @@ fun ChangePasswordView(onValuesUpdate: (password: String, code: String) -> Unit,
                 textValidation = true,
                 validationMethod = { text -> FieldsValidation.checkEmail(text) })
 
-            CustomPasswordTextField(initialValue = password, placeholder = "Password",
+            CustomPasswordTextField(
+                initialValue = password,
+                placeholder = stringResource(id = R.string.password),
                 onCorrectnessStateChange = {
                     filledPassword = !filledPassword
                     initialPasswordCorrectnessState = false
@@ -56,7 +62,7 @@ fun ChangePasswordView(onValuesUpdate: (password: String, code: String) -> Unit,
             ConfirmButton(
                 enabled = (filledVerificationCode || initialVerificationCodeCorrectnessState)
                         && (filledPassword || initialPasswordCorrectnessState),
-                text = "Change Password"
+                text = stringResource(id = R.string.change_password)
             ) { onValuesUpdate(verificationCode, password) }
         }
     }
