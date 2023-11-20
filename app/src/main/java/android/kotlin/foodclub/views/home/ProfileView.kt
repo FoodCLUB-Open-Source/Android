@@ -444,6 +444,8 @@ fun ProfileView(
                 sheetTitle = stringResource(id = R.string.upload_photo),
                 onDismiss = { showBottomSheet = false },
                 modifier = Modifier.padding(bottom = 110.dp),
+                containerColor = Color.White,
+                titleSpace = true
             )
         } else {
             if(showUserOptionsSheet){
@@ -455,10 +457,12 @@ fun ProfileView(
                         BottomSheetItem(4, "Copy profile URL",null) {},
                         BottomSheetItem(5, "Share this Profile",null) {}
                     ),
-                    sheetTitle = "User Options",
+                    sheetTitle = "",
 //                enableDragHandle = true,
                     onDismiss = { showBottomSheet = false },
-                    modifier = Modifier.padding(bottom = 110.dp)
+                    modifier = Modifier.padding(bottom = 110.dp),
+                    containerColor = Color.Black,
+                    titleSpace = false
                 )
             }
         }
