@@ -10,8 +10,10 @@ import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.others.AnimatedIcon
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
+import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.utils.composables.LikeButton
+import android.kotlin.foodclub.utils.composables.MemoriesItemView
 import android.kotlin.foodclub.utils.composables.PlayPauseButton
 import android.kotlin.foodclub.utils.composables.VideoLayout
 import android.kotlin.foodclub.utils.composables.VideoScroller
@@ -61,6 +63,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -86,9 +90,15 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.media3.common.util.UnstableApi
+import coil.compose.rememberImagePainter
+import okio.ByteString.Companion.encodeUtf8
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -356,14 +366,22 @@ fun HomeView(
 
     Box(
         modifier = Modifier
-            .padding(top = 55.dp)
             .fillMaxWidth()
-            .zIndex(1f),
+            .zIndex(1f)
+        ,
         contentAlignment = Alignment.Center // Center the content horizontally
     ) {
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .height(95.dp)
+            .alpha(0.4f)
+            .background(color = Color(0xFF424242)))
         Row(
             horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 10.dp)
         ) {
             Text(
                 modifier = modifier
@@ -516,10 +534,123 @@ fun HomeView(
                 }
             }
         }else{
-            ViewStories(modifier)
+            val memories = viewModel.storyListData.collectAsState()
+            var showStories by remember {
+                mutableStateOf(false)
+            }
+           if(showStories){
+               ViewStories()
+           }
+            else{
+               Column(
+                   modifier = Modifier
+                       .background(color = Color.White)
+                       .fillMaxSize()
+                       .padding(24.dp)
+               ) {
+                   Spacer(modifier = modifier.size(90.dp))
+                   Text(
+                       text="Memories",
+                       style = TextStyle(
+                           fontWeight = FontWeight.Bold,
+                           color = Color.Black,
+                           fontSize = 24.sp,
+                           fontFamily = Montserrat
+                       )
+                   )
+
+                   Spacer(modifier = modifier.size(12.dp))
+
+                   if(memories.value.isEmpty()){
+                       MemoriesItemView(
+                           modifier = Modifier.clickable {
+                               showStories=!showStories
+                           },
+                           painter = painterResource(id = R.drawable.nosnapsfortheday),
+                           date = "")
+                   }
+                   else{
+                       LazyRow(){
+                           items(memories.value){
+                                   val painter: Painter =  rememberImagePainter(data = it.thumbnailLink)
+                               MemoriesItemView(
+                                   modifier = Modifier.clickable {
+                                       showStories=!showStories
+                                   },
+                                   painter = painter,
+                                   date = it.createdAt)
+                               Spacer(modifier = Modifier.width(12.dp))
+                           }
+
+                       }
+                   }
+                   TapToSnapDialog(modifier =
+                   Modifier
+                       .fillMaxSize()
+                       .padding(vertical = 12.dp)
+                       .clickable {
+                           navController.navigate("CAMERA_VIEW/${"story".encodeUtf8()}")
+                       }
+                   )
+               }
+           }
         }
     }
 }
+@Composable
+fun TapToSnapDialog(
+    modifier: Modifier
+) {
+    Box(
+        modifier= modifier
+            .clip(RoundedCornerShape(18.dp))
+            .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(18.dp))
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.taptosnapbg),
+            contentDescription = "fds",
+            contentScale = ContentScale.Crop,
+            colorFilter = ColorFilter.tint(Color.Black, BlendMode.Overlay),
+            modifier = Modifier
+                .fillMaxSize()
+                .blur(
+                    radiusX = 50.dp,
+                    radiusY = 50.dp,
+                    edgeTreatment = BlurredEdgeTreatment.Unbounded
+                )
+        )
+
+        Image(
+            painter = painterResource(id = R.drawable.taptosnaphand),
+            contentDescription = "hand",
+            modifier = Modifier.align(Alignment.BottomStart)
+        )
+        Text(
+            text = "Are you ready? Its time to post a snap. Save this moment and share it with your friends.",
+            style = TextStyle(
+                fontSize = 20.sp,
+                fontFamily = Montserrat,
+                fontWeight = FontWeight.Normal,
+                lineHeight = 26.sp
+            ),
+            modifier = Modifier.padding(28.dp)
+        )
+        Text(
+            text = "Tap to snap",
+            style = TextStyle(
+                fontSize = 20.sp,
+                fontFamily = Montserrat,
+                fontWeight = FontWeight.Normal,
+                lineHeight = 24.sp
+            ),
+            modifier = Modifier
+                .padding(32.dp)
+                .align(Alignment.BottomEnd)
+        )
+    }
+}
+
+
 
 @Composable
 fun HomeIngredient(ingredientTitle: String, ingredientImage: Int) {

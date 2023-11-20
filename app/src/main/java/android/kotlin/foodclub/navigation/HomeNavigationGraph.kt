@@ -25,6 +25,11 @@ import android.kotlin.foodclub.views.home.CreateView
 import android.kotlin.foodclub.views.home.DiscoverView
 import android.kotlin.foodclub.views.home.MyFridgeView
 import android.kotlin.foodclub.views.home.TakeProfilePhotoView
+import android.kotlin.foodclub.views.home.ViewStories
+import androidx.compose.foundation.layout.height
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.dp
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -161,4 +166,5 @@ sealed class HomeOtherRoutes(val route: String) {
 
     object VideoTrimmerView : HomeOtherRoutes(route = "VIDEOTRIMMER")
     object TakeProfilePhotoView: HomeOtherRoutes(route = "TAKE_PROFILE_PHOTO_VIEW")
+    object ViewStories:HomeOtherRoutes(route = "VIEWSTORIES")
 }
