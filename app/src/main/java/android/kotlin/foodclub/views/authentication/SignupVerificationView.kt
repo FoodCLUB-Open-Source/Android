@@ -34,9 +34,14 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
+import android.kotlin.foodclub.R
+import androidx.compose.ui.res.stringResource
+import com.auth0.jwt.interfaces.Verification
 
 @Composable
-fun SignupVerification(navController: NavHostController, email: String?, username: String?, password: String?) {
+fun SignupVerification(
+    navController: NavHostController, email: String?, username: String?, password: String?
+) {
     val viewModel: SignupVerificationViewModel = hiltViewModel()
 
     LaunchedEffect(Unit) {
@@ -46,14 +51,16 @@ fun SignupVerification(navController: NavHostController, email: String?, usernam
     val errorOccurred = viewModel.errorOccurred.collectAsState()
     val message = viewModel.message.collectAsState()
 
-    AuthLayout(header = "Verify your email",
-        subHeading = "Please enter the code we've sent to " +
-                (email ?: "your email associated with this account"),
+    AuthLayout(
+        header = stringResource(id = R.string.verification_title),
+        subHeading = verificationSubheading(email = email),
         errorOccurred = errorOccurred.value, message = message.value,
         onBackButtonClick = {
             navController.navigate(AuthScreen.Login.route) {
-                popUpTo(Graph.AUTHENTICATION) { inclusive = true } }
-        }) {
+                popUpTo(Graph.AUTHENTICATION) { inclusive = true }
+            }
+        }
+    ) {
         Column(verticalArrangement = Arrangement.SpaceBetween) {
             var enableButton by remember { mutableStateOf(false) }
             var isTimerRunning by remember { mutableStateOf(true) }
@@ -73,33 +80,38 @@ fun SignupVerification(navController: NavHostController, email: String?, usernam
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
-                ConfirmButton(enabled = enableButton, "Verify") {
+                ConfirmButton(
+                    enabled = enableButton,
+                    text = stringResource(id = R.string.verify),
+                ) {
                     viewModel.verifyCode(currentCode)
                     enableButton = false
                 }
-                Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     Text(
-                        text = if(isTimerRunning)
-                                "Wait ${TimeUnit.MILLISECONDS.toSeconds(currentTime)} seconds to "
-                            else
-                                "I didn't receive a code ",
+                        text = verificationCodeResponse(isTimerRunning, currentTime),
                         fontSize = 12.sp,
                         fontFamily = Montserrat,
                         color = Color(0xFF1E232C).copy(alpha = 0.5F)
                     )
                     ClickableText(
-                        text = AnnotatedString("Resend"),
-                        onClick = { if(!isTimerRunning) {
-                            viewModel.sendVerificationCode()
-                            currentTime = TimeUnit.SECONDS.toMillis(61)
-                            isTimerRunning = true
-                        } },
+                        text = AnnotatedString(stringResource(id = R.string.resend)),
+                        onClick = {
+                            if (!isTimerRunning) {
+                                viewModel.sendVerificationCode()
+                                currentTime = TimeUnit.SECONDS.toMillis(61)
+                                isTimerRunning = true
+                            }
+                        },
                         style = TextStyle(
                             textDecoration = TextDecoration.Underline,
                             fontWeight = FontWeight.Bold,
                             fontFamily = Montserrat,
                             fontSize = 12.sp,
-                            color = if(isTimerRunning) Color(0xFF1E232C).copy(alpha = 0.5F)
+                            color = if (isTimerRunning) Color(0xFF1E232C).copy(alpha = 0.5F)
                             else Color(0xFF7EC60B)
                         )
                     )
@@ -107,125 +119,31 @@ fun SignupVerification(navController: NavHostController, email: String?, usernam
             }
 
             LaunchedEffect(key1 = currentTime, key2 = isTimerRunning) {
-                if(currentTime > 0 && isTimerRunning) {
+                if (currentTime > 0 && isTimerRunning) {
                     delay(100L)
                     currentTime -= 100L
                 }
-                if(currentTime <= 0) isTimerRunning = false
+                if (currentTime <= 0) isTimerRunning = false
             }
         }
     }
-
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .padding(start = 25.dp, end = 25.dp, top = 80.dp, bottom = 50.dp),
-//    ) {
-//        SignupVerificationTopLayout(navController, email, modifier = Modifier.weight(1F))
-//        SignupVerificationMainLayout(viewModel, modifier = Modifier.weight(2F))
-//        Box(Modifier.weight(1F)) { TermsAndConditionsInfoFooter() }
-//    }
 }
-//
-//@Composable
-//fun SignupVerificationTopLayout(navController: NavHostController, email: String?, modifier: Modifier = Modifier) {
-//    Box(modifier.fillMaxHeight()) {
-//        Column {
-//            Image(
-//                painter = painterResource(R.drawable.back_icon),
-//                contentDescription = "go back",
-//                modifier = Modifier
-//                    .width(32.dp)
-//                    .height(32.dp)
-//                    .offset(x = (-8).dp)
-//                    .clickable { navController.navigate(Graph.AUTHENTICATION) }
-//            )
-//            Box(modifier = Modifier.padding(top = 32.dp)) {
-//                Column(verticalArrangement = Arrangement.spacedBy(28.dp)) {
-//                    Text(text = "Verify your email", textAlign = TextAlign.Left,
-//                        fontWeight = FontWeight.Bold, fontSize = 30.sp, fontFamily = PlusJakartaSans
-//                    )
-//                    Text(text = "Please enter the code we've sent to ${email ?: "your email associated with this account"}",
-//                        textAlign = TextAlign.Left, fontWeight = FontWeight.Normal, fontSize = 16.sp,
-//                        fontFamily = Montserrat
-//                    )
-//                }
-//            }
-//
-//        }
-//    }
-//}
-//
-//@Composable
-//fun SignupVerificationMainLayout(viewModel: SignupVerificationViewModel, modifier: Modifier = Modifier) {
-//    Box(
-//        modifier = modifier
-//            .fillMaxSize()
-//            .padding(bottom = 80.dp),
-//        contentAlignment = Alignment.Center
-//    ) {
-//        Column(verticalArrangement = Arrangement.SpaceBetween, modifier = modifier.fillMaxSize()) {
-//            var enableButton by remember { mutableStateOf(false) }
-//            var isTimerRunning by remember { mutableStateOf(true) }
-//            var currentTime by remember { mutableStateOf(TimeUnit.SECONDS.toMillis(62)) }
-//            var currentCode by remember { mutableStateOf("") }
-//
-//            val errorOccurred = viewModel.errorOccurred.collectAsState()
-//            val message = viewModel.message.collectAsState()
-//
-//            Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(bottom = 12.dp)) {
-//                //Error or info messages
-//                Text(text = (if(errorOccurred.value) "Error: " else "") + message.value,
-//                    textAlign = TextAlign.Left, fontWeight = FontWeight.Normal, fontSize = 16.sp,
-//                    fontFamily = Montserrat,
-//                    color = if(errorOccurred.value) Color.Red else Color.Black
-//                )
-//                CustomCodeTextField { isEnabled, code ->
-//                    enableButton = isEnabled
-//                    currentCode = code
-//                }
-//            }
-//
-//            Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
-//                CustomAuthButton(enabled = enableButton, "Verify") {
-//                    viewModel.verifyCode(currentCode)
-//                    enableButton = false
-//                }
-//                Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
-//                    Text(
-//                        text = if(isTimerRunning) "Wait " + TimeUnit.MILLISECONDS.toSeconds(currentTime)
-//                                + " seconds to " else "I didn't receive a code ",
-//                        fontSize = 12.sp,
-//                        fontFamily = Montserrat,
-//                        color = Color(0xFF1E232C).copy(alpha = 0.5F)
-//                    )
-//                    ClickableText(
-//                        text = AnnotatedString("Resend"),
-//                        onClick = { if(!isTimerRunning) {
-//                            viewModel.sendVerificationCode()
-//                            currentTime = TimeUnit.SECONDS.toMillis(61)
-//                            isTimerRunning = true
-//                        } },
-//                        style = TextStyle(
-//                            textDecoration = TextDecoration.Underline,
-//                            fontWeight = FontWeight.Bold,
-//                            fontFamily = Montserrat,
-//                            fontSize = 12.sp,
-//                            color = if(isTimerRunning) Color(0xFF1E232C).copy(alpha = 0.5F)
-//                            else Color(0xFF7EC60B)
-//                        )
-//                    )
-//                }
-//            }
-//
-//            LaunchedEffect(key1 = currentTime, key2 = isTimerRunning) {
-//                if(currentTime > 0 && isTimerRunning) {
-//                    delay(100L)
-//                    currentTime -= 100L
-//                }
-//                if(currentTime <= 0) isTimerRunning = false
-//            }
-//        }
-//
-//    }
-//}
+
+@Composable
+fun verificationSubheading(email: String?): String {
+    return if (email.isNullOrEmpty()) {
+        stringResource(id = R.string.verification_subheading_alt)
+    } else {
+        stringResource(id = R.string.verification_subheading, email)
+    }
+}
+
+@Composable
+fun verificationCodeResponse(isTimerRunning: Boolean, currentTime: Long): String {
+    return if (isTimerRunning) {
+        stringResource(id = R.string.wait_time, TimeUnit.MILLISECONDS.toSeconds(currentTime))
+
+    } else {
+        stringResource(id = R.string.no_code)
+    }
+}
