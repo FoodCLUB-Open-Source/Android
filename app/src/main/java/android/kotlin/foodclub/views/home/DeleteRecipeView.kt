@@ -49,11 +49,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -260,6 +262,8 @@ fun DeleteRecipeView(
 
                 hasVideoLoaded.value = true
 
+                BackButton(alignment = Alignment.TopStart, onBackPressed = onBackPressed)
+
                 if (post.value!!.authorDetails == userData.value!!.username){
                     DeleteButton(
                         alignment = Alignment.TopEnd,
@@ -352,3 +356,40 @@ fun DeleteButton(
         }
     }
 }
+
+@Composable
+fun BackButton(alignment: Alignment, onBackPressed: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .padding(end = 20.dp, top = 50.dp)
+            .wrapContentSize(align = alignment)
+    ) {
+        Button(
+            shape = RectangleShape,
+            modifier = Modifier
+                .border(1.dp, Color.Transparent, shape = RoundedCornerShape(15.dp))
+                .clip(RoundedCornerShape(15.dp))
+                .align(Alignment.BottomCenter)
+                .width(40.dp)
+                .height(40.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent,
+                contentColor = Color.Transparent
+            ), contentPadding = PaddingValues(5.dp),
+            onClick = {
+                onBackPressed()
+            }
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.back_icon),
+                contentDescription = "Delete",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .width(25.dp)
+                    .height(25.dp),
+                colorFilter = ColorFilter.tint(Color.White)
+            )
+        }
+    }
+}
+
