@@ -10,6 +10,7 @@ import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.others.AnimatedIcon
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
+import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
 import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.utils.composables.LikeButton
@@ -534,12 +535,17 @@ fun HomeView(
                 }
             }
         }else{
-            val memories = viewModel.storyListData.collectAsState()
+            val memories = viewModel.memoryListData.collectAsState()
             var showStories by remember {
                 mutableStateOf(false)
             }
+            var currentMemoriesModel by remember{
+                mutableStateOf(MemoriesModel(listOf(),""))
+            }
            if(showStories){
-               ViewStories()
+               SnapsView(memoriesModel = currentMemoriesModel, modifier = Modifier) {
+                   showStories=!showStories
+               }
            }
             else{
                Column(
@@ -572,13 +578,15 @@ fun HomeView(
                    else{
                        LazyRow(){
                            items(memories.value){
-                                   val painter: Painter =  rememberImagePainter(data = it.thumbnailLink)
+                                   val painter: Painter =  rememberImagePainter(data = it.stories[0].imageUrl)
+                               Log.e("sfd",painter.toString())
                                MemoriesItemView(
                                    modifier = Modifier.clickable {
                                        showStories=!showStories
+                                       currentMemoriesModel = it
                                    },
                                    painter = painter,
-                                   date = it.createdAt)
+                                   date = it.dateTime)
                                Spacer(modifier = Modifier.width(12.dp))
                            }
 
@@ -597,6 +605,7 @@ fun HomeView(
         }
     }
 }
+
 @Composable
 fun TapToSnapDialog(
     modifier: Modifier

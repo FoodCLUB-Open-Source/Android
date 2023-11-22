@@ -1,7 +1,11 @@
 package android.kotlin.foodclub.viewModels.home
 
+import android.kotlin.foodclub.domain.enums.Reactions
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.home.VideoStats
+import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
+import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
+import android.kotlin.foodclub.domain.models.snaps.SnapModel
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
@@ -37,12 +41,57 @@ class HomeViewModel @Inject constructor(
     private val _storyListData = MutableStateFlow<List<VideoModel>>(listOf())
     val storyListData: StateFlow<List<VideoModel>> get() = _storyListData
 
+    private val _memoryListData = MutableStateFlow<List<MemoriesModel>>(listOf())
+    val memoryListData:StateFlow<List<MemoriesModel>> get() = _memoryListData
+
     private val _error = MutableStateFlow("")
     val error: StateFlow<String> get() = _error
 
     init {
         getPostListData()
         getUserFollowerStories()
+        getMemoriesListData()
+    }
+
+    private fun getMemoriesListData() {
+        val list = mutableListOf<MemoriesModel>(
+            MemoriesModel(
+                stories = listOf(
+                    SnapModel(
+                        snapAuthor = SimpleUserModel(123,"Shivendu Mishra","https://kretu.sts3.pl/foodclub_thumbnails/daniel_vid2-thumbnail.jpg"),
+                        userReactions = mapOf(
+                            SimpleUserModel(567,"Jakub","sampleUrl") to Reactions.YUMMY,
+                            SimpleUserModel(567,"Jakub","sampleUrl") to Reactions.YUMMY,
+                            SimpleUserModel(567,"Jakub","sampleUrl") to Reactions.YUMMY,
+                            SimpleUserModel(567,"Jakub","sampleUrl") to Reactions.YUMMY,
+                            SimpleUserModel(567,"Jakub","sampleUrl") to Reactions.YUMMY,
+                            SimpleUserModel(567,"Jakub","sampleUrl") to Reactions.YUMMY,
+                            SimpleUserModel(567,"Jakub","sampleUrl") to Reactions.YUMMY,
+                            SimpleUserModel(567,"Jakub","sampleUrl") to Reactions.YUMMY,
+                            SimpleUserModel(567,"Jakub","sampleUrl") to Reactions.YUMMY,
+                            SimpleUserModel(567,"Jakub","sampleUrl") to Reactions.YUMMY,
+                            SimpleUserModel(567,"Jakub","sampleUrl") to Reactions.YUMMY,
+                            SimpleUserModel(567,"Jakub","sampleUrl") to Reactions.YUMMY,
+                            SimpleUserModel(567,"Jakub","sampleUrl") to Reactions.YUMMY
+                        ),
+                        isSaved = false,
+                        imageUrl = "https://kretu.sts3.pl/foodclub_thumbnails/daniel_vid2-thumbnail.jpg",
+                        dateTime = "21 November 2023"
+                    ),
+                    SnapModel(
+                        snapAuthor = SimpleUserModel(123,"Shivendu ","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg"),
+                        userReactions = mapOf(
+                            SimpleUserModel(435,"Orhan","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.DELICIOUS
+                        ),
+                        isSaved = false,
+                        imageUrl = "https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg",
+                        dateTime = "22 November 2023"
+                    ),
+                ),
+                dateTime = "20 November 2023"
+            )
+        )
+        _memoryListData.value = list
     }
 
     private fun getPostListData() {
