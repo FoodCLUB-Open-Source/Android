@@ -124,11 +124,13 @@ fun VideoScroller(
 
     LaunchedEffect(key1 = true) {
         withContext(Dispatchers.IO) {
-            val bm = if(video.videoLink.startsWith("asset:///")) extractThumbnailFromMedia(
+            val bm = if (video.videoLink.startsWith("asset:///")) extractThumbnailFromMedia(
                 context.assets.openFd(video.videoLink.substring(9)), 1
-            )  else {
+            ) else {
                 try {
-                    BitmapFactory.decodeStream(URL(video.thumbnailLink).openConnection().getInputStream())
+                    BitmapFactory.decodeStream(
+                        URL(video.thumbnailLink).openConnection().getInputStream()
+                    )
                 } catch (e: IOException) {
                     Log.d("VideoPlayer", "Cannot fetch thumbnail. No connection")
                     null
@@ -182,6 +184,7 @@ fun VideoScroller(
                         exoPlayer.pause()
                         onVideoGoBackground()
                     }
+
                     Lifecycle.Event.ON_START -> exoPlayer.play()
                     else -> {}
                 }
@@ -207,16 +210,16 @@ fun VideoScroller(
         }
 
         DisposableEffect(key1 =
-        Box (modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxSize()) {
             AndroidView(factory = {
-            playerView
-        }, modifier = Modifier.pointerInput(Unit) {
-            detectTapGestures(onTap = {
-                onSingleTap(exoPlayer)
-            }, onDoubleTap = { offset ->
-                onDoubleTap(exoPlayer, offset)
+                playerView
+            }, modifier = Modifier.pointerInput(Unit) {
+                detectTapGestures(onTap = {
+                    onSingleTap(exoPlayer)
+                }, onDoubleTap = { offset ->
+                    onDoubleTap(exoPlayer, offset)
+                })
             })
-        })
             ProgressionBar(totalDuration,
                 modifier = Modifier.align(Alignment.BottomEnd),
                 totalDuration = { totalDuration },
@@ -225,15 +228,6 @@ fun VideoScroller(
                     exoPlayer.seekTo(timeMs.toLong())
                 }
             )
-            /*BottomControls(
-                modifier = Modifier.align(Alignment.BottomStart),
-                totalDuration = { totalDuration },
-                currentTime = { currentTime },
-                bufferPercentage = { bufferedPercentage },
-                onSeekChanged = { timeMs: Float ->
-                    exoPlayer.seekTo(timeMs.toLong())
-                }
-            )*/
         }, effect = {
             onDispose {
                 thumbnail = thumbnail.copy(second = true)
@@ -253,6 +247,7 @@ fun VideoScroller(
         )
     }
 }
+
 @OptIn(ExperimentalFoundationApi::class)
 @ExperimentalMaterial3Api
 @Composable
@@ -270,26 +265,30 @@ fun BottomControls(
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
     Column(
-        modifier = modifier.background(Color.Transparent)
-            .height(10.dp).fillMaxWidth(),
-        ) {
-            Slider(
-                modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
-                value = videoTime.toFloat(),
-                onValueChange = onSeekChanged,
-                valueRange = 0f..duration.toFloat(),
-                colors = SliderDefaults.colors(
-                    thumbColor = Color.Transparent,
-                    activeTrackColor = Color(android.graphics.Color.parseColor("#7EC60B"))
-                ),
-                thumb = {
-                    SliderDefaults.Thumb(
-                        interactionSource = interactionSource,
-                        thumbSize = DpSize(1.dp,1.dp),
-                        colors = SliderDefaults.colors(thumbColor = Color.Transparent)
-                    )
-                },
-            )
+        modifier = modifier
+            .background(Color.Transparent)
+            .height(10.dp)
+            .fillMaxWidth(),
+    ) {
+        Slider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 5.dp),
+            value = videoTime.toFloat(),
+            onValueChange = onSeekChanged,
+            valueRange = 0f..duration.toFloat(),
+            colors = SliderDefaults.colors(
+                thumbColor = Color.Transparent,
+                activeTrackColor = Color(android.graphics.Color.parseColor("#7EC60B"))
+            ),
+            thumb = {
+                SliderDefaults.Thumb(
+                    interactionSource = interactionSource,
+                    thumbSize = DpSize(1.dp, 1.dp),
+                    colors = SliderDefaults.colors(thumbColor = Color.Transparent)
+                )
+            },
+        )
         /*Row(
             modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween

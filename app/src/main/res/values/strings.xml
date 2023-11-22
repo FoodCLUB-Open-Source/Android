@@ -109,5 +109,83 @@
     <string name="accept_terms">Accept terms and conditions</string>
     <string name="please_accept_terms">Please accept the terms and conditions</string>
     <string name="proceed">Proceed</string>
+    - View Stories
+    <string name="profile_image">Profile Image</string>
+    - Uploading
+    <string name="uploading">Uploading...</string>
+    -Uploaded
+    <string name="uploaded">Successfully Uploaded!</string>
+    <string name="post">Post</string>
+    <string name="sharing_thanks">Thanks For Sharing On FoodCLUB!</string>
+    <string name="instagram_share">Share to Instagram</string>
+    <string name="tiktok_share">Share to TikTok</string>
+    -Take Photo
+    <string name="take_photo">Take Photo</string>
+    <string name="switch_camera">Switch Camera</string>
+    <string name="close_camera">Close Camera</string>
+    -Settings Notifications
+    <string name="general_notifications">General notifications</string>
+    <string name="system_and_service">System &amp; Service update</string>
+    <string name="app_updates">App updates</string>
+    <string name="payment_request">Payment request</string>
+    - Search
+    <string name="recent_searches">Recent Searches</string>
+    <string-array name="dummy_search_history">
+        <item>Pizza</item>
+        <item>Easy and Quick</item>
+        <item>For Children</item>
+    </string-array>
+    <string name="add_to_basket">Add to Basket</string>
+    <string name="dummy_badge_number">5</string>
+    <string-array name="search_tabs">
+        <item>All</item>
+        <item>Recipes</item>
+        <item>Creators</item>
+    </string-array>
+    - Discover
+    <string name="discover_view">DiscoverView</string>
+    <string-array name="discover_tabs">
+        <item>My Kitchen</item>
+        <item>World</item>
+        <item>Categories</item>
+    </string-array>
+    <string name="see_all_ingredients">See all ingredients</string>
+    <string name="search_for">Search for recipes, usernames…</string>
+    <string name="my_kitchen">My Kitchen</string>
+    <string name="search_to">Search to find or add…</string>
+    <string-array name="discover_sub_tabs">
+        <item>Veg &amp; Fruits</item>
+        <item>Grains &amp; Cereals</item>
+        <item>Dairy &amp; Alternatives</item>
+    </string-array>
+    <string name="edit">Edit</string>
+    <string name="gram_unit">g</string>
+    <string-array name="quantity_list">
+        <item>Pint</item>
+        <item>Jar</item>
+        <item>Cup</item>
+        <item>Bottle</item>
+        <item>Bag</item>
+        <item>Sack</item>
+        <item>Can</item>
+    </string-array>
+    <string name="added">Added!</string>
+    <string name="successfully_added"> Successfully added 1 ingredient in your digital pantry, now you cna start your FoodCLUB journey!</string>
+    - Profile
+    <string name="loading">Loading…</string>
+    <string name="followers">Followers</string>
+    <string name="following">Following</string>
+    <string name="profile_picture">Profile Picture</string>
+    <string name="profile_picture_edit">Edit Profile Picture</string>
+    <string name="select_from_gallery">Select from Gallery</string>
+    <string name="follow">Follow</string>
+    <string name="unfollow">Unfollow</string>
+    <string name="upload_photo">Upload Photo</string>
+    <string name="my_recipes">My Recipes</string>
+    <string name="bookmarked">Bookmarked</string>
+    <string-array name="profile_tabs">
+        <item>My Recipes</item>
+        <item>Bookmarked</item>
+    </string-array>
 
 </resources>

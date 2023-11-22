@@ -71,6 +71,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -88,7 +90,6 @@ fun ProfileView(
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
 
-//    val error = viewModel.error.collectAsState()
     val profileModelState = viewModel.profileModel.collectAsState()
     val bookmarkedPostsState = viewModel.bookmarkedPosts.collectAsState()
     val sessionUserId = viewModel.myUserId.collectAsState()
@@ -96,14 +97,13 @@ fun ProfileView(
     val dataStore = viewModel.storeData
     var imageUri: Uri? by remember { mutableStateOf(null) }
 
-    // get image data from DataStore and set user profile image
     LaunchedEffect(key1 = true) {
         dataStore.getImage().collect { image->
             if (image != null) {
                 imageUri = Uri.parse(image)
             }else{
-                imageUri = null // Set imageUri to null or a default value
-                Log.i("MYTAG", "NULL IMG")
+                imageUri = null
+                Log.i("ProfileView", "NULL IMG URI")
             }
         }
     }
@@ -130,23 +130,26 @@ fun ProfileView(
     val isFollowed = viewModel.isFollowedByUser.collectAsState()
 
     val systemUiController = rememberSystemUiController()
+
     SideEffect {
         systemUiController.setSystemBarsColor(
             color = Color.White,
             darkIcons = true
         )
     }
-    val scope = rememberCoroutineScope()
 
+    val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState() { 2 }
 
     if(profileModelState.value == null) {
-        Text(text = "Loading...")
-    } else {
+        Text(text = stringResource(id = R.string.loading))
+    }
+    else {
         val profile = profileModelState.value
         val userPosts = viewModel.userPosts.collectAsState()
         val topCreators = profile!!.topCreators
         val bookmarkedPosts = bookmarkedPostsState.value
+        val tabItems = stringArrayResource(id = R.array.profile_tabs)
         var showBottomSheet by remember { mutableStateOf(false) }
 
         val galleryLauncher =
@@ -157,11 +160,9 @@ fun ProfileView(
                             uri,
                             Intent.FLAG_GRANT_READ_URI_PERMISSION
                         )
-                    // store selected image to DataStore until backend sends profile picture data as url
                     scope.launch {
                         dataStore.storeImage(uri.toString())
                     }
-                    // convert selected image uri to File to send with PUT request
                     val file = uriToFile(uri, context)
                     viewModel.updateUserProfileImage(
                         id = viewModel.myUserId.value,
@@ -206,7 +207,7 @@ fun ProfileView(
                     Box(if(userId == 0L) Modifier.clickable { showBottomSheet = true } else Modifier) {
                         AsyncImage(
                             model = imageUri,
-                            contentDescription = "profile_picture",
+                            contentDescription = stringResource(id = R.string.profile_picture),
                             modifier = Modifier
                                 .clip(RoundedCornerShape(60.dp))
                                 .height(124.dp)
@@ -216,7 +217,7 @@ fun ProfileView(
                         if(userId == 0L){
                             Image(
                                 painter = painterResource(R.drawable.profile_picture_change_icon),
-                                contentDescription = "profile picture change icon",
+                                contentDescription = stringResource(id = R.string.profile_picture_edit),
                                 modifier = Modifier
                                     .height(46.dp)
                                     .width(46.dp)
@@ -239,7 +240,7 @@ fun ProfileView(
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.vector_1_),
-                            contentDescription = "",
+                            contentDescription = null,
                         )
                     }
                 }
@@ -300,14 +301,14 @@ fun ProfileView(
                     ) {
                         Text(
                             fontFamily = Montserrat,
-                            text = "Followers",
+                            text = stringResource(id = R.string.followers),
                             fontSize = 14.sp,
                             color = Color(127, 147, 141, 255),
                             fontWeight = FontWeight.Light
                         )
                         Text(
                             fontFamily = Montserrat,
-                            text = "Following",
+                            text = stringResource(id = R.string.following),
                             fontSize = 14.sp,
                             color = Color(127, 147, 141, 255),
                             fontWeight = FontWeight.Light
@@ -330,19 +331,18 @@ fun ProfileView(
                             )
                         }
                     ) {
-                        tabItem.forEachIndexed{
+                        tabItems.forEachIndexed{
                                 index,tabItem ->
                             Tab(
                                 selected = index == pagerState.currentPage,
                                 selectedContentColor = Color.Black,
-                                //onClick = { onTabSelected(index)   },
                                 onClick = {
                                     scope.launch {
                                         pagerState.animateScrollToPage(index)
                                     }
                                 }, text = {
                                     Text(
-                                        text =  AnnotatedString(tabItem.title),
+                                        text =  AnnotatedString(tabItem),
                                         style = TextStyle(
                                             fontFamily = Montserrat,
                                             fontWeight = FontWeight.SemiBold,
@@ -356,13 +356,13 @@ fun ProfileView(
                     }
 
 
-                    var tabItems = listOf<UserPosts>()
+                    var userTabItems = listOf<UserPosts>()
 
                     if(pagerState.currentPage == 0){
-                        tabItems = userPosts.value
+                        userTabItems = userPosts.value
                     }
                     else if(pagerState.currentPage == 1){
-                        tabItems = bookmarkedPosts
+                        userTabItems = bookmarkedPosts
                     }
 
                     HorizontalPager(
@@ -378,7 +378,7 @@ fun ProfileView(
                             LazyVerticalGrid(
                                 columns = GridCells.Fixed(2),
                             ) {
-                                items(tabItems) { dataItem ->
+                                items(userTabItems) { dataItem ->
                                     GridItem(dataItem, triggerShowDeleteRecipe = { tabItemId ->
                                         postId = tabItemId
                                         showDeleteRecipe = true
@@ -394,15 +394,21 @@ fun ProfileView(
         if(userId == 0L && showBottomSheet) {
             CustomBottomSheet(
                 itemList = listOf(
-                    BottomSheetItem(1, "Select From Gallery", R.drawable.select_from_gallery) {
-                        galleryLauncher.launch(arrayOf("image/*"))
-                    },
-                    BottomSheetItem(2, "Take Photo", R.drawable.take_photo) {
-                        navController.navigate("TAKE_PROFILE_PHOTO_VIEW")
-                    }
+                    BottomSheetItem(
+                        id= 1,
+                        title= stringResource(id = R.string.select_from_gallery),
+                        resourceId = R.drawable.select_from_gallery,
+                        onClick = {galleryLauncher.launch(arrayOf("image/*"))}
+                    ),
+                    BottomSheetItem(
+                        id= 2,
+                        title= stringResource(id = R.string.take_photo),
+                        resourceId = R.drawable.take_photo,
+                        onClick = {
+                            navController.navigate("TAKE_PROFILE_PHOTO_VIEW")
+                        })
                 ),
-                sheetTitle = "Upload Photo",
-//                enableDragHandle = true,
+                sheetTitle = stringResource(id = R.string.upload_photo),
                 onDismiss = { showBottomSheet = false },
                 modifier = Modifier.padding(bottom = 110.dp)
             )
@@ -426,7 +432,7 @@ fun GridItem(
             .fillMaxHeight()){
             Image(
                 painter = painterResource(id = R.drawable.salad_ingredient),
-                contentDescription = "",
+                contentDescription = null,
                 contentScale = ContentScale.FillHeight,
                 modifier = Modifier
                     .fillMaxSize()
@@ -451,7 +457,7 @@ fun FollowButton(isFollowed: Boolean, viewModel: ProfileViewModel, sessionUserId
             contentColor = Color.White
         )
 
-    val content = if(isFollowed) "Unfollow" else "Follow"
+    val content = isFollowed(isFollowed)
 
     val modifier = if(isFollowed) Modifier
         .width(130.dp)
@@ -472,16 +478,7 @@ fun FollowButton(isFollowed: Boolean, viewModel: ProfileViewModel, sessionUserId
         Text(text = content)
     }
 }
-
-data class RecipeHeader(
-    val title: String,
-)
-
-val tabItem = listOf(
-    RecipeHeader(
-        "My Recipes",
-    ),
-    RecipeHeader(
-        "Bookmarked",
-    )
-)
+@Composable
+fun isFollowed(isFollowed: Boolean): String {
+    return if(isFollowed) stringResource(id = R.string.unfollow) else stringResource(id = R.string.follow)
+}
