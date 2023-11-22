@@ -9,6 +9,8 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.utils.composables.engine.createVideoCaptureUseCase
 import android.kotlin.foodclub.utils.composables.engine.startRecordingVideo
+import android.kotlin.foodclub.viewModels.home.CameraViewModel
+import android.kotlin.foodclub.viewModels.home.StopWatchEvent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -39,6 +41,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -193,6 +196,7 @@ fun RecordingClipsButton(
                 useCenter = false,
                 style = Stroke(width = 25f)
             )
+
         }
 
         // Animated circle
@@ -240,9 +244,16 @@ fun RecordingClipsButton(
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun CameraView(
+    viewModel: CameraViewModel,
     navController: NavController,
     stateEncoded: String
 ) {
+
+    var seconds = (0)
+    var minutes = (0)
+
+
+
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -380,7 +391,7 @@ fun CameraView(
                         }
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.baseline_close_24),
+                        painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
                         contentDescription = "Story",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
@@ -415,165 +426,201 @@ fun CameraView(
                         )
                     }
                 }
-                val isPressed by interactionSource.collectIsPressedAsState()
-                IconButton(
 
-                    onClick = {
+                Column(modifier = Modifier.align(Alignment.BottomCenter), horizontalAlignment = Alignment.CenterHorizontally)
+                {
+                    //val stopWatch = Builder(Stopwatch)
+                    //val sdf = SimpleDateFormat("mm:ss")
 
-                        //Temporarily ignore recording code
+                    // on below line we are creating a variable for
+                    // current date and time and calling a simple
+                    // date format in it.
+                    //val currentDateAndTime = sdf.format(Date())
+                    var time = if (viewModel.minutes.value < 10)
+                    {
+                        "0${viewModel.minutes.value}"
+                    }
+                    else
+                    {
+                        viewModel.minutes.value.toString()
+                    }
 
-                        if(!holdOrPress) {
-                            if (!recordingStarted.value) {
-                                videoCapture.value?.let { videoCapture ->
-                                    recordingStarted.value = true
-                                    val mediaDir = context.externalCacheDirs.firstOrNull()?.let {
-                                        File(
-                                            it,
-                                            context.getString(R.string.app_name)
-                                        ).apply { mkdirs() }
+                    time += if (viewModel.seconds.value < 10)
+                    {
+                        ":0${viewModel.seconds.value}"
+                    }
+                    else
+                    {
+                        ":${viewModel.seconds.value}"
+                    }
+
+                    Text(text = time, modifier = Modifier.padding(10.dp), color = Color.White)
+                    val isPressed by interactionSource.collectIsPressedAsState()
+                    IconButton(
+
+                        onClick = {
+
+                            //Temporarily ignore recording code
+
+                            if(!holdOrPress) {
+                                if (!recordingStarted.value) {
+                                    videoCapture.value?.let { videoCapture ->
+                                        recordingStarted.value = true
+                                        val mediaDir = context.externalCacheDirs.firstOrNull()?.let {
+                                            File(
+                                                it,
+                                                context.getString(R.string.app_name)
+                                            ).apply { mkdirs() }
+                                        }
+
+                                        recording = startRecordingVideo(
+                                            context = context,
+                                            filenameFormat = "yyyy-MM-dd-HH-mm-ss-SSS",
+                                            videoCapture = videoCapture,
+                                            outputDirectory = if (mediaDir != null && mediaDir.exists())
+                                                mediaDir
+                                            else
+                                                context.filesDir,
+                                            executor = context.mainExecutor,
+                                            audioEnabled = audioEnabled.value
+                                        ) { event ->
+                                            if (event is VideoRecordEvent.Finalize) {
+                                                val uri = event.outputResults.outputUri
+                                                if (uri != Uri.EMPTY) {
+
+                                                    val uriEncoded = URLEncoder.encode(
+                                                        uri.toString(),
+                                                        StandardCharsets.UTF_8.toString()
+                                                    )
+
+                                                    navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
+                                                    //navController.navigate("GALLERY_VIEW/${uriEncoded}")
+                                                    clipUpdate(true)
+                                                    uris.add(uriEncoded)
+                                                }
+                                            }
+                                        }
                                     }
+                                } else {
+                                    recordingStarted.value = false
+                                    recording?.stop()
+                                }
+                            }
 
-                                    recording = startRecordingVideo(
-                                        context = context,
-                                        filenameFormat = "yyyy-MM-dd-HH-mm-ss-SSS",
-                                        videoCapture = videoCapture,
-                                        outputDirectory = if (mediaDir != null && mediaDir.exists())
-                                            mediaDir
-                                        else
-                                            context.filesDir,
-                                        executor = context.mainExecutor,
-                                        audioEnabled = audioEnabled.value
-                                    ) { event ->
-                                        if (event is VideoRecordEvent.Finalize) {
-                                            val uri = event.outputResults.outputUri
-                                            if (uri != Uri.EMPTY) {
+                            //navController.navigate("GALLERY_VIEW")
+                        },
+                        modifier = Modifier
+                            //.align(Alignment.BottomCenter)
+                            .size(80.dp),
+                        interactionSource = interactionSource
+                    ) {
 
-                                                val uriEncoded = URLEncoder.encode(
-                                                    uri.toString(),
-                                                    StandardCharsets.UTF_8.toString()
-                                                )
+                        if (holdOrPress) {
+                            if (isPressed) {
+                                Log.d("Recording Start","Preparing recording")
+                                if (!recordingStarted.value && canAdd) {
+                                    videoCapture.value?.let { videoCapture ->
+                                        recordingStarted.value = true
+                                        viewModel.onEvent(StopWatchEvent.onStart)
+                                        val mediaDir = context.externalCacheDirs.firstOrNull()?.let {
+                                            File(
+                                                it,
+                                                context.getString(R.string.app_name)
+                                            ).apply { mkdirs() }
+                                        }
 
-                                                navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
-                                                //navController.navigate("GALLERY_VIEW/${uriEncoded}")
-                                                clipUpdate(true)
-                                                uris.add(uriEncoded)
+                                        recording = startRecordingVideo(
+                                            context = context,
+                                            filenameFormat = "yyyy-MM-dd-HH-mm-ss-SSS",
+                                            videoCapture = videoCapture,
+                                            outputDirectory = if (mediaDir != null && mediaDir.exists())
+                                                mediaDir
+                                            else
+                                                context.filesDir,
+                                            executor = context.mainExecutor,
+                                            audioEnabled = audioEnabled.value
+                                        ) { event ->
+                                            if (event is VideoRecordEvent.Finalize) {
+                                                val uri = event.outputResults.outputUri
+                                                if (uri != Uri.EMPTY) {
+
+                                                    val uriEncoded = URLEncoder.encode(
+                                                        uri.toString(),
+                                                        StandardCharsets.UTF_8.toString()
+                                                    )
+
+                                                    //navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
+                                                    //navController.navigate("GALLERY_VIEW/${uriEncoded}")
+                                                    clipUpdate(true)
+                                                    uris.add(uriEncoded)
+                                                }
                                             }
                                         }
                                     }
                                 }
                             } else {
-                                recordingStarted.value = false
-                                recording?.stop()
-                            }
-                        }
-
-                        //navController.navigate("GALLERY_VIEW")
-                    },
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .size(80.dp),
-                    interactionSource = interactionSource
-                ) {
-
-                    if (holdOrPress) {
-                        if (isPressed) {
-                            Log.d("Recording Start","Preparing recording")
-                            if (!recordingStarted.value && canAdd) {
-                                videoCapture.value?.let { videoCapture ->
-                                    recordingStarted.value = true
-                                    val mediaDir = context.externalCacheDirs.firstOrNull()?.let {
-                                        File(
-                                            it,
-                                            context.getString(R.string.app_name)
-                                        ).apply { mkdirs() }
-                                    }
-
-                                    recording = startRecordingVideo(
-                                        context = context,
-                                        filenameFormat = "yyyy-MM-dd-HH-mm-ss-SSS",
-                                        videoCapture = videoCapture,
-                                        outputDirectory = if (mediaDir != null && mediaDir.exists())
-                                            mediaDir
-                                        else
-                                            context.filesDir,
-                                        executor = context.mainExecutor,
-                                        audioEnabled = audioEnabled.value
-                                    ) { event ->
-                                        if (event is VideoRecordEvent.Finalize) {
-                                            val uri = event.outputResults.outputUri
-                                            if (uri != Uri.EMPTY) {
-
-                                                val uriEncoded = URLEncoder.encode(
-                                                    uri.toString(),
-                                                    StandardCharsets.UTF_8.toString()
-                                                )
-
-                                                //navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
-                                                //navController.navigate("GALLERY_VIEW/${uriEncoded}")
-                                                clipUpdate(true)
-                                                uris.add(uriEncoded)
-                                            }
-                                        }
-                                    }
+                                Log.d("Recording Start","Preparing to end recording")
+                                if (recordingStarted.value) {
+                                    recordingStarted.value = false
+                                    viewModel.onEvent(StopWatchEvent.onStop)
+                                    recording?.stop()
+                                    canAdd = false
                                 }
                             }
-                        } else {
-                            Log.d("Recording Start","Preparing to end recording")
-                            if (recordingStarted.value) {
-                                recordingStarted.value = false
-                                recording?.stop()
-                                canAdd = false
-                            }
                         }
+
+                        RecordingClipsButton(
+                            isRecording = recordingStarted.value,
+                            removeClip = removeClip,
+                            removeUpdate = removeUpdate,
+                            addClip = addClip,
+                            clipUpdate = clipUpdate
+                        )
+
+
+                        /*Icon(
+                            painter = painterResource(if (recordingStarted.value) R.drawable.story_user else R.drawable.save),
+                            contentDescription = "",
+                            modifier = Modifier.size(64.dp)
+                        )*/
                     }
-
-                    RecordingClipsButton(
-                        isRecording = recordingStarted.value,
-                        removeClip = removeClip,
-                        removeUpdate = removeUpdate,
-                        addClip = addClip,
-                        clipUpdate = clipUpdate
-                    )
-
-
-                    /*Icon(
-                        painter = painterResource(if (recordingStarted.value) R.drawable.story_user else R.drawable.save),
-                        contentDescription = "",
-                        modifier = Modifier.size(64.dp)
-                    )*/
                 }
-                if (!recordingStarted.value) {
-                    val bitmapCheck = loadCurrentThumbnail(context = context)
-                    val bitmap: ImageBitmap
-                    if (bitmapCheck != null) {
-                        bitmap = bitmapCheck.asImageBitmap()
-                        Image(
-                            bitmap = bitmap,
-                            contentScale = ContentScale.Crop,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .align(Alignment.BottomStart)
-                                .clip(RoundedCornerShape(5.dp))
-                                .then(
-                                    Modifier
-                                        .size(64.dp)
-                                        .border(2.dp, Color.White, RoundedCornerShape(5.dp))
-                                )
-                                .clickable {
-                                    navController.navigate("GALLERY_VIEW/${state.encodeUtf8()}")
-                                }
-                        )
-                    } else {
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.BottomStart)
-                                .clip(RoundedCornerShape(5.dp))
-                                .then(
-                                    Modifier
-                                        .size(64.dp)
-                                        .border(2.dp, Color.White, RoundedCornerShape(5.dp))
-                                )
-                        )
+
+                Row(modifier = Modifier.height(80.dp).align(Alignment.BottomStart), verticalAlignment = Alignment.CenterVertically)
+                {
+                    if (!recordingStarted.value) {
+                        val bitmapCheck = loadCurrentThumbnail(context = context)
+                        val bitmap: ImageBitmap
+                        if (bitmapCheck != null) {
+                            bitmap = bitmapCheck.asImageBitmap()
+                            Image(
+                                bitmap = bitmap,
+                                contentScale = ContentScale.Crop,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    //.align(Alignment.BottomStart)
+                                    .clip(RoundedCornerShape(5.dp))
+                                    .then(
+                                        Modifier
+                                            .size(64.dp)
+                                            .border(2.dp, Color.White, RoundedCornerShape(5.dp))
+                                    )
+                                    .clickable {
+                                        navController.navigate("GALLERY_VIEW/${state.encodeUtf8()}")
+                                    }
+                            )
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    //.align(Alignment.BottomStart)
+                                    .clip(RoundedCornerShape(5.dp))
+                                    .then(
+                                        Modifier
+                                            .size(64.dp)
+                                            .border(2.dp, Color.White, RoundedCornerShape(5.dp))
+                                    )
+                            )
+                        }
                     }
                 }
                 Row(
