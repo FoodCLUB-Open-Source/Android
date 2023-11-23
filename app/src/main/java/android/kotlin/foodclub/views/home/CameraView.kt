@@ -152,12 +152,12 @@ fun RecordingClipsButton(
     val progress by animateFloatAsState(
         targetValue = if (isRecording) 1f else rememberProgress,
         animationSpec = if (isRecording) {infiniteRepeatable<Float>(
-            animation = tween<Float>( 20000, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
+            animation = tween<Float>( 60000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
         )}
         else
         {
-            snap<Float>(500)
+            snap(500)
         }
        , label = ""
     )
@@ -321,7 +321,7 @@ fun CameraView(
     }
 
     var holdOrPress by remember{
-        mutableStateOf(true)
+        mutableStateOf(false)
     }
 
     LaunchedEffect(Unit) {
@@ -466,6 +466,7 @@ fun CameraView(
                                 if (!recordingStarted.value) {
                                     videoCapture.value?.let { videoCapture ->
                                         recordingStarted.value = true
+                                        viewModel.onEvent(StopWatchEvent.onStart)
                                         val mediaDir = context.externalCacheDirs.firstOrNull()?.let {
                                             File(
                                                 it,
@@ -493,7 +494,7 @@ fun CameraView(
                                                         StandardCharsets.UTF_8.toString()
                                                     )
 
-                                                    navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
+                                                    //navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
                                                     //navController.navigate("GALLERY_VIEW/${uriEncoded}")
                                                     clipUpdate(true)
                                                     uris.add(uriEncoded)
@@ -503,6 +504,7 @@ fun CameraView(
                                     }
                                 } else {
                                     recordingStarted.value = false
+                                    viewModel.onEvent(StopWatchEvent.onStop)
                                     recording?.stop()
                                 }
                             }
@@ -512,11 +514,22 @@ fun CameraView(
                         modifier = Modifier
                             //.align(Alignment.BottomCenter)
                             .size(80.dp),
-                        interactionSource = interactionSource
+                        interactionSource = interactionSource,
+                        enabled = viewModel.minutes.value < 1
                     ) {
 
+                        if(viewModel.minutes.value >= 1)
+                        {
+                            if (recordingStarted.value)
+                            {
+                                recordingStarted.value = false
+                                viewModel.onEvent(StopWatchEvent.onStop)
+                                recording?.stop()
+                            }
+                        }
+
                         if (holdOrPress) {
-                            if (isPressed) {
+                            if (isPressed && viewModel.minutes.value < 1) {
                                 Log.d("Recording Start","Preparing recording")
                                 if (!recordingStarted.value && canAdd) {
                                     videoCapture.value?.let { videoCapture ->
@@ -645,6 +658,7 @@ fun CameraView(
                                     if (canDelete)
                                     {
                                         uris.removeAt(uris.lastIndex)
+                                        viewModel.onEvent(StopWatchEvent.onRecall)
                                         removeUpdate(true)
                                         canDelete = false
                                     }
