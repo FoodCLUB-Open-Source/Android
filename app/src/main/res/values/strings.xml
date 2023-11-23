@@ -268,6 +268,52 @@
     - Edit Profile
     <string name="edit_profile">Edit Profile</string>
     <string name="new_password">New Password</string>
-
+    - Future Topic Vote
+    <string name="future_topic_vote">Future Topic Vote</string>
+    <string name="send_votes">Send Votes</string>
+    <string name="default_text">Default Text</string>
+    <string name="vote_for_future_topics">Vote for future topics</string>
+    <string name="choose_from_the_options_below">Choose from the options below</string>
+    <string-array name="dummy_rice_list">
+        <item>Rice cultivation 1</item>
+        <item>Rice cultivation 2</item>
+        <item>Rice cultivation 3</item>
+        <item>Rice cultivation 4</item>
+    </string-array>
+    - Kitchen Tools
+    <string name="kitchen_tools">Kitchen Tools</string>
+    <string-array name="quiz_buttons">
+        <item>Quiz 1</item>
+        <item>Quiz 2</item>
+        <item>Quiz 3</item>
+    </string-array>
+    <string-array name="learn_buttons">
+        <item>Learn 1</item>
+        <item>Learn 2</item>
+        <item>Learn 3</item>
+    </string-array>
+    <string-array name="card_titles">
+        <item>Kitchen Tools</item>
+        <item>Can Opening</item>
+        <item>Food Prepararation Tools</item>
+    </string-array>
+    <string-array name="card_subtitles">
+        <item>Course Length = Approx 20 mins</item>
+        <item>Course Length = Approx 30 mins</item>
+        <item>Course Length = Approx 25 mins</item>
+    </string-array>
+    - Learning
+    <string name="vote_now">Vote Now</string>
+    <string name="click_to_vote">Click here to vote for future topics</string>
+    <string name="dummy_duration">20 mins</string>
+    <string name="completed">Completed</string>
+    <string name="zero_percent">0%</string>
+    <string name="twenty_percent">20%</string>
+    <string name="forty_percent">40%</string>
+    <string name="course_length">Course Length - Approx</string>
+    <string name="communities">Communities</string>
+    <string name="flavours">Flavours</string>
+    <string name="health">Health</string>
+    <string name="welcome_to_foodskills">Welcome to FoodSKILLS</string>
 
 </resources>

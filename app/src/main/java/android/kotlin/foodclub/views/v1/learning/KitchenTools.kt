@@ -26,6 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -38,38 +40,29 @@ import androidx.navigation.compose.rememberNavController
 fun KitchenTools(
     navController: NavController,
 ) {
-    KitchenToolsUI(".")
+    KitchenToolsUI()
 }
 
 @Composable
-fun KitchenToolsUI(name: String, modifier: Modifier = Modifier) {
+fun KitchenToolsUI(modifier: Modifier = Modifier) {
 
-    // LIST FOR CARD TITLES
-    val cardTitle = listOf("Kitchen Tools", "Can Opening", "Food Preparation Tools")
+    // TODO these should be dynamic and come from the backend
+    val cardTitle = stringArrayResource(id = R.array.card_titles).toList()
 
-    // LIST FOR SUB-TEXT
-    val cardSubText = listOf("Course Length - Approx 20 mins", "Course Length - Approx 20 mins", "Course Length - Approx 20 mins")
+    val cardSubText = stringArrayResource(id = R.array.card_subtitles).toList()
 
-    // LIST FOR IMAGE
     val imageContents = listOf(R.drawable.temporary_image_placeholder, R.drawable.temporary_image_placeholder, R.drawable.temporary_image_placeholder)
 
-    // LIST FOR LEARN BUTTONS
-    val Learnbuttons = listOf("Learn", "Learn", "Learn")
+    val learnButtons = stringArrayResource(id = R.array.learn_buttons).toList()
 
-    // LIST FOR QUIZ BUTTONS
-    val Quizbuttons = listOf("Quiz", "Quiz", "Quiz")
-    
+    val quizButtons = stringArrayResource(id = R.array.quiz_buttons).toList()
 
-    // QUIZ BUTTON GREY COLOUR
     val customGreyColor = Color(0xFFE7E7E7)
 
-    // LEARN BUTTON GREEN COLOUR
     val customGreenColor = Color(0xFF80C40C)
 
-
-    // KITCHEN TOOL TITLE TEXT
     Text(
-        text = "Kitchen Tools",
+        text = stringResource(id = R.string.kitchen_tools),
         fontSize = 24.sp,
         fontFamily = Montserrat,
         fontWeight = FontWeight.SemiBold,
@@ -101,11 +94,9 @@ fun KitchenToolsUI(name: String, modifier: Modifier = Modifier) {
     ) {
 
 
-        // HOW MANY ITEMS
-        items(3) { index ->
+        items(count = 3) { index ->
             Spacer(modifier = Modifier.height(16.dp))
 
-            // THE CARD STUFF
             Box(
                 modifier = Modifier
                     .clip(shape = RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp))
@@ -113,12 +104,8 @@ fun KitchenToolsUI(name: String, modifier: Modifier = Modifier) {
                     .height(230.dp)
                     .background(Color.White)
             ) {
-
-                // INNER CARD CONTENTS
-
-                // TITLE TEXTS SETTINGS
                 Text(
-                    text = cardTitle.getOrNull(index) ?: "Default Text",
+                    text = cardTitle.getOrNull(index) ?: stringResource(id = R.string.default_text),
                     fontFamily = Montserrat,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -129,10 +116,9 @@ fun KitchenToolsUI(name: String, modifier: Modifier = Modifier) {
                         .align(Alignment.Center)
                 )
 
-                // IMAGE SETTINGS
                 Image(
                     painter = painterResource(id = imageContents.getOrNull(index) ?: R.drawable.temporary_image_placeholder),
-                    contentDescription = "",
+                    contentDescription = null,
                     modifier = Modifier
                         .width(330.dp)
                         .height(200.dp)
@@ -141,9 +127,8 @@ fun KitchenToolsUI(name: String, modifier: Modifier = Modifier) {
                         .align(Alignment.Center)
                 )
 
-                // SUB TEXTS SETTINGS
                 Text(
-                    text = cardSubText.getOrNull(index) ?: "Default Text",
+                    text = cardSubText.getOrNull(index) ?: stringResource(id = R.string.default_text),
                     fontFamily = Montserrat,
                     fontSize = 12.sp,
                     letterSpacing = TextUnit(-0.8f, TextUnitType.Sp),
@@ -153,7 +138,6 @@ fun KitchenToolsUI(name: String, modifier: Modifier = Modifier) {
                         .align(Alignment.Center)
                 )
 
-                // LEARN MORE BUTTON SETTINGS
                 Button(
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier
@@ -163,16 +147,15 @@ fun KitchenToolsUI(name: String, modifier: Modifier = Modifier) {
                         .align(Alignment.BottomStart),
 
                     onClick = {
-                        // ON CLICK TO DO
+                        // TODO add click functionality
                     },
-
-                    // Button colour(s)
                     colors = ButtonDefaults.buttonColors(
                         containerColor  = customGreenColor,
                         contentColor = Color.White
                     )
                 ) {
-                    Text(text = Learnbuttons.getOrNull(index) ?: "",
+                    Text(
+                        text = learnButtons.getOrNull(index) ?: stringResource(id = R.string.default_text),
                         fontFamily = Montserrat,
                         letterSpacing = TextUnit(-0.64f, TextUnitType.Sp),
                         color = Color.White,
@@ -181,7 +164,6 @@ fun KitchenToolsUI(name: String, modifier: Modifier = Modifier) {
                     )
                 }
 
-                // QUIZ BUTTON SETTINGS
                 Button(
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier
@@ -191,16 +173,15 @@ fun KitchenToolsUI(name: String, modifier: Modifier = Modifier) {
                         .align(Alignment.BottomEnd),
 
                     onClick = {
-                        // ON CLICK TO DO
+                        // TODO add click functionality
                     },
-
-                    // Button colour(s)
                     colors = ButtonDefaults.buttonColors(
                         containerColor  = customGreyColor,
                         contentColor = Color.White
                     )
                 ) {
-                    Text(text = Quizbuttons.getOrNull(index) ?: "",
+                    Text(
+                        text = quizButtons.getOrNull(index) ?: stringResource(id = R.string.default_text),
                         fontFamily = Montserrat,
                         letterSpacing = TextUnit(-0.64f, TextUnitType.Sp),
                         color = Color.Black,
