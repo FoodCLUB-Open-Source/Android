@@ -404,7 +404,7 @@ fun ProfileView(
                 sheetTitle = "Upload Photo",
 //                enableDragHandle = true,
                 onDismiss = { showBottomSheet = false },
-                modifier = Modifier.padding(bottom = 110.dp)
+                modifier = Modifier.padding(bottom = 110.dp),
             )
         }
     }

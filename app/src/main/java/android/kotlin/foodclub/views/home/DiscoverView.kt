@@ -217,6 +217,7 @@ fun DiscoverView(navController: NavController, viewModel: DiscoverViewModel) {
 
         item {
             SubSearchBar(
+                navController = navController,
                 searchTextValue = ingredientsSearchText,
                 onSearch = { input->
                     searchText = input
@@ -268,7 +269,8 @@ fun DiscoverView(navController: NavController, viewModel: DiscoverViewModel) {
                 }
             }
             if (isDialogOpen){
-                AddIngredientDialog()
+                AddIngredientDialog("Added!","Successfully added 1 ingredient in your digital pantry \n" +
+                        " now you can start your FoodCLUB journey!")
                 LaunchedEffect(key1 = true){
                     delay(3000)
                     isDialogOpen = false
@@ -565,6 +567,7 @@ fun MainTabRow(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubSearchBar(
+    navController: NavController,
     searchTextValue: String,
     onSearch: (String) -> Unit
 ) {
@@ -623,7 +626,7 @@ fun SubSearchBar(
             ),
             contentPadding = PaddingValues(),
             onClick = {
-                // TODO impl camera
+                navController.navigate("ScanView_route")
             }
         ) {
             Icon(painterResource(id = R.drawable.camera_icon), contentDescription = "")
@@ -638,6 +641,7 @@ fun SubSearchBar(
             ),
             contentPadding = PaddingValues(),
             onClick = {
+
                 // TODO impl microphone
             }
         ) {
@@ -913,7 +917,7 @@ fun SingleSearchIngredientItem(
                         .padding(start = 10.dp)
                         .clickable {
                             onDateClicked(item)
-                    },
+                        },
                     text = expirationDate,
                     fontWeight = FontWeight(500),
                     textAlign = TextAlign.Start,
@@ -993,12 +997,13 @@ fun EditIngredientBottomModal(
 }
 
 @Composable
-fun AddIngredientDialog(){
+fun AddIngredientDialog(headline:String,text:String){
     Dialog(
         properties = DialogProperties(dismissOnClickOutside = false, dismissOnBackPress = false),
         onDismissRequest = {  }) {
         Card(
             modifier = Modifier
+                .clip(RoundedCornerShape(15.dp))
                 .width(500.dp)
                 .fillMaxHeight(0.2f)
                 .background(Color.White),
@@ -1034,7 +1039,7 @@ fun AddIngredientDialog(){
                         )
                     }
                     Text(
-                        text = "Added!",
+                        text = headline,
                         modifier = Modifier.padding(start = 10.dp),
                         fontWeight = FontWeight(600),
                         lineHeight = 19.5.sp,
@@ -1048,8 +1053,7 @@ fun AddIngredientDialog(){
                         .padding(vertical = 10.dp, horizontal = 30.dp),
                 ) {
                     Text(
-                        text = "Successfully added 1 ingredient in your digital pantry," +
-                                " now you can start your FoodCLUB journey!",
+                        text = text,
                         fontFamily = Montserrat,
                         fontSize = 14.sp,
                         lineHeight = 17.07.sp,
