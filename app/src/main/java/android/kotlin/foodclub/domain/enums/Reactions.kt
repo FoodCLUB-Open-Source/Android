@@ -1,12 +1,11 @@
 package android.kotlin.foodclub.domain.enums
 
-enum class Reactions {
-    LOVE,
-    YUMMY,
-    LAUGH,
-    SAD,
-    ANGRY,
-    DELICIOUS,
-    LIKE,
-    DISLIKE
+import android.kotlin.foodclub.R
+
+enum class Reactions(val drawable:Int) {
+    ALL(0),
+    YUMMY(R.drawable.yum),
+    CREATIVE(R.drawable.creative),
+    LETSGOTOGETHER(R.drawable.letsgotogether),
+    STAYHEALTHY(R.drawable.stayhealthy),
 }

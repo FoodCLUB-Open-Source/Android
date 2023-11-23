@@ -60,19 +60,19 @@ class HomeViewModel @Inject constructor(
                     SnapModel(
                         snapAuthor = SimpleUserModel(123,"Shivendu Mishra","https://kretu.sts3.pl/foodclub_thumbnails/daniel_vid2-thumbnail.jpg"),
                         userReactions = mapOf(
-                            SimpleUserModel(567,"Jakub","sampleUrl") to Reactions.YUMMY,
-                            SimpleUserModel(567,"Jakub","sampleUrl") to Reactions.YUMMY,
-                            SimpleUserModel(567,"Jakub","sampleUrl") to Reactions.YUMMY,
-                            SimpleUserModel(567,"Jakub","sampleUrl") to Reactions.YUMMY,
-                            SimpleUserModel(567,"Jakub","sampleUrl") to Reactions.YUMMY,
-                            SimpleUserModel(567,"Jakub","sampleUrl") to Reactions.YUMMY,
-                            SimpleUserModel(567,"Jakub","sampleUrl") to Reactions.YUMMY,
-                            SimpleUserModel(567,"Jakub","sampleUrl") to Reactions.YUMMY,
-                            SimpleUserModel(567,"Jakub","sampleUrl") to Reactions.YUMMY,
-                            SimpleUserModel(567,"Jakub","sampleUrl") to Reactions.YUMMY,
-                            SimpleUserModel(567,"Jakub","sampleUrl") to Reactions.YUMMY,
-                            SimpleUserModel(567,"Jakub","sampleUrl") to Reactions.YUMMY,
-                            SimpleUserModel(567,"Jakub","sampleUrl") to Reactions.YUMMY
+                            SimpleUserModel(567,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.YUMMY,
+                            SimpleUserModel(5632,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.CREATIVE,
+                            SimpleUserModel(56527,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.YUMMY,
+                            SimpleUserModel(5637,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.LETSGOTOGETHER,
+                            SimpleUserModel(5627,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.LETSGOTOGETHER,
+                            SimpleUserModel(562347,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.YUMMY,
+                            SimpleUserModel(56867,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.LETSGOTOGETHER,
+                            SimpleUserModel(568747,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.LETSGOTOGETHER,
+                            SimpleUserModel(5623547,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.YUMMY,
+                            SimpleUserModel(56577,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.STAYHEALTHY,
+                            SimpleUserModel(56897,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.STAYHEALTHY,
+                            SimpleUserModel(5678695,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.STAYHEALTHY,
+                            SimpleUserModel(56757,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.STAYHEALTHY
                         ),
                         isSaved = false,
                         imageUrl = "https://kretu.sts3.pl/foodclub_thumbnails/daniel_vid2-thumbnail.jpg",
@@ -81,7 +81,7 @@ class HomeViewModel @Inject constructor(
                     SnapModel(
                         snapAuthor = SimpleUserModel(123,"Shivendu ","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg"),
                         userReactions = mapOf(
-                            SimpleUserModel(435,"Orhan","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.DELICIOUS
+                            SimpleUserModel(435,"Orhan","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.CREATIVE
                         ),
                         isSaved = false,
                         imageUrl = "https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg",
@@ -89,6 +89,111 @@ class HomeViewModel @Inject constructor(
                     ),
                 ),
                 dateTime = "20 November 2023"
+            ),
+            MemoriesModel(
+                stories = listOf(
+                    SnapModel(
+                        snapAuthor = SimpleUserModel(123,"Shivendu Mishra","https://kretu.sts3.pl/foodclub_thumbnails/daniel_vid2-thumbnail.jpg"),
+                        userReactions = mapOf(
+                            SimpleUserModel(567,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.YUMMY,
+                            SimpleUserModel(5632,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.CREATIVE,
+                            SimpleUserModel(56527,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.YUMMY,
+                            SimpleUserModel(5637,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.LETSGOTOGETHER,
+                            SimpleUserModel(5627,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.LETSGOTOGETHER,
+                            SimpleUserModel(562347,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.YUMMY,
+                            SimpleUserModel(56867,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.LETSGOTOGETHER,
+                            SimpleUserModel(568747,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.LETSGOTOGETHER,
+                            SimpleUserModel(5623547,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.YUMMY,
+                            SimpleUserModel(56577,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.STAYHEALTHY,
+                            SimpleUserModel(56897,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.STAYHEALTHY,
+                            SimpleUserModel(5678695,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.STAYHEALTHY,
+                            SimpleUserModel(56757,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.STAYHEALTHY
+                        ),
+                        isSaved = false,
+                        imageUrl = "https://kretu.sts3.pl/foodclub_thumbnails/daniel_vid2-thumbnail.jpg",
+                        dateTime = "21 November 2023"
+                    ),
+                    SnapModel(
+                        snapAuthor = SimpleUserModel(123,"Shivendu ","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg"),
+                        userReactions = mapOf(
+                            SimpleUserModel(435,"Orhan","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.CREATIVE
+                        ),
+                        isSaved = false,
+                        imageUrl = "https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg",
+                        dateTime = "22 November 2023"
+                    ),
+                ),
+                dateTime = "21 November 2023"
+            ),
+            MemoriesModel(
+                stories = listOf(
+                    SnapModel(
+                        snapAuthor = SimpleUserModel(123,"Shivendu Mishra","https://kretu.sts3.pl/foodclub_thumbnails/daniel_vid2-thumbnail.jpg"),
+                        userReactions = mapOf(
+                            SimpleUserModel(567,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.YUMMY,
+                            SimpleUserModel(5632,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.CREATIVE,
+                            SimpleUserModel(56527,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.YUMMY,
+                            SimpleUserModel(5637,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.LETSGOTOGETHER,
+                            SimpleUserModel(5627,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.LETSGOTOGETHER,
+                            SimpleUserModel(562347,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.YUMMY,
+                            SimpleUserModel(56867,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.LETSGOTOGETHER,
+                            SimpleUserModel(568747,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.LETSGOTOGETHER,
+                            SimpleUserModel(5623547,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.YUMMY,
+                            SimpleUserModel(56577,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.STAYHEALTHY,
+                            SimpleUserModel(56897,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.STAYHEALTHY,
+                            SimpleUserModel(5678695,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.STAYHEALTHY,
+                            SimpleUserModel(56757,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.STAYHEALTHY
+                        ),
+                        isSaved = false,
+                        imageUrl = "https://kretu.sts3.pl/foodclub_thumbnails/daniel_vid2-thumbnail.jpg",
+                        dateTime = "21 November 2023"
+                    ),
+                    SnapModel(
+                        snapAuthor = SimpleUserModel(123,"Shivendu ","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg"),
+                        userReactions = mapOf(
+                            SimpleUserModel(435,"Orhan","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.CREATIVE
+                        ),
+                        isSaved = false,
+                        imageUrl = "https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg",
+                        dateTime = "22 November 2023"
+                    ),
+                ),
+                dateTime = "22 November 2023"
+            ),
+            MemoriesModel(
+                stories = listOf(
+                    SnapModel(
+                        snapAuthor = SimpleUserModel(123,"Shivendu Mishra","https://kretu.sts3.pl/foodclub_thumbnails/daniel_vid2-thumbnail.jpg"),
+                        userReactions = mapOf(
+                            SimpleUserModel(567,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.YUMMY,
+                            SimpleUserModel(5632,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.CREATIVE,
+                            SimpleUserModel(56527,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.YUMMY,
+                            SimpleUserModel(5637,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.LETSGOTOGETHER,
+                            SimpleUserModel(5627,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.LETSGOTOGETHER,
+                            SimpleUserModel(562347,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.YUMMY,
+                            SimpleUserModel(56867,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.LETSGOTOGETHER,
+                            SimpleUserModel(568747,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.LETSGOTOGETHER,
+                            SimpleUserModel(5623547,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.YUMMY,
+                            SimpleUserModel(56577,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.STAYHEALTHY,
+                            SimpleUserModel(56897,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.STAYHEALTHY,
+                            SimpleUserModel(5678695,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.STAYHEALTHY,
+                            SimpleUserModel(56757,"Jakub","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.STAYHEALTHY
+                        ),
+                        isSaved = false,
+                        imageUrl = "https://kretu.sts3.pl/foodclub_thumbnails/daniel_vid2-thumbnail.jpg",
+                        dateTime = "21 November 2023"
+                    ),
+                    SnapModel(
+                        snapAuthor = SimpleUserModel(123,"Shivendu ","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg"),
+                        userReactions = mapOf(
+                            SimpleUserModel(435,"Orhan","https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg") to Reactions.CREATIVE
+                        ),
+                        isSaved = false,
+                        imageUrl = "https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg",
+                        dateTime = "22 November 2023"
+                    ),
+                ),
+                dateTime = "23 November 2023"
             )
         )
         _memoryListData.value = list
