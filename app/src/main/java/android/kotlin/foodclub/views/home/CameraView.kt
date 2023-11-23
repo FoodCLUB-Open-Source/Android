@@ -67,6 +67,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
@@ -95,14 +96,12 @@ fun RecordingButton(isRecording: Boolean) {
         contentAlignment = Alignment.Center,
         modifier = Modifier.size(80.dp)
     ) {
-        // Background circle
         CircularProgressIndicator(
             progress = 1f,
             strokeWidth = 5.dp,
             color = Color.White,
             modifier = Modifier.size(80.dp)
         )
-        // Animated circle
         CircularProgressIndicator(
             progress = progress,
             strokeWidth = 5.dp,
@@ -148,13 +147,16 @@ fun RecordingClipsButton(
 
     val progress by animateFloatAsState(
         targetValue = if (isRecording) 1f else rememberProgress,
-        animationSpec = if (isRecording) {infiniteRepeatable<Float>(
-            animation = tween<Float>( 20000, easing = LinearEasing),
+        animationSpec = if (isRecording) {infiniteRepeatable(
+            animation = tween(
+                durationMillis = 20000,
+                easing = LinearEasing
+            ),
             repeatMode = RepeatMode.Reverse
         )}
         else
         {
-            snap<Float>(500)
+            snap(delayMillis = 500)
         }
        , label = ""
     )
@@ -165,7 +167,7 @@ fun RecordingClipsButton(
             progressUpdate(progress)
             clipUpdate(false)
         }
-        //progressUpdate(progress)
+
     }
 
 
@@ -174,15 +176,6 @@ fun RecordingClipsButton(
         contentAlignment = Alignment.Center,
         modifier = Modifier.size(80.dp)
     ) {
-        // Background circle
-        /*
-        CircularProgressIndicator(
-            progress = 1f,
-            strokeWidth = 5.dp,
-            color = Color.White,
-            modifier = Modifier.size(80.dp)
-        )
-         */
 
         Canvas(modifier = Modifier.fillMaxSize())
         {
@@ -195,7 +188,6 @@ fun RecordingClipsButton(
             )
         }
 
-        // Animated circle
         CircularProgressIndicator(
             progress = progress,
             strokeWidth = 5.dp,
@@ -205,7 +197,6 @@ fun RecordingClipsButton(
 
         Canvas(modifier = Modifier.fillMaxSize())
         {
-            val offset: Float = 0.005f
             clipArcs.forEach {
                 drawArc(
                     color = Color.White,
@@ -217,16 +208,6 @@ fun RecordingClipsButton(
             }
 
         }
-
-        /*
-        Canvas(modifier = Modifier.fillMaxSize())
-        {
-            clipArcs.forEach {
-                drawArc(color = Color.White, startAngle = (it + 270f), sweepAngle = 3f, useCenter = false)
-            }
-        }
-
-         */
 
         Canvas(modifier = Modifier.size(60.dp)) {
             drawCircle(color = Color(0xFFCACBCB))
@@ -248,11 +229,11 @@ fun CameraView(
 
     var state = ""
 
-    if (stateEncoded.contains("story")) {
-        state = "story"
+    if (stateEncoded.contains(GalleryState.STORY.state)) {
+        state = GalleryState.STORY.state
     }
-    if (stateEncoded.contains("recipe")) {
-        state = "recipe"
+    if (stateEncoded.contains(GalleryState.RECIPE.state)) {
+        state = GalleryState.RECIPE.state
     }
 
     val permissionState = rememberMultiplePermissionsState(
@@ -373,15 +354,13 @@ fun CameraView(
                         .height(40.dp)
                         .clip(RoundedCornerShape(10.dp))
                         .background(Color.Black.copy(alpha = 0.9f))
-                        //.blur(radius = 20.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
                         .clickable {
-                            // Do something when the box is clicked
                             navController.popBackStack()
                         }
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.baseline_close_24),
-                        contentDescription = "Story",
+                        contentDescription = stringResource(id = R.string.story),
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .width(25.dp)
@@ -397,16 +376,14 @@ fun CameraView(
                             .height(40.dp)
                             .clip(RoundedCornerShape(10.dp))
                             .background(Color.White)
-                            //.blur(radius = 20.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
                             .align(Alignment.TopEnd)
                             .clickable {
-                                // Do something when the box is clicked
                                 holdOrPress = !holdOrPress
                             }
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
-                            contentDescription = "Story",
+                            contentDescription = stringResource(id = R.string.story),
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .width(20.dp)
@@ -419,8 +396,6 @@ fun CameraView(
                 IconButton(
 
                     onClick = {
-
-                        //Temporarily ignore recording code
 
                         if(!holdOrPress) {
                             if (!recordingStarted.value) {
@@ -454,7 +429,6 @@ fun CameraView(
                                                 )
 
                                                 navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
-                                                //navController.navigate("GALLERY_VIEW/${uriEncoded}")
                                                 clipUpdate(true)
                                                 uris.add(uriEncoded)
                                             }
@@ -466,8 +440,6 @@ fun CameraView(
                                 recording?.stop()
                             }
                         }
-
-                        //navController.navigate("GALLERY_VIEW")
                     },
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
@@ -508,8 +480,6 @@ fun CameraView(
                                                     StandardCharsets.UTF_8.toString()
                                                 )
 
-                                                //navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
-                                                //navController.navigate("GALLERY_VIEW/${uriEncoded}")
                                                 clipUpdate(true)
                                                 uris.add(uriEncoded)
                                             }
@@ -535,12 +505,6 @@ fun CameraView(
                         clipUpdate = clipUpdate
                     )
 
-
-                    /*Icon(
-                        painter = painterResource(if (recordingStarted.value) R.drawable.story_user else R.drawable.save),
-                        contentDescription = "",
-                        modifier = Modifier.size(64.dp)
-                    )*/
                 }
                 if (!recordingStarted.value) {
                     val bitmapCheck = loadCurrentThumbnail(context = context)
@@ -595,8 +559,7 @@ fun CameraView(
                                     RoundedCornerShape(10.dp)
                                 )
                                 .clickable {
-                                    if (canDelete)
-                                    {
+                                    if (canDelete) {
                                         uris.removeAt(uris.lastIndex)
                                         removeUpdate(true)
                                         canDelete = false
@@ -616,44 +579,20 @@ fun CameraView(
                         }
 
                         Button(
-                            onClick = { /*TODO*/ }, colors = ButtonDefaults.buttonColors(
-                                foodClubGreen
-                            ),
+                            onClick = { /*TODO*/ },
+                            colors = ButtonDefaults.buttonColors(foodClubGreen),
                             shape = RoundedCornerShape(10.dp),
                             contentPadding = PaddingValues(0.dp),
                             modifier = Modifier.height(38.dp)
                         ) {
-                            Text(text = "continue", color = Color.White)
+                            Text(
+                                text = stringResource(id = R.string.continue_text),
+                                color = Color.White
+                            )
                         }
 
                     }
-
-                    /*
-                    Image(
-                        painter = painterResource(id = R.drawable.baseline_cameraswitch_24),
-                        contentDescription = "Story",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .width(40.dp)
-                            .height(40.dp)
-                            //.align(Alignment.BottomEnd)
-                            .clickable {
-                                cameraSelector.value =
-                                    if (cameraSelector.value == CameraSelector.DEFAULT_BACK_CAMERA) CameraSelector.DEFAULT_FRONT_CAMERA
-                                    else CameraSelector.DEFAULT_BACK_CAMERA
-                                lifecycleOwner.lifecycleScope.launch {
-                                    videoCapture.value = context.createVideoCaptureUseCase(
-                                        lifecycleOwner = lifecycleOwner,
-                                        cameraSelector = cameraSelector.value,
-                                        previewView = previewView
-                                    )
-                                }
-                            }
-                    )
-
-                     */
                 }
-
             }
         }
     }
@@ -688,7 +627,6 @@ fun loadCurrentThumbnail(context: Context): Bitmap? {
         imageProjection,
         selectionImageArgs,
         null,
-        //imageSortOrder
     )
 
     cursorImage.use {
@@ -703,10 +641,10 @@ fun loadCurrentThumbnail(context: Context): Bitmap? {
                     id
                 )
                 uri = contentUri
-                timeSinceEpoch = date //can't parse as Int
+                timeSinceEpoch = date
             }
         } ?: run {
-            Log.e("TAG", "Cursor is null!")
+            Log.e("LoadCurrentThumbnail", "Cursor is null!")
         }
     }
 
@@ -724,7 +662,6 @@ fun loadCurrentThumbnail(context: Context): Bitmap? {
         videoProjection,
         selectionVideoArgs,
         null,
-        //imageSortOrder
     )
 
     cursor.use {
@@ -744,7 +681,7 @@ fun loadCurrentThumbnail(context: Context): Bitmap? {
                 }
             }
         } ?: run {
-            Log.e("TAG", "Cursor is null!")
+            Log.e("LoadCurrentThumbnail", "Cursor is null!")
         }
     }
 

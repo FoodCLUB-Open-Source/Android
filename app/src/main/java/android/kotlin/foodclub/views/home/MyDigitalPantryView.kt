@@ -71,8 +71,11 @@ import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -83,7 +86,7 @@ import coil.compose.AsyncImage
 fun MyDigitalPantryView(
     navController: NavController,
     viewModel: DiscoverViewModel
-){
+) {
     val modifier = Modifier
     val userIngredients = viewModel.userIngredientsList.collectAsState()
 
@@ -117,22 +120,22 @@ fun MyDigitalPantryView(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "My Digital Pantry",
+                        text = stringResource(id = R.string.my_digital_pantry),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         lineHeight = 48.sp,
                         fontFamily = Montserrat
                     )
-                        },
+                },
                 navigationIcon = {
                     IconButton(
                         onClick = {
                             navController.popBackStack()
                         }
-                    ){
+                    ) {
                         Icon(
                             painterResource(id = R.drawable.back_arrow),
-                            contentDescription = "",
+                            contentDescription = null,
                         )
                     }
                 },
@@ -143,7 +146,7 @@ fun MyDigitalPantryView(
                         }
                     ) {
                         Text(
-                            text = "Save",
+                            text = stringResource(id = R.string.save),
                             color = foodClubGreen,
                             fontSize = 20.sp,
                             fontWeight = FontWeight(600),
@@ -165,20 +168,20 @@ fun MyDigitalPantryView(
                 verticalArrangement = Arrangement.Top
             ) {
 
-                if (isShowEditScreen){
-                    topBarTitleText = "Edit Item"
+                if (isShowEditScreen) {
+                    topBarTitleText = stringResource(id = R.string.edit_item)
                     EditIngredientView(
                         ingredient = viewModel.ingredientToEdit.value!!,
-                        onEditIngredient = { ingr ->
-                            viewModel.updateIngredient(ingr)
+                        onEditIngredient = { ingredient ->
+                            viewModel.updateIngredient(ingredient)
                         }
                     )
-                }else{
-                    topBarTitleText = "All My Ingredients"
+                } else {
+                    topBarTitleText = stringResource(id = R.string.all_my_ingredients)
                     SearchMyIngredients(
                         modifier = Modifier,
                         searchTextValue = searchText,
-                        onSearch = { input->
+                        onSearch = { input ->
                             viewModel.onSubSearchTextChange(input)
                         }
                     )
@@ -188,12 +191,11 @@ fun MyDigitalPantryView(
                         modifier,
                         userIngredients.value,
                         onAddDateClicked = { isDatePickerVisible = true },
-                        onEditClicked = {
-                                item->
+                        onEditClicked = { item ->
                             viewModel.ingredientToEdit.value = item
                             isShowEditScreen = !isShowEditScreen
                         },
-                        view = "DigitalPantry"
+                        view = stringResource(id = R.string.digitalPantry)
                     )
 
                     if (isDatePickerVisible) {
@@ -209,7 +211,7 @@ fun MyDigitalPantryView(
                                 datePickerDialogColors = datePickerDialogColors,
                                 onDismiss = { isDatePickerVisible = false },
                                 onSave = { date ->
-                                    if (date != null){
+                                    if (date != null) {
                                         selectedDate = date
                                     }
                                 }
@@ -244,24 +246,22 @@ fun SearchMyIngredients(
             containerColor = Color(0xFFF5F5F5)
         ),
         value = searchTextValue,
-        onValueChange = {
-            onSearch(it) // Call the onSearch callback when text changes
-        },
+        onValueChange = { onSearch(it) },
         placeholder = {
             Text(
                 modifier = modifier.padding(top = 3.dp),
-                text = "Search my ingredients",
+                text = stringResource(id = R.string.search_my_ingredients),
                 color = Color.Gray,
                 textAlign = TextAlign.Center
             )
-                      },
+        },
         leadingIcon = {
             IconButton(
                 onClick = {}
-            ){
+            ) {
                 Icon(
                     painterResource(id = R.drawable.search_icon_ingredients),
-                    contentDescription = "",
+                    contentDescription = null,
                 )
             }
         }
@@ -301,39 +301,61 @@ fun MyDigitalPantryList(
 }
 
 @Composable
-fun TitlesSection(modifier: Modifier, view: String){
-    Row(modifier = modifier
-        .fillMaxWidth()
-        .padding(start = 20.dp, end = 20.dp, top = 15.dp, bottom = 15.dp),
+fun TitlesSection(modifier: Modifier, view: String) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp, end = 20.dp, top = 15.dp, bottom = 15.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "Name",
-            fontWeight = if (view == "DigitalPantry") FontWeight(600) else FontWeight(500),
-            fontSize = if (view == "DigitalPantry") 16.sp else 13.7.sp,
-            lineHeight = if (view == "DigitalPantry") 19.5.sp else 16.71.sp,
+            text = stringResource(id = R.string.name),
+            fontWeight = fontWeightPantry(view = view),
+            fontSize = fontSizePantry(view = view),
+            lineHeight = lineHeightPantry(view = view),
             fontFamily = Montserrat,
-            color = if (view == "DigitalPantry") Color.Black else Color.Gray
+            color = colorPantry(view = view)
         )
         Text(
             modifier = modifier.padding(start = 15.dp),
-            text = "Quantity",
+            text = stringResource(id = R.string.quantity),
             fontWeight = FontWeight(500),
-            fontSize = if (view == "DigitalPantry") 16.sp else 13.7.sp,
-            lineHeight = if (view == "DigitalPantry") 19.5.sp else 16.71.sp,
+            fontSize = fontSizePantry(view = view),
+            lineHeight = lineHeightPantry(view = view),
             fontFamily = Montserrat,
             color = Color.Gray
         )
         Text(
-            text = "Expiration Date",
+            text = stringResource(id = R.string.expiration_date),
             fontWeight = FontWeight(500),
-            fontSize = if (view == "DigitalPantry") 16.sp else 13.7.sp,
-            lineHeight = if (view == "DigitalPantry") 19.5.sp else 16.71.sp,
+            fontSize = fontSizePantry(view = view),
+            lineHeight = lineHeightPantry(view = view),
             fontFamily = Montserrat,
             color = Color.Gray
         )
     }
 }
+
+@Composable
+private fun fontSizePantry(view: String): TextUnit {
+    return if (view == stringResource(id = R.string.digitalPantry)) 16.sp else 13.7.sp
+}
+
+@Composable
+private fun lineHeightPantry(view: String): TextUnit {
+    return if (view == stringResource(id = R.string.digitalPantry)) 19.5.sp else 16.71.sp
+}
+
+@Composable
+private fun colorPantry(view: String): Color {
+    return if (view == stringResource(id = R.string.digitalPantry)) Color.Black else Color.Gray
+}
+
+@Composable
+private fun fontWeightPantry(view: String): FontWeight {
+    return if (view == stringResource(id = R.string.digitalPantry)) FontWeight(600) else FontWeight(500)
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -343,14 +365,14 @@ fun SwipeableItemsLazyColumn(
     productsList: List<Ingredient>,
     onEditClicked: (Ingredient) -> Unit,
     onAddDateClicked: () -> Unit
-){
+) {
     LazyColumn(
         modifier = modifier
             .padding(start = 15.dp, end = 15.dp)
             .background(Color.White)
             .height(height.dp)
-    ){
-        itemsIndexed(productsList){index, ingredient ->
+    ) {
+        itemsIndexed(productsList) { index, ingredient ->
             var notSwiped by remember { mutableStateOf(false) }
             val dismissState = rememberDismissState(
                 confirmValueChange = { dismiss ->
@@ -372,7 +394,7 @@ fun SwipeableItemsLazyColumn(
             }
 
             Spacer(Modifier.height(8.dp))
-            if (index != 0){
+            if (index != 0) {
                 Divider(thickness = 1.dp, modifier = modifier.alpha(0.5f), color = LightGray)
             }
             Spacer(Modifier.height(8.dp))
@@ -401,13 +423,12 @@ fun SwipeableItemsLazyColumn(
                         Modifier
                             .fillMaxSize()
                             .background(color)
-                            .padding(horizontal = 20.dp)
-                        ,
+                            .padding(horizontal = 20.dp),
                         contentAlignment = alignment
                     ) {
                         Icon(
                             icon,
-                            contentDescription = "Localized description",
+                            contentDescription = null,
                             modifier = Modifier.scale(scale),
                             tint = Color.White
                         )
@@ -434,13 +455,9 @@ fun SingleIngredientItem(
     onEditClicked: (Ingredient) -> Unit
 ) {
     val title = item.type.split(",").first().trim()
-    val unit = "g" // for now
-    val quantity = if (item.quantity != 0) item.quantity.toString()+unit else "Edit"
-    val expirationDate = if (item.expirationDate != "") {
-        item.expirationDate.split(" ").take(2).joinToString(" ")
-    }else{
-        "Add Date"
-    }
+    val unit = stringResource(id = R.string.gram_unit) // TODO make dynamic
+    val quantity = itemQuantity(item = item, unit = unit)
+    val expirationDate = itemExpirationDate(item = item)
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -450,7 +467,8 @@ fun SingleIngredientItem(
             .fillMaxHeight()
             .background(Color.White)
     ) {
-        Column(modifier = modifier.weight(1f)
+        Column(
+            modifier = modifier.weight(1f)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -465,7 +483,7 @@ fun SingleIngredientItem(
                         .clip(CircleShape)
                 )
                 Text(
-                    modifier =modifier.padding(start = 6.dp),
+                    modifier = modifier.padding(start = 6.dp),
                     text = title,
                     fontWeight = FontWeight(500),
                     lineHeight = 19.5.sp,
@@ -480,7 +498,7 @@ fun SingleIngredientItem(
                 horizontalArrangement = Arrangement.Start
             ) {
                 Text(
-                    modifier =modifier.padding(start = 6.dp),
+                    modifier = modifier.padding(start = 6.dp),
                     text = quantity,
                     fontWeight = FontWeight(500),
                     fontSize = 16.sp,
@@ -535,7 +553,7 @@ fun SingleIngredientItem(
 fun EditIngredientView(
     ingredient: Ingredient,
     onEditIngredient: (Ingredient) -> Unit
-){
+) {
     Column(
         modifier = Modifier
             .background(Color.White)
@@ -558,23 +576,23 @@ fun EditIngredientView(
             mutableStateOf((1..10).map {
                 Pair(
                     it,
-                    (it * 100).toString()+ValueParser.quantityUnitToString(ingredient.unit)
+                    (it * 100).toString() + ValueParser.quantityUnitToString(ingredient.unit)
                 )
             })
         }
 
         val quantity = pickerValues.value.map { it.first }
         val grammage = pickerValues.value.map { it.second }
-        val types = listOf("Pint","Jar","Cup","Bottle","Bag","Sack","Can")
+        val types = stringArrayResource(id = R.array.quantity_list).toList()
 
         Row(modifier = Modifier.padding(top = 20.dp, bottom = 20.dp, start = 20.dp)) {
             Text(
-                text = "Quantity:",
+                text = stringResource(id = R.string.quantity_colon),
                 fontSize = 22.sp,
                 fontWeight = FontWeight(600),
                 color = Color.Black,
                 fontFamily = Montserrat
-                )
+            )
         }
         Box(
             modifier = Modifier.fillMaxWidth()
@@ -616,7 +634,7 @@ fun EditIngredientView(
                     }
                 ) {
                     Text(
-                        text = "Remove",
+                        text = stringResource(id = R.string.remove),
                         color = Color(126, 198, 11, 255),
                         fontFamily = Montserrat,
                         fontSize = 20.sp,
@@ -647,7 +665,7 @@ fun EditIngredientView(
                     }
                 ) {
                     Text(
-                        text = "Save",
+                        text = stringResource(id = R.string.save),
                         color = Color.White,
                         fontFamily = Montserrat,
                         fontSize = 20.sp,

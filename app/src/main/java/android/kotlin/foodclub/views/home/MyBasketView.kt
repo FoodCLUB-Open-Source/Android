@@ -49,6 +49,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
@@ -90,7 +91,10 @@ fun MyBasketView() {
 
     }
     Column(
-        modifier = Modifier.background(color = Color.White).fillMaxSize().padding(top = 60.dp),
+        modifier = Modifier
+            .background(color = Color.White)
+            .fillMaxSize()
+            .padding(top = 60.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(
@@ -98,12 +102,14 @@ fun MyBasketView() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(start = 20.dp, end = 20.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 20.dp, end = 20.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        "My Basket",
+                        text = stringResource(id = R.string.my_basket),
                         fontSize = 25.sp,
                         fontFamily = Montserrat,
                         fontWeight = FontWeight.Bold,
@@ -116,7 +122,9 @@ fun MyBasketView() {
                             .border(
                                 1.dp, Color(0xFFF5F5F5), shape = RoundedCornerShape(22.dp)
                             )
-                            .clip(RoundedCornerShape(22.dp)).width(50.dp).height(50.dp),
+                            .clip(RoundedCornerShape(22.dp))
+                            .width(50.dp)
+                            .height(50.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFFF5F5F5),
                             contentColor = Color.White
@@ -126,18 +134,21 @@ fun MyBasketView() {
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.delete_bin_5_line__2_),
-                            contentDescription = "Back",
+                            contentDescription = stringResource(id = R.string.go_back),
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.width(20.dp).height(20.dp)
                         )
                     }
                 }
             Row(
-                modifier = Modifier.fillMaxWidth()
-                    .padding(end = 20.dp, start = 20.dp, bottom = 5.dp).height(80.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 20.dp, start = 20.dp, bottom = 5.dp)
+                    .height(80.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Spacer(modifier = Modifier.weight(1f))
+
                 Button(
                     shape = RectangleShape,
                     modifier = Modifier
@@ -153,7 +164,7 @@ fun MyBasketView() {
                     onClick = { triggerBottomSheetModal() }
                 ) {
                     Text(
-                        "Add items +",
+                        text = stringResource(id = R.string.add_items_plus),
                         fontSize = 13.sp,
                         fontFamily = Montserrat,
                         color = Color(126, 198, 11),
@@ -252,7 +263,7 @@ fun BasketIngredient(ingredient: Ingredient, isShown: Boolean,
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Image(
                                 painter = painterResource(id = R.drawable.baseline_arrow_left_24),
-                                contentDescription = "Profile Image",
+                                contentDescription = stringResource(id = R.string.profile_picture),
                                 modifier = Modifier.size(50.dp).padding(end = 15.dp)
                                     .clip(RoundedCornerShape(20.dp))
                                     .clickable {
@@ -269,7 +280,7 @@ fun BasketIngredient(ingredient: Ingredient, isShown: Boolean,
                             )
                             Image(
                                 painter = painterResource(id = R.drawable.baseline_arrow_right_24),
-                                contentDescription = "Profile Image",
+                                contentDescription = stringResource(id = R.string.profile_picture),
                                 modifier = Modifier.size(50.dp).padding(start = 15.dp)
                                     .clip(RoundedCornerShape(20.dp))
                                     .clickable {

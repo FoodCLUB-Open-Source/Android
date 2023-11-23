@@ -112,7 +112,7 @@
     - View Stories
     <string name="profile_image">Profile Image</string>
     - Uploading
-    <string name="uploading">Uploading...</string>
+    <string name="uploading">Uploading…</string>
     -Uploaded
     <string name="uploaded">Successfully Uploaded!</string>
     <string name="post">Post</string>
@@ -187,5 +187,71 @@
         <item>My Recipes</item>
         <item>Bookmarked</item>
     </string-array>
+    - My Digital Pantry
+    <string name="my_digital_pantry">My Digital Pantry</string>
+    <string name="save">Save</string>
+    <string name="edit_item">Edit Item</string>
+    <string name="all_my_ingredients">All My Ingredients</string>
+    <string name="digitalPantry">DigitalPantry</string>
+    <string name="search_my_ingredients">Search my ingredients</string>
+    <string name="name">Name</string>
+    <string name="quantity">Quantity</string>
+    <string name="unit">Unit</string>
+    <string name="expiration_date">Expiration Date</string>
+    <string name="remove">Remove</string>
+    <string name="quantity_colon">Quantity:</string>
+    - My Basket
+    <string name="my_basket">My Basket</string>
+    <string name="add_items_plus">Add items +</string>
+    - Main
+    <string name="home">Home</string>
+    <string name="discover">Discover</string>
+    <string name="navigation_icon">Navigation Icon</string>
+    <string name="create_a_story">Create a Story</string>
+    <string name="create_a_recipe">Create a Recipe</string>
+    - Home
+    <string name="weight_placeholder">200g</string>
+    <string name="tap_to_snap">Tap to Snap</string>
+    <string name="tap_to_snap_subheading">Are you ready? Its time to post a snap. Save this moment and share it with your friends.</string>
+    <string name="hand">Hand</string>
+    <string name="memories">Memories</string>
+    <string name="meat">Meat</string>
+    <string name="snaps">Snaps</string>
+    <string name="feed">Feed</string>
+    <string name="add_to_my_shopping_list">Add to my shopping list</string>
+    <string name="example_ingredient">Broccoli oil</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="clear">Clear</string>
+    <string name="serving_size">Serving Size</string>
+    <string name="copy_clip">Copy clip</string>
+    <string name="example_recipe">Chicken broth and meatballs</string>
+    - Gallery
+    <string name="gallery">Gallery</string>
+    <string name="story">story</string>
+    <string name="recipe">recipe</string>
+    <string name="image">image</string>
+    <string name="images">Images</string>
+    <string name="video">Video</string>
+    - Follow
+    <string name="no_name_found"> No name found</string>
+    - Camera
+    <string name="camera">Camera</string>
+    <string name="date_format">yyyy-MM-dd-HH-mm-ss-SSS</string>
+     - Create a Recipe
+    <string name="recipe_title">Recipe title</string>
+    <string name="ingredient_offset_transitions">Ingredient Offset Transitions</string>
+    <string name="share_recipe">Share Recipe</string>
+    <string name="categories">Categories</string>
+    <string name="vegan">Vegan</string>
+    <string name="serving_size_colon">Serving Size: %d</string>
+    <string name="add_my_recipes_name">Add my recipes name</string>
+    <string name="my_new_recipe">My New Recipe</string>
+     - Delete Recipe
+    <string name="delete_recipe">Delete Recipe</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="delete_video">Delete Video?</string>
+    <string name="delete_video_message">Are you sure you want to delete this video? This action cannot be undone.</string>
+
 
 </resources>

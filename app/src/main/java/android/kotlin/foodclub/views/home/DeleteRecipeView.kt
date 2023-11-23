@@ -53,6 +53,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
 import com.airbnb.lottie.compose.LottieAnimation
@@ -132,7 +133,7 @@ fun ConfirmDeleteDialog(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
-                                text = "No",
+                                text = stringResource(id = R.string.no),
                                 color = Color.White,
                                 fontFamily = Montserrat,
                                 )
@@ -145,7 +146,7 @@ fun ConfirmDeleteDialog(
                                 .clip(RoundedCornerShape(5.dp))
                         ) {
                             Text(
-                                text = "Yes",
+                                text = stringResource(id = R.string.yes),
                                 color = Color.White,
                                 fontFamily = Montserrat,
                                 )
@@ -160,10 +161,6 @@ fun ConfirmDeleteDialog(
                 modifier = Modifier
                     .size(200.dp)
                     .align(Alignment.TopCenter)
-                /*.border(
-                    border = BorderStroke(width = 5.dp, color = Color.White),
-                    shape = CircleShape
-                )*/
             )
         }
     }
@@ -216,8 +213,8 @@ fun DeleteRecipeView(
     ) {
         if (infoDialog.value) {
             ConfirmDeleteDialog(
-                title = "Delete video?",
-                desc = "Are you sure you want to delete this video? This action cannot be undone.",
+                title = stringResource(id = R.string.delete_video),
+                desc = stringResource(id = R.string.delete_video_message),
                 onDismiss = {
                     infoDialog.value = false
                 },
@@ -263,9 +260,7 @@ fun DeleteRecipeView(
                 if (post.value!!.authorDetails == userData.value!!.username){
                     DeleteButton(
                         alignment = Alignment.TopEnd,
-                        onDeleteClicked = {
-                            infoDialog.value = true
-                        }
+                        onDeleteClicked = { infoDialog.value = true }
                     )
                 }
                 LikeButton(doubleTapState) {}
@@ -282,18 +277,18 @@ fun DeleteRecipeView(
                     videoStats = post.value!!.videoStats,
                     likeState = isLiked,
                     bookMarkState = isBookmarked,
-                    category = "Meat",
+                    category = stringResource(id = R.string.meat),
                     opacity = 0.7f,
                     onLikeClick = {
                         isLiked = !isLiked
                         coroutineScope.launch {
-//                            // TODO like functionality
+                           // TODO like functionality
                         }
                     },
                     onBookmarkClick = {
                         isBookmarked = !isBookmarked
                         coroutineScope.launch {
-//                            // TODO bookmark functionality
+                            // TODO bookmark functionality
                         }
                     },
                     onInfoClick = {},
@@ -343,7 +338,7 @@ fun DeleteButton(
         ) {
             Image(
                 painter = painterResource(id = R.drawable.delete),
-                contentDescription = "Delete",
+                contentDescription = stringResource(id = R.string.delete_video),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .width(25.dp)

@@ -1,6 +1,5 @@
 package android.kotlin.foodclub.views.home
 
-//import androidx.compose.foundation.layout.ColumnScopeInstance.weight
 import android.Manifest
 import android.content.Context
 import android.graphics.Bitmap
@@ -47,6 +46,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -63,21 +63,22 @@ import java.nio.charset.StandardCharsets
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-public fun GalleryView(navController: NavController, stateEncoded:String, itemsPerRow: Int = 3) {
+fun GalleryView(
+    navController: NavController,
+    stateEncoded: String,
+    itemsPerRow: Int = 3
+) {
     val viewModel: GalleryViewModel = viewModel()
-    //val str = firstImage.toString()
 
     val context = LocalContext.current
 
-    var state:String = ""
+    var state = ""
 
-    if (stateEncoded.contains("story"))
-    {
-        state = "story"
+    if (stateEncoded.contains(GalleryState.STORY.state)) {
+        state = GalleryState.STORY.state
     }
-    if (stateEncoded.contains("recipe"))
-    {
-        state = "recipe"
+    if (stateEncoded.contains(GalleryState.RECIPE.state)) {
+        state = GalleryState.RECIPE.state
     }
 
     val permissionState = rememberMultiplePermissionsState(
@@ -96,9 +97,20 @@ public fun GalleryView(navController: NavController, stateEncoded:String, itemsP
     }
 
 
-    //Try get 150 videos and images each loaded
-    val uris = viewModel.getMediaContent(context = context, limitSize = true, 150)
-    uris.addAll(viewModel.getVideoMediaContent(context = context, limitSize = true, 150))
+    val uris = viewModel.getMediaContent(
+        context = context,
+        limitSize = true,
+        sizeLimit = 150
+    )
+
+    uris.addAll(
+        viewModel.getVideoMediaContent(
+            context = context,
+            limitSize = true,
+            sizeLimit = 150
+        )
+    )
+
     val y = 0;
     for (uri in uris) {
         val type = context.contentResolver.getType(uri)
@@ -109,8 +121,7 @@ public fun GalleryView(navController: NavController, stateEncoded:String, itemsP
 
     ResourceIds.forEach()
     { (name, type) ->
-        if (type == "image") {
-            //val drawable = Drawable.createFromStream(context.contentResolver.openInputStream(name.toUri()), name)
+        if (type == ItemType.IMAGE.type) {
             ResourceDrawables.add(name)
         } else {
             ResourceURI.add(name)
@@ -118,26 +129,12 @@ public fun GalleryView(navController: NavController, stateEncoded:String, itemsP
     }
 
     if (ResourceURI.size < 150) {
-
+        // TODO fill or remove
     }
 
-
-    //Toggles between Image and Video options
     val (selectedImageOption, OnOptionSelected) = remember {
         mutableStateOf(true)
     }
-
-    /*
-    if (firstImage == "image")
-    {
-        OnOptionSelected(true)
-    }
-    else if (firstImage == "video")
-    {
-        OnOptionSelected(false)
-    }
-
-     */
 
     PermissionsRequired(
         multiplePermissionsState = permissionState,
@@ -146,9 +143,10 @@ public fun GalleryView(navController: NavController, stateEncoded:String, itemsP
     )
     {
 
-        Box(modifier = Modifier
-            .background(Color(0xFF031622))
-            .fillMaxWidth()
+        Box(
+            modifier = Modifier
+                .background(Color(0xFF031622))
+                .fillMaxWidth()
         ) {
             Column(
                 modifier = Modifier
@@ -173,14 +171,13 @@ public fun GalleryView(navController: NavController, stateEncoded:String, itemsP
                             painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
                             contentDescription = null,
                             modifier = Modifier
-                                //.aspectRatio(1f)
                                 .width(20.dp)
                                 .height(20.dp)
                         )
                     }
                     Text(
                         fontSize = 30.sp,
-                        text = "Gallery",
+                        text = stringResource(id = R.string.gallery),
                         fontFamily = Montserrat,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(25.dp),
@@ -231,7 +228,7 @@ public fun GalleryView(navController: NavController, stateEncoded:String, itemsP
                         )
                         {
                             Text(
-                                text = "Images",
+                                text = stringResource(id = R.string.images),
                                 fontFamily = Montserrat,
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Bold,
@@ -272,7 +269,7 @@ public fun GalleryView(navController: NavController, stateEncoded:String, itemsP
                         )
                         {
                             Text(
-                                text = "Video",
+                                text = stringResource(id = R.string.video),
                                 fontFamily = Montserrat,
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Bold,
@@ -306,7 +303,14 @@ public fun GalleryView(navController: NavController, stateEncoded:String, itemsP
 }
 
 @Composable
-fun <E> GalleryTab(items: List<E>, itemsPerRow: Int = 3, context: Context,  navController: NavController, itemType: String, state:String) {
+fun <E> GalleryTab(
+    items: List<E>,
+    itemsPerRow: Int = 3,
+    context: Context,
+    navController: NavController,
+    itemType: String,
+    state: String
+) {
     var itemRows: MutableList<MutableList<E>> = arrayListOf()
     val itemRow: MutableList<E> = arrayListOf()
     var count: Int = 0
@@ -326,8 +330,6 @@ fun <E> GalleryTab(items: List<E>, itemsPerRow: Int = 3, context: Context,  navC
         itemRows.add(itemRow)
     }
 
-    //
-    //Displays items in a grid format with a certain number of items per row
     LazyColumn(
         modifier = Modifier
             .padding(5.dp)
@@ -339,15 +341,16 @@ fun <E> GalleryTab(items: List<E>, itemsPerRow: Int = 3, context: Context,  navC
             {
                 val ratioModifier: Modifier = Modifier.weight(1f);
 
-                if (itemType === "image")
-                {
-                    for (item in itemLine)
-                    {
-                        ImageItem(modifier = ratioModifier, imageID = (context).contentResolver.loadThumbnail(item.toString().toUri(), Size(480, 480), null).asImageBitmap())
+                if (itemType == ItemType.IMAGE.type) {
+                    for (item in itemLine) {
+                        ImageItem(
+                            modifier = ratioModifier,
+                            imageID = (context).contentResolver.loadThumbnail(
+                                item.toString().toUri(), Size(480, 480), null
+                            ).asImageBitmap()
+                        )
                     }
-                }
-                else
-                {
+                } else {
                     for (item in itemLine) {
                         VideoItem(ratioModifier, item.toString().toUri(), navController, state)
                     }
@@ -361,13 +364,11 @@ fun <E> GalleryTab(items: List<E>, itemsPerRow: Int = 3, context: Context,  navC
 fun GalleryImageTab(images: List<Uri>, itemsPerRow: Int = 3, context: Context) {
     var imageRows: MutableList<MutableList<ImageBitmap>> = arrayListOf()
     val imageRow: MutableList<ImageBitmap> = arrayListOf()
-    var count: Int = 0
+    var count = 0
 
     for (image in images) {
         count += 1
         imageRow.add(
-            //Try make more efficient
-            //Drawable.createFromStream(context.contentResolver.openInputStream(image), image.toString()) as BitmapDrawable
             (context).contentResolver.loadThumbnail(image, Size(480, 480), null).asImageBitmap()
         )
         if (count == itemsPerRow) {
@@ -382,8 +383,6 @@ fun GalleryImageTab(images: List<Uri>, itemsPerRow: Int = 3, context: Context) {
         imageRows.add(imageRow)
     }
 
-    //
-    //Displays items in a grid format with a certain number of items per row
     LazyColumn(
         modifier = Modifier
             .padding(5.dp)
@@ -400,30 +399,23 @@ fun GalleryImageTab(images: List<Uri>, itemsPerRow: Int = 3, context: Context) {
                 }
             }
         }
-        //Box(modifier = Modifier.fillMaxWidth().padding(5.dp))
     }
 }
 
 @Composable
 fun ImageItem(modifier: Modifier, imageID: ImageBitmap) {
-
-
     //To be altered with intrinsic measurements
     Card(
         modifier = Modifier
-            //.height(32.dp)
-            //.fillMaxWidth(0.32f)
-            //.weight(1f, true)
             .aspectRatio(1f)
             .padding(start = 5.dp, top = 5.dp)
-            //.background(Color.Red)
             .clickable {
-
+                // TODO add functionality
             }
             .then(modifier)
     ) {
         Image(
-            bitmap = imageID,//.bitmap.asImageBitmap(),
+            bitmap = imageID,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -462,8 +454,6 @@ fun GalleryVideoTab(
         videoRows.add(videoRow)
     }
 
-    //
-    //Displays items in a grid format with a certain number of items per row
     LazyColumn(
         modifier = Modifier
             .padding(5.dp)
@@ -497,18 +487,19 @@ fun createVideoThumb(context: Context, uri: Uri): Bitmap? {
 }
 
 @Composable
-fun VideoItem(modifier: Modifier, videoID: Uri = ("").toUri(), navController: NavController, state:String) {
+fun VideoItem(
+    modifier: Modifier,
+    videoID: Uri = ("").toUri(),
+    navController: NavController,
+    state: String
+) {
     val context = LocalContext.current
     val bitmap = createVideoThumb(context = context, videoID)?.asImageBitmap()
     //To be altered with intrinsic measurements
     Card(
         modifier = Modifier
-            //.height(32.dp)
-            //.fillMaxWidth(0.32f)
-            //.weight(1f, true)
             .aspectRatio(1f)
             .padding(start = 5.dp, top = 5.dp)
-            //.background(Color.Red)
             .clickable {
 
                 val uriEncoded = URLEncoder.encode(
@@ -521,7 +512,7 @@ fun VideoItem(modifier: Modifier, videoID: Uri = ("").toUri(), navController: Na
     ) {
         if (bitmap != null) {
             Image(
-                bitmap = bitmap,//painterResource(id = R.drawable.baseline_close_24),
+                bitmap = bitmap,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -530,4 +521,14 @@ fun VideoItem(modifier: Modifier, videoID: Uri = ("").toUri(), navController: Na
             )
         }
     }
+}
+
+enum class ItemType(val type: String) {
+    IMAGE("image"),
+    VIDEO("video")
+}
+
+enum class GalleryState(val state: String) {
+    STORY("story"),
+    RECIPE("recipe")
 }

@@ -44,11 +44,16 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.config.ui.Raleway
+import androidx.compose.ui.res.stringResource
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 
 @Composable
-fun FollowerView(navController: NavController, viewType: String, userId: Long) {
+fun FollowerView(
+    navController: NavController,
+    viewType: String,
+    userId: Long
+) {
     val systemUiController = rememberSystemUiController()
     val viewModel: FollowerFollowingViewModel = hiltViewModel()
 
@@ -60,8 +65,8 @@ fun FollowerView(navController: NavController, viewType: String, userId: Long) {
     }
 
     LaunchedEffect(Unit) {
-        if(viewType == "followers") viewModel.getFollowersList(userId)
-        if(viewType == "following") viewModel.getFollowingList(userId)
+        if(viewType == FollowViewType.FOLLOWERS.type) viewModel.getFollowersList(userId)
+        if(viewType == FollowViewType.FOLLOWING.type) viewModel.getFollowingList(userId)
     }
 
     val titleState = viewModel.title.collectAsState()
@@ -71,17 +76,24 @@ fun FollowerView(navController: NavController, viewType: String, userId: Long) {
     Box(modifier = Modifier
         .fillMaxSize()
         .background(Color.White)) {
-        Column(modifier = Modifier.fillMaxSize().padding(top = 55.dp).background(Color.White)) {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 55.dp)
+            .background(Color.White)) {
             Box(
-                modifier = Modifier.background(Color.Transparent).padding(start = 20.dp),
+                modifier = Modifier
+                    .background(Color.Transparent)
+                    .padding(start = 20.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Button(
                     shape = RectangleShape,
                     modifier = Modifier
                         .border(1.dp, Color(0xFFB8B8B8), shape = RoundedCornerShape(15.dp))
-                        .clip(RoundedCornerShape(15.dp)).align(Alignment.BottomCenter)
-                        .width(40.dp).height(40.dp),
+                        .clip(RoundedCornerShape(15.dp))
+                        .align(Alignment.BottomCenter)
+                        .width(40.dp)
+                        .height(40.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFFB8B8B8),
                         contentColor = Color.White
@@ -90,9 +102,11 @@ fun FollowerView(navController: NavController, viewType: String, userId: Long) {
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.back_icon),
-                        contentDescription = "Back",
+                        contentDescription = stringResource(id = R.string.go_back),
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier.width(20.dp).height(20.dp)
+                        modifier = Modifier
+                            .width(20.dp)
+                            .height(20.dp)
                     )
                 }
             }
@@ -106,8 +120,8 @@ fun FollowerView(navController: NavController, viewType: String, userId: Long) {
             Spacer(modifier = Modifier.height(16.dp))
 
             val userList: List<SimpleUserModel> = when(viewType) {
-                "followers" -> followersListState.value
-                "following" -> followingListState.value
+                FollowViewType.FOLLOWERS.type -> followersListState.value
+                FollowViewType.FOLLOWING.type -> followingListState.value
                 else -> listOf()
             }
 
@@ -119,7 +133,7 @@ fun FollowerView(navController: NavController, viewType: String, userId: Long) {
                         userId = userList[index].userId,
                         imageUrl = userList[index].profilePictureUrl ?: "",
                         username = userList[index].username,
-                        completeName = userList[index].username + " No name in API"
+                        completeName = userList[index].username + stringResource(id = R.string.no_name_found)
                     )
                 }
             }
@@ -133,7 +147,10 @@ fun Follower(
     username: String, completeName: String
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().height(75.dp).padding(vertical = 4.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(75.dp)
+            .padding(vertical = 4.dp)
             .clickable {
                 navController.navigate(
                     BottomBarScreenObject.Profile.route + "?userId=$userId"
@@ -147,7 +164,10 @@ fun Follower(
         AsyncImage(
             model = imageUrl,
             contentDescription = null,
-            modifier = Modifier.size(50.dp).clip(CircleShape).background(Color.White)
+            modifier = Modifier
+                .size(50.dp)
+                .clip(CircleShape)
+                .background(Color.White)
         )
             Spacer(modifier = Modifier.width(12.dp))
             Column {
@@ -166,4 +186,9 @@ fun Follower(
             }
 
     }
+}
+
+enum class FollowViewType(val type: String) {
+    FOLLOWERS("followers"),
+    FOLLOWING("following")
 }
