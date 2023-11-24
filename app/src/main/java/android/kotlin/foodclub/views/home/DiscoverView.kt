@@ -216,13 +216,18 @@ fun DiscoverView(navController: NavController, viewModel: DiscoverViewModel) {
         }
 
         item {
-            SubSearchBar(
-                searchTextValue = ingredientsSearchText,
-                onSearch = { input->
-                    searchText = input
-                    viewModel.onSubSearchTextChange(input)
-                }
-            )
+            if (mainTabIndex == 0){
+                SubSearchBar(
+                    searchTextValue = ingredientsSearchText,
+                    onSearch = { input->
+                        searchText = input
+                        viewModel.onSubSearchTextChange(input)
+                    }
+                )
+            }else{
+                // figure out what do show here
+                Spacer(modifier = Modifier.height(30.dp))
+            }
         }
 
         item {
@@ -913,7 +918,7 @@ fun SingleSearchIngredientItem(
                         .padding(start = 10.dp)
                         .clickable {
                             onDateClicked(item)
-                    },
+                        },
                     text = expirationDate,
                     fontWeight = FontWeight(500),
                     textAlign = TextAlign.Start,
