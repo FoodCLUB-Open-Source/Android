@@ -41,6 +41,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -52,21 +54,27 @@ fun SearchView(
     navController: NavController
 ){
     var mainTabIndex by remember { mutableIntStateOf(0) }
-    val mainTabItemsList = listOf("All", "Recipes", "Creators")
+    val mainTabItemsList = stringArrayResource(id = R.array.search_tabs)
 
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
     ) {
-        SearchRow(searchTextValue = "", navController = navController)
+        SearchRow(
+            searchTextValue = "",
+            navController = navController
+        )
+
         MainTabRow(
-            mainTabItemsList,
-            Arrangement.Start
+            tabsList = mainTabItemsList,
+            horizontalArrangement = Arrangement.Start
         ) {
             mainTabIndex = it
         }
+
         Spacer(modifier = Modifier.height(25.dp))
+
         SearchHistory()
     }
 }
@@ -99,7 +107,7 @@ fun SearchRow(
             ),
             value = searchTextValue,
             onValueChange = {
-                // TODO impl
+                // TODO implementation
             },
             placeholder = {
                 Text(
@@ -117,7 +125,7 @@ fun SearchRow(
                 ) {
                     Icon(
                         painterResource(id = R.drawable.back_arrow),
-                        contentDescription = "",
+                        contentDescription = null,
                         tint = Color.Gray
                     )
                 }
@@ -146,12 +154,15 @@ fun SearchRow(
                         modifier = Modifier.offset(x = (-5).dp, y = 5.dp),
                         containerColor = foodClubGreen
                     )
-                    { Text(text = "5", color = Color.Black) }
+                    { Text(
+                        text = stringResource(id = R.string.dummy_badge_number),
+                        color = Color.Black
+                    ) }
                 }
             ) {
                 Icon(
                     painterResource(id = R.drawable.vector__1_),
-                    contentDescription = "Add to Basket",
+                    contentDescription = stringResource(id = R.string.add_to_basket),
                     tint = Color.Black
                 )
             }
@@ -161,7 +172,7 @@ fun SearchRow(
 
 @Composable
 fun SearchHistory(){
-    val searchHistoryList = listOf("Pizza", "Easy And Quick", "For Children")
+    val searchHistoryList = stringArrayResource(id = R.array.dummy_search_history)
 
     Column(
         modifier = Modifier
@@ -171,7 +182,7 @@ fun SearchHistory(){
     ) {
         Text(
             modifier = Modifier.padding(bottom = 10.dp),
-            text = "Recent Searches",
+            text = stringResource(id = R.string.recent_searches),
             fontSize = 20.sp,
             lineHeight = 24.38.sp,
             fontFamily = Montserrat,
@@ -201,7 +212,7 @@ fun SearchHistory(){
                             ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.history_icon),
-                                    contentDescription = "",
+                                    contentDescription = null,
                                     tint = Color.Gray
                                 )
                                 Text(

@@ -47,13 +47,17 @@ import androidx.compose.ui.unit.dp
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomBottomSheet(itemList: List<BottomSheetItem>, sheetTitle: String,
-                      modifier: Modifier = Modifier, enableDragHandle: Boolean = false,
-                      onDismiss: () -> Unit = {}) {
+fun CustomBottomSheet(
+    itemList: List<BottomSheetItem>, sheetTitle: String,
+    modifier: Modifier = Modifier, enableDragHandle: Boolean = false,
+    onDismiss: () -> Unit = {}
+) {
     ModalBottomSheet(
         containerColor = Color.White,
         onDismissRequest = { onDismiss() },
-        dragHandle = if(enableDragHandle) { { BottomSheetDefaults.DragHandle() } } else null,
+        dragHandle = if (enableDragHandle) {
+            { BottomSheetDefaults.DragHandle() }
+        } else null,
         modifier = modifier
     ) {
         Column(
@@ -65,7 +69,7 @@ fun CustomBottomSheet(itemList: List<BottomSheetItem>, sheetTitle: String,
                 text = sheetTitle,
                 fontFamily = Montserrat,
                 fontWeight = FontWeight.Bold,
-                modifier = if(!enableDragHandle) Modifier.padding(top = 36.dp) else Modifier
+                modifier = if (!enableDragHandle) Modifier.padding(top = 36.dp) else Modifier
             )
             Divider(
                 color = Color.Gray,
@@ -101,7 +105,11 @@ fun CustomBottomSheet(itemList: List<BottomSheetItem>, sheetTitle: String,
  * @param onClick Executes when user clicks on the given element and animates sheet to [Hidden]
  */
 @Composable
-fun BottomSheetItem(icon: Int, text: String, onClick: () -> Unit) {
+fun BottomSheetItem(
+    icon: Int,
+    text: String,
+    onClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .clickable { onClick() }

@@ -70,7 +70,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import android.kotlin.foodclub.viewModels.home.DiscoverViewModel
-import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.heightIn
@@ -111,6 +110,8 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -122,18 +123,25 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun DiscoverView(navController: NavController, viewModel: DiscoverViewModel) {
+fun DiscoverView(
+    navController: NavController,
+    viewModel: DiscoverViewModel
+) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 240.dp
 
     var isSmallScreen by remember { mutableStateOf(false) }
-    if (screenHeight <= 440.dp) { isSmallScreen = true }
+    if (screenHeight <= 440.dp) {
+        isSmallScreen = true
+    }
 
     val systemUiController = rememberSystemUiController()
+
     SideEffect {
         systemUiController.setSystemBarsColor(
             color = Color.White, darkIcons = true
         )
     }
+
     val mainSearchText by viewModel.mainSearchText.collectAsState()
     val ingredientsSearchText by viewModel.ingredientsSearchText.collectAsState()
 
@@ -153,10 +161,11 @@ fun DiscoverView(navController: NavController, viewModel: DiscoverViewModel) {
     }
     var isDialogOpen by remember { mutableStateOf(false) }
     var alphaValue by remember { mutableFloatStateOf(1f) }
-    if (isDialogOpen){
-        alphaValue = 0.7f
-    }else{
-        alphaValue = 1f
+
+    alphaValue = if (isDialogOpen) {
+        0.7f
+    } else {
+        1f
     }
 
     val datePickerDialogColors = DatePickerDefaults.colors(
@@ -189,7 +198,7 @@ fun DiscoverView(navController: NavController, viewModel: DiscoverViewModel) {
         )
     )
     var mainTabIndex by remember { mutableIntStateOf(0) }
-    val mainTabItemsList = listOf("My Kitchen", "World", "Categories")
+    val mainTabItemsList = stringArrayResource(id = R.array.discover_tabs)
 
     LazyColumn(
         modifier = Modifier
@@ -240,10 +249,10 @@ fun DiscoverView(navController: NavController, viewModel: DiscoverViewModel) {
         }
 
         item {
-            if (isSheetOpen){
+            if (isSheetOpen) {
                 EditIngredientBottomModal(
                     ingredient = viewModel.ingredientToEdit.value!!,
-                    onDismissRequest = { isSheetOpen = it},
+                    onDismissRequest = { isSheetOpen = it },
                     onEdit = {
                         viewModel.updateIngredient(it)
                     }
@@ -263,7 +272,7 @@ fun DiscoverView(navController: NavController, viewModel: DiscoverViewModel) {
                         datePickerDialogColors = datePickerDialogColors,
                         onDismiss = { isDatePickerVisible = false },
                         onSave = { date ->
-                            if (date != null){
+                            if (date != null) {
                                 selectedDate = date
                                 viewModel.ingredientToEdit.value!!.expirationDate = selectedDate
                                 viewModel.updateIngredient(viewModel.ingredientToEdit.value!!)
@@ -272,9 +281,9 @@ fun DiscoverView(navController: NavController, viewModel: DiscoverViewModel) {
                     )
                 }
             }
-            if (isDialogOpen){
+            if (isDialogOpen) {
                 AddIngredientDialog()
-                LaunchedEffect(key1 = true){
+                LaunchedEffect(key1 = true) {
                     delay(3000)
                     isDialogOpen = false
                 }
@@ -282,7 +291,7 @@ fun DiscoverView(navController: NavController, viewModel: DiscoverViewModel) {
         }
 
         item {
-            if (mainTabIndex == 0){
+            if (mainTabIndex == 0) {
                 homePosts = viewModel.postList.collectAsState()
 
                 if (searchText.isBlank()) {
@@ -294,7 +303,6 @@ fun DiscoverView(navController: NavController, viewModel: DiscoverViewModel) {
                         onEditQuantityClicked = {
                             isSheetOpen = true
                             viewModel.ingredientToEdit.value = it
-//                            viewModel.updateIngredient(it)
                         },
                         onDateClicked = {
                             viewModel.ingredientToEdit.value = it
@@ -342,7 +350,7 @@ fun DiscoverView(navController: NavController, viewModel: DiscoverViewModel) {
                         modifier = Modifier.clickable {
                             navController.navigate("MY_DIGITAL_PANTRY_VIEW")
                         },
-                        text = "See All Ingredients",
+                        text = stringResource(id = R.string.see_all_ingredients),
                         color = foodClubGreen,
                         fontWeight = FontWeight.Bold,
                         style = TextStyle(
@@ -377,14 +385,12 @@ fun DiscoverView(navController: NavController, viewModel: DiscoverViewModel) {
                         LazyVerticalGrid(columns = GridCells.Fixed(2)) {
                             val userName = viewModel.sessionUserName.value
 
-                            if(homePosts!=null){
+                            if (homePosts != null) {
                                 items(homePosts!!.value) { dataItem ->
                                     viewModel.getPostData(dataItem.videoId)
                                     GridItem2(navController, dataItem, userName)
                                 }
-                            }
-
-                            else if(worldPosts!=null){
+                            } else if (worldPosts != null) {
                                 items(worldPosts.value) { dataItem ->
 
                                     viewModel.getPostData(dataItem.videoId)
@@ -427,7 +433,7 @@ fun DiscoverView(navController: NavController, viewModel: DiscoverViewModel) {
 fun MainSearchBar(
     searchTextValue: String,
     navController: NavController
-){
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -443,8 +449,7 @@ fun MainSearchBar(
                 )
                 .pointerInput(Unit) {
                     navController.navigate("SEARCH_VIEW")
-                }
-            ,
+                },
             colors = TextFieldDefaults.textFieldColors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
@@ -458,7 +463,7 @@ fun MainSearchBar(
             placeholder = {
                 Text(
                     modifier = Modifier.padding(top = 3.dp),
-                    text = "Search for recipes, usernames...",
+                    text = stringResource(id = R.string.search_for),
                     color = Color.Gray,
                     textAlign = TextAlign.Center
                 )
@@ -469,7 +474,7 @@ fun MainSearchBar(
                 ) {
                     Icon(
                         painterResource(id = R.drawable.search_icon_ingredients),
-                        contentDescription = "",
+                        contentDescription = null,
                     )
                 }
             }
@@ -498,13 +503,14 @@ fun MainSearchBar(
                 badge = {
                     Badge(
                         modifier = Modifier.offset(x = (-5).dp, y = 5.dp),
-                        containerColor = foodClubGreen)
+                        containerColor = foodClubGreen
+                    )
                     { Text(text = "5", color = Color.Black) }
                 }
             ) {
                 Icon(
                     painterResource(id = R.drawable.vector__1_),
-                    contentDescription = "Add to Basket",
+                    contentDescription = stringResource(id = R.string.add_to_basket),
                     tint = Color.Black
                 )
             }
@@ -515,16 +521,16 @@ fun MainSearchBar(
 
 @Composable
 fun MainTabRow(
-    tabsList: List<String>,
+    tabsList: Array<String>,
     horizontalArrangement: Arrangement.Horizontal,
-    onTabChanged: (Int) -> Unit) {
+    onTabChanged: (Int) -> Unit
+) {
     var mainTabIndex by remember { mutableIntStateOf(0) }
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 10.dp)
-        ,
+            .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 10.dp),
         horizontalArrangement = horizontalArrangement
     ) {
         tabsList.forEachIndexed { index, data ->
@@ -559,7 +565,7 @@ fun MainTabRow(
                 textAlign = TextAlign.Start,
                 fontFamily = Montserrat
             )
-            if (tabsList[0] != "My Kitchen"){
+            if (tabsList[0] != stringResource(id = R.string.my_kitchen)) {
                 Spacer(modifier = Modifier.width(50.dp))
             }
         }
@@ -599,7 +605,7 @@ fun SubSearchBar(
             placeholder = {
                 Text(
                     modifier = Modifier.padding(top = 3.dp),
-                    text = "Search to find or add...",
+                    text = stringResource(id = R.string.search_to),
                     color = Color.Gray,
                     textAlign = TextAlign.Center
                 )
@@ -612,7 +618,7 @@ fun SubSearchBar(
                 ) {
                     Icon(
                         painterResource(id = R.drawable.search_icon_ingredients),
-                        contentDescription = "",
+                        contentDescription = null,
                     )
                 }
             }
@@ -651,11 +657,12 @@ fun SubSearchBar(
 
     }
 }
+
 @Composable
 fun SubTabRow(
     onTabChanged: (Int) -> Unit
 ) {
-    val subTabItemsList = listOf("Veg & Fruits", "Grains & Cereals", "Dairy & Alternatives")
+    val subTabItemsList = stringArrayResource(id = R.array.discover_sub_tabs)
     var subTabIndex by remember { mutableIntStateOf(0) }
 
     LazyRow(
@@ -670,9 +677,9 @@ fun SubTabRow(
                             if (selected) {
                                 val strokeWidthPx = 2.dp.toPx()
                                 val topPaddingPx =
-                                    4.dp.toPx() // Adjust the top padding as needed
+                                    4.dp.toPx()
                                 val underlineHeight =
-                                    2.dp.toPx() // Adjust the underline height as needed
+                                    2.dp.toPx()
                                 val verticalOffset =
                                     size.height - (underlineHeight / 2) + topPaddingPx
                                 drawLine(
@@ -686,8 +693,7 @@ fun SubTabRow(
                         .clickable {
                             subTabIndex = index
                             onTabChanged(index)
-                        }
-                    ,
+                        },
                     text = data,
                     fontWeight = if (selected) FontWeight(500) else FontWeight.Normal,
                     color = if (selected) Color.Black else Color(0xFFC2C2C2),
@@ -696,7 +702,7 @@ fun SubTabRow(
                     textAlign = TextAlign.Start,
                     fontFamily = Montserrat
                 )
-                Spacer(modifier = Modifier.width(50.dp)) // Add spacing
+                Spacer(modifier = Modifier.width(50.dp))
             }
         }
     )
@@ -714,23 +720,26 @@ fun IngredientsList(
     userIngredientsList: State<List<Ingredient>>
 ) {
     Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.57f)
-                .background(
-                    color = Color.White
-                )
-            ) {
-        TitlesSection(modifier, view = "DiscoverView")
+        modifier = modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.57f)
+            .background(
+                color = Color.White
+            )
+    ) {
+        TitlesSection(
+            modifier = modifier,
+            view = stringResource(id = R.string.discover_view)
+        )
 
         IngredientsListColumn(
             viewModel = viewModel,
             productsList = productsList,
             userIngredientsList = userIngredientsList.value,
-            onEditQuantityClicked ={ onEditQuantityClicked(it) },
+            onEditQuantityClicked = { onEditQuantityClicked(it) },
             onDateClicked = { onDateClicked(it) },
             onIngredientAdd = { onIngredientAdd(it) },
-            onDeleteIngredient = { onDeleteIngredient(it)}
+            onDeleteIngredient = { onDeleteIngredient(it) }
         )
     }
 }
@@ -745,7 +754,7 @@ fun IngredientsListColumn(
     onIngredientAdd: (Ingredient) -> Unit,
     onDeleteIngredient: (Ingredient) -> Unit,
     userIngredientsList: List<Ingredient>
-){
+) {
     LazyColumn(
         modifier = Modifier
             .padding(start = 15.dp, end = 15.dp)
@@ -795,13 +804,12 @@ fun IngredientsListColumn(
                             Modifier
                                 .fillMaxSize()
                                 .background(color)
-                                .padding(horizontal = 20.dp)
-                            ,
+                                .padding(horizontal = 20.dp),
                             contentAlignment = alignment
                         ) {
                             Icon(
                                 icon,
-                                contentDescription = "Localized description",
+                                contentDescription = null,
                                 modifier = Modifier.scale(scale),
                                 tint = Color.White
                             )
@@ -810,7 +818,7 @@ fun IngredientsListColumn(
                     dismissContent = {
                         SingleSearchIngredientItem(
                             modifier = Modifier,
-                            item =item,
+                            item = item,
                             userIngredientsList = userIngredientsList,
                             onEditQuantityClicked = {
                                 viewModel.ingredientToEdit.value = it
@@ -845,14 +853,11 @@ fun SingleSearchIngredientItem(
     onDateClicked: (Ingredient) -> Unit,
     onAddItemClicked: (Ingredient) -> Unit,
     userIngredientsList: List<Ingredient>
-){
-    val unit = "g" // for now
-    val quantity = if (item.quantity != 0) item.quantity.toString()+unit else "Edit"
-    val expirationDate = if (item.expirationDate != ""){
-        item.expirationDate.split(" ").take(2).joinToString(" ")
-    } else "Edit"
+) {
+    val unit = stringResource(id = R.string.gram_unit) // TODO make this dynamic
+    val quantity = itemQuantity(item, unit)
+    val expirationDate = itemExpirationDate(item)
     val isItemAdded = item in userIngredientsList
-
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -862,7 +867,8 @@ fun SingleSearchIngredientItem(
             .fillMaxHeight()
             .background(Color.White)
     ) {
-        Column(modifier = modifier.weight(1f)
+        Column(
+            modifier = modifier.weight(1f)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -877,7 +883,7 @@ fun SingleSearchIngredientItem(
                         .clip(CircleShape)
                 )
                 Text(
-                    modifier =modifier.padding(start = 6.dp),
+                    modifier = modifier.padding(start = 6.dp),
                     text = item.type,
                     fontWeight = FontWeight(500),
                     lineHeight = 19.5.sp,
@@ -903,7 +909,7 @@ fun SingleSearchIngredientItem(
                     lineHeight = 19.5.sp,
                     fontFamily = Montserrat,
                     color = Color.Gray,
-                    style = if (quantity == "Edit") TextStyle(textDecoration = TextDecoration.Underline) else TextStyle(textDecoration = TextDecoration.None)
+                    style = quantityTextStyle(quantity)
                 )
             }
         }
@@ -926,9 +932,9 @@ fun SingleSearchIngredientItem(
                     lineHeight = 19.5.sp,
                     fontFamily = Montserrat,
                     color = Color.Gray,
-                    style = if (expirationDate == "Edit") TextStyle(textDecoration = TextDecoration.Underline) else TextStyle(textDecoration = TextDecoration.None)
+                    style = expirationDateTextStyle(expirationDate)
                 )
-                if (!isItemAdded){
+                if (!isItemAdded) {
                     Box(
                         modifier = Modifier
                             .size(24.dp)
@@ -957,7 +963,7 @@ fun EditIngredientBottomModal(
     ingredient: Ingredient,
     onDismissRequest: (Boolean) -> Unit,
     onEdit: (Ingredient) -> Unit
-){
+) {
     val sheetState = rememberModalBottomSheetState()
     ModalBottomSheet(
         sheetState = sheetState,
@@ -970,14 +976,14 @@ fun EditIngredientBottomModal(
             mutableStateOf((1..10).map {
                 Pair(
                     it,
-                    (it * 100).toString()+ValueParser.quantityUnitToString(ingredient.unit)
+                    (it * 100).toString() + ValueParser.quantityUnitToString(ingredient.unit)
                 )
             })
         }
 
         val quantity = pickerValues.value.map { it.first }
         val grammage = pickerValues.value.map { it.second }
-        val types = listOf("Pint","Jar","Cup","Bottle","Bag","Sack","Can")
+        val types = stringArrayResource(id = R.array.quantity_list).toList()
         Column(
             modifier = Modifier
                 .heightIn(max = 350.dp)
@@ -998,10 +1004,10 @@ fun EditIngredientBottomModal(
 }
 
 @Composable
-fun AddIngredientDialog(){
+fun AddIngredientDialog() {
     Dialog(
         properties = DialogProperties(dismissOnClickOutside = false, dismissOnBackPress = false),
-        onDismissRequest = {  }) {
+        onDismissRequest = { }) {
         Card(
             modifier = Modifier
                 .width(500.dp)
@@ -1009,7 +1015,8 @@ fun AddIngredientDialog(){
                 .background(Color.White),
             shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.cardElevation(
-                defaultElevation = 10.dp),
+                defaultElevation = 10.dp
+            ),
             colors = CardDefaults.cardColors(containerColor = Color.White)
         ) {
             Column(
@@ -1039,7 +1046,7 @@ fun AddIngredientDialog(){
                         )
                     }
                     Text(
-                        text = "Added!",
+                        text = stringResource(id = R.string.added),
                         modifier = Modifier.padding(start = 10.dp),
                         fontWeight = FontWeight(600),
                         lineHeight = 19.5.sp,
@@ -1053,8 +1060,7 @@ fun AddIngredientDialog(){
                         .padding(vertical = 10.dp, horizontal = 30.dp),
                 ) {
                     Text(
-                        text = "Successfully added 1 ingredient in your digital pantry," +
-                                " now you can start your FoodCLUB journey!",
+                        text = stringResource(id = R.string.successfully_added),
                         fontFamily = Montserrat,
                         fontSize = 14.sp,
                         lineHeight = 17.07.sp,
@@ -1067,18 +1073,21 @@ fun AddIngredientDialog(){
 }
 
 @Composable
-fun GridItem2(navController: NavController, dataItem: VideoModel, userName:String) {
-    Card(modifier = Modifier
-        .height(272.dp)
-        .width(178.dp)
-        .padding(10.dp), shape = RoundedCornerShape(15.dp)
+fun GridItem2(navController: NavController, dataItem: VideoModel, userName: String) {
+    Card(
+        modifier = Modifier
+            .height(272.dp)
+            .width(178.dp)
+            .padding(10.dp), shape = RoundedCornerShape(15.dp)
     ) {
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+        ) {
             Image(
                 painter = rememberAsyncImagePainter(dataItem.thumbnailLink),
-                contentDescription = "",
+                contentDescription = null,
                 Modifier
                     .fillMaxSize()
                     .clickable { navController.navigate("DELETE_RECIPE/${dataItem.videoId}") },
@@ -1097,10 +1106,10 @@ fun GridItem2(navController: NavController, dataItem: VideoModel, userName:Strin
                     fontSize = 15.sp
                 )
                 Text(
-                    text =  dataItem.createdAt ,
+                    text = dataItem.createdAt,
                     fontFamily = Satoshi,
                     fontSize = 13.sp,
-                    color= Color.White
+                    color = Color.White
                 )
             }
         }
@@ -1165,18 +1174,21 @@ fun TabHomeDiscover(
 
 @Composable
 fun GridItem2(navController: NavController, dataItem: UserPosts, userName: String) {
-    Card(modifier = Modifier
-        .height(272.dp)
-        .width(178.dp)
-        .padding(10.dp), shape = RoundedCornerShape(15.dp)
+    Card(
+        modifier = Modifier
+            .height(272.dp)
+            .width(178.dp)
+            .padding(10.dp), shape = RoundedCornerShape(15.dp)
     ) {
 
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+        ) {
             Image(
                 painter = rememberAsyncImagePainter(dataItem.thumbnailUrl),
-                contentDescription = "",
+                contentDescription = null,
                 Modifier
                     .fillMaxSize()
                     .clickable { navController.navigate("DELETE_RECIPE/${dataItem.id}") },
@@ -1188,7 +1200,7 @@ fun GridItem2(navController: NavController, dataItem: UserPosts, userName: Strin
                     .padding(10.dp), verticalArrangement = Arrangement.Bottom
             ) {
                 Text(
-                    text = dataItem.totalLikes.toString() ,
+                    text = dataItem.totalLikes.toString(),
                     fontFamily = Satoshi,
                     color = Color.White,
                     fontSize = 15.sp
@@ -1199,3 +1211,30 @@ fun GridItem2(navController: NavController, dataItem: UserPosts, userName: Strin
 
     }
 }
+
+@Composable
+fun itemQuantity(item: Ingredient, unit: String): String {
+    return if (item.quantity != 0) item.quantity.toString() + unit else stringResource(id = R.string.edit)
+}
+
+@Composable
+fun itemExpirationDate(item: Ingredient): String {
+    return if (item.expirationDate != "") {
+        item.expirationDate.split(" ").take(2).joinToString(" ")
+    } else stringResource(id = R.string.edit)
+}
+
+@Composable
+fun quantityTextStyle(quantity: String): TextStyle {
+    return if (quantity == stringResource(id = R.string.edit)) TextStyle(textDecoration = TextDecoration.Underline) else TextStyle(
+        textDecoration = TextDecoration.None
+    )
+}
+
+@Composable
+fun expirationDateTextStyle(expirationDate: String): TextStyle {
+    return if (expirationDate == stringResource(id = R.string.edit)) TextStyle(textDecoration = TextDecoration.Underline) else TextStyle(
+        textDecoration = TextDecoration.None
+    )
+}
+

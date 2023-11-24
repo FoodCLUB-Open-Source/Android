@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -63,7 +64,9 @@ import androidx.compose.ui.unit.sp
  * @param onFillCallback Executes when all 6 fields were filled with numbers
  */
 @Composable
-fun CustomCodeTextField(onFillCallback: (Boolean, String) -> Unit) {
+fun CustomCodeTextField(
+    onFillCallback: (Boolean, String) -> Unit
+) {
     var text by remember { mutableStateOf("") }
     BasicTextField(modifier = Modifier.fillMaxWidth(),
         value = text,
@@ -97,7 +100,11 @@ fun CustomCodeTextField(onFillCallback: (Boolean, String) -> Unit) {
                         Text(
                             text = text.getOrNull(index)?.toString() ?: "",
                             textAlign = TextAlign.Center,
-                            style = TextStyle(fontFamily = PlusJakartaSans, fontSize = 32.sp, fontWeight = FontWeight.SemiBold)
+                            style = TextStyle(
+                                fontFamily = PlusJakartaSans,
+                                fontSize = 32.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
                         )
                     }
                 }
@@ -126,10 +133,15 @@ fun CustomCodeTextField(onFillCallback: (Boolean, String) -> Unit) {
  */
 @Composable
 fun CustomTextField(
-    placeholder: String, keyboardType: KeyboardType, modifier: Modifier = Modifier,
-    initialValue: String = "", textValidation: Boolean = false,
-    allowSpace: Boolean = false, validationMethod: (text: String) -> String? = { text -> text },
-    onCorrectnessStateChange: () -> Unit = {}, onValueChange: (text: String) -> Unit,
+    placeholder: String,
+    keyboardType: KeyboardType,
+    modifier: Modifier = Modifier,
+    initialValue: String = "",
+    textValidation: Boolean = false,
+    allowSpace: Boolean = false,
+    validationMethod: (text: String) -> String? = { text -> text },
+    onCorrectnessStateChange: () -> Unit = {},
+    onValueChange: (text: String) -> Unit,
 ) {
     var text by remember { mutableStateOf(initialValue) }
     var textValid by remember { mutableStateOf(false) }
@@ -140,7 +152,7 @@ fun CustomTextField(
             value = text,
             onValueChange = {
                 var textValidCurrent = true
-                val currentVal = if(allowSpace) it else it.trim()
+                val currentVal = if (allowSpace) it else it.trim()
                 if (textValidation) {
                     errorMessage = validationMethod(currentVal)
                     textValidCurrent = errorMessage.isNullOrBlank()
@@ -206,8 +218,9 @@ fun CustomPasswordTextField(
     var passValid by remember { mutableStateOf(false) }
     var errorMessage: String? by remember { mutableStateOf(null) }
 
-    val composableLabel: @Composable (() -> Unit)? = if(!label.isNullOrBlank()) {
-        @Composable { Text(text = label) } } else null
+    val composableLabel: @Composable (() -> Unit)? = if (!label.isNullOrBlank()) {
+        @Composable { Text(text = label) }
+    } else null
 
     Column {
         TextField(
@@ -228,7 +241,12 @@ fun CustomPasswordTextField(
                 passValid = passValidCurrent
             },
             label = composableLabel,
-            placeholder = { Text(text = placeholder, color = Color(0xFF939393)) },
+            placeholder = {
+                Text(
+                    text = placeholder,
+                    color = Color(0xFF939393)
+                )
+            },
             colors = if (errorMessage.isNullOrBlank()) textFieldColors else errorTextFieldColors,
             modifier = Modifier
                 .border(1.dp, Color(0xFFDADADA), RoundedCornerShape(percent = 20))
@@ -299,7 +317,7 @@ fun BackButton(onBackButtonClick: () -> Unit) {
     ) {
         Image(
             painter = painterResource(id = R.drawable.back_icon),
-            contentDescription = "Back",
+            contentDescription = stringResource(id = R.string.go_back),
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .width(36.dp)
@@ -351,14 +369,14 @@ fun TermsAndConditionsInfoFooter(onClick: () -> Unit = {}) {
     ) {
         Text(
             color = Color.Gray,
-            text = "By using FoodCLUB you agree to our ",
+            text = stringResource(id = R.string.by_using),
             fontFamily = Montserrat,
             fontSize = 10.sp
         )
 
         ClickableText(
-            text = AnnotatedString("Terms & Conditions"),
-            onClick={ onClick() },
+            text = AnnotatedString(text = stringResource(id = R.string.terms_and_conditions)),
+            onClick = { onClick() },
             style = TextStyle(
                 color = Color.Gray,
                 fontFamily = Montserrat,
@@ -381,10 +399,17 @@ fun TermsAndConditionsInfoFooter(onClick: () -> Unit = {}) {
  * @param onClick Executes when button is clicked
  */
 @Composable
-fun ConfirmButton(enabled: Boolean, text: String, onClick: () -> Unit) {
+fun ConfirmButton(
+    enabled: Boolean,
+    text: String,
+    onClick: () -> Unit
+) {
     Button(
         shape = RoundedCornerShape(10.dp),
-        modifier = Modifier.height(56.dp).clip(RoundedCornerShape(10.dp)).fillMaxWidth(),
+        modifier = Modifier
+            .height(56.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .fillMaxWidth(),
         enabled = enabled,
         colors = defaultButtonColors(),
         onClick = { onClick() }
