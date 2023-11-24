@@ -134,7 +134,9 @@ class DiscoverViewModel @Inject constructor(
     }
 
     fun updateIngredient(ingredient: Ingredient) {
-        
+        Log.i("MYTAG","INGR ${ingredient.quantity}")
+        Log.i("MYTAG","INGR ${ingredient.unit}")
+        Log.i("MYTAG","LIST BEFORE ${_userIngredientsList.value[0].quantity}")
         _userIngredientsList.update { currentList ->
             currentList.map { item ->
                 if (item.id == ingredient.id) {
