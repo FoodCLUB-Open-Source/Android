@@ -30,7 +30,6 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -128,7 +127,9 @@ fun RecordingClipsButton(
     removeClip: Boolean = false,
     removeUpdate: (Boolean) -> Unit = {},
     addClip: Boolean = false,
-    clipUpdate: (Boolean) -> Unit = {}
+    clipUpdate: (Boolean) -> Unit = {},
+    viewModel: CameraViewModel? = null,
+    timeLimitMilliseconds: Int = 6000
 ) {
 
     val (rememberProgress, progressUpdate) = remember {
@@ -151,6 +152,9 @@ fun RecordingClipsButton(
         removeUpdate(false)
     }
 
+    val progress: Float = (viewModel?.totalMilliseconds?.value ?: 0).toFloat() / timeLimitMilliseconds
+
+    /*
     val progress by animateFloatAsState(
         targetValue = if (isRecording) 1f else rememberProgress,
         animationSpec = if (isRecording) {infiniteRepeatable<Float>(
@@ -163,6 +167,8 @@ fun RecordingClipsButton(
         }
        , label = ""
     )
+
+     */
 
     if (!isRecording) {
         if (progress != 0f && addClip) {
@@ -326,10 +332,11 @@ fun CameraView(
     }
 
     var confirmDeletion by remember{
-        mutableStateOf(true)
+        mutableStateOf(false)
     }
 
     LaunchedEffect(Unit) {
+        viewModel.onEvent(StopWatchEvent.onReset)
         permissionState.launchMultiplePermissionRequest()
     }
 
@@ -438,27 +445,33 @@ fun CameraView(
                     if (confirmDeletion)
                     {
                         AlertDialog(onDismissRequest = { confirmDeletion = !confirmDeletion },
-                            modifier = Modifier.background(Color(0x55FFBBBB)),) {
-                            Text(text = "Do you want to delete the last clip made?")
+                            modifier = Modifier.background(Color(0x55FFBBBB), RoundedCornerShape(5.dp)).padding(5.dp),) {
 
-                            Row {
-                                Button(onClick = {
-                                    confirmDeletion = !confirmDeletion
+                            Column(horizontalAlignment = Alignment.CenterHorizontally){
+                                Text(text = "Do you want to delete the last clip made?")
 
-                                }) {
-                                    Text(text="Cancel")
-                                }
+                                Row(horizontalArrangement = Arrangement.SpaceEvenly) {
+                                    Button(colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                                        onClick = {
+                                        confirmDeletion = !confirmDeletion
 
-                                Button(onClick = {
-                                    uris.removeAt(uris.lastIndex)
-                                    viewModel.onEvent(StopWatchEvent.onRecall)
-                                    removeUpdate(true)
-                                    canDelete = false
-                                    confirmDeletion = !confirmDeletion
-                                }) {
-                                    Text(text="Confirm")
+                                    }) {
+                                        Text(text="Cancel")
+                                    }
+
+                                    Button(colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                                        onClick = {
+                                        uris.removeAt(uris.lastIndex)
+                                        viewModel.onEvent(StopWatchEvent.onRecall)
+                                        removeUpdate(true)
+                                        canDelete = false
+                                        confirmDeletion = !confirmDeletion
+                                    }) {
+                                        Text(text="Confirm")
+                                    }
                                 }
                             }
+
                         }
                     }
                     
@@ -620,7 +633,8 @@ fun CameraView(
                             removeClip = removeClip,
                             removeUpdate = removeUpdate,
                             addClip = addClip,
-                            clipUpdate = clipUpdate
+                            clipUpdate = clipUpdate,
+                            viewModel = viewModel
                         )
 
 

@@ -15,16 +15,21 @@ class CameraViewModel : ViewModel() {
     var milliseconds = mutableIntStateOf(0)
         private set
 
+    var totalMilliseconds = mutableIntStateOf(0)
+        private set
+
     private var isCounting = false
 
     private var prevMinutes = mutableListOf<Int>()
     private var prevSeconds = mutableListOf<Int>()
     private var prevMilliseconds = mutableListOf<Int>()
+    private var prevTotalMilliseconds = mutableListOf<Int>()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
             while (true) {
                 if (isCounting) {
+                    totalMilliseconds.value++
                     if (milliseconds.value < 100) {
                         milliseconds.value++
                     }
@@ -51,21 +56,23 @@ class CameraViewModel : ViewModel() {
                 minutes.value = 0
                 seconds.value = 0
                 milliseconds.value = 0
+                totalMilliseconds.value = 0
                 prevMinutes.clear()
                 prevSeconds.clear()
                 prevMilliseconds.clear()
+                prevTotalMilliseconds.clear()
             }
 
             StopWatchEvent.onStart -> {
                 prevMinutes.add(minutes.value)
                 prevSeconds.add(seconds.value)
                 prevMilliseconds.add(milliseconds.value)
+                prevTotalMilliseconds.add(totalMilliseconds.value)
                 isCounting = true
             }
 
             StopWatchEvent.onStop -> {
                 isCounting = false
-
             }
 
             StopWatchEvent.onRecall -> {
@@ -76,6 +83,8 @@ class CameraViewModel : ViewModel() {
                 prevSeconds.removeAt(prevSeconds.lastIndex)
                 milliseconds.value = prevMilliseconds[prevMilliseconds.lastIndex]
                 prevMilliseconds.removeAt(prevMilliseconds.lastIndex)
+                totalMilliseconds.value = prevTotalMilliseconds[prevTotalMilliseconds.lastIndex]
+                prevTotalMilliseconds.removeAt(prevTotalMilliseconds.lastIndex)
             }
         }
     }
