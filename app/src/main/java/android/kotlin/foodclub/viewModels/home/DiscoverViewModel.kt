@@ -16,6 +16,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -58,6 +60,8 @@ class DiscoverViewModel @Inject constructor(
     private val _mainSearchText = MutableStateFlow("")
     var mainSearchText = _mainSearchText.asStateFlow()
 
+    private var searchJob: Job? = null
+
     private val _ingredientsSearchText = MutableStateFlow("")
     var ingredientsSearchText = _ingredientsSearchText.asStateFlow()
 
@@ -96,8 +100,13 @@ class DiscoverViewModel @Inject constructor(
 
     fun onSubSearchTextChange(text: String) {
         _ingredientsSearchText.value = text
-        viewModelScope.launch {
-            fetchProductsDatabase(text)
+        searchJob?.cancel() // Cancel the previous job if it exists
+
+        searchJob = viewModelScope.launch {
+            if (text != ""){
+                delay(1000) // Delay for 1000 milliseconds
+                fetchProductsDatabase(_ingredientsSearchText.value)
+            }
         }
     }
 
@@ -115,9 +124,6 @@ class DiscoverViewModel @Inject constructor(
     }
 
     fun updateIngredient(ingredient: Ingredient) {
-        Log.i("MYTAG","INGR ${ingredient.quantity}")
-        Log.i("MYTAG","INGR ${ingredient.unit}")
-        Log.i("MYTAG","LIST BEFORE ${_userIngredientsList.value[0].quantity}")
 
         _userIngredientsList.update { currentList ->
             currentList.map { item ->
@@ -145,8 +151,12 @@ class DiscoverViewModel @Inject constructor(
     }
 
     private suspend fun fetchProductsDatabase(searchText: String) {
+        Log.e("MYTAG","made call $searchText")
+
         when(val resource = productsRepo.getProductsList(searchText)) {
             is Resource.Success -> {
+                Log.e("MYTAG","SUCCESS")
+
                 _error.value = ""
                 _productsDatabase.value = resource.data!!
             }
