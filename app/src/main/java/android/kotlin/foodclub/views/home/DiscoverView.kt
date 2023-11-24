@@ -219,7 +219,7 @@ fun DiscoverView(navController: NavController, viewModel: DiscoverViewModel) {
         item {
             if (mainTabIndex == 0) {
                 SubSearchBar(
-                    navController=navController,
+
                     searchTextValue = ingredientsSearchText,
                     onSearch = { input ->
                         searchText = input
@@ -571,10 +571,11 @@ fun MainTabRow(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubSearchBar(
-    navController:NavController,
+
     searchTextValue: String,
     onSearch: (String) -> Unit
 ) {
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -632,7 +633,7 @@ fun SubSearchBar(
             contentPadding = PaddingValues(),
             onClick = {
                 // TODO impl camera
-                navController.navigate("ScanView_route")
+               // navController.navigate("ScanView_route")
             }
         ) {
             Icon(painterResource(id = R.drawable.camera_icon), contentDescription = "")
