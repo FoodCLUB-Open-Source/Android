@@ -2,6 +2,7 @@ package android.kotlin.foodclub.views.home
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
@@ -69,6 +70,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -379,8 +381,8 @@ fun ScanView(navController: NavController,viewModel: DiscoverViewModel) {
 
             if(BottomSheetNextButton) {
                 AddIngredientDialog(
-                    "Scanning completed!",
-                    "${viewModel.ScanResultItemList.size} items were detected in your fridge \n and the results will be imported now..."
+                    stringResource(R.string.scanning_completed_heading),
+                    stringResource(R.string.ingredients_import_notification, viewModel.ScanResultItemList.size)
                 )
                 LaunchedEffect(key1 = true) {
                     delay(3000)

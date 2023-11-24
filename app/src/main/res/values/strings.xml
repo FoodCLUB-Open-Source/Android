@@ -170,7 +170,10 @@
         <item>Can</item>
     </string-array>
     <string name="added">Added!</string>
-    <string name="successfully_added"> Successfully added 1 ingredient in your digital pantry, now you cna start your FoodCLUB journey!</string>
+    <string name="successfully_added"> Successfully added %1$d ingredient in your digital pantry, now you cna start your FoodCLUB journey!</string>
+    <string name="scanning_completed_heading">Scanning completed!</string>
+    <string name="ingredients_import_notification">%1$d items were detected in your fridge
+        and the results will be imported now...</string>
     - Profile
     <string name="loading">Loading…</string>
     <string name="followers">Followers</string>

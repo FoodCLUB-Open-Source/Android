@@ -227,6 +227,7 @@ fun DiscoverView(
         item {
             if (mainTabIndex == 0){
                 SubSearchBar(
+                    navController = navController,
                     searchTextValue = ingredientsSearchText,
                     onSearch = { input->
                         searchText = input
@@ -283,8 +284,7 @@ fun DiscoverView(
                 }
             }
             if (isDialogOpen){
-                AddIngredientDialog("Added!","Successfully added 1 ingredient in your digital pantry \n" +
-                        " now you can start your FoodCLUB journey!")
+                AddIngredientDialog(stringResource(R.string.added), stringResource(R.string.successfully_added))
                 LaunchedEffect(key1 = true){
                     delay(3000)
                     isDialogOpen = false
@@ -1008,7 +1008,7 @@ fun EditIngredientBottomModal(
 }
 
 @Composable
-fun AddIngredientDialog(){
+fun AddIngredientDialog(headline: String, text: String){
     Dialog(
         properties = DialogProperties(dismissOnClickOutside = false, dismissOnBackPress = false),
         onDismissRequest = { }) {
@@ -1051,7 +1051,7 @@ fun AddIngredientDialog(){
                         )
                     }
                     Text(
-                        text = stringResource(id = R.string.added),
+                        text = headline,
                         modifier = Modifier.padding(start = 10.dp),
                         fontWeight = FontWeight(600),
                         lineHeight = 19.5.sp,
@@ -1065,7 +1065,7 @@ fun AddIngredientDialog(){
                         .padding(vertical = 10.dp, horizontal = 30.dp),
                 ) {
                     Text(
-                        text = stringResource(id = R.string.successfully_added),
+                        text = text,
                         fontFamily = Montserrat,
                         fontSize = 14.sp,
                         lineHeight = 17.07.sp,
