@@ -248,7 +248,6 @@ fun VideoScroller(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @ExperimentalMaterial3Api
 @Composable
 fun BottomControls(
@@ -289,16 +288,6 @@ fun BottomControls(
                 )
             },
         )
-        /*Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                text = duration.formatMinSec(),
-                color = Color.Cyan
-            )
-        }*/
     }
 }
 

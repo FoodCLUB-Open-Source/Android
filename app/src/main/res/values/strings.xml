@@ -315,5 +315,23 @@
     <string name="flavours">Flavours</string>
     <string name="health">Health</string>
     <string name="welcome_to_foodskills">Welcome to FoodSKILLS</string>
+    - Input Composables
+    <string name="terms_and_conditions">Terms and Conditions</string>
+    <string name="by_using">By using FoodCLUB you agree to our </string>
+     - Ingredients Bottomsheet
+    <string name="left_arrow">Left Arrow</string>
+    <string name="right_arrow">Right Arrow</string>
+    <string name="add_items">Add items</string>
+    <string name="cancel">Cancel</string>
+    <string name="select_expiration_date">Select Expiration Date</string>
+     - Story Viewer
+    <string name="foodsnaps">foodsnaps</string>
+    <string name="close_story">Close Story</string>
+    <string name="author_photo">Author Photo</string>
+    <string name="time_ago">%d ago</string>
+     - Video Layout
+    <string name="info">Info</string>
+    <string name="bookmark">Bookmark</string>
+
 
 </resources>

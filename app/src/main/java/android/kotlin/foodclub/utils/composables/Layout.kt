@@ -39,8 +39,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainLayout(navController: NavHostController,
-               rootNavigationGraph: @Composable (Boolean, () -> Unit, () -> Unit, (Boolean) -> Unit) -> Unit) {
+fun MainLayout(
+    navController: NavHostController,
+    rootNavigationGraph: @Composable (Boolean, () -> Unit, () -> Unit, (Boolean) -> Unit) -> Unit
+) {
     //Check if user is logged in, otherwise - redirect to auth navigation graph
     val baseViewModel: BaseViewModel = hiltViewModel()
     val currentSessionState = baseViewModel.currentSession.collectAsState()
@@ -58,8 +60,11 @@ fun MainLayout(navController: NavHostController,
         showStory = !showStory
     }
 
-    var showBottomBar by remember { mutableStateOf(navController.currentDestination?.hierarchy?.any {
-        it.route?.startsWith(Graph.HOME) ?: false } == true) }
+    var showBottomBar by remember {
+        mutableStateOf(navController.currentDestination?.hierarchy?.any {
+            it.route?.startsWith(Graph.HOME) ?: false
+        } == true)
+    }
 
     Scaffold(
         bottomBar = {
@@ -70,7 +75,7 @@ fun MainLayout(navController: NavHostController,
             ) {
                 BottomBar(navController = navController, triggerBottomSheetModal)
             }
-             }
+        }
     ) {
         if (showBottomBar && !showStory && showSheet) {
             BottomSheet(triggerBottomSheetModal, navController)
@@ -98,13 +103,19 @@ fun MainLayout(navController: NavHostController,
  * @param content All composables which should be displayed in the middle of the screen
  */
 @Composable
-fun AuthLayout(header: String, subHeading: String? = null,
-               message: String = "", errorOccurred: Boolean = false,
-               onBackButtonClick: () -> Unit, content: @Composable () -> Unit) {
+fun AuthLayout(
+    header: String,
+    subHeading: String? = null,
+    message: String = "",
+    errorOccurred: Boolean = false,
+    onBackButtonClick: () -> Unit,
+    content: @Composable () -> Unit
+) {
     Column(
         Modifier
             .fillMaxSize()
-            .padding(start = 32.dp, end = 32.dp, top = 100.dp, bottom = 32.dp)) {
+            .padding(start = 32.dp, end = 32.dp, top = 100.dp, bottom = 32.dp)
+    ) {
         Column(Modifier.weight(1F)) {
             BackButton(onBackButtonClick)
 
@@ -119,27 +130,32 @@ fun AuthLayout(header: String, subHeading: String? = null,
                     )
                 }
 
-                if(!subHeading.isNullOrEmpty()) {
+                if (!subHeading.isNullOrEmpty()) {
                     Text(
                         text = subHeading,
-                        fontSize = if(subHeading.length > 50) 16.sp else 18.sp,
-                        fontFamily = Montserrat,  // AS ITS A CLEAN CUT FONT
+                        fontSize = if (subHeading.length > 50) 16.sp else 18.sp,
+                        fontFamily = Montserrat,
                         color = Color(0xFF000000).copy(alpha = 0.4f)
                     )
                 }
             }
 
             Text(
-                text = if(errorOccurred && message.isNotEmpty()) stringResource(id = R.string.error_message, message) else message,
+                text = if (errorOccurred && message.isNotEmpty()) stringResource(
+                    id = R.string.error_message,
+                    message
+                ) else message,
                 fontFamily = Montserrat,
-                color = if(errorOccurred) Color.Red else Color.Green,
+                color = if (errorOccurred) Color.Red else Color.Green,
                 modifier = Modifier.padding(bottom = 4.dp)
             )
         }
 
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.weight(2F).fillMaxSize()
+            modifier = Modifier
+                .weight(2F)
+                .fillMaxSize()
         ) {
             content()
         }

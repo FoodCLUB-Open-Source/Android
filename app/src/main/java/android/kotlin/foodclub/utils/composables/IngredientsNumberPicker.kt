@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.utils.composables
 
+import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.domain.enums.QuantityUnit
 import android.kotlin.foodclub.domain.models.products.Ingredient
@@ -39,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -75,6 +77,7 @@ fun EditIngredientQuantityPicker(
 
     val itemHeightPixels = remember { mutableStateOf(0) }
     val itemHeightDp = pixelsToDp(itemHeightPixels.value)
+    val TAG = "IngredientsNumberPicker"
 
     // setting selected states
     LaunchedEffect(quantityListState) {
@@ -86,7 +89,7 @@ fun EditIngredientQuantityPicker(
             .filterNotNull()
             .distinctUntilChanged()
             .collect {
-                Log.i("MYTAG","SELECTED quantity $it")
+                Log.i(TAG,"SELECTED quantity $it")
                 selectedQuantityState = it }
     }
 
@@ -99,7 +102,7 @@ fun EditIngredientQuantityPicker(
             .filterNotNull()
             .distinctUntilChanged()
             .collect {
-            Log.i("MYTAG","SELECTED GRAMMAGE $it")
+            Log.i(TAG,"SELECTED GRAMMAGE $it")
                 selectedGrammageState = it }
     }
     LaunchedEffect(typeListState) {
@@ -111,7 +114,7 @@ fun EditIngredientQuantityPicker(
             .filterNotNull()
             .distinctUntilChanged()
             .collect {
-                Log.i("MYTAG","SELECTED type $it")
+                Log.i(TAG,"SELECTED type $it")
                 selectedTypeState = it }
     }
 
@@ -215,7 +218,7 @@ fun EditIngredientQuantityPicker(
             }
         ) {
             Text(
-                text = "Save",
+                text = stringResource(id = R.string.save),
                 color = Color.White,
                 fontFamily = Montserrat,
                 fontSize = 20.sp,
