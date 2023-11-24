@@ -217,6 +217,7 @@ fun DiscoverView(navController: NavController, viewModel: DiscoverViewModel) {
 
         item {
             if (mainTabIndex == 0) {
+
                 SubSearchBar(
                     navController = navController,
                     searchTextValue = ingredientsSearchText,
