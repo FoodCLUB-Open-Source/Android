@@ -6,6 +6,8 @@ package android.kotlin.foodclub.navigation
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
 import android.kotlin.foodclub.viewModels.home.DiscoverViewModel
+import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
+import android.kotlin.foodclub.viewModels.home.CameraViewModel
 import android.kotlin.foodclub.views.home.CameraPreviewView
 import android.kotlin.foodclub.views.home.CameraView
 import android.kotlin.foodclub.views.home.CreateView
@@ -93,11 +95,13 @@ fun NavGraphBuilder.homeNavigationGraph(
 
         composable(route = HomeOtherRoutes.CameraView.route) {
             val state = it.arguments?.getString("state") ?: ""
-            CameraView(navController = navController, stateEncoded = state)
+            val viewModel = it.sharedHiltViewModel<CameraViewModel>(navController = navController)
+
+            CameraView(viewModel = viewModel, navController = navController, stateEncoded = state)
         }
         composable(route = HomeOtherRoutes.VideoTrimmerView.route) {
             val state = it.arguments?.getString("state") ?: ""
-//            CameraView(navController = navController, stateEncoded = state)
+//          CameraView(navController = navController, stateEncoded = state)
 
             CreateView()
         }

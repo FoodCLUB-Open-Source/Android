@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">FoodClub</string>
+    <string name="foodCLUB">FoodCLUB</string>
     <string name="title_activity_create_username_view">CreateUsernameView</string>
     <string name="title_activity_preference_input_view">PreferenceInputView</string>
     <string name="title_activity_preference_view">PreferenceView</string>
@@ -10,4 +11,327 @@
     <string name="title_activity_future_topic_vote_view">FutureTopicVoteView</string>
     <string name="title_activity_uploading_view">UploadingView</string>
     <string name="title_activity_uploaded_view">UploadedView</string>
+
+    Errors
+    <string name="error_message">Error %s</string>
+
+    Authentication Screens
+    - Forgot Password
+    <string name="change_password">Change Password</string>
+    <string name="change_password_subheading">We\'ve sent an email with password reset link to %s</string>
+    <string name="verification_code">Verification Code</string>
+    <string name="password">Password</string>
+    <string name="password_changed">Password Changed</string>
+    <string name="log_in">Log In</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="forgot_password_subheading">Don’t worry! It happens. Please enter the email associated with your account.</string>
+    <string name="email">Email</string>
+    <string name="send_code">Send Code</string>
+    - Sign up
+    <string name="sign_up">Sign Up</string>
+    <string name="confirm_email">Confirm Email</string>
+    <string name="confirm_email_subheading">So that you are sure you haven\'t mistyped it!</string>
+    <string name="continue_text">Continue</string>
+    <string name="put_your_name">Put your name</string>
+    <string name="put_your_name_subheading">So others know how to call you</string>
+    <string name="full_name">Full Name</string>
+    <string name="create">Create</string>
+    <string name="username">Username</string>
+    <string name="create_username">Create a username!</string>
+    <string name="create_username_subheading">So everyone can find you!</string>
+    <string name="new_here">New here?\nNo Problem</string>
+    - Confirm Identity
+    <string name="confirm_identity">Confirm Your Identity</string>
+    <string name="confirm_identity_subheading">Please confirm your country code and enter in your phone number</string>
+    <string name="go_back">Go Back</string>
+    <string name="plus_sign">+</string>
+    <string name="vertical_line">|</string>
+    <string name="invalid_number">Invalid Number</string>
+    <string name="sync_contacts">Sync Contacts</string>
+    - Login Email
+    <string name="forgot_password_question">Forgot Password?</string>
+    <string name="reset_here">Reset here</string>
+    <string name="welcome_back">Welcome back!</string>
+    <string name="welcome_back_subheading">Cooking just got social</string>
+    - Main login/signup
+    <string name="app_title">app title</string>
+    <string name="app_logo">app logo</string>
+    <string name="login_arrow">Log in →</string>
+    <string name="already_have_account">Already have an account?</string>
+    - Onboarding
+    <string name="art_of_food">The Art Of Food Is Here</string>
+    <string name="dont_follow">Don\'t follow,</string>
+    <string name="create_fullstop">create.</string>
+    <string name="our_mission">Our Mission</string>
+    <string name="did_you_know">Did you know?</string>
+    <string name="info_1">25% of climate change and 70% of fresh water is linked to food production</string>
+    <string name="info_2">70% of disease and illness are caused by nutrition</string>
+    <string name="info_3">We produce food across the glob to wipe out global hunger - but 40% of that food goes to waste</string>
+    <string name="info_4">1 in 10 people have a food disorder</string>
+    <string name="info_5">Social media has left us unconnected in our communities and our cultures</string>
+    <string name="you_are_part_mission">You\'re now  part of our mission</string>
+    <string name="join_community">Join our Discord VIP Community</string>
+    <string name="join_vip_discord">Join our VIP Discord Server</string>
+    <string name="discord_link">https://discord.gg/dA83mnQMqr</string>
+    <string name="join_our_community">Join our community for exclusive content and insight into the tech and business world</string>
+    <string name="join_1">Engage in lively discussions and events.</string>
+    <string name="join_2">Shape the future of food: help decide new features and innovation..</string>
+    <string name="join_3">Participate in special contests and giveaways.</string>
+    <string name="join_4">Be the first to savor insights into foodSNAPS, foodMAPS, foodSCHOOL, and our detectable AI-driven innovations..</string>
+    - Preferences
+    <string name="preferences_title">Tell us what you like!</string>
+    <string name="preferences_subheading">So we can bring you the latest recipes</string>
+    <string name="finish">Finish</string>
+    <string-array name="preferences">
+        <item>Italian</item>
+        <item>Mexican</item>
+        <item>Indian</item>
+        <item>Chinese</item>
+        <item>Vegan</item>
+        <item>Vegetarian</item>
+        <item>Thai</item>
+        <item>Japanese</item>
+        <item>Vietnamese</item>
+        <item>Paleo</item>
+        <item>Gluten-free</item>
+        <item>Low carb</item>
+        <item>Keto</item>
+    </string-array>
+    - Verification
+    <string name="verification_title">Verify your email</string>
+    <string name="verification_subheading">Please enter the code we\'ve sent to %s</string>
+    <string name="verification_subheading_alt">Please enter the code we\'ve sent to your email associated with this account</string>
+    <string name="verify">Verify</string>
+    <string name="wait_time">Wait %d seconds to </string>
+    <string name="resend">Resend</string>
+    <string name ="no_code">I didn\'t receive a code </string>
+    - Terms and Conditions
+    <string name="accept_terms">Accept terms and conditions</string>
+    <string name="please_accept_terms">Please accept the terms and conditions</string>
+    <string name="proceed">Proceed</string>
+    - View Stories
+    <string name="profile_image">Profile Image</string>
+    - Uploading
+    <string name="uploading">Uploading…</string>
+    -Uploaded
+    <string name="uploaded">Successfully Uploaded!</string>
+    <string name="post">Post</string>
+    <string name="sharing_thanks">Thanks For Sharing On FoodCLUB!</string>
+    <string name="instagram_share">Share to Instagram</string>
+    <string name="tiktok_share">Share to TikTok</string>
+    -Take Photo
+    <string name="take_photo">Take Photo</string>
+    <string name="switch_camera">Switch Camera</string>
+    <string name="close_camera">Close Camera</string>
+    -Settings Notifications
+    <string name="general_notifications">General notifications</string>
+    <string name="system_and_service">System &amp; Service update</string>
+    <string name="app_updates">App updates</string>
+    <string name="payment_request">Payment request</string>
+    - Search
+    <string name="recent_searches">Recent Searches</string>
+    <string-array name="dummy_search_history">
+        <item>Pizza</item>
+        <item>Easy and Quick</item>
+        <item>For Children</item>
+    </string-array>
+    <string name="add_to_basket">Add to Basket</string>
+    <string name="dummy_badge_number">5</string>
+    <string-array name="search_tabs">
+        <item>All</item>
+        <item>Recipes</item>
+        <item>Creators</item>
+    </string-array>
+    - Discover
+    <string name="discover_view">DiscoverView</string>
+    <string-array name="discover_tabs">
+        <item>My Kitchen</item>
+        <item>World</item>
+        <item>Categories</item>
+    </string-array>
+    <string name="see_all_ingredients">See all ingredients</string>
+    <string name="search_for">Search for recipes, usernames…</string>
+    <string name="my_kitchen">My Kitchen</string>
+    <string name="search_to">Search to find or add…</string>
+    <string-array name="discover_sub_tabs">
+        <item>Veg &amp; Fruits</item>
+        <item>Grains &amp; Cereals</item>
+        <item>Dairy &amp; Alternatives</item>
+    </string-array>
+    <string name="edit">Edit</string>
+    <string name="gram_unit">g</string>
+    <string-array name="quantity_list">
+        <item>Pint</item>
+        <item>Jar</item>
+        <item>Cup</item>
+        <item>Bottle</item>
+        <item>Bag</item>
+        <item>Sack</item>
+        <item>Can</item>
+    </string-array>
+    <string name="added">Added!</string>
+    <string name="successfully_added"> Successfully added 1 ingredient in your digital pantry, now you cna start your FoodCLUB journey!</string>
+    - Profile
+    <string name="loading">Loading…</string>
+    <string name="followers">Followers</string>
+    <string name="following">Following</string>
+    <string name="profile_picture">Profile Picture</string>
+    <string name="profile_picture_edit">Edit Profile Picture</string>
+    <string name="select_from_gallery">Select from Gallery</string>
+    <string name="follow">Follow</string>
+    <string name="unfollow">Unfollow</string>
+    <string name="upload_photo">Upload Photo</string>
+    <string name="my_recipes">My Recipes</string>
+    <string name="bookmarked">Bookmarked</string>
+    <string-array name="profile_tabs">
+        <item>My Recipes</item>
+        <item>Bookmarked</item>
+    </string-array>
+    - My Digital Pantry
+    <string name="my_digital_pantry">My Digital Pantry</string>
+    <string name="save">Save</string>
+    <string name="edit_item">Edit Item</string>
+    <string name="all_my_ingredients">All My Ingredients</string>
+    <string name="digitalPantry">DigitalPantry</string>
+    <string name="search_my_ingredients">Search my ingredients</string>
+    <string name="name">Name</string>
+    <string name="quantity">Quantity</string>
+    <string name="unit">Unit</string>
+    <string name="expiration_date">Expiration Date</string>
+    <string name="remove">Remove</string>
+    <string name="quantity_colon">Quantity:</string>
+    - My Basket
+    <string name="my_basket">My Basket</string>
+    <string name="add_items_plus">Add items +</string>
+    - Main
+    <string name="home">Home</string>
+    <string name="discover">Discover</string>
+    <string name="navigation_icon">Navigation Icon</string>
+    <string name="create_a_story">Create a Story</string>
+    <string name="create_a_recipe">Create a Recipe</string>
+    - Home
+    <string name="weight_placeholder">200g</string>
+    <string name="tap_to_snap">Tap to Snap</string>
+    <string name="tap_to_snap_subheading">Are you ready? Its time to post a snap. Save this moment and share it with your friends.</string>
+    <string name="hand">Hand</string>
+    <string name="memories">Memories</string>
+    <string name="meat">Meat</string>
+    <string name="snaps">Snaps</string>
+    <string name="feed">Feed</string>
+    <string name="add_to_my_shopping_list">Add to my shopping list</string>
+    <string name="example_ingredient">Broccoli oil</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="clear">Clear</string>
+    <string name="serving_size">Serving Size</string>
+    <string name="copy_clip">Copy clip</string>
+    <string name="example_recipe">Chicken broth and meatballs</string>
+    - Gallery
+    <string name="gallery">Gallery</string>
+    <string name="story">story</string>
+    <string name="recipe">recipe</string>
+    <string name="image">image</string>
+    <string name="images">Images</string>
+    <string name="video">Video</string>
+    - Follow
+    <string name="no_name_found"> No name found</string>
+    - Camera
+    <string name="camera">Camera</string>
+    <string name="date_format">yyyy-MM-dd-HH-mm-ss-SSS</string>
+     - Create a Recipe
+    <string name="recipe_title">Recipe title</string>
+    <string name="ingredient_offset_transitions">Ingredient Offset Transitions</string>
+    <string name="share_recipe">Share Recipe</string>
+    <string name="categories">Categories</string>
+    <string name="vegan">Vegan</string>
+    <string name="serving_size_colon">Serving Size: %d</string>
+    <string name="add_my_recipes_name">Add my recipes name</string>
+    <string name="my_new_recipe">My New Recipe</string>
+     - Delete Recipe
+    <string name="delete_recipe">Delete Recipe</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="delete_video">Delete Video?</string>
+    <string name="delete_video_message">Are you sure you want to delete this video? This action cannot be undone.</string>
+    - Settings
+    <string name="settings">Settings</string>
+    <string name="notifications">Notifications</string>
+    <string name="user_images">User Images</string>
+    <string name="log_out">Log Out</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="contact_us">Contact Us</string>
+    <string name="help_and_support">Help &amp; Support</string>
+    <string name="privacy_settings">Privacy Settings</string>
+    <string name="edit_profile_information">Edit Profile Information</string>
+    - Privacy
+    <string name="privacy">Privacy</string>
+    <string name="sent_your_data_request">If you would like to get sent your data, make changes to it or delete it, send an email to tech@foodclub.live</string>
+    - Edit Profile
+    <string name="edit_profile">Edit Profile</string>
+    <string name="new_password">New Password</string>
+    - Future Topic Vote
+    <string name="future_topic_vote">Future Topic Vote</string>
+    <string name="send_votes">Send Votes</string>
+    <string name="default_text">Default Text</string>
+    <string name="vote_for_future_topics">Vote for future topics</string>
+    <string name="choose_from_the_options_below">Choose from the options below</string>
+    <string-array name="dummy_rice_list">
+        <item>Rice cultivation 1</item>
+        <item>Rice cultivation 2</item>
+        <item>Rice cultivation 3</item>
+        <item>Rice cultivation 4</item>
+    </string-array>
+    - Kitchen Tools
+    <string name="kitchen_tools">Kitchen Tools</string>
+    <string-array name="quiz_buttons">
+        <item>Quiz 1</item>
+        <item>Quiz 2</item>
+        <item>Quiz 3</item>
+    </string-array>
+    <string-array name="learn_buttons">
+        <item>Learn 1</item>
+        <item>Learn 2</item>
+        <item>Learn 3</item>
+    </string-array>
+    <string-array name="card_titles">
+        <item>Kitchen Tools</item>
+        <item>Can Opening</item>
+        <item>Food Prepararation Tools</item>
+    </string-array>
+    <string-array name="card_subtitles">
+        <item>Course Length = Approx 20 mins</item>
+        <item>Course Length = Approx 30 mins</item>
+        <item>Course Length = Approx 25 mins</item>
+    </string-array>
+    - Learning
+    <string name="vote_now">Vote Now</string>
+    <string name="click_to_vote">Click here to vote for future topics</string>
+    <string name="dummy_duration">20 mins</string>
+    <string name="completed">Completed</string>
+    <string name="zero_percent">0%</string>
+    <string name="twenty_percent">20%</string>
+    <string name="forty_percent">40%</string>
+    <string name="course_length">Course Length - Approx</string>
+    <string name="communities">Communities</string>
+    <string name="flavours">Flavours</string>
+    <string name="health">Health</string>
+    <string name="welcome_to_foodskills">Welcome to FoodSKILLS</string>
+    - Input Composables
+    <string name="terms_and_conditions">Terms and Conditions</string>
+    <string name="by_using">By using FoodCLUB you agree to our </string>
+     - Ingredients Bottomsheet
+    <string name="left_arrow">Left Arrow</string>
+    <string name="right_arrow">Right Arrow</string>
+    <string name="add_items">Add items</string>
+    <string name="cancel">Cancel</string>
+    <string name="select_expiration_date">Select Expiration Date</string>
+     - Story Viewer
+    <string name="foodsnaps">foodsnaps</string>
+    <string name="close_story">Close Story</string>
+    <string name="author_photo">Author Photo</string>
+    <string name="time_ago">%d ago</string>
+     - Video Layout
+    <string name="info">Info</string>
+    <string name="bookmark">Bookmark</string>
+
+
 </resources>

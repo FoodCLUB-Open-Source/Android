@@ -50,7 +50,6 @@ fun ProgressionBar(
     val coroutineScope = rememberCoroutineScope()
     val isChecked by remember { mutableStateOf(true) }
 
-    // new states passed from the video state
     val duration = remember(totalDuration()) { totalDuration() }
     val videoTime = remember(currentTime()) { currentTime() }
 
@@ -77,6 +76,7 @@ fun ProgressionBar(
                 progress = it
                 changeIterations = (it / progressionRate).toInt()
             },*/
+
             modifier = Modifier.fillMaxWidth().negativeMargin((-16).dp).padding(0.dp),
             colors = SliderDefaults.colors(
                 thumbColor = Color.Transparent,
@@ -92,7 +92,6 @@ fun ProgressionBar(
     }
 }
 
-// Function to override the default modifier properties of the slider. This was used to fix the width
 fun Modifier.negativeMargin(margin: Dp): Modifier = this.then(
     object : LayoutModifier {
         override fun MeasureScope.measure(
