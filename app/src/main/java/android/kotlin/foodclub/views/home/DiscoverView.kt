@@ -114,7 +114,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.navigation.navDeepLink
 import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
@@ -217,15 +216,18 @@ fun DiscoverView(navController: NavController, viewModel: DiscoverViewModel) {
         }
 
         item {
-            if (mainTabIndex == 0) {
+            if (mainTabIndex == 0){
                 SubSearchBar(
-
+                    navController=navController,
                     searchTextValue = ingredientsSearchText,
-                    onSearch = { input ->
+                    onSearch = { input->
                         searchText = input
                         viewModel.onSubSearchTextChange(input)
                     }
                 )
+            }else{
+                // figure out what do show here
+                Spacer(modifier = Modifier.height(30.dp))
             }
         }
 
@@ -571,11 +573,10 @@ fun MainTabRow(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubSearchBar(
-
+    navController: NavController,
     searchTextValue: String,
     onSearch: (String) -> Unit
 ) {
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -611,7 +612,6 @@ fun SubSearchBar(
                 IconButton(
                     onClick = {
                         // TODO impl search
-
                     }
                 ) {
                     Icon(
@@ -632,8 +632,7 @@ fun SubSearchBar(
             ),
             contentPadding = PaddingValues(),
             onClick = {
-                // TODO impl camera
-               // navController.navigate("ScanView_route")
+                navController.navigate("ScanView_route")
             }
         ) {
             Icon(painterResource(id = R.drawable.camera_icon), contentDescription = "")
@@ -648,6 +647,7 @@ fun SubSearchBar(
             ),
             contentPadding = PaddingValues(),
             onClick = {
+
                 // TODO impl microphone
             }
         ) {

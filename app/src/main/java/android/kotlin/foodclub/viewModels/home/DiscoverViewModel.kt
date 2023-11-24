@@ -134,6 +134,7 @@ class DiscoverViewModel @Inject constructor(
     }
 
     fun updateIngredient(ingredient: Ingredient) {
+        
         _userIngredientsList.update { currentList ->
             currentList.map { item ->
                 if (item.id == ingredient.id) {
