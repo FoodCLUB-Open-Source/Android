@@ -1,7 +1,12 @@
 package android.kotlin.foodclub.viewModels.home
 
+import android.content.Context
+import android.graphics.BitmapFactory
+import android.kotlin.foodclub.R
+import android.kotlin.foodclub.domain.enums.QuantityUnit
 import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.domain.models.home.VideoModel
+import android.kotlin.foodclub.domain.models.others.BottomSheetItem
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.profile.UserPosts
 import android.kotlin.foodclub.repositories.PostRepository
@@ -10,8 +15,15 @@ import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.util.Log
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.ImageProxy
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -116,6 +128,13 @@ class DiscoverViewModel @Inject constructor(
         _userIngredientsList.value = updatedList
         _ingredientsSearchText.value = ""
     }
+    fun addScanListToUserIngredients(ingredient: List<Ingredient>) {
+        val updatedList: MutableList<Ingredient> = _userIngredientsList.value.toMutableList()
+        updatedList.addAll(ingredient)
+
+        _userIngredientsList.value = updatedList
+        _ingredientsSearchText.value = ""
+    }
 
     fun deleteIngredientFromList(ingredient: Ingredient){
         val list = _userIngredientsList.value.toMutableList()
@@ -124,7 +143,6 @@ class DiscoverViewModel @Inject constructor(
     }
 
     fun updateIngredient(ingredient: Ingredient) {
-
         _userIngredientsList.update { currentList ->
             currentList.map { item ->
                 if (item.id == ingredient.id) {
@@ -149,7 +167,6 @@ class DiscoverViewModel @Inject constructor(
         ingredientToEdit.value = ingredient
         Log.i("MYTAG","LIST AFTER ${_userIngredientsList.value[0].quantity}")
     }
-
     private suspend fun fetchProductsDatabase(searchText: String) {
         Log.e("MYTAG","made call $searchText")
 
@@ -224,6 +241,72 @@ class DiscoverViewModel @Inject constructor(
         }
 
     }
+
+    private val _capturedImage = mutableStateOf<ImageBitmap?>(null)
+    var capturedImage: State<ImageBitmap?> = _capturedImage
+
+
+
+    val ScanResultItemList: List<Ingredient> = listOf(
+        Ingredient(
+            id = "1",  // Make sure to copy other properties if needed
+            quantity = 100,
+            unit = QuantityUnit.GRAMS,
+            type = "Capsicum",
+            expirationDate = "Edit",
+            imageUrl = R.drawable.capsicum
+        ),
+        Ingredient(
+            id = "2",  // Make sure to copy other properties if needed
+            quantity = 10,
+            unit = QuantityUnit.GRAMS,
+            type = "Tomato Soup",
+            expirationDate = "Edit",
+            imageUrl = R.drawable.tomato_ingredient
+        ),
+        Ingredient(
+            id = "3",  // Make sure to copy other properties if needed
+            quantity =1 ,
+            unit = QuantityUnit.GRAMS,
+            type = "Lemon",
+            expirationDate = "Edit",
+            imageUrl = R.drawable.lemon
+        ),
+        Ingredient(
+            id = "4",  // Make sure to copy other properties if needed
+            quantity = 1000,
+            unit = QuantityUnit.GRAMS,
+            type = "Egg",
+            expirationDate = "Edit",
+            imageUrl = R.drawable.egg
+        ),
+
+
+        // Add more items as needed
+    )
+    fun Scan(imageCapture: ImageCapture, context: Context) {
+        imageCapture.takePicture(
+            ContextCompat.getMainExecutor(context),
+            object : ImageCapture.OnImageCapturedCallback() {
+                override fun onCaptureSuccess(image: ImageProxy) {
+                    // Convert the ImageProxy to ImageBitmap
+                    val buffer = image.planes[0].buffer
+                    val bytes = ByteArray(buffer.remaining())
+                    buffer.get(bytes)
+                    val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                    _capturedImage.value = bitmap.asImageBitmap()
+
+                    // Close the ImageProxy
+                    image.close()
+                }
+
+                override fun onError(exception: ImageCaptureException) {
+                    // Handle capture error
+                }
+            }
+        )
+    }
+
 
 }
 

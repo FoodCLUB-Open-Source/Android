@@ -239,6 +239,7 @@ fun DiscoverView(
             }
         }
 
+
         item {
             var subTabIndex by remember { mutableIntStateOf(0) }
             SubTabRow(
@@ -281,9 +282,10 @@ fun DiscoverView(
                     )
                 }
             }
-            if (isDialogOpen) {
-                AddIngredientDialog()
-                LaunchedEffect(key1 = true) {
+            if (isDialogOpen){
+                AddIngredientDialog("Added!","Successfully added 1 ingredient in your digital pantry \n" +
+                        " now you can start your FoodCLUB journey!")
+                LaunchedEffect(key1 = true){
                     delay(3000)
                     isDialogOpen = false
                 }
@@ -576,6 +578,7 @@ fun MainTabRow(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubSearchBar(
+    navController: NavController,
     searchTextValue: String,
     onSearch: (String) -> Unit
 ) {
@@ -634,7 +637,7 @@ fun SubSearchBar(
             ),
             contentPadding = PaddingValues(),
             onClick = {
-                // TODO impl camera
+                navController.navigate("ScanView_route")
             }
         ) {
             Icon(painterResource(id = R.drawable.camera_icon), contentDescription = "")
@@ -649,6 +652,7 @@ fun SubSearchBar(
             ),
             contentPadding = PaddingValues(),
             onClick = {
+
                 // TODO impl microphone
             }
         ) {
@@ -1004,12 +1008,13 @@ fun EditIngredientBottomModal(
 }
 
 @Composable
-fun AddIngredientDialog() {
+fun AddIngredientDialog(){
     Dialog(
         properties = DialogProperties(dismissOnClickOutside = false, dismissOnBackPress = false),
         onDismissRequest = { }) {
         Card(
             modifier = Modifier
+                .clip(RoundedCornerShape(15.dp))
                 .width(500.dp)
                 .fillMaxHeight(0.2f)
                 .background(Color.White),

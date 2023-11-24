@@ -410,7 +410,7 @@ fun ProfileView(
                 ),
                 sheetTitle = stringResource(id = R.string.upload_photo),
                 onDismiss = { showBottomSheet = false },
-                modifier = Modifier.padding(bottom = 110.dp)
+                modifier = Modifier.padding(bottom = 110.dp),
             )
         }
     }
