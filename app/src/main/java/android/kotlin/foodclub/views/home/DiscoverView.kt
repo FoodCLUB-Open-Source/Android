@@ -225,13 +225,18 @@ fun DiscoverView(
         }
 
         item {
-            SubSearchBar(
-                searchTextValue = ingredientsSearchText,
-                onSearch = { input ->
-                    searchText = input
-                    viewModel.onSubSearchTextChange(input)
-                }
-            )
+            if (mainTabIndex == 0){
+                SubSearchBar(
+                    searchTextValue = ingredientsSearchText,
+                    onSearch = { input->
+                        searchText = input
+                        viewModel.onSubSearchTextChange(input)
+                    }
+                )
+            }else{
+                // figure out what do show here
+                Spacer(modifier = Modifier.height(30.dp))
+            }
         }
 
         item {
