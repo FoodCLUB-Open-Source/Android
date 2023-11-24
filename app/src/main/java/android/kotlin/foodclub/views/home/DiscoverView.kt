@@ -217,7 +217,6 @@ fun DiscoverView(navController: NavController, viewModel: DiscoverViewModel) {
 
         item {
             if (mainTabIndex == 0) {
-
                 SubSearchBar(
                     navController = navController,
                     searchTextValue = ingredientsSearchText,
@@ -226,13 +225,12 @@ fun DiscoverView(navController: NavController, viewModel: DiscoverViewModel) {
                         viewModel.onSubSearchTextChange(input)
                     }
                 )
-
-            }
-            else{
-                // figure out what do show here
+            } else {
+                // figure out what to show here
                 Spacer(modifier = Modifier.height(30.dp))
             }
         }
+
 
         item {
             var subTabIndex by remember { mutableIntStateOf(0) }
