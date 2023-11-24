@@ -51,6 +51,9 @@ class CameraViewModel : ViewModel() {
                 minutes.value = 0
                 seconds.value = 0
                 milliseconds.value = 0
+                prevMinutes.clear()
+                prevSeconds.clear()
+                prevMilliseconds.clear()
             }
 
             StopWatchEvent.onStart -> {

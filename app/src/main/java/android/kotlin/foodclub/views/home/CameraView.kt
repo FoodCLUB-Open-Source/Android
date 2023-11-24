@@ -51,9 +51,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -241,7 +243,7 @@ fun RecordingClipsButton(
 }
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CameraView(
     viewModel: CameraViewModel,
@@ -251,7 +253,6 @@ fun CameraView(
 
     var seconds = (0)
     var minutes = (0)
-
 
 
     val context = LocalContext.current
@@ -324,6 +325,10 @@ fun CameraView(
         mutableStateOf(false)
     }
 
+    var confirmDeletion by remember{
+        mutableStateOf(true)
+    }
+
     LaunchedEffect(Unit) {
         permissionState.launchMultiplePermissionRequest()
     }
@@ -387,6 +392,7 @@ fun CameraView(
                         //.blur(radius = 20.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
                         .clickable {
                             // Do something when the box is clicked
+                            viewModel.onEvent(StopWatchEvent.onReset)
                             navController.popBackStack()
                         }
                 ) {
@@ -429,6 +435,33 @@ fun CameraView(
 
                 Column(modifier = Modifier.align(Alignment.BottomCenter), horizontalAlignment = Alignment.CenterHorizontally)
                 {
+                    if (confirmDeletion)
+                    {
+                        AlertDialog(onDismissRequest = { confirmDeletion = !confirmDeletion },
+                            modifier = Modifier.background(Color(0x55FFBBBB)),) {
+                            Text(text = "Do you want to delete the last clip made?")
+
+                            Row {
+                                Button(onClick = {
+                                    confirmDeletion = !confirmDeletion
+
+                                }) {
+                                    Text(text="Cancel")
+                                }
+
+                                Button(onClick = {
+                                    uris.removeAt(uris.lastIndex)
+                                    viewModel.onEvent(StopWatchEvent.onRecall)
+                                    removeUpdate(true)
+                                    canDelete = false
+                                    confirmDeletion = !confirmDeletion
+                                }) {
+                                    Text(text="Confirm")
+                                }
+                            }
+                        }
+                    }
+                    
                     //val stopWatch = Builder(Stopwatch)
                     //val sdf = SimpleDateFormat("mm:ss")
 
@@ -599,7 +632,9 @@ fun CameraView(
                     }
                 }
 
-                Row(modifier = Modifier.height(80.dp).align(Alignment.BottomStart), verticalAlignment = Alignment.CenterVertically)
+                Row(modifier = Modifier
+                    .height(80.dp)
+                    .align(Alignment.BottomStart), verticalAlignment = Alignment.CenterVertically)
                 {
                     if (!recordingStarted.value) {
                         val bitmapCheck = loadCurrentThumbnail(context = context)
@@ -636,6 +671,8 @@ fun CameraView(
                         }
                     }
                 }
+
+
                 Row(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
@@ -655,14 +692,9 @@ fun CameraView(
                                     RoundedCornerShape(10.dp)
                                 )
                                 .clickable {
-                                    if (canDelete)
-                                    {
-                                        uris.removeAt(uris.lastIndex)
-                                        viewModel.onEvent(StopWatchEvent.onRecall)
-                                        removeUpdate(true)
-                                        canDelete = false
+                                    if (canDelete) {
+                                        confirmDeletion = true
                                     }
-
                                 },
                         ) {
                             Image(
