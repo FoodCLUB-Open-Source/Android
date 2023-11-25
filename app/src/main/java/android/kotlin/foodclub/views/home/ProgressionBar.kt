@@ -81,7 +81,7 @@ fun ProgressionBar(
             colors = SliderDefaults.colors(
                 thumbColor = Color.Transparent,
                 activeTrackColor = foodClubGreen,
-                inactiveTrackColor = foodClubGreen,
+                inactiveTrackColor = Color.White,
             ),
             thumb = {
                 Box(modifier = Modifier.size(0.dp).shadow(0.dp, clip = true)
