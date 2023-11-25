@@ -61,6 +61,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -93,11 +94,14 @@ import kotlinx.coroutines.launch
  */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
-fun IngredientsBottomSheet(onDismiss: () -> Unit, productsDataFlow: StateFlow<ProductsData>,
-                           loadMoreObjects: (searchText: String, onLoadCompleted: () -> Unit)
-                           -> Unit = { _, _ -> },
-                           onListUpdate: (searchText: String) -> Unit = {},
-                           onSave: (ingredient: Ingredient) -> Unit = {}) {
+fun IngredientsBottomSheet(
+    onDismiss: () -> Unit,
+    productsDataFlow: StateFlow<ProductsData>,
+    loadMoreObjects: (searchText: String, onLoadCompleted: () -> Unit)
+    -> Unit = { _, _ -> },
+    onListUpdate: (searchText: String) -> Unit = {},
+    onSave: (ingredient: Ingredient) -> Unit = {}
+) {
 
     var editedIngredient by remember { mutableStateOf<Ingredient?>(null) }
 
@@ -158,7 +162,7 @@ fun IngredientsBottomSheet(onDismiss: () -> Unit, productsDataFlow: StateFlow<Pr
                 }
 
                 DrawerContentState.IngredientAmountSelection -> {
-                    if(editedIngredient != null) {
+                    if (editedIngredient != null) {
                         IngredientSelectedView(
                             screenHeight = screenHeight,
                             selectedIngredient = editedIngredient!!,
@@ -183,33 +187,46 @@ fun IngredientsBottomSheet(onDismiss: () -> Unit, productsDataFlow: StateFlow<Pr
 
 @Composable
 private fun IngredientSelectedView(
-    screenHeight: Dp, selectedIngredient: Ingredient,
+    screenHeight: Dp,
+    selectedIngredient: Ingredient,
     onDismiss: () -> Unit, onSave: (ingredient: Ingredient) -> Unit
 ) {
     val valuesPickerState = rememberPickerState()
-    val pickerValues = remember { mutableStateOf((1..99).map { (it * 10).toString() +
-            ValueParser.quantityUnitToString(selectedIngredient.unit) } ) }
+    val pickerValues = remember {
+        mutableStateOf((1..99).map {
+            (it * 10).toString() +
+                    ValueParser.quantityUnitToString(selectedIngredient.unit)
+        })
+    }
 
     Box(
-        modifier = Modifier.fillMaxWidth().height(screenHeight)
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(screenHeight)
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(start = 17.dp, end = 17.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 17.dp, end = 17.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
             Box(
-                modifier = Modifier.height(50.dp).fillMaxWidth()
+                modifier = Modifier
+                    .height(50.dp)
+                    .fillMaxWidth()
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
-                    contentDescription = "Left Arrow",
-                    modifier = Modifier.size(24.dp).align(Alignment.CenterStart)
+                    contentDescription = stringResource(id = R.string.left_arrow),
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.CenterStart)
                         .clickable(onClick = { onDismiss() })
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Add items",
+                    text = stringResource(id = R.string.add_items),
                     color = Color.White,
                     fontFamily = Montserrat,
                     modifier = Modifier.align(Alignment.Center)
@@ -218,12 +235,16 @@ private fun IngredientSelectedView(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxSize().padding(top = 30.dp, bottom = 40.dp)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 30.dp, bottom = 40.dp)
             ) {
                 AsyncImage(
                     model = selectedIngredient.imageUrl,
                     contentDescription = null,
-                    modifier = Modifier.size(130.dp).clip(CircleShape)
+                    modifier = Modifier
+                        .size(130.dp)
+                        .clip(CircleShape)
                 )
                 Spacer(modifier = Modifier.height(35.dp))
                 Picker(
@@ -245,7 +266,8 @@ private fun IngredientSelectedView(
                             Color(126, 198, 11, 255),
                             shape = RoundedCornerShape(15.dp)
                         )
-                        .clip(RoundedCornerShape(15.dp)).fillMaxWidth(),
+                        .clip(RoundedCornerShape(15.dp))
+                        .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(126, 198, 11, 255),
                         contentColor = Color.White
@@ -266,7 +288,7 @@ private fun IngredientSelectedView(
                     }
                 ) {
                     Text(
-                        text = "Save",
+                        text = stringResource(id = R.string.save),
                         color = Color.White,
                         fontFamily = Montserrat,
                         fontSize = 16.sp,
@@ -296,9 +318,11 @@ private fun IngredientListView(
     val lazyListState = rememberLazyListState()
 
 
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .height(screenHeight)) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(screenHeight)
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -369,7 +393,7 @@ private fun IngredientListView(
                 items = productsDataFlow.value.productsList,
                 key = { it.id }
             ) {
-                if(showingList.productsList.contains(it)){
+                if (showingList.productsList.contains(it)) {
                     IngredientComposable(
                         ingredient = it,
                         onClick = { ingredient -> onIngredientSelect(ingredient, searchText) }
@@ -389,11 +413,13 @@ private fun IngredientListView(
 
     LaunchedEffect(searchText) {
         delay(1500)
-        if(searchText.length > 3) { onListUpdate(searchText) }
+        if (searchText.length > 3) {
+            onListUpdate(searchText)
+        }
     }
 
     LaunchedEffect(loadMore) {
-        if(!listLoading) {
+        if (!listLoading) {
             listLoading = true
             loadMoreObjects(searchText) { listLoading = false }
         }

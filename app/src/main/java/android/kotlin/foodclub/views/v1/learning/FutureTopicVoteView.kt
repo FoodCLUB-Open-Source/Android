@@ -25,6 +25,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -37,50 +39,39 @@ import androidx.navigation.compose.rememberNavController
 fun FutureTopicVoteView(
     navController: NavController,
 ) {
-    FutureTopicVoteViewUI(".")
+    FutureTopicVoteViewUI()
 }
 
 @Composable
-fun FutureTopicVoteViewUI(name: String, modifier: Modifier = Modifier) {
-
-    // LIST FOR RICE CULIVATION BUTTON
-    val RiceTextButton = listOf("Rice cultivation", "Rice cultivation", "Rice cultivation", "Rice cultivation", "Rice cultivation")
+fun FutureTopicVoteViewUI(modifier: Modifier = Modifier) {
 
 
-    // THE FONT WE'LL USE
+    val riceTextButton = stringArrayResource(id = R.array.dummy_rice_list).toList()
     val montserratFontFamily = FontFamily(
         Font(R.font.montserratbold, FontWeight.Normal)
     )
 
-    // GREEN
     val customGreenColor = Color(0xFF80C40C)
 
-    // GREY
     val customGreyColor = Color(0xFF5C5C5C)
 
-    // LIGHT GREY COLOUR
     val customLightGreyColor = Color(0xFFD0CCCC)
 
-
-    // TITLE TEXT
     Text(
-        text = "Vote for your future topics",
+        text = stringResource(id = R.string.vote_for_future_topics),
         fontSize = 16.sp,
         fontFamily = montserratFontFamily,
         modifier = Modifier.padding(top = 110.dp, start = 40.dp)
     )
 
-    // SUB TEXT
     Text(
-        text = "Choose from the options below",
+        text = stringResource(id = R.string.choose_from_the_options_below),
         fontSize = 13.sp,
         fontFamily = montserratFontFamily,
         modifier = Modifier.padding(top = 230.dp, start = 40.dp),
         color = customGreyColor,
     )
 
-
-    // BACK BUTTON BOX
     Box(
         modifier = Modifier
             .offset(34.dp, 50.dp)
@@ -98,7 +89,6 @@ fun FutureTopicVoteViewUI(name: String, modifier: Modifier = Modifier) {
     }
 
 
-    // LEFT COLUMN
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -106,7 +96,6 @@ fun FutureTopicVoteViewUI(name: String, modifier: Modifier = Modifier) {
     ) {
         item {
 
-            // COLUMN 1 (LEFT)
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -116,7 +105,7 @@ fun FutureTopicVoteViewUI(name: String, modifier: Modifier = Modifier) {
                     Button(
                         shape = RoundedCornerShape(16.dp),
                         onClick = {
-                            // Handle button click here (turns green)
+                            //TODO add click functionality
                         },
                         modifier = Modifier
                             .width(200.dp)
@@ -126,12 +115,12 @@ fun FutureTopicVoteViewUI(name: String, modifier: Modifier = Modifier) {
                                 RoundedCornerShape(1)
                             ),
                         colors = ButtonDefaults.buttonColors(
-                            //containerColor = customGreenColor,
                             containerColor = Color.White,
                             contentColor = Color.White
                         )
                     ) {
-                        Text(text = RiceTextButton.getOrNull(index) ?: "Default Text",
+                        Text(
+                            text = riceTextButton.getOrNull(index) ?: stringResource(id = R.string.default_text),
                             fontSize = 13.sp,
                             color = Color.Black
                         )
@@ -141,8 +130,6 @@ fun FutureTopicVoteViewUI(name: String, modifier: Modifier = Modifier) {
         }
     }
 
-
-    // RIGHT COLUMN
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -154,14 +141,13 @@ fun FutureTopicVoteViewUI(name: String, modifier: Modifier = Modifier) {
                     .fillMaxWidth()
                     .padding(start = 205.dp, top = 16.dp),
             ) {
-                repeat(5) { index ->
+                repeat(times = 5) { index ->
                     Button(
                         shape = RoundedCornerShape(16.dp),
                         onClick = {
-                            // Handle button click here (turns green)
+                            // TODO add click functionality
                         },
 
-                        // Button colour(s)
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.White,
                             contentColor = Color.White
@@ -172,7 +158,8 @@ fun FutureTopicVoteViewUI(name: String, modifier: Modifier = Modifier) {
                             .height(70.dp)
                             .padding(top = 15.dp, end = 30.dp)
                     ) {
-                        Text(text = RiceTextButton.getOrNull(index) ?: "Default Text",
+                        Text(
+                            text = riceTextButton.getOrNull(index) ?: stringResource(id = R.string.default_text),
                             fontSize = 13.sp,
                             color = Color.Black
                         )
@@ -185,7 +172,6 @@ fun FutureTopicVoteViewUI(name: String, modifier: Modifier = Modifier) {
 
     }
 
-    // BOTTOM COLUMN (FOR BUTTON)
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -199,7 +185,7 @@ fun FutureTopicVoteViewUI(name: String, modifier: Modifier = Modifier) {
             Button(
                 shape = RoundedCornerShape(16.dp),
                 onClick = {
-                    // Handle button click here
+                    // TODO add click functionality
                 },
                 modifier = Modifier
                     .width(327.dp)
@@ -210,7 +196,8 @@ fun FutureTopicVoteViewUI(name: String, modifier: Modifier = Modifier) {
                     contentColor = Color.White
                 )
             ) {
-                Text("Send Votes",
+                Text(
+                    text = stringResource(id = R.string.send_votes),
                     fontSize = 18.sp,
 
                     )

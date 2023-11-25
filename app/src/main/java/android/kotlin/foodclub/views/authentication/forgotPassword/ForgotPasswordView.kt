@@ -14,26 +14,31 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.State
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import android.kotlin.foodclub.R
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun ForgotPasswordView(onValuesUpdate: (email: String) -> Unit,
-                       onBackButtonClick: () -> Unit, email: String,
-                       errorOccurred: State<Boolean>, message: State<String>
+fun ForgotPasswordView(
+    onValuesUpdate: (email: String) -> Unit,
+    onBackButtonClick: () -> Unit, email: String,
+    errorOccurred: State<Boolean>, message: State<String>
 ) {
     var userEmail by remember { mutableStateOf(email) }
 
     var initialEmailCorrectnessState = FieldsValidation.checkEmail(userEmail) == null
     var filledEmail by remember { mutableStateOf(false) }
 
-    AuthLayout(header = "Forgot Password",
-        subHeading = "Don’t worry! It happens. Please enter the email associated with your account.",
+    AuthLayout(
+        header = stringResource(id = R.string.forgot_password),
+        subHeading = stringResource(id = R.string.forgot_password_subheading),
         errorOccurred = errorOccurred.value, message = message.value,
-        onBackButtonClick = { onBackButtonClick() }) {
+        onBackButtonClick = { onBackButtonClick() }
+    ) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             CustomTextField(initialValue = userEmail,
-                placeholder = "Email",
+                placeholder = stringResource(id = R.string.email),
                 keyboardType = KeyboardType.Email,
                 onCorrectnessStateChange = { filledEmail = !filledEmail },
                 onValueChange = {
@@ -45,7 +50,7 @@ fun ForgotPasswordView(onValuesUpdate: (email: String) -> Unit,
 
             ConfirmButton(
                 enabled = (filledEmail || initialEmailCorrectnessState) || true,
-                text = "Send Code"
+                text = stringResource(id = R.string.send_code)
             ) { onValuesUpdate(userEmail) }
         }
     }

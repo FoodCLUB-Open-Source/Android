@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.C
@@ -37,7 +38,7 @@ import androidx.navigation.NavController
 fun CameraPreviewView(
     uri: String,
     state:String,
-    navController: NavController // NEED NAV CONTROLLER
+    navController: NavController
 ) {
     val context = LocalContext.current
 
@@ -76,7 +77,6 @@ fun CameraPreviewView(
         }
     }
 
-    // NEXT BUTTON + VIDEO URI
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -94,12 +94,11 @@ fun CameraPreviewView(
                 .padding(vertical = 30.dp)
                 .width(40.dp)
                 .height(40.dp)
-                //.blur(radius = 20.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
 
         ) {
             Image(
                 painter = painterResource(id = R.drawable.baseline_close_24),
-                contentDescription = "Story",
+                contentDescription = stringResource(id = R.string.story),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .width(25.dp)
@@ -110,12 +109,10 @@ fun CameraPreviewView(
         Button(
             onClick = {
                 navController.navigate(
-                    // URI ROUTE ON CLICK
-                    route = if (state.contains("recipe")) "CREATE_RECIPE_VIEW" else Graph.HOME//"CreateRecipeRoute/${Uri.encode(uri)}"
+                    route = if (state.contains(GalleryState.RECIPE.state)) "CREATE_RECIPE_VIEW" else Graph.HOME
                 )
             },
             modifier = Modifier
-                // ALIGNMENT
                 .align(Alignment.BottomEnd)
                 .padding(vertical = 40.dp)
                 .width(90.dp)
@@ -128,7 +125,7 @@ fun CameraPreviewView(
         ) {
             Image(
                 painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
-                contentDescription = "Story",
+                contentDescription = stringResource(id = R.string.story),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .width(20.dp)

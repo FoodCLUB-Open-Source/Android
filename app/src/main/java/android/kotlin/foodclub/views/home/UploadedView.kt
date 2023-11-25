@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -48,13 +49,12 @@ import androidx.navigation.compose.rememberNavController
 fun UploadedView(
     navController: NavController,
 ) {
-    UploadedViewUI(".")
+    UploadedViewUI()
 }
 
 @Composable
-fun UploadedViewUI(name: String, modifier: Modifier = Modifier) {
+fun UploadedViewUI(modifier: Modifier = Modifier) {
 
-    // FONT
     val montserratFontFamily = FontFamily(
         Font(R.font.montserratbold, FontWeight.Normal)
     )
@@ -68,12 +68,7 @@ fun UploadedViewUI(name: String, modifier: Modifier = Modifier) {
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            //horizontalArrangement = Arrangement.SpaceBetween
         ) {
-
-            // ********** TOP BAR STUFF **********
-
-            // LEFT BACK BUTTON
             Box(
                 modifier = Modifier
                     .offset(34.dp, 50.dp)
@@ -90,16 +85,14 @@ fun UploadedViewUI(name: String, modifier: Modifier = Modifier) {
                 )
             }
 
-            // CENTER TEXT
             Text(
-                text = "Post",
+                text = stringResource(id = R.string.post),
                 fontSize = 20.sp,
                 fontFamily = montserratFontFamily,
                 modifier = Modifier.offset(130.dp, 56.dp)
             )
 
 
-            // RIGHT CROSS BUTTON
             Box(
                 modifier = Modifier
                     .offset(230.dp, 50.dp)
@@ -117,41 +110,33 @@ fun UploadedViewUI(name: String, modifier: Modifier = Modifier) {
             }
 
 
-        }  // END OF ROW
-
-
-        // COLUMN FOR IMAGE + 2 BUTTONS
-
+        }
 
         Column(
             modifier = modifier.fillMaxSize()
         ) {
 
-            // BOX FOR TICK IMAGE
             Box(
                 modifier = Modifier
                     .offset(160.dp, 250.dp)
             ) {
 
-                // BACKGROUND BOX
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(10.dp))
-                        .background(Color.Gray.copy(alpha = 0.5f) ) // ALPHA SETS TRANSPARENCY
+                        .background(Color.Gray.copy(alpha = 0.5f))
                         .size(60.dp)
                 )
 
-                // TICK IMAGE
                 Image(
                     painter = painterResource(id = R.drawable.done_tick),
-                    contentDescription = "",
+                    contentDescription = null,
                     modifier = Modifier
                         .size(60.dp)
                 )
 
-                // CENTER TEXT
                 Text(
-                    text = "Successfully Uploaded!",
+                    text = stringResource(id = R.string.uploaded),
                     fontSize = 18.sp,
                     color = Color.Gray, // MEANT TO BE WHITE BUT YOU WONT SEE IT, SO CHANGE WHEN THUMBNAIL IS IMPLEMENTED ETC
                     fontFamily = montserratFontFamily,
@@ -161,9 +146,6 @@ fun UploadedViewUI(name: String, modifier: Modifier = Modifier) {
                 )
             }
 
-
-            // ********** TOP STUFF **********
-
             Row(
                 modifier = modifier
                     .offset(0.dp, -55.dp)
@@ -171,18 +153,16 @@ fun UploadedViewUI(name: String, modifier: Modifier = Modifier) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                // THANK YOU TEXT
                 Text(
-                    text = "Thanks For Sharing On FoodCLUB!",
+                    text = stringResource(id = R.string.sharing_thanks),
                     fontSize = 11.sp,
                     fontFamily = montserratFontFamily,
                     modifier = Modifier.offset(105.dp, 56.dp)
                 )
 
-                // CLOUD TICK IMAGE
                 Image(
                     painter = painterResource(id = R.drawable.cloud_tick),
-                    contentDescription = "",
+                    contentDescription = null,
                     modifier = Modifier
                         .offset(-140.dp, 56.dp)
                         .width(20.dp)
@@ -191,20 +171,16 @@ fun UploadedViewUI(name: String, modifier: Modifier = Modifier) {
             }
 
             Column(
-                modifier = modifier.fillMaxSize()
+                modifier = modifier
+                    .fillMaxSize()
                     .padding(bottom = 170.dp),
                 verticalArrangement = Arrangement.Bottom,
             ) {
 
-
-                // ********** BOTTOM STUFF **********
-
-
-                // INSTAGRAM SHARE BUTTON
                 Button(
                     shape = RoundedCornerShape(16.dp),
                     onClick = {
-                        // Handle button click here *For the future*
+                        // TODO Add functionality to button
                     },
                     modifier = Modifier
                         .offset(32.dp, 96.dp)
@@ -225,15 +201,18 @@ fun UploadedViewUI(name: String, modifier: Modifier = Modifier) {
                             modifier = Modifier.size(45.dp)
                         )
                         Spacer(modifier = Modifier.width(15.dp))
-                        Text("Share to Instagram", fontSize = 18.sp)
+                        Text(
+                            text= stringResource(id = R.string.instagram_share),
+                            fontSize = 18.sp
+                        )
                     }
                 }
 
-                // TIKTOK BUTTON
+
                 Button(
                     shape = RoundedCornerShape(16.dp),
                     onClick = {
-                        // Handle button click here *For the future*
+                        // TODO Add functionality to button
                     },
                     modifier = Modifier
                         .offset(32.dp, 126.dp)
@@ -253,12 +232,12 @@ fun UploadedViewUI(name: String, modifier: Modifier = Modifier) {
                         Image(
                             painter = painterResource(id = R.drawable.tiktok),
                             contentDescription = null,
-                            modifier = Modifier.size(45.dp) // Adjust te size as needed
+                            modifier = Modifier.size(45.dp)
                         )
                         Spacer(modifier = Modifier.width(35.dp))
 
                         Text(
-                            text = "Share to TikTok",
+                            text = stringResource(id = R.string.tiktok_share),
                             fontSize = 18.sp,
                             modifier = Modifier
                                 .offset(-25.dp, 0.dp)
