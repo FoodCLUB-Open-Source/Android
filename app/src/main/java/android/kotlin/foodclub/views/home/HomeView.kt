@@ -9,6 +9,7 @@ import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.others.AnimatedIcon
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
+import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
 import android.kotlin.foodclub.utils.composables.LikeButton
 import android.kotlin.foodclub.utils.composables.MemoriesItemView
 import android.kotlin.foodclub.utils.composables.PlayPauseButton
@@ -357,7 +358,13 @@ fun HomeView(
     if (screenHeightMinusBottomNavItem <= 650.dp) {
         screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.96f
     }
-
+    val memories = viewModel.memoryListData.collectAsState()
+    var showStories by remember {
+        mutableStateOf(false)
+    }
+    var currentMemoriesModel by remember{
+        mutableStateOf(MemoriesModel(listOf(),""))
+    }
     val systemUiController = rememberSystemUiController()
 
     val triggerIngredientBottomSheetModal: () -> Unit = {
@@ -384,61 +391,72 @@ fun HomeView(
             .zIndex(1f),
         contentAlignment = Alignment.Center
     ) {
-        Box(
-            modifier = Modifier
+            Box(modifier = Modifier
                 .fillMaxWidth()
                 .height(95.dp)
                 .alpha(0.4f)
-                .background(color = Color(0xFF424242))
-        )
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 10.dp)
-        ) {
-            Text(
-                modifier = modifier
-                    .alpha(feedTransparency)
-                    .clickable {
-                        showFeedOnUI = true
-                        snapsTransparency = 0.7f
-                        feedTransparency = 1f
-                    },
-                text = stringResource(id = R.string.feed),
-                fontFamily = Montserrat,
-                fontSize = 18.sp,
-                style = TextStyle(color = Color.White),
-                lineHeight = 21.94.sp,
-                fontWeight = if (showFeedOnUI) FontWeight.Bold else FontWeight.Medium
-            )
-            Text(
+                .background(color = Color(0xFF424242)))
+            if(showStories){
+                Image(
+                    painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
+                    contentDescription = "",
+                    modifier = Modifier.
+                    align(Alignment.BottomStart)
+                        .alpha(feedTransparency)
+                        .padding(start = 22.dp, bottom = 18.dp)
+                        .clickable {
+                            showStories=!showStories
+                        }
+                )
+            }
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .padding(8.dp)
-                    .alpha(0.7f),
-                text = stringResource(id = R.string.vertical_line),
-                fontFamily = Montserrat,
-                fontSize = 18.sp,
-                style = TextStyle(color = Color.LightGray),
-                lineHeight = 21.94.sp
-            )
-            Text(
-                modifier = modifier
-                    .alpha(snapsTransparency)
-                    .clickable {
-                        feedTransparency = 0.7f
-                        snapsTransparency = 1f
-                        showFeedOnUI = false
-                    },
-                text = stringResource(id = R.string.snaps),
-                fontFamily = Montserrat,
-                fontSize = 18.sp,
-                style = TextStyle(color = Color.White),
-                lineHeight = 21.94.sp,
-                fontWeight = if (!showFeedOnUI) FontWeight.Bold else FontWeight.Medium
-            )
-        }
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 10.dp)
+            ) {
+                Text(
+                    modifier = modifier
+                        .alpha(feedTransparency)
+                        .clickable {
+                            showFeedOnUI = true
+                            snapsTransparency = 0.7f
+                            feedTransparency = 1f
+                        },
+                    text = "Feed",
+                    fontFamily = Montserrat,
+                    fontSize = 18.sp,
+                    style = TextStyle(color = Color.White),
+                    lineHeight = 21.94.sp,
+                    fontWeight = if (showFeedOnUI) FontWeight.Bold else FontWeight.Medium
+                )
+                Text(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .alpha(0.7f),
+                    text = "|",
+                    fontFamily = Montserrat,
+                    fontSize = 18.sp,
+                    style = TextStyle(color = Color.LightGray),
+                    lineHeight = 21.94.sp
+                )
+                Text(
+                    modifier = modifier
+                        .alpha(snapsTransparency)
+                        .clickable {
+                            feedTransparency = 0.7f
+                            snapsTransparency = 1f
+                            showFeedOnUI = false
+                        },
+                    text = "Snaps",
+                    fontFamily = Montserrat,
+                    fontSize = 18.sp,
+                    style = TextStyle(color = Color.White),
+                    lineHeight = 21.94.sp,
+                    fontWeight = if (!showFeedOnUI) FontWeight.Bold else FontWeight.Medium
+                )
+            }
     }
 
     Column(modifier = Modifier.height(screenHeightMinusBottomNavItem)) {
@@ -553,55 +571,51 @@ fun HomeView(
                     }
                 }
             }
-        } else {
-            val memories = viewModel.storyListData.collectAsState()
-            var showStories by remember {
-                mutableStateOf(false)
-            }
-            if (showStories) {
-                ViewStories()
-            } else {
-                Column(
-                    modifier = Modifier
-                        .background(color = Color.White)
-                        .fillMaxSize()
-                        .padding(24.dp)
-                ) {
-                    Spacer(modifier = modifier.size(90.dp))
-                    Text(
-                        text = stringResource(id = R.string.memories),
-                        style = TextStyle(
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Black,
-                            fontSize = 24.sp,
-                            fontFamily = Montserrat
-                        )
-                    )
+        }else{
 
+           if(showStories){
+               SnapsView(memoriesModel = currentMemoriesModel, modifier = Modifier)
+           }
+            else{
+               Column(
+                   modifier = Modifier
+                       .background(color = Color.White)
+                       .fillMaxSize()
+                       .padding(24.dp)
+               ) {
+                   Spacer(modifier = modifier.size(90.dp))
+                   Text(
+                       text="Memories",
+                       style = TextStyle(
+                           fontWeight = FontWeight.Bold,
+                           color = Color.Black,
+                           fontSize = 24.sp,
+                           fontFamily = Montserrat
+                       )
+                   )
                     Spacer(modifier = modifier.size(12.dp))
 
-                    if (memories.value.isEmpty()) {
-                        MemoriesItemView(
-                            modifier = Modifier.clickable {
-                                showStories = !showStories
-                            },
-                            painter = painterResource(id = R.drawable.nosnapsfortheday),
-                            date = ""
-                        )
-                    } else {
-                        LazyRow() {
-                            items(memories.value) {
-                                val painter: Painter = rememberImagePainter(data = it.thumbnailLink)
-                                MemoriesItemView(
-                                    modifier = Modifier.clickable {
-                                        showStories = !showStories
-                                    },
-                                    painter = painter,
-                                    date = it.createdAt
-                                )
-                                Spacer(modifier = Modifier.width(12.dp))
-                            }
-
+                   if(memories.value.isEmpty()){
+                       MemoriesItemView(
+                           modifier = Modifier.clickable {
+                               showStories=!showStories
+                           },
+                           painter = painterResource(id = R.drawable.nosnapsfortheday),
+                           date = "")
+                   }
+                   else{
+                       LazyRow(){
+                           items(memories.value){
+                                   val painter: Painter =  rememberImagePainter(data = it.stories[0].imageUrl)
+                               MemoriesItemView(
+                                   modifier = Modifier.clickable {
+                                       showStories=!showStories
+                                       currentMemoriesModel = it
+                                   },
+                                   painter = painter,
+                                   date = it.dateTime)
+                               Spacer(modifier = Modifier.width(12.dp))
+                           }
                         }
                     }
                     TapToSnapDialog(modifier =
