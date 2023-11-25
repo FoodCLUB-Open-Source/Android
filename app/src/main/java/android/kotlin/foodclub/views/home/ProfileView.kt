@@ -178,11 +178,21 @@ fun ProfileView(
         var postId by remember {
             mutableLongStateOf(0)
         }
+        var tabItems = listOf<UserPosts>()
+
+        if(pagerState.currentPage == 0){
+            tabItems = userPosts.value
+        }
+        else if(pagerState.currentPage == 1){
+            tabItems = bookmarkedPosts
+        }
+
         if (showDeleteRecipe){
             viewModel.getPostData(postId)
 
-            DeleteRecipeView(
+            ShowProfilePosts(
                 postId = postId,
+                posts = tabItems,
                 viewModel = viewModel,
                 onPostDeleted = {
                     viewModel.updatePosts(postId)
