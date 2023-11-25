@@ -50,6 +50,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -69,8 +70,12 @@ import coil.compose.AsyncImage
  * @param onLikeExecution Executes when the animation finishes
  */
 @Composable
-fun LikeButton(animatedIcon: AnimatedIcon, onLikeExecution: () -> Unit) {
+fun LikeButton(
+    animatedIcon: AnimatedIcon,
+    onLikeExecution: () -> Unit
+) {
     val isAnimatingState = animatedIcon.startAnimation.collectAsState()
+
     AnimatedVisibility(visible = isAnimatingState.value,
         enter = scaleIn(
             spring(Spring.DampingRatioMediumBouncy),
@@ -99,7 +104,8 @@ fun LikeButton(animatedIcon: AnimatedIcon, onLikeExecution: () -> Unit) {
 
     LaunchedEffect(isAnimatingState.value) {
         if (animatedIcon.dpOffset != DpOffset.Unspecified &&
-            isAnimatingState.value) {
+            isAnimatingState.value
+        ) {
             onLikeExecution()
         }
     }
@@ -182,188 +188,243 @@ fun VideoLayout(
                 .align(Alignment.BottomStart)
                 .padding(15.dp)
         ) {
-            Column {
-                //Category button
-                if(category != null) {
-                    Button(
-                        modifier = Modifier
-                            .width(60.dp)
-                            .height(25.dp),
-                        onClick = { onCategoryClick() },
-                        contentPadding = PaddingValues(0.dp),
-                        colors = ButtonDefaults.buttonColors(Color(0xFFD95978))
-                    ) {
-                        Text(
-                            category, fontFamily = Montserrat,
-                            fontSize = 12.sp, style = TextStyle(color = Color.White)
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
-
-                //Profile photo and name
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable { onProfileClick() }
-                ) {
-                    AsyncImage(
-                        model = userDetails.profilePictureUrl ?: defaultProfileImage,
-                        contentDescription = "Profile Image",
-                        modifier = Modifier
-                            .size(35.dp)
-                            .clip(CircleShape)
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Text(
-                        userDetails.username, color = Color.White,
-                        fontFamily = Montserrat, fontSize = 18.sp,
-                        modifier = Modifier.padding(2.dp)
-                    )
-                }
-            }
+            VideoCategorySection(
+                category = category,
+                onCategoryClick = onCategoryClick,
+                onProfileClick = onProfileClick,
+                userDetails = userDetails
+            )
         }
 
-        if(videoStats != null) {
-            Box(modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(15.dp)) {
-                Column {
-                    //Bookmark button
-                    if(bookMarkState != null) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .align(Alignment.End)
-                                .size(50.dp)
-                        ) {
-                            Box(modifier = Modifier
-                                .size(55.dp)
-                                .clickable { onBookmarkClick() }) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(55.dp)
-                                        .clip(RoundedCornerShape(35.dp))
-                                        .background(Color.Black.copy(alpha = 0.5f))
-                                        .blur(radius = 5.dp)
-                                )
-
-                                val maxBookmarkSize = 32.dp
-                                val bookmarkIconSize by animateDpAsState(
-                                    targetValue = if (bookMarkState) 22.dp else 21.dp,
-                                    animationSpec = keyframes {
-                                        durationMillis = 400
-                                        14.dp.at(50)
-                                        maxBookmarkSize.at(190)
-                                        16.dp.at(330)
-                                        22.dp.at(400)
-                                            .with(FastOutLinearInEasing)
-                                    }, label = ""
-                                )
-                                Icon(
-                                    painter = painterResource(id = R.drawable.save),
-                                    tint = if (bookMarkState) foodClubGreen else Color.White,
-                                    modifier = Modifier
-                                        .size(bookmarkIconSize)
-                                        .align(Alignment.Center)
-                                        .zIndex(1f),
-                                    contentDescription = "bookmark"
-                                )
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(10.dp))
-                    }
-
-                    //Like button
-                    if(likeState != null) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .align(Alignment.End)
-                                .width(50.dp)
-                                .height(80.dp),
-                        ) {
-                            Spacer(Modifier.weight(1f))
-                            Box(
-                                modifier = Modifier
-                                    .width(50.dp)
-                                    .height(80.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .width(50.dp)
-                                        .height(80.dp)
-                                        .clip(RoundedCornerShape(30.dp))
-                                        .background(Color.Black.copy(alpha = 0.5f))
-                                        .blur(radius = 5.dp)
-                                )
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center,
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .clip(RoundedCornerShape(30.dp))
-                                        .clickable { onLikeClick() }
-                                ) {
-                                    val maxSize = 32.dp
-                                    val iconSize by animateDpAsState(
-                                        targetValue = if (likeState) 22.dp else 21.dp,
-                                        animationSpec = keyframes {
-                                            durationMillis = 400
-                                            14.dp.at(50)
-                                            maxSize.at(190)
-                                            16.dp.at(330)
-                                            22.dp.at(400)
-                                                .with(FastOutLinearInEasing)
-                                        }, label = ""
-                                    )
-
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.like),
-                                        contentDescription = null,
-                                        tint = if (likeState) foodClubGreen else Color.White,
-                                        modifier = Modifier.size(iconSize)
-                                    )
-                                    Spacer(modifier = Modifier.height(3.dp))
-                                    Text(
-                                        text = videoStats.displayLike,
-                                        fontSize = 13.sp,
-                                        fontFamily = Montserrat,
-                                        color = if (likeState) foodClubGreen else Color.White
-                                    )
-                                }
-                            }
-                            Spacer(Modifier.weight(1f))
-                        }
-                        Spacer(modifier = Modifier.height(10.dp))
-                    }
-
-                    //Info button
-                    if(onInfoClick != null) {
-                        Button(
-                            onClick = { onInfoClick() },
-                            colors = defaultButtonColors(),
-                            shape = RoundedCornerShape(15.dp),
-                            modifier = Modifier
-                                .width(120.dp)
-                                .height(35.dp),
-                            contentPadding = PaddingValues(0.dp)
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    text = "Info",
-                                    fontFamily = Montserrat,
-                                    fontSize = 14.sp
-                                )
-                            }
-                        }
-                    } else {
-                        Spacer(modifier = Modifier.height(35.dp))
-                    }
-                }
+        if (videoStats != null) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(15.dp)
+            ) {
+                VideoStats(
+                    videoStats = videoStats,
+                    likeState = likeState,
+                    bookMarkState = bookMarkState,
+                    onLikeClick = onLikeClick,
+                    onBookmarkClick = onBookmarkClick,
+                    onInfoClick = onInfoClick
+                )
             }
         }
 
     }
 
+}
+
+@Composable
+private fun VideoCategorySection(
+    category: String?,
+    onCategoryClick: () -> Unit,
+    onProfileClick: () -> Unit,
+    userDetails: SimpleUserModel
+) {
+    Column {
+        if (category != null) {
+            Button(
+                modifier = Modifier
+                    .width(60.dp)
+                    .height(25.dp),
+                onClick = { onCategoryClick() },
+                contentPadding = PaddingValues(0.dp),
+                colors = ButtonDefaults.buttonColors(Color(0xFFD95978))
+            ) {
+                Text(
+                    category, fontFamily = Montserrat,
+                    fontSize = 12.sp, style = TextStyle(color = Color.White)
+                )
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.clickable { onProfileClick() }
+        ) {
+            AsyncImage(
+                model = userDetails.profilePictureUrl ?: defaultProfileImage,
+                contentDescription = stringResource(id = R.string.profile_picture),
+                modifier = Modifier
+                    .size(35.dp)
+                    .clip(CircleShape)
+            )
+            Spacer(modifier = Modifier.width(10.dp))
+            Text(
+                userDetails.username, color = Color.White,
+                fontFamily = Montserrat, fontSize = 18.sp,
+                modifier = Modifier.padding(2.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun VideoStats(
+    videoStats: VideoStats,
+    likeState: Boolean? = null,
+    bookMarkState: Boolean? = null,
+    onLikeClick: () -> Unit = {},
+    onBookmarkClick: () -> Unit = {},
+    onInfoClick: (() -> Unit)? = null,
+) {
+    Column {
+        if (bookMarkState != null) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .size(50.dp)
+            ) {
+                BookMarkButton(onBookmarkClick, bookMarkState)
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+        }
+
+        if (likeState != null) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .width(50.dp)
+                    .height(80.dp),
+            ) {
+                VideoLikeButton(videoStats, likeState, onLikeClick)
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+
+            InfoButton(onInfoClick)
+        }
+    }
+}
+
+@Composable
+fun BookMarkButton(
+    onBookmarkClick: () -> Unit,
+    bookMarkState: Boolean
+) {
+    Box(modifier = Modifier
+        .size(55.dp)
+        .clickable { onBookmarkClick() }) {
+        Box(
+            modifier = Modifier
+                .size(55.dp)
+                .clip(RoundedCornerShape(35.dp))
+                .background(Color.Black.copy(alpha = 0.5f))
+                .blur(radius = 5.dp)
+        )
+
+        val maxBookmarkSize = 32.dp
+        val bookmarkIconSize by animateDpAsState(
+            targetValue = if (bookMarkState) 22.dp else 21.dp,
+            animationSpec = keyframes {
+                durationMillis = 400
+                14.dp.at(50)
+                maxBookmarkSize.at(190)
+                16.dp.at(330)
+                22.dp.at(400)
+                    .with(FastOutLinearInEasing)
+            }, label = ""
+        )
+        Icon(
+            painter = painterResource(id = R.drawable.save),
+            tint = if (bookMarkState) foodClubGreen else Color.White,
+            modifier = Modifier
+                .size(bookmarkIconSize)
+                .align(Alignment.Center)
+                .zIndex(1f),
+            contentDescription = stringResource(id = R.string.bookmark)
+        )
+    }
+}
+
+@Composable
+fun VideoLikeButton(
+    videoStats: VideoStats,
+    likeState: Boolean,
+    onLikeClick: () -> Unit
+) {
+    Column {
+        Spacer(Modifier.weight(1f))
+        Box(
+            modifier = Modifier
+                .width(50.dp)
+                .height(80.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = Modifier
+                    .width(50.dp)
+                    .height(80.dp)
+                    .clip(RoundedCornerShape(30.dp))
+                    .background(Color.Black.copy(alpha = 0.5f))
+                    .blur(radius = 5.dp)
+            )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(30.dp))
+                    .clickable { onLikeClick() }
+            ) {
+                val maxSize = 32.dp
+                val iconSize by animateDpAsState(
+                    targetValue = if (likeState) 22.dp else 21.dp,
+                    animationSpec = keyframes {
+                        durationMillis = 400
+                        14.dp.at(50)
+                        maxSize.at(190)
+                        16.dp.at(330)
+                        22.dp.at(400)
+                            .with(FastOutLinearInEasing)
+                    }, label = ""
+                )
+
+                Icon(
+                    painter = painterResource(id = R.drawable.like),
+                    contentDescription = null,
+                    tint = if (likeState) foodClubGreen else Color.White,
+                    modifier = Modifier.size(iconSize)
+                )
+                Spacer(modifier = Modifier.height(3.dp))
+                Text(
+                    text = videoStats.displayLike,
+                    fontSize = 13.sp,
+                    fontFamily = Montserrat,
+                    color = if (likeState) foodClubGreen else Color.White
+                )
+            }
+        }
+        Spacer(Modifier.weight(1f))
+    }
+}
+
+@Composable
+private fun InfoButton(onInfoClick: (() -> Unit)?) {
+    if (onInfoClick != null) {
+        Button(
+            onClick = { onInfoClick() },
+            colors = defaultButtonColors(),
+            shape = RoundedCornerShape(15.dp),
+            modifier = Modifier
+                .width(120.dp)
+                .height(35.dp),
+            contentPadding = PaddingValues(0.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = stringResource(id = R.string.info),
+                    fontFamily = Montserrat,
+                    fontSize = 14.sp
+                )
+            }
+        }
+    } else {
+        Spacer(modifier = Modifier.height(35.dp))
+    }
 }

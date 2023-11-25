@@ -59,7 +59,7 @@ fun MemoriesItemView(
         ){
             Image(
                 painter = painter,
-                contentDescription = "",
+                contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxSize()

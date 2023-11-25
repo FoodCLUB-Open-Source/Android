@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -59,8 +60,12 @@ fun TermsAndConditions(navController: NavHostController) {
 
         )
         Row (modifier = Modifier.padding(top = 20.dp)){
-            Text(text = "Accept terms and conditions",modifier = Modifier.padding(top = 15.dp, end = 5.dp))
-            Checkbox(checked = checkedState.value,
+            Text(
+                text = stringResource(id = R.string.accept_terms),
+                modifier = Modifier.padding(top = 15.dp, end = 5.dp)
+            )
+            Checkbox(
+                checked = checkedState.value,
                 onCheckedChange = { checkedState.value = !checkedState.value},
                 colors = CheckboxDefaults.colors(
                     checkedColor = Color(0xFF7EC60B)
@@ -72,12 +77,14 @@ fun TermsAndConditions(navController: NavHostController) {
         
         Button(onClick = {
 
-            if(checkedState.value == true)
+            if(checkedState.value)
                     viewModel.onChecked(checkedState.value,navController)
             else
                     Toast.makeText(context,"Please accept terms and conditions to proceed",Toast.LENGTH_SHORT).show()
 
-        }, modifier = Modifier.fillMaxWidth().padding(20.dp),
+        }, modifier = Modifier
+            .fillMaxWidth()
+            .padding(20.dp),
 
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF7EC60B),
@@ -86,7 +93,7 @@ fun TermsAndConditions(navController: NavHostController) {
                 contentColor = Color.White
             )
         ) {
-                Text(text = "Proceed")
+                Text(text = stringResource(id = R.string.proceed))
         }
 
     }

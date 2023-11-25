@@ -39,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -52,20 +53,9 @@ import androidx.navigation.NavHostController
 fun ConfirmPhoneNumView(navController: NavHostController) {
     Box(modifier = Modifier.background(Color.White))
     {
-        /*
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 25.dp, end = 25.dp, top = 80.dp, bottom = 50.dp)
-        ) {
-            ConfirmPhoneNumTopLayout()//modifier = Modifier.weight(1F))
-            ConfirmPhoneNumMainLayout()//modifier = Modifier.weight(1F))
-        }
-         */
-
         AuthLayout(
-            header = "Confirm your Identity",
-            subHeading = "Please confirm your country code and enter in your phone number",
+            header = stringResource(id = R.string.confirm_identity),
+            subHeading = stringResource(id = R.string.confirm_identity_subheading),
             onBackButtonClick = { navController.popBackStack() }) {
             ConfirmPhoneNumMainLayout()
         }
@@ -81,7 +71,7 @@ fun ConfirmPhoneNumTopLayout(
         Column {
             Image(
                 painter = painterResource(R.drawable.back_icon),
-                contentDescription = "go back",
+                contentDescription = stringResource(id = R.string.go_back),
                 modifier = Modifier
                     .width(32.dp)
                     .height(32.dp)
@@ -91,11 +81,14 @@ fun ConfirmPhoneNumTopLayout(
             Box(modifier = Modifier.padding(top = 32.dp)) {
                 Column(verticalArrangement = Arrangement.spacedBy(28.dp)) {
                     Text(
-                        text = "Confirm Your Identity", textAlign = TextAlign.Left,
-                        fontWeight = FontWeight.Bold, fontSize = 30.sp, fontFamily = PlusJakartaSans
+                        text = stringResource(id = R.string.confirm_identity),
+                        textAlign = TextAlign.Left,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 30.sp,
+                        fontFamily = PlusJakartaSans
                     )
                     Text(
-                        text = "Please confirm your country code and enter in your phone number",
+                        text = stringResource(id = R.string.confirm_identity_subheading),
                         textAlign = TextAlign.Left,
                         fontWeight = FontWeight.Normal,
                         fontSize = 16.sp,
@@ -140,17 +133,15 @@ fun ConfirmPhoneNumMainLayout(
     val (isError, onErrorUpdate) = rememberSaveable { mutableStateOf(false) }
 
     Column(verticalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxHeight()) {
-
         Column {
-
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding()) {
-
                 Text(
-                    text = "+",
+                    text = stringResource(id = R.string.plus_sign),
                     fontFamily = Montserrat,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
+
                 BasicTextField(
                     modifier = Modifier
                         .padding(0.dp)
@@ -159,7 +150,6 @@ fun ConfirmPhoneNumMainLayout(
                     singleLine = true,
                     onValueChange = { onCodeUpdate(it.take(3)) },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                    //colors = TextFieldDefaults.textFieldColors(containerColor = Color.Transparent),
                     textStyle = LocalTextStyle.current.copy(
                         fontFamily = Montserrat,
                         fontSize = 18.sp,
@@ -168,22 +158,21 @@ fun ConfirmPhoneNumMainLayout(
                 )
 
                 Text(
-                    text = "|",
+                    text = stringResource(id = R.string.vertical_line),
                     fontSize = 25.sp,
                     fontFamily = Montserrat,
                     color = Color.LightGray,
                     modifier = Modifier.padding(vertical = 3.dp, horizontal = 10.dp)
                 )
+
                 BasicTextField(
                     value = phoneNum,
                     singleLine = true,
                     onValueChange = { onPhoneUpdate(it.take(18)) },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                    //colors = TextFieldDefaults.textFieldColors(containerColor = Color.Transparent), ,
                     modifier = Modifier
                         .padding(0.dp)
                         .fillMaxWidth(),
-                    //.then(mod)
                     textStyle = LocalTextStyle.current.copy(
                         fontFamily = Montserrat,
                         fontSize = 18.sp,
@@ -194,6 +183,7 @@ fun ConfirmPhoneNumMainLayout(
 
 
             val offset: Dp by animateDpAsState(if (isError) 0.dp else 130.dp, label = "")
+
             Box(
                 modifier = Modifier
                     .padding(start = 74.dp + offset, bottom = 3.dp)
@@ -211,7 +201,9 @@ fun ConfirmPhoneNumMainLayout(
                         .background(Color.Red)
                 )
             }
+
             Divider()
+
             Box(modifier = Modifier.height(20.dp))
             {
                 if (isError) {
@@ -219,7 +211,7 @@ fun ConfirmPhoneNumMainLayout(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 75.dp, top = 2.dp),
-                        text = "Invalid number",
+                        text = stringResource(id = R.string.invalid_number),
                         color = MaterialTheme.colorScheme.error,
                         fontFamily = Montserrat
                     )
@@ -232,7 +224,12 @@ fun ConfirmPhoneNumMainLayout(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                Text(text = "Sync Contacts", fontFamily = Montserrat, fontWeight = FontWeight.Bold)
+                Text(
+                    text = stringResource(id = R.string.sync_contacts),
+                    fontFamily = Montserrat,
+                    fontWeight = FontWeight.Bold
+                )
+
                 Switch(
                     checked = syncContacts,
                     onCheckedChange = { onSyncUpdate(it) },
@@ -248,7 +245,10 @@ fun ConfirmPhoneNumMainLayout(
             }
         }
 
-        ConfirmButton(enabled = enableButton, text = "Continue") {
+        ConfirmButton(
+            enabled = enableButton,
+            text = stringResource(id = R.string.continue_text),
+        ) {
             if ((isValidNumber(countryCode) && isValidNumber(phoneNum))) {
                 if (phoneNum.length >= 9) {
                     onErrorUpdate(false)
@@ -267,7 +267,6 @@ fun ConfirmPhoneNumMainLayout(
 }
 
 fun isValidNumber(text: String): Boolean {
-    // Add your custom validation rules here
     return text.matches(Regex("[0-9]+"))
 }
 
@@ -276,19 +275,9 @@ fun isValidNumber(text: String): Boolean {
 fun ConfirmPhoneNumPreview() {
     Box(modifier = Modifier.background(Color.White))
     {
-        /*
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 25.dp, end = 25.dp, top = 80.dp, bottom = 50.dp)
-        ) {
-            ConfirmPhoneNumTopLayout()//modifier = Modifier.weight(1F))
-            ConfirmPhoneNumMainLayout()//modifier = Modifier.weight(1F))
-        }
-         */
         AuthLayout(
-            header = "Confirm your Identity",
-            subHeading = "Please confirm your country code and enter in your phone number",
+            header = stringResource(id = R.string.confirm_identity),
+            subHeading = stringResource(id = R.string.confirm_identity_subheading),
             onBackButtonClick = { /*TODO*/ }) {
             ConfirmPhoneNumMainLayout()
         }

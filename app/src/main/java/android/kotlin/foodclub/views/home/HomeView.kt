@@ -4,21 +4,17 @@ package android.kotlin.foodclub.views.home
 
 import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.domain.models.stories.StoryModel
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.others.AnimatedIcon
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
-import android.kotlin.foodclub.navigation.HomeOtherRoutes
-import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.utils.composables.LikeButton
 import android.kotlin.foodclub.utils.composables.MemoriesItemView
 import android.kotlin.foodclub.utils.composables.PlayPauseButton
 import android.kotlin.foodclub.utils.composables.VideoLayout
 import android.kotlin.foodclub.utils.composables.VideoScroller
-import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -38,7 +34,6 @@ import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -86,7 +81,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -96,6 +90,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.media3.common.util.UnstableApi
 import coil.compose.rememberImagePainter
@@ -119,22 +114,28 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
         sheetState = bottomSheetState,
         dragHandle = { BottomSheetDefaults.DragHandle() },
     ) {
-        Column(modifier = Modifier
-            .height(screenHeight)
-            .padding(start = 16.dp, end = 16.dp)) {
+        Column(
+            modifier = Modifier
+                .height(screenHeight)
+                .padding(start = 16.dp, end = 16.dp)
+        ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Box(modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 16.dp)) {
-                    Text("Chicken broth and meatballs",
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 16.dp)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.example_recipe),
                         color = Color.Black,
                         fontFamily = Montserrat,
                         fontSize = if (isSmallScreen) 18.sp else 22.sp,
-                        fontWeight = FontWeight.Bold)
+                        fontWeight = FontWeight.Bold
+                    )
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 Box(
@@ -157,7 +158,7 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
                         onClick = {}
                     ) {
                         Text(
-                            "copy clip",
+                            text = stringResource(id = R.string.copy_clip),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             fontFamily = Montserrat,
@@ -177,10 +178,12 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
                         .weight(1f)
                         .padding(start = if (isSmallScreen) 16.dp else 0.dp)
                 ) {
-                    Text("Serving Size",
+                    Text(
+                        text = stringResource(id = R.string.serving_size),
                         color = Color.Black,
                         fontFamily = Montserrat,
-                        fontSize = if (isSmallScreen) 14.sp else 17.sp)
+                        fontSize = if (isSmallScreen) 14.sp else 17.sp
+                    )
                 }
                 Box(
                     modifier = Modifier.padding(end = if (isSmallScreen) 10.dp else 0.dp)
@@ -203,20 +206,28 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 16.dp)) {
-                    Text("Ingredients", color = Color.Black,
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 16.dp)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.ingredients),
+                        color = Color.Black,
                         fontFamily = Montserrat,
                         fontSize = if (isSmallScreen) 13.sp else 16.sp,
-                        fontWeight = FontWeight.Bold)
+                        fontWeight = FontWeight.Bold
+                    )
                 }
                 Spacer(modifier = Modifier.width(if (isSmallScreen) 10.dp else 16.dp))
                 Box(modifier = Modifier.padding(end = if (isSmallScreen) 16.dp else 16.dp)) {
-                    Text("Clear", color = Color(0xFF7EC60B),
+                    Text(
+                        text = stringResource(id = R.string.clear),
+                        color = Color(0xFF7EC60B),
                         fontFamily = Montserrat,
                         fontSize = if (isSmallScreen) 13.sp else 16.sp,
-                        fontWeight = FontWeight.Bold)
+                        fontWeight = FontWeight.Bold
+                    )
                 }
 
             }
@@ -229,7 +240,10 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
             ) {
                 LazyColumn {
                     items(6) {
-                        HomeIngredient("Broccoli oil", R.drawable.salad_ingredient)
+                        HomeIngredient(
+                            ingredientTitle = stringResource(id = R.string.example_ingredient),
+                            ingredientImage = R.drawable.salad_ingredient
+                        )
                     }
                 }
             }
@@ -251,7 +265,7 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
                     onClick = {}
                 ) {
                     Text(
-                        "Add to my shopping list",
+                        text = stringResource(id = R.string.add_to_my_shopping_list),
                         color = Color.White,
                         fontFamily = Montserrat,
                         fontSize = 16.sp,
@@ -374,9 +388,8 @@ fun HomeView(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .zIndex(1f)
-        ,
-        contentAlignment = Alignment.Center // Center the content horizontally
+            .zIndex(1f),
+        contentAlignment = Alignment.Center
     ) {
             Box(modifier = Modifier
                 .fillMaxWidth()
@@ -450,7 +463,7 @@ fun HomeView(
         if (showIngredientSheet) {
             HomeBottomSheetIngredients(triggerIngredientBottomSheetModal)
         }
-        if (showFeedOnUI){
+        if (showFeedOnUI) {
             if (videosState.value.isNotEmpty()) {
                 val pagerState = rememberPagerState(
                     initialPage = initialPage ?: 0,
@@ -469,7 +482,7 @@ fun HomeView(
 
                 LaunchedEffect(pagerState.currentPage) { videoViewed = false }
                 LaunchedEffect(videoViewed) {
-                    if(videoViewed) {
+                    if (videoViewed) {
                         viewModel.userViewsPost(videosState.value[pagerState.currentPage].videoId)
                     }
                 }
@@ -481,76 +494,81 @@ fun HomeView(
                     modifier = modifier
                 ) {
                     var pauseButtonVisibility by remember { mutableStateOf(false) }
-                    val doubleTapState by remember { mutableStateOf(
-                        AnimatedIcon(R.drawable.liked, 110.dp, localDensity)
-                    ) }
+                    val doubleTapState by remember {
+                        mutableStateOf(
+                            AnimatedIcon(R.drawable.liked, 110.dp, localDensity)
+                        )
+                    }
 
                     Box(modifier = Modifier.fillMaxSize()) {
-    //                    if (viewModel.videosList.isNotEmpty()) {
-                            val currentVideo = videosState.value[it]
-    //                        val currentVideo = viewModel.videosList[it]
-                            val authorDetails = SimpleUserModel(
-                                userId = 1,
-                                username = currentVideo.authorDetails,
-                                profilePictureUrl = null
+                        val currentVideo = videosState.value[it]
+                        val authorDetails = SimpleUserModel(
+                            userId = 1,
+                            username = currentVideo.authorDetails,
+                            profilePictureUrl = null
+                        )
+                        var isLiked by remember {
+                            mutableStateOf(currentVideo.currentViewerInteraction.isLiked)
+                        }
+                        var isBookmarked by remember {
+                            mutableStateOf(
+                                currentVideo.currentViewerInteraction.isBookmarked
                             )
-                            var isLiked by remember {
-                                mutableStateOf(currentVideo.currentViewerInteraction.isLiked)
-                            }
-                            var isBookmarked by remember { mutableStateOf(
-                                currentVideo.currentViewerInteraction.isBookmarked)
-                            }
+                        }
 
-                            VideoScroller(currentVideo, pagerState, it, onSingleTap = {
-                                pauseButtonVisibility = it.isPlaying
-                                it.playWhenReady = !it.isPlaying
+                        VideoScroller(currentVideo, pagerState, it, onSingleTap = {
+                            pauseButtonVisibility = it.isPlaying
+                            it.playWhenReady = !it.isPlaying
+                        },
+                            onDoubleTap = { exoPlayer, offset ->
+                                coroutineScope.launch {
+                                    doubleTapState.animate(offset)
+                                }
                             },
-                                onDoubleTap = { exoPlayer, offset ->
-                                    coroutineScope.launch {
-                                        doubleTapState.animate(offset)
-                                    }
-                                },
-                                onVideoDispose = {
-                                    pauseButtonVisibility = false
-                                    videoViewed = true
-                                                 },
-                                onVideoGoBackground = { pauseButtonVisibility = false }
-                            )
+                            onVideoDispose = {
+                                pauseButtonVisibility = false
+                                videoViewed = true
+                            },
+                            onVideoGoBackground = { pauseButtonVisibility = false }
+                        )
 
 
 
-                            LikeButton(doubleTapState) {
+                        LikeButton(doubleTapState) {
+                            isLiked = !isLiked
+                            coroutineScope.launch {
+                                viewModel.updatePostLikeStatus(currentVideo.videoId, isLiked)
+                            }
+                        }
+                        PlayPauseButton(buttonVisibility = pauseButtonVisibility)
+                        VideoLayout(
+                            userDetails = authorDetails,
+                            videoStats = currentVideo.videoStats,
+                            likeState = isLiked,
+                            bookMarkState = isBookmarked,
+                            category = stringResource(id = R.string.meat),
+                            opacity = 0.7f,
+                            onLikeClick = {
                                 isLiked = !isLiked
                                 coroutineScope.launch {
                                     viewModel.updatePostLikeStatus(currentVideo.videoId, isLiked)
                                 }
-                            }
-                            PlayPauseButton(buttonVisibility = pauseButtonVisibility)
-                            VideoLayout(
-                                userDetails = authorDetails,
-                                videoStats = currentVideo.videoStats,
-                                likeState = isLiked,
-                                bookMarkState = isBookmarked,
-                                category = "Meat",
-                                opacity = 0.7f,
-                                onLikeClick = {
-                                    isLiked = !isLiked
-                                    coroutineScope.launch {
-                                        viewModel.updatePostLikeStatus(currentVideo.videoId, isLiked)
-                                    }
-                                },
-                                onBookmarkClick = {
-                                    isBookmarked = !isBookmarked
-                                    coroutineScope.launch {
-                                        viewModel.updatePostBookmarkStatus(currentVideo.videoId, isBookmarked)
-                                    }
-                                },
-                                onInfoClick = {},
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .align(Alignment.BottomCenter)
-                            )
-                        }
+                            },
+                            onBookmarkClick = {
+                                isBookmarked = !isBookmarked
+                                coroutineScope.launch {
+                                    viewModel.updatePostBookmarkStatus(
+                                        currentVideo.videoId,
+                                        isBookmarked
+                                    )
+                                }
+                            },
+                            onInfoClick = {},
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.BottomCenter)
+                        )
+                    }
                 }
             }
         }else{
@@ -575,8 +593,7 @@ fun HomeView(
                            fontFamily = Montserrat
                        )
                    )
-
-                   Spacer(modifier = modifier.size(12.dp))
+                    Spacer(modifier = modifier.size(12.dp))
 
                    if(memories.value.isEmpty()){
                        MemoriesItemView(
@@ -590,7 +607,6 @@ fun HomeView(
                        LazyRow(){
                            items(memories.value){
                                    val painter: Painter =  rememberImagePainter(data = it.stories[0].imageUrl)
-                               Log.e("sfd",painter.toString())
                                MemoriesItemView(
                                    modifier = Modifier.clickable {
                                        showStories=!showStories
@@ -600,19 +616,18 @@ fun HomeView(
                                    date = it.dateTime)
                                Spacer(modifier = Modifier.width(12.dp))
                            }
-
-                       }
-                   }
-                   TapToSnapDialog(modifier =
-                   Modifier
-                       .fillMaxSize()
-                       .padding(vertical = 12.dp)
-                       .clickable {
-                           navController.navigate("CAMERA_VIEW/${"story".encodeUtf8()}")
-                       }
-                   )
-               }
-           }
+                        }
+                    }
+                    TapToSnapDialog(modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(vertical = 12.dp)
+                        .clickable {
+                            navController.navigate("CAMERA_VIEW/${"story".encodeUtf8()}")
+                        }
+                    )
+                }
+            }
         }
     }
 }
@@ -622,13 +637,13 @@ fun TapToSnapDialog(
     modifier: Modifier
 ) {
     Box(
-        modifier= modifier
+        modifier = modifier
             .clip(RoundedCornerShape(18.dp))
             .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(18.dp))
     ) {
         Image(
             painter = painterResource(id = R.drawable.taptosnapbg),
-            contentDescription = "fds",
+            contentDescription = null,
             contentScale = ContentScale.Crop,
             colorFilter = ColorFilter.tint(Color.Black, BlendMode.Overlay),
             modifier = Modifier
@@ -642,11 +657,11 @@ fun TapToSnapDialog(
 
         Image(
             painter = painterResource(id = R.drawable.taptosnaphand),
-            contentDescription = "hand",
+            contentDescription = stringResource(id = R.string.hand),
             modifier = Modifier.align(Alignment.BottomStart)
         )
         Text(
-            text = "Are you ready? Its time to post a snap. Save this moment and share it with your friends.",
+            text =stringResource(id = R.string.tap_to_snap_subheading),
             style = TextStyle(
                 fontSize = 20.sp,
                 fontFamily = Montserrat,
@@ -656,7 +671,7 @@ fun TapToSnapDialog(
             modifier = Modifier.padding(28.dp)
         )
         Text(
-            text = "Tap to snap",
+            text = stringResource(id = R.string.tap_to_snap),
             style = TextStyle(
                 fontSize = 20.sp,
                 fontFamily = Montserrat,
@@ -671,14 +686,12 @@ fun TapToSnapDialog(
 }
 
 
-
 @Composable
 fun HomeIngredient(ingredientTitle: String, ingredientImage: Int) {
     var isSelected by remember { mutableStateOf(false) }
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 240.dp
     var isSmallScreen by remember { mutableStateOf(false) }
 
-    Log.d("ScreenHeightLog", "Screen bottom sheet: $screenHeight")
     if (screenHeight <= 440.dp) {
         isSmallScreen = true
     }
@@ -720,13 +733,16 @@ fun HomeIngredient(ingredientTitle: String, ingredientImage: Int) {
                 contentScale = ContentScale.Crop,
             )
         }
-        Box(modifier = Modifier
-            .padding(start = if (isSmallScreen) 90.dp else 110.dp, top = 10.dp)
-            .fillMaxSize()
+        Box(
+            modifier = Modifier
+                .padding(start = if (isSmallScreen) 90.dp else 110.dp, top = 10.dp)
+                .fillMaxSize()
         ) {
-            Box(modifier = Modifier
-                .width(115.dp)
-                .padding(start = 10.dp)) {
+            Box(
+                modifier = Modifier
+                    .width(115.dp)
+                    .padding(start = 10.dp)
+            ) {
                 Text(
                     text = ingredientTitle,
                     lineHeight = 18.sp,
@@ -740,7 +756,7 @@ fun HomeIngredient(ingredientTitle: String, ingredientImage: Int) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Image(
                         painter = painterResource(id = R.drawable.baseline_arrow_left_24),
-                        contentDescription = "Profile Image",
+                        contentDescription = null,
                         modifier = Modifier
                             .size(50.dp)
                             .padding(end = 15.dp)
@@ -748,14 +764,14 @@ fun HomeIngredient(ingredientTitle: String, ingredientImage: Int) {
                             .clickable { }
                     )
                     Text(
-                        "200g",
+                        text = stringResource(id = R.string.weight_placeholder),
                         color = Color.Black,
                         fontFamily = Montserrat,
                         fontSize = 14.sp
                     )
                     Image(
                         painter = painterResource(id = R.drawable.baseline_arrow_right_24),
-                        contentDescription = "Profile Image",
+                        contentDescription = null,
                         modifier = Modifier
                             .size(50.dp)
                             .padding(start = 15.dp)

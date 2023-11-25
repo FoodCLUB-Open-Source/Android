@@ -48,32 +48,24 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 
 
-//import com.google.android.exoplayer2.ExoPlayer
-//import com.google.android.exoplayer2.MediaItem
-//import com.google.android.exoplayer2.ui.PlayerView
-
 @Composable
 fun CreateView() {
-//    val viewModel: CreateViewModel = viewModel()
-//    val title = viewModel.title.value ?: "Loading..."
-//    Text(text = title)
 
     var trimStartMs: Long = 1000
     var trimEndMs: Long = 2000
 
     var framesList = mutableListOf<Bitmap?>()
-
+    val testUri = "https://storage.googleapis.com/exoplayer-test-media-1/mp4/portrait_avc_aac.mp4"
 
     var activity = LocalContext.current as Activity
 
     var mediaMeta = MediaMetadataRetriever()
-    mediaMeta.setDataSource("https://storage.googleapis.com/exoplayer-test-media-1/mp4/portrait_avc_aac.mp4")
+    mediaMeta.setDataSource(testUri)
     val duration: Long = mediaMeta.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)!!.toLong() * 1000
 
         var time: Long = 0
         while (time < duration) {
             val frame: Bitmap? = mediaMeta.getFrameAtTime(time, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
-            //imageView.setImageBitmap(frame)
             framesList.add(frame)
             time += 250000
         }
@@ -89,7 +81,7 @@ fun CreateView() {
             var playWhenReady by remember { mutableStateOf(true) }
             val exoPlayer = remember {
                 ExoPlayer.Builder(context).build().apply {
-                    setMediaItem(MediaItem.fromUri("https://storage.googleapis.com/exoplayer-test-media-1/mp4/portrait_avc_aac.mp4"))
+                    setMediaItem(MediaItem.fromUri(testUri))
                     repeatMode = ExoPlayer.REPEAT_MODE_ALL
                     playWhenReady = playWhenReady
                     prepare()
@@ -130,7 +122,7 @@ fun CreateView() {
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.close_icon),
-                        contentDescription = "Image",
+                        contentDescription = null,
                         modifier = Modifier.height(15.dp).width(15.dp)
 
                     )
@@ -142,8 +134,6 @@ fun CreateView() {
                 .align(Alignment.BottomEnd)
                 .padding(20.dp)) {
                 Column(horizontalAlignment = Alignment.End) {
-
-
                     val mainViewModel: CreateViewModel = viewModel()
 
                     Button(
@@ -160,7 +150,7 @@ fun CreateView() {
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.next_icon),
-                            contentDescription = "Image",
+                            contentDescription = null,
                             modifier = Modifier
                                 .height(15.dp)
                                 .width(15.dp)
@@ -172,12 +162,14 @@ fun CreateView() {
                         .fillMaxWidth()
                         .height(100.dp).background(Color.White)){
 
-
                         items(framesList){item ->
 
                             Image(bitmap = item!!.asImageBitmap(),
-                                contentDescription = "", modifier = Modifier.height(100.dp).width(100.dp).border(1.dp,
-                                    Color.White, RectangleShape),
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .height(100.dp)
+                                    .width(100.dp)
+                                    .border(1.dp,Color.White, RectangleShape),
                                 contentScale = ContentScale.FillBounds)
                         }
 
@@ -201,107 +193,5 @@ fun CreateView() {
 
         }
     }
-
-
-
 }
 
-//@Composable
-//fun VideoPlayerScreen() {
-//    val context = LocalContext.current
-//    var playWhenReady by remember { mutableStateOf(true) }
-//    val exoPlayer = remember {
-//        ExoPlayer.Builder(context).build().apply {
-//            setMediaItem(MediaItem.fromUri("https://storage.googleapis.com/exoplayer-test-media-1/mp4/portrait_avc_aac.mp4"))
-//            repeatMode = ExoPlayer.REPEAT_MODE_ALL
-//            playWhenReady = playWhenReady
-//            prepare()
-//            play()
-//        }
-//    }
-//
-//    DisposableEffect(
-//        AndroidView(
-//            modifier = Modifier.fillMaxSize(),
-//            factory = {
-//                PlayerView(context).apply {
-//                    player = exoPlayer
-//                    useController = false
-//                    FrameLayout.LayoutParams(
-//                        ViewGroup.LayoutParams.MATCH_PARENT,
-//                        ViewGroup.LayoutParams.MATCH_PARENT
-//                    )
-//                }
-//            }
-//        )
-//    ) {
-//        onDispose {
-//            exoPlayer.release()
-//        }
-//    }
-//}
-//
-//@Composable
-//fun CloseButton() {
-//    Button(
-//        modifier = Modifier.size(50.dp),
-//        onClick = {
-//
-//        },
-//        contentPadding = PaddingValues(1.dp),
-//        shape = RoundedCornerShape(10.dp),
-//        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF292929))
-//    ) {
-//        Image(
-//            painter = painterResource(id = R.drawable.close_icon),
-//            contentDescription = "Image",
-//            modifier = Modifier
-//                .height(15.dp)
-//                .width(15.dp)
-//
-//        )
-//    }
-//}
-//
-//@Composable
-//fun ProceedButton(application: Application, activity: Activity) {
-//    val mainViewModel: CreateViewModel = viewModel()
-//
-//    Button(
-//        modifier = Modifier.height(50.dp).width(80.dp),
-//        onClick = {
-//            mainViewModel.setApplicationData(activity,trimStartMs,trimEndMs)
-//            mainViewModel.startExport()
-//        },
-//        contentPadding = PaddingValues(1.dp),
-//        shape = RoundedCornerShape(10.dp),
-//        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE0E0E0))
-//    ) {
-//        Image(
-//            painter = painterResource(id = R.drawable.next_icon),
-//            contentDescription = "Image",
-//            modifier = Modifier
-//                .height(15.dp)
-//                .width(15.dp)
-//
-//        )
-//    }
-//}
-//
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun RangeSliderExample() {
-//    var sliderPosition by remember { mutableStateOf(1f..2f) }
-//    var valueRange : ClosedFloatingPointRange<Float> = 0.00f.rangeTo(3.00f)
-//
-//    RangeSlider(
-//        value = sliderPosition,
-//        steps = 3,
-//        onValueChange = { range -> sliderPosition = range },
-//        valueRange = valueRange,
-//        onValueChangeFinished = {
-//            trimStartMs = sliderPosition.start.toLong() * 1000
-//            trimEndMs = sliderPosition.endInclusive.toLong() * 1000
-//        },
-//    )
-//}

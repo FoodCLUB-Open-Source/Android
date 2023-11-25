@@ -3,6 +3,7 @@ package android.kotlin.foodclub.utils.composables.engine
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.*
@@ -80,3 +81,28 @@ fun startRecordingVideo(
         .apply { if (audioEnabled) withAudioEnabled() }
         .start(executor, consumer)
 }
+
+suspend fun Context.createImageCaptureUseCase(
+    lifecycleOwner: LifecycleOwner,
+    cameraSelector: CameraSelector,
+    previewView: PreviewView
+): ImageCapture {
+    val imageCapture = ImageCapture.Builder()
+        .build()
+
+    val preview = Preview.Builder()
+        .build()
+        .apply { setSurfaceProvider(previewView.surfaceProvider) }
+
+    val cameraProvider = getCameraProvider()
+    cameraProvider.unbindAll()
+    cameraProvider.bindToLifecycle(
+        lifecycleOwner,
+        cameraSelector,
+        preview,
+        imageCapture
+    )
+
+    return imageCapture
+}
+
