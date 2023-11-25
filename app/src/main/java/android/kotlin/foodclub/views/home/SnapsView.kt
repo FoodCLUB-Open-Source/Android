@@ -5,13 +5,11 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.domain.enums.Reactions
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
-import android.kotlin.foodclub.domain.models.snaps.SnapModel
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,7 +17,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -40,7 +37,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,8 +48,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -91,7 +87,7 @@ fun SnapsView(
             easing = LinearEasing, durationMillis = 300
         )
     )
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
     var snapUserIndex by remember {
@@ -184,7 +180,7 @@ fun SnapsView(
                                 shape = RoundedCornerShape(22.dp)
                             )
                             .clickable {
-                                isDownloaded=!isDownloaded
+                                isDownloaded = !isDownloaded
                             }
                     ){
                         Image(painter = painterResource(id = if(isDownloaded)R.drawable.download_green else R.drawable.download_svg), contentDescription = "download", modifier = Modifier.align(Alignment.Center))
@@ -195,8 +191,13 @@ fun SnapsView(
 
         }
         val userReactions = memoriesModel.stories[snapUserIndex].userReactions
+
         if(showBottomSheet){
-            ModalBottomSheet(onDismissRequest = { showBottomSheet=false},sheetState=sheetState) {
+            ModalBottomSheet(
+                onDismissRequest = { showBottomSheet=false},
+                sheetState=sheetState,
+                modifier = Modifier.height((LocalConfiguration.current.screenHeightDp/2).dp)
+            ) {
                 SnapBottomSheetLayout(userReactions)
             }
         }
@@ -215,6 +216,10 @@ fun SnapBottomSheetLayout(userReactions:
     ) {
         reactions.size
     }
+    val flingBehavior = PagerDefaults.flingBehavior(state = state, lowVelocityAnimationSpec = tween(
+        easing = LinearEasing, durationMillis = 300
+    ))
+    val scope = rememberCoroutineScope()
     Column {
         LazyRow(
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -222,49 +227,55 @@ fun SnapBottomSheetLayout(userReactions:
             verticalAlignment = Alignment.CenterVertically,
         ){
             items(reactions){reaction->
-                if(reaction != Reactions.ALL){
-                    Column (modifier = Modifier.width(IntrinsicSize.Max)){
-                        Row {
-                            Image(painter = painterResource(id = reaction.drawable), contentDescription = "")
-                            Text(text = "${userReactions.filter {
-                                it.value == reaction
-                            }.count()}",
-                                style = TextStyle(
-                                    fontSize = 14.sp,
-                                    fontFamily = Montserrat,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = if(state.currentPage != reaction.ordinal) Color(0xFF949494) else Color(0xFF7EC60B)
+                Box(modifier = Modifier.clickable {
+                    scope.launch {
+                        state.scrollToPage(reaction.ordinal,0f)
+                    }
+                }){
+                    if(reaction != Reactions.ALL){
+                        Column (modifier = Modifier.width(IntrinsicSize.Max)){
+                            Row {
+                                Image(painter = painterResource(id = reaction.drawable), contentDescription = "")
+                                Text(text = "${userReactions.filter {
+                                    it.value == reaction
+                                }.count()}",
+                                    style = TextStyle(
+                                        fontSize = 14.sp,
+                                        fontFamily = Montserrat,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = if(state.currentPage != reaction.ordinal) Color(0xFF949494) else Color(0xFF7EC60B)
+                                    )
                                 )
-                            )
-                        }
-                        Spacer(modifier = Modifier.size(10.dp))
-                        if(state.currentPage == reaction.ordinal){
-                            Spacer(modifier = Modifier
-                                .height(2.dp)
-                                .fillMaxSize()
-                                .background(color = Color(0xFF7EC60B)))
+                            }
+                            Spacer(modifier = Modifier.size(10.dp))
+                            if(state.currentPage == reaction.ordinal){
+                                Spacer(modifier = Modifier
+                                    .height(2.dp)
+                                    .fillMaxSize()
+                                    .background(color = Color(0xFF7EC60B)))
+                            }
                         }
                     }
-                }
-                else{
-                    Column (modifier = Modifier
-                        .width(IntrinsicSize.Max)
+                    else{
+                        Column (modifier = Modifier
+                            .width(IntrinsicSize.Max)
                         ){
-                        Text(
-                            text = "ALL ${userReactions.count()}",
-                            style = TextStyle(
-                                color = if(state.currentPage != 0) Color(0xFF949494) else Color(0xFF7EC60B),
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 14.sp,
+                            Text(
+                                text = "ALL ${userReactions.count()}",
+                                style = TextStyle(
+                                    color = if(state.currentPage != 0) Color(0xFF949494) else Color(0xFF7EC60B),
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 14.sp,
                                 ),
-                            modifier = Modifier.height(19.88.dp)
-                        )
-                        Spacer(modifier = Modifier.size(10.dp))
-                        if(state.currentPage == 0){
-                            Spacer(modifier = Modifier
-                                .height(2.dp)
-                                .fillMaxSize()
-                                .background(color = Color(0xFF7EC60B)))
+                                modifier = Modifier.height(19.88.dp)
+                            )
+                            Spacer(modifier = Modifier.size(10.dp))
+                            if(state.currentPage == 0){
+                                Spacer(modifier = Modifier
+                                    .height(2.dp)
+                                    .fillMaxSize()
+                                    .background(color = Color(0xFF7EC60B)))
+                            }
                         }
                     }
                 }
@@ -281,7 +292,9 @@ fun SnapBottomSheetLayout(userReactions:
     HorizontalPager(
         state = state,
         beyondBoundsPageCount = 1,
-        verticalAlignment = Alignment.Top
+        verticalAlignment = Alignment.Top,
+        flingBehavior=flingBehavior,
+
     ) {idx->
         LazyColumn{
             val list =if(reactions[idx]!=Reactions.ALL) userReactions.filter { x->
