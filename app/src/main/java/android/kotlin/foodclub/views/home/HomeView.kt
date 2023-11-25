@@ -4,11 +4,12 @@ package android.kotlin.foodclub.views.home
 
 import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.domain.models.stories.StoryModel
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.domain.enums.QuantityUnit
 import android.kotlin.foodclub.domain.models.others.AnimatedIcon
+import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.utils.composables.LikeButton
@@ -52,6 +53,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import android.kotlin.foodclub.viewModels.home.HomeViewModel
+import android.kotlin.foodclub.viewModels.home.MyBasketViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.Image
@@ -59,6 +61,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -98,6 +101,11 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var sliderPosition by remember { mutableStateOf(0f) }
     var isSmallScreen by remember { mutableStateOf(false) }
+
+    val viewModel: HomeViewModel = hiltViewModel()
+    val ingredientsList = listOf<Ingredient>()
+
+    val selectedIngredients by viewModel.selectedIngredients.collectAsState()
 
     if (screenHeight <= 440.dp) {
         isSmallScreen = true
@@ -177,15 +185,36 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
                     Slider(
                         modifier = Modifier.width(if (isSmallScreen) 150.dp else 200.dp),
                         value = sliderPosition,
-                        onValueChange = { sliderPosition = it },
+                        onValueChange = { newSliderPosition ->
+                            sliderPosition = newSliderPosition
+                            Log.d("Slider", "Slider value changed: $newSliderPosition")
+
+                            val newQuantity = ((newSliderPosition * 100)).toInt()
+                            viewModel.onQuantityChange(newQuantity.toInt())
+                        },
                         valueRange = 0f..10f,
-                        steps = 4,
+                        steps = 9,
                         colors = SliderDefaults.colors(
                             thumbColor = Color(0xFF7EC60B),
                             activeTrackColor = Color.Black,
                             inactiveTrackColor = Color.Black
                         ),
                     )
+                    // DISPLAYING NUMBER BELOW SLIDER + TRACKING IT
+                    Box(
+                        modifier = Modifier
+                            .width(20.dp)
+                            .offset(x = with(LocalDensity.current) { (sliderPosition * 63.dp.toPx() / density).toDp() + 1.dp },
+                                y = 45.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            (sliderPosition.toInt()).toString(),
+                            color = Color.Black,
+                            fontFamily = Montserrat,
+                            fontSize = 12.sp
+                        )
+                    }
                 }
             }
             Row(
@@ -218,7 +247,26 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
             ) {
                 LazyColumn {
                     items(6) {
-                        HomeIngredient("Broccoli oil", R.drawable.salad_ingredient)
+                        HomeIngredient(
+                            viewModel = viewModel,
+                            ingredientTitle = "Broccoli oil",
+                            ingredientImage = R.drawable.salad_ingredient,
+                            onQuantityChange = { newQuantity ->
+                                viewModel.onQuantityChange(newQuantity)
+                            },
+                            onIngredientUpdate = {
+
+                            },
+                            ingredient = Ingredient(
+                                id = "Ingredient_ID",
+                                type = "Broccoli Oil",
+                                quantity = 200,
+                                unit = QuantityUnit.GRAMS,
+                                imageUrl = "image_URL"
+                            )
+                        )
+
+
                     }
                 }
             }
@@ -237,7 +285,14 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
                         .fillMaxWidth(),
                     colors = defaultButtonColors(),
                     contentPadding = PaddingValues(15.dp),
-                    onClick = {}
+                    onClick = {
+                        // TEST1
+                        //viewModel.addToShoppingList(ingredientsList)
+                        //viewModel.fetchProductsDatabase("")
+
+                        viewModel.addToShoppingList(ingredientsList, viewModel.selectedQuantity.value)
+                        viewModel.fetchProductsDatabase("")
+                    }
                 ) {
                     Text(
                         "Add to my shopping list",
@@ -448,71 +503,74 @@ fun HomeView(
                     ) }
 
                     Box(modifier = Modifier.fillMaxSize()) {
-    //                    if (viewModel.videosList.isNotEmpty()) {
-                            val currentVideo = videosState.value[it]
-    //                        val currentVideo = viewModel.videosList[it]
-                            val authorDetails = SimpleUserModel(
-                                userId = 1,
-                                username = currentVideo.authorDetails,
-                                profilePictureUrl = null
-                            )
-                            var isLiked by remember {
-                                mutableStateOf(currentVideo.currentViewerInteraction.isLiked)
-                            }
-                            var isBookmarked by remember { mutableStateOf(
-                                currentVideo.currentViewerInteraction.isBookmarked)
-                            }
+                        //                    if (viewModel.videosList.isNotEmpty()) {
+                        val currentVideo = videosState.value[it]
+                        //                        val currentVideo = viewModel.videosList[it]
+                        val authorDetails = SimpleUserModel(
+                            userId = 1,
+                            username = currentVideo.authorDetails,
+                            profilePictureUrl = null
+                        )
+                        var isLiked by remember {
+                            mutableStateOf(currentVideo.currentViewerInteraction.isLiked)
+                        }
+                        var isBookmarked by remember { mutableStateOf(
+                            currentVideo.currentViewerInteraction.isBookmarked)
+                        }
 
-                            VideoScroller(currentVideo, pagerState, it, onSingleTap = {
-                                pauseButtonVisibility = it.isPlaying
-                                it.playWhenReady = !it.isPlaying
+                        VideoScroller(currentVideo, pagerState, it, onSingleTap = {
+                            pauseButtonVisibility = it.isPlaying
+                            it.playWhenReady = !it.isPlaying
+                        },
+                            onDoubleTap = { exoPlayer, offset ->
+                                coroutineScope.launch {
+                                    doubleTapState.animate(offset)
+                                }
                             },
-                                onDoubleTap = { exoPlayer, offset ->
-                                    coroutineScope.launch {
-                                        doubleTapState.animate(offset)
-                                    }
-                                },
-                                onVideoDispose = {
-                                    pauseButtonVisibility = false
-                                    videoViewed = true
-                                                 },
-                                onVideoGoBackground = { pauseButtonVisibility = false }
-                            )
+                            onVideoDispose = {
+                                pauseButtonVisibility = false
+                                videoViewed = true
+                            },
+                            onVideoGoBackground = { pauseButtonVisibility = false }
+                        )
 
 
 
-                            LikeButton(doubleTapState) {
+                        LikeButton(doubleTapState) {
+                            isLiked = !isLiked
+                            coroutineScope.launch {
+                                viewModel.updatePostLikeStatus(currentVideo.videoId, isLiked)
+                            }
+                        }
+                        PlayPauseButton(buttonVisibility = pauseButtonVisibility)
+                        VideoLayout(
+                            userDetails = authorDetails,
+                            videoStats = currentVideo.videoStats,
+                            likeState = isLiked,
+                            bookMarkState = isBookmarked,
+                            category = "Meat",
+                            opacity = 0.7f,
+                            onLikeClick = {
                                 isLiked = !isLiked
                                 coroutineScope.launch {
                                     viewModel.updatePostLikeStatus(currentVideo.videoId, isLiked)
                                 }
-                            }
-                            PlayPauseButton(buttonVisibility = pauseButtonVisibility)
-                            VideoLayout(
-                                userDetails = authorDetails,
-                                videoStats = currentVideo.videoStats,
-                                likeState = isLiked,
-                                bookMarkState = isBookmarked,
-                                category = "Meat",
-                                opacity = 0.7f,
-                                onLikeClick = {
-                                    isLiked = !isLiked
-                                    coroutineScope.launch {
-                                        viewModel.updatePostLikeStatus(currentVideo.videoId, isLiked)
-                                    }
-                                },
-                                onBookmarkClick = {
-                                    isBookmarked = !isBookmarked
-                                    coroutineScope.launch {
-                                        viewModel.updatePostBookmarkStatus(currentVideo.videoId, isBookmarked)
-                                    }
-                                },
-                                onInfoClick = {},
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .align(Alignment.BottomCenter)
-                            )
-                        }
+                            },
+                            onBookmarkClick = {
+                                isBookmarked = !isBookmarked
+                                coroutineScope.launch {
+                                    viewModel.updatePostBookmarkStatus(currentVideo.videoId, isBookmarked)
+                                }
+                            },
+                            onInfoClick = {
+                                // OPENS THE BOTTOM SHEET
+                                triggerIngredientBottomSheetModal()
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.BottomCenter)
+                        )
+                    }
                 }
             }
         }else{
@@ -522,10 +580,21 @@ fun HomeView(
 }
 
 @Composable
-fun HomeIngredient(ingredientTitle: String, ingredientImage: Int) {
+fun HomeIngredient(
+    ingredientTitle: String,
+    ingredientImage: Int,
+    onQuantityChange: (Int) -> Unit,
+    onIngredientUpdate: () -> Unit,
+    ingredient: Ingredient,
+    viewModel: HomeViewModel,
+) {
     var isSelected by remember { mutableStateOf(false) }
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 240.dp
     var isSmallScreen by remember { mutableStateOf(false) }
+    var quantity by remember { mutableStateOf(ingredient.quantity) }
+    val quantityState by viewModel.quantity.collectAsState()
+
+
 
     Log.d("ScreenHeightLog", "Screen bottom sheet: $screenHeight")
     if (screenHeight <= 440.dp) {
@@ -551,7 +620,7 @@ fun HomeIngredient(ingredientTitle: String, ingredientImage: Int) {
                 .clip(RoundedCornerShape(12.dp))
         )
         Box(
-            modifier = Modifier
+            modifier = Modifier // GREEN TICK
                 .size(35.dp)
                 .align(Alignment.TopEnd)
                 .clip(RoundedCornerShape(30.dp))
@@ -559,7 +628,8 @@ fun HomeIngredient(ingredientTitle: String, ingredientImage: Int) {
                     if (isSelected) foodClubGreen
                     else Color(0xFFECECEC)
                 )
-                .clickable { isSelected = !isSelected }
+                .clickable { isSelected = !isSelected
+                    viewModel.toggleIngredientSelection(ingredient)}
                 .padding(4.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -577,6 +647,7 @@ fun HomeIngredient(ingredientTitle: String, ingredientImage: Int) {
                 .width(115.dp)
                 .padding(start = 10.dp)) {
                 Text(
+                    // text = ingredientTitle,
                     text = ingredientTitle,
                     lineHeight = 18.sp,
                     modifier = Modifier
@@ -594,10 +665,21 @@ fun HomeIngredient(ingredientTitle: String, ingredientImage: Int) {
                             .size(50.dp)
                             .padding(end = 15.dp)
                             .clip(RoundedCornerShape(20.dp))
-                            .clickable { }
+                            .clickable {
+                                // DECREASING INGREDIENT
+                                ingredient.decrementQuantity(5)
+                                quantity = ingredient.quantity
+                                onQuantityChange(quantity)
+                                onIngredientUpdate()
+                            }
                     )
+                    LaunchedEffect(quantity) {
+                        // UPDATE QUANTITY WHEN IT CHANGES
+                        quantity = ingredient.quantity
+                    }
                     Text(
-                        "200g",
+                        //"200g",
+                        "$quantityState  g", // TEXT CHANGES WHEN U PRESS BUTTON
                         color = Color.Black,
                         fontFamily = Montserrat,
                         fontSize = 14.sp
@@ -609,7 +691,13 @@ fun HomeIngredient(ingredientTitle: String, ingredientImage: Int) {
                             .size(50.dp)
                             .padding(start = 15.dp)
                             .clip(RoundedCornerShape(20.dp))
-                            .clickable { }
+                            .clickable {
+                                // INCREASING INGREDIENT
+                                ingredient.incrementQuantity(5) // INCREMENT BY 5
+                                quantity = ingredient.quantity
+                                onQuantityChange(quantity)
+                                onIngredientUpdate()
+                            }
                     )
                 }
             }
