@@ -153,6 +153,9 @@ fun ProfileView(
         var showBottomSheet by remember { mutableStateOf(false) }
         var showUserOptionsSheet by remember { mutableStateOf(false) }
 
+        var showBlockView by remember { mutableStateOf(false) }
+        var showReportView by remember { mutableStateOf(false) }
+
         val galleryLauncher =
             rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocument()) {
                 it?.let { uri ->
@@ -451,18 +454,40 @@ fun ProfileView(
             if(showUserOptionsSheet){
                 android.kotlin.foodclub.utils.composables.BottomSheet(
                     itemList = listOf(
-                        BottomSheetItem(1, "Block",null) {},
-                        BottomSheetItem(2, "Report",null) {},
+                        BottomSheetItem(1, "Block",null) {showUserOptionsSheet=false; showBlockView=true},
+                        BottomSheetItem(2, "Report",null) {showUserOptionsSheet=false;showReportView=true},
                         BottomSheetItem(3, "Hide your FoodSNAPS",null) {},
                         BottomSheetItem(4, "Copy profile URL",null) {},
                         BottomSheetItem(5, "Share this Profile",null) {}
                     ),
                     sheetTitle = "",
 //                enableDragHandle = true,
-                    onDismiss = { showBottomSheet = false },
+                    onDismiss = { showUserOptionsSheet = false;},
                     modifier = Modifier.padding(bottom = 110.dp),
                     containerColor = Color.Black,
                     titleSpace = false
+                )
+            }
+
+            if(showBlockView){
+                android.kotlin.foodclub.utils.composables.BlockReportView(
+                    containerColor = Color.Black,
+                    text = "Block",
+                    type = "Block",
+                    userId = "User1",
+                    actionBlockReport = {},
+                    onDismiss = {showBlockView=false; showUserOptionsSheet=true}
+                )
+            }
+
+            if(showReportView){
+                android.kotlin.foodclub.utils.composables.BlockReportView(
+                    containerColor = Color.Black,
+                    text = "Report",
+                    type = "Report",
+                    userId = "User1",
+                    actionBlockReport = {},
+                    onDismiss = {showReportView=false; showUserOptionsSheet=true}
                 )
             }
         }
