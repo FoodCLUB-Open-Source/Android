@@ -303,8 +303,7 @@ fun DeleteRecipeView(
             }
         }
     }
-
-    //Fix width deformation - recompose
+    
     LaunchedEffect(hasVideoLoaded.value) {
         if(post.value != null) {
             delay(50)

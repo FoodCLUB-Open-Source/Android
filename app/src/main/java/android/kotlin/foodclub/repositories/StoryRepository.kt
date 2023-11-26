@@ -37,7 +37,7 @@ class StoryRepository(
         }
     }
 
-    // USER VIEWS STORY FUNCTION
+
     suspend fun userViewsStory(storyId: Long, userId: Long): Resource<RetrieveUserViewedStoryResponse, DefaultErrorResponse> {
         try {
             val response = api.userViewsStory(storyId, userId)
