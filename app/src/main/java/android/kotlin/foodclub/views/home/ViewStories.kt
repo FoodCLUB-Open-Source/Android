@@ -135,9 +135,9 @@ fun ViewStories() {
             var doubleTapState by remember {
                 mutableStateOf(
                     Triple(
-                        Offset.Unspecified, //offset
-                        false, //double tap anim start
-                        0f //rotation angle
+                        Offset.Unspecified,
+                        false,
+                        0f
                     )
                 )
             }

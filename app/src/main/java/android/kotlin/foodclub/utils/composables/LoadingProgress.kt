@@ -40,10 +40,9 @@ fun LoadingProgressBar(
     var progress by remember { mutableFloatStateOf(0.1f) }
 
     LaunchedEffect(Unit) {
-        // Simulate loading progress
         for (i in 0..100) {
             progress = i / 100f
-            delay(20) // Adjust delay as needed
+            delay(20)
         }
         navController.navigate(route)
     }

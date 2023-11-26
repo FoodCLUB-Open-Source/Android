@@ -55,7 +55,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 
-
 @Composable
 fun MyBasketView() {
     val viewModel: MyBasketViewModel = hiltViewModel()

@@ -133,7 +133,6 @@ fun GraphicsCreatorsView(){
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
-        // Dropdown menu items
         if (isMenuExpanded) {
             listOfDesignsToApply.forEach { icon ->
                 IconButton(
@@ -251,7 +250,7 @@ fun HeaderSection(
         HEALTH,
         BUSINESS
     )
-    // Find the index of the selected header
+
     if (currentSelectedHeader != null) {
         selectedHeaderIndex = mainTabItemsList.indexOf(currentSelectedHeader)
     }
