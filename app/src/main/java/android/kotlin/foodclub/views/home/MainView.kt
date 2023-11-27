@@ -33,6 +33,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
+import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import okio.ByteString.Companion.encodeUtf8
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,7 +65,7 @@ fun BottomSheet(onDismiss: () -> Unit, navController: NavHostController) {
                 icon = R.drawable.story_bottom_sheet_icon,
                 text = "Create a Story",
                 onClick = {
-                    navController.navigate("CAMERA_VIEW/${"story".encodeUtf8()}")
+                    navController.navigate(route = HomeOtherRoutes.CameraView.route + "/${"story".encodeUtf8()}")
                     onDismiss()
                 }
 
@@ -75,7 +76,7 @@ fun BottomSheet(onDismiss: () -> Unit, navController: NavHostController) {
 //                onClick = { navController.navigate("CAMERA_VIEW/${"recipe".encodeUtf8()}")}//"CREATE_RECIPE_VIEW") }
                 onClick = {
 //                    navController.navigate("VIDEOTRIMMER")
-                    navController.navigate("CREATE_RECIPE_VIEW")
+                    navController.navigate(route = HomeOtherRoutes.CreateRecipeView.route)
                     onDismiss()
                 }
             )

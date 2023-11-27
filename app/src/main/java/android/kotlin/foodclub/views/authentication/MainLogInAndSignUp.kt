@@ -2,6 +2,7 @@ package android.kotlin.foodclub.views.authentication
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.navigation.auth.AuthScreen
 import android.kotlin.foodclub.utils.composables.TermsAndConditionsInfoFooter
 import android.kotlin.foodclub.viewModels.authentication.MainLogInAndSignUpViewModel
 import androidx.compose.foundation.Image
@@ -189,7 +190,7 @@ fun MainLogInAndSignUp(
                     ), contentPadding = PaddingValues(15.dp),
 
                     onClick = {
-                        navController.navigate("TERMS")
+                        navController.navigate(AuthScreen.TermsAndConditions.route)
                     }
 
 
@@ -219,7 +220,7 @@ fun MainLogInAndSignUp(
                 ClickableText(
                     text = AnnotatedString("Log in →"),
                     onClick = {
-                        navController.navigate("LOGIN")
+                        navController.navigate(route = AuthScreen.Login.route)
                     },
                     style = TextStyle(
                         color = Color(126, 198, 11, 255),

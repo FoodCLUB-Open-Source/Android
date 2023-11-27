@@ -20,13 +20,20 @@ fun NavGraphBuilder.settingsNavigationGraph(navController: NavHostController) {
         composable(SettingsScreen.Main.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<SettingsViewModel>(navController)
 
-            SettingsView(navController = navController, viewModel = viewModel)
+            SettingsView(
+                navController = navController,
+                viewModel = viewModel
+            )
         }
         composable(SettingsScreen.EditProfile.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<SettingsViewModel>(navController)
             val userState = viewModel.userDetails.collectAsState()
 
-            EditProfileSetting(navController = navController, userState = userState, viewModel = viewModel)
+            EditProfileSetting(
+                navController = navController,
+                userState = userState,
+                viewModel = viewModel
+            )
         }
         composable(SettingsScreen.Privacy.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<SettingsViewModel>(navController)
@@ -37,8 +44,10 @@ fun NavGraphBuilder.settingsNavigationGraph(navController: NavHostController) {
             val viewModel = entry.sharedHiltViewModel<SettingsViewModel>(navController)
             val errorType = viewModel.errorType.collectAsState();
 
-            ChangePasswordSettings(errorType.value, { navController.popBackStack() }) {
-                    oldPassword, newPassword -> viewModel.changePassword(oldPassword, newPassword)
+            ChangePasswordSettings(
+                error = errorType.value,
+                onBackAction = { navController.popBackStack() }) { oldPassword, newPassword ->
+                viewModel.changePassword(oldPassword, newPassword)
             }
         }
     }

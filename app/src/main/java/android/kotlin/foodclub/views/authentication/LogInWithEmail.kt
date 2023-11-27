@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.views.authentication
 
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.navigation.auth.AuthScreen
 import android.kotlin.foodclub.utils.composables.AuthLayout
 import android.kotlin.foodclub.utils.composables.ConfirmButton
 import android.kotlin.foodclub.utils.composables.CustomPasswordTextField
@@ -93,7 +94,7 @@ fun LogInWithEmail(
                 ClickableText(
                     text = AnnotatedString("Reset here"),
                     onClick = {
-                        navController.navigate("FORGOT")
+                        navController.navigate(route = AuthScreen.Forgot.route)
                     },
                     style = TextStyle(
                         color = Color(152, 209, 60),

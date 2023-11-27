@@ -6,6 +6,7 @@ import android.kotlin.foodclub.domain.models.others.BottomSheetItem
 import android.kotlin.foodclub.domain.models.profile.UserPosts
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.navigation.Graph
+import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.CustomBottomSheet
 import android.kotlin.foodclub.utils.helpers.UiEvent
 import android.kotlin.foodclub.utils.helpers.uriToFile
@@ -235,7 +236,7 @@ fun ProfileView(
                             .width(53.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(255, 255, 255, 255)),
                         contentPadding = PaddingValues(),
-                        onClick = { navController.navigate("SETTINGS") }
+                        onClick = { navController.navigate(HomeOtherRoutes.SettingsView.route) }
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.vector_1_),
@@ -398,7 +399,7 @@ fun ProfileView(
                         galleryLauncher.launch(arrayOf("image/*"))
                     },
                     BottomSheetItem(2, "Take Photo", R.drawable.take_photo) {
-                        navController.navigate("TAKE_PROFILE_PHOTO_VIEW")
+                        navController.navigate(route = HomeOtherRoutes.TakeProfilePhotoView.route)
                     }
                 ),
                 sheetTitle = "Upload Photo",
