@@ -3,9 +3,7 @@ package android.kotlin.foodclub.navigation
 //import android.kotlin.foodclub.views.home.PlayView
 //import android.kotlin.foodclub.views.home.StoryView
 //import com.example.foodclub.navigation.graphs.Graph
-import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
-import android.kotlin.foodclub.viewModels.home.DiscoverViewModel
 import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
 import android.kotlin.foodclub.viewModels.home.CameraViewModel
 import android.kotlin.foodclub.views.home.CameraPreviewView
