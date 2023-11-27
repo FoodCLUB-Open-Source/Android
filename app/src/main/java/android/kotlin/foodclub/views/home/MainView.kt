@@ -65,7 +65,7 @@ fun BottomSheet(onDismiss: () -> Unit, navController: NavHostController) {
                 icon = R.drawable.story_bottom_sheet_icon,
                 text = "Create a Story",
                 onClick = {
-                    navController.navigate(route = HomeOtherRoutes.CameraView.route + "/${"story".encodeUtf8()}")
+                    navController.navigate(route = "CAMERA_VIEW" + "/${"story".encodeUtf8()}")
                     onDismiss()
                 }
 
