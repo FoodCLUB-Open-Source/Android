@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.views.authentication
+package android.kotlin.foodclub.views.authentication.loginWithEmail
 
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.navigation.auth.AuthScreen
@@ -37,9 +37,9 @@ import androidx.compose.ui.res.stringResource
 @Composable
 fun LogInWithEmail(
     navController: NavHostController,
-    viewModel: LogInWithEmailViewModel
+    viewModel: LogInWithEmailViewModel,
+    state: LoginState
 ) {
-    val loginStatus by viewModel.loginStatus.observeAsState(null)
 
     var username by remember { mutableStateOf("") }
     var userPassword by remember { mutableStateOf("") }
@@ -71,7 +71,7 @@ fun LogInWithEmail(
                     onValueChange = { userPassword = it })
 
                 Text(
-                    text = loginStatus ?: "",
+                    text = state.loginStatus ?: "",
                     fontSize = 12.sp,
                     color = Color.Red,
                     modifier = Modifier.padding(horizontal = 10.dp)

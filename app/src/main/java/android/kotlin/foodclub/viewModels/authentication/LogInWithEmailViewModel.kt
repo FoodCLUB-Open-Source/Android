@@ -6,6 +6,7 @@ import android.kotlin.foodclub.network.retrofit.utils.auth.JWTManager
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.repositories.AuthRepository
 import android.kotlin.foodclub.utils.helpers.Resource
+import android.kotlin.foodclub.views.authentication.loginWithEmail.LoginState
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,6 +14,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,8 +34,10 @@ class LogInWithEmailViewModel @Inject constructor(
     private val repository: AuthRepository,
     private val sessionCache: SessionCache
 ) : ViewModel() {
-    private val _loginStatus = MutableLiveData<String?>()
-    val loginStatus: LiveData<String?> get() = _loginStatus
+
+    private val _state = MutableStateFlow(LoginState.default())
+    val state : StateFlow<LoginState>
+    get() = _state
 
     private fun setSession(userId: Long) {
         if(sessionCache.getActiveSession() != null) sessionCache.clearSession()
@@ -42,7 +48,7 @@ class LogInWithEmailViewModel @Inject constructor(
 
     fun logInUser(userEmail: String?, userPassword: String?, navController: NavController) {
         if (userEmail.isNullOrEmpty() || userPassword.isNullOrEmpty()) {
-            _loginStatus.postValue(LoginErrorCodes.EMPTY_CREDENTIALS)
+            _state.update { it.copy(loginStatus = LoginErrorCodes.EMPTY_CREDENTIALS) }
             return
         }
         viewModelScope.launch {
@@ -60,7 +66,7 @@ class LogInWithEmailViewModel @Inject constructor(
                         val message = resource.message
                         when {
                             message?.contains("Incorrect username or password.") == true -> {
-                                _loginStatus.postValue(LoginErrorCodes.WRONG_CREDENTIALS)
+                                _state.update { it.copy(loginStatus = LoginErrorCodes.WRONG_CREDENTIALS) }
                             }
 
                             message?.contains("User is not confirmed.") == true -> {
@@ -70,27 +76,27 @@ class LogInWithEmailViewModel @Inject constructor(
                             }
 
                             message?.contains("account_not_found") == true -> {
-                                _loginStatus.postValue(LoginErrorCodes.ACCOUNT_NOT_FOUND)
+                                _state.update { it.copy(loginStatus = LoginErrorCodes.ACCOUNT_NOT_FOUND) }
                             }
 
-                            else -> _loginStatus.postValue(LoginErrorCodes.UNKNOWN_ERROR)
+                            else -> _state.update { it.copy(loginStatus = LoginErrorCodes.UNKNOWN_ERROR) }
                         }
                     } else {
                         for (error in errors) {
                             when (error.message) {
                                 "Password must be at least 8 characters long" -> {
-                                    _loginStatus.postValue(LoginErrorCodes.PASSWORD_FORMAT)
+                                    _state.update { it.copy(loginStatus = LoginErrorCodes.PASSWORD_FORMAT) }
                                 }
 
                                 "Password must have at least one uppercase letter, one lowercase letter, one number, and one special character" -> {
-                                    _loginStatus.postValue(LoginErrorCodes.PASSWORD_FORMAT)
+                                    _state.update { it.copy(loginStatus = LoginErrorCodes.PASSWORD_FORMAT) }
                                 }
 
                                 "Username must only contain letters and numbers" -> {
-                                    _loginStatus.postValue(LoginErrorCodes.USERNAME_FORMAT)
+                                    _state.update { it.copy(loginStatus = LoginErrorCodes.PASSWORD_FORMAT) }
                                 }
 
-                                else -> _loginStatus.postValue(LoginErrorCodes.UNKNOWN_ERROR)
+                                else -> _state.update { it.copy(loginStatus = LoginErrorCodes.UNKNOWN_ERROR) }
                             }
                         }
                     }

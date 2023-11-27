@@ -4,7 +4,7 @@ import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.viewModels.authentication.LogInWithEmailViewModel
 import android.kotlin.foodclub.viewModels.authentication.MainLogInAndSignUpViewModel
 import android.kotlin.foodclub.viewModels.authentication.TermsAndConditionsViewModel
-import android.kotlin.foodclub.views.authentication.LogInWithEmail
+import android.kotlin.foodclub.views.authentication.loginWithEmail.LogInWithEmail
 import android.kotlin.foodclub.views.authentication.MainLogInAndSignUp
 import android.kotlin.foodclub.views.authentication.SignupVerification
 import androidx.navigation.NavGraphBuilder
@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import android.kotlin.foodclub.views.authentication.TermsAndConditions
+import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 
@@ -40,10 +41,12 @@ fun NavGraphBuilder.authNavigationGraph(
         }
         composable(route = AuthScreen.Login.route) {
             val viewModel: LogInWithEmailViewModel = hiltViewModel()
+            val state = viewModel.state.collectAsState()
 
             LogInWithEmail(
                 navController = navController,
-                viewModel = viewModel
+                viewModel = viewModel,
+                state = state.value
             )
         }
 
