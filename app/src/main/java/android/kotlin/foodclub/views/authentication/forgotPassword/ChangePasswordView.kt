@@ -17,9 +17,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ChangePasswordView(onValuesUpdate: (password: String, code: String) -> Unit,
-                       onBackButtonClick: () -> Unit,
-                       email: String, errorOccurred: State<Boolean>, message: State<String>
+fun ChangePasswordView(
+    onValuesUpdate: (password: String, code: String) -> Unit,
+    onBackButtonClick: () -> Unit,
+    email: String, errorOccurred: State<Boolean>, message: State<String>
 ){
     var verificationCode by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -29,7 +30,8 @@ fun ChangePasswordView(onValuesUpdate: (password: String, code: String) -> Unit,
     var filledVerificationCode by remember { mutableStateOf(false) }
     var filledPassword by remember { mutableStateOf(false) }
 
-    AuthLayout(header = "Change Password",
+    AuthLayout(
+        header = "Change Password",
         subHeading = "We've sent an email with password reset link to $email",
         errorOccurred = errorOccurred.value, message = message.value,
         onBackButtonClick = { onBackButtonClick() }) {

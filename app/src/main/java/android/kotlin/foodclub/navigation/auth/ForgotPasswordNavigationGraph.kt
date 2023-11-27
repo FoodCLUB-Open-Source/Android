@@ -14,9 +14,9 @@ import androidx.navigation.navigation
 fun NavGraphBuilder.forgotPasswordNavigationGraph(navController: NavHostController) {
     navigation(
         route = AuthScreen.Forgot.route,
-        startDestination = "forgot_password_page_1"
+        startDestination = ForgotPasswordScreen.ForgotPasswordPage1.route
     ) {
-        composable("forgot_password_page_1") {entry ->
+        composable(route = ForgotPasswordScreen.ForgotPasswordPage1.route) {entry ->
             val viewModel = entry.sharedHiltViewModel<ForgotPasswordViewModel>(navController)
             val errorOccurred = viewModel.errorOccurred.collectAsState()
             val message = viewModel.message.collectAsState()
@@ -25,7 +25,7 @@ fun NavGraphBuilder.forgotPasswordNavigationGraph(navController: NavHostControll
             ForgotPasswordView(
                 onValuesUpdate = {
                     viewModel.sendCode(it){
-                        navController.navigate("forgot_password_page_2")
+                        navController.navigate(route = ForgotPasswordScreen.ForgotPasswordPage2.route)
                     } },
                 onBackButtonClick = { navController.navigate(AuthScreen.Login.route) {
                     popUpTo(AuthScreen.Login.route) { inclusive = true } }
@@ -35,7 +35,7 @@ fun NavGraphBuilder.forgotPasswordNavigationGraph(navController: NavHostControll
                 message = message
             )
         }
-        composable("forgot_password_page_2") {entry ->
+        composable(ForgotPasswordScreen.ForgotPasswordPage2.route) {entry ->
             val viewModel = entry.sharedHiltViewModel<ForgotPasswordViewModel>(navController)
             val errorOccurred = viewModel.errorOccurred.collectAsState()
             val message = viewModel.message.collectAsState()
@@ -44,7 +44,7 @@ fun NavGraphBuilder.forgotPasswordNavigationGraph(navController: NavHostControll
             ChangePasswordView(
                 onValuesUpdate = { code, password ->
                     viewModel.changePassword(code, password) {
-                        navController.navigate("forgot_password_page_3")
+                        navController.navigate(route = ForgotPasswordScreen.ForgotPasswordPage3.route)
                     }
                 },
                 onBackButtonClick = { navController.popBackStack() },
@@ -53,7 +53,7 @@ fun NavGraphBuilder.forgotPasswordNavigationGraph(navController: NavHostControll
                 message = message
             )
         }
-        composable("forgot_password_page_3") {
+        composable(route = ForgotPasswordScreen.ForgotPasswordPage3.route) {
             EmailSentView(
                 onClick = { navController.navigate(AuthScreen.Login.route) {
                     popUpTo(AuthScreen.Login.route) { inclusive = true } } },
@@ -62,4 +62,10 @@ fun NavGraphBuilder.forgotPasswordNavigationGraph(navController: NavHostControll
             )
         }
     }
+}
+
+sealed class ForgotPasswordScreen(val route: String) {
+    object ForgotPasswordPage1 : ForgotPasswordScreen(route = "forgot_password_page_1")
+    object ForgotPasswordPage2 : ForgotPasswordScreen(route = "forgot_password_page_2")
+    object ForgotPasswordPage3 : ForgotPasswordScreen(route = "forgot_password_page_3")
 }

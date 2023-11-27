@@ -45,9 +45,10 @@ import androidx.navigation.compose.rememberNavController
 
 
 @Composable
-fun MainLogInAndSignUp(navController: NavHostController) {
-
-    val viewModel: MainLogInAndSignUpViewModel = viewModel()
+fun MainLogInAndSignUp(
+    navController: NavHostController,
+    viewModel: MainLogInAndSignUpViewModel
+) {
 
     var interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -246,5 +247,8 @@ fun MainLogInAndSignUp(navController: NavHostController) {
 @Composable
 @Preview
 fun MainLogInAndSignUp() {
-    MainLogInAndSignUp(rememberNavController())
+    MainLogInAndSignUp(
+        rememberNavController(),
+        MainLogInAndSignUpViewModel()
+    )
 }

@@ -32,8 +32,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun LogInWithEmail(navController: NavHostController) {
-    val viewModel: LogInWithEmailViewModel = hiltViewModel()
+fun LogInWithEmail(
+    navController: NavHostController,
+    viewModel: LogInWithEmailViewModel
+) {
     val loginStatus by viewModel.loginStatus.observeAsState(null)
 
     var username by remember { mutableStateOf("") }
