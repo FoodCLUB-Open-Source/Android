@@ -55,7 +55,7 @@ import java.io.File
 @Composable
 fun TakeProfilePhotoView(
     modifier: Modifier = Modifier,
-    viewModel: ProfileViewModel = hiltViewModel(),
+    viewModel: ProfileViewModel,
     navController: NavController
 ){
     val context = LocalContext.current

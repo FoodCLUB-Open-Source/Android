@@ -19,15 +19,18 @@ fun NavGraphBuilder.settingsNavigationGraph(navController: NavHostController) {
     ) {
         composable(SettingsScreen.Main.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<SettingsViewModel>(navController)
+
             SettingsView(navController = navController, viewModel = viewModel)
         }
         composable(SettingsScreen.EditProfile.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<SettingsViewModel>(navController)
             val userState = viewModel.userDetails.collectAsState()
+
             EditProfileSetting(navController = navController, userState = userState, viewModel = viewModel)
         }
         composable(SettingsScreen.Privacy.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<SettingsViewModel>(navController)
+
             PrivacySetting(navController = navController)
         }
         composable(SettingsScreen.ChangePassword.route) { entry ->

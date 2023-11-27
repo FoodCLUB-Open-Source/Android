@@ -85,7 +85,7 @@ import kotlin.math.sin
 fun ProfileView(
     navController: NavController,
     userId: Long,
-    viewModel: ProfileViewModel = hiltViewModel()
+    viewModel: ProfileViewModel,
 ) {
 
 //    val error = viewModel.error.collectAsState()

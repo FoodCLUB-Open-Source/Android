@@ -17,7 +17,10 @@ import android.kotlin.foodclub.views.authentication.TermsAndConditions
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 
-fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, setBottomBarVisibility: (Boolean) -> Unit) {
+fun NavGraphBuilder.authNavigationGraph(
+    navController: NavHostController,
+    setBottomBarVisibility: (Boolean) -> Unit
+) {
     navigation(
         route = Graph.AUTHENTICATION,
         startDestination = AuthScreen.MainLogInAndSignUp.route
@@ -26,29 +29,30 @@ fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, setBot
         forgotPasswordNavigationGraph(navController)
 
         composable(route = AuthScreen.MainLogInAndSignUp.route) {
-            val viewModel :  MainLogInAndSignUpViewModel = viewModel()
+            val viewModel: MainLogInAndSignUpViewModel = viewModel()
             setBottomBarVisibility(false)
 
             MainLogInAndSignUp(
-                navController,
-                viewModel
+                navController = navController,
+                viewModel = viewModel
             )
 
         }
         composable(route = AuthScreen.Login.route) {
-            val viewModel : LogInWithEmailViewModel = hiltViewModel()
+            val viewModel: LogInWithEmailViewModel = hiltViewModel()
 
             LogInWithEmail(
-                navController,
-                viewModel)
+                navController = navController,
+                viewModel = viewModel
+            )
         }
 
         composable(route = AuthScreen.TermsAndConditions.route) {
-            val viewModel : TermsAndConditionsViewModel = viewModel()
+            val viewModel: TermsAndConditionsViewModel = viewModel()
 
             TermsAndConditions(
-                navController,
-                viewModel
+                navController = navController,
+                viewModel = viewModel
             )
         }
 
@@ -56,14 +60,18 @@ fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, setBot
 
             arguments = listOf(
                 navArgument(Auth.USERNAME.title) { type = NavType.StringType },
-                navArgument(Auth.PASSWORD.title) { nullable = true
-                    type = NavType.StringType }
+                navArgument(Auth.PASSWORD.title) {
+                    nullable = true
+                    type = NavType.StringType
+                }
             )
-        ) {backStackEntry ->
+        ) { backStackEntry ->
             SignupVerification(
-                navController,backStackEntry.arguments?.getString(Auth.EMAIL.title),
-                backStackEntry.arguments?.getString(Auth.USERNAME.title),
-                backStackEntry.arguments?.getString(Auth.PASSWORD.title))
+                navController = navController,
+                email = backStackEntry.arguments?.getString(Auth.EMAIL.title),
+                username = backStackEntry.arguments?.getString(Auth.USERNAME.title),
+                password = backStackEntry.arguments?.getString(Auth.PASSWORD.title)
+            )
 
         }
     }
@@ -80,7 +88,7 @@ sealed class AuthScreen(val route: String) {
     object TermsAndConditions : AuthScreen(route = "TERMS")
 }
 
-enum class Auth(val title : String){
+enum class Auth(val title: String) {
     USERNAME("username"),
     PASSWORD("password"),
     EMAIL("email")

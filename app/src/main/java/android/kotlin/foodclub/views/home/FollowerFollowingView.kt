@@ -48,9 +48,13 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 
 @Composable
-fun FollowerView(navController: NavController, viewType: String, userId: Long) {
+fun FollowerView(
+    navController: NavController,
+    viewModel: FollowerFollowingViewModel,
+    viewType: String,
+    userId: Long
+) {
     val systemUiController = rememberSystemUiController()
-    val viewModel: FollowerFollowingViewModel = hiltViewModel()
 
     SideEffect {
         systemUiController.setSystemBarsColor(
