@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -71,7 +72,6 @@ fun MainLogInAndSignUp(
         Modifier
             .fillMaxSize()
             .background(Color.White)
-//            .padding(start = 50.dp, end = 50.dp, top = 80.dp, bottom = 32.dp),
     ) {
         Column(
             Modifier
@@ -83,14 +83,14 @@ fun MainLogInAndSignUp(
         ) {
             Image(
                 painterResource(id = R.drawable.welcome_logo),
-                contentDescription = "app_logo",
+                contentDescription = stringResource(id = R.string.app_logo),
                 modifier = Modifier
                     .width(80.dp)
                     .height(80.dp)
             )
             Image(
                 painterResource(id = R.drawable.foodclub),
-                contentDescription = "app_title",
+                contentDescription = stringResource(id = R.string.app_title),
                 modifier = Modifier.height(40.dp)
 
             )
@@ -104,80 +104,6 @@ fun MainLogInAndSignUp(
             verticalArrangement = Arrangement.spacedBy(18.dp)
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                //        Button(
-//            shape = RectangleShape,
-//            modifier = Modifier
-//                .border(1.dp, Color(android.graphics.Color.parseColor("#DADADA")), shape = RoundedCornerShape(10.dp))
-//                .clip(RoundedCornerShape(10.dp))
-//                .fillMaxWidth(),
-//            colors = ButtonDefaults.buttonColors(
-//                containerColor = viewModel.backgroundColor,
-//                contentColor = Color.Black
-//            ), contentPadding = PaddingValues(15.dp),
-//
-//            onClick = {
-//                viewModel.changeButtonUi()
-//                viewModel.continueWithFacebook()
-//
-//            }, interactionSource = interactionSource
-//
-//        ) {
-//            Image(
-//                painterResource(id = R.drawable.facebook_icon),
-//                contentDescription = "app_title",
-//                modifier = Modifier.size(20.dp)
-//
-//
-//            )
-//
-//            Text(
-//                text = "Continue with Facebook",
-//                fontFamily = montserratFamily,
-//                fontWeight = FontWeight.Bold,
-//                fontSize = 15.sp,
-//                modifier = Modifier.padding(start = 10.dp)
-//            )
-//        }
-
-
-//        Button(
-//
-//            shape = RectangleShape,
-//            modifier = Modifier
-//                .border(1.dp, Color(android.graphics.Color.parseColor("#DADADA")), shape = RoundedCornerShape(10.dp))
-//                .clip(RoundedCornerShape(10.dp))
-//                .fillMaxWidth(),
-//            colors = ButtonDefaults.buttonColors(
-//                containerColor = viewModel.backgroundColor,
-//                contentColor = Color.Black
-//            ), contentPadding = PaddingValues(15.dp),
-//
-//            onClick = {
-//                viewModel.changeButtonUi()
-//                viewModel.continueWithInstagram()
-//            }, interactionSource = interactionSource1
-//
-//
-//        ) {
-//            Image(
-//                painterResource(id = R.mipmap.instagram_icon),
-//                contentDescription = "app_title",
-//                modifier = Modifier.size(20.dp)
-//
-//
-//            )
-//
-//
-//
-//            Text(
-//                text = "Continue with Instagram",
-//                fontFamily = montserratFamily,
-//                fontWeight = FontWeight.Bold,
-//                fontSize = 15.sp,
-//                modifier = Modifier.padding(start = 10.dp)
-//            )
-//        }
-
                 Button(
                     shape = RectangleShape,
                     modifier = Modifier
@@ -187,19 +113,15 @@ fun MainLogInAndSignUp(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(126, 198, 11, 255),
                         contentColor = Color.White
-                    ), contentPadding = PaddingValues(15.dp),
-
+                    ),
+                    contentPadding = PaddingValues(15.dp),
                     onClick = {
                         navController.navigate(AuthScreen.TermsAndConditions.route)
                     }
-
-
                 ) {
-
-
                     Text(
                         color = Color.White,
-                        text = "Sign Up",
+                        text = stringResource(id = R.string.sign_up),
                         fontSize = 14.sp,
                         fontFamily = Montserrat
                     )
@@ -207,18 +129,19 @@ fun MainLogInAndSignUp(
             }
 
             Row(
-                    modifier = Modifier.wrapContentWidth(),
-            horizontalArrangement = Arrangement.SpaceAround
+                modifier = Modifier.wrapContentWidth(),
+                horizontalArrangement = Arrangement.SpaceAround
             ) {
                 Text(
                     color = Color.Black,
-                    text = "Already have an account?",
+                    text = stringResource(id = R.string.already_have_account),
                     fontFamily = Montserrat,
                     fontSize = 14.sp,
                     modifier = Modifier.padding(end = 5.dp)
                 )
+
                 ClickableText(
-                    text = AnnotatedString("Log in →"),
+                    text = AnnotatedString(stringResource(id = R.string.login_arrow)),
                     onClick = {
                         navController.navigate(route = AuthScreen.Login.route)
                     },
@@ -227,8 +150,6 @@ fun MainLogInAndSignUp(
                         fontFamily = Montserrat,
                         fontSize = 14.sp
                     )
-
-
                 )
             }
         }
@@ -236,13 +157,11 @@ fun MainLogInAndSignUp(
             Modifier
                 .weight(5F)
                 .fillMaxSize()
-                .padding(vertical = 32.dp)) {
+                .padding(vertical = 32.dp)
+        ) {
             TermsAndConditionsInfoFooter() { viewModel.termsAndConditions() }
         }
     }
-
-
-
 }
 
 @Composable

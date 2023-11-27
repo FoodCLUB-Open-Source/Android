@@ -34,15 +34,18 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.navigation.HomeOtherRoutes
+import androidx.compose.ui.res.stringResource
 import okio.ByteString.Companion.encodeUtf8
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheet(onDismiss: () -> Unit, navController: NavHostController) {
+fun BottomSheet(
+    onDismiss: () -> Unit,
+    navController: NavHostController
+) {
     ModalBottomSheet(
         containerColor = Color.White,
         onDismissRequest = { onDismiss() },
-        //sheetState = modalBottomSheetState,
         dragHandle = { BottomSheetDefaults.DragHandle() },
     ) {
 
@@ -52,7 +55,7 @@ fun BottomSheet(onDismiss: () -> Unit, navController: NavHostController) {
             verticalArrangement = Arrangement.Top
         ) {
             Text(
-                text = "Create",
+                text = stringResource(id = R.string.create),
                 fontFamily = Montserrat,
                 fontWeight = FontWeight.Bold,
             )
@@ -63,7 +66,7 @@ fun BottomSheet(onDismiss: () -> Unit, navController: NavHostController) {
             )
             BottomSheetItem(
                 icon = R.drawable.story_bottom_sheet_icon,
-                text = "Create a Story",
+                text = stringResource(id = R.string.create_a_story),
                 onClick = {
                     navController.navigate(route = "CAMERA_VIEW" + "/${"story".encodeUtf8()}")
                     onDismiss()
@@ -72,8 +75,7 @@ fun BottomSheet(onDismiss: () -> Unit, navController: NavHostController) {
             )
             BottomSheetItem(
                 icon = R.drawable.recipe_bottom_sheet_icon,
-                text = "Create a Recipe",
-//                onClick = { navController.navigate("CAMERA_VIEW/${"recipe".encodeUtf8()}")}//"CREATE_RECIPE_VIEW") }
+                text = stringResource(id = R.string.create_a_recipe),
                 onClick = {
 //                    navController.navigate("VIDEOTRIMMER")
                     navController.navigate(route = HomeOtherRoutes.CreateRecipeView.route)
@@ -132,7 +134,7 @@ fun RowScope.AddItem(
             Icon(
                 painter = icon,
                 modifier = Modifier.size(if (screen.route == "CREATE") 40.dp else 20.dp),
-                contentDescription = "Navigation Icon",
+                contentDescription = stringResource(id = R.string.navigation_icon),
                 tint = when {
                     screen is BottomBarScreenObject.Create -> Color.Unspecified
                     currentDestination?.hierarchy?.any { it.route?.startsWith(screen.route) == true } == true -> Color(0xFF7EC60B)

@@ -31,6 +31,8 @@ import androidx.navigation.NavHostController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
+import android.kotlin.foodclub.R
+import androidx.compose.ui.res.stringResource
 
 @Composable
 fun LogInWithEmail(
@@ -45,22 +47,25 @@ fun LogInWithEmail(
     var filledUsername by remember { mutableStateOf(false) }
     var filledPassword by remember { mutableStateOf(false) }
 
-    AuthLayout(header = "Welcome back!",
-        subHeading = "Cooking just got social!",
-        onBackButtonClick = { navController.popBackStack() }) {
+    AuthLayout(
+        header = stringResource(id = R.string.welcome_back),
+        subHeading = stringResource(id = R.string.welcome_back_subheading),
+        onBackButtonClick = { navController.popBackStack() }
+    ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 CustomTextField(initialValue = username,
-                    placeholder = "Username", keyboardType = KeyboardType.Text,
+                    placeholder = stringResource(id = R.string.username),
+                    keyboardType = KeyboardType.Text,
                     onCorrectnessStateChange = { filledUsername = !filledUsername },
                     onValueChange = { username = it }
                 )
 
                 CustomPasswordTextField(
-                    placeholder = "Password",
+                    placeholder = stringResource(id = R.string.password),
                     strengthValidation = false,
                     onCorrectnessStateChange = { filledPassword = !filledPassword },
                     onValueChange = { userPassword = it })
@@ -74,7 +79,8 @@ fun LogInWithEmail(
 
                 ConfirmButton(
                     enabled = filledUsername && filledPassword,
-                    text = "Log in") {
+                    text = stringResource(id = R.string.log_in)
+                ) {
                     viewModel.logInUser(username, userPassword, navController)
                 }
             }
@@ -86,13 +92,13 @@ fun LogInWithEmail(
 
                 Text(
                     color = Color.Black,
-                    text = "Forgot Password?",
+                    text = stringResource(id = R.string.forgot_password_question),
                     fontFamily = Montserrat,
                     fontSize = 13.sp,
                     modifier = Modifier.padding(end = 5.dp)
                 )
                 ClickableText(
-                    text = AnnotatedString("Reset here"),
+                    text = AnnotatedString(stringResource(R.string.reset_here)),
                     onClick = {
                         navController.navigate(route = AuthScreen.Forgot.route)
                     },
@@ -104,67 +110,7 @@ fun LogInWithEmail(
                     )
                 )
             }
-        //    Image(
-//                painterResource(id = R.drawable.login_with),
-//                contentDescription = "app_title",
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(15.dp)
-//
-//
-//            )
-
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),
-//                horizontalArrangement = Arrangement.spacedBy(15.dp,Alignment.CenterHorizontally),
-//            ) {
-//                Button(
-//                    shape = RectangleShape,
-//                    modifier = Modifier
-//                        .width(80.dp)
-//                        .border(1.dp, Color(230, 230, 230, 255), shape = RoundedCornerShape(10.dp))
-//                        .clip(RoundedCornerShape(10.dp)),
-//                    colors = ButtonDefaults.buttonColors(
-//                        containerColor = Color(218, 218, 218, 70)
-//
-//                    ), contentPadding = PaddingValues(15.dp),
-//
-//                    onClick = {
-//
-//                    }
-//
-//                ) {
-//                    Image(
-//                        painterResource(id = R.mipmap.facebook_icon),
-//                        contentDescription = "",
-//                        Modifier.size(20.dp)
-//                    )
-//                }
-//
-//                Button(
-//                    shape = RectangleShape,
-//                    modifier = Modifier
-//                        .width(80.dp)
-//                        .border(1.dp, Color(230, 230, 230, 255), shape = RoundedCornerShape(10.dp))
-//                        .clip(RoundedCornerShape(10.dp)),
-//                    colors = ButtonDefaults.buttonColors(
-//                        containerColor = Color(218, 218, 218, 70)
-//                    ), contentPadding = PaddingValues(15.dp),
-//
-//                    onClick = {
-//
-//                    }
-//
-//                ) {
-//                    Image(
-//                        painterResource(id = R.mipmap.instagram_icon),
-//                        contentDescription = "",
-//                        Modifier.size(20.dp)
-//                    )
-//                }
-//            }
         }
-
     }
 }
 

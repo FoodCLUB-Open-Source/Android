@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -38,19 +39,17 @@ import androidx.navigation.compose.rememberNavController
 fun LearningView(
     navController: NavController,
 ) {
-    LearningViewUI(".")
+    LearningViewUI()
 }
 
 
 @Composable
-fun LearningViewUI(name: String) {
+fun LearningViewUI() {
 
-    // FONT
     val montserratFontFamily = FontFamily(
         Font(R.font.montserratbold, FontWeight.ExtraLight)
     )
 
-    // GREEN
     val customGreenColor = Color(0xFF80C40C)
 
     Column(
@@ -62,19 +61,15 @@ fun LearningViewUI(name: String) {
 
     ) {
 
-        // TITLE TEXT
         Text(
-            text = "Welcome to FoodSKILLS",
+            text = stringResource(id = R.string.welcome_to_foodskills),
             fontSize = 22.sp,
             fontFamily = montserratFontFamily,
             modifier = Modifier.padding(bottom = 10.dp)
         )
 
-        // SPACER BETWEEN TITLE AND BOX 1
         Spacer(modifier = Modifier.height(10.dp))
 
-
-        // ********** BOX 1 **********
         Box(
             modifier = Modifier
                 .clip(shape = RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp))
@@ -89,17 +84,15 @@ fun LearningViewUI(name: String) {
 
                 )
 
-
             {
                 Spacer(modifier = Modifier
-                    .weight(2f) // SHIFTS TEXT TO RIGHT
+                    .weight(2f)
                     .padding(10.dp)
 
                 )
 
-                // TEXT 1 (BIG)
                 Text(
-                    text = "Kitchen Tools",
+                    text = stringResource(id = R.string.kitchen_tools),
                     fontSize = 18.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
@@ -108,7 +101,7 @@ fun LearningViewUI(name: String) {
                 )
 
                 Text(
-                    text = "Course length - Approx",
+                    text = stringResource(id = R.string.course_length),
                     fontSize = 9.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
@@ -117,13 +110,12 @@ fun LearningViewUI(name: String) {
                 )
 
 
-                Spacer(modifier = Modifier.weight(1f).padding(1.dp)) // INVERTED PADDING
+                Spacer(modifier = Modifier
+                    .weight(1f)
+                    .padding(1.dp))
 
             }
 
-            // *****ANYTHING TO DO WITH ROWS (BOX 1) *****
-
-            // & ROW
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -131,9 +123,8 @@ fun LearningViewUI(name: String) {
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // LEFT SIDE % TEXT
                 Text(
-                    text = "60%",
+                    text = stringResource(id = R.string.forty_percent),
                     fontSize = 30.sp,
                     fontFamily = montserratFontFamily,
                     color = customGreenColor,
@@ -143,7 +134,6 @@ fun LearningViewUI(name: String) {
 
             }
 
-            // COMPLETED ROW
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -151,9 +141,9 @@ fun LearningViewUI(name: String) {
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // GREEN COMPLETED TEXT
+
                 Text(
-                    text = "Completed",
+                    text = stringResource(id = R.string.completed),
                     fontSize = 10.sp,
                     fontFamily = montserratFontFamily,
                     color = customGreenColor,
@@ -163,7 +153,6 @@ fun LearningViewUI(name: String) {
 
             }
 
-            // ROW FOR THE MINUTES TEXT
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -172,7 +161,7 @@ fun LearningViewUI(name: String) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "20 mins",
+                    text = stringResource(id = R.string.dummy_duration),
                     fontSize = 9.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
@@ -190,7 +179,7 @@ fun LearningViewUI(name: String) {
             ) {
                 Image(
                     painterResource(id = R.drawable.right_arrow),
-                    contentDescription = "",
+                    contentDescription = null,
                     modifier = Modifier
                         .size(75.dp)
                         .padding(bottom = 25.dp, start = 20.dp)
@@ -201,12 +190,6 @@ fun LearningViewUI(name: String) {
         }
 
     }
-
-
-    // ******************** BOX 2 ********************
-
-
-
 
     Column(
         modifier = Modifier
@@ -217,12 +200,8 @@ fun LearningViewUI(name: String) {
 
     ) {
 
-
-        // SPACER BETWEEN TITLE AND BOX 2
         Spacer(modifier = Modifier.height(10.dp))
 
-
-        // BOX 2
         Box(
             modifier = Modifier
                 .clip(shape = RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp))
@@ -239,14 +218,13 @@ fun LearningViewUI(name: String) {
 
             {
                 Spacer(modifier = Modifier
-                    .weight(2f) // SHIFTS TEXT TO RIGHT
+                    .weight(2f)
                     .padding(10.dp)
 
                 )
 
-                // TEXT 1 (BIG)
                 Text(
-                    text = "Health",
+                    text = stringResource(id = R.string.health),
                     fontSize = 18.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
@@ -255,7 +233,7 @@ fun LearningViewUI(name: String) {
                 )
 
                 Text(
-                    text = "Course length - Approx",
+                    text = stringResource(id = R.string.course_length),
                     fontSize = 9.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
@@ -263,14 +241,12 @@ fun LearningViewUI(name: String) {
 
                 )
 
-
-                Spacer(modifier = Modifier.weight(1f).padding(1.dp)) // INVERTED PADDING
+                Spacer(modifier = Modifier
+                    .weight(1f)
+                    .padding(1.dp))
 
             }
 
-            // *****ANYTHING TO DO WITH ROWS (BOX 3) *****
-
-            // & ROW
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -278,9 +254,9 @@ fun LearningViewUI(name: String) {
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // LEFT SIDE % TEXT
+
                 Text(
-                    text = "0%",
+                    text = stringResource(id = R.string.zero_percent),
                     fontSize = 30.sp,
                     fontFamily = montserratFontFamily,
                     color = customGreenColor,
@@ -290,7 +266,6 @@ fun LearningViewUI(name: String) {
 
             }
 
-            // COMPLETED ROW
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -298,9 +273,8 @@ fun LearningViewUI(name: String) {
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // GREEN COMPLETED TEXT
                 Text(
-                    text = "Completed",
+                    text = stringResource(id = R.string.completed),
                     fontSize = 10.sp,
                     fontFamily = montserratFontFamily,
                     color = customGreenColor,
@@ -310,7 +284,6 @@ fun LearningViewUI(name: String) {
 
             }
 
-            // ROW FOR THE MINUTES TEXT
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -319,7 +292,7 @@ fun LearningViewUI(name: String) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "20 mins",
+                    text = stringResource(id = R.string.dummy_duration),
                     fontSize = 9.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
@@ -337,7 +310,7 @@ fun LearningViewUI(name: String) {
             ) {
                 Image(
                     painterResource(id = R.drawable.right_arrow),
-                    contentDescription = "",
+                    contentDescription = null,
                     modifier = Modifier
                         .size(75.dp)
                         .padding(bottom = 25.dp, start = 20.dp)
@@ -348,9 +321,6 @@ fun LearningViewUI(name: String) {
         }
 
     }
-
-
-    // ******************** BOX 4 ********************
 
     Column(
         modifier = Modifier
@@ -361,11 +331,8 @@ fun LearningViewUI(name: String) {
 
     ) {
 
-        // SPACER BETWEEN TITLE AND BOX 1
         Spacer(modifier = Modifier.height(10.dp))
 
-
-        // BOX 4
         Box(
             modifier = Modifier
                 .clip(shape = RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp))
@@ -382,14 +349,13 @@ fun LearningViewUI(name: String) {
 
             {
                 Spacer(modifier = Modifier
-                    .weight(2f) // SHIFTS TEXT TO RIGHT
+                    .weight(2f)
                     .padding(10.dp)
 
                 )
 
-                // TEXT 4 (BIG)
                 Text(
-                    text = "Flavours",
+                    text = stringResource(id = R.string.flavours),
                     fontSize = 18.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
@@ -398,7 +364,7 @@ fun LearningViewUI(name: String) {
                 )
 
                 Text(
-                    text = "Course length - Approx",
+                    text = stringResource(id = R.string.course_length),
                     fontSize = 9.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
@@ -407,13 +373,12 @@ fun LearningViewUI(name: String) {
                 )
 
 
-                Spacer(modifier = Modifier.weight(1f).padding(1.dp)) // INVERTED PADDING
+                Spacer(modifier = Modifier
+                    .weight(1f)
+                    .padding(1.dp))
 
             }
 
-            // *****ANYTHING TO DO WITH ROWS (BOX 4)*****
-
-            // & ROW
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -421,9 +386,8 @@ fun LearningViewUI(name: String) {
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // LEFT SIDE % TEXT
                 Text(
-                    text = "0%",
+                    text = stringResource(id = R.string.zero_percent),
                     fontSize = 30.sp,
                     fontFamily = montserratFontFamily,
                     color = customGreenColor,
@@ -433,7 +397,6 @@ fun LearningViewUI(name: String) {
 
             }
 
-            // COMPLETED ROW
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -441,9 +404,8 @@ fun LearningViewUI(name: String) {
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // GREEN COMPLETED TEXT
                 Text(
-                    text = "Completed",
+                    text = stringResource(id = R.string.completed),
                     fontSize = 10.sp,
                     fontFamily = montserratFontFamily,
                     color = customGreenColor,
@@ -453,7 +415,6 @@ fun LearningViewUI(name: String) {
 
             }
 
-            // ROW FOR THE MINUTES TEXT
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -462,7 +423,7 @@ fun LearningViewUI(name: String) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "20 mins",
+                    text = stringResource(id = R.string.dummy_duration),
                     fontSize = 9.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
@@ -480,7 +441,7 @@ fun LearningViewUI(name: String) {
             ) {
                 Image(
                     painterResource(id = R.drawable.right_arrow),
-                    contentDescription = "",
+                    contentDescription = null,
                     modifier = Modifier
                         .size(75.dp)
                         .padding(bottom = 25.dp, start = 20.dp)
@@ -492,8 +453,6 @@ fun LearningViewUI(name: String) {
 
     }
 
-    // ********************BOX 3********************
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -503,11 +462,8 @@ fun LearningViewUI(name: String) {
 
     ) {
 
-        // SPACER BETWEEN TITLE AND BOX 1
         Spacer(modifier = Modifier.height(10.dp))
 
-
-        // BOX 3
         Box(
             modifier = Modifier
                 .clip(shape = RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp))
@@ -524,14 +480,13 @@ fun LearningViewUI(name: String) {
 
             {
                 Spacer(modifier = Modifier
-                    .weight(2f) // SHIFTS TEXT TO RIGHT
+                    .weight(2f)
                     .padding(10.dp)
 
                 )
 
-                // TEXT 3 (BIG)
                 Text(
-                    text = "Communities",
+                    text = stringResource(id = R.string.communities),
                     fontSize = 18.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
@@ -540,7 +495,7 @@ fun LearningViewUI(name: String) {
                 )
 
                 Text(
-                    text = "Course length - Approx",
+                    text = stringResource(id = R.string.course_length),
                     fontSize = 9.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
@@ -549,13 +504,13 @@ fun LearningViewUI(name: String) {
                 )
 
 
-                Spacer(modifier = Modifier.weight(1f).padding(1.dp)) // INVERTED PADDING
+                Spacer(modifier = Modifier
+                    .weight(1f)
+                    .padding(1.dp))
 
             }
 
-            // *****ANYTHING TO DO WITH ROWS*****
 
-            // & ROW
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -563,9 +518,8 @@ fun LearningViewUI(name: String) {
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // LEFT SIDE % TEXT
                 Text(
-                    text = "0%",
+                    text = stringResource(id = R.string.zero_percent),
                     fontSize = 30.sp,
                     fontFamily = montserratFontFamily,
                     color = customGreenColor,
@@ -575,7 +529,6 @@ fun LearningViewUI(name: String) {
 
             }
 
-            // COMPLETED ROW
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -583,9 +536,8 @@ fun LearningViewUI(name: String) {
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // GREEN COMPLETED TEXT
                 Text(
-                    text = "Completed",
+                    text = stringResource(id = R.string.completed),
                     fontSize = 10.sp,
                     fontFamily = montserratFontFamily,
                     color = customGreenColor,
@@ -595,7 +547,6 @@ fun LearningViewUI(name: String) {
 
             }
 
-            // ROW FOR THE MINUTES TEXT
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -604,7 +555,7 @@ fun LearningViewUI(name: String) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "20 mins",
+                    text = stringResource(id = R.string.dummy_duration),
                     fontSize = 9.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
@@ -622,7 +573,7 @@ fun LearningViewUI(name: String) {
             ) {
                 Image(
                     painterResource(id = R.drawable.right_arrow),
-                    contentDescription = "",
+                    contentDescription = null,
                     modifier = Modifier
                         .size(75.dp)
                         .padding(bottom = 25.dp, start = 20.dp)
@@ -632,13 +583,6 @@ fun LearningViewUI(name: String) {
             }
         }
 
-
-
-
-
-
-        // ********** BOX 5 (THE BIG ONE) **********
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -647,12 +591,8 @@ fun LearningViewUI(name: String) {
             horizontalAlignment = Alignment.CenterHorizontally
 
         ) {
-
-            // SPACER BETWEEN TITLE AND BOX 1
             Spacer(modifier = Modifier.height(10.dp))
 
-
-            // BOX 5
             Box(
                 modifier = Modifier
                     .clip(shape = RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp))
@@ -670,14 +610,13 @@ fun LearningViewUI(name: String) {
                 {
                     Spacer(
                         modifier = Modifier
-                            .weight(2f) // SHIFTS TEXT TO RIGHT
+                            .weight(2f)
                             .padding(10.dp)
 
                     )
 
-                    // TEXT 1 (BIG)
                     Text(
-                        text = "Click here to vote for future topics",
+                        text = stringResource(id = R.string.click_to_vote),
                         fontSize = 19.sp,
                         fontFamily = PlusJakartaSans,
                         color = Color.Black,
@@ -685,37 +624,36 @@ fun LearningViewUI(name: String) {
                             bottom = 5.dp,
                             start = 135.dp,
                             end = 30.dp
-                        ) // SHIFTS TEXT UP. WE NEED SPACE FOR TEXT BELOW
+                        )
 
                     )
 
-                    Spacer(modifier = Modifier.weight(1f).padding(1.dp)) // INVERTED PADDING
+                    Spacer(modifier = Modifier
+                        .weight(1f)
+                        .padding(1.dp))
 
                     Button(
                         shape = RoundedCornerShape(9.dp),
 
-                        onClick = { /* TO DO: ON CLICK STUFF */ },
+                        onClick = { /* TODO: ON CLICK STUFF */ },
                         modifier = Modifier
                             .padding(
-                                bottom = 25.dp, start = 35.dp)
+                                bottom = 25.dp, start = 35.dp
+                            )
                             .width(120.dp)
                             .height(40.dp),
 
-                        // Button colour(s)
                         colors = ButtonDefaults.buttonColors(
                             containerColor  = customGreenColor,
                             contentColor = Color.White
                         )
 
                     ) {
-                        Text(text = "Vote Now")
+                        Text(text = stringResource(id = R.string.vote_now))
                     }
 
                 }
 
-                // *****ANYTHING TO DO WITH ROWS*****
-
-                // & ROW
                 Row(
                     modifier = Modifier
                         .fillMaxSize()
@@ -724,9 +662,8 @@ fun LearningViewUI(name: String) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
-                        // CHANGE THE IMAGE THIS IS A PLACEHOLDER FOR SIZING REFERENCES
                         painterResource(id = R.drawable.temporary_image_placeholder),
-                        contentDescription = "",
+                        contentDescription = null,
                         modifier = Modifier
                             .size(185.dp)
                             .padding(end = 65.dp)

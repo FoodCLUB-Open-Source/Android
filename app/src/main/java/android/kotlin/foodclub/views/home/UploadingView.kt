@@ -26,6 +26,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -35,14 +36,12 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun UploadingView(
-    navController: NavController,
-) {
-    UploadingViewUI(".", progress = 0.5f)
+fun UploadingView(navController: NavController) {
+    UploadingViewUI(progress = 0.5f)
 }
 
 @Composable
-fun UploadingViewUI(name: String, modifier: Modifier = Modifier, progress: Float) {
+fun UploadingViewUI(modifier: Modifier = Modifier, progress: Float) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -50,15 +49,12 @@ fun UploadingViewUI(name: String, modifier: Modifier = Modifier, progress: Float
         contentAlignment = Alignment.Center
     ) {
 
-        // FONT
         val montserratFontFamily = FontFamily(
             Font(R.font.montserratbold, FontWeight.Normal)
         )
 
-        // GREEN
         val customGreenColor = Color(0xFF80C40C)
 
-        // FOODCLUB IMAGE
         Image(
             painter = painterResource(id = R.drawable.welcome_logo),
             contentDescription = null,
@@ -68,15 +64,13 @@ fun UploadingViewUI(name: String, modifier: Modifier = Modifier, progress: Float
 
         )
 
-        // UPLOADING TEXT
         Text(
-            text = "Uploading...",
+            text = stringResource(id = R.string.uploading),
             fontSize = 22.sp,
             fontFamily = montserratFontFamily,
             modifier = Modifier.padding(top = 40.dp, bottom = 50.dp)
         )
 
-        // PROGRESS BAR
         LinearProgressIndicator(
             progress = progress,
             modifier = Modifier

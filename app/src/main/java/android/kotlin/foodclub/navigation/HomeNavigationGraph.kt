@@ -3,14 +3,26 @@ package android.kotlin.foodclub.navigation
 //import android.kotlin.foodclub.views.home.PlayView
 //import android.kotlin.foodclub.views.home.StoryView
 //import com.example.foodclub.navigation.graphs.Graph
+import android.kotlin.foodclub.config.ui.BottomBarScreenObject
+import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
+import android.kotlin.foodclub.viewModels.home.DiscoverViewModel
+import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
+import android.kotlin.foodclub.viewModels.home.CameraViewModel
 import android.kotlin.foodclub.views.home.CameraPreviewView
 import android.kotlin.foodclub.views.home.CameraView
+import android.kotlin.foodclub.views.home.CreateView
+import android.kotlin.foodclub.views.home.DiscoverView
 import android.kotlin.foodclub.views.home.FollowerView
 import android.kotlin.foodclub.views.home.GalleryView
 import android.kotlin.foodclub.views.home.HomeView
 import android.kotlin.foodclub.views.home.MyBasketView
+import android.kotlin.foodclub.views.home.MyDigitalPantryView
 import android.kotlin.foodclub.views.home.ProfileView
+import android.kotlin.foodclub.views.home.ScanResultView
+import android.kotlin.foodclub.views.home.ScanView
 import android.kotlin.foodclub.views.home.SearchView
+import android.kotlin.foodclub.views.home.TakeProfilePhotoView
+import android.kotlin.foodclub.views.home.topbackbar
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.navigation.NavGraphBuilder
@@ -37,6 +49,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -93,6 +106,7 @@ fun NavGraphBuilder.homeNavigationGraph(
         composable(route = BottomBarScreenObject.Create.route) {
             CreateView()
         }
+
         composable(route = BottomBarScreenObject.Play.route) {
             val viewModel = it.sharedHiltViewModel<DiscoverViewModel>(navController)
 
@@ -101,17 +115,36 @@ fun NavGraphBuilder.homeNavigationGraph(
                 viewModel = viewModel
             )
         }
+
+
+        composable("ScanView_route") {
+            val viewModel = it.sharedHiltViewModel<DiscoverViewModel>(navController)
+            topbackbar(navController = navController)
+            {
+                ScanView(navController = navController,viewModel=viewModel)
+            }
+        }
+        composable("ScanResultView_route") {
+            val viewModel = it.sharedHiltViewModel<DiscoverViewModel>(navController)
+
+            ScanResultView(navController = navController,viewModel=viewModel)
+
+        }
+
         composable(route = HomeOtherRoutes.CameraView.route) {
             val state = it.arguments?.getString("state") ?: ""
+            val viewModel = it.sharedHiltViewModel<CameraViewModel>(navController = navController)
 
             CameraView(
-                navController = navController,
-                stateEncoded = state
+              viewModel = viewModel,
+              navController = navController,
+              stateEncoded = state
             )
+
         }
         composable(route = HomeOtherRoutes.VideoTrimmerView.route) {
             val state = it.arguments?.getString("state") ?: ""
-//            CameraView(navController = navController, stateEncoded = state)
+//          CameraView(navController = navController, stateEncoded = state)
 
             CreateView()
         }
