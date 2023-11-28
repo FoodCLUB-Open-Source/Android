@@ -2,6 +2,7 @@ package android.kotlin.foodclub.views.authentication
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.navigation.auth.AuthScreen
 import android.kotlin.foodclub.utils.composables.TermsAndConditionsInfoFooter
 import android.kotlin.foodclub.viewModels.authentication.MainLogInAndSignUpViewModel
 import androidx.compose.foundation.Image
@@ -46,9 +47,10 @@ import androidx.navigation.compose.rememberNavController
 
 
 @Composable
-fun MainLogInAndSignUp(navController: NavHostController) {
-
-    val viewModel: MainLogInAndSignUpViewModel = viewModel()
+fun MainLogInAndSignUp(
+    navController: NavHostController,
+    viewModel: MainLogInAndSignUpViewModel
+) {
 
     var interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -114,7 +116,7 @@ fun MainLogInAndSignUp(navController: NavHostController) {
                     ),
                     contentPadding = PaddingValues(15.dp),
                     onClick = {
-                        navController.navigate("TERMS")
+                        navController.navigate(AuthScreen.TermsAndConditions.route)
                     }
                 ) {
                     Text(
@@ -141,7 +143,7 @@ fun MainLogInAndSignUp(navController: NavHostController) {
                 ClickableText(
                     text = AnnotatedString(stringResource(id = R.string.login_arrow)),
                     onClick = {
-                        navController.navigate("LOGIN")
+                        navController.navigate(route = AuthScreen.Login.route)
                     },
                     style = TextStyle(
                         color = Color(126, 198, 11, 255),
@@ -165,5 +167,8 @@ fun MainLogInAndSignUp(navController: NavHostController) {
 @Composable
 @Preview
 fun MainLogInAndSignUp() {
-    MainLogInAndSignUp(rememberNavController())
+    MainLogInAndSignUp(
+        rememberNavController(),
+        MainLogInAndSignUpViewModel()
+    )
 }

@@ -33,6 +33,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
+import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import androidx.compose.ui.res.stringResource
 import okio.ByteString.Companion.encodeUtf8
 
@@ -68,7 +69,8 @@ fun BottomSheet(
                 text = stringResource(id = R.string.create_a_story),
                 onDismiss = onDismiss,
                 onClick = {
-                    navController.navigate("CAMERA_VIEW/${"story".encodeUtf8()}")
+                    navController.navigate(route = "CAMERA_VIEW" + "/${"story".encodeUtf8()}")
+                    onDismiss()
                 }
 
             )
@@ -77,7 +79,9 @@ fun BottomSheet(
                 text = stringResource(id = R.string.create_a_recipe),
                 onDismiss = onDismiss,
                 onClick = {
-                    navController.navigate("CREATE_RECIPE_VIEW")
+//                    navController.navigate("VIDEOTRIMMER")
+                    navController.navigate(route = HomeOtherRoutes.CreateRecipeView.route)
+                    onDismiss()
                 }
             )
             Spacer(modifier = Modifier.height(25.dp))

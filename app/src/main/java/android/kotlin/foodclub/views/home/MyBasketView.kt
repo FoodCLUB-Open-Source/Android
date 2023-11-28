@@ -56,8 +56,9 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 
 @Composable
-fun MyBasketView() {
-    val viewModel: MyBasketViewModel = hiltViewModel()
+fun MyBasketView(
+    viewModel: MyBasketViewModel
+) {
     val systemUiController = rememberSystemUiController()
     var showSheet by remember { mutableStateOf(false) }
     val productsList = viewModel.productsList.collectAsState()

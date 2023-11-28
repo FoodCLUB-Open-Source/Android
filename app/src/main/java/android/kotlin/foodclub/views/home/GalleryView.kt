@@ -63,13 +63,12 @@ import java.nio.charset.StandardCharsets
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun GalleryView(
+public fun GalleryView(
     navController: NavController,
-    stateEncoded: String,
+    viewModel: GalleryViewModel,
+    stateEncoded:String,
     itemsPerRow: Int = 3
 ) {
-    val viewModel: GalleryViewModel = viewModel()
-
     val context = LocalContext.current
 
     var state = ""

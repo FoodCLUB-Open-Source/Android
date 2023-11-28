@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.viewModels.authentication
 
+import android.kotlin.foodclub.navigation.auth.AuthScreen
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +15,7 @@ class TermsAndConditionsViewModel: ViewModel() {
 
     fun onChecked(checked:Boolean,navController: NavHostController){
         if(checked){
-            navController.navigate("SIGN_UP")
+            navController.navigate(AuthScreen.SignUp.route)
         }
     }
 

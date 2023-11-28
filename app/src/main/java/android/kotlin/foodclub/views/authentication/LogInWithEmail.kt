@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.views.authentication
 
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.navigation.auth.AuthScreen
 import android.kotlin.foodclub.utils.composables.AuthLayout
 import android.kotlin.foodclub.utils.composables.ConfirmButton
 import android.kotlin.foodclub.utils.composables.CustomPasswordTextField
@@ -32,9 +33,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 
 @Composable
-fun LogInWithEmail(navController: NavHostController) {
-    val viewModel: LogInWithEmailViewModel = hiltViewModel()
-    val loginStatus: String? by viewModel.loginStatus.collectAsState()
+fun LogInWithEmail(
+    navController: NavHostController,
+    viewModel: LogInWithEmailViewModel
+) {
+    val loginStatus by viewModel.loginStatus.observeAsState(null)
 
     var username by remember { mutableStateOf("") }
     var userPassword by remember { mutableStateOf("") }
@@ -91,7 +94,7 @@ fun LogInWithEmail(navController: NavHostController) {
                 ClickableText(
                     text = AnnotatedString("Reset here"),
                     onClick = {
-                        navController.navigate("FORGOT")
+                        navController.navigate(route = AuthScreen.Forgot.route)
                     },
                     style = TextStyle(
                         color = Color(152, 209, 60),

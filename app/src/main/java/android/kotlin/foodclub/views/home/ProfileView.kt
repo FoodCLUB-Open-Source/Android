@@ -6,6 +6,7 @@ import android.kotlin.foodclub.domain.models.others.BottomSheetItem
 import android.kotlin.foodclub.domain.models.profile.UserPosts
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.navigation.Graph
+import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.CustomBottomSheet
 import android.kotlin.foodclub.utils.helpers.UiEvent
 import android.kotlin.foodclub.utils.helpers.uriToFile
@@ -87,7 +88,7 @@ import kotlin.math.sin
 fun ProfileView(
     navController: NavController,
     userId: Long,
-    viewModel: ProfileViewModel = hiltViewModel()
+    viewModel: ProfileViewModel,
 ) {
 
     val profileModelState = viewModel.profileModel.collectAsState()
@@ -441,7 +442,7 @@ fun ProfileView(
                         title= stringResource(id = R.string.take_photo),
                         resourceId = R.drawable.take_photo,
                         onClick = {
-                            navController.navigate("TAKE_PROFILE_PHOTO_VIEW")
+                          navController.navigate(route = HomeOtherRoutes.TakeProfilePhotoView.route)
                         })
                 ),
                 sheetTitle = stringResource(id = R.string.upload_photo),
