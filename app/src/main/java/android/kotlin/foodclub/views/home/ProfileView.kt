@@ -366,16 +366,6 @@ fun ProfileView(
                         }
                     }
 
-
-//                    var userTabItems = listOf<UserPosts>()
-//
-//                    if(pagerState.currentPage == 0){
-//                        userTabItems = userPosts.value
-//                    }
-//                    else if(pagerState.currentPage == 1){
-//                        userTabItems = bookmarkedPosts
-//                    }
-
                     HorizontalPager(
                         state = pagerState,
                         beyondBoundsPageCount = 10,
