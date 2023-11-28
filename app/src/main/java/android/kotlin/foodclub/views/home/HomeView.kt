@@ -459,7 +459,10 @@ fun HomeView(
             }
     }
 
-    Column(modifier = Modifier.height(screenHeightMinusBottomNavItem)) {
+    Column(modifier = Modifier
+        .height(screenHeightMinusBottomNavItem)
+        .padding(bottom = 10 .dp)
+    ) {
         if (showIngredientSheet) {
             HomeBottomSheetIngredients(triggerIngredientBottomSheetModal)
         }
