@@ -178,13 +178,14 @@ fun ProfileView(
         var postId by remember {
             mutableLongStateOf(0)
         }
-        var tabItems = listOf<UserPosts>()
+
+        var userTabItems = listOf<UserPosts>()
 
         if(pagerState.currentPage == 0){
-            tabItems = userPosts.value
+            userTabItems = userPosts.value
         }
         else if(pagerState.currentPage == 1){
-            tabItems = bookmarkedPosts
+            userTabItems = bookmarkedPosts
         }
 
         if (showDeleteRecipe){
@@ -192,7 +193,7 @@ fun ProfileView(
 
             ShowProfilePosts(
                 postId = postId,
-                posts = tabItems,
+                posts = userTabItems,
                 viewModel = viewModel,
                 onPostDeleted = {
                     viewModel.updatePosts(postId)
@@ -366,14 +367,14 @@ fun ProfileView(
                     }
 
 
-                    var userTabItems = listOf<UserPosts>()
-
-                    if(pagerState.currentPage == 0){
-                        userTabItems = userPosts.value
-                    }
-                    else if(pagerState.currentPage == 1){
-                        userTabItems = bookmarkedPosts
-                    }
+//                    var userTabItems = listOf<UserPosts>()
+//
+//                    if(pagerState.currentPage == 0){
+//                        userTabItems = userPosts.value
+//                    }
+//                    else if(pagerState.currentPage == 1){
+//                        userTabItems = bookmarkedPosts
+//                    }
 
                     HorizontalPager(
                         state = pagerState,
