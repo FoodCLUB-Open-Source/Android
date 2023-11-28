@@ -111,7 +111,7 @@ fun VideoScroller(
 ) {
     val context = LocalContext.current
     var thumbnail by remember {
-        mutableStateOf<Pair<Bitmap?, Boolean>>(Pair(null, true))  //bitmap, isShow
+        mutableStateOf<Pair<Bitmap?, Boolean>>(Pair(null, true))
     }
     var isFirstFrameLoad = remember { false }
 

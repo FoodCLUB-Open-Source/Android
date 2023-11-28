@@ -112,11 +112,11 @@ class DiscoverViewModel @Inject constructor(
 
     fun onSubSearchTextChange(text: String) {
         _ingredientsSearchText.value = text
-        searchJob?.cancel() // Cancel the previous job if it exists
+        searchJob?.cancel()
 
         searchJob = viewModelScope.launch {
             if (text != ""){
-                delay(1000) // Delay for 1000 milliseconds
+                delay(1000)
                 fetchProductsDatabase(_ingredientsSearchText.value)
             }
         }
@@ -160,10 +160,8 @@ class DiscoverViewModel @Inject constructor(
             }
         }
 
-        // Now update the ingredientToEdit
         ingredientToEdit.value = ingredient
 
-        // Now update the ingredientToEdit
         ingredientToEdit.value = ingredient
         Log.i("MYTAG","LIST AFTER ${_userIngredientsList.value[0].quantity}")
     }
@@ -249,7 +247,7 @@ class DiscoverViewModel @Inject constructor(
 
     val ScanResultItemList: List<Ingredient> = listOf(
         Ingredient(
-            id = "1",  // Make sure to copy other properties if needed
+            id = "1",
             quantity = 100,
             unit = QuantityUnit.GRAMS,
             type = "Capsicum",
@@ -257,7 +255,7 @@ class DiscoverViewModel @Inject constructor(
             imageUrl = R.drawable.capsicum
         ),
         Ingredient(
-            id = "2",  // Make sure to copy other properties if needed
+            id = "2",
             quantity = 10,
             unit = QuantityUnit.GRAMS,
             type = "Tomato Soup",
@@ -265,7 +263,7 @@ class DiscoverViewModel @Inject constructor(
             imageUrl = R.drawable.tomato_ingredient
         ),
         Ingredient(
-            id = "3",  // Make sure to copy other properties if needed
+            id = "3",
             quantity =1 ,
             unit = QuantityUnit.GRAMS,
             type = "Lemon",
@@ -273,7 +271,7 @@ class DiscoverViewModel @Inject constructor(
             imageUrl = R.drawable.lemon
         ),
         Ingredient(
-            id = "4",  // Make sure to copy other properties if needed
+            id = "4",
             quantity = 1000,
             unit = QuantityUnit.GRAMS,
             type = "Egg",
@@ -281,27 +279,25 @@ class DiscoverViewModel @Inject constructor(
             imageUrl = R.drawable.egg
         ),
 
-
-        // Add more items as needed
     )
     fun Scan(imageCapture: ImageCapture, context: Context) {
         imageCapture.takePicture(
             ContextCompat.getMainExecutor(context),
             object : ImageCapture.OnImageCapturedCallback() {
                 override fun onCaptureSuccess(image: ImageProxy) {
-                    // Convert the ImageProxy to ImageBitmap
+
                     val buffer = image.planes[0].buffer
                     val bytes = ByteArray(buffer.remaining())
                     buffer.get(bytes)
                     val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
                     _capturedImage.value = bitmap.asImageBitmap()
 
-                    // Close the ImageProxy
+
                     image.close()
                 }
 
                 override fun onError(exception: ImageCaptureException) {
-                    // Handle capture error
+
                 }
             }
         )

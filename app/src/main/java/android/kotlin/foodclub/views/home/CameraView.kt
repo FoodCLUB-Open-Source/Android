@@ -115,7 +115,7 @@ fun RecordingButton(isRecording: Boolean) {
         Canvas(modifier = Modifier.size(60.dp)) {
             drawCircle(color = Color(0xFFCACBCB))
         }
-        // Record button
+
     }
 
 }
@@ -221,7 +221,6 @@ fun RecordingClipsButton(
         Canvas(modifier = Modifier.size(60.dp)) {
             drawCircle(color = Color(0xFFCACBCB))
         }
-        // Record button
     }
 
 }
@@ -375,7 +374,6 @@ fun CameraView(
                         .clip(RoundedCornerShape(10.dp))
                         .background(Color.Black.copy(alpha = 0.9f))
                         .clickable {
-                            // Do something when the box is clicked
                             viewModel.onEvent(StopWatchEvent.onReset)
                             navController.popBackStack()
                         }
@@ -480,9 +478,7 @@ fun CameraView(
                     val isPressed by interactionSource.collectIsPressedAsState()
                     IconButton(
                         onClick = {
-
                             //Temporarily ignore recording code
-
                             if(!holdOrPress) {
                                 if (!recordingStarted.value) {
                                     videoCapture.value?.let { videoCapture ->
@@ -533,7 +529,6 @@ fun CameraView(
                             //navController.navigate("GALLERY_VIEW")
                         },
                         modifier = Modifier
-                            //.align(Alignment.BottomCenter)
                             .size(80.dp),
                         interactionSource = interactionSource,
                         enabled = viewModel.minutes.value < 1
@@ -635,7 +630,6 @@ fun CameraView(
                                 contentScale = ContentScale.Crop,
                                 contentDescription = null,
                                 modifier = Modifier
-                                    //.align(Alignment.BottomStart)
                                     .clip(RoundedCornerShape(5.dp))
                                     .then(
                                         Modifier
@@ -649,7 +643,6 @@ fun CameraView(
                         } else {
                             Box(
                                 modifier = Modifier
-                                    //.align(Alignment.BottomStart)
                                     .clip(RoundedCornerShape(5.dp))
                                     .then(
                                         Modifier

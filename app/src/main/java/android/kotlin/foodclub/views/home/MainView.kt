@@ -67,6 +67,7 @@ fun BottomSheet(
             BottomSheetItem(
                 icon = R.drawable.story_bottom_sheet_icon,
                 text = stringResource(id = R.string.create_a_story),
+                onDismiss = onDismiss,
                 onClick = {
                     navController.navigate(route = "CAMERA_VIEW" + "/${"story".encodeUtf8()}")
                     onDismiss()
@@ -76,6 +77,7 @@ fun BottomSheet(
             BottomSheetItem(
                 icon = R.drawable.recipe_bottom_sheet_icon,
                 text = stringResource(id = R.string.create_a_recipe),
+                onDismiss = onDismiss,
                 onClick = {
 //                    navController.navigate("VIDEOTRIMMER")
                     navController.navigate(route = HomeOtherRoutes.CreateRecipeView.route)

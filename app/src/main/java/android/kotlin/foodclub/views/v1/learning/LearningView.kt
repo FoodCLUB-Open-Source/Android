@@ -96,7 +96,7 @@ fun LearningViewUI() {
                     fontSize = 18.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
-                    modifier = Modifier.padding(bottom = 5.dp, start = 55.dp, end = 20.dp) // SHIFTS TEXT UP. WE NEED SPACE FOR TEXT BELOW
+                    modifier = Modifier.padding(bottom = 5.dp, start = 55.dp, end = 20.dp)
 
                 )
 
@@ -228,7 +228,7 @@ fun LearningViewUI() {
                     fontSize = 18.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
-                    modifier = Modifier.padding(bottom = 5.dp, start = 5.dp, end = 36.dp) // SHIFTS TEXT UP. WE NEED SPACE FOR TEXT BELOW
+                    modifier = Modifier.padding(bottom = 5.dp, start = 5.dp, end = 36.dp)
 
                 )
 
@@ -359,7 +359,7 @@ fun LearningViewUI() {
                     fontSize = 18.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
-                    modifier = Modifier.padding(bottom = 5.dp, start = 55.dp, end = 71.dp) // SHIFTS TEXT UP. WE NEED SPACE FOR TEXT BELOW
+                    modifier = Modifier.padding(bottom = 5.dp, start = 55.dp, end = 71.dp)
 
                 )
 
@@ -490,7 +490,7 @@ fun LearningViewUI() {
                     fontSize = 18.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
-                    modifier = Modifier.padding(bottom = 5.dp, start = 55.dp, end = 19.dp) // SHIFTS TEXT UP. WE NEED SPACE FOR TEXT BELOW
+                    modifier = Modifier.padding(bottom = 5.dp, start = 55.dp, end = 19.dp)
 
                 )
 
