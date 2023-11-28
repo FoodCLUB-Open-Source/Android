@@ -282,7 +282,7 @@ private fun IngredientSelectedView(
                                     selectedIngredient.unit
                                 ),
                                 selectedIngredient.unit,
-                                selectedIngredient.imageUrl
+                                selectedIngredient.imageUrl,
                             )
                         )
                     }
