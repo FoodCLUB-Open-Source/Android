@@ -100,4 +100,3 @@ class LogInWithEmailViewModel @Inject constructor(
         }
     }
 }
-
