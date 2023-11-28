@@ -79,7 +79,6 @@ fun EditIngredientQuantityPicker(
     val itemHeightDp = pixelsToDp(itemHeightPixels.value)
     val TAG = "IngredientsNumberPicker"
 
-    // setting selected states
     LaunchedEffect(quantityListState) {
         snapshotFlow { quantityListState.firstVisibleItemIndex }
             .map { index ->

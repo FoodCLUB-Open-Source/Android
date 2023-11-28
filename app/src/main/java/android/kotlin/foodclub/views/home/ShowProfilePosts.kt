@@ -336,8 +336,7 @@ fun ShowProfilePosts(
             }
         }
     }
-
-    //Fix width deformation - recompose
+    
     LaunchedEffect(hasVideoLoaded.value) {
         if(post.value != null) {
             delay(50)

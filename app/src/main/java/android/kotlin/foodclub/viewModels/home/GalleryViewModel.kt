@@ -8,9 +8,9 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.util.Size
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 
 data class MediaImageTest(var id: String) {
@@ -21,10 +21,9 @@ data class MediaImageTest(var id: String) {
 
 
 class GalleryViewModel : ViewModel() {
-    private val _title = MutableLiveData("GalleryViewModel View")
-    val title: LiveData<String> get() = _title
+    private val _title = MutableStateFlow("GalleryViewModel View")
+    val title: StateFlow<String> get() = _title
 
-    //Hard coded data for now
     val ResourceIds: MutableList<Pair<Uri, String>> = mutableListOf()
     val tests: MutableList<MediaImageTest> = mutableListOf()
     fun getMediaContent(
@@ -77,7 +76,6 @@ class GalleryViewModel : ViewModel() {
                         id
                     )
                     // add the URI to the list
-
                     /*
                     if (limitSize && count >= sizeLimit)
                     {
@@ -131,7 +129,7 @@ class GalleryViewModel : ViewModel() {
             imageProjection,
             selectionArgs,
             null,
-            //imageSortOrder
+
         )
 
         val uris = mutableListOf<Uri>()

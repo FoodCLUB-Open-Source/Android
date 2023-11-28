@@ -404,7 +404,6 @@ fun GalleryImageTab(images: List<Uri>, itemsPerRow: Int = 3, context: Context) {
 
 @Composable
 fun ImageItem(modifier: Modifier, imageID: ImageBitmap) {
-    //To be altered with intrinsic measurements
     Card(
         modifier = Modifier
             .aspectRatio(1f)
@@ -495,7 +494,6 @@ fun VideoItem(
 ) {
     val context = LocalContext.current
     val bitmap = createVideoThumb(context = context, videoID)?.asImageBitmap()
-    //To be altered with intrinsic measurements
     Card(
         modifier = Modifier
             .aspectRatio(1f)
