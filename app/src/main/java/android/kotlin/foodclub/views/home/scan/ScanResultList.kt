@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.views.home
+package android.kotlin.foodclub.views.home.scan
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
@@ -8,6 +8,9 @@ import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.utils.composables.CustomDatePicker
 import android.kotlin.foodclub.utils.composables.LoadingProgressBar
 import android.kotlin.foodclub.viewModels.home.DiscoverViewModel
+import android.kotlin.foodclub.views.home.myDigitalPantry.EditIngredientView
+import android.kotlin.foodclub.views.home.myDigitalPantry.SwipeableItemsLazyColumn
+import android.kotlin.foodclub.views.home.myDigitalPantry.TitlesSection
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

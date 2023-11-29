@@ -1,5 +1,6 @@
-package android.kotlin.foodclub.views.home
+package android.kotlin.foodclub.views.home.discover
 
+import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.Satoshi
@@ -71,6 +72,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import android.kotlin.foodclub.viewModels.home.DiscoverViewModel
+import android.kotlin.foodclub.views.home.myDigitalPantry.TitlesSection
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.heightIn
@@ -122,11 +124,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun DiscoverView(
     navController: NavController,
-    viewModel: DiscoverViewModel
+    viewModel: DiscoverViewModel,
+    state: DiscoverState
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 240.dp
 
@@ -143,12 +147,7 @@ fun DiscoverView(
         )
     }
 
-    val mainSearchText by viewModel.mainSearchText.collectAsState()
-    val ingredientsSearchText by viewModel.ingredientsSearchText.collectAsState()
-
-    val userIngredients = viewModel.userIngredientsList.collectAsState()
     var searchText by remember { mutableStateOf("") }
-    val searchResults by viewModel.displayedProducts.collectAsState(emptyList())
 
     var homePosts: State<List<VideoModel>>?
     val worldPosts: State<List<VideoModel>>? = null
@@ -211,7 +210,7 @@ fun DiscoverView(
 
         item {
             MainSearchBar(
-                searchTextValue = mainSearchText,
+                searchTextValue = state.mainSearchText,
                 navController = navController
             )
         }
@@ -229,14 +228,14 @@ fun DiscoverView(
             if (mainTabIndex == 0){
                 SubSearchBar(
                     navController = navController,
-                    searchTextValue = ingredientsSearchText,
+                    searchTextValue = state.ingredientSearchText,
                     onSearch = { input->
                         searchText = input
                         viewModel.onSubSearchTextChange(input)
                     }
                 )
             }else{
-                // figure out what do show here
+                // TODO figure out what do show here
                 Spacer(modifier = Modifier.height(30.dp))
             }
         }
@@ -301,8 +300,8 @@ fun DiscoverView(
                     IngredientsList(
                         Modifier,
                         viewModel = viewModel,
-                        productsList = userIngredients.value,
-                        userIngredientsList = userIngredients,
+                        productsList = state.userIngredients,
+                        userIngredientsList = state.userIngredients,
                         onEditQuantityClicked = {
                             isSheetOpen = true
                             viewModel.ingredientToEdit.value = it
@@ -321,8 +320,8 @@ fun DiscoverView(
                     IngredientsList(
                         Modifier,
                         viewModel = viewModel,
-                        productsList = searchResults,
-                        userIngredientsList = userIngredients,
+                        productsList = state.searchResults,
+                        userIngredientsList = state.userIngredients,
                         onEditQuantityClicked = {
                             viewModel.ingredientToEdit.value = it
                             viewModel.updateIngredient(it)
@@ -426,7 +425,7 @@ fun DiscoverView(
         }
     }
     if (showSheet) {
-        IngredientsBottomSheet(triggerBottomSheetModal, viewModel.productsDatabase)
+        IngredientsBottomSheet(triggerBottomSheetModal, viewModel.productsDatabase.value)
     }
 
 }
@@ -722,7 +721,7 @@ fun IngredientsList(
     onDateClicked: (Ingredient) -> Unit,
     onIngredientAdd: (Ingredient) -> Unit,
     onDeleteIngredient: (Ingredient) -> Unit,
-    userIngredientsList: State<List<Ingredient>>
+    userIngredientsList: List<Ingredient>
 ) {
     Column(
         modifier = modifier
@@ -740,7 +739,7 @@ fun IngredientsList(
         IngredientsListColumn(
             viewModel = viewModel,
             productsList = productsList,
-            userIngredientsList = userIngredientsList.value,
+            userIngredientsList = userIngredientsList,
             onEditQuantityClicked = { onEditQuantityClicked(it) },
             onDateClicked = { onDateClicked(it) },
             onIngredientAdd = { onIngredientAdd(it) },

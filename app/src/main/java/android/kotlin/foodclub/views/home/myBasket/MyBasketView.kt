@@ -1,5 +1,6 @@
-package android.kotlin.foodclub.views.home
+package android.kotlin.foodclub.views.home.myBasket
 
+import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.config.ui.Montserrat
@@ -51,11 +52,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun MyBasketView(
     viewModel: MyBasketViewModel
@@ -83,7 +84,7 @@ fun MyBasketView(
     if (showSheet) {
         IngredientsBottomSheet(
             onDismiss = triggerBottomSheetModal,
-            productsDataFlow = viewModel.productsDatabase,
+            productsData = viewModel.productsDatabase.value,
             loadMoreObjects = { searchText, onLoadCompleted ->
                 viewModel.fetchMoreProducts(searchText, onLoadCompleted) },
             onListUpdate = { viewModel.fetchProductsDatabase(it) },

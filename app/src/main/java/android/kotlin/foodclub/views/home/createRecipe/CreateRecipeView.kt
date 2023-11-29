@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.views.home
+package android.kotlin.foodclub.views.home.createRecipe
 
 import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
@@ -10,8 +10,6 @@ import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.viewModels.home.CreateRecipeViewModel
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
@@ -75,7 +73,6 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -106,21 +103,22 @@ import kotlin.math.roundToInt
 @Composable
 fun BottomSheetCategories(
     onDismiss: () -> Unit,
-    viewModel: CreateRecipeViewModel
+    viewModel: CreateRecipeViewModel,
+    state: CreateRecipeState
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 150.dp
     var searchText by remember { mutableStateOf("") }
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val categories = viewModel.categories.collectAsState()
-    var displayedCategories by remember { mutableStateOf(categories.value) }
-    val selectedCategories = viewModel.chosenCategories.collectAsState()
+    val categories = state.categories
+    var displayedCategories by remember { mutableStateOf(categories) }
+    val selectedCategories = state.chosenCategories
 
     LaunchedEffect(searchText) {
         if(searchText.isEmpty()) {
-            displayedCategories = categories.value
+            displayedCategories = categories
             return@LaunchedEffect
         }
-        displayedCategories = categories.value.filter {
+        displayedCategories = categories.filter {
             it.name.lowercase().contains(searchText.lowercase())
         }
     }
@@ -201,7 +199,7 @@ fun BottomSheetCategories(
             }
             FlowRow {
                 displayedCategories.forEachIndexed { _, category ->
-                    val isSelected = selectedCategories.value.contains(category)
+                    val isSelected = selectedCategories.contains(category)
 
                     Card(
                         shape = RoundedCornerShape(16.dp),
@@ -236,10 +234,14 @@ fun BottomSheetCategories(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun CreateRecipeView(navController: NavController, viewModel: CreateRecipeViewModel) {
-    val title = viewModel.title.value ?: stringResource(id = R.string.loading)
-    val ingredientList by viewModel.ingredients.collectAsState()
-    val revealedIngredientId by viewModel.revealedIngredientId.collectAsState()
+fun CreateRecipeView(
+    navController: NavController,
+    viewModel: CreateRecipeViewModel,
+    state: CreateRecipeState
+) {
+    //val title = viewModel.title.value ?: stringResource(id = R.string.loading)
+   // val ingredientList by viewModel.ingredients.collectAsState()
+   // val revealedIngredientId by viewModel.revealedIngredientId.collectAsState()
     val systemUiController = rememberSystemUiController()
     var showSheet by remember { mutableStateOf(false) }
     var showCategorySheet by remember { mutableStateOf(false) }
@@ -247,7 +249,7 @@ fun CreateRecipeView(navController: NavController, viewModel: CreateRecipeViewMo
     var sliderPosition by remember { mutableStateOf(0f) }
     var recipeName by remember { mutableStateOf("") }
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 240.dp
-    val categories = viewModel.chosenCategories.collectAsState()
+   // val categories = viewModel.chosenCategories.collectAsState()
     val rows = listOf(
         stringArrayResource(id = R.array.quantity_list).toList(),
         stringArrayResource(id = R.array.discover_sub_tabs).toList(),
@@ -295,7 +297,7 @@ fun CreateRecipeView(navController: NavController, viewModel: CreateRecipeViewMo
         if (showSheet) {
             IngredientsBottomSheet(
                 onDismiss = triggerBottomSheetModal,
-                productsDataFlow = viewModel.productsDatabase,
+                productsData = state.products,
                 loadMoreObjects = { searchText, onLoadCompleted ->
                     viewModel.fetchMoreProducts(searchText, onLoadCompleted) },
                 onListUpdate = { viewModel.fetchProductsDatabase(it) },
@@ -303,7 +305,11 @@ fun CreateRecipeView(navController: NavController, viewModel: CreateRecipeViewMo
             )
         }
         if (showCategorySheet) {
-            BottomSheetCategories(triggerCategoryBottomSheetModal, viewModel)
+            BottomSheetCategories(
+                onDismiss = triggerCategoryBottomSheetModal,
+                viewModel = viewModel,
+                state = state
+            )
         }
 
 
@@ -421,7 +427,7 @@ fun CreateRecipeView(navController: NavController, viewModel: CreateRecipeViewMo
                 val purpleColor = Color(0xFFA059D9)
 
                 FlowRow {
-                    categories.value.forEachIndexed { _, content ->
+                    state.categories.forEachIndexed { _, content ->
                         Card(
                             shape = RoundedCornerShape(30.dp),
                             modifier = Modifier
@@ -513,10 +519,10 @@ fun CreateRecipeView(navController: NavController, viewModel: CreateRecipeViewMo
                 Spacer(modifier = Modifier.height(10.dp))
 
             }
-            items(items = ingredientList, key = { it.id }) { ingredient ->
+            items(items = state.ingredients, key = { it.id }) { ingredient ->
                 Ingredient(
                     ingredient = ingredient,
-                    isRevealed = revealedIngredientId == ingredient.id,
+                    isRevealed = state.revealedIngredientId == ingredient.id,
                     onExpand = { viewModel.onIngredientExpanded(ingredient.id) },
                     onCollapse = { viewModel.onIngredientCollapsed(ingredient.id) },
                     onDelete = { viewModel.onIngredientDeleted(ingredient) }
@@ -828,5 +834,10 @@ fun onRecipeSubmit(
 fun CreateRecipeViewPreview() {
     val navController = rememberNavController()
     val viewModel: CreateRecipeViewModel = hiltViewModel()
-    CreateRecipeView(navController, viewModel)
+    val state = viewModel.state.collectAsState()
+    CreateRecipeView(
+        navController,
+        viewModel,
+        state.value
+    )
 }

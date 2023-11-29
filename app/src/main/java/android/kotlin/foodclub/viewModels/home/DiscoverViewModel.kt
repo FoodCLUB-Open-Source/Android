@@ -14,6 +14,7 @@ import android.kotlin.foodclub.repositories.ProductRepository
 import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
+import android.kotlin.foodclub.views.home.discover.DiscoverState
 import android.util.Log
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -48,106 +49,122 @@ class DiscoverViewModel @Inject constructor(
     private val sessionCache: SessionCache
 ):ViewModel() {
 
-    private val _postList = MutableStateFlow<List<VideoModel>>(listOf())
-    val postList: StateFlow<List<VideoModel>> get() = _postList
+    companion object {
+        private val TAG = DiscoverViewModel::class.java.simpleName
+    }
 
-    private val _postListPerCategory = MutableStateFlow<List<VideoModel>>(listOf())
-    val postListPerCategory: StateFlow<List<VideoModel>> get() = _postListPerCategory
+    private val _state = MutableStateFlow(DiscoverState.default())
+    val state:StateFlow<DiscoverState>
+        get() = _state
 
-    private val _myFridgePosts = MutableStateFlow<List<UserPosts>>(listOf())
-    val myFridgePosts: StateFlow<List<UserPosts>> get() = _myFridgePosts
 
-    private val _sessionUserId = MutableStateFlow("")
-    val sessionUserId: MutableStateFlow<String> get() = _sessionUserId
-
-    private val _sessionUserName = MutableStateFlow("")
-    val sessionUserName: MutableStateFlow<String> get() = _sessionUserName
-
-    private val _productsDatabase = MutableStateFlow(ProductsData("", "", listOf()))
-    val productsDatabase: StateFlow<ProductsData> get() = _productsDatabase
-
-    private val _userIngredientsList = MutableStateFlow<List<Ingredient>>(listOf())
-    val userIngredientsList: StateFlow<List<Ingredient>> get() = _userIngredientsList
-
-    private val _mainSearchText = MutableStateFlow("")
-    var mainSearchText = _mainSearchText.asStateFlow()
+//    private val _postList = MutableStateFlow<List<VideoModel>>(listOf())
+//    val postList: StateFlow<List<VideoModel>> get() = _postList
+//
+//    // Not used, save for later or add to state?
+//    private val _postListPerCategory = MutableStateFlow<List<VideoModel>>(listOf())
+//    val postListPerCategory: StateFlow<List<VideoModel>> get() = _postListPerCategory
+//
+//    private val _myFridgePosts = MutableStateFlow<List<UserPosts>>(listOf())
+//    val myFridgePosts: StateFlow<List<UserPosts>> get() = _myFridgePosts
+//
+//    private val _sessionUserId = MutableStateFlow("")
+//    val sessionUserId: MutableStateFlow<String> get() = _sessionUserId
+//
+//    private val _sessionUserName = MutableStateFlow("")
+//    val sessionUserName: MutableStateFlow<String> get() = _sessionUserName
+//
+//    private val _productsDatabase = MutableStateFlow(ProductsData("", "", listOf()))
+//    val productsDatabase: StateFlow<ProductsData> get() = _productsDatabase
+//
+//    private val _userIngredientsList = MutableStateFlow<List<Ingredient>>(listOf())
+//    val userIngredientsList: StateFlow<List<Ingredient>> get() = _userIngredientsList
+//
+//    private val _mainSearchText = MutableStateFlow("")
+//    var mainSearchText = _mainSearchText.asStateFlow()
 
     private var searchJob: Job? = null
 
-    private val _ingredientsSearchText = MutableStateFlow("")
-    var ingredientsSearchText = _ingredientsSearchText.asStateFlow()
+//    private val _ingredientsSearchText = MutableStateFlow("")
+//    var ingredientsSearchText = _ingredientsSearchText.asStateFlow()
 
     var ingredientToEdit: MutableState<Ingredient?> = mutableStateOf(null)
 
     // filter products db list with search text
-    var displayedProducts: StateFlow<List<Ingredient>> = combine(
-        ingredientsSearchText,
-        _productsDatabase
-    ) { query, productsData ->
-        if (query.isBlank()) {
-            productsData.productsList
-        } else {
-            val matchingProducts = productsData.productsList.filter { product ->
-                product.type.contains(query, ignoreCase = true)
-            }
-            matchingProducts
-        }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyList()
-    )
+//    var displayedProducts: StateFlow<List<Ingredient>> = combine(
+//        state.value.ingredientSearchText,
+//        state.value.productsData
+//    ) { query, productsData ->
+//        if (query.isBlank()) {
+//            productsData.productsList
+//        } else {
+//            val matchingProducts = productsData.productsList.filter { product ->
+//                product.type.contains(query, ignoreCase = true)
+//            }
+//            matchingProducts
+//        }
+//    }.stateIn(
+//        scope = viewModelScope,
+//        started = SharingStarted.WhileSubscribed(5000),
+//        initialValue = emptyList()
+//    )
 
-    private val _error = MutableStateFlow("")
+   // private val _error = MutableStateFlow("")
 
     init {
         viewModelScope.launch {
-            fetchProductsDatabase(mainSearchText.value)
+            fetchProductsDatabase(state.value.mainSearchText)
         }
     }
 
     fun onMainSearchTextChange(text: String) {
-        _mainSearchText.value = text
+       _state.update { it.copy(mainSearchText = text) }
     }
 
     fun onSubSearchTextChange(text: String) {
-        _ingredientsSearchText.value = text
+        _state.update { it.copy(ingredientSearchText = text) }
         searchJob?.cancel() // Cancel the previous job if it exists
 
         searchJob = viewModelScope.launch {
             if (text != ""){
                 delay(1000) // Delay for 1000 milliseconds
-                fetchProductsDatabase(_ingredientsSearchText.value)
+                fetchProductsDatabase(state.value.ingredientSearchText)
             }
         }
     }
 
     fun addToUserIngredients(ingredient: Ingredient) {
-        val updatedList = _userIngredientsList.value.toMutableList()
+        val updatedList = state.value.userIngredients.toMutableList()
         updatedList.add(ingredient)
-        _userIngredientsList.value = updatedList
-        _ingredientsSearchText.value = ""
+        _state.update { it.copy(
+            userIngredients = updatedList,
+            ingredientSearchText = ""
+        ) }
     }
-    fun addScanListToUserIngredients(ingredient: List<Ingredient>) {
-        val updatedList: MutableList<Ingredient> = _userIngredientsList.value.toMutableList()
-        updatedList.addAll(ingredient)
 
-        _userIngredientsList.value = updatedList
-        _ingredientsSearchText.value = ""
+    fun addScanListToUserIngredients(ingredient: List<Ingredient>) {
+        val updatedList = state.value.userIngredients.toMutableList()
+        updatedList.addAll(ingredient)
+        _state.update { it.copy(
+            userIngredients = updatedList,
+            ingredientSearchText = ""
+        ) }
     }
 
     fun deleteIngredientFromList(ingredient: Ingredient){
-        val list = _userIngredientsList.value.toMutableList()
-        list.remove(ingredient)
-        _userIngredientsList.value = list
+        val updatedList = state.value.userIngredients.toMutableList()
+        updatedList.remove(ingredient)
+        _state.update { it.copy(
+            userIngredients = updatedList
+        ) }
     }
 
     fun updateIngredient(ingredient: Ingredient) {
-        _userIngredientsList.update { currentList ->
-            currentList.map { item ->
+        _state.update { it.copy(
+            userIngredients = state.value.userIngredients.map { item ->
                 if (item.id == ingredient.id) {
                     Ingredient(
-                        id = item.id,  // Make sure to copy other properties if needed
+                        id = item.id,
                         quantity = ingredient.quantity,
                         unit = ingredient.unit,
                         type = ingredient.type,
@@ -158,27 +175,30 @@ class DiscoverViewModel @Inject constructor(
                     item
                 }
             }
-        }
+        ) }
 
         // Now update the ingredientToEdit
         ingredientToEdit.value = ingredient
 
         // Now update the ingredientToEdit
         ingredientToEdit.value = ingredient
-        Log.i("MYTAG","LIST AFTER ${_userIngredientsList.value[0].quantity}")
+        Log.i(TAG,"LIST AFTER ${state.value.userIngredients[0].quantity}")
     }
     private suspend fun fetchProductsDatabase(searchText: String) {
-        Log.e("MYTAG","made call $searchText")
+        Log.e(TAG,"made call $searchText")
 
         when(val resource = productsRepo.getProductsList(searchText)) {
             is Resource.Success -> {
-                Log.e("MYTAG","SUCCESS")
-
-                _error.value = ""
-                _productsDatabase.value = resource.data!!
+                Log.e(TAG,"SUCCESS")
+                _state.update {
+                    it.copy(
+                        error = "",
+                        productsData = resource.data!!
+                    )
+                }
             }
             is Resource.Error -> {
-                _error.value = resource.message!!
+                _state.update { it.copy(error = resource.message!!) }
             }
         }
     }
@@ -192,7 +212,7 @@ class DiscoverViewModel @Inject constructor(
                     _postListPerCategory.value = resource.data!!
                 }
                 is Resource.Error -> {
-
+                    // TODO deal with error
                 }
             }
         }
@@ -208,7 +228,7 @@ class DiscoverViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-
+                    // TODO deal with error
                 }
             }
         }
@@ -221,7 +241,7 @@ class DiscoverViewModel @Inject constructor(
                     _postList.value = resource.data!!
                 }
                 is Resource.Error -> {
-
+                    // TODO deal with error
                 }
             }
         }
@@ -235,7 +255,7 @@ class DiscoverViewModel @Inject constructor(
                     _myFridgePosts.value = resource.data!!.userPosts
                 }
                 is Resource.Error -> {
-
+                    // TODO deal with error
                 }
             }
         }
