@@ -68,6 +68,7 @@ import android.content.SharedPreferences
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -83,19 +84,11 @@ fun ViewStories() {
     val coroutineScope = rememberCoroutineScope()
     val localDensity = LocalDensity.current
 
-
-
-    // GETTING CONTEXT + SESSION
     val context = LocalContext.current
     val sessionCache = SessionCache(provideSharedPreferences(context))
 
-    // GETTING ACTIVE SESSIONS USER ID + NULL CHECK
-    val userId = sessionCache.getActiveSession()?.sessionUser?.userId
+    val userId = sessionCache.getActiveSession()?.sessionUser?.userId ?: return
 
-    // IF USER ID IS NULL, RETURN
-    if (userId == null ) {
-        return
-    }
     val systemUiController = rememberSystemUiController()
     SideEffect {
         systemUiController.setSystemBarsColor(
@@ -142,9 +135,9 @@ fun ViewStories() {
             var doubleTapState by remember {
                 mutableStateOf(
                     Triple(
-                        Offset.Unspecified, //offset
-                        false, //double tap anim start
-                        0f //rotation angle
+                        Offset.Unspecified,
+                        false,
+                        0f
                     )
                 )
             }
@@ -242,7 +235,7 @@ fun ViewStories() {
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.story_user),
-                                contentDescription = "Profile Image",
+                                contentDescription = stringResource(id = R.string.profile_image),
                                 modifier = Modifier
                                     .size(35.dp)
                                     .clip(CircleShape)

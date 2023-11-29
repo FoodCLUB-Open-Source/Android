@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.utils.composables
 
+import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.util.Log
 import androidx.compose.foundation.border
@@ -18,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -66,7 +68,7 @@ fun CustomDatePicker(
                     onDismiss()
                 })
             {
-                Text("Save")
+                Text(text = stringResource(id = R.string.save))
             }
         },
         dismissButton = {
@@ -88,7 +90,7 @@ fun CustomDatePicker(
                     onDismiss()
                 })
             {
-                Text("Cancel")
+                Text( text = stringResource(id = R.string.cancel))
             }
         },
         colors = datePickerDialogColors
@@ -98,7 +100,7 @@ fun CustomDatePicker(
             colors = datePickerColors,
             title = {
                 Text(
-                    "Select Expiration Date",
+                    text = stringResource(id = R.string.select_expiration_date),
                     color = foodClubGreen
                 )
             }

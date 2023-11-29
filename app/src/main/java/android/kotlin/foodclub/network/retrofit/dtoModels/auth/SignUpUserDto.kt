@@ -7,6 +7,6 @@ data class SignUpUserDto(
     val email: String,
     val password: String,
 
-    @SerializedName("fullname")
+    @SerializedName("full_name")
     val name: String
 )

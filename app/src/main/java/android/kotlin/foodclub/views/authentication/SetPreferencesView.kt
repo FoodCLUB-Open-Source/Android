@@ -29,14 +29,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import android.kotlin.foodclub.R
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 
 @Composable
 fun SetPreferencesView(navController: NavHostController) {
     Box(modifier = Modifier.background(Color.White))
     {
         AuthLayout(
-            header = "Tell us what you like!",
-            subHeading = "So we can bring the latest recipes!",
+            header = stringResource(id = R.string.preferences_title),
+            subHeading = stringResource(id = R.string.preferences_subheading),
             onBackButtonClick = { navController.popBackStack() }) {
             SetPreferencesMainLayout()
         }
@@ -46,20 +49,8 @@ fun SetPreferencesView(navController: NavHostController) {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SetPreferencesMainLayout() {
-    val preferencesOptions = arrayListOf(
-        "Italian",
-        "Mexican",
-        "Indian",
-        "Chinese",
-        "Vegan",
-        "Vegetarian",
-        "Paleo",
-        "Japanese",
-        "low-carb",
-        "Vietnamese",
-        "Thai",
-        "Gluten-free"
-    , "Llllllllllllllllllllooooooooonnnnnnnnggggggggggggg")
+    val preferencesOptions = stringArrayResource(id = R.array.preferences)
+
     val selectedPreferences = remember { mutableStateListOf<String>() }
 
     Column(verticalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxHeight())
@@ -76,8 +67,11 @@ fun SetPreferencesMainLayout() {
             }
         }
 
-        ConfirmButton(enabled = selectedPreferences.isNotEmpty(), text = "Finish") {
-            //OnClick
+        ConfirmButton(
+            enabled = selectedPreferences.isNotEmpty(),
+            text = stringResource(id = R.string.finish)
+        ) {
+            // TODO add OnClick
         }
     }
 
@@ -123,8 +117,8 @@ fun SetPreferencesPreview() {
     Box(modifier = Modifier.background(Color.White))
     {
         AuthLayout(
-            header = "Tell us what you like!",
-            subHeading = "So we can bring the latest recipes!",
+            header = stringResource(id = R.string.preferences_title),
+            subHeading = stringResource(id = R.string.preferences_subheading),
             onBackButtonClick = { /*TODO*/ }) {
             SetPreferencesMainLayout()
         }

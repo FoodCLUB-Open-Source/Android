@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -55,12 +56,13 @@ import java.io.File
 @Composable
 fun TakeProfilePhotoView(
     modifier: Modifier = Modifier,
-    viewModel: ProfileViewModel = hiltViewModel(),
+    viewModel: ProfileViewModel,
     navController: NavController
 ){
     val context = LocalContext.current
     val dataStore = viewModel.storeData
     val scope = rememberCoroutineScope()
+    val TAG = "TakeProfilePhotoView"
 
     var photoUri by remember { mutableStateOf<Uri?>(null) }
 
@@ -80,7 +82,6 @@ fun TakeProfilePhotoView(
             PhotoTakenPreview(
                 image = photoUri!!,
                 onSaveClick = {
-                    // convert image taken with camera to File and make a PUT request to backend
                     val file = uriToFile(photoUri!!, context)
                     if (file != null){
                         viewModel.updateUserProfileImage(
@@ -88,14 +89,15 @@ fun TakeProfilePhotoView(
                             file,
                             photoUri!!
                         )
-                        // save image to DataStore, when we navigate back,
-                        // LaunchedEffect on ProfileView will catch this and apply on profile image
+
                         scope.launch {
                             dataStore.storeImage(photoUri!!.toString())
                         }
+
                         navController.popBackStack()
-                    }else{
-                        Log.i("MYTAG","EMPTY FILE")
+                    }
+                    else {
+                        Log.i(TAG,"EMPTY FILE")
                     }
                 },
                 onCancelClick = {
@@ -119,7 +121,7 @@ fun TakeProfilePhotoView(
             ) {
                 Icon(
                     painterResource(id = R.drawable.close),
-                    contentDescription = "Close camera",
+                    contentDescription = stringResource(id = R.string.close_camera),
                     modifier.size(30.dp),
                     tint = foodClubGreen
                 )
@@ -142,7 +144,7 @@ fun TakeProfilePhotoView(
                 ) {
                     Icon(
                         painterResource(id = R.drawable.baseline_cameraswitch_24),
-                        contentDescription = "Switch camera",
+                        contentDescription = stringResource(id = R.string.switch_camera),
                         modifier = modifier.size(30.dp),
                         tint = foodClubGreen
                     )
@@ -158,7 +160,7 @@ fun TakeProfilePhotoView(
                 ) {
                     Icon(
                         painterResource(id = R.drawable.take_photo),
-                        contentDescription = "Take photo",
+                        contentDescription = stringResource(id = R.string.take_photo),
                         modifier = modifier.size(30.dp),
                         tint = foodClubGreen,
                     )
@@ -209,7 +211,7 @@ fun PhotoTakenPreview(
                     Icon(
                         modifier = Modifier.size(30.dp),
                         imageVector = Icons.Default.Close,
-                        contentDescription = "",
+                        contentDescription = null,
                         tint = Color.White
                     )
                 }
@@ -228,7 +230,7 @@ fun PhotoTakenPreview(
                     Icon(
                         modifier = Modifier.size(30.dp),
                         imageVector = Icons.Default.Check,
-                        contentDescription = "",
+                        contentDescription = null,
                         tint = Color.White
                     )
                 }
@@ -243,6 +245,7 @@ private fun takePhoto(
     onPhotoTaken: (Uri) -> Unit,
     context: Context
 ) {
+    val TAG = "TakePhoto"
     val outputDirectory = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
     if (outputDirectory != null) {
         val outputFile = File(outputDirectory, "captured_image.jpg")
@@ -259,11 +262,11 @@ private fun takePhoto(
                 }
 
                 override fun onError(exception: ImageCaptureException) {
-                    Log.i("MYTAG", "Couldn't save photo: ", exception)
+                    Log.i(TAG, "Couldn't save photo: ", exception)
                 }
             }
         )
     } else {
-        Log.i("MYTAG", "Failed to obtain output directory")
+        Log.i(TAG, "Failed to obtain output directory")
     }
 }

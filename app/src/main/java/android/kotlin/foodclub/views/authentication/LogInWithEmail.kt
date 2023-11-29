@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.views.authentication
 
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.navigation.auth.AuthScreen
 import android.kotlin.foodclub.utils.composables.AuthLayout
 import android.kotlin.foodclub.utils.composables.ConfirmButton
 import android.kotlin.foodclub.utils.composables.CustomPasswordTextField
@@ -14,8 +15,8 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -23,18 +24,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun LogInWithEmail(navController: NavHostController) {
-    val viewModel: LogInWithEmailViewModel = hiltViewModel()
-    val loginStatus by viewModel.loginStatus.observeAsState(null)
+fun LogInWithEmail(
+    navController: NavHostController,
+    viewModel: LogInWithEmailViewModel
+) {
+    val loginStatus by viewModel.loginStatus.collectAsState()
 
     var username by remember { mutableStateOf("") }
     var userPassword by remember { mutableStateOf("") }
@@ -91,7 +93,7 @@ fun LogInWithEmail(navController: NavHostController) {
                 ClickableText(
                     text = AnnotatedString("Reset here"),
                     onClick = {
-                        navController.navigate("FORGOT")
+                        navController.navigate(route = AuthScreen.Forgot.route)
                     },
                     style = TextStyle(
                         color = Color(152, 209, 60),

@@ -1,16 +1,14 @@
 package android.kotlin.foodclub.viewModels.home
 
+import android.kotlin.foodclub.domain.enums.QuantityUnit
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.ProductsData
-import android.kotlin.foodclub.domain.models.recipes.Recipe
-import android.kotlin.foodclub.repositories.RecipeRepository
-import android.kotlin.foodclub.repositories.ProductRepository
-import android.kotlin.foodclub.domain.enums.QuantityUnit
 import android.kotlin.foodclub.domain.models.recipes.Category
+import android.kotlin.foodclub.domain.models.recipes.Recipe
+import android.kotlin.foodclub.repositories.ProductRepository
+import android.kotlin.foodclub.repositories.RecipeRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,8 +25,8 @@ class CreateRecipeViewModel @Inject constructor(
     private val productsRepository: ProductRepository,
     private val recipeRepository: RecipeRepository,
 ) : ViewModel() {
-    private val _title = MutableLiveData("CreateRecipeViewModel View")
-    val title: LiveData<String> get() = _title
+    private val _title = MutableStateFlow("CreateRecipeViewModel View")
+    val title: StateFlow<String> get() = _title
 
     private val _ingredients = MutableStateFlow(listOf<Ingredient>())
     val ingredients: StateFlow<List<Ingredient>> get() = _ingredients

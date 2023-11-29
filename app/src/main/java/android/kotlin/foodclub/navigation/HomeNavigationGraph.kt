@@ -1,16 +1,24 @@
 package android.kotlin.foodclub.navigation
 
-//import android.kotlin.foodclub.views.home.PlayView
-//import android.kotlin.foodclub.views.home.StoryView
-//import com.example.foodclub.navigation.graphs.Graph
+import android.kotlin.foodclub.config.ui.BottomBarScreenObject
+import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
+import android.kotlin.foodclub.viewModels.home.CameraViewModel
+import android.kotlin.foodclub.viewModels.home.DiscoverViewModel
 import android.kotlin.foodclub.views.home.CameraPreviewView
 import android.kotlin.foodclub.views.home.CameraView
+import android.kotlin.foodclub.views.home.CreateView
+import android.kotlin.foodclub.views.home.DiscoverView
 import android.kotlin.foodclub.views.home.FollowerView
 import android.kotlin.foodclub.views.home.GalleryView
 import android.kotlin.foodclub.views.home.HomeView
 import android.kotlin.foodclub.views.home.MyBasketView
+import android.kotlin.foodclub.views.home.MyDigitalPantryView
 import android.kotlin.foodclub.views.home.ProfileView
+import android.kotlin.foodclub.views.home.ScanResultView
+import android.kotlin.foodclub.views.home.ScanView
 import android.kotlin.foodclub.views.home.SearchView
+import android.kotlin.foodclub.views.home.TakeProfilePhotoView
+import android.kotlin.foodclub.views.home.topbackbar
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.navigation.NavGraphBuilder
@@ -19,23 +27,19 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import android.kotlin.foodclub.config.ui.BottomBarScreenObject
-import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
-import android.kotlin.foodclub.viewModels.home.DiscoverViewModel
-import android.kotlin.foodclub.views.home.CreateView
-import android.kotlin.foodclub.views.home.DiscoverView
-import android.kotlin.foodclub.views.home.MyDigitalPantryView
-import android.kotlin.foodclub.views.home.TakeProfilePhotoView
-import android.kotlin.foodclub.views.home.ViewStories
-import androidx.compose.foundation.layout.height
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.unit.dp
+import android.kotlin.foodclub.viewModels.home.FollowerFollowingViewModel
+import android.kotlin.foodclub.viewModels.home.GalleryViewModel
+import android.kotlin.foodclub.viewModels.home.HomeViewModel
+import android.kotlin.foodclub.viewModels.home.MyBasketViewModel
+import android.kotlin.foodclub.viewModels.home.ProfileViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 fun NavGraphBuilder.homeNavigationGraph(
-    navController: NavHostController, showSheet: Boolean,
+    navController: NavHostController,
+    showSheet: Boolean,
     triggerBottomSheetModal: () -> Unit,
     triggerStory: () -> Unit,
     setBottomBarVisibility: (Boolean) -> Unit
@@ -49,7 +53,13 @@ fun NavGraphBuilder.homeNavigationGraph(
 
         composable(route = BottomBarScreenObject.Home.route) {
             setBottomBarVisibility(true)
-            HomeView(navController = navController, triggerStoryView = triggerStory)
+            val viewModel: HomeViewModel = hiltViewModel()
+
+            HomeView(
+                navController = navController,
+                viewModel = viewModel,
+                triggerStoryView = triggerStory
+            )
         }
         composable(
             route = BottomBarScreenObject.Profile.route + "?userId={userId}",
@@ -58,53 +68,87 @@ fun NavGraphBuilder.homeNavigationGraph(
                 type = NavType.LongType
             })
         ) {
+            val viewModel : ProfileViewModel = hiltViewModel()
             val userId = it.arguments?.getLong("userId")
             if (userId == null) {
                 navController.popBackStack()
                 return@composable
             }
-            ProfileView(navController, userId)
+
+            ProfileView(
+                navController = navController,
+                userId = userId,
+                viewModel = viewModel
+            )
 
         }
         composable(route = BottomBarScreenObject.Discover.route) {
-            MyBasketView()
+            val viewModel: MyBasketViewModel = hiltViewModel()
+
+            MyBasketView(viewModel = viewModel)
         }
         composable(route = BottomBarScreenObject.Create.route) {
             CreateView()
         }
+
         composable(route = BottomBarScreenObject.Play.route) {
             val viewModel = it.sharedHiltViewModel<DiscoverViewModel>(navController)
-            DiscoverView(navController = navController, viewModel = viewModel)
+
+            DiscoverView(
+                navController = navController,
+                viewModel = viewModel
+            )
         }
+
+
+        composable("ScanView_route") {
+            val viewModel = it.sharedHiltViewModel<DiscoverViewModel>(navController)
+            topbackbar(navController = navController)
+            {
+                ScanView(navController = navController,viewModel=viewModel)
+            }
+        }
+        composable("ScanResultView_route") {
+            val viewModel = it.sharedHiltViewModel<DiscoverViewModel>(navController)
+
+            ScanResultView(navController = navController,viewModel=viewModel)
+
+        }
+
         composable(route = HomeOtherRoutes.CameraView.route) {
             val state = it.arguments?.getString("state") ?: ""
-            CameraView(navController = navController, stateEncoded = state)
+            val viewModel = it.sharedHiltViewModel<CameraViewModel>(navController = navController)
+
+            CameraView(
+              viewModel = viewModel,
+              navController = navController,
+              stateEncoded = state
+            )
+
         }
         composable(route = HomeOtherRoutes.VideoTrimmerView.route) {
-            val state = it.arguments?.getString("state") ?: ""
-//            CameraView(navController = navController, stateEncoded = state)
-
             CreateView()
         }
         composable(route = HomeOtherRoutes.CameraPreviewView.route) { backStackEntry ->
             val uri = backStackEntry.arguments?.getString("uri") ?: ""
             val state = backStackEntry.arguments?.getString("state") ?: ""
+
             CameraPreviewView(
                 uri = uri,
                 navController = navController,
                 state = state
-            ) // **CHANGED THIS**
+            )
         }
-//        composable(route = HomeOtherRoutes.CreateRecipeView.route) {
-//            setBottomBarVisibility(false)
-//            CreateRecipeView(navController = navController)
-//
-////            CreateView()
-//        }
 
         composable(route = HomeOtherRoutes.GalleryView.route) {
             val state = it.arguments?.getString("state") ?: ""
-            GalleryView(navController = navController, stateEncoded = state)
+            val viewModel: GalleryViewModel = hiltViewModel()
+
+            GalleryView(
+                navController = navController,
+                viewModel = viewModel,
+                stateEncoded = state
+            )
         }
 
         composable(route = HomeOtherRoutes.FollowerView.route + "/{userId}",
@@ -112,9 +156,13 @@ fun NavGraphBuilder.homeNavigationGraph(
                 navArgument("userId") { nullable = true }
             )
         ) {
+            val viewModel: FollowerFollowingViewModel = hiltViewModel()
+
             it.arguments?.getString("userId")?.let { it1 ->
                 FollowerView(
-                    navController = navController, viewType = "followers",
+                    navController = navController,
+                    viewModel = viewModel,
+                    viewType = FollowViewType.FOLLOWERS.title,
                     userId = it1.toLong()
                 )
             }
@@ -125,16 +173,22 @@ fun NavGraphBuilder.homeNavigationGraph(
                 navArgument("userId") { nullable = true }
             )
         ) {
+            val viewModel: FollowerFollowingViewModel = hiltViewModel()
+
             it.arguments?.getString("userId")?.let { it1 ->
                 FollowerView(
-                    navController = navController, viewType = "following",
+                    navController = navController,
+                    viewModel = viewModel,
+                    viewType = FollowViewType.FOLLOWING.title,
                     userId = it1.toLong()
                 )
             }
         }
 
         composable(route = HomeOtherRoutes.MyBasketView.route) {
-            MyBasketView()
+            val viewModel: MyBasketViewModel = hiltViewModel()
+
+            MyBasketView(viewModel = viewModel)
         }
 
         composable(route = HomeOtherRoutes.MySearchView.route) {
@@ -142,10 +196,19 @@ fun NavGraphBuilder.homeNavigationGraph(
         }
         composable(route = HomeOtherRoutes.MyDigitalPantryView.route) {
             val viewModel = it.sharedHiltViewModel<DiscoverViewModel>(navController)
-            MyDigitalPantryView(navController = navController, viewModel = viewModel)
+
+            MyDigitalPantryView(
+                navController = navController,
+                viewModel = viewModel
+            )
         }
         composable(route = HomeOtherRoutes.TakeProfilePhotoView.route) {
-            TakeProfilePhotoView(navController = navController)
+            val viewModel: ProfileViewModel = hiltViewModel()
+
+            TakeProfilePhotoView(
+                navController = navController,
+                viewModel = viewModel
+            )
         }
 
     }
@@ -168,6 +231,12 @@ sealed class HomeOtherRoutes(val route: String) {
     object MySearchView : HomeOtherRoutes(route = "SEARCH_VIEW")
 
     object VideoTrimmerView : HomeOtherRoutes(route = "VIDEOTRIMMER")
-    object TakeProfilePhotoView: HomeOtherRoutes(route = "TAKE_PROFILE_PHOTO_VIEW")
-    object ViewStories:HomeOtherRoutes(route = "VIEWSTORIES")
+    object TakeProfilePhotoView : HomeOtherRoutes(route = "TAKE_PROFILE_PHOTO_VIEW")
+    object ViewStories : HomeOtherRoutes(route = "VIEWSTORIES")
+
+}
+
+enum class FollowViewType(val title: String) {
+    FOLLOWERS("followers"),
+    FOLLOWING("following")
 }

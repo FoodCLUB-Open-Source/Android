@@ -43,24 +43,32 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun StoryView(storyEnabled: Boolean, storyDetails: StoryModel,
-              callbackDisableStory: () -> Unit, currentOffset: IntOffset,
-              modifier: Modifier = Modifier
+fun StoryView(
+    storyEnabled: Boolean,
+    storyDetails: StoryModel,
+    callbackDisableStory: () -> Unit,
+    currentOffset: IntOffset,
+    modifier: Modifier = Modifier
 ) {
 
     AnimatedVisibility(
         visible = storyEnabled,
         enter =
-        // slideInVertically(initialOffsetY = { (1.5 * it).toInt() } )
-        slideIn(animationSpec = tween(durationMillis = 250)) { IntOffset(- it.width / 2, - it.height / 2).plus(currentOffset) }
+        slideIn(animationSpec = tween(durationMillis = 250)) {
+            IntOffset(
+                -it.width / 2,
+                -it.height / 2
+            ).plus(currentOffset)
+        }
                 + scaleIn(animationSpec = tween(durationMillis = 250)),
-        exit = slideOut(){ IntOffset(- it.width / 2, - it.height / 2).plus(currentOffset) }
+        exit = slideOut() { IntOffset(-it.width / 2, -it.height / 2).plus(currentOffset) }
                 + scaleOut(animationSpec = tween(durationMillis = 250))
     ) {
         val density = LocalDensity.current
@@ -81,7 +89,9 @@ fun StoryView(storyEnabled: Boolean, storyDetails: StoryModel,
                 positionalThreshold = { distance: Float -> distance },
                 velocityThreshold = { with(density) { 125.dp.toPx() } },
                 confirmValueChange = {
-                    if(it == DragValue.End) { callbackDisableStory() }
+                    if (it == DragValue.End) {
+                        callbackDisableStory()
+                    }
                     return@AnchoredDraggableState true
                 }
             )
@@ -103,7 +113,7 @@ fun StoryView(storyEnabled: Boolean, storyDetails: StoryModel,
         ) {
             Image(
                 painter = storyDetails.storyPhoto,
-                contentDescription = "foodsnap",
+                contentDescription = stringResource(id = R.string.foodsnaps),
                 contentScale = ContentScale.Crop,
                 alignment = Alignment.Center,
                 modifier = Modifier.fillMaxSize()
@@ -130,7 +140,10 @@ fun StoryView(storyEnabled: Boolean, storyDetails: StoryModel,
                     contentPadding = PaddingValues(4.dp),
                     modifier = Modifier.size(40.dp)
                 ) {
-                    Image(painter = painterResource(R.drawable.baseline_close_24), contentDescription = "close story")
+                    Image(
+                        painter = painterResource(R.drawable.baseline_close_24),
+                        contentDescription = stringResource(id = R.string.close_story)
+                    )
                 }
             }
         }
@@ -139,26 +152,33 @@ fun StoryView(storyEnabled: Boolean, storyDetails: StoryModel,
 }
 
 @Composable
-fun StoryInfo(painter: Painter, name: String, time: Long, modifier: Modifier = Modifier) {
+fun StoryInfo(
+    painter: Painter,
+    name: String,
+    time: Long,
+    modifier: Modifier = Modifier
+) {
     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
         Image(
             painter = painter,
-            contentDescription = "author photo",
+            contentDescription = stringResource(id = R.string.author_photo),
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(45.dp)
                 .clip(CircleShape)
         )
 
-        Column(verticalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterVertically),
-            modifier = Modifier.height(45.dp)) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterVertically),
+            modifier = Modifier.height(45.dp)
+        ) {
             Text(
                 text = name,
                 color = Color.White,
                 fontSize = 16.sp
             )
             Text(
-                text = TimeUtil.getHoursAgoFromNow(time) + " ago",
+                text = stringResource(id = R.string.time_ago, TimeUtil.getHoursAgoFromNow(time)),
                 color = Color.White,
                 fontSize = 12.sp
             )

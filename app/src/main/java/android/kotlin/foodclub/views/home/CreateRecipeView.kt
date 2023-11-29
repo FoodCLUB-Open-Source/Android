@@ -688,7 +688,6 @@ fun SectionItem(
         }
 }
 
-// CREATE RECIPE STUFF
 @Composable
 fun CreateRecipe(viewModel: CreateRecipeViewModel) {
     var recipeTitle by remember { mutableStateOf("") }
@@ -697,7 +696,7 @@ fun CreateRecipe(viewModel: CreateRecipeViewModel) {
     val servingSize by remember { mutableStateOf("") }
     val category by remember { mutableStateOf("") }
 
-    val coroutineScope = rememberCoroutineScope() // COROUTINE SCOPE
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -723,7 +722,6 @@ fun CreateRecipe(viewModel: CreateRecipeViewModel) {
                     category = category
                 )
 
-                // LAUNCH COROUTINE
                 coroutineScope.launch {
                     val success = viewModel.createRecipe(recipe, "user_id_here")
 
@@ -736,7 +734,6 @@ fun CreateRecipe(viewModel: CreateRecipeViewModel) {
     }
 }
 
-// SUBMITTING RECIPE
 fun onRecipeSubmit(
     recipeTitle: String,
     recipeDescription: String,
@@ -755,7 +752,6 @@ fun onRecipeSubmit(
         )
 }
 
-// PREVIEW
 @Composable
 @Preview
 fun CreateRecipeViewPreview() {

@@ -5,12 +5,15 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.domain.models.others.AnimatedIcon
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
+import android.kotlin.foodclub.domain.models.profile.UserPosts
 import android.kotlin.foodclub.utils.composables.LikeButton
 import android.kotlin.foodclub.utils.composables.PlayPauseButton
 import android.kotlin.foodclub.utils.composables.VideoLayout
-import android.kotlin.foodclub.utils.composables.VideoPlayer
+import android.kotlin.foodclub.utils.composables.VideoScroller
 import android.kotlin.foodclub.viewModels.home.ProfileViewModel
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -42,6 +45,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.pager.PagerDefaults
+import androidx.compose.foundation.pager.VerticalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
@@ -54,8 +60,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -134,7 +140,7 @@ fun ConfirmDeleteDialog(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
-                                text = "No",
+                                text = stringResource(id = R.string.no),
                                 color = Color.White,
                                 fontFamily = Montserrat,
                                 )
@@ -147,7 +153,7 @@ fun ConfirmDeleteDialog(
                                 .clip(RoundedCornerShape(5.dp))
                         ) {
                             Text(
-                                text = "Yes",
+                                text = stringResource(id = R.string.yes),
                                 color = Color.White,
                                 fontFamily = Montserrat,
                                 )
@@ -162,10 +168,6 @@ fun ConfirmDeleteDialog(
                 modifier = Modifier
                     .size(200.dp)
                     .align(Alignment.TopCenter)
-                /*.border(
-                    border = BorderStroke(width = 5.dp, color = Color.White),
-                    shape = CircleShape
-                )*/
             )
         }
     }
@@ -173,10 +175,12 @@ fun ConfirmDeleteDialog(
 
 
 
+@OptIn(ExperimentalFoundationApi::class,ExperimentalFoundationApi::class)
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
-fun DeleteRecipeView(
+fun ShowProfilePosts(
     postId: Long,
+    posts: List<UserPosts>,
     viewModel: ProfileViewModel,
     onPostDeleted: () -> Unit,
     onBackPressed: () -> Unit
@@ -218,8 +222,8 @@ fun DeleteRecipeView(
     ) {
         if (infoDialog.value) {
             ConfirmDeleteDialog(
-                title = "Delete video?",
-                desc = "Are you sure you want to delete this video? This action cannot be undone.",
+                title = stringResource(id = R.string.delete_video),
+                desc = stringResource(id = R.string.delete_video_message),
                 onDismiss = {
                     infoDialog.value = false
                 },
@@ -231,85 +235,108 @@ fun DeleteRecipeView(
             )
         }
         if(post.value != null) {
-            var pauseButtonVisibility by remember { mutableStateOf(false) }
-            val doubleTapState by remember { mutableStateOf(
-                AnimatedIcon(R.drawable.liked, 110.dp, localDensity)
-            ) }
-
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
+            val pagerState = rememberPagerState(
+                initialPage = 0,
+                initialPageOffsetFraction = 0f
             ) {
-                VideoPlayer(post.value!!, onSingleTap = {
-                    pauseButtonVisibility = it.isPlaying
-                    it.playWhenReady = !it.isPlaying
-                },
-                    onDoubleTap = { exoPlayer, offset ->
-                        coroutineScope.launch {
-                            doubleTapState.animate(offset)
-                        }
-                    },
-                    onVideoDispose = { pauseButtonVisibility = false },
-                    onVideoGoBackground = { pauseButtonVisibility = false },
-                    controlPoint = controlPoint.value
+                posts.size
+            }
+
+            val fling = PagerDefaults.flingBehavior(
+                state = pagerState, lowVelocityAnimationSpec = tween(
+                    easing = LinearEasing, durationMillis = 300
                 )
-                var isLiked by remember {
-                    mutableStateOf(post.value!!.currentViewerInteraction.isLiked)
-                }
-                var isBookmarked by remember { mutableStateOf(
-                    post.value!!.currentViewerInteraction.isBookmarked)
-                }
+            )
 
-                hasVideoLoaded.value = true
+            VerticalPager(
+                state = pagerState,
+                flingBehavior = fling,
+                beyondBoundsPageCount = 1,
+                modifier = Modifier
+            ) { vtPager->
+                var pauseButtonVisibility by remember { mutableStateOf(false) }
+                val doubleTapState by remember { mutableStateOf(
+                    AnimatedIcon(R.drawable.liked, 110.dp, localDensity)
+                ) }
 
-                BackButton(alignment = Alignment.TopStart, onBackPressed = onBackPressed)
-
-                if (post.value!!.authorDetails == userData.value!!.username){
-                    DeleteButton(
-                        alignment = Alignment.TopEnd,
-                        onDeleteClicked = {
-                            infoDialog.value = true
-                        }
-                    )
-                }
-                LikeButton(doubleTapState) {}
-
-                val simpleUserModel = SimpleUserModel(
-                    userId = userId.value.toInt(),
-                    username = post.value!!.authorDetails,
-                    profilePictureUrl = userData.value!!.profilePictureUrl
-                    )
-
-                PlayPauseButton(buttonVisibility = pauseButtonVisibility)
-                VideoLayout(
-                    userDetails = simpleUserModel,
-                    videoStats = post.value!!.videoStats,
-                    likeState = isLiked,
-                    bookMarkState = isBookmarked,
-                    category = "Meat",
-                    opacity = 0.7f,
-                    onLikeClick = {
-                        isLiked = !isLiked
-                        coroutineScope.launch {
-//                            // TODO like functionality
-                        }
-                    },
-                    onBookmarkClick = {
-                        isBookmarked = !isBookmarked
-                        coroutineScope.launch {
-//                            // TODO bookmark functionality
-                        }
-                    },
-                    onInfoClick = {},
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.BottomCenter)
-                )
+                        .fillMaxSize()
+                ) {
+                    var isLiked by remember {
+                        mutableStateOf(post.value!!.currentViewerInteraction.isLiked)
+                    }
+                    var isBookmarked by remember {
+                        mutableStateOf(
+                            post.value!!.currentViewerInteraction.isBookmarked
+                        )
+                    }
+
+                    VideoScroller(post.value!!, pagerState, vtPager, onSingleTap = {
+                        pauseButtonVisibility = it.isPlaying
+                        it.playWhenReady = !it.isPlaying
+                    },
+                        onDoubleTap = { exoPlayer, offset ->
+                            coroutineScope.launch {
+                                doubleTapState.animate(offset)
+                            }
+                        },
+                        onVideoDispose = {
+                            pauseButtonVisibility = false
+                        },
+                        onVideoGoBackground = { pauseButtonVisibility = false }
+                    )
+
+                    hasVideoLoaded.value = true
+
+                    BackButton(alignment = Alignment.TopStart, onBackPressed = onBackPressed)
+
+                    if (post.value!!.authorDetails == userData.value!!.username) {
+                        DeleteButton(
+                            alignment = Alignment.TopEnd,
+                            onDeleteClicked = {
+                                infoDialog.value = true
+                            }
+                        )
+                    }
+                    LikeButton(doubleTapState) {}
+
+                    val simpleUserModel = SimpleUserModel(
+                        userId = userId.value.toInt(),
+                        username = post.value!!.authorDetails,
+                        profilePictureUrl = userData.value!!.profilePictureUrl
+                    )
+
+                    PlayPauseButton(buttonVisibility = pauseButtonVisibility)
+                    VideoLayout(
+                        userDetails = simpleUserModel,
+                        videoStats = post.value!!.videoStats,
+                        likeState = isLiked,
+                        bookMarkState = isBookmarked,
+                        category = stringResource(id = R.string.meat),
+                        opacity = 0.7f,
+                        onLikeClick = {
+                            isLiked = !isLiked
+                            coroutineScope.launch {
+                                // TODO like functionality
+                            }
+                        },
+                        onBookmarkClick = {
+                            isBookmarked = !isBookmarked
+                            coroutineScope.launch {
+                                // TODO bookmark functionality
+                            }
+                        },
+                        onInfoClick = {},
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.BottomCenter)
+                    )
+                }
             }
         }
     }
-
-    //Fix width deformation - recompose
+    
     LaunchedEffect(hasVideoLoaded.value) {
         if(post.value != null) {
             delay(50)
@@ -347,7 +374,7 @@ fun DeleteButton(
         ) {
             Image(
                 painter = painterResource(id = R.drawable.delete),
-                contentDescription = "Delete",
+                contentDescription = stringResource(id = R.string.delete_video),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .width(25.dp)

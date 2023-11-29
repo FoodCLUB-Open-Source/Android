@@ -15,35 +15,50 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import android.kotlin.foodclub.R
+import androidx.compose.ui.res.stringResource
 
 @Composable
-fun ConfirmEmailView(onValuesUpdate: () -> Unit, saveData: (String) -> Unit,
-                     onBackButtonClick: () -> Unit, userSignUpInformation: State<SignUpUser>,
-                     repeatedEmailState: State<String>, error: String) {
+fun ConfirmEmailView(
+    onValuesUpdate: () -> Unit, saveData: (String) -> Unit,
+    onBackButtonClick: () -> Unit, userSignUpInformation: State<SignUpUser>,
+    repeatedEmailState: State<String>, error: String
+) {
     val email by remember { mutableStateOf(userSignUpInformation.value.email) }
     var repeatedEmail by remember { mutableStateOf(repeatedEmailState.value) }
     var initialEmailCorrectnessState = email == repeatedEmail
     var filledEmail by remember { mutableStateOf(false) }
 
-    AuthLayout(header = "Confirm email",
-        subHeading = "So that you are sure you haven't mistyped it!", errorOccurred = true,
+    AuthLayout(
+        header = stringResource(id = R.string.confirm_email),
+        subHeading = stringResource(id = R.string.confirm_email_subheading),
+        errorOccurred = true,
         message = error,
         onBackButtonClick = {
             saveData(repeatedEmail)
             onBackButtonClick()
-        }) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            CustomTextField(initialValue = repeatedEmail,
-                placeholder = "Email", keyboardType = KeyboardType.Text,
+        }
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            CustomTextField(
+                initialValue = repeatedEmail,
+                placeholder = stringResource(id = R.string.email),
+                keyboardType = KeyboardType.Text,
                 onCorrectnessStateChange = { filledEmail = !filledEmail },
-                onValueChange = { repeatedEmail = it
-                    initialEmailCorrectnessState = false }, textValidation = true,
+                onValueChange = {
+                    repeatedEmail = it
+                    initialEmailCorrectnessState = false
+                },
+                textValidation = true,
                 validationMethod = { text -> FieldsValidation.confirmEmail(text, email) }
             )
 
             ConfirmButton(
                 enabled = filledEmail || initialEmailCorrectnessState,
-                text = "Continue") {
+                text = stringResource(id = R.string.continue_text)
+            ) {
                 saveData(repeatedEmail)
                 onValuesUpdate()
             }
