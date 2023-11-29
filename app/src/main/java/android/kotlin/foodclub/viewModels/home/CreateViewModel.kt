@@ -23,24 +23,19 @@ import androidx.media3.transformer.ExportResult
 import androidx.media3.transformer.ProgressHolder
 import androidx.media3.transformer.TransformationRequest
 import androidx.media3.transformer.Transformer
-//import com.google.android.exoplayer2.util.MimeTypes
 import java.io.File
 import java.io.IOException
 import java.util.UUID
 
 class CreateViewModel : ViewModel() {
-//    private val _title = MutableLiveData("CreateViewModel View")
-//    val title: LiveData<String> get() = _title
 
     private val TAG = "MainActivity"
-//    var application: Application? = null
+
     var activity: Activity? = null
     var trimStartMs: Long = 0
     var trimEndMs: Long = 0
 
-//    fun setApplicationData(application: Application, activity: Activity, trimStartMs : Long, trimEndMs:Long){
     fun setApplicationData(activity: Activity, trimStartMs : Long, trimEndMs:Long){
-//        this.application = application
         this.activity = activity
         this.trimStartMs = trimStartMs
         this.trimEndMs = trimEndMs

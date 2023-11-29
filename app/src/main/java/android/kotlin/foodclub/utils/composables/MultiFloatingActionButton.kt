@@ -1,6 +1,5 @@
 package android.kotlin.foodclub.utils.composables
 
-import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -35,14 +33,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
-
-// FabButtonItem.kt
 data class FabButtonItem(val iconRes: ImageVector, val label: String)
 
-// FabButtonMain.kt
+
 interface FabButtonMain {
     val iconRes: ImageVector
     val iconRotate: Float?
@@ -72,7 +67,6 @@ fun FabButtonSub(
     iconTint: Color = Color.White
 ): FabButtonSub = FabButtonSubImpl(iconTint, backgroundTint)
 
-// FabButtonState.kt
 sealed class FabButtonState {
     object Collapsed : FabButtonState()
     object Expand : FabButtonState()
@@ -101,7 +95,6 @@ fun MiniFabItem(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Text label for the sub-item displayed in a rounded-corner background
         Text(
             text = item.label,
             style = typography.labelSmall,
@@ -112,14 +105,12 @@ fun MiniFabItem(
                 .padding(all = 8.dp)
         )
 
-        // FloatingActionButton representing the sub-item
         FloatingActionButton(
             onClick = { onFabItemClicked(item) },
             modifier = Modifier.size(40.dp),
             containerColor = fabOption.backgroundTint,
             contentColor = fabOption.iconTint
         ) {
-            // Icon for the sub-item with customized tint
             Icon(
                 imageVector = item.iconRes,
                 contentDescription = "stringResource(R.string.float_icon)",
@@ -139,7 +130,6 @@ fun MultiFloatingActionButton(
     onFabItemClicked: (fabItem: FabButtonItem) -> Unit,
     stateChanged: (fabState: FabButtonState) -> Unit = {}
 ) {
-    // Animation for rotating the main FAB icon based on its state (expanded or collapsed)
     val rotation by animateFloatAsState(
         if (fabState.value == FabButtonState.Expand) {
             fabIcon.iconRotate ?: 0f
@@ -152,31 +142,27 @@ fun MultiFloatingActionButton(
         modifier = modifier.wrapContentSize(),
         horizontalAlignment = Alignment.End
     ) {
-        // AnimatedVisibility to show or hide the sub-items when the Multi-FAB is expanded or collapsed
         AnimatedVisibility(
             visible = fabState.value.isExpanded(),
             enter = fadeIn() + expandVertically(),
             exit = fadeOut() + shrinkVertically()
         ) {
-            // LazyColumn to display the sub-items in a vertical list
             LazyColumn(
                 modifier = Modifier.wrapContentSize(),
                 horizontalAlignment = Alignment.End,
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
                 items(items.size) { index ->
-                    // Composable to display each individual sub-item
                     MiniFabItem(
                         item = items[index],
                         fabOption = fabOption,
                         onFabItemClicked = onFabItemClicked
                     )
                 }
-                item {} // Empty item to provide spacing at the end of the list
+                item {}
             }
         }
 
-        // Main FloatingActionButton representing the Multi-FAB
         FloatingActionButton(
             onClick = {
                 fabState.value = fabState.value.toggleValue()
@@ -185,7 +171,6 @@ fun MultiFloatingActionButton(
             containerColor = fabOption.backgroundTint,
             contentColor = fabOption.iconTint
         ) {
-            // Icon for the main FAB with optional rotation based on its state (expanded or collapsed)
             Icon(
                 imageVector = fabIcon.iconRes,
                 contentDescription = "stringResource(R.string.main_fab_button)",

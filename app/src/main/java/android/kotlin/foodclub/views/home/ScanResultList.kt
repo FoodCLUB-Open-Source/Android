@@ -267,7 +267,7 @@ fun SearchResultIngredients(
         ),
         value = searchTextValue,
         onValueChange = {
-            onSearch(it) // Call the onSearch callback when text changes
+            onSearch(it) 
         },
         placeholder = {
             Text(

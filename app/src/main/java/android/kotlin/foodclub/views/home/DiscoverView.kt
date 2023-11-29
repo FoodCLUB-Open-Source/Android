@@ -7,6 +7,7 @@ import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.profile.UserPosts
+import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.CustomDatePicker
 import android.kotlin.foodclub.utils.composables.EditIngredientQuantityPicker
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
@@ -350,7 +351,7 @@ fun DiscoverView(
                 ) {
                     Text(
                         modifier = Modifier.clickable {
-                            navController.navigate("MY_DIGITAL_PANTRY_VIEW")
+                            navController.navigate(route = HomeOtherRoutes.MyDigitalPantryView.route)
                         },
                         text = stringResource(id = R.string.see_all_ingredients),
                         color = foodClubGreen,
@@ -450,7 +451,7 @@ fun MainSearchBar(
                     RoundedCornerShape(15.dp)
                 )
                 .pointerInput(Unit) {
-                    navController.navigate("SEARCH_VIEW")
+                    navController.navigate(HomeOtherRoutes.MySearchView.route)
                 },
             colors = TextFieldDefaults.textFieldColors(
                 focusedIndicatorColor = Color.Transparent,
@@ -500,7 +501,7 @@ fun MainSearchBar(
 
             BadgedBox(
                 modifier = Modifier.clickable {
-                    navController.navigate("BASKET_VIEW")
+                    navController.navigate(HomeOtherRoutes.MyBasketView.route)
                 },
                 badge = {
                     Badge(
