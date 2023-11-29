@@ -13,6 +13,7 @@ import android.kotlin.foodclub.utils.composables.MultiFloatingActionButton
 import android.kotlin.foodclub.utils.composables.engine.createImageCaptureUseCase
 import android.kotlin.foodclub.viewModels.home.DiscoverViewModel
 import android.kotlin.foodclub.views.home.discover.AddIngredientDialog
+import android.kotlin.foodclub.views.home.discover.DiscoverState
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.camera.core.CameraSelector
@@ -88,8 +89,12 @@ import kotlinx.coroutines.delay
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun ScanView(navController: NavController,viewModel: DiscoverViewModel) {
-    var scanstate:String  by rememberSaveable { mutableStateOf("off") }
+fun ScanView(
+    navController: NavController,
+    viewModel: DiscoverViewModel,
+    state: DiscoverState
+) {
+    var scanState:String  by rememberSaveable { mutableStateOf("off") }
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val permissionState = rememberMultiplePermissionsState(
@@ -121,7 +126,7 @@ fun ScanView(navController: NavController,viewModel: DiscoverViewModel) {
             .fillMaxSize()
             .padding(14.dp) // Add overall padding to the Column
     ) {
-        when (scanstate) {
+        when (scanState) {
 
             "off" -> {Text(
                 text = "Once you've finished scanning, you can use Search to find ingredients you need",
@@ -134,8 +139,8 @@ fun ScanView(navController: NavController,viewModel: DiscoverViewModel) {
                 Button2text="Scan"
                 onclick1={navController.navigate(BottomBarScreenObject.Play.route)}
                 onclick2= {
-                    scanstate = "Scanning"
-                    viewModel.Scan(imageCapture.value!!, context)
+                    scanState = "Scanning"
+                    viewModel.scan(imageCapture.value!!, context)
                     showCamPreview=!showCamPreview
                     showImage = !showImage
                     showBottomSheet = !showBottomSheet
@@ -182,7 +187,6 @@ fun ScanView(navController: NavController,viewModel: DiscoverViewModel) {
             )
         }
 
-         //Capture and display the image
         PermissionsRequired(
             multiplePermissionsState = permissionState,
             permissionsNotGrantedContent = { /* ... */ },
@@ -197,7 +201,7 @@ fun ScanView(navController: NavController,viewModel: DiscoverViewModel) {
                 // Scaffold with a Multi-Floating Action Button (Multi-FAB)
                 Scaffold(
                     floatingActionButton = {
-                        if (scanstate=="Scanning"||scanstate=="Completed")
+                        if (scanState=="Scanning"||scanState=="Completed")
                         {
                             MultiFloatingActionButton(
                                 items = listOf(
@@ -240,8 +244,8 @@ fun ScanView(navController: NavController,viewModel: DiscoverViewModel) {
                         )
                     }
 
-                        if(scanstate=="Scanning"||scanstate=="Completed") {
-                            viewModel.capturedImage.value?.let { imageBitmap ->
+                        if(scanState=="Scanning"||scanState=="Completed") {
+                            state.capturedImage?.let { imageBitmap ->
                                 Image(
                                     bitmap = imageBitmap,
                                     contentDescription = null,
@@ -252,7 +256,7 @@ fun ScanView(navController: NavController,viewModel: DiscoverViewModel) {
                     }
                 }
             }
-        if (scanstate=="off"||scanstate=="Completed")
+        if (scanState=="off"||scanState=="Completed")
         {
             Column(
                 modifier = Modifier
@@ -263,7 +267,7 @@ fun ScanView(navController: NavController,viewModel: DiscoverViewModel) {
                 Buttons(text =Button2text ,  onClick =onclick2, containerColor = foodClubGreen,textcolor=Color.White )
             }
         }
-        if(scanstate=="Scanning")
+        if(scanState=="Scanning")
         {
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -307,7 +311,7 @@ fun ScanView(navController: NavController,viewModel: DiscoverViewModel) {
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = "${viewModel.ScanResultItemList.size} Items Found",
+                            text = "${state.scanResultItemList.size} Items Found",
                             fontFamily = Montserrat,
                             fontWeight = FontWeight.Bold,
                         )
@@ -316,7 +320,7 @@ fun ScanView(navController: NavController,viewModel: DiscoverViewModel) {
                             thickness = 0.8.dp,
                             modifier = Modifier.padding(vertical = 16.dp)
                         )
-                        val visibleItems = viewModel.ScanResultItemList.take(3)
+                        val visibleItems = state.scanResultItemList.take(3)
                         Row {
                             visibleItems.forEach {
                                 horizontalBottomSheetItem(
@@ -326,7 +330,7 @@ fun ScanView(navController: NavController,viewModel: DiscoverViewModel) {
                                 )
                             }
 
-                            if(viewModel.ScanResultItemList.size>visibleItems.size)
+                            if(state.scanResultItemList.size>visibleItems.size)
                             {
                                 Column(modifier = Modifier.padding(8.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
@@ -343,7 +347,7 @@ fun ScanView(navController: NavController,viewModel: DiscoverViewModel) {
                                         // Handle click on the additional icon
                                     )
                                     Text(
-                                        text = " ${viewModel.ScanResultItemList.size-visibleItems.size} " +
+                                        text = " ${state.scanResultItemList.size-visibleItems.size} " +
                                                 "More",
                                         fontFamily = Montserrat,
                                     )
@@ -359,7 +363,7 @@ fun ScanView(navController: NavController,viewModel: DiscoverViewModel) {
                                     modifier = Modifier
                                         .clickable(onClick = {
                                             BottomSheetNextButton = !BottomSheetNextButton
-                                            scanstate = "Completed"
+                                            scanState = "Completed"
                                         })
                                         .clip(CircleShape)
                                         .background(foodClubGreen)
@@ -383,7 +387,7 @@ fun ScanView(navController: NavController,viewModel: DiscoverViewModel) {
             if(BottomSheetNextButton) {
                 AddIngredientDialog(
                     stringResource(R.string.scanning_completed_heading),
-                    stringResource(R.string.ingredients_import_notification, viewModel.ScanResultItemList.size)
+                    stringResource(R.string.ingredients_import_notification, state.scanResultItemList.size)
                 )
                 LaunchedEffect(key1 = true) {
                     delay(3000)

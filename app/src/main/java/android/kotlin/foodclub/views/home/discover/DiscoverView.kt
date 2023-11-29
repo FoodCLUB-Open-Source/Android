@@ -149,7 +149,7 @@ fun DiscoverView(
 
     var searchText by remember { mutableStateOf("") }
 
-    var homePosts: State<List<VideoModel>>?
+    var homePosts: List<VideoModel>?
     val worldPosts: State<List<VideoModel>>? = null
 
     var isDatePickerVisible by remember { mutableStateOf(false) }
@@ -253,7 +253,7 @@ fun DiscoverView(
         item {
             if (isSheetOpen) {
                 EditIngredientBottomModal(
-                    ingredient = viewModel.ingredientToEdit.value!!,
+                    ingredient = state.ingredientToEdit!!,
                     onDismissRequest = { isSheetOpen = it },
                     onEdit = {
                         viewModel.updateIngredient(it)
@@ -276,8 +276,8 @@ fun DiscoverView(
                         onSave = { date ->
                             if (date != null) {
                                 selectedDate = date
-                                viewModel.ingredientToEdit.value!!.expirationDate = selectedDate
-                                viewModel.updateIngredient(viewModel.ingredientToEdit.value!!)
+                                state.ingredientToEdit!!.expirationDate = selectedDate
+                                viewModel.updateIngredient(state.ingredientToEdit!!)
                             }
                         }
                     )
@@ -294,7 +294,7 @@ fun DiscoverView(
 
         item {
             if (mainTabIndex == 0) {
-                homePosts = viewModel.postList.collectAsState()
+                homePosts = state.postList
 
                 if (searchText.isBlank()) {
                     IngredientsList(
@@ -304,10 +304,10 @@ fun DiscoverView(
                         userIngredientsList = state.userIngredients,
                         onEditQuantityClicked = {
                             isSheetOpen = true
-                            viewModel.ingredientToEdit.value = it
+                            viewModel.updateIngredient(it)
                         },
                         onDateClicked = {
-                            viewModel.ingredientToEdit.value = it
+                            viewModel.updateIngredient(it)
                             isDatePickerVisible = true
                             viewModel.updateIngredient(it)
                         },
@@ -323,12 +323,12 @@ fun DiscoverView(
                         productsList = state.searchResults,
                         userIngredientsList = state.userIngredients,
                         onEditQuantityClicked = {
-                            viewModel.ingredientToEdit.value = it
+                            viewModel.updateIngredient(it)
                             viewModel.updateIngredient(it)
                         },
                         onDateClicked = {
                             isDatePickerVisible = true
-                            viewModel.ingredientToEdit.value = it
+                            viewModel.updateIngredient(it)
                             viewModel.updateIngredient(it)
                         },
                         onIngredientAdd = {
@@ -385,10 +385,10 @@ fun DiscoverView(
                             )
                     ) {
                         LazyVerticalGrid(columns = GridCells.Fixed(2)) {
-                            val userName = viewModel.sessionUserName.value
+                            val userName = state.sessionUserUsername
 
                             if (homePosts != null) {
-                                items(homePosts!!.value) { dataItem ->
+                                items(homePosts!!) { dataItem ->
                                     viewModel.getPostData(dataItem.videoId)
                                     GridItem2(navController, dataItem, userName)
                                 }
@@ -425,7 +425,10 @@ fun DiscoverView(
         }
     }
     if (showSheet) {
-        IngredientsBottomSheet(triggerBottomSheetModal, viewModel.productsDatabase.value)
+        IngredientsBottomSheet(
+            onDismiss = triggerBottomSheetModal,
+            productsData = state.productsData
+        )
     }
 
 }
@@ -825,15 +828,15 @@ fun IngredientsListColumn(
                             item = item,
                             userIngredientsList = userIngredientsList,
                             onEditQuantityClicked = {
-                                viewModel.ingredientToEdit.value = it
+                                viewModel.updateIngredient(it)
                                 onEditQuantityClicked(item)
                             },
                             onDateClicked = {
-                                viewModel.ingredientToEdit.value = it
+                                viewModel.updateIngredient(it)
                                 onDateClicked(item)
                             },
                             onAddItemClicked = {
-                                viewModel.ingredientToEdit.value = it
+                                viewModel.updateIngredient(it)
                                 onIngredientAdd(item)
                             }
                         )

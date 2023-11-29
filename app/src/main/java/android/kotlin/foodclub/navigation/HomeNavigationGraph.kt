@@ -39,7 +39,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
 
 
-
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 fun NavGraphBuilder.homeNavigationGraph(
     navController: NavHostController,
@@ -72,7 +71,7 @@ fun NavGraphBuilder.homeNavigationGraph(
                 type = NavType.LongType
             })
         ) {
-            val viewModel : ProfileViewModel = hiltViewModel()
+            val viewModel: ProfileViewModel = hiltViewModel()
             val userId = it.arguments?.getLong("userId")
             if (userId == null) {
                 navController.popBackStack()
@@ -109,15 +108,26 @@ fun NavGraphBuilder.homeNavigationGraph(
 
         composable("ScanView_route") {
             val viewModel = it.sharedHiltViewModel<DiscoverViewModel>(navController)
+            val state = viewModel.state.collectAsState()
+
             topbackbar(navController = navController)
             {
-                ScanView(navController = navController,viewModel=viewModel)
+                ScanView(
+                    navController = navController,
+                    viewModel = viewModel,
+                    state = state.value
+                )
             }
         }
         composable("ScanResultView_route") {
             val viewModel = it.sharedHiltViewModel<DiscoverViewModel>(navController)
+            val state = viewModel.state.collectAsState()
 
-            ScanResultView(navController = navController,viewModel=viewModel)
+            ScanResultView(
+                navController = navController,
+                viewModel = viewModel,
+                state = state.value
+            )
 
         }
 
@@ -126,9 +136,9 @@ fun NavGraphBuilder.homeNavigationGraph(
             val viewModel = it.sharedHiltViewModel<CameraViewModel>(navController = navController)
 
             CameraView(
-              viewModel = viewModel,
-              navController = navController,
-              stateEncoded = state
+                viewModel = viewModel,
+                navController = navController,
+                stateEncoded = state
             )
 
         }
@@ -211,10 +221,12 @@ fun NavGraphBuilder.homeNavigationGraph(
         }
         composable(route = HomeOtherRoutes.MyDigitalPantryView.route) {
             val viewModel = it.sharedHiltViewModel<DiscoverViewModel>(navController)
+            val state = viewModel.state.collectAsState()
 
             MyDigitalPantryView(
                 navController = navController,
-                viewModel = viewModel
+                viewModel = viewModel,
+                state = state.value
             )
         }
         composable(route = HomeOtherRoutes.TakeProfilePhotoView.route) {

@@ -132,7 +132,7 @@ fun VideoScroller(
                         URL(video.thumbnailLink).openConnection().getInputStream()
                     )
                 } catch (e: IOException) {
-                    Log.d("VideoPlayer", "Cannot fetch thumbnail. No connection")
+                    Log.d("VideoScroller", "Cannot fetch thumbnail. No connection")
                     null
                 }
             }

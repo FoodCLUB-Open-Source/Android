@@ -8,6 +8,7 @@ import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.utils.composables.CustomDatePicker
 import android.kotlin.foodclub.utils.composables.LoadingProgressBar
 import android.kotlin.foodclub.viewModels.home.DiscoverViewModel
+import android.kotlin.foodclub.views.home.discover.DiscoverState
 import android.kotlin.foodclub.views.home.myDigitalPantry.EditIngredientView
 import android.kotlin.foodclub.views.home.myDigitalPantry.SwipeableItemsLazyColumn
 import android.kotlin.foodclub.views.home.myDigitalPantry.TitlesSection
@@ -56,17 +57,20 @@ import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScanResultView( navController: NavController,
-                    viewModel: DiscoverViewModel)
+fun ScanResultView(
+    navController: NavController,
+    viewModel: DiscoverViewModel,
+    state: DiscoverState
+)
 {
 
     val modifier = Modifier
-    val userIngredients = viewModel.userIngredientsList.collectAsState()
+    val userIngredients = state.userIngredients
 
     var isShowEditScreen by remember { mutableStateOf(false) }
     var topBarTitleText by remember { mutableStateOf("") }
 
-    val searchText by viewModel.ingredientsSearchText.collectAsState()
+    val searchText = state.ingredientSearchText
 
     var isDatePickerVisible by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
@@ -126,7 +130,7 @@ fun ScanResultView( navController: NavController,
                     TextButton(
                         onClick = {
                             loading=!loading
-                            viewModel.addScanListToUserIngredients(viewModel.ScanResultItemList)
+                            viewModel.addScanListToUserIngredients(state.scanResultItemList)
 
                         }
                     ) {
@@ -157,7 +161,7 @@ fun ScanResultView( navController: NavController,
                 if (isShowEditScreen){
                     topBarTitleText = "Edit Item"
                     EditIngredientView(
-                        ingredient = viewModel.ingredientToEdit.value!!,
+                        ingredient = state.ingredientToEdit!!,
                         onEditIngredient = { ingr ->
                             viewModel.updateIngredient(ingr)
                         }
@@ -174,12 +178,12 @@ fun ScanResultView( navController: NavController,
                     Spacer(modifier = Modifier.height(15.dp))
 
                     ScanResultList(
-                        modifier,
-                        viewModel.ScanResultItemList,
+                        modifier = modifier,
+                        productsList = state.scanResultItemList,
                         onAddDateClicked = { isDatePickerVisible = true },
                         onEditClicked = {
                                 item->
-                            viewModel.ingredientToEdit.value = item
+                            viewModel.updateIngredient(item)
                             isShowEditScreen = false
                         },
                         view = "DigitalPantry"
