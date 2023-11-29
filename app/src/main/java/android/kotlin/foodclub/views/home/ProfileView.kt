@@ -222,7 +222,7 @@ fun ProfileView(
                 ) {
                     Box(if(userId == 0L) Modifier.clickable { showBottomSheet = true } else Modifier) {
                         AsyncImage(
-                            model = imageUri,
+                            model = imageUri ?: R.drawable.profilepicture,
                             contentDescription = stringResource(id = R.string.profile_picture),
                             modifier = Modifier
                                 .clip(RoundedCornerShape(60.dp))
