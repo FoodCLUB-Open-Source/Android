@@ -7,6 +7,7 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.others.AnimatedIcon
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
@@ -56,6 +57,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -83,16 +85,22 @@ import androidx.navigation.NavHostController
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.IntSize
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.media3.common.util.UnstableApi
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import okio.ByteString.Companion.encodeUtf8
 
@@ -351,6 +359,7 @@ fun HomeView(
     val localDensity = LocalDensity.current
 
     val videosState = viewModel.postListData.collectAsState()
+    val storyListData = viewModel.storyListData.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
     var screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.94f
@@ -400,12 +409,12 @@ fun HomeView(
                 Image(
                     painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
                     contentDescription = "",
-                    modifier = Modifier.
-                    align(Alignment.BottomStart)
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
                         .alpha(feedTransparency)
                         .padding(start = 22.dp, bottom = 18.dp)
                         .clickable {
-                            showStories=!showStories
+                            showStories = !showStories
                         }
                 )
             }
@@ -581,54 +590,117 @@ fun HomeView(
                    modifier = Modifier
                        .background(color = Color.White)
                        .fillMaxSize()
-                       .padding(24.dp)
                ) {
                    Spacer(modifier = modifier.size(90.dp))
+                   Column(
+                       modifier = Modifier.padding(24.dp)
+                   ) {
+
+                       Text(
+                           text="Memories",
+                           style = TextStyle(
+                               fontWeight = FontWeight.Bold,
+                               color = Color.Black,
+                               fontSize = 20.sp,
+                               fontFamily = Montserrat
+                           )
+                       )
+                       Spacer(modifier = modifier.size(12.dp))
+
+                       if(memories.value.isEmpty()){
+                           MemoriesItemView(
+                               modifier = Modifier.clickable {
+                                   showStories=!showStories
+                               },
+                               painter = painterResource(id = R.drawable.nosnapsfortheday),
+                               date = "")
+                       }
+                       else{
+                           LazyRow(){
+                               items(memories.value){
+                                   val painter: Painter =  rememberImagePainter(data = it.stories[0].imageUrl)
+                                   MemoriesItemView(
+                                       modifier = Modifier.clickable {
+                                           showStories=!showStories
+                                           currentMemoriesModel = it
+                                       },
+                                       painter = painter,
+                                       date = it.dateTime)
+                                   Spacer(modifier = Modifier.width(12.dp))
+                               }
+                           }
+                       }
+                   }
+                   Spacer(modifier = Modifier.height(5.dp))
+                   Spacer(modifier = Modifier
+                       .fillMaxWidth()
+                       .height(0.5.dp)
+                       .background(color = Color.Black))
+                   Spacer(modifier = Modifier.height(25.dp))
                    Text(
-                       text="Memories",
+                       text ="Today",
                        style = TextStyle(
                            fontWeight = FontWeight.Bold,
-                           color = Color.Black,
-                           fontSize = 24.sp,
-                           fontFamily = Montserrat
-                       )
+                           fontSize = 20.sp,
+                           fontFamily = Montserrat,
+                           color = Color.Black
+                       ),
+                       modifier = Modifier.padding(start = 24.dp)
                    )
-                    Spacer(modifier = modifier.size(12.dp))
+                   if(storyListData.value.isEmpty()){
+                       TapToSnapDialog(modifier =
+                       Modifier
+                           .fillMaxSize()
+                           .padding(vertical = 12.dp)
+                           .clickable {
+                               navController.navigate("CAMERA_VIEW/${"story".encodeUtf8()}")
+                           }
+                           .aspectRatio(0.9f, true)
 
-                   if(memories.value.isEmpty()){
-                       MemoriesItemView(
-                           modifier = Modifier.clickable {
-                               showStories=!showStories
-                           },
-                           painter = painterResource(id = R.drawable.nosnapsfortheday),
-                           date = "")
+                       )
                    }
                    else{
-                       LazyRow(){
-                           items(memories.value){
-                                   val painter: Painter =  rememberImagePainter(data = it.stories[0].imageUrl)
-                               MemoriesItemView(
-                                   modifier = Modifier.clickable {
-                                       showStories=!showStories
-                                       currentMemoriesModel = it
-                                   },
-                                   painter = painter,
-                                   date = it.dateTime)
-                               Spacer(modifier = Modifier.width(12.dp))
-                           }
-                        }
-                    }
-                    TapToSnapDialog(modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .padding(vertical = 12.dp)
-                        .clickable {
-                            navController.navigate("CAMERA_VIEW/${"story".encodeUtf8()}")
-                        }
-                    )
+                       SnapStoryView(storyListData)
+                   }
+
                 }
             }
         }
+    }
+}
+
+@Composable
+fun SnapStoryView(storyListData: State<List<VideoModel>>) {
+    var sizeImage by remember { mutableStateOf(IntSize.Zero) }
+    val gradient = Brush.verticalGradient(
+        colors = listOf(Color.White,Color.Transparent),
+        startY = 0f,
+        endY =  sizeImage.height.toFloat()/2,
+        tileMode = TileMode.Clamp
+    )
+    
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+
+    ){
+        Image(
+            painter = rememberAsyncImagePainter(model = storyListData.value[0].thumbnailLink),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxSize()
+                .onGloballyPositioned {
+                    sizeImage = it.size
+                }
+        )
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .background(gradient)
+        )
+        
+
     }
 }
 

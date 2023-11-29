@@ -228,7 +228,8 @@ class HomeViewModel @Inject constructor(
     private fun getUserFollowerStories(){
         if(sessionCache.getActiveSession()?.sessionUser == null) return
         viewModelScope.launch {
-            when(val resource = storyRepository.getUserFriendsStories(sessionCache.getActiveSession()!!.sessionUser.userId)) {
+           // when(val resource = storyRepository.getUserFriendsStories(sessionCache.getActiveSession()!!.sessionUser.userId)) {
+            when(val resource = storyRepository.getUserFriendsStories(10)) {
                 is Resource.Success -> {
                     _error.value = ""
                     val originalList = resource.data
