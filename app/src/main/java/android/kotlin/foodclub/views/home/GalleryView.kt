@@ -63,13 +63,12 @@ import java.nio.charset.StandardCharsets
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun GalleryView(
+public fun GalleryView(
     navController: NavController,
-    stateEncoded: String,
+    viewModel: GalleryViewModel,
+    stateEncoded:String,
     itemsPerRow: Int = 3
 ) {
-    val viewModel: GalleryViewModel = viewModel()
-
     val context = LocalContext.current
 
     var state = ""
@@ -404,7 +403,6 @@ fun GalleryImageTab(images: List<Uri>, itemsPerRow: Int = 3, context: Context) {
 
 @Composable
 fun ImageItem(modifier: Modifier, imageID: ImageBitmap) {
-    //To be altered with intrinsic measurements
     Card(
         modifier = Modifier
             .aspectRatio(1f)
@@ -495,7 +493,6 @@ fun VideoItem(
 ) {
     val context = LocalContext.current
     val bitmap = createVideoThumb(context = context, videoID)?.asImageBitmap()
-    //To be altered with intrinsic measurements
     Card(
         modifier = Modifier
             .aspectRatio(1f)

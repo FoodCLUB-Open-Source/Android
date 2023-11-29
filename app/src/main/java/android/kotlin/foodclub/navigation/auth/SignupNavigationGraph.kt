@@ -15,9 +15,9 @@ import androidx.navigation.navigation
 fun NavGraphBuilder.signupNavigationGraph(navController: NavHostController) {
     navigation(
         route = AuthScreen.SignUp.route,
-        startDestination = "signup_page_1"
+        startDestination = SignUpScreen.SignUpPage1.route
     ) {
-        composable("signup_page_1") {entry ->
+        composable(route = SignUpScreen.SignUpPage1.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<SignupWithEmailViewModel>(navController)
             val userSignUpInformation = viewModel.userSignUpInformation.collectAsState()
             val repeatedEmail = viewModel.repeatedEmail.collectAsState()
@@ -25,10 +25,10 @@ fun NavGraphBuilder.signupNavigationGraph(navController: NavHostController) {
             SignUpWithEmailView(
                 onValuesUpdate = { email, pass ->
                     viewModel.saveEmailPasswordData(email, pass)
-                    if(repeatedEmail.value != email) {
-                        navController.navigate("signup_page_2")
+                    if (repeatedEmail.value != email) {
+                        navController.navigate(route = SignUpScreen.SignUpPage2.route)
                     } else {
-                        navController.navigate("signup_page_3")
+                        navController.navigate(route = SignUpScreen.SignUpPage3.route)
                     }
 
                 },
@@ -36,7 +36,7 @@ fun NavGraphBuilder.signupNavigationGraph(navController: NavHostController) {
                 userSignUpInformation = userSignUpInformation
             )
         }
-        composable("signup_page_2") {entry ->
+        composable(route = SignUpScreen.SignUpPage2.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<SignupWithEmailViewModel>(navController)
             val userSignUpInformation = viewModel.userSignUpInformation.collectAsState()
             val error = viewModel.error.collectAsState()
@@ -44,8 +44,8 @@ fun NavGraphBuilder.signupNavigationGraph(navController: NavHostController) {
 
             ConfirmEmailView(
                 onValuesUpdate = {
-                    navController.navigate("signup_page_3") {
-                        popUpTo("signup_page_2") { inclusive = true }
+                    navController.navigate(route = SignUpScreen.SignUpPage3.route) {
+                        popUpTo(route = SignUpScreen.SignUpPage2.route) { inclusive = true }
                     }
                 },
                 saveData = { viewModel.saveRepeatedEmail(it) },
@@ -55,23 +55,24 @@ fun NavGraphBuilder.signupNavigationGraph(navController: NavHostController) {
                 error = error.value
             )
         }
-        composable("signup_page_3") {entry ->
+        composable(route = SignUpScreen.SignUpPage3.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<SignupWithEmailViewModel>(navController)
             val userSignUpInformation = viewModel.userSignUpInformation.collectAsState()
             val error = viewModel.error.collectAsState()
 
             CreateFullNameView(
-                onValuesUpdate = { navController.navigate("signup_page_4") },
+                onValuesUpdate = { navController.navigate(SignUpScreen.SignUpPage4.route) },
                 saveData = { viewModel.saveFullName(it) },
                 onBackButtonClick = {
-                    navController.navigate("signup_page_1") {
-                        popUpTo("signup_page_1") { inclusive = true }
-                    } },
+                    navController.navigate(route = SignUpScreen.SignUpPage1.route) {
+                        popUpTo(route = SignUpScreen.SignUpPage1.route) { inclusive = true }
+                    }
+                },
                 userSignUpInformation = userSignUpInformation,
                 error = error.value
             )
         }
-        composable("signup_page_4") {entry ->
+        composable(route = SignUpScreen.SignUpPage4.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<SignupWithEmailViewModel>(navController)
             val userSignUpInformation = viewModel.userSignUpInformation.collectAsState()
             val error = viewModel.error.collectAsState()
@@ -85,4 +86,11 @@ fun NavGraphBuilder.signupNavigationGraph(navController: NavHostController) {
             )
         }
     }
+}
+
+sealed class SignUpScreen(val route: String) {
+    object SignUpPage1 : SignUpScreen(route = "signup_page_1")
+    object SignUpPage2 : SignUpScreen(route = "signup_page_2")
+    object SignUpPage3 : SignUpScreen(route = "signup_page_3")
+    object SignUpPage4 : SignUpScreen(route = "signup_page_4")
 }
