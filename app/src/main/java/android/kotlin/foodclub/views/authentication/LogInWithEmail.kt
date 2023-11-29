@@ -29,7 +29,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 
 @Composable
@@ -37,7 +36,7 @@ fun LogInWithEmail(
     navController: NavHostController,
     viewModel: LogInWithEmailViewModel
 ) {
-    val loginStatus by viewModel.loginStatus.observeAsState(null)
+    val loginStatus by viewModel.loginStatus.collectAsState()
 
     var username by remember { mutableStateOf("") }
     var userPassword by remember { mutableStateOf("") }
