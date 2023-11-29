@@ -30,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -85,7 +86,7 @@ fun SettingsView(
 
         Spacer(modifier = Modifier.height(screenSizeHeight * 0.03f))
 
-        Column(modifier = Modifier.border(width = 1.dp, colorGray, RoundedCornerShape(8.dp))) {
+        Column(modifier = Modifier.border(width =dimensionResource(id = R.dimen.dim_1), colorGray, RoundedCornerShape(dimensionResource(id = R.dimen.dim_8)))) {
             SettingRow(
                 text = stringResource(id = R.string.help_and_support),
                 iconId = R.drawable.helpandsupport,
@@ -175,8 +176,8 @@ fun SettingsTopBar(
             IconButton(
                 onClick = { navController.navigateUp() },
                 modifier = Modifier
-                    .background(colorGray, RoundedCornerShape(8.dp))
-                    .size(35.dp),
+                    .background(colorGray, RoundedCornerShape(dimensionResource(id = R.dimen.dim_8)))
+                    .size( dimensionResource(id = R.dimen.dim_35)),
                 content = {
                     SettingsIcons(
                         size = 20,
@@ -186,7 +187,7 @@ fun SettingsTopBar(
             )
         }
 
-        Spacer(modifier = Modifier.width(20.dp))
+        Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_20)))
 
         Column {
             SettingsText(
@@ -212,12 +213,12 @@ fun SettingsProfile(
                 contentDescription = stringResource(id = R.string.user_images),
                 painter = userImage,
                 modifier = Modifier
-                    .size(120.dp)
-                    .clip(RoundedCornerShape(100.dp))
+                    .size(dimensionResource(id = R.dimen.dim_120))
+                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_100)))
             )
         }
 
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_15)))
 
         Row(
             horizontalArrangement = Arrangement.Center,
@@ -243,7 +244,7 @@ fun SettingRow(
     navController: NavController,
     onClick: () -> Unit = {}
 ) {
-    val rowSize = 65.dp
+    val rowSize = dimensionResource(id = R.dimen.dim_65)
 
     Row(
         modifier = Modifier
@@ -260,19 +261,19 @@ fun SettingRow(
                 containerColor = Color.Transparent,
                 contentColor = Color.Black
             ),
-            shape = RoundedCornerShape(8.dp),
+            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_8)),
             modifier = Modifier
                 .height(rowSize)
                 .border(
                     width = borderSize.dp,
                     color = borderColor,
-                    shape = RoundedCornerShape(8.dp)
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_8))
                 )
 
         ) {
             SettingsIcons(size = 24, icon = iconId)
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width( dimensionResource(id = R.dimen.dim_16)))
 
             SettingsText(text = text, size = 14, weight = FontWeight.Normal, fontC = fontC)
 

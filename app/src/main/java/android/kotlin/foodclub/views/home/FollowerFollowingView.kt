@@ -44,6 +44,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.config.ui.Raleway
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -78,26 +79,26 @@ fun FollowerView(
         .background(Color.White)) {
         Column(modifier = Modifier
             .fillMaxSize()
-            .padding(top = 55.dp)
+            .padding(top = dimensionResource(id = R.dimen.dim_55))
             .background(Color.White)) {
             Box(
                 modifier = Modifier
                     .background(Color.Transparent)
-                    .padding(start = 20.dp),
+                    .padding(start = dimensionResource(id = R.dimen.dim_20)),
                 contentAlignment = Alignment.Center,
             ) {
                 Button(
                     shape = RectangleShape,
                     modifier = Modifier
-                        .border(1.dp, Color(0xFFB8B8B8), shape = RoundedCornerShape(15.dp))
-                        .clip(RoundedCornerShape(15.dp))
+                        .border(dimensionResource(id = R.dimen.dim_1), Color(0xFFB8B8B8), shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
+                        .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
                         .align(Alignment.BottomCenter)
-                        .width(40.dp)
-                        .height(40.dp),
+                        .width(dimensionResource(id = R.dimen.dim_40))
+                        .height(dimensionResource(id = R.dimen.dim_40)),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFFB8B8B8),
                         contentColor = Color.White
-                    ), contentPadding = PaddingValues(5.dp),
+                    ), contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_5)),
                     onClick = { navController.navigateUp() }
                 ) {
                     Image(
@@ -105,19 +106,19 @@ fun FollowerView(
                         contentDescription = stringResource(id = R.string.go_back),
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .width(20.dp)
-                            .height(20.dp)
+                            .width(dimensionResource(id = R.dimen.dim_20))
+                            .height(dimensionResource(id = R.dimen.dim_20))
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_16)))
             Text(
                 text = titleState.value, fontWeight = FontWeight.ExtraBold,
                 fontFamily = Raleway,
-                fontSize = 20.sp,
-                modifier = Modifier.padding(start = 20.dp),
+                fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
+                modifier = Modifier.padding(start = dimensionResource(id = R.dimen.dim_20)),
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_16)))
 
             val userList: List<SimpleUserModel> = when(viewType) {
                 FollowViewType.FOLLOWERS.type -> followersListState.value
@@ -126,7 +127,7 @@ fun FollowerView(
             }
 
 
-            LazyColumn( modifier = Modifier.padding(bottom = 150.dp) ) {
+            LazyColumn( modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_150)) ) {
                 items(userList.size) { index ->
                     Follower(
                         navController = navController,
@@ -149,8 +150,8 @@ fun Follower(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(75.dp)
-            .padding(vertical = 4.dp)
+            .height(dimensionResource(id = R.dimen.dim_75))
+            .padding(vertical =dimensionResource(id = R.dimen.dim_4))
             .clickable {
                 navController.navigate(
                     BottomBarScreenObject.Profile.route + "?userId=$userId"
@@ -159,27 +160,27 @@ fun Follower(
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width( dimensionResource(id = R.dimen.dim_16)))
 
         AsyncImage(
             model = imageUrl,
             contentDescription = null,
             modifier = Modifier
-                .size(50.dp)
+                .size(dimensionResource(id = R.dimen.dim_50))
                 .clip(CircleShape)
                 .background(Color.White)
         )
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_12)))
             Column {
                 Text(
                     text = username,
-                    fontSize = 15.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_15).value.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = Avenir
                 )
                 Text(
                     text = completeName,
-                    fontSize = 15.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_15).value.sp,
                     fontWeight = FontWeight.Medium,
                     fontFamily = Avenir
                 )

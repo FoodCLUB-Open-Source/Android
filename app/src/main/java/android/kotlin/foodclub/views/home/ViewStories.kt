@@ -68,6 +68,7 @@ import android.content.SharedPreferences
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -101,7 +102,7 @@ fun ViewStories() {
     }
     var screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.94f
 
-    if (screenHeightMinusBottomNavItem <= 650.dp) {
+    if (screenHeightMinusBottomNavItem <= dimensionResource(id = R.dimen.dim_650)) {
         screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.96f
     }
     if (videosState.value.isNotEmpty()) {
@@ -169,7 +170,7 @@ fun ViewStories() {
                 }
 
                 Column() {
-                    val iconSize = 110.dp
+                    val iconSize = dimensionResource(id = R.dimen.dim_110)
                     AnimatedVisibility(visible = doubleTapState.second,
                         enter = scaleIn(
                             spring(Spring.DampingRatioMediumBouncy),
@@ -203,7 +204,7 @@ fun ViewStories() {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(top = 30.dp),
+                        .padding(top = dimensionResource(id = R.dimen.dim_30)),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -219,34 +220,34 @@ fun ViewStories() {
                             painter = painterResource(id = R.drawable.pause_video_button),
                             contentDescription = null,
                             tint = Color.Unspecified,
-                            modifier = Modifier.size(36.dp)
+                            modifier = Modifier.size( dimensionResource(id = R.dimen.dim_36))
                         )
                     }
                 }
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
-                        .padding(15.dp)
+                        .padding( dimensionResource(id = R.dimen.dim_15))
                 ) {
                     Column {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(bottom = 15.dp)
+                            modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_15))
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.story_user),
                                 contentDescription = stringResource(id = R.string.profile_image),
                                 modifier = Modifier
-                                    .size(35.dp)
+                                    .size( dimensionResource(id = R.dimen.dim_35))
                                     .clip(CircleShape)
                                     .alpha(0.7f)
                             )
-                            Spacer(modifier = Modifier.width(10.dp))
+                            Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_10)))
                             Text(
                                 videosState.value[it].authorDetails, color = Color.White,
-                                fontFamily = Montserrat, fontSize = 18.sp,
+                                fontFamily = Montserrat, fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
                                 modifier = Modifier
-                                    .padding(2.dp)
+                                    .padding(dimensionResource(id = R.dimen.dim_2))
                                     .alpha(0.7f)
                             )
                         }
@@ -256,40 +257,40 @@ fun ViewStories() {
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
-                        .padding(15.dp)
+                        .padding( dimensionResource(id = R.dimen.dim_15))
                 ) {
                     Column {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier
                                 .align(Alignment.End)
-                                .width(50.dp)
-                                .height(50.dp)
+                                .width(dimensionResource(id = R.dimen.dim_50))
+                                .height(dimensionResource(id = R.dimen.dim_50))
                         ) {
                         }
-                        Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier
                                 .align(Alignment.End)
-                                .width(50.dp)
-                                .height(80.dp),
+                                .width(dimensionResource(id = R.dimen.dim_50))
+                                .height(dimensionResource(id = R.dimen.dim_80)),
                         ) {
                             Spacer(Modifier.weight(1f))
                             Box(
                                 modifier = Modifier
-                                    .width(50.dp)
-                                    .height(80.dp),
+                                    .width(dimensionResource(id = R.dimen.dim_50))
+                                    .height(dimensionResource(id = R.dimen.dim_80)),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Box(
                                     modifier = Modifier
-                                        .width(50.dp)
-                                        .height(80.dp)
-                                        .clip(RoundedCornerShape(30.dp))
+                                        .width(dimensionResource(id = R.dimen.dim_50))
+                                        .height(dimensionResource(id = R.dimen.dim_80))
+                                        .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_30)))
                                         .background(Color.Black.copy(alpha = 0.5f))
-                                        .blur(radius = 5.dp)
+                                        .blur(radius =dimensionResource(id = R.dimen.dim_5))
                                         .alpha(0.7f)
                                 ) {}
                                 Column(
@@ -297,7 +298,7 @@ fun ViewStories() {
                                     verticalArrangement = Arrangement.Center,
                                     modifier = Modifier
                                         .fillMaxSize()
-                                        .clip(RoundedCornerShape(30.dp))
+                                        .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_30)))
                                         .alpha(0.7f)
                                         .clickable {
                                             isLiked = !isLiked
@@ -305,9 +306,9 @@ fun ViewStories() {
                                                 !isLiked
                                         }
                                 ) {
-                                    val maxSize = 32.dp
+                                    val maxSize =  dimensionResource(id = R.dimen.dim_32)
                                     val iconSize by animateDpAsState(
-                                        targetValue = if (isLiked) 22.dp else 21.dp,
+                                        targetValue = if (isLiked) dimensionResource(id = R.dimen.dim_22) else dimensionResource(id = R.dimen.dim_21),
                                         animationSpec = keyframes {
                                             durationMillis = 400
                                             14.dp.at(50)
@@ -330,10 +331,10 @@ fun ViewStories() {
                                             .size(iconSize)
                                             .alpha(0.7f)
                                     )
-                                    Spacer(modifier = Modifier.height(3.dp))
+                                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_3)))
                                     Text(
                                         text = videosState.value[it].videoStats.displayLike,
-                                        fontSize = 13.sp,
+                                        fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
                                         fontFamily = Montserrat,
                                         color = if (isLiked) foodClubGreen else Color.White
                                     )
@@ -342,7 +343,7 @@ fun ViewStories() {
                             Spacer(Modifier.weight(1f))
                         }
 
-                        Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
                     }
                 }
             }

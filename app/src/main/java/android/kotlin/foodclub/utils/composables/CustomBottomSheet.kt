@@ -3,6 +3,8 @@ package android.kotlin.foodclub.utils.composables
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.others.BottomSheetItem
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.disabledContainerColor
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -80,15 +83,15 @@ fun CustomBottomSheet(
                     text = sheetTitle,
                     fontFamily = Montserrat,
                     fontWeight = FontWeight.Bold,
-                    modifier = if (!enableDragHandle) Modifier.padding(top = 36.dp) else Modifier
+                    modifier = if (!enableDragHandle) Modifier.padding(top =  dimensionResource(id = R.dimen.dim_36)) else Modifier
                 )
                 Divider(
                     color = Color.Gray,
-                    thickness = 0.8.dp,
-                    modifier = Modifier.padding(vertical = 16.dp)
+                    thickness = dimensionResource(id = R.dimen.dim_0pt8),
+                    modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.dim_16))
                 )
             }else{
-                Spacer(modifier = Modifier.height(25.dp))
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_25)))
             }
             itemList.forEach {
                 BottomSheetItem(
@@ -98,23 +101,26 @@ fun CustomBottomSheet(
                     onClick = it.onClick
                 )
             }
-            Spacer(modifier = Modifier.height(25.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_25)))
             if(!titleSpace){
                 Button(
                     onClick = { onDismiss()},
-                    shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier.height(56.dp).clip(RoundedCornerShape(10.dp)).padding(10.dp,0.dp,10.dp,0.dp).fillMaxWidth(),
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
+                    modifier = Modifier.height(dimensionResource(id = R.dimen.dim_56))
+                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
+                        .padding(dimensionResource(id = R.dimen.dim_10),dimensionResource(id = R.dimen.dim_0),dimensionResource(id = R.dimen.dim_10),dimensionResource(id = R.dimen.dim_0))
+                        .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF7EC60B),
-                        disabledContainerColor = Color(0xFFC9C9C9),
+                        containerColor = foodClubGreen,
+                        disabledContainerColor = disabledContainerColor,
                         disabledContentColor = Color.White,
                         contentColor = Color.White
                     )
                 ) {
-                    Text(text = "Cancel ", fontSize = 16.sp)
+                    Text(text = "Cancel ", fontSize = dimensionResource(id = R.dimen.fon_16).value.sp)
                 }
             }
-            Spacer(modifier = Modifier.height(25.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_25)))
         }
 
     }
@@ -146,18 +152,18 @@ fun BottomSheetItem(
         modifier = Modifier
             .clickable { onClick(); onDismiss() }
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding( dimensionResource(id = R.dimen.dim_16)),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Spacer(Modifier.width(16.dp))
+        Spacer(Modifier.width( dimensionResource(id = R.dimen.dim_16)))
         icon?.let { painterResource(id = it) }?.let {
             Image(
                 painter = it,
                 contentDescription = null,
-                modifier = Modifier.size(30.dp)
+                modifier = Modifier.size( dimensionResource(id = R.dimen.dim_30))
             )
         }
-        Spacer(Modifier.width(16.dp))
+        Spacer(Modifier.width( dimensionResource(id = R.dimen.dim_16)))
         Text(
             text = text,
             fontFamily = Montserrat,
@@ -182,11 +188,11 @@ fun BlockReportView(modifier: Modifier = Modifier, enableDragHandle: Boolean = f
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Spacer(modifier = Modifier.height(25.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_25)))
             Row(
                 modifier = Modifier
                     .fillMaxWidth() // Fill the max width of the parent
-                    .padding(horizontal = 25.dp), // Apply horizontal padding
+                    .padding(horizontal = dimensionResource(id = R.dimen.dim_25)), // Apply horizontal padding
                 verticalAlignment = Alignment.CenterVertically, // Center items vertically
                 horizontalArrangement = Arrangement.Start
             ){
@@ -194,14 +200,14 @@ fun BlockReportView(modifier: Modifier = Modifier, enableDragHandle: Boolean = f
                 IconButton(
                     onClick = { onDismiss() },
                     modifier = Modifier
-                        .background(color = Color.Black, RoundedCornerShape(8.dp))
-                        .size(35.dp),
+                        .background(color = Color.Black, RoundedCornerShape(dimensionResource(id = R.dimen.dim_8)))
+                        .size( dimensionResource(id = R.dimen.dim_35)),
                     content = {
                         Icon(
                             painter = painterResource(id = R.drawable.back_icon),
                             contentDescription = "Back",
                             modifier = Modifier
-                                .size(20.dp)
+                                .size(dimensionResource(id = R.dimen.dim_20))
                         )
                     }
                 )
@@ -209,18 +215,18 @@ fun BlockReportView(modifier: Modifier = Modifier, enableDragHandle: Boolean = f
 
                 Text(
                     text = "Are you sure you want to?",
-                    fontSize = 16.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                     color = Color.White,
                     fontFamily = Montserrat,
                     fontWeight = FontWeight.Light,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .weight(1f) // Text takes up the rest of the space
-                        .padding(end = 16.dp)
+                        .padding(end = dimensionResource(id = R.dimen.dim_16))
                 )
 
             }
-            Spacer(modifier = Modifier.height(25.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_25)))
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
@@ -228,59 +234,61 @@ fun BlockReportView(modifier: Modifier = Modifier, enableDragHandle: Boolean = f
 
                 Text(
                     text = "$type $userId?",
-                    fontSize = 28.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_28).value.sp,
                     color = Color.White,
                     fontFamily = Montserrat,
                     fontWeight = FontWeight.Medium,
                     textAlign = TextAlign.Center
                 )
-                Spacer(modifier = Modifier.height(25.dp))
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_25)))
                 Image(
                     painterResource(id = R.drawable.story_user),
                     contentDescription = "profile_picture",
                     modifier = Modifier
-                        .clip(RoundedCornerShape(60.dp))
-                        .height(124.dp)
-                        .width(124.dp))
+                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_60)))
+                        .height(dimensionResource(id = R.dimen.dim_124))
+                        .width(dimensionResource(id = R.dimen.dim_124)))
             }
-            Spacer(modifier = Modifier.height(25.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_25)))
             Row(
                 modifier = Modifier
                     .fillMaxWidth() // Fill the max width of the parent
-                    .padding(16.dp), // Apply padding around the Row
+                    .padding( dimensionResource(id = R.dimen.dim_16)), // Apply padding around the Row
                 verticalAlignment = Alignment.CenterVertically, // Align items vertically in the center
                 horizontalArrangement = Arrangement.SpaceBetween
             ){
                 Button(
                     onClick = { onDismiss()},
-                    shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier.height(56.dp).clip(RoundedCornerShape(10.dp)).padding(10.dp,0.dp,10.dp,0.dp).weight(1f),
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
+                    modifier = Modifier.height(dimensionResource(id = R.dimen.dim_56))
+                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
+                        .padding(dimensionResource(id = R.dimen.dim_10),dimensionResource(id = R.dimen.dim_0),dimensionResource(id = R.dimen.dim_10),dimensionResource(id = R.dimen.dim_0)).weight(1f),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xff333333),
-                        disabledContainerColor = Color(0xFFC9C9C9),
+                        disabledContainerColor = disabledContainerColor,
                         disabledContentColor = Color.White,
                         contentColor = Color.White
                     )
                 ) {
-                    Text(text = "Cancel", fontSize = 16.sp)
+                    Text(text = "Cancel", fontSize = dimensionResource(id = R.dimen.fon_16).value.sp)
                 }
 
                 Button(
                     onClick = { actionBlockReport },
-                    shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier.height(56.dp).clip(RoundedCornerShape(10.dp)).padding(10.dp,0.dp,10.dp,0.dp).weight(1f),
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
+                    modifier = Modifier.height(dimensionResource(id = R.dimen.dim_56)).clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))).padding(dimensionResource(id = R.dimen.dim_10),dimensionResource(id = R.dimen.dim_0),dimensionResource(id = R.dimen.dim_10),dimensionResource(id = R.dimen.dim_0)).weight(1f),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF7EC60B),
-                        disabledContainerColor = Color(0xFFC9C9C9),
+                        containerColor = foodClubGreen,
+                        disabledContainerColor = disabledContainerColor,
                         disabledContentColor = Color.White,
                         contentColor = Color.White
                     )
                 ) {
-                    Text(text = "$type", fontSize = 16.sp)
+                    Text(text = "$type", fontSize = dimensionResource(id = R.dimen.fon_16).value.sp)
                 }
             }
 
-            Spacer(modifier = Modifier.height(25.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_25)))
         }
 
     }

@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,7 +51,7 @@ fun ChangePasswordSettings(
             textFieldColors = textFieldColors,
             errorTextFieldColors = errorTextFieldColors
         )
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_12)))
 
         CustomPasswordTextField(
             placeholder = "",
@@ -61,11 +62,11 @@ fun ChangePasswordSettings(
             textFieldColors = textFieldColors,
             errorTextFieldColors = errorTextFieldColors
         )
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_12)))
 
         Text(
             text = error ?: "",
-            fontSize = 11.sp,
+            fontSize = dimensionResource(id = R.dimen.fon_11).value.sp,
             color = Color.Red
         )
 

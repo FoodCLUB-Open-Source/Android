@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -110,20 +111,20 @@ fun CreateView() {
             }
             Box(modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(20.dp)) {
+                .padding(dimensionResource(id = R.dimen.dim_20))) {
                 Button(
-                    modifier = Modifier.size(50.dp),
+                    modifier = Modifier.size(dimensionResource(id = R.dimen.dim_50)),
                     onClick = {
 
                     },
-                    contentPadding = PaddingValues(1.dp),
-                    shape = RoundedCornerShape(10.dp),
+                    contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_1)),
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF292929))
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.close_icon),
                         contentDescription = null,
-                        modifier = Modifier.height(15.dp).width(15.dp)
+                        modifier = Modifier.height( dimensionResource(id = R.dimen.dim_15)).width( dimensionResource(id = R.dimen.dim_15))
 
                     )
                 }
@@ -132,44 +133,44 @@ fun CreateView() {
 
             Box(modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(20.dp)) {
+                .padding(dimensionResource(id = R.dimen.dim_20))) {
                 Column(horizontalAlignment = Alignment.End) {
                     val mainViewModel: CreateViewModel = viewModel()
 
                     Button(
                         modifier = Modifier
-                            .height(50.dp)
-                            .width(80.dp),
+                            .height(dimensionResource(id = R.dimen.dim_50))
+                            .width(dimensionResource(id = R.dimen.dim_80)),
                         onClick = {
                             mainViewModel.setApplicationData( activity,trimStartMs,trimEndMs)
                             mainViewModel.startExport()
                         },
-                        contentPadding = PaddingValues(1.dp),
-                        shape = RoundedCornerShape(10.dp),
+                        contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_1)),
+                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE0E0E0))
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.next_icon),
                             contentDescription = null,
                             modifier = Modifier
-                                .height(15.dp)
-                                .width(15.dp)
+                                .height( dimensionResource(id = R.dimen.dim_15))
+                                .width( dimensionResource(id = R.dimen.dim_15))
 
                         )
                     }
 
                     LazyRow(modifier = Modifier
                         .fillMaxWidth()
-                        .height(100.dp).background(Color.White)){
+                        .height(dimensionResource(id = R.dimen.dim_100)).background(Color.White)){
 
                         items(framesList){item ->
 
                             Image(bitmap = item!!.asImageBitmap(),
                                 contentDescription = "",
                                 modifier = Modifier
-                                    .height(100.dp)
-                                    .width(100.dp)
-                                    .border(1.dp,Color.White, RectangleShape),
+                                    .height(dimensionResource(id = R.dimen.dim_100))
+                                    .width(dimensionResource(id = R.dimen.dim_100))
+                                    .border(dimensionResource(id = R.dimen.dim_1),Color.White, RectangleShape),
                                 contentScale = ContentScale.FillBounds)
                         }
 

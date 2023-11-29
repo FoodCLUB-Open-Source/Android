@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -49,7 +50,7 @@ fun LoadingProgressBar(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding( dimensionResource(id = R.dimen.dim_16)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -57,16 +58,16 @@ fun LoadingProgressBar(
             painter = painterResource(id = R.drawable.app_logo),
             contentDescription = "",
             modifier = Modifier
-                .size(150.dp)
+                .size(dimensionResource(id = R.dimen.dim_150))
 
         )
         Text(text = text, color = Color.Gray)
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
         Box(
             modifier = Modifier
-                .width(250.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .height(8.dp)
+                .width(dimensionResource(id = R.dimen.dim_250))
+                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)))
+                .height(dimensionResource(id = R.dimen.dim_8))
                 .background(Color.Gray),
             contentAlignment = Alignment.CenterStart
         ) {
@@ -74,7 +75,7 @@ fun LoadingProgressBar(
                 progress = progress,
                 modifier = Modifier
                     .fillMaxSize()
-                    .clip(RoundedCornerShape(12.dp)),
+                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_12))),
 
                 color = foodClubGreen,
                 trackColor = Color.Gray

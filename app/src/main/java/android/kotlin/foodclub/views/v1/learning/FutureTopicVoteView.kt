@@ -24,6 +24,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -59,24 +60,24 @@ fun FutureTopicVoteViewUI(modifier: Modifier = Modifier) {
 
     Text(
         text = stringResource(id = R.string.vote_for_future_topics),
-        fontSize = 16.sp,
+        fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
         fontFamily = montserratFontFamily,
-        modifier = Modifier.padding(top = 110.dp, start = 40.dp)
+        modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_110), start =  dimensionResource(id = R.dimen.dim_40))
     )
 
     Text(
         text = stringResource(id = R.string.choose_from_the_options_below),
-        fontSize = 13.sp,
+        fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
         fontFamily = montserratFontFamily,
-        modifier = Modifier.padding(top = 230.dp, start = 40.dp),
+        modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_230), start =  dimensionResource(id = R.dimen.dim_40)),
         color = customGreyColor,
     )
 
     Box(
         modifier = Modifier
-            .offset(34.dp, 50.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .size(37.dp)
+            .offset( dimensionResource(id = R.dimen.dim_34), dimensionResource(id = R.dimen.dim_50))
+            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)))
+            .size( dimensionResource(id = R.dimen.dim_37))
             .background(customLightGreyColor)
 
 
@@ -92,25 +93,25 @@ fun FutureTopicVoteViewUI(modifier: Modifier = Modifier) {
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .padding(top = 240.dp, start = 18.dp, end = 18.dp)
+            .padding(top = dimensionResource(id = R.dimen.dim_240), start = dimensionResource(id = R.dimen.dim_18), end = dimensionResource(id = R.dimen.dim_18))
     ) {
         item {
 
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding( dimensionResource(id = R.dimen.dim_16))
             ) {
                 repeat(5) { index ->
                     Button(
-                        shape = RoundedCornerShape(16.dp),
+                        shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_16)),
                         onClick = {
                             //TODO add click functionality
                         },
                         modifier = Modifier
-                            .width(200.dp)
-                            .height(70.dp)
-                            .padding(top = 15.dp, end = 55.dp)
+                            .width(dimensionResource(id = R.dimen.dim_200))
+                            .height(dimensionResource(id = R.dimen.dim_70))
+                            .padding(top = dimensionResource(id = R.dimen.dim_15), end = dimensionResource(id = R.dimen.dim_55))
                             .clip(
                                 RoundedCornerShape(1)
                             ),
@@ -121,7 +122,7 @@ fun FutureTopicVoteViewUI(modifier: Modifier = Modifier) {
                     ) {
                         Text(
                             text = riceTextButton.getOrNull(index) ?: stringResource(id = R.string.default_text),
-                            fontSize = 13.sp,
+                            fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
                             color = Color.Black
                         )
                     }
@@ -133,17 +134,17 @@ fun FutureTopicVoteViewUI(modifier: Modifier = Modifier) {
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .padding(top = 240.dp, start = 1.dp, end = 1.dp),
+            .padding(top = dimensionResource(id = R.dimen.dim_240), start =dimensionResource(id = R.dimen.dim_1), end =dimensionResource(id = R.dimen.dim_1)),
     ) {
         item {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 205.dp, top = 16.dp),
+                    .padding(start = dimensionResource(id = R.dimen.dim_205), top = dimensionResource(id = R.dimen.dim_16)),
             ) {
                 repeat(times = 5) { index ->
                     Button(
-                        shape = RoundedCornerShape(16.dp),
+                        shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_16)),
                         onClick = {
                             // TODO add click functionality
                         },
@@ -154,13 +155,13 @@ fun FutureTopicVoteViewUI(modifier: Modifier = Modifier) {
                         ),
 
                         modifier = Modifier
-                            .width(170.dp)
-                            .height(70.dp)
-                            .padding(top = 15.dp, end = 30.dp)
+                            .width(dimensionResource(id = R.dimen.dim_170))
+                            .height(dimensionResource(id = R.dimen.dim_70))
+                            .padding(top = dimensionResource(id = R.dimen.dim_15), end = dimensionResource(id = R.dimen.dim_30))
                     ) {
                         Text(
                             text = riceTextButton.getOrNull(index) ?: stringResource(id = R.string.default_text),
-                            fontSize = 13.sp,
+                            fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
                             color = Color.Black
                         )
                     }
@@ -175,7 +176,7 @@ fun FutureTopicVoteViewUI(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(top = 770.dp)
+            .padding(top = dimensionResource(id = R.dimen.dim_770))
     ) {
 
         Box(
@@ -183,14 +184,14 @@ fun FutureTopicVoteViewUI(modifier: Modifier = Modifier) {
             contentAlignment = Alignment.Center
         ) {
             Button(
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_16)),
                 onClick = {
                     // TODO add click functionality
                 },
                 modifier = Modifier
-                    .width(327.dp)
-                    .height(50.dp)
-                    .clip(RoundedCornerShape(16.dp)),
+                    .width(dimensionResource(id = R.dimen.dim_327))
+                    .height(dimensionResource(id = R.dimen.dim_50))
+                    .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_16))),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = customGreenColor,
                     contentColor = Color.White
@@ -198,7 +199,7 @@ fun FutureTopicVoteViewUI(modifier: Modifier = Modifier) {
             ) {
                 Text(
                     text = stringResource(id = R.string.send_votes),
-                    fontSize = 18.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
 
                     )
             }

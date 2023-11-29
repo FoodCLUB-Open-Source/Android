@@ -2,6 +2,7 @@ package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.utils.composables.EditIngredientQuantityPicker
@@ -70,6 +71,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -121,9 +123,9 @@ fun MyDigitalPantryView(
                 title = {
                     Text(
                         text = stringResource(id = R.string.my_digital_pantry),
-                        fontSize = 20.sp,
+                        fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
                         fontWeight = FontWeight.Bold,
-                        lineHeight = 48.sp,
+                        lineHeight = dimensionResource(id = R.dimen.fon_48).value.sp,
                         fontFamily = Montserrat
                     )
                 },
@@ -148,7 +150,7 @@ fun MyDigitalPantryView(
                         Text(
                             text = stringResource(id = R.string.save),
                             color = foodClubGreen,
-                            fontSize = 20.sp,
+                            fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
                             fontWeight = FontWeight(600),
                             fontFamily = Montserrat
                         )
@@ -185,7 +187,7 @@ fun MyDigitalPantryView(
                             viewModel.onSubSearchTextChange(input)
                         }
                     )
-                    Spacer(modifier = Modifier.height(15.dp))
+                    Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_15)))
 
                     MyDigitalPantryList(
                         modifier,
@@ -204,8 +206,8 @@ fun MyDigitalPantryView(
                             contentAlignment = Alignment.Center
                         ) {
                             CustomDatePicker(
-                                modifier = Modifier.shadow(5.dp),
-                                shape = RoundedCornerShape(6.dp),
+                                modifier = Modifier.shadow(dimensionResource(id = R.dimen.dim_5)),
+                                shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_6)),
                                 datePickerState = datePickerState,
                                 datePickerColors = datePickerColors,
                                 datePickerDialogColors = datePickerDialogColors,
@@ -235,21 +237,21 @@ fun SearchMyIngredients(
     TextField(
         modifier = modifier
             .fillMaxWidth()
-            .padding(10.dp)
+            .padding(dimensionResource(id = R.dimen.dim_10))
             .clip(
-                RoundedCornerShape(15.dp)
+                RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
             ),
         colors = TextFieldDefaults.textFieldColors(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
-            containerColor = Color(0xFFF5F5F5)
+            containerColor = containerColor
         ),
         value = searchTextValue,
         onValueChange = { onSearch(it) },
         placeholder = {
             Text(
-                modifier = modifier.padding(top = 3.dp),
+                modifier = modifier.padding(top =dimensionResource(id = R.dimen.dim_3)),
                 text = stringResource(id = R.string.search_my_ingredients),
                 color = Color.Gray,
                 textAlign = TextAlign.Center
@@ -277,14 +279,14 @@ fun MyDigitalPantryList(
     view: String
 ) {
     Surface(
-        shadowElevation = 8.dp,
-        shape = RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp)
+        shadowElevation = dimensionResource(id = R.dimen.dim_8),
+        shape = RoundedCornerShape(topStart = dimensionResource(id = R.dimen.dim_18), topEnd = dimensionResource(id = R.dimen.dim_18))
     ) {
         Column(
             modifier = modifier
                 .fillMaxSize()
                 .background(
-                    shape = RoundedCornerShape(10.dp),
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
                     color = Color.White
                 )
         ) {
@@ -305,7 +307,7 @@ fun TitlesSection(modifier: Modifier, view: String) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, end = 20.dp, top = 15.dp, bottom = 15.dp),
+            .padding(start = dimensionResource(id = R.dimen.dim_20), end = dimensionResource(id = R.dimen.dim_20), top = dimensionResource(id = R.dimen.dim_15), bottom = dimensionResource(id = R.dimen.dim_15)),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
@@ -317,7 +319,7 @@ fun TitlesSection(modifier: Modifier, view: String) {
             color = colorPantry(view = view)
         )
         Text(
-            modifier = modifier.padding(start = 15.dp),
+            modifier = modifier.padding(start = dimensionResource(id = R.dimen.dim_15)),
             text = stringResource(id = R.string.quantity),
             fontWeight = FontWeight(500),
             fontSize = fontSizePantry(view = view),
@@ -338,7 +340,7 @@ fun TitlesSection(modifier: Modifier, view: String) {
 
 @Composable
 private fun fontSizePantry(view: String): TextUnit {
-    return if (view == stringResource(id = R.string.digitalPantry)) 16.sp else 13.7.sp
+    return if (view == stringResource(id = R.string.digitalPantry)) dimensionResource(id = R.dimen.fon_16).value.sp else 13.7.sp
 }
 
 @Composable
@@ -368,7 +370,7 @@ fun SwipeableItemsLazyColumn(
 ) {
     LazyColumn(
         modifier = modifier
-            .padding(start = 15.dp, end = 15.dp)
+            .padding(start = dimensionResource(id = R.dimen.dim_15), end = dimensionResource(id = R.dimen.dim_15))
             .background(Color.White)
             .height(height.dp)
     ) {
@@ -393,11 +395,11 @@ fun SwipeableItemsLazyColumn(
                 }
             }
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(dimensionResource(id = R.dimen.dim_8)))
             if (index != 0) {
-                Divider(thickness = 1.dp, modifier = modifier.alpha(0.5f), color = LightGray)
+                Divider(thickness =dimensionResource(id = R.dimen.dim_1), modifier = modifier.alpha(0.5f), color = LightGray)
             }
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(dimensionResource(id = R.dimen.dim_8)))
 
 
             SwipeToDismiss(
@@ -423,7 +425,7 @@ fun SwipeableItemsLazyColumn(
                         Modifier
                             .fillMaxSize()
                             .background(color)
-                            .padding(horizontal = 20.dp),
+                            .padding(horizontal = dimensionResource(id = R.dimen.dim_20)),
                         contentAlignment = alignment
                     ) {
                         Icon(
@@ -478,16 +480,16 @@ fun SingleIngredientItem(
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = modifier
-                        .height(48.dp)
-                        .width(48.dp)
+                        .height(dimensionResource(id = R.dimen.dim_48))
+                        .width(dimensionResource(id = R.dimen.dim_48))
                         .clip(CircleShape)
                 )
                 Text(
-                    modifier = modifier.padding(start = 6.dp),
+                    modifier = modifier.padding(start =dimensionResource(id = R.dimen.dim_6)),
                     text = title,
                     fontWeight = FontWeight(500),
                     lineHeight = 19.5.sp,
-                    fontSize = 16.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                     color = Color.Black
                 )
             }
@@ -498,10 +500,10 @@ fun SingleIngredientItem(
                 horizontalArrangement = Arrangement.Start
             ) {
                 Text(
-                    modifier = modifier.padding(start = 6.dp),
+                    modifier = modifier.padding(start =dimensionResource(id = R.dimen.dim_6)),
                     text = quantity,
                     fontWeight = FontWeight(500),
-                    fontSize = 16.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                     lineHeight = 19.5.sp,
                     fontFamily = Montserrat,
                     color = Color.Gray
@@ -522,14 +524,14 @@ fun SingleIngredientItem(
                     text = expirationDate,
                     fontWeight = FontWeight(500),
                     textAlign = TextAlign.Start,
-                    fontSize = 16.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                     lineHeight = 19.5.sp,
                     fontFamily = Montserrat,
                     color = Color.Gray
                 )
                 Box(
                     modifier = Modifier
-                        .size(24.dp)
+                        .size(dimensionResource(id = R.dimen.dim_24))
                         .clip(CircleShape)
                         .background(foodClubGreen)
                         .clickable {
@@ -585,10 +587,10 @@ fun EditIngredientView(
         val grammage = pickerValues.value.map { it.second }
         val types = stringArrayResource(id = R.array.quantity_list).toList()
 
-        Row(modifier = Modifier.padding(top = 20.dp, bottom = 20.dp, start = 20.dp)) {
+        Row(modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_20), bottom = dimensionResource(id = R.dimen.dim_20), start = dimensionResource(id = R.dimen.dim_20))) {
             Text(
                 text = stringResource(id = R.string.quantity_colon),
-                fontSize = 22.sp,
+                fontSize = dimensionResource(id = R.dimen.fon_22).value.sp,
                 fontWeight = FontWeight(600),
                 color = Color.Black,
                 fontFamily = Montserrat
@@ -602,7 +604,7 @@ fun EditIngredientView(
                 verticalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 17.dp, end = 17.dp, bottom = 20.dp),
+                    .padding(start = dimensionResource(id = R.dimen.dim_17), end = dimensionResource(id = R.dimen.dim_17), bottom = dimensionResource(id = R.dimen.dim_20)),
             ) {
                 EditIngredientQuantityPicker(
                     ingredient = ingredient,
@@ -614,21 +616,21 @@ fun EditIngredientView(
                     }
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
                 OutlinedButton(
                     shape = RectangleShape,
                     modifier = Modifier
                         .border(
-                            2.dp,
+                            dimensionResource(id = R.dimen.dim_2),
                             Color(126, 198, 11, 255),
-                            shape = RoundedCornerShape(15.dp)
+                            shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
                         )
-                        .clip(RoundedCornerShape(15.dp))
+                        .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
                         .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.White,
                         contentColor = Color.White
-                    ), contentPadding = PaddingValues(15.dp),
+                    ), contentPadding = PaddingValues( dimensionResource(id = R.dimen.dim_15)),
                     onClick = {
                         // TODO impl delete ingredient
                     }
@@ -637,29 +639,29 @@ fun EditIngredientView(
                         text = stringResource(id = R.string.remove),
                         color = Color(126, 198, 11, 255),
                         fontFamily = Montserrat,
-                        fontSize = 20.sp,
+                        fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
                         fontWeight = FontWeight(600),
                         lineHeight = 24.38.sp,
                         textAlign = TextAlign.Center
                     )
                 }
 
-                Spacer(modifier = Modifier.height(15.dp))
+                Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_15)))
 
                 Button(
                     shape = RectangleShape,
                     modifier = Modifier
                         .border(
-                            1.dp,
+                            dimensionResource(id = R.dimen.dim_1),
                             Color(126, 198, 11, 255),
-                            shape = RoundedCornerShape(15.dp)
+                            shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
                         )
-                        .clip(RoundedCornerShape(15.dp))
+                        .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
                         .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(126, 198, 11, 255),
                         contentColor = Color.White
-                    ), contentPadding = PaddingValues(15.dp),
+                    ), contentPadding = PaddingValues( dimensionResource(id = R.dimen.dim_15)),
                     onClick = {
                         // TODO impl save changes
                     }
@@ -668,7 +670,7 @@ fun EditIngredientView(
                         text = stringResource(id = R.string.save),
                         color = Color.White,
                         fontFamily = Montserrat,
-                        fontSize = 20.sp,
+                        fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
                         fontWeight = FontWeight(600),
                         lineHeight = 24.38.sp,
                         textAlign = TextAlign.Center
