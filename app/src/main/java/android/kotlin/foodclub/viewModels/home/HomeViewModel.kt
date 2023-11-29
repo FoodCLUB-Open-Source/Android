@@ -6,15 +6,13 @@ import android.kotlin.foodclub.domain.models.home.VideoStats
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
 import android.kotlin.foodclub.domain.models.snaps.SnapModel
-import android.kotlin.foodclub.repositories.PostRepository
-import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.repositories.BookmarkRepository
 import android.kotlin.foodclub.repositories.LikesRepository
+import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.repositories.StoryRepository
+import android.kotlin.foodclub.utils.helpers.Resource
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,8 +30,8 @@ class HomeViewModel @Inject constructor(
     private val bookmarkRepository: BookmarkRepository,
     private val sessionCache: SessionCache
 ) : ViewModel() {
-    private val _title = MutableLiveData("HomeViewModel View")
-    val title: LiveData<String> get() = _title
+    private val _title = MutableStateFlow("HomeViewModel View")
+    val title: StateFlow<String> get() = _title
 
     private val _postListData = MutableStateFlow<List<VideoModel>>(listOf())
     val postListData: StateFlow<List<VideoModel>> get() = _postListData

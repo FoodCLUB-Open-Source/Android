@@ -87,8 +87,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.stringArrayResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
@@ -104,10 +102,7 @@ import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun BottomSheetCategories(
-    onDismiss: () -> Unit,
-    viewModel: CreateRecipeViewModel
-) {
+fun BottomSheetCategories(onDismiss: () -> Unit, viewModel: CreateRecipeViewModel) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 150.dp
     var searchText by remember { mutableStateOf("") }
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -131,10 +126,7 @@ fun BottomSheetCategories(
         sheetState = bottomSheetState,
         dragHandle = { BottomSheetDefaults.DragHandle() },
     ) {
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .height(screenHeight)) {
+        Column(Modifier.fillMaxWidth().height(screenHeight)) {
             Box(modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 30.dp, end = 17.dp),
@@ -148,14 +140,8 @@ fun BottomSheetCategories(
                         contentDescription = "Left Arrow",
                         modifier = Modifier.size(24.dp)
                     )
-
                     Spacer(modifier = Modifier.width(8.dp))
-
-                    Text(
-                        text = "Categories",
-                        color = Color.White,
-                        fontFamily = Montserrat
-                    )
+                    Text(text = "Categories", color = Color.White, fontFamily = Montserrat)
                 }
             }
             Row(
@@ -168,11 +154,7 @@ fun BottomSheetCategories(
                 TextField(
                     value = searchText,
                     onValueChange = { searchText = it },
-                    placeholder = {
-                        Text(
-                            text = "Search here",
-                            fontSize = 15.sp
-                        ) },
+                    placeholder = { Text(text = "Search here", fontSize = 15.sp) },
                     shape = RoundedCornerShape(12.dp),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
@@ -202,7 +184,6 @@ fun BottomSheetCategories(
             FlowRow {
                 displayedCategories.forEachIndexed { _, category ->
                     val isSelected = selectedCategories.value.contains(category)
-
                     Card(
                         shape = RoundedCornerShape(16.dp),
                         modifier = Modifier
@@ -237,7 +218,7 @@ fun BottomSheetCategories(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun CreateRecipeView(navController: NavController, viewModel: CreateRecipeViewModel) {
-    val title = viewModel.title.value ?: stringResource(id = R.string.loading)
+    val title = viewModel.title.value ?: "Loading..."
     val ingredientList by viewModel.ingredients.collectAsState()
     val revealedIngredientId by viewModel.revealedIngredientId.collectAsState()
     val systemUiController = rememberSystemUiController()
@@ -249,9 +230,9 @@ fun CreateRecipeView(navController: NavController, viewModel: CreateRecipeViewMo
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 240.dp
     val categories = viewModel.chosenCategories.collectAsState()
     val rows = listOf(
-        stringArrayResource(id = R.array.quantity_list).toList(),
-        stringArrayResource(id = R.array.discover_sub_tabs).toList(),
-    ) // TODO remove placeholder data
+        listOf("fzfe", "fefez", "fzeffezfze"),
+        listOf("Button", "Button"),
+    )
 
     var isSmallScreen by remember { mutableStateOf(false) }
 
@@ -287,11 +268,8 @@ fun CreateRecipeView(navController: NavController, viewModel: CreateRecipeViewMo
         )
     }
 
-    Box(
-        Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(start = 15.dp, top = 0.dp, end = 15.dp, bottom = 70.dp)) {
+    Box(Modifier.fillMaxSize().background(Color.White)
+        .padding(start = 15.dp, top = 0.dp, end = 15.dp, bottom = 70.dp)) {
         if (showSheet) {
             IngredientsBottomSheet(
                 onDismiss = triggerBottomSheetModal,
@@ -342,7 +320,7 @@ fun CreateRecipeView(navController: NavController, viewModel: CreateRecipeViewMo
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
-                                contentDescription = stringResource(id = R.string.go_back),
+                                contentDescription = "Back",
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier
                                     .width(20.dp)
@@ -351,7 +329,7 @@ fun CreateRecipeView(navController: NavController, viewModel: CreateRecipeViewMo
                         }
                     }
                     Text(
-                        text= stringResource(id = R.string.my_new_recipe),
+                        "My New Recipe",
                         modifier = Modifier.padding(start = 8.dp),
                         fontFamily = Montserrat,
                         fontWeight = FontWeight.SemiBold,
@@ -364,10 +342,8 @@ fun CreateRecipeView(navController: NavController, viewModel: CreateRecipeViewMo
                     onValueChange = { recipeName = it },
                     placeholder = {
                         Text(
-                            text = stringResource(id = R.string.add_my_recipes_name),
-                            fontFamily = Montserrat, fontSize = 15.sp,
-                            color = Color(0xFFB3B3B3
-                            )
+                            "Add my recipe’s name", fontFamily = Montserrat, fontSize = 15.sp,
+                            color = Color(0xFFB3B3B3)
                         )
                     },
                     modifier = Modifier.fillMaxWidth(),
@@ -384,7 +360,7 @@ fun CreateRecipeView(navController: NavController, viewModel: CreateRecipeViewMo
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = stringResource(id = R.string.serving_size_colon),
+                        text = "Serving Size: ${sliderPosition.toInt()}",
                         fontFamily = Montserrat,
                         fontSize = 14.sp
                     )
@@ -403,23 +379,18 @@ fun CreateRecipeView(navController: NavController, viewModel: CreateRecipeViewMo
                         ),
                     )
                 }
-
                 Divider(
                     color = Color(0xFFE8E8E8),
                     thickness = 1.dp
                 )
-
                 Spacer(modifier = Modifier.height(15.dp))
-
                 SectionItem(
-                    title = stringResource(id = R.string.categories),
-                    action = stringResource(id = R.string.vegan),
+                    title = "Categories",
+                    action = "Vegan",
                     icon = Icons.Default.KeyboardArrowDown,
                     onClick = triggerCategoryBottomSheetModal
                 )
-
                 val purpleColor = Color(0xFFA059D9)
-
                 FlowRow {
                     categories.value.forEachIndexed { _, content ->
                         Card(
@@ -441,7 +412,6 @@ fun CreateRecipeView(navController: NavController, viewModel: CreateRecipeViewMo
                                     modifier = Modifier.padding(8.dp),
                                     maxLines = 1
                                 )
-
                                 Button(
                                     modifier = Modifier
                                         .border(2.dp, Color.White, shape = CircleShape)
@@ -466,28 +436,19 @@ fun CreateRecipeView(navController: NavController, viewModel: CreateRecipeViewMo
                         }
                     }
                 }
-
                 Spacer(modifier = Modifier.height(10.dp))
-
                 Divider(
                     color = Color(0xFFE8E8E8),
                     thickness = 1.dp
                 )
-
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(80.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = stringResource(id = R.string.ingredients),
-                        fontFamily = Montserrat,
-                        fontSize = 14.sp
-                    )
-
+                    Text("Ingredients", fontFamily = Montserrat, fontSize = 14.sp)
                     Spacer(modifier = Modifier.weight(1f))
-
                     Button(
                         shape = RectangleShape,
                         modifier = Modifier
@@ -502,20 +463,17 @@ fun CreateRecipeView(navController: NavController, viewModel: CreateRecipeViewMo
                         onClick = { triggerBottomSheetModal() }
                     ) {
                         Text(
-                            text = stringResource(id = R.string.add_items_plus),
+                            "Add +",
                             color = Color(126, 198, 11, 255),
                             fontFamily = Montserrat,
                             fontSize = 14.sp
                         )
                     }
                 }
-
                 Spacer(modifier = Modifier.height(10.dp))
-
             }
             items(items = ingredientList, key = { it.id }) { ingredient ->
-                Ingredient(
-                    ingredient = ingredient,
+                Ingredient(ingredient = ingredient,
                     isRevealed = revealedIngredientId == ingredient.id,
                     onExpand = { viewModel.onIngredientExpanded(ingredient.id) },
                     onCollapse = { viewModel.onIngredientCollapsed(ingredient.id) },
@@ -537,33 +495,22 @@ fun CreateRecipeView(navController: NavController, viewModel: CreateRecipeViewMo
             ), contentPadding = PaddingValues(15.dp),
             onClick = { /* Create Recipe */ }
         ) {
-            Text(
-                text = stringResource(id = R.string.share_recipe),
-                color = Color.White,
-                fontFamily = Montserrat,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.ExtraBold
-            )
+            Text("Share Recipe", color = Color.White, fontFamily = Montserrat, fontSize = 16.sp, fontWeight = FontWeight.ExtraBold)
         }
     }
 }
 
 @SuppressLint("UnusedTransitionTargetStateParameter")
 @Composable
-fun Ingredient(
-    ingredient: Ingredient,
-    isRevealed: Boolean,
-    onExpand: () -> Unit,
-    onCollapse: () -> Unit,
-    onDelete: () -> Unit
-) {
+fun Ingredient(ingredient: Ingredient, isRevealed: Boolean, onExpand: () -> Unit, onCollapse: () -> Unit,
+               onDelete: () -> Unit) {
     val ingredientXOffset = remember { mutableStateOf(0f) }
     var showItem by remember { mutableStateOf(true) }
 
     val transitionState = remember { MutableTransitionState(isRevealed).apply { targetState = !isRevealed }}
     val transition = updateTransition(transitionState, label = "")
     val offsetTransition by transition.animateFloat(
-        label = stringResource(id = R.string.ingredient_offset_transitions),
+        label = "ingredientOffsetTransition",
         transitionSpec = { tween(durationMillis = 500) },
         targetValueByState = { if (isRevealed) (-ingredientXOffset.value - 200f) else -ingredientXOffset.value }
     )
@@ -573,16 +520,11 @@ fun Ingredient(
     val unit by remember { mutableStateOf(ingredient.unit) }
 
 
-    AnimatedVisibility(
-        visible = showItem,
-        exit = shrinkOut(shrinkTowards = Alignment.TopCenter)
-    ) {
-        Box(
-            contentAlignment = Alignment.CenterEnd,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-                .padding(end = 15.dp)) {
+    AnimatedVisibility(visible = showItem, exit = shrinkOut(shrinkTowards = Alignment.TopCenter)) {
+        Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier
+            .fillMaxWidth()
+            .height(100.dp)
+            .padding(end = 15.dp)) {
             Button(
                 shape = RectangleShape,
                 modifier = Modifier
@@ -598,7 +540,7 @@ fun Ingredient(
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.delete_bin_5_line__2_),
-                    contentDescription = stringResource(id = R.string.go_back),
+                    contentDescription = "Back",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .width(20.dp)
@@ -611,7 +553,7 @@ fun Ingredient(
                 .offset {
                     IntOffset((ingredientXOffset.value + offsetTransition).roundToInt(), 0)
                 }
-                .pointerInput(key1 = "") {
+                .pointerInput("") {
                     detectHorizontalDragGestures { change, dragAmount ->
                         val original = Offset(ingredientXOffset.value, 0f)
                         val summed = original + Offset(x = dragAmount, y = 0f)
@@ -643,9 +585,7 @@ fun Ingredient(
                     modifier = Modifier
                         .height(80.dp)
                         .width(80.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                )
-
+                        .clip(RoundedCornerShape(12.dp)))
                 Box(
                     modifier = Modifier
                         .padding(start = 95.dp)
@@ -667,27 +607,25 @@ fun Ingredient(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Image(
                                 painter = painterResource(id = R.drawable.baseline_arrow_left_24),
-                                contentDescription = null,
+                                contentDescription = "",
                                 modifier = Modifier
-                                    .size(35.dp)
-                                    .padding(end = 5.dp)
+                                    .size(35.dp).padding(end = 5.dp)
                                     .clickable {
                                         ingredient.decrementQuantity(5)
                                         quantity = ingredient.quantity
                                     }
                             )
                             Text(
-                                text = quantity.toString() + ValueParser.quantityUnitToString(unit),
+                                quantity.toString() + ValueParser.quantityUnitToString(unit),
                                 color = Color.Black,
                                 fontFamily = Montserrat,
                                 fontSize = 14.sp
                             )
                             Image(
                                 painter = painterResource(id = R.drawable.baseline_arrow_right_24),
-                                contentDescription = null,
+                                contentDescription = "",
                                 modifier = Modifier
-                                    .size(35.dp)
-                                    .padding(start = 5.dp)
+                                    .size(35.dp).padding(start = 5.dp)
                                     .clickable {
                                         ingredient.incrementQuantity(5)
                                         quantity = ingredient.quantity
@@ -697,7 +635,6 @@ fun Ingredient(
                     }
                 }
             }
-
             Spacer(modifier = Modifier.height(10.dp))
         }
     }
@@ -721,15 +658,8 @@ fun SectionItem(
         Row ( modifier = Modifier
             .fillMaxWidth()
             .height(50.dp), verticalAlignment = Alignment.CenterVertically) {
-
-            Text(
-                text = title,
-                fontFamily = Montserrat,
-                fontSize = 14.sp
-            )
-
+            Text(title, fontFamily = Montserrat, fontSize = 14.sp)
             Spacer(modifier = Modifier.weight(1f))
-
             Button(
                 shape = RectangleShape,
                 modifier = Modifier
@@ -743,14 +673,13 @@ fun SectionItem(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.White,
                     contentColor = Color(126, 198, 11, 255)
-                ),
-                contentPadding = PaddingValues(15.dp),
+                ), contentPadding = PaddingValues(15.dp),
                 onClick = {
                     onClick()
                 }
             ) {
                 Text(
-                    text = stringResource(id = R.string.add_items_plus),
+                    "Add +",
                     color = Color(126, 198, 11, 255),
                     fontFamily = Montserrat,
                     fontSize = 14.sp
@@ -777,7 +706,7 @@ fun CreateRecipe(viewModel: CreateRecipeViewModel) {
         TextField(
             value = recipeTitle,
             onValueChange = { newValue -> recipeTitle = newValue },
-            label = { Text(text = stringResource(id = R.string.recipe_title)) }
+            label = { Text("Recipe Title") }
         )
 
 
@@ -800,7 +729,7 @@ fun CreateRecipe(viewModel: CreateRecipeViewModel) {
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = stringResource(id = R.string.create_a_recipe))
+            Text("Create Recipe")
         }
     }
 }

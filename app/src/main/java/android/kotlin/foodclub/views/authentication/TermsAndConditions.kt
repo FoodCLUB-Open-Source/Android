@@ -34,12 +34,12 @@ import com.rizzi.bouquet.rememberVerticalPdfReaderState
 
 @SuppressLint("UnrememberedMutableInteractionSource", "StateFlowValueCalledInComposition")
 @Composable
-fun TermsAndConditions(navController: NavHostController) {
+fun TermsAndConditions(
+    navController: NavHostController,
+    viewModel: TermsAndConditionsViewModel
+) {
 
-    val viewModel : TermsAndConditionsViewModel = viewModel()
     val checkedState = remember { mutableStateOf(false) }
-
-
 
     val pdfState = rememberVerticalPdfReaderState(
         resource = ResourceType.Asset(R.raw.tandc),

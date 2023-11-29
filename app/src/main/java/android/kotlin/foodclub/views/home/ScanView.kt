@@ -118,7 +118,7 @@ fun ScanView(navController: NavController,viewModel: DiscoverViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
-            .padding(14.dp) // Add overall padding to the Column
+            .padding(14.dp)
     ) {
         when (scanstate) {
 
@@ -181,11 +181,10 @@ fun ScanView(navController: NavController,viewModel: DiscoverViewModel) {
             )
         }
 
-         //Capture and display the image
         PermissionsRequired(
             multiplePermissionsState = permissionState,
-            permissionsNotGrantedContent = { /* ... */ },
-            permissionsNotAvailableContent = { /* ... */ }
+            permissionsNotGrantedContent = {  },
+            permissionsNotAvailableContent = {  }
         ) {
             Box(
                 modifier = Modifier
@@ -193,7 +192,6 @@ fun ScanView(navController: NavController,viewModel: DiscoverViewModel) {
                     .background(Color.Transparent)
             )
             {
-                // Scaffold with a Multi-Floating Action Button (Multi-FAB)
                 Scaffold(
                     floatingActionButton = {
                         if (scanstate=="Scanning"||scanstate=="Completed")
@@ -215,13 +213,13 @@ fun ScanView(navController: NavController,viewModel: DiscoverViewModel) {
                             onFabItemClicked = {
                             navController.navigate("ScanView_route")
 
-//                                when (it.label) {
-//                                    "Scan again" -> {
-//                                        navController.navigate("ScanView_route")
-//                                    }
-//                                    " Scan more" -> {
-//                                    }
-//                                }
+                                when (it.label) {
+                                    "Scan again" -> {
+                                        navController.navigate("ScanView_route")
+                                    }
+                                    " Scan more" -> {
+                                    }
+                                }
                             },
                                  fabIcon = FabButtonMain(),
                                  fabOption = FabButtonSub()
@@ -256,7 +254,7 @@ fun ScanView(navController: NavController,viewModel: DiscoverViewModel) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(18.dp) // Adjust padding for the buttons
+                    .padding(18.dp)
             ) {
                 Buttons( text =Button1text, onClick =onclick1 , containerColor =Color.Transparent,textcolor= foodClubGreen)
                 Buttons(text =Button2text ,  onClick =onclick2, containerColor = foodClubGreen,textcolor=Color.White )
@@ -291,7 +289,6 @@ fun ScanView(navController: NavController,viewModel: DiscoverViewModel) {
                         contentDescription = null,
                         tint = Color.Black,
                         modifier = Modifier.clickable {
-                            // Handle click on the additional icon
                             showBottomSheet = !showBottomSheet
                         }
                     )
@@ -339,7 +336,6 @@ fun ScanView(navController: NavController,viewModel: DiscoverViewModel) {
                                             .clickable(onClick = {})
                                             .size(35.dp)
 
-                                        // Handle click on the additional icon
                                     )
                                     Text(
                                         text = " ${viewModel.ScanResultItemList.size-visibleItems.size} " +
@@ -408,7 +404,7 @@ fun topbackbar(navController: NavController, screenContent: @Composable () -> Un
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp), // Adjust padding as needed
+                        .padding(16.dp),
                     textAlign = TextAlign.Center
                 )
                 },
@@ -422,7 +418,7 @@ fun topbackbar(navController: NavController, screenContent: @Composable () -> Un
                     )
                 },
                 actions = {
-                    // Additional navigation icon on the right
+
                     Icon(
                         imageVector = Icons.Default.Clear,
                         contentDescription = null,
@@ -464,7 +460,6 @@ fun horizontalBottomSheetItem(icon: Any, text: String) {
     ) {
         when (icon) {
             is Int -> {
-                // If icon is of type Int (resource ID), use painterResource
                 Image(
                     painter = painterResource(icon),
                     contentDescription = null,
@@ -475,7 +470,6 @@ fun horizontalBottomSheetItem(icon: Any, text: String) {
             }
 
             is Painter -> {
-                // If icon is of type Painter, directly use it
                 Image(
                     painter = icon,
                     contentDescription = null,

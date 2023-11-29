@@ -98,7 +98,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.media3.common.util.UnstableApi
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
@@ -349,13 +348,12 @@ fun BlurImage(content: @Composable () -> Unit) {
 @Composable
 fun HomeView(
     modifier: Modifier = Modifier,
+    viewModel: HomeViewModel,
     initialPage: Int? = 0,
     navController: NavHostController,
     triggerStoryView: () -> Unit
 ) {
     var showIngredientSheet by remember { mutableStateOf(false) }
-
-    val viewModel: HomeViewModel = hiltViewModel()
     val localDensity = LocalDensity.current
 
     val videosState = viewModel.postListData.collectAsState()
@@ -468,7 +466,10 @@ fun HomeView(
             }
     }
 
-    Column(modifier = Modifier.height(screenHeightMinusBottomNavItem)) {
+    Column(modifier = Modifier
+        .height(screenHeightMinusBottomNavItem)
+        .padding(bottom = 10 .dp)
+    ) {
         if (showIngredientSheet) {
             HomeBottomSheetIngredients(triggerIngredientBottomSheetModal)
         }
