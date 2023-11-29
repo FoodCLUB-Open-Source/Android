@@ -33,7 +33,9 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.navigation.HomeOtherRoutes
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import okio.ByteString.Companion.encodeUtf8
 
@@ -61,8 +63,8 @@ fun BottomSheet(
             )
             Divider(
                 color = Color.Gray,
-                thickness = 0.8.dp,
-                modifier = Modifier.padding(vertical = 16.dp)
+                thickness = dimensionResource(id = R.dimen.dim_0pt8),
+                modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.dim_16))
             )
             BottomSheetItem(
                 icon = R.drawable.story_bottom_sheet_icon,
@@ -84,7 +86,7 @@ fun BottomSheet(
                     onDismiss()
                 }
             )
-            Spacer(modifier = Modifier.height(25.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_25)))
         }
 
     }
@@ -105,8 +107,8 @@ fun BottomBar(navController: NavHostController, triggerBottomSheetModal: () -> U
     val bottomBarDestination = screens.any { currentDestination?.route?.startsWith(it.route) == true }
     var screenHeight = LocalConfiguration.current.screenHeightDp.dp * 0.13f
 
-    if (screenHeight < 90.dp) {
-        screenHeight = 110.dp
+    if (screenHeight < dimensionResource(id = R.dimen.dim_90)) {
+        screenHeight = dimensionResource(id = R.dimen.dim_110)
     }
     if (bottomBarDestination) {
         NavigationBar (containerColor = Color.White, modifier = Modifier.height(screenHeight)) {
@@ -135,11 +137,11 @@ fun RowScope.AddItem(
         icon = {
             Icon(
                 painter = icon,
-                modifier = Modifier.size(if (screen.route == "CREATE") 40.dp else 20.dp),
+                modifier = Modifier.size(if (screen.route == "CREATE") dimensionResource(id = R.dimen.dim_40) else dimensionResource(id = R.dimen.dim_20)),
                 contentDescription = stringResource(id = R.string.navigation_icon),
                 tint = when {
                     screen is BottomBarScreenObject.Create -> Color.Unspecified
-                    currentDestination?.hierarchy?.any { it.route?.startsWith(screen.route) == true } == true -> Color(0xFF7EC60B)
+                    currentDestination?.hierarchy?.any { it.route?.startsWith(screen.route) == true } == true -> foodClubGreen
                     else -> Color(0xFFB9B9B9)
                 }
 

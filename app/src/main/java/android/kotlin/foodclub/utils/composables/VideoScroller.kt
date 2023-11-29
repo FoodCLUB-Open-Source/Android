@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.res.AssetFileDescriptor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.views.home.ProgressionBar
 import android.media.MediaMetadataRetriever
@@ -43,6 +44,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -266,13 +268,13 @@ fun BottomControls(
     Column(
         modifier = modifier
             .background(Color.Transparent)
-            .height(10.dp)
+            .height(dimensionResource(id = R.dimen.dim_10))
             .fillMaxWidth(),
     ) {
         Slider(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 5.dp),
+                .padding(top =dimensionResource(id = R.dimen.dim_5)),
             value = videoTime.toFloat(),
             onValueChange = onSeekChanged,
             valueRange = 0f..duration.toFloat(),
@@ -283,7 +285,7 @@ fun BottomControls(
             thumb = {
                 SliderDefaults.Thumb(
                     interactionSource = interactionSource,
-                    thumbSize = DpSize(1.dp, 1.dp),
+                    thumbSize = DpSize(dimensionResource(id = R.dimen.dim_1), dimensionResource(id = R.dimen.dim_1)),
                     colors = SliderDefaults.colors(thumbColor = Color.Transparent)
                 )
             },

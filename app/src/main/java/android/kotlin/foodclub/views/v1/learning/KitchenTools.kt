@@ -25,6 +25,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -63,18 +64,18 @@ fun KitchenToolsUI(modifier: Modifier = Modifier) {
 
     Text(
         text = stringResource(id = R.string.kitchen_tools),
-        fontSize = 24.sp,
+        fontSize = dimensionResource(id = R.dimen.fon_24).value.sp,
         fontFamily = Montserrat,
         fontWeight = FontWeight.SemiBold,
         letterSpacing = TextUnit(-0.96f, TextUnitType.Sp),
-        modifier = Modifier.padding(top = 32.dp, start = 70.dp)
+        modifier = Modifier.padding(top =  dimensionResource(id = R.dimen.dim_32), start = dimensionResource(id = R.dimen.dim_70))
     )
 
     Box(
         modifier = Modifier
-            .offset(18.dp, 29.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .size(32.dp)
+            .offset(dimensionResource(id = R.dimen.dim_18), dimensionResource(id = R.dimen.dim_29))
+            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)))
+            .size( dimensionResource(id = R.dimen.dim_32))
             .background(customGreyColor)
 
 
@@ -90,29 +91,29 @@ fun KitchenToolsUI(modifier: Modifier = Modifier) {
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .padding(top = 60.dp, start = 18.dp, end = 18.dp)
+            .padding(top = dimensionResource(id = R.dimen.dim_60), start = dimensionResource(id = R.dimen.dim_18), end = dimensionResource(id = R.dimen.dim_18))
     ) {
 
 
         items(count = 3) { index ->
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_16)))
 
             Box(
                 modifier = Modifier
-                    .clip(shape = RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp))
+                    .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15)))
                     .fillMaxWidth()
-                    .height(230.dp)
+                    .height(dimensionResource(id = R.dimen.dim_230))
                     .background(Color.White)
             ) {
                 Text(
                     text = cardTitle.getOrNull(index) ?: stringResource(id = R.string.default_text),
                     fontFamily = Montserrat,
-                    fontSize = 20.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = TextUnit(-0.8f, TextUnitType.Sp),
                     color = Color.Black,
                     modifier = Modifier
-                        .padding(top = 25.dp)
+                        .padding(top = dimensionResource(id = R.dimen.dim_25))
                         .align(Alignment.Center)
                 )
 
@@ -120,30 +121,30 @@ fun KitchenToolsUI(modifier: Modifier = Modifier) {
                     painter = painterResource(id = imageContents.getOrNull(index) ?: R.drawable.temporary_image_placeholder),
                     contentDescription = null,
                     modifier = Modifier
-                        .width(330.dp)
-                        .height(200.dp)
-                        .clip(shape = RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp))
-                        .padding(bottom = 105.dp)
+                        .width(dimensionResource(id = R.dimen.dim_330))
+                        .height(dimensionResource(id = R.dimen.dim_200))
+                        .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15)))
+                        .padding(bottom = dimensionResource(id = R.dimen.dim_105))
                         .align(Alignment.Center)
                 )
 
                 Text(
                     text = cardSubText.getOrNull(index) ?: stringResource(id = R.string.default_text),
                     fontFamily = Montserrat,
-                    fontSize = 12.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
                     letterSpacing = TextUnit(-0.8f, TextUnitType.Sp),
                     color = Color.Black,
                     modifier = Modifier
-                        .padding(top = 78.dp)
+                        .padding(top = dimensionResource(id = R.dimen.dim_78))
                         .align(Alignment.Center)
                 )
 
                 Button(
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)),
                     modifier = Modifier
-                        .padding(start = 55.dp, bottom = 15.dp)
-                        .height(35.dp)
-                        .width(100.dp)
+                        .padding(start = dimensionResource(id = R.dimen.dim_55), bottom = dimensionResource(id = R.dimen.dim_15))
+                        .height( dimensionResource(id = R.dimen.dim_35))
+                        .width(dimensionResource(id = R.dimen.dim_100))
                         .align(Alignment.BottomStart),
 
                     onClick = {
@@ -159,17 +160,17 @@ fun KitchenToolsUI(modifier: Modifier = Modifier) {
                         fontFamily = Montserrat,
                         letterSpacing = TextUnit(-0.64f, TextUnitType.Sp),
                         color = Color.White,
-                        fontSize = 13.sp
+                        fontSize = dimensionResource(id = R.dimen.fon_13).value.sp
 
                     )
                 }
 
                 Button(
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)),
                     modifier = Modifier
-                        .padding(end = 55.dp, bottom = 15.dp)
-                        .height(35.dp)
-                        .width(100.dp)
+                        .padding(end = dimensionResource(id = R.dimen.dim_55), bottom = dimensionResource(id = R.dimen.dim_15))
+                        .height( dimensionResource(id = R.dimen.dim_35))
+                        .width(dimensionResource(id = R.dimen.dim_100))
                         .align(Alignment.BottomEnd),
 
                     onClick = {
@@ -185,7 +186,7 @@ fun KitchenToolsUI(modifier: Modifier = Modifier) {
                         fontFamily = Montserrat,
                         letterSpacing = TextUnit(-0.64f, TextUnitType.Sp),
                         color = Color.Black,
-                        fontSize = 13.sp
+                        fontSize = dimensionResource(id = R.dimen.fon_13).value.sp
 
                     )
                 }

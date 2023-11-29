@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.utils.composables
 
+import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -33,6 +34,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 
 data class FabButtonItem(val iconRes: ImageVector, val label: String)
@@ -91,8 +93,8 @@ fun MiniFabItem(
     Row(
         modifier = Modifier
             .wrapContentSize()
-            .padding(end = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
+            .padding(end = dimensionResource(id = R.dimen.dim_10)),
+        horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_10)),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -100,14 +102,14 @@ fun MiniFabItem(
             style = typography.labelSmall,
             color = Color.Black,
             modifier = Modifier
-                .clip(RoundedCornerShape(size = 8.dp))
+                .clip(RoundedCornerShape(size = dimensionResource(id = R.dimen.dim_8)))
                 .background(Color.Gray.copy(alpha = 0.5f))
-                .padding(all = 8.dp)
+                .padding(all = dimensionResource(id = R.dimen.dim_8))
         )
 
         FloatingActionButton(
             onClick = { onFabItemClicked(item) },
-            modifier = Modifier.size(40.dp),
+            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_40)),
             containerColor = fabOption.backgroundTint,
             contentColor = fabOption.iconTint
         ) {
@@ -150,7 +152,7 @@ fun MultiFloatingActionButton(
             LazyColumn(
                 modifier = Modifier.wrapContentSize(),
                 horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(15.dp)
+                verticalArrangement = Arrangement.spacedBy( dimensionResource(id = R.dimen.dim_15))
             ) {
                 items(items.size) { index ->
                     MiniFabItem(

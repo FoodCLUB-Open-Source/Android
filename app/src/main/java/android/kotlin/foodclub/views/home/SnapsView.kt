@@ -2,6 +2,7 @@ package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.enums.Reactions
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
@@ -50,6 +51,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -113,38 +115,38 @@ fun SnapsView(
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
-                    .padding(15.dp)
+                    .padding( dimensionResource(id = R.dimen.dim_15))
             ) {
                 Column(
                     modifier=Modifier.fillMaxWidth()
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(bottom = 15.dp)
+                        modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_15))
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.story_user),
                             contentDescription = "Profile Image",
                             modifier = Modifier
-                                .size(35.dp)
+                                .size( dimensionResource(id = R.dimen.dim_35))
                                 .clip(CircleShape)
                                 .alpha(0.7f)
                         )
-                        Spacer(modifier = Modifier.width(10.dp))
+                        Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_10)))
                         Text(
                             memoriesModel.stories[it].snapAuthor.username, color = Color.White,
-                            fontFamily = Montserrat, fontSize = 18.sp,
+                            fontFamily = Montserrat, fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
                             modifier = Modifier
-                                .padding(2.dp)
+                                .padding(dimensionResource(id = R.dimen.dim_2))
                                 .alpha(0.7f)
                         )
                     }
                     Text(
                         memoriesModel.stories[it].dateTime, color = Color.White,
-                        fontFamily = Montserrat, fontSize = 12.sp,
+                        fontFamily = Montserrat, fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier
-                            .padding(2.dp)
+                            .padding(dimensionResource(id = R.dimen.dim_2))
                             .alpha(0.7f)
                     )
                 }
@@ -154,11 +156,11 @@ fun SnapsView(
                 ) {
                     Box (
                         modifier= Modifier
-                            .size(44.dp)
+                            .size(dimensionResource(id = R.dimen.dim_44))
                             .alpha(0.4f)
                             .background(
                                 color = Color(0xFF735029),
-                                shape = RoundedCornerShape(22.dp)
+                                shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_22))
                             )
                             .clickable {
                                 scope.launch {
@@ -170,14 +172,14 @@ fun SnapsView(
                         Image(painter = painterResource(id = R.drawable.handwave), contentDescription = "download", modifier = Modifier.align(Alignment.Center))
 
                     }
-                    Spacer(modifier = Modifier.size(16.dp))
+                    Spacer(modifier = Modifier.size( dimensionResource(id = R.dimen.dim_16)))
                     Box (
                         modifier= Modifier
-                            .size(44.dp)
+                            .size(dimensionResource(id = R.dimen.dim_44))
                             .alpha(0.4f)
                             .background(
                                 color = Color(0xFF6D4E2E),
-                                shape = RoundedCornerShape(22.dp)
+                                shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_22))
                             )
                             .clickable {
                                 isDownloaded = !isDownloaded
@@ -240,19 +242,19 @@ fun SnapBottomSheetLayout(userReactions:
                                     it.value == reaction
                                 }.count()}",
                                     style = TextStyle(
-                                        fontSize = 14.sp,
+                                        fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
                                         fontFamily = Montserrat,
                                         fontWeight = FontWeight.SemiBold,
-                                        color = if(state.currentPage != reaction.ordinal) Color(0xFF949494) else Color(0xFF7EC60B)
+                                        color = if(state.currentPage != reaction.ordinal) Color(0xFF949494) else foodClubGreen
                                     )
                                 )
                             }
-                            Spacer(modifier = Modifier.size(10.dp))
+                            Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.dim_10)))
                             if(state.currentPage == reaction.ordinal){
                                 Spacer(modifier = Modifier
-                                    .height(2.dp)
+                                    .height(dimensionResource(id = R.dimen.dim_2))
                                     .fillMaxSize()
-                                    .background(color = Color(0xFF7EC60B)))
+                                    .background(color = foodClubGreen))
                             }
                         }
                     }
@@ -263,18 +265,18 @@ fun SnapBottomSheetLayout(userReactions:
                             Text(
                                 text = "ALL ${userReactions.count()}",
                                 style = TextStyle(
-                                    color = if(state.currentPage != 0) Color(0xFF949494) else Color(0xFF7EC60B),
+                                    color = if(state.currentPage != 0) Color(0xFF949494) else foodClubGreen,
                                     fontWeight = FontWeight.SemiBold,
-                                    fontSize = 14.sp,
+                                    fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
                                 ),
                                 modifier = Modifier.height(19.88.dp)
                             )
-                            Spacer(modifier = Modifier.size(10.dp))
+                            Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.dim_10)))
                             if(state.currentPage == 0){
                                 Spacer(modifier = Modifier
-                                    .height(2.dp)
+                                    .height(dimensionResource(id = R.dimen.dim_2))
                                     .fillMaxSize()
-                                    .background(color = Color(0xFF7EC60B)))
+                                    .background(color = foodClubGreen))
                             }
                         }
                     }
@@ -283,7 +285,7 @@ fun SnapBottomSheetLayout(userReactions:
         }
         Spacer(modifier = Modifier
             .fillMaxWidth()
-            .height(0.5.dp)
+            .height(dimensionResource(id = R.dimen.dim_0pt5))
             .background(color = Color.Black)
             .alpha(0.6f)
             )
@@ -316,34 +318,34 @@ fun BottomSheetItemView(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.Start
     ) {
-        Spacer(modifier = Modifier.size(10.dp))
+        Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.dim_10)))
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start){
-            Spacer(modifier = Modifier.size(20.dp))
+            Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.dim_20)))
             AsyncImage(model = snapUserModel.profilePictureUrl, contentDescription = "dp", contentScale = ContentScale.Crop, modifier = Modifier
-                .size(45.dp)
+                .size(dimensionResource(id = R.dimen.dim_45))
                 .clip(
                     RoundedCornerShape(100)
                 ))
-            Spacer(modifier = Modifier.size(20.dp))
+            Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.dim_20)))
             Text(
                 text = snapUserModel.username,
                 style = TextStyle(
-                    fontSize = 17.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_17).value.sp,
                     fontFamily = Montserrat,
                     fontWeight = FontWeight.Medium,
                     color = Color.Black
                 )
             )
         }
-        Spacer(modifier = Modifier.size(10.dp))
+        Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.dim_10)))
         Row {
-            Spacer(modifier = Modifier.size(20.dp))
+            Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.dim_20)))
             Spacer(modifier = Modifier
                 .fillMaxWidth()
-                .height(0.5.dp)
+                .height(dimensionResource(id = R.dimen.dim_0pt5))
                 .background(color = Color.Black)
                 .alpha(0.6f)
-                .padding(horizontal = 14.dp))
+                .padding(horizontal = dimensionResource(id = R.dimen.dim_14)))
         }
     }
 }
