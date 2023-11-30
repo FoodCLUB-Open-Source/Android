@@ -76,7 +76,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
@@ -224,7 +223,7 @@ fun ProfileView(
                 ) {
                     Box(if(userId == 0L) Modifier.clickable { showBottomSheet = true } else Modifier) {
                         AsyncImage(
-                            model = imageUri,
+                            model = imageUri ?: R.drawable.profilepicture,
                             contentDescription = stringResource(id = R.string.profile_picture),
                             modifier = Modifier
                                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_60)))
