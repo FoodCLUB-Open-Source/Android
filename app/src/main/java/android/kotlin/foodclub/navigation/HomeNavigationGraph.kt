@@ -11,7 +11,7 @@ import android.kotlin.foodclub.views.home.CreateView
 import android.kotlin.foodclub.views.home.discover.DiscoverView
 import android.kotlin.foodclub.views.home.FollowerView
 import android.kotlin.foodclub.views.home.GalleryView
-import android.kotlin.foodclub.views.home.HomeView
+import android.kotlin.foodclub.views.home.home.HomeView
 import android.kotlin.foodclub.views.home.myBasket.MyBasketView
 import android.kotlin.foodclub.views.home.myDigitalPantry.MyDigitalPantryView
 import android.kotlin.foodclub.views.home.ProfileView
@@ -57,11 +57,13 @@ fun NavGraphBuilder.homeNavigationGraph(
         composable(route = BottomBarScreenObject.Home.route) {
             setBottomBarVisibility(true)
             val viewModel: HomeViewModel = hiltViewModel()
+            val state = viewModel.state.collectAsState()
 
             HomeView(
                 navController = navController,
                 viewModel = viewModel,
-                triggerStoryView = triggerStory
+                triggerStoryView = triggerStory,
+                state = state.value
             )
         }
         composable(
