@@ -19,6 +19,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -253,6 +254,20 @@ class HomeViewModel @Inject constructor(
                 }
                 is Resource.Error -> {
                     _error.value = resource.message!!
+                }
+            }
+        }
+    }
+
+    fun postSnap(file: File) {
+        val user = sessionCache.getActiveSession()?.sessionUser
+        viewModelScope.launch {
+            when (val resource = storyRepository.postImageStory(user!!.userId, file)){
+                is Resource.Success -> {
+                    Log.i("MYTAG","POST STORY ${resource.data}")
+                }
+                is Resource.Error -> {
+                    Log.e("MYTAG","POST STORY ${resource.message}")
                 }
             }
         }
