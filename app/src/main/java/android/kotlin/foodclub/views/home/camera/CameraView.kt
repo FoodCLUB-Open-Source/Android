@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.views.home
+package android.kotlin.foodclub.views.home.camera
 
 import android.Manifest
 import android.content.ContentResolver
@@ -11,6 +11,7 @@ import android.kotlin.foodclub.utils.composables.engine.createVideoCaptureUseCas
 import android.kotlin.foodclub.utils.composables.engine.startRecordingVideo
 import android.kotlin.foodclub.viewModels.home.CameraViewModel
 import android.kotlin.foodclub.viewModels.home.StopWatchEvent
+import android.kotlin.foodclub.views.home.GalleryState
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -85,154 +86,14 @@ import java.io.File
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
-
-@Composable
-fun RecordingButton(isRecording: Boolean) {
-    val progress by animateFloatAsState(
-        targetValue = if (isRecording) 1f else 0f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(20000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ), label = ""
-    )
-
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.size(80.dp)
-    ) {
-        CircularProgressIndicator(
-            progress = 1f,
-            strokeWidth = 5.dp,
-            color = Color.White,
-            modifier = Modifier.size(80.dp)
-        )
-        CircularProgressIndicator(
-            progress = progress,
-            strokeWidth = 5.dp,
-            color = foodClubGreen,
-            modifier = Modifier.size(80.dp)
-        )
-        Canvas(modifier = Modifier.size(60.dp)) {
-            drawCircle(color = Color(0xFFCACBCB))
-        }
-        // Record button
-    }
-
-}
-
-@Composable
-fun RecordingClipsButton(
-    isRecording: Boolean,
-    removeClip: Boolean = false,
-    removeUpdate: (Boolean) -> Unit = {},
-    addClip: Boolean = false,
-    clipUpdate: (Boolean) -> Unit = {},
-    viewModel: CameraViewModel? = null,
-    timeLimitMilliseconds: Int = 6000
-) {
-
-    val (rememberProgress, progressUpdate) = remember {
-        mutableFloatStateOf(0f)
-    }
-
-    val clipArcs = remember {
-        mutableListOf<Float>()
-    }
-
-    if (removeClip) {
-        if (clipArcs.size > 1) {
-            clipArcs.removeAt(clipArcs.lastIndex)
-            progressUpdate(clipArcs[clipArcs.lastIndex])
-        } else if (clipArcs.isNotEmpty()) {
-            clipArcs.removeAt(clipArcs.lastIndex)
-            progressUpdate(0f)
-        }
-
-        removeUpdate(false)
-    }
-
-    val progress: Float = (viewModel?.totalMilliseconds?.value ?: 0).toFloat() / timeLimitMilliseconds
-
-    /*
-    val progress by animateFloatAsState(
-        targetValue = if (isRecording) 1f else rememberProgress,
-        animationSpec = if (isRecording) {infiniteRepeatable<Float>(
-            animation = tween<Float>( 60000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        )}
-        else
-        {
-            snap(500)
-        }
-       , label = ""
-    )
-
-     */
-
-    if (!isRecording) {
-        if (progress != 0f && addClip) {
-            clipArcs.add(progress) //Constantly adding to clip Arcs should only add at one point
-            progressUpdate(progress)
-            clipUpdate(false)
-        }
-
-    }
-
-
-
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.size(80.dp)
-    ) {
-
-        Canvas(modifier = Modifier.fillMaxSize())
-        {
-            drawArc(
-                color = Color(0x55FFFFFF),
-                startAngle = -90f,
-                sweepAngle = 360f,
-                useCenter = false,
-                style = Stroke(width = 25f)
-            )
-
-        }
-
-        CircularProgressIndicator(
-            progress = progress,
-            strokeWidth = 5.dp,
-            color = foodClubGreen,
-            modifier = Modifier.size(80.dp)
-        )
-
-        Canvas(modifier = Modifier.fillMaxSize())
-        {
-            clipArcs.forEach {
-                drawArc(
-                    color = Color.White,
-                    startAngle = (360f * it) - 90f,
-                    sweepAngle = 3f,
-                    useCenter = false,
-                    style = Stroke(width = 25f)
-                )
-            }
-
-        }
-
-        Canvas(modifier = Modifier.size(60.dp)) {
-            drawCircle(color = Color(0xFFCACBCB))
-        }
-        // Record button
-    }
-
-}
-
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CameraView(
     viewModel: CameraViewModel,
     navController: NavController,
-    stateEncoded: String
+    stateEncoded: String,
+    state: CameraState
 ) {
 
     var seconds = (0)
@@ -242,13 +103,13 @@ fun CameraView(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    var state = ""
+    var stateString = ""
 
     if (stateEncoded.contains(GalleryState.STORY.state)) {
-        state = GalleryState.STORY.state
+        stateString = GalleryState.STORY.state
     }
     if (stateEncoded.contains(GalleryState.RECIPE.state)) {
-        state = GalleryState.RECIPE.state
+        stateString = GalleryState.RECIPE.state
     }
 
     val permissionState = rememberMultiplePermissionsState(
@@ -375,7 +236,6 @@ fun CameraView(
                         .clip(RoundedCornerShape(10.dp))
                         .background(Color.Black.copy(alpha = 0.9f))
                         .clickable {
-                            // Do something when the box is clicked
                             viewModel.onEvent(StopWatchEvent.onReset)
                             navController.popBackStack()
                         }
@@ -458,22 +318,22 @@ fun CameraView(
                     // current date and time and calling a simple
                     // date format in it.
                     //val currentDateAndTime = sdf.format(Date())
-                    var time = if (viewModel.minutes.value < 10)
+                    var time = if (state.minutes < 10)
                     {
-                        "0${viewModel.minutes.value}"
+                        "0${state.minutes}"
                     }
                     else
                     {
-                        viewModel.minutes.value.toString()
+                        state.minutes.toString()
                     }
 
-                    time += if (viewModel.seconds.value < 10)
+                    time += if (state.seconds < 10)
                     {
-                        ":0${viewModel.seconds.value}"
+                        ":0${state.seconds}"
                     }
                     else
                     {
-                        ":${viewModel.seconds.value}"
+                        ":${state.seconds}"
                     }
 
                     Text(text = time, modifier = Modifier.padding(10.dp), color = Color.White)
@@ -536,10 +396,10 @@ fun CameraView(
                             //.align(Alignment.BottomCenter)
                             .size(80.dp),
                         interactionSource = interactionSource,
-                        enabled = viewModel.minutes.value < 1
+                        enabled = state.minutes < 1
                     ) {
 
-                        if(viewModel.minutes.value >= 1)
+                        if(state.minutes >= 1)
                         {
                             if (recordingStarted.value)
                             {
@@ -550,7 +410,7 @@ fun CameraView(
                         }
 
                         if (holdOrPress) {
-                            if (isPressed && viewModel.minutes.value < 1) {
+                            if (isPressed && state.minutes < 1) {
                                 Log.d("Recording Start","Preparing recording")
                                 if (!recordingStarted.value && canAdd) {
                                     videoCapture.value?.let { videoCapture ->
@@ -609,7 +469,7 @@ fun CameraView(
                             removeUpdate = removeUpdate,
                             addClip = addClip,
                             clipUpdate = clipUpdate,
-                            viewModel = viewModel
+                            state = state
                         )
 
 
@@ -643,7 +503,7 @@ fun CameraView(
                                             .border(2.dp, Color.White, RoundedCornerShape(5.dp))
                                     )
                                     .clickable {
-                                        navController.navigate("GALLERY_VIEW/${state.encodeUtf8()}")
+                                        navController.navigate("GALLERY_VIEW/${stateString.encodeUtf8()}")
                                     }
                             )
                         } else {

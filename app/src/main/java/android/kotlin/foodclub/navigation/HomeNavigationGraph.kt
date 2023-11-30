@@ -3,7 +3,7 @@ package android.kotlin.foodclub.navigation
 import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
 import android.kotlin.foodclub.viewModels.home.CameraViewModel
 import android.kotlin.foodclub.views.home.CameraPreviewView
-import android.kotlin.foodclub.views.home.CameraView
+import android.kotlin.foodclub.views.home.camera.CameraView
 import android.kotlin.foodclub.views.home.CreateView
 import android.kotlin.foodclub.views.home.discover.DiscoverView
 import android.kotlin.foodclub.views.home.FollowerView
@@ -137,13 +137,15 @@ fun NavGraphBuilder.homeNavigationGraph(
         }
 
         composable(route = HomeOtherRoutes.CameraView.route) {
-            val state = it.arguments?.getString("state") ?: ""
+            val stateEncoded = it.arguments?.getString("state") ?: ""
             val viewModel = it.sharedHiltViewModel<CameraViewModel>(navController = navController)
+            val state = viewModel.state.collectAsState()
 
             CameraView(
                 viewModel = viewModel,
                 navController = navController,
-                stateEncoded = state
+                stateEncoded = stateEncoded,
+                state = state.value
             )
 
         }
