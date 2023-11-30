@@ -4,6 +4,8 @@ import android.content.SharedPreferences
 import android.kotlin.foodclub.network.retrofit.utils.auth.RefreshTokenManager
 import android.kotlin.foodclub.domain.models.products.MyBasketCache
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
+import android.kotlin.foodclub.repositories.ProductRepository
+import android.kotlin.foodclub.viewModels.home.MyBasketViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -36,4 +38,11 @@ object AppModule {
     ): MyBasketCache {
         return MyBasketCache(basketPreferences, sessionCache)
     }
+
+    @Provides
+    @Singleton
+    fun provideMyBasketViewModel(
+        basketCache: MyBasketCache,
+        productRepository: ProductRepository
+    ): MyBasketViewModel = MyBasketViewModel(basketCache, productRepository)
 }

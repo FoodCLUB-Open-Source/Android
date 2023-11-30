@@ -7,7 +7,9 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.domain.enums.QuantityUnit
 import android.kotlin.foodclub.domain.models.others.AnimatedIcon
+import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
 import android.kotlin.foodclub.utils.composables.LikeButton
@@ -50,6 +52,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import android.kotlin.foodclub.viewModels.home.HomeViewModel
+import android.util.Log
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.Image
@@ -57,6 +60,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -104,6 +108,9 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var sliderPosition by remember { mutableStateOf(0f) }
     var isSmallScreen by remember { mutableStateOf(false) }
+    val viewModel: HomeViewModel = hiltViewModel()
+    val ingredientsList = listOf<Ingredient>()
+
 
     if (screenHeight <= 440.dp) {
         isSmallScreen = true
@@ -191,15 +198,39 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
                     Slider(
                         modifier = Modifier.width(if (isSmallScreen) 150.dp else 200.dp),
                         value = sliderPosition,
-                        onValueChange = { sliderPosition = it },
+                        onValueChange = { newSliderPosition ->
+                            sliderPosition = newSliderPosition
+                            Log.d("Slider", "Slider value changed: $newSliderPosition")
+
+                            val newQuantity = ((newSliderPosition * 100)).toInt()
+                            viewModel.onQuantityChange(newQuantity.toInt())
+                        },
                         valueRange = 0f..10f,
-                        steps = 4,
+                        steps = 9,
                         colors = SliderDefaults.colors(
                             thumbColor = Color(0xFF7EC60B),
                             activeTrackColor = Color.Black,
                             inactiveTrackColor = Color.Black
                         ),
                     )
+                    // DISPLAYING NUMBER BELOW SLIDER + TRACKING IT
+                    Box(
+                        modifier = Modifier
+                            .width(20.dp)
+                            .offset(
+                                x = with(LocalDensity.current) { (sliderPosition * 63.dp.toPx() / density).toDp() + 1.dp },
+                                y = 45.dp
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            (sliderPosition.toInt()).toString(),
+                            color = Color.Black,
+                            fontFamily = Montserrat,
+                            fontSize = 12.sp
+                        )
+                    }
+
                 }
             }
             Row(
@@ -241,8 +272,22 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
                 LazyColumn {
                     items(6) {
                         HomeIngredient(
-                            ingredientTitle = stringResource(id = R.string.example_ingredient),
-                            ingredientImage = R.drawable.salad_ingredient
+                            viewModel = viewModel,
+                            ingredientTitle = "Broccoli oil",
+                            ingredientImage = R.drawable.salad_ingredient,
+                            onQuantityChange = { newQuantity ->
+                                viewModel.onQuantityChange(newQuantity)
+                            },
+                            onIngredientUpdate = {
+
+                            },
+                            ingredient = android.kotlin.foodclub.domain.models.products.Ingredient(
+                                id = "Ingredient_ID",
+                                type = "Broccoli Oil",
+                                quantity = 200,
+                                unit = QuantityUnit.GRAMS,
+                                imageUrl = "image_URL"
+                            )
                         )
                     }
                 }
@@ -262,7 +307,10 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
                         .fillMaxWidth(),
                     colors = defaultButtonColors(),
                     contentPadding = PaddingValues(15.dp),
-                    onClick = {}
+                    onClick = {
+                        viewModel.addToShoppingList(ingredientsList, viewModel.selectedQuantity.value)
+                        viewModel.fetchProductsDatabase("")
+                    }
                 ) {
                     Text(
                         text = stringResource(id = R.string.add_to_my_shopping_list),
@@ -565,7 +613,9 @@ fun HomeView(
                                     )
                                 }
                             },
-                            onInfoClick = {},
+                            onInfoClick = {
+                                triggerIngredientBottomSheetModal()
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .align(Alignment.BottomCenter)
@@ -689,10 +739,19 @@ fun TapToSnapDialog(
 
 
 @Composable
-fun HomeIngredient(ingredientTitle: String, ingredientImage: Int) {
+fun HomeIngredient(
+    ingredientTitle: String,
+    ingredientImage: Int,
+    onQuantityChange: (Int) -> Unit,
+    onIngredientUpdate: () -> Unit,
+    ingredient: Ingredient,
+    viewModel: HomeViewModel,
+) {
     var isSelected by remember { mutableStateOf(false) }
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 240.dp
     var isSmallScreen by remember { mutableStateOf(false) }
+    var quantity by remember { mutableStateOf(ingredient.quantity) }
+    val quantityState by viewModel.quantity.collectAsState()
 
     if (screenHeight <= 440.dp) {
         isSmallScreen = true
@@ -725,7 +784,8 @@ fun HomeIngredient(ingredientTitle: String, ingredientImage: Int) {
                     if (isSelected) foodClubGreen
                     else Color(0xFFECECEC)
                 )
-                .clickable { isSelected = !isSelected }
+                .clickable { isSelected = !isSelected
+                    viewModel.toggleIngredientSelection(ingredient)}
                 .padding(4.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -763,10 +823,20 @@ fun HomeIngredient(ingredientTitle: String, ingredientImage: Int) {
                             .size(50.dp)
                             .padding(end = 15.dp)
                             .clip(RoundedCornerShape(20.dp))
-                            .clickable { }
+                            .clickable {
+                                // DECREASING INGREDIENT
+                                ingredient.decrementQuantity(5)
+                                quantity = ingredient.quantity
+                                onQuantityChange(quantity)
+                                onIngredientUpdate()
+                            }
                     )
+                    LaunchedEffect(quantity) {
+                        // UPDATE QUANTITY WHEN IT CHANGES
+                        quantity = ingredient.quantity
+                    }
                     Text(
-                        text = stringResource(id = R.string.weight_placeholder),
+                        text = "$quantityState g", // TEXT CHANGES WHEN U PRESS BUTTON ,
                         color = Color.Black,
                         fontFamily = Montserrat,
                         fontSize = 14.sp
@@ -778,7 +848,13 @@ fun HomeIngredient(ingredientTitle: String, ingredientImage: Int) {
                             .size(50.dp)
                             .padding(start = 15.dp)
                             .clip(RoundedCornerShape(20.dp))
-                            .clickable { }
+                            .clickable {
+                                // INCREASING INGREDIENT
+                                ingredient.incrementQuantity(5) // INCREMENT BY 5
+                                quantity = ingredient.quantity
+                                onQuantityChange(quantity)
+                                onIngredientUpdate()
+                            }
                     )
                 }
             }

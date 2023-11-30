@@ -37,11 +37,50 @@ class MyBasketViewModel @Inject constructor(
         fetchProductsDatabase("")
         _basket.value.clearSelectedIngredients()
         _selectedProductsList.update { _basket.value.selectedIngredients }
+
+        // OBSERVES BASKET + UPDATES
+        viewModelScope.launch {
+            _basket.collect { basket ->
+                _productsList.value = basket.ingredients
+            }
+        }
     }
 
     fun saveBasket() {
         basketCache.saveBasket(_basket.value)
     }
+
+    private val _selectedIngredients = MutableStateFlow<List<Ingredient>>(listOf())
+    val selectedIngredients: StateFlow<List<Ingredient>> get() = _selectedIngredients
+
+
+    fun refreshBasket() {
+        _productsList.value = _basket.value.ingredients
+    }
+    fun updateSelectedIngredients(selectedIngredients: List<Ingredient>) {
+        _selectedIngredients.value = selectedIngredients
+    }
+
+    fun addIngredientsToBasket(ingredients: List<Ingredient>) {
+        // SAVES CURRENT LIST
+        val currentIngredients = _basket.value.ingredients.toMutableList()
+
+        // ADDS NEW INGREDIENT TO BASKET
+        ingredients.forEach { ingredient ->
+            _basket.value.addIngredient(ingredient)
+        }
+
+        // SAVE UPDATED BASKET
+        saveBasket()
+
+        // UPDATE PRODUCT LIST
+        _productsList.value = currentIngredients + ingredients
+
+        // CLEARS
+        _selectedIngredients.value = emptyList()
+    }
+
+
 
     fun addIngredient(ingredient: Ingredient) {
         _basket.value.addIngredient(ingredient)

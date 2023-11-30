@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -64,8 +65,16 @@ fun MyBasketView(
     val productsList = viewModel.productsList.collectAsState()
     val selectedProductsIds = viewModel.selectedProductsList.collectAsState()
     var deleteSelected by remember { mutableStateOf(false) }
+    val selectedIngredients = viewModel.selectedIngredients.collectAsState()
 
     val triggerBottomSheetModal: () -> Unit = {
+        // GETTING SELECTED INGREDIENT FROM HOME VIEW MODEL
+        val selectedIngredients = viewModel.selectedIngredients.value
+
+        // PASSING SELECTED INGREDIENT TO MY BASKET VIEW
+        viewModel.addIngredientsToBasket(selectedIngredients)
+        //viewModel.updateSelectedIngredients(emptyList())
+
         showSheet = !showSheet
         systemUiController.setStatusBarColor(color = Color(0x00ACACAC), darkIcons = true)
         systemUiController.setNavigationBarColor(color = Color.Black, darkIcons = true)
@@ -88,7 +97,6 @@ fun MyBasketView(
             onListUpdate = { viewModel.fetchProductsDatabase(it) },
             onSave = { viewModel.addIngredient(it) }
         )
-
     }
     Column(
         modifier = Modifier
@@ -101,45 +109,45 @@ fun MyBasketView(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-                Row(
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 20.dp, end = 20.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = stringResource(id = R.string.my_basket),
+                    fontSize = 25.sp,
+                    fontFamily = Montserrat,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    style = TextStyle(letterSpacing = -1.sp)
+                )
+                Button(
+                    shape = RectangleShape,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 20.dp, end = 20.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.my_basket),
-                        fontSize = 25.sp,
-                        fontFamily = Montserrat,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black,
-                        style = TextStyle(letterSpacing = -1.sp)
-                    )
-                    Button(
-                        shape = RectangleShape,
-                        modifier = Modifier
-                            .border(
-                                1.dp, Color(0xFFF5F5F5), shape = RoundedCornerShape(22.dp)
-                            )
-                            .clip(RoundedCornerShape(22.dp))
-                            .width(50.dp)
-                            .height(50.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFFF5F5F5),
-                            contentColor = Color.White
-                        ),
-                        contentPadding = PaddingValues(5.dp),
-                        onClick = { deleteSelected = true }
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.delete_bin_5_line__2_),
-                            contentDescription = stringResource(id = R.string.go_back),
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.width(20.dp).height(20.dp)
+                        .border(
+                            1.dp, Color(0xFFF5F5F5), shape = RoundedCornerShape(22.dp)
                         )
-                    }
+                        .clip(RoundedCornerShape(22.dp))
+                        .width(50.dp)
+                        .height(50.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFF5F5F5),
+                        contentColor = Color.White
+                    ),
+                    contentPadding = PaddingValues(5.dp),
+                    onClick = { deleteSelected = true }
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.delete_bin_5_line__2_),
+                        contentDescription = stringResource(id = R.string.go_back),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.width(20.dp).height(20.dp)
+                    )
                 }
+            }
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -171,28 +179,45 @@ fun MyBasketView(
                     )
                 }
             }
-            LazyColumn (modifier = Modifier.padding(end = 20.dp, start = 20.dp, bottom = 110.dp)) {
-                items(
-                    items = productsList.value,
-                    key = { ingredient -> ingredient.id }
-                ) { ingredient ->
-                    val product = ingredient
-                    BasketIngredient(
-                        ingredient = product,
-                        isShown = !selectedProductsIds.value.contains(product.id)||!deleteSelected,
-                        onSelectionChange = {bool ->
-                            if(bool) viewModel.selectIngredient(product.id)
-                            else viewModel.unselectIngredient(product.id) },
-                        onIngredientUpdate = { viewModel.saveBasket() }
-                    )
+
+            val updatedProductList = productsList.value.map { product ->
+                val isSelectedProduct = viewModel.selectedIngredients.value.any { it.id == product.id }
+                product.copy(isSelected = isSelectedProduct)
+            }
+
+            if (updatedProductList.isNotEmpty()) {
+                LazyColumn(
+                    modifier = Modifier.padding(end = 20.dp, start = 20.dp, bottom = 110.dp)
+                ) {
+//                    itemsIndexed(
+//                        items = updatedProductList,
+//                        key = { index, product -> "${product.id}_${index}" }
+//                    ) { index, product ->
+//
+//                    }
+
+                    itemsIndexed(
+                        items = productsList.value,
+                        key = { index, ingredient -> "${index}_${ingredient.id}" }
+                    ) { index, ingredient ->
+                        val product = ingredient
+                        BasketIngredient(
+                            ingredient = product,
+                            isShown = !selectedProductsIds.value.contains(product.id) || !deleteSelected,
+                            onSelectionChange = { bool ->
+                                if (bool) viewModel.selectIngredient(product.id)
+                                else viewModel.unselectIngredient(product.id)
+                            },
+                            onIngredientUpdate = { viewModel.saveBasket() }
+                        )
+                    }
                 }
             }
         }
-
     }
 
     LaunchedEffect(deleteSelected) {
-        if(deleteSelected) {
+        if (deleteSelected) {
             delay(800)
             viewModel.deleteSelectedIngredients()
             deleteSelected = false
@@ -200,18 +225,19 @@ fun MyBasketView(
     }
 }
 
+
 @Composable
 fun BasketIngredient(ingredient: Ingredient, isShown: Boolean,
                      onSelectionChange: (isSelected: Boolean) -> Unit,
                      onIngredientUpdate: () -> Unit) {
-    var isSelected by remember { mutableStateOf(false) }
+    var isSelected by remember { mutableStateOf(ingredient.isSelected) }
 
     var quantity by remember { mutableStateOf(ingredient.quantity) }
     val type by remember { mutableStateOf(ingredient.type) }
     val unit by remember { mutableStateOf(ingredient.unit) }
 
     var showItem by remember { mutableStateOf(true) }
-    if(!isShown) {
+    if (!isShown) {
         showItem = false
     }
 
@@ -263,7 +289,7 @@ fun BasketIngredient(ingredient: Ingredient, isShown: Boolean,
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Image(
                                 painter = painterResource(id = R.drawable.baseline_arrow_left_24),
-                                contentDescription = stringResource(id = R.string.profile_picture),
+                                contentDescription = "Profile Image",
                                 modifier = Modifier.size(50.dp).padding(end = 15.dp)
                                     .clip(RoundedCornerShape(20.dp))
                                     .clickable {
@@ -280,7 +306,7 @@ fun BasketIngredient(ingredient: Ingredient, isShown: Boolean,
                             )
                             Image(
                                 painter = painterResource(id = R.drawable.baseline_arrow_right_24),
-                                contentDescription = stringResource(id = R.string.profile_picture),
+                                contentDescription = "Profile Image",
                                 modifier = Modifier.size(50.dp).padding(start = 15.dp)
                                     .clip(RoundedCornerShape(20.dp))
                                     .clickable {
@@ -297,3 +323,4 @@ fun BasketIngredient(ingredient: Ingredient, isShown: Boolean,
         }
     }
 }
+
