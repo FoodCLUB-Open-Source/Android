@@ -163,7 +163,7 @@ fun NavGraphBuilder.homeNavigationGraph(
                 uri = uri,
                 navController = navController,
                 state = state
-            ) // **CHANGED THIS**
+            )
         }
 //        composable(route = HomeOtherRoutes.CreateRecipeView.route) {
 //            setBottomBarVisibility(false)
