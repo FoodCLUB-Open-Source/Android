@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
@@ -123,7 +124,7 @@ fun StoryView(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 60.dp)
+                    .padding(horizontal = dimensionResource(id = R.dimen.dim_20), vertical = dimensionResource(id = R.dimen.dim_60))
             ) {
                 StoryInfo(
                     painter = storyDetails.authorPhotoPainter,
@@ -132,13 +133,13 @@ fun StoryView(
                 )
                 Button(
                     onClick = { callbackDisableStory() },
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0x00FFFFFF).copy(alpha = 0.1f),
                         contentColor = Color(0x00FFFFFF).copy(alpha = 0.1f)
                     ),
-                    contentPadding = PaddingValues(4.dp),
-                    modifier = Modifier.size(40.dp)
+                    contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_4)),
+                    modifier = Modifier.size(dimensionResource(id = R.dimen.dim_40))
                 ) {
                     Image(
                         painter = painterResource(R.drawable.baseline_close_24),
@@ -158,29 +159,29 @@ fun StoryInfo(
     time: Long,
     modifier: Modifier = Modifier
 ) {
-    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+    Row(horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_10))) {
         Image(
             painter = painter,
             contentDescription = stringResource(id = R.string.author_photo),
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .size(45.dp)
+                .size(dimensionResource(id = R.dimen.dim_45))
                 .clip(CircleShape)
         )
 
         Column(
-            verticalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterVertically),
-            modifier = Modifier.height(45.dp)
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_5), Alignment.CenterVertically),
+            modifier = Modifier.height(dimensionResource(id = R.dimen.dim_45))
         ) {
             Text(
                 text = name,
                 color = Color.White,
-                fontSize = 16.sp
+                fontSize = dimensionResource(id = R.dimen.fon_16).value.sp
             )
             Text(
                 text = stringResource(id = R.string.time_ago, TimeUtil.getHoursAgoFromNow(time)),
                 color = Color.White,
-                fontSize = 12.sp
+                fontSize = dimensionResource(id = R.dimen.fon_12).value.sp
             )
         }
     }

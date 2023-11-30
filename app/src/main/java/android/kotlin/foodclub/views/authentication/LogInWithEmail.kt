@@ -1,6 +1,8 @@
 package android.kotlin.foodclub.views.authentication
 
+import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.navigation.auth.AuthScreen
 import android.kotlin.foodclub.utils.composables.AuthLayout
 import android.kotlin.foodclub.utils.composables.ConfirmButton
@@ -23,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
@@ -48,10 +51,10 @@ fun LogInWithEmail(
         subHeading = "Cooking just got social!",
         onBackButtonClick = { navController.popBackStack() }) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy( dimensionResource(id = R.dimen.dim_16)),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_4))) {
                 CustomTextField(initialValue = username,
                     placeholder = "Username", keyboardType = KeyboardType.Text,
                     onCorrectnessStateChange = { filledUsername = !filledUsername },
@@ -66,9 +69,9 @@ fun LogInWithEmail(
 
                 Text(
                     text = loginStatus ?: "",
-                    fontSize = 12.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
                     color = Color.Red,
-                    modifier = Modifier.padding(horizontal = 10.dp)
+                    modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.dim_10))
                 )
 
                 ConfirmButton(
@@ -87,8 +90,8 @@ fun LogInWithEmail(
                     color = Color.Black,
                     text = "Forgot Password?",
                     fontFamily = Montserrat,
-                    fontSize = 13.sp,
-                    modifier = Modifier.padding(end = 5.dp)
+                    fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
+                    modifier = Modifier.padding(end =dimensionResource(id = R.dimen.dim_5))
                 )
                 ClickableText(
                     text = AnnotatedString("Reset here"),
@@ -96,9 +99,9 @@ fun LogInWithEmail(
                         navController.navigate(route = AuthScreen.Forgot.route)
                     },
                     style = TextStyle(
-                        color = Color(152, 209, 60),
+                        color = foodClubGreen,
                         fontFamily = Montserrat,
-                        fontSize = 13.sp,
+                        fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
                         textDecoration = TextDecoration.Underline
                     )
                 )
@@ -108,25 +111,25 @@ fun LogInWithEmail(
 //                contentDescription = "app_title",
 //                modifier = Modifier
 //                    .fillMaxWidth()
-//                    .height(15.dp)
+//                    .height( dimensionResource(id = R.dimen.dim_15))
 //
 //
 //            )
 
 //            Row(
 //                modifier = Modifier.fillMaxWidth(),
-//                horizontalArrangement = Arrangement.spacedBy(15.dp,Alignment.CenterHorizontally),
+//                horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_15),Alignment.CenterHorizontally),
 //            ) {
 //                Button(
 //                    shape = RectangleShape,
 //                    modifier = Modifier
-//                        .width(80.dp)
-//                        .border(1.dp, Color(230, 230, 230, 255), shape = RoundedCornerShape(10.dp))
-//                        .clip(RoundedCornerShape(10.dp)),
+//                        .width(dimensionResource(id = R.dimen.dim_80))
+//                        .border(dimensionResource(id = R.dimen.dim_1), Color(230, 230, 230, 255), shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))
+//                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
 //                    colors = ButtonDefaults.buttonColors(
 //                        containerColor = Color(218, 218, 218, 70)
 //
-//                    ), contentPadding = PaddingValues(15.dp),
+//                    ), contentPadding = PaddingValues( dimensionResource(id = R.dimen.dim_15)),
 //
 //                    onClick = {
 //
@@ -136,19 +139,19 @@ fun LogInWithEmail(
 //                    Image(
 //                        painterResource(id = R.mipmap.facebook_icon),
 //                        contentDescription = "",
-//                        Modifier.size(20.dp)
+//                        Modifier.size(dimensionResource(id = R.dimen.dim_20))
 //                    )
 //                }
 //
 //                Button(
 //                    shape = RectangleShape,
 //                    modifier = Modifier
-//                        .width(80.dp)
-//                        .border(1.dp, Color(230, 230, 230, 255), shape = RoundedCornerShape(10.dp))
-//                        .clip(RoundedCornerShape(10.dp)),
+//                        .width(dimensionResource(id = R.dimen.dim_80))
+//                        .border(dimensionResource(id = R.dimen.dim_1), Color(230, 230, 230, 255), shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))
+//                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
 //                    colors = ButtonDefaults.buttonColors(
 //                        containerColor = Color(218, 218, 218, 70)
-//                    ), contentPadding = PaddingValues(15.dp),
+//                    ), contentPadding = PaddingValues( dimensionResource(id = R.dimen.dim_15)),
 //
 //                    onClick = {
 //
@@ -158,7 +161,7 @@ fun LogInWithEmail(
 //                    Image(
 //                        painterResource(id = R.mipmap.instagram_icon),
 //                        contentDescription = "",
-//                        Modifier.size(20.dp)
+//                        Modifier.size(dimensionResource(id = R.dimen.dim_20))
 //                    )
 //                }
 //            }

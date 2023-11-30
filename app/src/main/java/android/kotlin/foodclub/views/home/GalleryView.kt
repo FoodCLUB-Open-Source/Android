@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.viewModels.home.GalleryViewModel
 import android.media.MediaMetadataRetriever
 import android.net.Uri
@@ -45,6 +46,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -149,7 +151,7 @@ public fun GalleryView(
         ) {
             Column(
                 modifier = Modifier
-                    .padding(10.dp)
+                    .padding(dimensionResource(id = R.dimen.dim_10))
                     .fillMaxWidth()
                     .background(Color(0xFF131622))
             )
@@ -160,26 +162,26 @@ public fun GalleryView(
                         onClick = {
                             navController.popBackStack()
                         },
-                        shape = RoundedCornerShape(10.dp),
-                        colors = ButtonDefaults.buttonColors(Color(0xFF7EC60B)),
-                        contentPadding = PaddingValues(0.dp),
-                        modifier = Modifier.size(50.dp)
+                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
+                        colors = ButtonDefaults.buttonColors(foodClubGreen),
+                        contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_0)),
+                        modifier = Modifier.size(dimensionResource(id = R.dimen.dim_50))
                     )
                     {
                         Image(
                             painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
                             contentDescription = null,
                             modifier = Modifier
-                                .width(20.dp)
-                                .height(20.dp)
+                                .width(dimensionResource(id = R.dimen.dim_20))
+                                .height(dimensionResource(id = R.dimen.dim_20))
                         )
                     }
                     Text(
-                        fontSize = 30.sp,
+                        fontSize = dimensionResource(id = R.dimen.fon_30).value.sp,
                         text = stringResource(id = R.string.gallery),
                         fontFamily = Montserrat,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(25.dp),
+                        modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_25)),
                         color = Color.White
                     )
                 }
@@ -200,24 +202,24 @@ public fun GalleryView(
                                     OnOptionSelected(true)
                                 }
                             },
-                            shape = RoundedCornerShape(20.dp),
+                            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)),
                             modifier = Modifier
-                                .width(170.dp)
-                                .border(1.dp, Color.White, shape = RoundedCornerShape(20.dp))
+                                .width(dimensionResource(id = R.dimen.dim_170))
+                                .border(dimensionResource(id = R.dimen.dim_1), Color.White, shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
                                 .then(
                                     if (selectedImageOption) {
                                         Modifier.background(
-                                            Color(0xFF7EC60B),
-                                            shape = RoundedCornerShape(20.dp)
+                                            foodClubGreen,
+                                            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_20))
                                         )
                                     } else {
                                         Modifier.background(
                                             Color.Transparent,
-                                            shape = RoundedCornerShape(20.dp)
+                                            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_20))
                                         )
                                     }
                                 ),
-                            contentPadding = PaddingValues(0.dp),
+                            contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_0)),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color.Transparent,
                                 disabledContainerColor = Color.Transparent,
@@ -229,7 +231,7 @@ public fun GalleryView(
                             Text(
                                 text = stringResource(id = R.string.images),
                                 fontFamily = Montserrat,
-                                fontSize = 13.sp,
+                                fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
                             )
@@ -240,25 +242,25 @@ public fun GalleryView(
                                 if (selectedImageOption) {
                                     OnOptionSelected(false)
                                 }
-                            }, shape = RoundedCornerShape(20.dp),
+                            }, shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)),
                             modifier = Modifier
-                                .width(170.dp)
-                                .border(1.dp, Color.White, shape = RoundedCornerShape(20.dp))
+                                .width(dimensionResource(id = R.dimen.dim_170))
+                                .border(dimensionResource(id = R.dimen.dim_1), Color.White, shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
                                 .then(
                                     if (!selectedImageOption) {
                                         Modifier.background(
-                                            Color(0xFF7EC60B),
-                                            shape = RoundedCornerShape(20.dp)
+                                            foodClubGreen,
+                                            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_20))
                                         )
                                     } else {
                                         Modifier.background(
                                             Color.Transparent,
-                                            shape = RoundedCornerShape(20.dp)
+                                            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_20))
                                         )
                                     }
 
                                 ),
-                            contentPadding = PaddingValues(0.dp),
+                            contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_0)),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color.Transparent,
                                 disabledContainerColor = Color.Transparent,
@@ -270,7 +272,7 @@ public fun GalleryView(
                             Text(
                                 text = stringResource(id = R.string.video),
                                 fontFamily = Montserrat,
-                                fontSize = 13.sp,
+                                fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
                             )
@@ -331,7 +333,7 @@ fun <E> GalleryTab(
 
     LazyColumn(
         modifier = Modifier
-            .padding(5.dp)
+            .padding(dimensionResource(id = R.dimen.dim_5))
             .fillMaxWidth()
     ) {
         items(items = itemRows)
@@ -384,7 +386,7 @@ fun GalleryImageTab(images: List<Uri>, itemsPerRow: Int = 3, context: Context) {
 
     LazyColumn(
         modifier = Modifier
-            .padding(5.dp)
+            .padding(dimensionResource(id = R.dimen.dim_5))
             .fillMaxWidth()
     ) {
         items(items = imageRows)
@@ -406,7 +408,7 @@ fun ImageItem(modifier: Modifier, imageID: ImageBitmap) {
     Card(
         modifier = Modifier
             .aspectRatio(1f)
-            .padding(start = 5.dp, top = 5.dp)
+            .padding(start =dimensionResource(id = R.dimen.dim_5), top =dimensionResource(id = R.dimen.dim_5))
             .clickable {
                 // TODO add functionality
             }
@@ -418,7 +420,7 @@ fun ImageItem(modifier: Modifier, imageID: ImageBitmap) {
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .aspectRatio(1f, true)
-                .padding(2.dp)
+                .padding(dimensionResource(id = R.dimen.dim_2))
         )
 
     }
@@ -454,7 +456,7 @@ fun GalleryVideoTab(
 
     LazyColumn(
         modifier = Modifier
-            .padding(5.dp)
+            .padding(dimensionResource(id = R.dimen.dim_5))
             .fillMaxWidth()
     ) {
         items(items = videoRows)
@@ -496,7 +498,7 @@ fun VideoItem(
     Card(
         modifier = Modifier
             .aspectRatio(1f)
-            .padding(start = 5.dp, top = 5.dp)
+            .padding(start =dimensionResource(id = R.dimen.dim_5), top =dimensionResource(id = R.dimen.dim_5))
             .clickable {
 
                 val uriEncoded = URLEncoder.encode(
@@ -514,7 +516,7 @@ fun VideoItem(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .aspectRatio(1f, true)
-                    .padding(2.dp)
+                    .padding(dimensionResource(id = R.dimen.dim_2))
             )
         }
     }
