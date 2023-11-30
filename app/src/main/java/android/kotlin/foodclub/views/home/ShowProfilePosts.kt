@@ -60,6 +60,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
@@ -91,47 +92,47 @@ fun ConfirmDeleteDialog(
     Dialog(
         onDismissRequest = onDismiss
     ) {
-        Box(modifier = Modifier.height(450.dp)) {
+        Box(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_450))) {
             Column {
-                Spacer(modifier = Modifier.height(130.dp))
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_130)))
                 Box(modifier = Modifier
-                    .height(490.dp)
+                    .height(dimensionResource(id = R.dimen.dim_490))
                     .background(
                         color = Color.White,
-                        shape = RoundedCornerShape(25.dp, 10.dp, 25.dp, 10.dp)
+                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_25), dimensionResource(id = R.dimen.dim_10), dimensionResource(id = R.dimen.dim_25), dimensionResource(id = R.dimen.dim_10))
                     )
                 ) {
                     Column(
-                        modifier = Modifier.padding(16.dp),
+                        modifier = Modifier.padding( dimensionResource(id = R.dimen.dim_16)),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
 
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_24)))
 
                         Text(
                             text = title,
                             textAlign = TextAlign.Center,
                             modifier = Modifier
-                                .padding(top = 10.dp)
+                                .padding(top = dimensionResource(id = R.dimen.dim_10))
                                 .fillMaxWidth(),
                             style = MaterialTheme.typography.headlineSmall,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             fontFamily = Montserrat,
                             )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_8)))
 
 
                         Text(
                             text = desc,
                             textAlign = TextAlign.Center,
                             modifier = Modifier
-                                .padding(top = 10.dp, start = 25.dp, end = 25.dp)
+                                .padding(top = dimensionResource(id = R.dimen.dim_10), start = dimensionResource(id = R.dimen.dim_25), end = dimensionResource(id = R.dimen.dim_25))
                                 .fillMaxWidth(),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             fontFamily = Montserrat,
                             )
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_24)))
 
 
                         Button(
@@ -150,7 +151,7 @@ fun ConfirmDeleteDialog(
                             colors = defaultButtonColors(),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clip(RoundedCornerShape(5.dp))
+                                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_5)))
                         ) {
                             Text(
                                 text = stringResource(id = R.string.yes),
@@ -160,13 +161,13 @@ fun ConfirmDeleteDialog(
                         }
 
 
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_8)))
                     }
                 }
             }
             HeaderImage(
                 modifier = Modifier
-                    .size(200.dp)
+                    .size(dimensionResource(id = R.dimen.dim_200))
                     .align(Alignment.TopCenter)
             )
         }
@@ -198,7 +199,7 @@ fun ShowProfilePosts(
 
     var screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.94f
 
-    if (screenHeightMinusBottomNavItem <= 650.dp) {
+    if (screenHeightMinusBottomNavItem <= dimensionResource(id = R.dimen.dim_650)) {
         screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.96f
     }
 
@@ -255,8 +256,9 @@ fun ShowProfilePosts(
                 modifier = Modifier
             ) { vtPager->
                 var pauseButtonVisibility by remember { mutableStateOf(false) }
+                val iconSize = dimensionResource(id = R.dimen.dim_110)
                 val doubleTapState by remember { mutableStateOf(
-                    AnimatedIcon(R.drawable.liked, 110.dp, localDensity)
+                    AnimatedIcon(R.drawable.liked, iconSize = iconSize, localDensity)
                 ) }
 
                 Box(
@@ -352,22 +354,22 @@ fun DeleteButton(
 ){
     Box(
         modifier = Modifier
-            .padding(end = 20.dp, top = 50.dp)
+            .padding(end = dimensionResource(id = R.dimen.dim_20), top = dimensionResource(id = R.dimen.dim_50))
             .fillMaxSize()
             .wrapContentSize(align = alignment)
     ) {
         Button(
             shape = RectangleShape,
             modifier = Modifier
-                .border(1.dp, Color.Transparent, shape = RoundedCornerShape(15.dp))
-                .clip(RoundedCornerShape(15.dp))
+                .border(dimensionResource(id = R.dimen.dim_1), Color.Transparent, shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
+                .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
                 .align(Alignment.BottomCenter)
-                .width(40.dp)
-                .height(40.dp),
+                .width(dimensionResource(id = R.dimen.dim_40))
+                .height(dimensionResource(id = R.dimen.dim_40)),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Transparent,
                 contentColor = Color.Transparent
-            ), contentPadding = PaddingValues(5.dp),
+            ), contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_5)),
             onClick = {
                 onDeleteClicked()
             }
@@ -377,8 +379,8 @@ fun DeleteButton(
                 contentDescription = stringResource(id = R.string.delete_video),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .width(25.dp)
-                    .height(25.dp)
+                    .width(dimensionResource(id = R.dimen.dim_25))
+                    .height(dimensionResource(id = R.dimen.dim_25))
             )
         }
     }
@@ -388,21 +390,21 @@ fun DeleteButton(
 fun BackButton(alignment: Alignment, onBackPressed: () -> Unit) {
     Box(
         modifier = Modifier
-            .padding(end = 20.dp, top = 50.dp)
+            .padding(end = dimensionResource(id = R.dimen.dim_20), top = dimensionResource(id = R.dimen.dim_50))
             .wrapContentSize(align = alignment)
     ) {
         Button(
             shape = RectangleShape,
             modifier = Modifier
-                .border(1.dp, Color.Transparent, shape = RoundedCornerShape(15.dp))
-                .clip(RoundedCornerShape(15.dp))
+                .border(dimensionResource(id = R.dimen.dim_1), Color.Transparent, shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
+                .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
                 .align(Alignment.BottomCenter)
-                .width(40.dp)
-                .height(40.dp),
+                .width(dimensionResource(id = R.dimen.dim_40))
+                .height(dimensionResource(id = R.dimen.dim_40)),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Transparent,
                 contentColor = Color.Transparent
-            ), contentPadding = PaddingValues(5.dp),
+            ), contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_5)),
             onClick = {
                 onBackPressed()
             }
@@ -412,8 +414,8 @@ fun BackButton(alignment: Alignment, onBackPressed: () -> Unit) {
                 contentDescription = "Delete",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .width(25.dp)
-                    .height(25.dp),
+                    .width(dimensionResource(id = R.dimen.dim_25))
+                    .height(dimensionResource(id = R.dimen.dim_25)),
                 colorFilter = ColorFilter.tint(Color.White)
             )
         }

@@ -43,6 +43,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -117,12 +118,12 @@ fun TakeProfilePhotoView(
                 },
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(30.dp)
+                    .padding( dimensionResource(id = R.dimen.dim_30))
             ) {
                 Icon(
                     painterResource(id = R.drawable.close),
                     contentDescription = stringResource(id = R.string.close_camera),
-                    modifier.size(30.dp),
+                    modifier.size( dimensionResource(id = R.dimen.dim_30)),
                     tint = foodClubGreen
                 )
             }
@@ -131,7 +132,7 @@ fun TakeProfilePhotoView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter)
-                    .padding(30.dp),
+                    .padding( dimensionResource(id = R.dimen.dim_30)),
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
                 IconButton(
@@ -145,7 +146,7 @@ fun TakeProfilePhotoView(
                     Icon(
                         painterResource(id = R.drawable.baseline_cameraswitch_24),
                         contentDescription = stringResource(id = R.string.switch_camera),
-                        modifier = modifier.size(30.dp),
+                        modifier = modifier.size( dimensionResource(id = R.dimen.dim_30)),
                         tint = foodClubGreen
                     )
                 }
@@ -161,7 +162,7 @@ fun TakeProfilePhotoView(
                     Icon(
                         painterResource(id = R.drawable.take_photo),
                         contentDescription = stringResource(id = R.string.take_photo),
-                        modifier = modifier.size(30.dp),
+                        modifier = modifier.size( dimensionResource(id = R.dimen.dim_30)),
                         tint = foodClubGreen,
                     )
                 }
@@ -195,13 +196,13 @@ fun PhotoTakenPreview(
             Row(
                 modifier = Modifier
                     .background(Color.Transparent)
-                    .padding(bottom = 40.dp)
+                    .padding(bottom =  dimensionResource(id = R.dimen.dim_40))
                     .align(Alignment.BottomCenter),
                 horizontalArrangement = Arrangement.Center
             ) {
                 IconButton(
                     modifier = Modifier
-                        .size(56.dp)
+                        .size(dimensionResource(id = R.dimen.dim_56))
                         .clip(CircleShape)
                         .background(Color.Gray),
                     onClick = {
@@ -209,18 +210,18 @@ fun PhotoTakenPreview(
                     }
                 ) {
                     Icon(
-                        modifier = Modifier.size(30.dp),
+                        modifier = Modifier.size( dimensionResource(id = R.dimen.dim_30)),
                         imageVector = Icons.Default.Close,
                         contentDescription = null,
                         tint = Color.White
                     )
                 }
 
-                Spacer(modifier = Modifier.width(40.dp))
+                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_40)))
 
                 IconButton(
                     modifier = Modifier
-                        .size(56.dp)
+                        .size(dimensionResource(id = R.dimen.dim_56))
                         .clip(CircleShape)
                         .background(foodClubGreen),
                     onClick = {
@@ -228,7 +229,7 @@ fun PhotoTakenPreview(
                     }
                 ) {
                     Icon(
-                        modifier = Modifier.size(30.dp),
+                        modifier = Modifier.size( dimensionResource(id = R.dimen.dim_30)),
                         imageVector = Icons.Default.Check,
                         contentDescription = null,
                         tint = Color.White

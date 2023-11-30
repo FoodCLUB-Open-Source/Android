@@ -38,4 +38,11 @@ object ProfileMappersModule {
     fun provideUserDetailsMapper(): UserDetailsMapper {
         return UserDetailsMapper()
     }
+
+    @Provides
+    @Singleton
+    fun provideProfileModelMapper(): ProfileModelMapper {
+        return ProfileModelMapper()
+    }
+
 }

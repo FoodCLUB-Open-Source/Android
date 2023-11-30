@@ -35,6 +35,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.foodClubGreen
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.auth0.jwt.interfaces.Verification
 
@@ -70,8 +72,8 @@ fun SignupVerification(
             var currentCode by remember { mutableStateOf("") }
 
             Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(bottom = 12.dp)
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_8)),
+                modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_12))
             ) {
                 CustomCodeTextField { isEnabled, code ->
                     enableButton = isEnabled
@@ -79,7 +81,7 @@ fun SignupVerification(
                 }
             }
 
-            Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_18))) {
                 ConfirmButton(
                     enabled = enableButton,
                     text = stringResource(id = R.string.verify),
@@ -93,7 +95,7 @@ fun SignupVerification(
                 ) {
                     Text(
                         text = verificationCodeResponse(isTimerRunning, currentTime),
-                        fontSize = 12.sp,
+                        fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
                         fontFamily = Montserrat,
                         color = Color(0xFF1E232C).copy(alpha = 0.5F)
                     )
@@ -110,9 +112,9 @@ fun SignupVerification(
                             textDecoration = TextDecoration.Underline,
                             fontWeight = FontWeight.Bold,
                             fontFamily = Montserrat,
-                            fontSize = 12.sp,
+                            fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
                             color = if (isTimerRunning) Color(0xFF1E232C).copy(alpha = 0.5F)
-                            else Color(0xFF7EC60B)
+                            else foodClubGreen
                         )
                     )
                 }

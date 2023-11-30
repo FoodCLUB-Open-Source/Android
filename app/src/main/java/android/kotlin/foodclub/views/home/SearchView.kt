@@ -2,6 +2,7 @@ package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -40,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -73,7 +75,7 @@ fun SearchView(
             mainTabIndex = it
         }
 
-        Spacer(modifier = Modifier.height(25.dp))
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_25)))
 
         SearchHistory()
     }
@@ -88,7 +90,7 @@ fun SearchRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 60.dp, end = 20.dp, start = 20.dp, bottom = 10.dp),
+            .padding(top = dimensionResource(id = R.dimen.dim_60), end = dimensionResource(id = R.dimen.dim_20), start = dimensionResource(id = R.dimen.dim_20), bottom = dimensionResource(id = R.dimen.dim_10)),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -96,14 +98,14 @@ fun SearchRow(
             modifier = Modifier
                 .fillMaxWidth(0.85f)
                 .clip(
-                    RoundedCornerShape(15.dp)
+                    RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
                 )
             ,
             colors = TextFieldDefaults.textFieldColors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent,
-                containerColor = Color(0xFFF5F5F5)
+                containerColor = containerColor
             ),
             value = searchTextValue,
             onValueChange = {
@@ -111,7 +113,7 @@ fun SearchRow(
             },
             placeholder = {
                 Text(
-                    modifier = Modifier.padding(top = 3.dp),
+                    modifier = Modifier.padding(top =dimensionResource(id = R.dimen.dim_3)),
                     text = "",
                     color = Color.Gray,
                     textAlign = TextAlign.Center
@@ -132,13 +134,13 @@ fun SearchRow(
             }
         )
 
-        Spacer(modifier = Modifier.width(5.dp))
+        Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_5)))
 
         Button(
-            shape = RoundedCornerShape(corner = CornerSize(25.dp)),
+            shape = RoundedCornerShape(corner = CornerSize(dimensionResource(id = R.dimen.dim_25))),
             modifier = Modifier
-                .height(56.dp)
-                .width(56.dp),
+                .height(dimensionResource(id = R.dimen.dim_56))
+                .width(dimensionResource(id = R.dimen.dim_56)),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(245, 245, 245, 255),
             ),
@@ -151,7 +153,7 @@ fun SearchRow(
             BadgedBox(
                 badge = {
                     Badge(
-                        modifier = Modifier.offset(x = (-5).dp, y = 5.dp),
+                        modifier = Modifier.offset(x = (-5).dp, y =dimensionResource(id = R.dimen.dim_5)),
                         containerColor = foodClubGreen
                     )
                     { Text(
@@ -177,13 +179,13 @@ fun SearchHistory(){
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, end = 20.dp),
+            .padding(start = dimensionResource(id = R.dimen.dim_20), end = dimensionResource(id = R.dimen.dim_20)),
         horizontalAlignment = Alignment.Start
     ) {
         Text(
-            modifier = Modifier.padding(bottom = 10.dp),
+            modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_10)),
             text = stringResource(id = R.string.recent_searches),
-            fontSize = 20.sp,
+            fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
             lineHeight = 24.38.sp,
             fontFamily = Montserrat,
             fontWeight = FontWeight(700)
@@ -196,8 +198,8 @@ fun SearchHistory(){
                     TextButton(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(15.dp))
-                            .background(Color(0xFFF5F5F5))
+                            .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
+                            .background(containerColor)
                             .weight(1f)
 
                             .align(Alignment.Start)
@@ -206,7 +208,7 @@ fun SearchHistory(){
                     ) {
                         Box(modifier = Modifier.fillMaxWidth()) {
                             Row(
-                                modifier = Modifier.padding(start = 20.dp, end = 20.dp),
+                                modifier = Modifier.padding(start = dimensionResource(id = R.dimen.dim_20), end = dimensionResource(id = R.dimen.dim_20)),
                                 horizontalArrangement = Arrangement.Start,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
@@ -216,10 +218,10 @@ fun SearchHistory(){
                                     tint = Color.Gray
                                 )
                                 Text(
-                                    modifier = Modifier.padding(start=10.dp),
+                                    modifier = Modifier.padding(start=dimensionResource(id = R.dimen.dim_10)),
                                     text = data,
                                     color = Color.Black,
-                                    fontSize = 16.sp,
+                                    fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                                     fontWeight = FontWeight(500),
                                     lineHeight = 19.5.sp
                                 )
@@ -227,7 +229,7 @@ fun SearchHistory(){
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
                 }
             }
         )

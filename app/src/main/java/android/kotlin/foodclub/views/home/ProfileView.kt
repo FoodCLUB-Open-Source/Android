@@ -5,6 +5,7 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.others.BottomSheetItem
 import android.kotlin.foodclub.domain.models.profile.UserPosts
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.CustomBottomSheet
@@ -72,9 +73,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
@@ -217,7 +218,7 @@ fun ProfileView(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 70.dp, start = 95.dp),
+                        .padding(top = dimensionResource(id = R.dimen.dim_70), start = dimensionResource(id = R.dimen.dim_95)),
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Box(if(userId == 0L) Modifier.clickable { showBottomSheet = true } else Modifier) {
@@ -225,9 +226,9 @@ fun ProfileView(
                             model = imageUri ?: R.drawable.profilepicture,
                             contentDescription = stringResource(id = R.string.profile_picture),
                             modifier = Modifier
-                                .clip(RoundedCornerShape(60.dp))
-                                .height(124.dp)
-                                .width(124.dp),
+                                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_60)))
+                                .height(dimensionResource(id = R.dimen.dim_124))
+                                .width(dimensionResource(id = R.dimen.dim_124)),
                             contentScale = ContentScale.Crop
                         )
                         if(userId == 0L){
@@ -235,8 +236,8 @@ fun ProfileView(
                                 painter = painterResource(R.drawable.profile_picture_change_icon),
                                 contentDescription = stringResource(id = R.string.profile_picture_edit),
                                 modifier = Modifier
-                                    .height(46.dp)
-                                    .width(46.dp)
+                                    .height(dimensionResource(id = R.dimen.dim_46))
+                                    .width(dimensionResource(id = R.dimen.dim_46))
                                     .offset(
                                         x = (cos(PI / 4) * 62 + 39).dp,
                                         y = (sin(PI / 4) * 62 + 39).dp
@@ -244,13 +245,13 @@ fun ProfileView(
                             )
                         }
                     }
-                    Spacer(modifier = Modifier.width(40.dp))
+                    Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_40)))
                     if(userId ==0L) {
                         Button(shape = CircleShape,
                             modifier = Modifier
                                 .clip(CircleShape)
-                                .height(53.dp)
-                                .width(53.dp),
+                                .height(dimensionResource(id = R.dimen.dim_53))
+                                .width(dimensionResource(id = R.dimen.dim_53)),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color(
                                     255,
@@ -271,8 +272,8 @@ fun ProfileView(
                         Button(shape = CircleShape,
                             modifier = Modifier
                                 .clip(CircleShape)
-                                .height(53.dp)
-                                .width(53.dp),
+                                .height(dimensionResource(id = R.dimen.dim_53))
+                                .width(dimensionResource(id = R.dimen.dim_53)),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color(
                                     255,
@@ -295,8 +296,8 @@ fun ProfileView(
                     Modifier
                         .fillMaxSize()
                         .background(Color.White)
-                        .padding(top = 10.dp, start = 4.dp, end = 4.dp),
-                    verticalArrangement = Arrangement.spacedBy(5.dp),
+                        .padding(top = dimensionResource(id = R.dimen.dim_10), start =dimensionResource(id = R.dimen.dim_4), end =dimensionResource(id = R.dimen.dim_4)),
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_5)),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
@@ -304,14 +305,14 @@ fun ProfileView(
                         text = profile.username,
                         fontSize = 23.sp,
                         fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(top = 5.dp),
+                        modifier = Modifier.padding(top =dimensionResource(id = R.dimen.dim_5)),
                         letterSpacing = (-1).sp
                     )
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 5.dp),
-                        horizontalArrangement = Arrangement.spacedBy(70.dp, Alignment.CenterHorizontally)
+                            .padding(top =dimensionResource(id = R.dimen.dim_5)),
+                        horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_70), Alignment.CenterHorizontally)
                     ) {
                         ClickableText(
                             text = AnnotatedString(profile.totalUserFollowers.toString()),
@@ -323,7 +324,7 @@ fun ProfileView(
                                 color = Color.Black,
                                 fontFamily = Montserrat,
                                 fontWeight = FontWeight.SemiBold,
-                                fontSize = 17.sp
+                                fontSize = dimensionResource(id = R.dimen.fon_17).value.sp
                             )
                         )
                         ClickableText(
@@ -336,7 +337,7 @@ fun ProfileView(
                                 color = Color.Black,
                                 fontFamily = Montserrat,
                                 fontWeight = FontWeight.SemiBold,
-                                fontSize = 17.sp
+                                fontSize = dimensionResource(id = R.dimen.fon_17).value.sp
                             )
                         )
                     }
@@ -344,25 +345,25 @@ fun ProfileView(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(Color.White),
-                        horizontalArrangement = Arrangement.spacedBy(30.dp, Alignment.CenterHorizontally)
+                        horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_30), Alignment.CenterHorizontally)
                     ) {
                         Text(
                             fontFamily = Montserrat,
                             text = stringResource(id = R.string.followers),
-                            fontSize = 14.sp,
+                            fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
                             color = Color(127, 147, 141, 255),
                             fontWeight = FontWeight.Light
                         )
                         Text(
                             fontFamily = Montserrat,
                             text = stringResource(id = R.string.following),
-                            fontSize = 14.sp,
+                            fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
                             color = Color(127, 147, 141, 255),
                             fontWeight = FontWeight.Light
                         )
                     }
                     if(userId != 0L && userId != sessionUserId.value) {
-                        Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
                         FollowButton(isFollowed.value, viewModel, sessionUserId.value, userId)
                     }
                     TabRow(selectedTabIndex = pagerState.currentPage,
@@ -373,7 +374,7 @@ fun ProfileView(
                             TabRowDefaults.Indicator(
                                 modifier = Modifier
                                     .tabIndicatorOffset(tabPositions[pagerState.currentPage]),
-                                height = 2.dp,
+                                height =dimensionResource(id = R.dimen.dim_2),
                                 color = Color.Black
                             )
                         }
@@ -394,7 +395,7 @@ fun ProfileView(
                                             fontFamily = Montserrat,
                                             fontWeight = FontWeight.SemiBold,
                                             color = Color.Black,
-                                            fontSize = 16.sp,
+                                            fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                                         )
                                     )
                                 }
@@ -410,7 +411,7 @@ fun ProfileView(
                             Modifier
                                 .fillMaxSize()
                                 .background(Color.White)
-                                .padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 110.dp)
+                                .padding(top =dimensionResource(id = R.dimen.dim_5), start = dimensionResource(id = R.dimen.dim_15), end = dimensionResource(id = R.dimen.dim_15), bottom = dimensionResource(id = R.dimen.dim_110))
                         ) {
                             LazyVerticalGrid(
                                 columns = GridCells.Fixed(2),
@@ -447,7 +448,7 @@ fun ProfileView(
                 ),
                 sheetTitle = stringResource(id = R.string.upload_photo),
                 onDismiss = { showBottomSheet = false },
-                modifier = Modifier.padding(bottom = 110.dp),
+                modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_110)),
                 containerColor = Color.White,
                 titleSpace = true
             )
@@ -464,7 +465,7 @@ fun ProfileView(
                     sheetTitle = "",
 //                enableDragHandle = true,
                     onDismiss = { showUserOptionsSheet = false;},
-                    modifier = Modifier.padding(bottom = 110.dp),
+                    modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_110)),
                     containerColor = Color.Black,
                     titleSpace = false
                 )
@@ -501,10 +502,10 @@ fun GridItem(
     triggerShowDeleteRecipe: (Long) -> Unit
 ){
     Card(modifier = Modifier
-        .height(272.dp)
-        .width(178.dp)
-        .padding(10.dp)
-        ,shape = RoundedCornerShape(15.dp)) {
+        .height(dimensionResource(id = R.dimen.dim_272))
+        .width(dimensionResource(id = R.dimen.dim_178))
+        .padding(dimensionResource(id = R.dimen.dim_10))
+        ,shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))) {
 
         Box(modifier = Modifier
             .fillMaxWidth()
@@ -532,25 +533,25 @@ fun FollowButton(isFollowed: Boolean, viewModel: ProfileViewModel, sessionUserId
         )
     else
         ButtonDefaults.buttonColors(
-            containerColor = Color(0xFF7EC60B),
+            containerColor = foodClubGreen,
             contentColor = Color.White
         )
 
     val content = isFollowed(isFollowed)
 
     val modifier = if(isFollowed) Modifier
-        .width(130.dp)
-        .height(40.dp)
-        .border(1.dp, Color.Black, RoundedCornerShape(40.dp))
-        .clip(RoundedCornerShape(40.dp))
+        .width(dimensionResource(id = R.dimen.dim_130))
+        .height(dimensionResource(id = R.dimen.dim_40))
+        .border(dimensionResource(id = R.dimen.dim_1), Color.Black, RoundedCornerShape(dimensionResource(id = R.dimen.dim_40)))
+        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_40)))
     else Modifier
-        .width(130.dp)
-        .height(40.dp)
+        .width(dimensionResource(id = R.dimen.dim_130))
+        .height(dimensionResource(id = R.dimen.dim_40))
 
     Button(
         onClick = { if(isFollowed) viewModel.unfollowUser(sessionUserId, userId)
             else viewModel.followUser(sessionUserId, userId) },
-        shape = RoundedCornerShape(40.dp),
+        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_40)),
         modifier = modifier,
         colors = colors
     ) {
