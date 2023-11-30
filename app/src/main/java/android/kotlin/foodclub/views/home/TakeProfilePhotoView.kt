@@ -6,6 +6,7 @@ import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.utils.composables.CameraPreview
 import android.kotlin.foodclub.utils.helpers.uriToFile
 import android.kotlin.foodclub.viewModels.home.ProfileViewModel
+import android.kotlin.foodclub.views.home.profile.ProfileState
 import android.net.Uri
 import android.os.Environment
 import android.util.Log
@@ -57,10 +58,11 @@ import java.io.File
 fun TakeProfilePhotoView(
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel,
+    state: ProfileState,
     navController: NavController
 ){
     val context = LocalContext.current
-    val dataStore = viewModel.storeData
+   // val dataStore = viewModel.storeData
     val scope = rememberCoroutineScope()
     val TAG = "TakeProfilePhotoView"
 
@@ -85,13 +87,13 @@ fun TakeProfilePhotoView(
                     val file = uriToFile(photoUri!!, context)
                     if (file != null){
                         viewModel.updateUserProfileImage(
-                            viewModel.myUserId.value,
+                            state.myUserId,
                             file,
                             photoUri!!
                         )
 
                         scope.launch {
-                            dataStore.storeImage(photoUri!!.toString())
+                            state.dataStore?.storeImage(photoUri!!.toString())
                         }
 
                         navController.popBackStack()

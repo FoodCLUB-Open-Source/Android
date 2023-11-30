@@ -10,6 +10,7 @@ import android.kotlin.foodclub.utils.composables.PlayPauseButton
 import android.kotlin.foodclub.utils.composables.VideoLayout
 import android.kotlin.foodclub.utils.composables.VideoPlayer
 import android.kotlin.foodclub.viewModels.home.ProfileViewModel
+import android.kotlin.foodclub.views.home.profile.ProfileState
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -175,12 +176,13 @@ fun ConfirmDeleteDialog(
 fun DeleteRecipeView(
     postId: Long,
     viewModel: ProfileViewModel,
+    state: ProfileState,
     onPostDeleted: () -> Unit,
     onBackPressed: () -> Unit
 ) {
-    val post = viewModel.postData.collectAsState()
-    val userId = viewModel.myUserId.collectAsState()
-    val userData = viewModel.profileModel.collectAsState()
+   // val post = viewModel.postData.collectAsState()
+   // val userId = viewModel.myUserId.collectAsState()
+   // val userData = viewModel.profileModel.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val localDensity = LocalDensity.current
     val infoDialog = remember { mutableStateOf(false) }
@@ -227,7 +229,7 @@ fun DeleteRecipeView(
                     }
             )
         }
-        if(post.value != null) {
+        if(state.postData != null) {
             var pauseButtonVisibility by remember { mutableStateOf(false) }
             val doubleTapState by remember { mutableStateOf(
                 AnimatedIcon(R.drawable.liked, 110.dp, localDensity)
@@ -237,7 +239,7 @@ fun DeleteRecipeView(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                VideoPlayer(post.value!!, onSingleTap = {
+                VideoPlayer(state.postData, onSingleTap = {
                     pauseButtonVisibility = it.isPlaying
                     it.playWhenReady = !it.isPlaying
                 },
@@ -251,17 +253,17 @@ fun DeleteRecipeView(
                     controlPoint = controlPoint.value
                 )
                 var isLiked by remember {
-                    mutableStateOf(post.value!!.currentViewerInteraction.isLiked)
+                    mutableStateOf(state.postData.currentViewerInteraction.isLiked)
                 }
                 var isBookmarked by remember { mutableStateOf(
-                    post.value!!.currentViewerInteraction.isBookmarked)
+                    state.postData.currentViewerInteraction.isBookmarked)
                 }
 
                 hasVideoLoaded.value = true
 
                 BackButton(alignment = Alignment.TopStart, onBackPressed = onBackPressed)
 
-                if (post.value!!.authorDetails == userData.value!!.username){
+                if (state.postData.authorDetails == state.userProfile!!.username){
                     DeleteButton(
                         alignment = Alignment.TopEnd,
                         onDeleteClicked = { infoDialog.value = true }
@@ -270,15 +272,15 @@ fun DeleteRecipeView(
                 LikeButton(doubleTapState) {}
 
                 val simpleUserModel = SimpleUserModel(
-                    userId = userId.value.toInt(),
-                    username = post.value!!.authorDetails,
-                    profilePictureUrl = userData.value!!.profilePictureUrl
+                    userId = state.myUserId.toInt(),
+                    username = state.postData.authorDetails,
+                    profilePictureUrl = state.userProfile.profilePictureUrl
                     )
 
                 PlayPauseButton(buttonVisibility = pauseButtonVisibility)
                 VideoLayout(
                     userDetails = simpleUserModel,
-                    videoStats = post.value!!.videoStats,
+                    videoStats = state.postData.videoStats,
                     likeState = isLiked,
                     bookMarkState = isBookmarked,
                     category = stringResource(id = R.string.meat),
@@ -306,7 +308,7 @@ fun DeleteRecipeView(
 
     //Fix width deformation - recompose
     LaunchedEffect(hasVideoLoaded.value) {
-        if(post.value != null) {
+        if(state.postData != null) {
             delay(50)
             controlPoint.value = false
         }

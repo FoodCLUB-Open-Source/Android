@@ -14,7 +14,7 @@ import android.kotlin.foodclub.views.home.GalleryView
 import android.kotlin.foodclub.views.home.home.HomeView
 import android.kotlin.foodclub.views.home.myBasket.MyBasketView
 import android.kotlin.foodclub.views.home.myDigitalPantry.MyDigitalPantryView
-import android.kotlin.foodclub.views.home.ProfileView
+import android.kotlin.foodclub.views.home.profile.ProfileView
 import android.kotlin.foodclub.views.home.scan.ScanResultView
 import android.kotlin.foodclub.views.home.scan.ScanView
 import android.kotlin.foodclub.views.home.search.SearchView
@@ -74,6 +74,7 @@ fun NavGraphBuilder.homeNavigationGraph(
             })
         ) {
             val viewModel: ProfileViewModel = hiltViewModel()
+            val state = viewModel.state.collectAsState()
             val userId = it.arguments?.getLong("userId")
             if (userId == null) {
                 navController.popBackStack()
@@ -83,7 +84,8 @@ fun NavGraphBuilder.homeNavigationGraph(
             ProfileView(
                 navController = navController,
                 userId = userId,
-                viewModel = viewModel
+                viewModel = viewModel,
+                state = state.value
             )
 
         }
@@ -168,13 +170,13 @@ fun NavGraphBuilder.homeNavigationGraph(
 //        }
 
         composable(route = HomeOtherRoutes.GalleryView.route) {
-            val state = it.arguments?.getString("state") ?: ""
+            val stateEncoded = it.arguments?.getString("state") ?: ""
             val viewModel: GalleryViewModel = hiltViewModel()
 
             GalleryView(
                 navController = navController,
                 viewModel = viewModel,
-                stateEncoded = state
+                stateEncoded = stateEncoded
             )
         }
 
@@ -233,10 +235,12 @@ fun NavGraphBuilder.homeNavigationGraph(
         }
         composable(route = HomeOtherRoutes.TakeProfilePhotoView.route) {
             val viewModel: ProfileViewModel = hiltViewModel()
+            val state = viewModel.state.collectAsState()
 
             TakeProfilePhotoView(
                 navController = navController,
-                viewModel = viewModel
+                viewModel = viewModel,
+                state = state.value
             )
         }
 

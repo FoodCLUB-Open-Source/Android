@@ -13,6 +13,7 @@ import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.utils.helpers.StoreData
 import android.kotlin.foodclub.utils.helpers.UiEvent
+import android.kotlin.foodclub.views.home.profile.ProfileState
 import android.net.Uri
 import android.util.Log
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,38 +35,45 @@ class ProfileViewModel @Inject constructor(
     val storeData: StoreData
 ) : ViewModel() {
 
-    private val _myUserId = MutableStateFlow(
-        sessionCache.getActiveSession()?.sessionUser?.userId ?: 0
-    )
-    val myUserId: StateFlow<Long> get() = _myUserId
+    companion object {
+        private val TAG = ProfileViewModel::class.java.simpleName
+    }
 
-    private val _profileModel = MutableStateFlow<UserProfile?>(null)
-    val profileModel: StateFlow<UserProfile?> get() = _profileModel
+    private val _state = MutableStateFlow(ProfileState.default())
+    val state: StateFlow<ProfileState>
+        get() = _state
+//    private val _myUserId = MutableStateFlow(
+//        sessionCache.getActiveSession()?.sessionUser?.userId ?: 0
+//    )
+//    val myUserId: StateFlow<Long> get() = _myUserId
+//
+//    private val _profileModel = MutableStateFlow<UserProfile?>(null)
+//    val profileModel: StateFlow<UserProfile?> get() = _profileModel
+//
+//    private var _userDetails = MutableStateFlow<UserDetailsModel?>(null)
+//
+//    private val _bookmarkedPosts = MutableStateFlow<List<UserPosts>>(listOf())
+//    val bookmarkedPosts: StateFlow<List<UserPosts>> get() = _bookmarkedPosts
+//
+//    private val _userPosts = MutableStateFlow<List<UserPosts>>(listOf())
+//    val userPosts: StateFlow<List<UserPosts>> get() = _userPosts
+//
+//
+//    private val _error = MutableStateFlow("")
+//    val error: StateFlow<String> get() = _error
+//
+//    private val _isFollowedByUser = MutableStateFlow(false)
+//    val isFollowedByUser: StateFlow<Boolean> get() = _isFollowedByUser
+//
+//    // Below variables are related to DeleteRecipeView Composable
+//    private val _postData = MutableStateFlow<VideoModel?>(null)
+//    val postData: StateFlow<VideoModel?> get() = _postData
 
-    private var _userDetails = MutableStateFlow<UserDetailsModel?>(null)
-
-    private val _bookmarkedPosts = MutableStateFlow<List<UserPosts>>(listOf())
-    val bookmarkedPosts: StateFlow<List<UserPosts>> get() = _bookmarkedPosts
-
-    private val _userPosts = MutableStateFlow<List<UserPosts>>(listOf())
-    val userPosts: StateFlow<List<UserPosts>> get() = _userPosts
-
-
-    private val _error = MutableStateFlow("")
-    val error: StateFlow<String> get() = _error
-
-    private val _isFollowedByUser = MutableStateFlow(false)
-    val isFollowedByUser: StateFlow<Boolean> get() = _isFollowedByUser
-
-    // Below variables are related to DeleteRecipeView Composable
-    private val _postData = MutableStateFlow<VideoModel?>(null)
-    val postData: StateFlow<VideoModel?> get() = _postData
-
-    private val _uiEvent =  MutableSharedFlow<UiEvent>()
+    private val _uiEvent = MutableSharedFlow<UiEvent>()
     val uiEvent = _uiEvent.asSharedFlow()
 
     init {
-        if(sessionCache.getActiveSession()?.sessionUser?.userId == null) {
+        if (sessionCache.getActiveSession()?.sessionUser?.userId == null) {
             sendUiEvent(UiEvent.Navigate(Graph.AUTHENTICATION))
         } else {
             val id = sessionCache.getActiveSession()!!.sessionUser.userId
@@ -77,9 +85,9 @@ class ProfileViewModel @Inject constructor(
 
 
     fun setUser(newUserId: Long) {
-        if(newUserId != sessionCache.getActiveSession()!!.sessionUser.userId) {
+        if (newUserId != sessionCache.getActiveSession()!!.sessionUser.userId) {
             getProfileModel(
-                if(newUserId != 0L) newUserId
+                if (newUserId != 0L) newUserId
                 else sessionCache.getActiveSession()!!.sessionUser.userId
             )
         }
@@ -87,30 +95,37 @@ class ProfileViewModel @Inject constructor(
 
     private fun getProfileModel(userId: Long) {
         viewModelScope.launch {
-            when(val resource = profileRepository.retrieveProfileData(userId)) {
+            when (val resource = profileRepository.retrieveProfileData(userId)) {
                 is Resource.Success -> {
-                    _error.value = ""
-                    _profileModel.value = resource.data
-                    resource.data.let { user->
-                        _userPosts.value = user!!.userPosts
+                    _state.update {
+                        it.copy(
+                            error = "",
+                            userProfile = resource.data,
+                            sessionUserId = sessionCache.getActiveSession()!!.sessionUser.userId,
+                            dataStore = storeData,
+                            userPosts = resource.data!!.userPosts,
+                            myUserId = sessionCache.getActiveSession()!!.sessionUser.userId
+                        )
                     }
                 }
+
                 is Resource.Error -> {
-                    _error.value = resource.message!!
+                    _state.update { it.copy(error = resource.message!!) }
                 }
             }
         }
     }
 
-    private fun getUserDetails(id: Long){
+    private fun getUserDetails(id: Long) {
         viewModelScope.launch {
-            when(val resource = profileRepository.retrieveUserDetails(id)){
+            when (val resource = profileRepository.retrieveUserDetails(id)) {
                 is Resource.Success -> {
-                    _userDetails.value = resource.data
-                    Log.i("MYTAG","getUserDetails success: ${resource.data}")
+                    _state.update { it.copy(userDetails = resource.data) }
+                    Log.i(TAG, "getUserDetails success: ${resource.data}")
                 }
+
                 is Resource.Error -> {
-                    Log.i("MYTAG","getUserDetails failed: ${resource.message}")
+                    Log.i(TAG, "getUserDetails failed: ${resource.message}")
                 }
             }
         }
@@ -119,28 +134,40 @@ class ProfileViewModel @Inject constructor(
 
     fun updateUserProfileImage(id: Long, file: File, uri: Uri) {
         viewModelScope.launch {
-            when(val resource = profileRepository.updateUserProfileImage(id, file)){
-                is Resource.Success-> {
-                    Log.i("MYTAG", "SUCCESSFULLY UPDATED IMAGE ${resource.data}")
+            when (val resource = profileRepository.updateUserProfileImage(id, file)) {
+                is Resource.Success -> {
+                    Log.i(TAG, "SUCCESSFULLY UPDATED IMAGE ${resource.data}")
                 }
+
                 is Resource.Error -> {
-                    Log.i("MYTAG", "ERROR UPDATING IMAGE ${resource.message}")
+                    Log.i(TAG, "ERROR UPDATING IMAGE ${resource.message}")
                 }
             }
         }
-        _userDetails.value!!.profilePicture = uri.toString()
-        Log.i("MYTAG","USER UPDATED IMG: ${_userDetails.value!!.profilePicture}")
+        _state.update {
+            it.copy(
+                userDetails = it.userDetails!!.copy(
+                    profilePicture = uri.toString()
+                )
+            )
+        }
+        Log.i(TAG, "USER UPDATED IMG: ${state.value.userDetails!!.profilePicture}")
     }
 
     private fun getBookmarkedPosts(userId: Long) {
         viewModelScope.launch {
-            when(val resource = profileRepository.retrieveBookmarkedPosts(userId)) {
+            when (val resource = profileRepository.retrieveBookmarkedPosts(userId)) {
                 is Resource.Success -> {
-                    _error.value = ""
-                    _bookmarkedPosts.value = resource.data!!
+                    _state.update {
+                        it.copy(
+                            error = "",
+                            bookmarkedPosts = resource.data!!
+                        )
+                    }
                 }
+
                 is Resource.Error -> {
-                    _error.value = resource.message!!
+                    _state.update { it.copy(error = resource.message!!) }
                 }
             }
         }
@@ -148,20 +175,25 @@ class ProfileViewModel @Inject constructor(
 
     private fun getListFromDatabase() {
 
-        /// Hardcoded List used, need to fetch from API---->
+        //  TODO Hardcoded List used, need to fetch from API---->
 
 
     }
 
     fun unfollowUser(followerId: Long, userId: Long) {
         viewModelScope.launch {
-            when(val resource = profileRepository.unfollowUser(followerId, userId)) {
+            when (val resource = profileRepository.unfollowUser(followerId, userId)) {
                 is Resource.Success -> {
-                    _error.value = ""
-                    _isFollowedByUser.value = false
+                    _state.update {
+                        it.copy(
+                            error = "",
+                            isFollowed = false
+                        )
+                    }
                 }
+
                 is Resource.Error -> {
-                    _error.value = resource.message!!
+                    _state.update { it.copy(error = resource.message!!) }
                 }
             }
         }
@@ -169,13 +201,18 @@ class ProfileViewModel @Inject constructor(
 
     fun followUser(followerId: Long, userId: Long) {
         viewModelScope.launch {
-            when(val resource = profileRepository.followUser(followerId, userId)) {
+            when (val resource = profileRepository.followUser(followerId, userId)) {
                 is Resource.Success -> {
-                    _error.value = ""
-                    _isFollowedByUser.value = true
+                    _state.update {
+                        it.copy(
+                            error = "",
+                            isFollowed = true
+                        )
+                    }
                 }
+
                 is Resource.Error -> {
-                    _error.value = resource.message!!
+                    _state.update { it.copy(error = resource.message!!) }
                 }
             }
         }
@@ -183,77 +220,102 @@ class ProfileViewModel @Inject constructor(
 
     fun isFollowedByUser(followerId: Long, userId: Long) {
         viewModelScope.launch {
-            when(val resource = profileRepository.retrieveProfileFollowers(userId)) {
+            when (val resource = profileRepository.retrieveProfileFollowers(userId)) {
                 is Resource.Success -> {
-                    _error.value = ""
-                    _isFollowedByUser.value = resource.data!!.any {
-                        it.userId.toLong() == followerId
+                    _state.update {
+                        it.copy(
+                            error = "",
+                            isFollowed = resource.data!!.any {
+                                it.userId.toLong() == followerId
+                            }
+                        )
                     }
                 }
+
                 is Resource.Error -> {
-                    _error.value = resource.message!!
+                    _state.update { it.copy(error = resource.message!!) }
                 }
             }
         }
     }
 
     fun getListOfMyRecipes(): List<UserPosts> {
-        return _profileModel.value!!.userPosts
+        return state.value.userProfile!!.userPosts
     }
 
     fun getListOfBookmarkedRecipes(): List<UserPosts> {
-        return _profileModel.value!!.userPosts
+        return state.value.userProfile!!.userPosts
 //        return tabItems.filter { unit -> return@filter (unit.bookMarked == true) };
 
     }
 
-    // Below functions are related to delete recipe composable
     fun getPostData(postId: Long) {
         val userId = sessionCache.getActiveSession()?.sessionUser?.userId ?: return
 
         viewModelScope.launch {
-            when(val resource = postRepository.getPost(postId, userId)) {
+            when (val resource = postRepository.getPost(postId, userId)) {
                 is Resource.Success -> {
-                    _error.value = ""
-                    _postData.value = resource.data
-                    setTestPostData(_postData.value!!.videoLink, _postData.value!!.thumbnailLink)
+                    _state.update {
+                        it.copy(
+                            error = "",
+                            postData = resource.data
+                        )
+                    }
+                    setTestPostData(resource.data!!.videoLink, resource.data.thumbnailLink)
                 }
+
                 is Resource.Error -> {
-                    _error.value = resource.message!!
+                    _state.update { it.copy(error = resource.message!!) }
                 }
             }
         }
     }
 
     fun deleteCurrentPost(postId: Long) {
-        Log.i("MYTAG", "DELETED POST ID: $postId")
+        Log.i(TAG, "DELETED POST ID: $postId")
         viewModelScope.launch {
-            when(val resource = postRepository.deletePost(postId)) {
+            when (val resource = postRepository.deletePost(postId)) {
                 is Resource.Success -> {
-                    _error.value = ""
-                    _postData.value = null
+                    _state.update {
+                        it.copy(
+                            error = "",
+                            postData = null
+                        )
+                    }
                 }
+
                 is Resource.Error -> {
-                    _error.value = resource.message!!
+                    _state.update { it.copy(error = resource.message!!) }
                 }
             }
         }
     }
 
-    fun updatePosts(postId: Long){
-        _userPosts.update { currentList ->
-            currentList.filter { post ->
-                post.id != postId.toInt()
-            }
+    fun updatePosts(postId: Long) {
+        _state.update {
+            it.copy(
+                error = "",
+                userPosts = it.userPosts.filter { post ->
+                    post.id != postId.toInt()
+                }
+            )
         }
     }
+
     private fun setTestPostData(videoLink: String, thumbnailLink: String) {
-        if(_postData.value == null) return
-        val post = _postData.value!!
-        _postData.value = VideoModel(post.videoId, post.authorDetails, post.videoStats,
-            videoLink,
-            post.currentViewerInteraction, post.description, post.createdAt,
-            thumbnailLink)
+        if (state.value.postData == null) return
+        val post = state.value.postData!!
+        _state.update {
+            it.copy(
+                error = "",
+                postData = VideoModel(
+                    post.videoId, post.authorDetails, post.videoStats,
+                    videoLink,
+                    post.currentViewerInteraction, post.description, post.createdAt,
+                    thumbnailLink
+                )
+            )
+        }
     }
 
     private fun sendUiEvent(event: UiEvent) {
