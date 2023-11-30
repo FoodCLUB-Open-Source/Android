@@ -1,8 +1,5 @@
 package android.kotlin.foodclub.navigation
 
-//import android.kotlin.foodclub.views.home.PlayView
-//import android.kotlin.foodclub.views.home.StoryView
-//import com.example.foodclub.navigation.graphs.Graph
 import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
 import android.kotlin.foodclub.viewModels.home.CameraViewModel
 import android.kotlin.foodclub.views.home.CameraPreviewView
@@ -91,8 +88,12 @@ fun NavGraphBuilder.homeNavigationGraph(
         }
         composable(route = BottomBarScreenObject.Discover.route) {
             val viewModel: MyBasketViewModel = hiltViewModel()
+            val state = viewModel.state.collectAsState()
 
-            MyBasketView(viewModel = viewModel)
+            MyBasketView(
+                viewModel = viewModel,
+                state = state.value
+            )
         }
         composable(route = BottomBarScreenObject.Create.route) {
             CreateView()
@@ -216,8 +217,12 @@ fun NavGraphBuilder.homeNavigationGraph(
 
         composable(route = HomeOtherRoutes.MyBasketView.route) {
             val viewModel: MyBasketViewModel = hiltViewModel()
+            val state = viewModel.state.collectAsState()
 
-            MyBasketView(viewModel = viewModel)
+            MyBasketView(
+                viewModel = viewModel,
+                state = state.value
+            )
         }
 
         composable(route = HomeOtherRoutes.MySearchView.route) {

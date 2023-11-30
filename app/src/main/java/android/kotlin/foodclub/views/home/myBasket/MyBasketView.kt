@@ -59,12 +59,13 @@ import kotlinx.coroutines.delay
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun MyBasketView(
-    viewModel: MyBasketViewModel
+    viewModel: MyBasketViewModel,
+    state: MyBasketState
 ) {
     val systemUiController = rememberSystemUiController()
     var showSheet by remember { mutableStateOf(false) }
-    val productsList = viewModel.productsList.collectAsState()
-    val selectedProductsIds = viewModel.selectedProductsList.collectAsState()
+    val productsList = state.productsList
+    val selectedProductsIds = state.selectedProductsList
     var deleteSelected by remember { mutableStateOf(false) }
 
     val triggerBottomSheetModal: () -> Unit = {
@@ -84,7 +85,7 @@ fun MyBasketView(
     if (showSheet) {
         IngredientsBottomSheet(
             onDismiss = triggerBottomSheetModal,
-            productsData = viewModel.productsDatabase.value,
+            productsData = state.productsDatabase,
             loadMoreObjects = { searchText, onLoadCompleted ->
                 viewModel.fetchMoreProducts(searchText, onLoadCompleted) },
             onListUpdate = { viewModel.fetchProductsDatabase(it) },
@@ -175,13 +176,13 @@ fun MyBasketView(
             }
             LazyColumn (modifier = Modifier.padding(end = 20.dp, start = 20.dp, bottom = 110.dp)) {
                 items(
-                    items = productsList.value,
+                    items = productsList,
                     key = { ingredient -> ingredient.id }
                 ) { ingredient ->
                     val product = ingredient
                     BasketIngredient(
                         ingredient = product,
-                        isShown = !selectedProductsIds.value.contains(product.id)||!deleteSelected,
+                        isShown = !selectedProductsIds.contains(product.id)||!deleteSelected,
                         onSelectionChange = {bool ->
                             if(bool) viewModel.selectIngredient(product.id)
                             else viewModel.unselectIngredient(product.id) },
