@@ -2,7 +2,6 @@ package android.kotlin.foodclub.views.home
 
 import android.content.Intent
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.domain.models.others.BottomSheetItem
 import android.kotlin.foodclub.domain.models.profile.UserPosts
 import android.kotlin.foodclub.config.ui.Montserrat
@@ -12,11 +11,9 @@ import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.CustomBottomSheet
 import android.kotlin.foodclub.utils.helpers.UiEvent
 import android.kotlin.foodclub.utils.helpers.uriToFile
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,13 +25,11 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -49,30 +44,20 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringArrayResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import android.kotlin.foodclub.viewModels.home.ProfileViewModel
 import android.net.Uri
 import android.util.Log
@@ -91,8 +76,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
@@ -240,7 +223,7 @@ fun ProfileView(
                 ) {
                     Box(if(userId == 0L) Modifier.clickable { showBottomSheet = true } else Modifier) {
                         AsyncImage(
-                            model = imageUri,
+                            model = imageUri ?: R.drawable.profilepicture,
                             contentDescription = stringResource(id = R.string.profile_picture),
                             modifier = Modifier
                                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_60)))
@@ -420,17 +403,6 @@ fun ProfileView(
                         }
                     }
 
-                    var userTabItems = listOf<UserPosts>()
-
-                    if(pagerState.currentPage == 0){
-                        userTabItems = userPosts.value
-                    }
-                    else if(pagerState.currentPage == 1){
-                        userTabItems = bookmarkedPosts
-                    }
-
-                    val lazyGridState = rememberLazyGridState()
-
                     HorizontalPager(
                         state = pagerState,
                         beyondBoundsPageCount = 10,
@@ -443,11 +415,8 @@ fun ProfileView(
                         ) {
                             LazyVerticalGrid(
                                 columns = GridCells.Fixed(2),
-                                state = lazyGridState
                             ) {
-                                items(items=userTabItems,
-                                    key = {it.id}
-                                    ) { dataItem ->
+                                items(userTabItems) { dataItem ->
                                     GridItem(dataItem, triggerShowDeleteRecipe = { tabItemId ->
                                         postId = tabItemId
                                         showDeleteRecipe = true
@@ -456,23 +425,6 @@ fun ProfileView(
                             }
                         }
                     }
-
-                    var listLoading by remember { mutableStateOf(false) }
-                    val loadMore = remember{
-                        derivedStateOf {
-                            lazyGridState.firstVisibleItemIndex > userTabItems.size - 10
-                        }
-                    }
-
-                    LaunchedEffect(loadMore)
-                    {
-                        if(!listLoading)
-                        {
-                            listLoading = true
-
-                        }
-                    }
-
                 }
             }
         }
@@ -491,7 +443,7 @@ fun ProfileView(
                         title= stringResource(id = R.string.take_photo),
                         resourceId = R.drawable.take_photo,
                         onClick = {
-                          navController.navigate(route = HomeOtherRoutes.TakeProfilePhotoView.route)
+                            navController.navigate(route = HomeOtherRoutes.TakeProfilePhotoView.route)
                         })
                 ),
                 sheetTitle = stringResource(id = R.string.upload_photo),
@@ -598,7 +550,7 @@ fun FollowButton(isFollowed: Boolean, viewModel: ProfileViewModel, sessionUserId
 
     Button(
         onClick = { if(isFollowed) viewModel.unfollowUser(sessionUserId, userId)
-            else viewModel.followUser(sessionUserId, userId) },
+        else viewModel.followUser(sessionUserId, userId) },
         shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_40)),
         modifier = modifier,
         colors = colors
