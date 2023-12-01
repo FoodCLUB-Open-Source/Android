@@ -3,8 +3,6 @@ package android.kotlin.foodclub.views.home
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.config.ui.Montserrat
-import android.kotlin.foodclub.config.ui.containerColor
-import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.viewModels.home.MyBasketViewModel
@@ -28,6 +26,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -51,7 +50,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -67,8 +65,16 @@ fun MyBasketView(
     val productsList = viewModel.productsList.collectAsState()
     val selectedProductsIds = viewModel.selectedProductsList.collectAsState()
     var deleteSelected by remember { mutableStateOf(false) }
+    val selectedIngredients = viewModel.selectedIngredients.collectAsState()
 
     val triggerBottomSheetModal: () -> Unit = {
+        // GETTING SELECTED INGREDIENT FROM HOME VIEW MODEL
+        val selectedIngredients = viewModel.selectedIngredients.value
+
+        // PASSING SELECTED INGREDIENT TO MY BASKET VIEW
+        viewModel.addIngredientsToBasket(selectedIngredients)
+        //viewModel.updateSelectedIngredients(emptyList())
+
         showSheet = !showSheet
         systemUiController.setStatusBarColor(color = Color(0x00ACACAC), darkIcons = true)
         systemUiController.setNavigationBarColor(color = Color.Black, darkIcons = true)
@@ -91,63 +97,62 @@ fun MyBasketView(
             onListUpdate = { viewModel.fetchProductsDatabase(it) },
             onSave = { viewModel.addIngredient(it) }
         )
-
     }
     Column(
         modifier = Modifier
             .background(color = Color.White)
             .fillMaxSize()
-            .padding(top = dimensionResource(id = R.dimen.dim_60)),
+            .padding(top = 60.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = dimensionResource(id = R.dimen.dim_20), end = dimensionResource(id = R.dimen.dim_20)),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.my_basket),
-                        fontSize = dimensionResource(id = R.dimen.fon_25).value.sp,
-                        fontFamily = Montserrat,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black,
-                        style = TextStyle(letterSpacing = -1.sp)
-                    )
-                    Button(
-                        shape = RectangleShape,
-                        modifier = Modifier
-                            .border(
-                                dimensionResource(id = R.dimen.dim_1), containerColor, shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_22))
-                            )
-                            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_22)))
-                            .width(dimensionResource(id = R.dimen.dim_50))
-                            .height(dimensionResource(id = R.dimen.dim_50)),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = containerColor,
-                            contentColor = Color.White
-                        ),
-                        contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_5)),
-                        onClick = { deleteSelected = true }
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.delete_bin_5_line__2_),
-                            contentDescription = stringResource(id = R.string.go_back),
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.width(dimensionResource(id = R.dimen.dim_20)).height(dimensionResource(id = R.dimen.dim_20))
-                        )
-                    }
-                }
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(end = dimensionResource(id = R.dimen.dim_20), start = dimensionResource(id = R.dimen.dim_20), bottom =dimensionResource(id = R.dimen.dim_5))
-                    .height(dimensionResource(id = R.dimen.dim_80)),
+                    .padding(start = 20.dp, end = 20.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = stringResource(id = R.string.my_basket),
+                    fontSize = 25.sp,
+                    fontFamily = Montserrat,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    style = TextStyle(letterSpacing = -1.sp)
+                )
+                Button(
+                    shape = RectangleShape,
+                    modifier = Modifier
+                        .border(
+                            1.dp, Color(0xFFF5F5F5), shape = RoundedCornerShape(22.dp)
+                        )
+                        .clip(RoundedCornerShape(22.dp))
+                        .width(50.dp)
+                        .height(50.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFF5F5F5),
+                        contentColor = Color.White
+                    ),
+                    contentPadding = PaddingValues(5.dp),
+                    onClick = { deleteSelected = true }
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.delete_bin_5_line__2_),
+                        contentDescription = stringResource(id = R.string.go_back),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.width(20.dp).height(20.dp)
+                    )
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 20.dp, start = 20.dp, bottom = 5.dp)
+                    .height(80.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Spacer(modifier = Modifier.weight(1f))
@@ -156,46 +161,63 @@ fun MyBasketView(
                     shape = RectangleShape,
                     modifier = Modifier
                         .border(
-                            dimensionResource(id = R.dimen.dim_1), Color(126, 198, 11), RoundedCornerShape(dimensionResource(id = R.dimen.dim_20))
+                            1.dp, Color(126, 198, 11), RoundedCornerShape(20.dp)
                         )
-                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_20))).width(dimensionResource(id = R.dimen.dim_125)),
+                        .clip(RoundedCornerShape(20.dp)).width(125.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.White,
                         contentColor = Color(126, 198, 11)
                     ),
-                    contentPadding = PaddingValues( dimensionResource(id = R.dimen.dim_15)),
+                    contentPadding = PaddingValues(15.dp),
                     onClick = { triggerBottomSheetModal() }
                 ) {
                     Text(
                         text = stringResource(id = R.string.add_items_plus),
-                        fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
+                        fontSize = 13.sp,
                         fontFamily = Montserrat,
                         color = Color(126, 198, 11),
                     )
                 }
             }
-            LazyColumn (modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dim_20), start = dimensionResource(id = R.dimen.dim_20), bottom = dimensionResource(id = R.dimen.dim_110))) {
-                items(
-                    items = productsList.value,
-                    key = { ingredient -> ingredient.id }
-                ) { ingredient ->
-                    val product = ingredient
-                    BasketIngredient(
-                        ingredient = product,
-                        isShown = !selectedProductsIds.value.contains(product.id)||!deleteSelected,
-                        onSelectionChange = {bool ->
-                            if(bool) viewModel.selectIngredient(product.id)
-                            else viewModel.unselectIngredient(product.id) },
-                        onIngredientUpdate = { viewModel.saveBasket() }
-                    )
+
+            val updatedProductList = productsList.value.map { product ->
+                val isSelectedProduct = viewModel.selectedIngredients.value.any { it.id == product.id }
+                product.copy(isSelected = isSelectedProduct)
+            }
+
+            if (updatedProductList.isNotEmpty()) {
+                LazyColumn(
+                    modifier = Modifier.padding(end = 20.dp, start = 20.dp, bottom = 110.dp)
+                ) {
+//                    itemsIndexed(
+//                        items = updatedProductList,
+//                        key = { index, product -> "${product.id}_${index}" }
+//                    ) { index, product ->
+//
+//                    }
+
+                    itemsIndexed(
+                        items = productsList.value,
+                        key = { index, ingredient -> "${index}_${ingredient.id}" }
+                    ) { index, ingredient ->
+                        val product = ingredient
+                        BasketIngredient(
+                            ingredient = product,
+                            isShown = !selectedProductsIds.value.contains(product.id) || !deleteSelected,
+                            onSelectionChange = { bool ->
+                                if (bool) viewModel.selectIngredient(product.id)
+                                else viewModel.unselectIngredient(product.id)
+                            },
+                            onIngredientUpdate = { viewModel.saveBasket() }
+                        )
+                    }
                 }
             }
         }
-
     }
 
     LaunchedEffect(deleteSelected) {
-        if(deleteSelected) {
+        if (deleteSelected) {
             delay(800)
             viewModel.deleteSelectedIngredients()
             deleteSelected = false
@@ -203,18 +225,19 @@ fun MyBasketView(
     }
 }
 
+
 @Composable
 fun BasketIngredient(ingredient: Ingredient, isShown: Boolean,
                      onSelectionChange: (isSelected: Boolean) -> Unit,
                      onIngredientUpdate: () -> Unit) {
-    var isSelected by remember { mutableStateOf(false) }
+    var isSelected by remember { mutableStateOf(ingredient.isSelected) }
 
     var quantity by remember { mutableStateOf(ingredient.quantity) }
     val type by remember { mutableStateOf(ingredient.type) }
     val unit by remember { mutableStateOf(ingredient.unit) }
 
     var showItem by remember { mutableStateOf(true) }
-    if(!isShown) {
+    if (!isShown) {
         showItem = false
     }
 
@@ -222,28 +245,28 @@ fun BasketIngredient(ingredient: Ingredient, isShown: Boolean,
     AnimatedVisibility(visible = showItem, exit = shrinkOut(shrinkTowards = Alignment.TopCenter)) {
         Column {
             Box(
-                modifier = Modifier.fillMaxWidth().height(dimensionResource(id = R.dimen.dim_140))
-                    .border(dimensionResource(id = R.dimen.dim_1), Color(0xFFE8E8E8), RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
-                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))).background(Color.White).padding(dimensionResource(id = R.dimen.dim_10))
+                modifier = Modifier.fillMaxWidth().height(140.dp)
+                    .border(1.dp, Color(0xFFE8E8E8), RoundedCornerShape(15.dp))
+                    .clip(RoundedCornerShape(10.dp)).background(Color.White).padding(10.dp)
             ) {
                 AsyncImage(
                     model = ingredient.imageUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.height(dimensionResource(id = R.dimen.dim_200)).width(dimensionResource(id = R.dimen.dim_130)).clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)))
+                    modifier = Modifier.height(200.dp).width(130.dp).clip(RoundedCornerShape(12.dp))
                 )
                 Box(
-                    modifier = Modifier.size( dimensionResource(id = R.dimen.dim_35)).align(Alignment.TopEnd)
-                        .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_30)))
+                    modifier = Modifier.size(35.dp).align(Alignment.TopEnd)
+                        .clip(RoundedCornerShape(30.dp))
                         .background(
-                            if (isSelected) foodClubGreen
+                            if (isSelected) Color(0xFF7EC60B)
                             else Color(0xFFECECEC)
                         )
                         .clickable {
                             isSelected = !isSelected
                             onSelectionChange(isSelected)
                         }
-                        .padding(dimensionResource(id = R.dimen.dim_4)),
+                        .padding(4.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
@@ -252,11 +275,11 @@ fun BasketIngredient(ingredient: Ingredient, isShown: Boolean,
                         contentScale = ContentScale.Crop,
                     )
                 }
-                Box(modifier = Modifier.padding(start = dimensionResource(id = R.dimen.dim_140), top = dimensionResource(id = R.dimen.dim_10)).fillMaxSize()) {
-                    Box ( modifier = Modifier.width(dimensionResource(id = R.dimen.dim_115)) ) {
+                Box(modifier = Modifier.padding(start = 140.dp, top = 10.dp).fillMaxSize()) {
+                    Box ( modifier = Modifier.width(115.dp) ) {
                         Text(
                             text = type,
-                            lineHeight = dimensionResource(id = R.dimen.fon_18).value.sp,
+                            lineHeight = 18.sp,
                             modifier = Modifier.align(Alignment.TopStart),
                             fontWeight = FontWeight.Normal,
                             fontFamily = Montserrat
@@ -266,9 +289,9 @@ fun BasketIngredient(ingredient: Ingredient, isShown: Boolean,
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Image(
                                 painter = painterResource(id = R.drawable.baseline_arrow_left_24),
-                                contentDescription = stringResource(id = R.string.profile_picture),
-                                modifier = Modifier.size(dimensionResource(id = R.dimen.dim_50)).padding(end = dimensionResource(id = R.dimen.dim_15))
-                                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
+                                contentDescription = "Profile Image",
+                                modifier = Modifier.size(50.dp).padding(end = 15.dp)
+                                    .clip(RoundedCornerShape(20.dp))
                                     .clickable {
                                         ingredient.decrementQuantity(5)
                                         quantity = ingredient.quantity
@@ -279,13 +302,13 @@ fun BasketIngredient(ingredient: Ingredient, isShown: Boolean,
                                 quantity.toString() + ValueParser.quantityUnitToString(unit),
                                 color = Color.Black,
                                 fontFamily = Montserrat,
-                                fontSize = dimensionResource(id = R.dimen.fon_14).value.sp
+                                fontSize = 14.sp
                             )
                             Image(
                                 painter = painterResource(id = R.drawable.baseline_arrow_right_24),
-                                contentDescription = stringResource(id = R.string.profile_picture),
-                                modifier = Modifier.size(dimensionResource(id = R.dimen.dim_50)).padding(start = dimensionResource(id = R.dimen.dim_15))
-                                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
+                                contentDescription = "Profile Image",
+                                modifier = Modifier.size(50.dp).padding(start = 15.dp)
+                                    .clip(RoundedCornerShape(20.dp))
                                     .clickable {
                                         ingredient.incrementQuantity(5)
                                         quantity = ingredient.quantity
@@ -296,7 +319,8 @@ fun BasketIngredient(ingredient: Ingredient, isShown: Boolean,
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+            Spacer(modifier = Modifier.height(10.dp))
         }
     }
 }
+

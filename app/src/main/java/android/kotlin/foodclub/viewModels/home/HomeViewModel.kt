@@ -3,6 +3,9 @@ package android.kotlin.foodclub.viewModels.home
 import android.kotlin.foodclub.domain.enums.Reactions
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.home.VideoStats
+import android.kotlin.foodclub.domain.models.products.Ingredient
+import android.kotlin.foodclub.domain.models.products.MyBasketCache
+import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
 import android.kotlin.foodclub.domain.models.snaps.SnapModel
@@ -10,6 +13,7 @@ import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.repositories.BookmarkRepository
 import android.kotlin.foodclub.repositories.LikesRepository
 import android.kotlin.foodclub.repositories.PostRepository
+import android.kotlin.foodclub.repositories.ProductRepository
 import android.kotlin.foodclub.repositories.StoryRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.util.Log
@@ -29,7 +33,10 @@ class HomeViewModel @Inject constructor(
     private val storyRepository: StoryRepository,
     private val likesRepository: LikesRepository,
     private val bookmarkRepository: BookmarkRepository,
-    private val sessionCache: SessionCache
+    private val sessionCache: SessionCache,
+    private val myBasketViewModel: MyBasketViewModel,
+    private val productRepository: ProductRepository,
+    private val basketCache: MyBasketCache,
 ) : ViewModel() {
     private val _title = MutableStateFlow("HomeViewModel View")
     val title: StateFlow<String> get() = _title
@@ -46,10 +53,32 @@ class HomeViewModel @Inject constructor(
     private val _error = MutableStateFlow("")
     val error: StateFlow<String> get() = _error
 
+    private val _basket = MutableStateFlow(basketCache.getBasket())
+    private val _productsList = MutableStateFlow<List<Ingredient>>(_basket.value.ingredients)
+    val selectedIngredients: StateFlow<List<Ingredient>> get() = _selectedIngredients
+    private val _defaultIngredients = MutableStateFlow<List<Ingredient>>(listOf())
+    val defaultIngredients: StateFlow<List<Ingredient>> get() = _defaultIngredients
+
+    private val _quantity = MutableStateFlow(0)
+    val quantity: StateFlow<Int> get() = _quantity
+
+    private val _selectedQuantity = MutableStateFlow(0)
+    val selectedQuantity: StateFlow<Int> get() = _selectedQuantity
+    private val _selectedIngredients = MutableStateFlow<List<Ingredient>>(listOf())
+    private val _productsDatabase = MutableStateFlow(ProductsData("", "", listOf()))
+
+
+    val ingredients: StateFlow<List<Ingredient>> get() = _ingredients
+    private val _ingredients = MutableStateFlow<List<Ingredient>>(emptyList())
+
+
+
     init {
         getPostListData()
         getUserFollowerStories()
         getMemoriesListData()
+        _defaultIngredients.value = calculateDefaultQuantities(1)
+
     }
 
     private fun getMemoriesListData() {
@@ -196,6 +225,84 @@ class HomeViewModel @Inject constructor(
             )
         )
         _memoryListData.value = list
+    }
+
+    fun addToShoppingList(ingredients: List<Ingredient>, selectedQuantity: Int) {
+        viewModelScope.launch {
+            try {
+                val updatedIngredients = ingredients.map { ingredient ->
+                    ingredient.copy(quantity = selectedQuantity)
+                }
+
+                // STORING SELECTED INGREDIENT
+                _selectedIngredients.emit(updatedIngredients)
+
+                //myBasketViewModel.addIngredientsToBasket(updatedIngredients)
+
+            } catch (e: Exception) {
+                _error.value = e.message ?: "Unknown error"
+            }
+        }
+    }
+
+    fun fetchProductsDatabase(searchText: String) {
+        viewModelScope.launch() {
+            when(val resource = productRepository.getProductsList(searchText)) {
+                is Resource.Success -> {
+                    _error.value = ""
+                    _productsDatabase.value = resource.data!!
+                    Log.d("MyBasketViewModel", "database: ${_productsDatabase.value.productsList}")
+                }
+                is Resource.Error -> {
+                    _error.value = resource.message!!
+                    Log.d("MyBasketViewModel", "error: ${_error.value}")
+                }
+            }
+        }
+    }
+
+
+    private fun calculateDefaultQuantities(numberOfPortions: Int): List<Ingredient> {
+        return _selectedIngredients.value.map { ingredient ->
+            val defaultQuantity = ingredient.quantity / numberOfPortions
+            ingredient.copy(quantity = defaultQuantity)
+        }
+    }
+
+    fun onQuantityChange(newQuantity: Int) {
+        _defaultIngredients.value = calculateDefaultQuantities(newQuantity)
+        _selectedIngredients.value = calculateUpdatedQuantities(newQuantity)
+
+        _selectedQuantity.value = newQuantity
+        _quantity.value = newQuantity
+    }
+
+    private fun calculateUpdatedQuantities(newQuantity: Int): List<Ingredient> {
+        return _selectedIngredients.value.map { ingredient ->
+            val updatedQuantity = (ingredient.quantity * newQuantity) / 100
+            ingredient.copy(quantity = updatedQuantity)
+        }
+    }
+
+
+    fun toggleIngredientSelection(ingredient: Ingredient) {
+        ingredient.isSelected = !ingredient.isSelected
+
+        // UPDATE SELECTED INGREDIENT
+        val updatedSelectedIngredients = _selectedIngredients.value.toMutableList()
+        if (ingredient.isSelected) {
+            updatedSelectedIngredients.add(ingredient)
+        } else {
+            updatedSelectedIngredients.remove(ingredient)
+        }
+        _selectedIngredients.value = updatedSelectedIngredients
+
+        // TELLING MY BASKET VIEW MODEL TO UPDATE
+        //myBasketViewModel.updateSelectedIngredients(_selectedIngredients.value)
+        myBasketViewModel.addIngredientsToBasket(listOf(ingredient))
+
+        // RECOMPOSITION FOR MY BASKET
+        myBasketViewModel.refreshBasket()
     }
 
     private fun getPostListData() {
