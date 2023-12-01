@@ -4,9 +4,10 @@ import android.kotlin.foodclub.utils.composables.PhotoTakenPreview
 import android.kotlin.foodclub.utils.composables.TakePhotoPreview
 import android.kotlin.foodclub.utils.helpers.takePhoto
 import android.kotlin.foodclub.utils.helpers.uriToFile
-import android.kotlin.foodclub.viewModels.home.ProfileViewModel
+import android.kotlin.foodclub.viewModels.home.HomeViewModel
 import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.layout.Box
@@ -15,32 +16,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import kotlinx.coroutines.launch
 
 @Composable
-fun TakeProfilePhotoView(
+fun TakeSnapView(
     modifier: Modifier = Modifier,
-    viewModel: ProfileViewModel,
+    viewModel: HomeViewModel,
     navController: NavController
 ){
     val context = LocalContext.current
-    val dataStore = viewModel.storeData
-    val scope = rememberCoroutineScope()
-    val TAG = "TakeProfilePhotoView"
-
+    BackHandler {
+        navController.popBackStack()
+    }
+    val TAG = "TakeSnapPhotoView"
     var photoUri by remember { mutableStateOf<Uri?>(null) }
-
     val controller = remember {
         LifecycleCameraController(context).apply {
             setEnabledUseCases(
@@ -49,30 +41,18 @@ fun TakeProfilePhotoView(
         }
     }
 
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-    ) {
+    Box(modifier= modifier.fillMaxSize()) {
         if (photoUri != null){
             PhotoTakenPreview(
                 image = photoUri!!,
                 onSaveClick = {
                     val file = uriToFile(photoUri!!, context)
                     if (file != null){
-                        viewModel.updateUserProfileImage(
-                            viewModel.myUserId.value,
-                            file,
-                            photoUri!!
-                        )
-
-                        scope.launch {
-                            dataStore.storeImage(photoUri!!.toString())
-                        }
-
+                        viewModel.postSnap(file)
                         navController.popBackStack()
                     }
                     else {
-                        Log.i(TAG,"EMPTY FILE")
+                        Log.e(TAG,"EMPTY FILE")
                     }
                 },
                 onCancelClick = {

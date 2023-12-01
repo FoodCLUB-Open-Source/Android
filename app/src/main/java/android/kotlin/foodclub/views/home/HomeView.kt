@@ -461,7 +461,7 @@ fun HomeView(
 
     Column(modifier = Modifier
         .height(screenHeightMinusBottomNavItem)
-        .padding(bottom = 10 .dp)
+        .padding(bottom = 10.dp)
     ) {
         if (showIngredientSheet) {
             HomeBottomSheetIngredients(triggerIngredientBottomSheetModal)
@@ -627,7 +627,7 @@ fun HomeView(
                         .fillMaxSize()
                         .padding(vertical = dimensionResource(id = R.dimen.dim_12))
                         .clickable {
-                            navController.navigate("CAMERA_VIEW/${"story".encodeUtf8()}")
+                            navController.navigate("TAKE_SNAP_VIEW")
                         }
                     )
                 }

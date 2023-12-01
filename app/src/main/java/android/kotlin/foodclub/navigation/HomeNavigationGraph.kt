@@ -23,6 +23,7 @@ import android.kotlin.foodclub.views.home.ScanResultView
 import android.kotlin.foodclub.views.home.ScanView
 import android.kotlin.foodclub.views.home.SearchView
 import android.kotlin.foodclub.views.home.TakeProfilePhotoView
+import android.kotlin.foodclub.views.home.TakeSnapView
 import android.kotlin.foodclub.views.home.topbackbar
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -209,6 +210,10 @@ fun NavGraphBuilder.homeNavigationGraph(
                 viewModel = viewModel
             )
         }
+        composable(route = HomeOtherRoutes.TakeSnapPhotoView.route) {
+            val viewModel: HomeViewModel = hiltViewModel()
+            TakeSnapView(viewModel = viewModel, navController = navController)
+        }
 
     }
 }
@@ -231,6 +236,7 @@ sealed class HomeOtherRoutes(val route: String) {
 
     object VideoTrimmerView : HomeOtherRoutes(route = "VIDEOTRIMMER")
     object TakeProfilePhotoView : HomeOtherRoutes(route = "TAKE_PROFILE_PHOTO_VIEW")
+    object TakeSnapPhotoView : HomeOtherRoutes(route = "TAKE_SNAP_VIEW")
     object ViewStories : HomeOtherRoutes(route = "VIEWSTORIES")
 
 }
