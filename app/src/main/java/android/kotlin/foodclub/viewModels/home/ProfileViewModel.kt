@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.repositories.PostRepository
+import android.kotlin.foodclub.room.entity.ProfileModel
 import android.kotlin.foodclub.utils.helpers.StoreData
 import android.kotlin.foodclub.utils.helpers.UiEvent
 import android.net.Uri
@@ -98,6 +99,55 @@ class ProfileViewModel @Inject constructor(
                 is Resource.Error -> {
                     _error.value = resource.message!!
                 }
+            }
+        }
+    }
+
+    /**
+     * to make offline-first app,
+     * store room response data to profileModel or userDetails(not used right now)
+     * populate UI with room response data
+     * then check for internet connection(utils.helpers.ConnectivityUtils) and make api call
+     * compare the room db response and api call response
+     * update room db with profileModel or userDetails values
+     * */
+    private fun retrieveLocalUserDetails(id: Long){
+        viewModelScope.launch {
+            when(val dbResponse = profileRepository.retrieveLocalUserDetails(id)){
+                is Resource.Success -> {
+                    dbResponse.data!!.collect {
+                        Log.i("MYTAG","room db response success $it")
+                    }
+                }
+                is Resource.Error -> {
+                    val dbResponseError = dbResponse.message
+                    Log.e("MYTAG","error room db response $dbResponseError")
+                }
+            }
+        }
+    }
+
+    private fun insertLocalUserDetails(profileModel: ProfileModel){
+        viewModelScope.launch {
+            profileRepository.insertLocalUserDetails(profileModel)
+        }
+    }
+
+    private fun compareLocalAndRemoteData(remote: UserDetailsModel){
+        // or profileModel.value
+        // this can further be detailed for only updating a single data
+        // instead of adding all the remote data values to ProfileModel
+        if (_userDetails.value != remote){
+            viewModelScope.launch {
+                profileRepository.updateLocalProfileData(
+                    ProfileModel(
+                        remote.id,
+                        remote.userName,
+                        remote.email,
+                        remote.profilePicture,
+                        remote.createdAt,
+                    )
+                )
             }
         }
     }

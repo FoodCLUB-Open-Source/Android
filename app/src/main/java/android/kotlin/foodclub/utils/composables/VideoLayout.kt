@@ -49,6 +49,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -124,7 +125,7 @@ fun PlayPauseButton(buttonVisibility: Boolean) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 30.dp),
+            .padding(top = dimensionResource(id = R.dimen.dim_30)),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -137,7 +138,7 @@ fun PlayPauseButton(buttonVisibility: Boolean) {
                 painter = painterResource(id = R.drawable.pause_video_button),
                 contentDescription = null,
                 tint = Color.Unspecified,
-                modifier = Modifier.size(36.dp)
+                modifier = Modifier.size( dimensionResource(id = R.dimen.dim_36))
             )
         }
     }
@@ -186,7 +187,7 @@ fun VideoLayout(
         Box(
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(15.dp)
+                .padding( dimensionResource(id = R.dimen.dim_15))
         ) {
             VideoCategorySection(
                 category = category,
@@ -200,7 +201,7 @@ fun VideoLayout(
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(15.dp)
+                    .padding( dimensionResource(id = R.dimen.dim_15))
             ) {
                 VideoStats(
                     videoStats = videoStats,
@@ -228,18 +229,18 @@ private fun VideoCategorySection(
         if (category != null) {
             Button(
                 modifier = Modifier
-                    .width(60.dp)
-                    .height(25.dp),
+                    .width(dimensionResource(id = R.dimen.dim_60))
+                    .height(dimensionResource(id = R.dimen.dim_25)),
                 onClick = { onCategoryClick() },
-                contentPadding = PaddingValues(0.dp),
+                contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_0)),
                 colors = ButtonDefaults.buttonColors(Color(0xFFD95978))
             ) {
                 Text(
                     category, fontFamily = Montserrat,
-                    fontSize = 12.sp, style = TextStyle(color = Color.White)
+                    fontSize = dimensionResource(id = R.dimen.fon_12).value.sp, style = TextStyle(color = Color.White)
                 )
             }
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
         }
 
         Row(
@@ -250,14 +251,14 @@ private fun VideoCategorySection(
                 model = userDetails.profilePictureUrl ?: defaultProfileImage,
                 contentDescription = stringResource(id = R.string.profile_picture),
                 modifier = Modifier
-                    .size(35.dp)
+                    .size( dimensionResource(id = R.dimen.dim_35))
                     .clip(CircleShape)
             )
-            Spacer(modifier = Modifier.width(10.dp))
+            Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_10)))
             Text(
                 userDetails.username, color = Color.White,
-                fontFamily = Montserrat, fontSize = 18.sp,
-                modifier = Modifier.padding(2.dp)
+                fontFamily = Montserrat, fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
+                modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_2))
             )
         }
     }
@@ -278,11 +279,11 @@ private fun VideoStats(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .align(Alignment.End)
-                    .size(50.dp)
+                    .size(dimensionResource(id = R.dimen.dim_50))
             ) {
                 BookMarkButton(onBookmarkClick, bookMarkState)
             }
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
         }
 
         if (likeState != null) {
@@ -290,12 +291,12 @@ private fun VideoStats(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .align(Alignment.End)
-                    .width(50.dp)
-                    .height(80.dp),
+                    .width(dimensionResource(id = R.dimen.dim_50))
+                    .height(dimensionResource(id = R.dimen.dim_80)),
             ) {
                 VideoLikeButton(videoStats, likeState, onLikeClick)
             }
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
             InfoButton(onInfoClick)
         }
@@ -308,19 +309,19 @@ fun BookMarkButton(
     bookMarkState: Boolean
 ) {
     Box(modifier = Modifier
-        .size(55.dp)
+        .size(dimensionResource(id = R.dimen.dim_55))
         .clickable { onBookmarkClick() }) {
         Box(
             modifier = Modifier
-                .size(55.dp)
-                .clip(RoundedCornerShape(35.dp))
+                .size(dimensionResource(id = R.dimen.dim_55))
+                .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_35)))
                 .background(Color.Black.copy(alpha = 0.5f))
-                .blur(radius = 5.dp)
+                .blur(radius =dimensionResource(id = R.dimen.dim_5))
         )
 
-        val maxBookmarkSize = 32.dp
+        val maxBookmarkSize =  dimensionResource(id = R.dimen.dim_32)
         val bookmarkIconSize by animateDpAsState(
-            targetValue = if (bookMarkState) 22.dp else 21.dp,
+            targetValue = if (bookMarkState) dimensionResource(id = R.dimen.dim_22) else dimensionResource(id = R.dimen.dim_21),
             animationSpec = keyframes {
                 durationMillis = 400
                 14.dp.at(50)
@@ -352,29 +353,29 @@ fun VideoLikeButton(
         Spacer(Modifier.weight(1f))
         Box(
             modifier = Modifier
-                .width(50.dp)
-                .height(80.dp),
+                .width(dimensionResource(id = R.dimen.dim_50))
+                .height(dimensionResource(id = R.dimen.dim_80)),
             contentAlignment = Alignment.Center
         ) {
             Box(
                 modifier = Modifier
-                    .width(50.dp)
-                    .height(80.dp)
-                    .clip(RoundedCornerShape(30.dp))
+                    .width(dimensionResource(id = R.dimen.dim_50))
+                    .height(dimensionResource(id = R.dimen.dim_80))
+                    .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_30)))
                     .background(Color.Black.copy(alpha = 0.5f))
-                    .blur(radius = 5.dp)
+                    .blur(radius =dimensionResource(id = R.dimen.dim_5))
             )
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .fillMaxSize()
-                    .clip(RoundedCornerShape(30.dp))
+                    .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_30)))
                     .clickable { onLikeClick() }
             ) {
-                val maxSize = 32.dp
+                val maxSize =  dimensionResource(id = R.dimen.dim_32)
                 val iconSize by animateDpAsState(
-                    targetValue = if (likeState) 22.dp else 21.dp,
+                    targetValue = if (likeState) dimensionResource(id = R.dimen.dim_22) else dimensionResource(id = R.dimen.dim_21),
                     animationSpec = keyframes {
                         durationMillis = 400
                         14.dp.at(50)
@@ -391,10 +392,10 @@ fun VideoLikeButton(
                     tint = if (likeState) foodClubGreen else Color.White,
                     modifier = Modifier.size(iconSize)
                 )
-                Spacer(modifier = Modifier.height(3.dp))
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_3)))
                 Text(
                     text = videoStats.displayLike,
-                    fontSize = 13.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
                     fontFamily = Montserrat,
                     color = if (likeState) foodClubGreen else Color.White
                 )
@@ -410,21 +411,21 @@ private fun InfoButton(onInfoClick: (() -> Unit)?) {
         Button(
             onClick = { onInfoClick() },
             colors = defaultButtonColors(),
-            shape = RoundedCornerShape(15.dp),
+            shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)),
             modifier = Modifier
-                .width(120.dp)
-                .height(35.dp),
-            contentPadding = PaddingValues(0.dp)
+                .width(dimensionResource(id = R.dimen.dim_120))
+                .height( dimensionResource(id = R.dimen.dim_35)),
+            contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_0))
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = stringResource(id = R.string.info),
                     fontFamily = Montserrat,
-                    fontSize = 14.sp
+                    fontSize = dimensionResource(id = R.dimen.fon_14).value.sp
                 )
             }
         }
     } else {
-        Spacer(modifier = Modifier.height(35.dp))
+        Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_35)))
     }
 }

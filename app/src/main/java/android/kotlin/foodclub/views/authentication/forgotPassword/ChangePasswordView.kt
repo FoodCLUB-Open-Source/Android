@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -37,7 +38,7 @@ fun ChangePasswordView(
         subHeading = stringResource(id = R.string.change_password_subheading, email),
         errorOccurred = errorOccurred.value, message = message.value,
         onBackButtonClick = { onBackButtonClick() }) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)
+        Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_4))
         ) {
             CustomTextField(
                 initialValue = verificationCode,

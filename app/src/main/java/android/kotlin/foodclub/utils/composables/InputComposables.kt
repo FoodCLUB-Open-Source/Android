@@ -1,9 +1,11 @@
 package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.Black
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.PlusJakartaSans
 import android.kotlin.foodclub.config.ui.defaultButtonColors
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.config.ui.textFieldCustomColors
 import android.kotlin.foodclub.utils.helpers.FieldsValidation
 import androidx.compose.foundation.Image
@@ -43,6 +45,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -82,18 +85,18 @@ fun CustomCodeTextField(
         keyboardActions = KeyboardActions(),
         decorationBox = {
             Row(
-                modifier = Modifier.size(352.dp, 72.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.size(dimensionResource(id = R.dimen.dim_352), dimensionResource(id = R.dimen.dim_72)),
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_8)),
             ) {
                 repeat(6) { index ->
                     Box(
                         modifier = Modifier
-                            .size(52.dp, 72.dp)
+                            .size(dimensionResource(id = R.dimen.dim_52), dimensionResource(id = R.dimen.dim_72))
                             .border(
-                                1.dp,
-                                color = if (text.length == index) Color(0xFF7EC60B)
-                                else Color(0xFF000000).copy(alpha = 0.3f),
-                                shape = RoundedCornerShape(16.dp)
+                                dimensionResource(id = R.dimen.dim_1),
+                                color = if (text.length == index) foodClubGreen
+                                else Black.copy(alpha = 0.3f),
+                                shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_16))
                             ),
                         contentAlignment = Alignment.Center
                     ) {
@@ -102,7 +105,7 @@ fun CustomCodeTextField(
                             textAlign = TextAlign.Center,
                             style = TextStyle(
                                 fontFamily = PlusJakartaSans,
-                                fontSize = 32.sp,
+                                fontSize = dimensionResource(id = R.dimen.fon_32).value.sp,
                                 fontWeight = FontWeight.SemiBold
                             )
                         )
@@ -172,10 +175,10 @@ fun CustomTextField(
                 unfocusedIndicatorColor = Color.Red
             ),
             modifier = modifier
-                .border(1.dp, Color(0xFFDADADA), RoundedCornerShape(percent = 20))
-                .clip(RoundedCornerShape(10.dp))
-                .background(Color(0xFF000000).copy(alpha = 0.04F))
-                .padding(horizontal = 10.dp)
+                .border(dimensionResource(id = R.dimen.dim_1), Color(0xFFDADADA), RoundedCornerShape(percent = 20))
+                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
+                .background(Black.copy(alpha = 0.04F))
+                .padding(horizontal = dimensionResource(id = R.dimen.dim_10))
                 .fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType)
         )
@@ -183,7 +186,7 @@ fun CustomTextField(
         Text(
             text = errorMessage.toString(),
             color = if (!textValid && !errorMessage.isNullOrBlank()) Color.Red else Color.Transparent,
-            fontSize = 12.sp
+            fontSize = dimensionResource(id = R.dimen.fon_12).value.sp
         )
     }
 }
@@ -249,10 +252,10 @@ fun CustomPasswordTextField(
             },
             colors = if (errorMessage.isNullOrBlank()) textFieldColors else errorTextFieldColors,
             modifier = Modifier
-                .border(1.dp, Color(0xFFDADADA), RoundedCornerShape(percent = 20))
-                .clip(RoundedCornerShape(10.dp))
-                .background(Color(0xFF000000).copy(alpha = 0.04F))
-                .padding(horizontal = 10.dp)
+                .border(dimensionResource(id = R.dimen.dim_1), Color(0xFFDADADA), RoundedCornerShape(percent = 20))
+                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
+                .background(Black.copy(alpha = 0.04F))
+                .padding(horizontal = dimensionResource(id = R.dimen.dim_10))
                 .fillMaxWidth(),
             trailingIcon = {
                 if (passVisible) {
@@ -284,7 +287,7 @@ fun CustomPasswordTextField(
         Text(
             text = errorMessage.toString(),
             color = if (!passValid && !errorMessage.isNullOrBlank()) Color.Red else Color.Transparent,
-            fontSize = 12.sp
+            fontSize = dimensionResource(id = R.dimen.fon_12).value.sp
         )
 
 
@@ -304,15 +307,15 @@ fun BackButton(onBackButtonClick: () -> Unit) {
     Button(
         shape = RectangleShape,
         modifier = Modifier
-            .clip(RoundedCornerShape(15.dp))
-            .width(36.dp)
-            .height(36.dp)
+            .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
+            .width( dimensionResource(id = R.dimen.dim_36))
+            .height( dimensionResource(id = R.dimen.dim_36))
             .offset(x = (-8).dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.White,
             contentColor = Color.White
         ),
-        contentPadding = PaddingValues(0.dp),
+        contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_0)),
         onClick = { onBackButtonClick() }
     ) {
         Image(
@@ -320,8 +323,8 @@ fun BackButton(onBackButtonClick: () -> Unit) {
             contentDescription = stringResource(id = R.string.go_back),
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .width(36.dp)
-                .height(36.dp)
+                .width( dimensionResource(id = R.dimen.dim_36))
+                .height( dimensionResource(id = R.dimen.dim_36))
         )
     }
 }
@@ -333,12 +336,12 @@ fun AlternativeLoginOption(
 ) {
     Button(
         onClick = {},
-        shape = RoundedCornerShape(10.dp),
+        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
         modifier = Modifier
-            .border(1.dp, Color(0xFFDADADA), RoundedCornerShape(percent = 20))
-            .height(56.dp)
-            .width(105.dp)
-            .clip(RoundedCornerShape(10.dp)),
+            .border(dimensionResource(id = R.dimen.dim_1), Color(0xFFDADADA), RoundedCornerShape(percent = 20))
+            .height(dimensionResource(id = R.dimen.dim_56))
+            .width(dimensionResource(id = R.dimen.dim_105))
+            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.White,
             contentColor = Color.White
@@ -347,7 +350,7 @@ fun AlternativeLoginOption(
         Image(
             painter = image,
             contentDescription = contentDescription,
-            modifier = Modifier.size(26.dp)
+            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_26))
         )
     }
 }
@@ -371,7 +374,7 @@ fun TermsAndConditionsInfoFooter(onClick: () -> Unit = {}) {
             color = Color.Gray,
             text = stringResource(id = R.string.by_using),
             fontFamily = Montserrat,
-            fontSize = 10.sp
+            fontSize = dimensionResource(id = R.dimen.fon_10).value.sp
         )
 
         ClickableText(
@@ -380,7 +383,7 @@ fun TermsAndConditionsInfoFooter(onClick: () -> Unit = {}) {
             style = TextStyle(
                 color = Color.Gray,
                 fontFamily = Montserrat,
-                fontSize = 10.sp,
+                fontSize = dimensionResource(id = R.dimen.fon_10).value.sp,
                 fontWeight = FontWeight.Bold,
                 textDecoration = TextDecoration.Underline
             )
@@ -405,10 +408,10 @@ fun ConfirmButton(
     onClick: () -> Unit
 ) {
     Button(
-        shape = RoundedCornerShape(10.dp),
+        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
         modifier = Modifier
-            .height(56.dp)
-            .clip(RoundedCornerShape(10.dp))
+            .height(dimensionResource(id = R.dimen.dim_56))
+            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
             .fillMaxWidth(),
         enabled = enabled,
         colors = defaultButtonColors(),
@@ -417,7 +420,7 @@ fun ConfirmButton(
         Text(
             text = text,
             fontFamily = Montserrat,
-            fontSize = 16.sp
+            fontSize = dimensionResource(id = R.dimen.fon_16).value.sp
         )
     }
 }

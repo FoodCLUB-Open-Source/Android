@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import java.text.SimpleDateFormat
@@ -46,18 +47,18 @@ fun CustomDatePicker(
                 shape = RectangleShape,
                 modifier = Modifier
                     .border(
-                        1.dp,
+                        dimensionResource(id = R.dimen.dim_1),
                         foodClubGreen,
-                        shape = RoundedCornerShape(15.dp)
+                        shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
                     )
                     .clip(
-                        RoundedCornerShape(15.dp)
+                        RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
                     ),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = foodClubGreen,
                     contentColor = Color.White
                 ),
-                contentPadding = PaddingValues(15.dp),
+                contentPadding = PaddingValues( dimensionResource(id = R.dimen.dim_15)),
                 onClick = {
                     val selected = datePickerState.selectedDateMillis
                     if (selected != null){
@@ -76,16 +77,16 @@ fun CustomDatePicker(
                 shape = RectangleShape,
                 modifier = Modifier
                     .border(
-                        1.dp,
+                        dimensionResource(id = R.dimen.dim_1),
                         Color.Gray,
-                        shape = RoundedCornerShape(15.dp)
+                        shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
                     )
-                    .clip(RoundedCornerShape(15.dp)),
+                    .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Gray,
                     contentColor = Color.White
                 ),
-                contentPadding = PaddingValues(15.dp),
+                contentPadding = PaddingValues( dimensionResource(id = R.dimen.dim_15)),
                 onClick = {
                     onDismiss()
                 })

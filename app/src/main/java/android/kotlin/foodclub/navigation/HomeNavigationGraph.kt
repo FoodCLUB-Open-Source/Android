@@ -4,6 +4,11 @@ import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
 import android.kotlin.foodclub.viewModels.home.CameraViewModel
 import android.kotlin.foodclub.viewModels.home.DiscoverViewModel
+import android.kotlin.foodclub.viewModels.home.FollowerFollowingViewModel
+import android.kotlin.foodclub.viewModels.home.GalleryViewModel
+import android.kotlin.foodclub.viewModels.home.HomeViewModel
+import android.kotlin.foodclub.viewModels.home.MyBasketViewModel
+import android.kotlin.foodclub.viewModels.home.ProfileViewModel
 import android.kotlin.foodclub.views.home.CameraPreviewView
 import android.kotlin.foodclub.views.home.CameraView
 import android.kotlin.foodclub.views.home.CreateView
@@ -18,23 +23,17 @@ import android.kotlin.foodclub.views.home.ScanResultView
 import android.kotlin.foodclub.views.home.ScanView
 import android.kotlin.foodclub.views.home.SearchView
 import android.kotlin.foodclub.views.home.TakeProfilePhotoView
+import android.kotlin.foodclub.views.home.TakeSnapView
 import android.kotlin.foodclub.views.home.topbackbar
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import android.kotlin.foodclub.viewModels.home.FollowerFollowingViewModel
-import android.kotlin.foodclub.viewModels.home.GalleryViewModel
-import android.kotlin.foodclub.viewModels.home.HomeViewModel
-import android.kotlin.foodclub.viewModels.home.MyBasketViewModel
-import android.kotlin.foodclub.viewModels.home.ProfileViewModel
-import android.kotlin.foodclub.views.home.TakeSnapView
-import androidx.hilt.navigation.compose.hiltViewModel
-
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)

@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -77,21 +78,21 @@ fun MainLogInAndSignUp(
             Modifier
                 .weight(7F)
                 .fillMaxSize()
-                .padding(top = 120.dp),
+                .padding(top = dimensionResource(id = R.dimen.dim_120)),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(36.dp)
+            verticalArrangement = Arrangement.spacedBy( dimensionResource(id = R.dimen.dim_36))
         ) {
             Image(
                 painterResource(id = R.drawable.welcome_logo),
                 contentDescription = stringResource(id = R.string.app_logo),
                 modifier = Modifier
-                    .width(80.dp)
-                    .height(80.dp)
+                    .width(dimensionResource(id = R.dimen.dim_80))
+                    .height(dimensionResource(id = R.dimen.dim_80))
             )
             Image(
                 painterResource(id = R.drawable.foodclub),
                 contentDescription = stringResource(id = R.string.app_title),
-                modifier = Modifier.height(40.dp)
+                modifier = Modifier.height(dimensionResource(id = R.dimen.dim_40))
 
             )
         }
@@ -99,22 +100,22 @@ fun MainLogInAndSignUp(
             Modifier
                 .weight(8F)
                 .fillMaxSize()
-                .padding(horizontal = 48.dp, vertical = 48.dp),
+                .padding(horizontal = dimensionResource(id = R.dimen.dim_48), vertical = dimensionResource(id = R.dimen.dim_48)),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(18.dp)
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_18))
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_8))) {
                 Button(
                     shape = RectangleShape,
                     modifier = Modifier
-                        .border(1.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
-                        .clip(RoundedCornerShape(10.dp))
+                        .border(dimensionResource(id = R.dimen.dim_1), Color.LightGray, shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
+                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
                         .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(126, 198, 11, 255),
                         contentColor = Color.White
                     ),
-                    contentPadding = PaddingValues(15.dp),
+                    contentPadding = PaddingValues( dimensionResource(id = R.dimen.dim_15)),
                     onClick = {
                         navController.navigate(AuthScreen.TermsAndConditions.route)
                     }
@@ -122,7 +123,7 @@ fun MainLogInAndSignUp(
                     Text(
                         color = Color.White,
                         text = stringResource(id = R.string.sign_up),
-                        fontSize = 14.sp,
+                        fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
                         fontFamily = Montserrat
                     )
                 }
@@ -136,8 +137,8 @@ fun MainLogInAndSignUp(
                     color = Color.Black,
                     text = stringResource(id = R.string.already_have_account),
                     fontFamily = Montserrat,
-                    fontSize = 14.sp,
-                    modifier = Modifier.padding(end = 5.dp)
+                    fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
+                    modifier = Modifier.padding(end =dimensionResource(id = R.dimen.dim_5))
                 )
 
                 ClickableText(
@@ -148,7 +149,7 @@ fun MainLogInAndSignUp(
                     style = TextStyle(
                         color = Color(126, 198, 11, 255),
                         fontFamily = Montserrat,
-                        fontSize = 14.sp
+                        fontSize = dimensionResource(id = R.dimen.fon_14).value.sp
                     )
                 )
             }
@@ -157,7 +158,7 @@ fun MainLogInAndSignUp(
             Modifier
                 .weight(5F)
                 .fillMaxSize()
-                .padding(vertical = 32.dp)
+                .padding(vertical =  dimensionResource(id = R.dimen.dim_32))
         ) {
             TermsAndConditionsInfoFooter() { viewModel.termsAndConditions() }
         }

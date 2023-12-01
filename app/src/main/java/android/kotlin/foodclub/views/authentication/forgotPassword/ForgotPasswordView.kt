@@ -17,6 +17,7 @@ import androidx.compose.runtime.State
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import android.kotlin.foodclub.R
+import androidx.compose.ui.res.dimensionResource
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -36,7 +37,7 @@ fun ForgotPasswordView(
         errorOccurred = errorOccurred.value, message = message.value,
         onBackButtonClick = { onBackButtonClick() }
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_4))) {
             CustomTextField(initialValue = userEmail,
                 placeholder = stringResource(id = R.string.email),
                 keyboardType = KeyboardType.Email,
