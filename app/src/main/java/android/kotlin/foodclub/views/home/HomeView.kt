@@ -16,91 +16,102 @@ import android.kotlin.foodclub.utils.composables.MemoriesItemView
 import android.kotlin.foodclub.utils.composables.PlayPauseButton
 import android.kotlin.foodclub.utils.composables.VideoLayout
 import android.kotlin.foodclub.utils.composables.VideoScroller
+import android.kotlin.foodclub.viewModels.home.HomeViewModel
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.dp
-import android.kotlin.foodclub.viewModels.home.HomeViewModel
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import kotlinx.coroutines.launch
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.BottomSheetDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
+import androidx.compose.ui.draw.BlurredEdgeTreatment
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.RoundRect
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.drawscope.clipPath
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
-import androidx.navigation.NavHostController
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.ui.draw.BlurredEdgeTreatment
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
+import androidx.constraintlayout.compose.ExperimentalMotionApi
+import androidx.constraintlayout.compose.MotionLayout
+import androidx.constraintlayout.compose.MotionScene
 import androidx.media3.common.util.UnstableApi
+import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.launch
 import okio.ByteString.Companion.encodeUtf8
 
 
@@ -343,7 +354,7 @@ fun BlurImage(content: @Composable () -> Unit) {
 }
 
 @SuppressLint("StateFlowValueCalledInComposition")
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMotionApi::class)
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 fun HomeView(
@@ -468,7 +479,7 @@ fun HomeView(
 
     Column(modifier = Modifier
         .height(screenHeightMinusBottomNavItem)
-        .padding(bottom = 10 .dp)
+        .padding(bottom = 10.dp)
     ) {
         if (showIngredientSheet) {
             HomeBottomSheetIngredients(triggerIngredientBottomSheetModal)
@@ -582,96 +593,226 @@ fun HomeView(
                 }
             }
         }else{
+            val context = LocalContext.current
+            val motionScene = remember {
+                context.resources
+                    .openRawResource(R.raw.snapmotion_layout)
+                    .readBytes()
+                    .decodeToString()
+            }
 
+            val scrollState = rememberScrollState(initial = 0)
+            val snapPagerState = rememberPagerState(
+                initialPage = 0,
+                initialPageOffsetFraction = 0f,
+            ) {
+                storyListData.value.size
+            }
+
+            val snapPagerFling = PagerDefaults.flingBehavior(
+                state = snapPagerState, lowVelocityAnimationSpec = tween(
+                    easing = LinearEasing, durationMillis = 300
+                ),
+
+            )
            if(showStories){
                SnapsView(memoriesModel = currentMemoriesModel, modifier = Modifier)
            }
             else{
-               Column(
-                   modifier = Modifier
-                       .background(color = Color.White)
-                       .fillMaxSize()
-               ) {
-                   Spacer(modifier = modifier.size(90.dp))
-                   Column(
-                       modifier = Modifier.padding(24.dp)
-                   ) {
-
-                       Text(
-                           text="Memories",
-                           style = TextStyle(
-                               fontWeight = FontWeight.Bold,
-                               color = Color.Black,
-                               fontSize = 20.sp,
-                               fontFamily = Montserrat
-                           )
-                       )
-                       Spacer(modifier = modifier.size(12.dp))
-
-                       if(memories.value.isEmpty()){
-                           MemoriesItemView(
-                               modifier = Modifier.clickable {
-                                   showStories=!showStories
-                               },
-                               painter = painterResource(id = R.drawable.nosnapsfortheday),
-                               date = "")
-                       }
-                       else{
-                           LazyRow(){
-                               items(memories.value){
-                                   val painter: Painter =  rememberImagePainter(data = it.stories[0].imageUrl)
-                                   MemoriesItemView(
-                                       modifier = Modifier.clickable {
-                                           showStories=!showStories
-                                           currentMemoriesModel = it
-                                       },
-                                       painter = painter,
-                                       date = it.dateTime)
-                                   Spacer(modifier = Modifier.width(12.dp))
-                               }
-                           }
-                       }
-                   }
-                   Spacer(modifier = Modifier.height(5.dp))
-                   Spacer(modifier = Modifier
-                       .fillMaxWidth()
-                       .height(0.5.dp)
-                       .background(color = Color.Black))
-                   Spacer(modifier = Modifier.height(25.dp))
-                   Text(
-                       text ="Today",
-                       style = TextStyle(
-                           fontWeight = FontWeight.Bold,
-                           fontSize = 20.sp,
-                           fontFamily = Montserrat,
-                           color = Color.Black
-                       ),
-                       modifier = Modifier.padding(start = 24.dp)
-                   )
-                   if(storyListData.value.isEmpty()){
-                       TapToSnapDialog(modifier =
-                       Modifier
-                           .fillMaxSize()
-                           .padding(vertical = 12.dp)
-                           .clickable {
-                               navController.navigate("CAMERA_VIEW/${"story".encodeUtf8()}")
-                           }
-                           .aspectRatio(0.9f, true)
-
-                       )
-                   }
-                   else{
-                       SnapStoryView(storyListData)
-                   }
-
+                var progress by remember{
+                    mutableFloatStateOf(0f)
                 }
-            }
+               val isDragged by snapPagerState.interactionSource.collectIsDraggedAsState()
+
+               MotionLayout(
+                               motionScene = MotionScene(
+                                   content = motionScene
+                               ),
+                               progress = if(!snapPagerState.canScrollBackward && snapPagerState.canScrollForward && isDragged){
+                                   LaunchedEffect(progress) {
+                                       progress = 0f
+                                       scrollState.scrollTo(0)
+                                   }
+                                   progress
+                               } else (scrollState.value/100).toFloat(),
+                               modifier = Modifier
+                                   .height(screenHeightMinusBottomNavItem)
+                                   .fillMaxWidth()
+
+                           ) {
+                               Box(modifier = Modifier
+                                   .layoutId("paren")
+                                   .fillMaxSize())
+
+                                   Spacer(
+                                       modifier = modifier
+                                           .size(90.dp)
+                                           .layoutId("spacer")
+                                   )
+                                   Text(
+                                       text="Memories",
+                                       style = TextStyle(
+                                           fontWeight = FontWeight.Bold,
+                                           color = Color.Black,
+                                           fontSize = 20.sp,
+                                           fontFamily = Montserrat
+                                       ),
+                                       modifier = Modifier.layoutId("memories_text")
+
+                                   )
+                                   Spacer(
+                                       modifier = modifier.size(12.dp)
+                                   )
+
+
+                                   if(memories.value.isEmpty()){
+                                       MemoriesItemView(
+                                           modifier = Modifier
+                                               .clickable {
+                                                   showStories = !showStories
+                                               }
+                                               .layoutId("memories_item_view")
+
+                                           ,
+                                           painter = painterResource(id = R.drawable.nosnapsfortheday),
+                                           date = "")
+
+                                   }
+                                   else{
+                                       LazyRow(
+                                           modifier = Modifier
+                                               .layoutId("memories_item_view")
+                                       ){
+                                           items(memories.value){
+                                               val painter: Painter =  rememberImagePainter(data = it.stories[0].imageUrl)
+                                               MemoriesItemView(
+                                                   modifier = Modifier.clickable {
+                                                       showStories=!showStories
+                                                       currentMemoriesModel = it
+                                                   },
+                                                   painter = painter,
+                                                   date = it.dateTime
+                                               )
+                                               Spacer(modifier = Modifier.width(12.dp))
+
+                                           }
+                                       }
+                                   }
+                                   Spacer(modifier = Modifier.height(5.dp))
+                                   Spacer(modifier = Modifier
+                                       .fillMaxWidth()
+                                       .background(color = Color.Black)
+                                       .layoutId("memories_divider")
+                                   )
+                                   Spacer(modifier = Modifier.height(25.dp))
+                                   Text(
+                                       text ="Today",
+                                       style = TextStyle(
+                                           fontWeight = FontWeight.Bold,
+                                           fontSize = 20.sp,
+                                           fontFamily = Montserrat,
+                                           color = Color.Black
+                                       ),
+                                       modifier = Modifier
+                                           .layoutId("today_text")
+                                   )
+
+                                   if(storyListData.value.isEmpty()){
+                                       TapToSnapDialog(modifier =
+                                       Modifier
+                                           .layoutId("tap_to_snap")
+                                           .clickable {
+                                               navController.navigate("CAMERA_VIEW/${"story".encodeUtf8()}")
+                                           }
+                                           .aspectRatio(0.9f, true)
+                                       )
+                                   }
+                                   else {
+
+                                       SnapStoryView(
+                                           storyListData = storyListData,
+                                           modifier = Modifier
+                                               .scrollable(
+                                                   state = scrollState,
+                                                   reverseDirection = true,
+                                                   orientation = Orientation.Vertical,
+                                               )
+                                               .layoutId("snap_story_view")
+                                       )
+                                       Box(modifier = Modifier
+                                           .fillMaxSize()
+                                           .layoutId("stories_view")
+
+                                       )
+                                       {
+                                           VerticalPager(
+                                               state = snapPagerState,
+                                               flingBehavior = snapPagerFling,
+                                               beyondBoundsPageCount = 1,
+                                               modifier = Modifier,
+                                           ) {
+                                               Box {
+                                                   AsyncImage(
+                                                       model = storyListData.value[it].thumbnailLink,
+                                                       contentDescription = "",
+                                                       contentScale = ContentScale.Crop,
+                                                       modifier = Modifier.fillMaxSize()
+                                                   )
+
+                                                   Box(
+                                                       modifier = Modifier
+                                                           .align(Alignment.BottomStart)
+                                                           .padding(15.dp)
+                                                   ) {
+                                                       Column(
+                                                           modifier = Modifier.fillMaxWidth()
+                                                       ) {
+                                                           Row(
+                                                               verticalAlignment = Alignment.CenterVertically,
+                                                               modifier = Modifier.padding(bottom = 15.dp)
+                                                           ) {
+                                                               Image(
+                                                                   painter = painterResource(id = R.drawable.story_user),
+                                                                   contentDescription = "Profile Image",
+                                                                   modifier = Modifier
+                                                                       .size(35.dp)
+                                                                       .clip(CircleShape)
+                                                                       .alpha(0.7f)
+                                                               )
+                                                               Spacer(modifier = Modifier.width(10.dp))
+                                                               Text(
+                                                                   storyListData.value[it].authorDetails, color = Color.Black,
+                                                                   fontFamily = Montserrat, fontSize = 18.sp,
+                                                                   modifier = Modifier
+                                                                       .padding(2.dp)
+                                                                       .alpha(0.7f)
+                                                               )
+                                                           }
+                                                           Text(
+                                                               storyListData.value[it].createdAt, color = Color.Black,
+                                                               fontFamily = Montserrat, fontSize = 12.sp,
+                                                               fontWeight = FontWeight.SemiBold,
+                                                               modifier = Modifier
+                                                                   .padding(2.dp)
+                                                                   .alpha(0.7f)
+                                                           )
+                                                       }
+                                                   }
+                                               }
+                                           }
+                                       }
+                                   }
+                               }
+
+                   }
         }
     }
 }
-
 @Composable
-fun SnapStoryView(storyListData: State<List<VideoModel>>) {
+fun SnapStoryView(
+    storyListData: State<List<VideoModel>>,
+    modifier: Modifier
+) {
     var sizeImage by remember { mutableStateOf(IntSize.Zero) }
     val gradient = Brush.verticalGradient(
         colors = listOf(Color.White,Color.Transparent),
@@ -681,9 +822,7 @@ fun SnapStoryView(storyListData: State<List<VideoModel>>) {
     )
     
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-
+        modifier = modifier
     ){
         Image(
             painter = rememberAsyncImagePainter(model = storyListData.value[0].thumbnailLink),
@@ -720,7 +859,6 @@ fun TapToSnapDialog(
             contentScale = ContentScale.Crop,
             colorFilter = ColorFilter.tint(Color.Black, BlendMode.Overlay),
             modifier = Modifier
-                .fillMaxSize()
                 .blur(
                     radiusX = 50.dp,
                     radiusY = 50.dp,

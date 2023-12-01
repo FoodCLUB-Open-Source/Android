@@ -154,6 +154,9 @@ dependencies {
     implementation 'com.auth0.android:jwtdecode:2.0.2'
     implementation 'com.auth0:java-jwt:4.4.0'
 
+    // Constraint layout implementation for MotionLayout
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0"
+    
 
 }
 
