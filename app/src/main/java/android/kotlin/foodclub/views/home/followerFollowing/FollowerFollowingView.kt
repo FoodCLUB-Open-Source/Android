@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.views.home
+package android.kotlin.foodclub.views.home.followerFollowing
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Avenir
@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -52,6 +51,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 fun FollowerView(
     navController: NavController,
     viewModel: FollowerFollowingViewModel,
+    state: FollowerFollowingState,
     viewType: String,
     userId: Long
 ) {
@@ -68,10 +68,6 @@ fun FollowerView(
         if(viewType == FollowViewType.FOLLOWERS.type) viewModel.getFollowersList(userId)
         if(viewType == FollowViewType.FOLLOWING.type) viewModel.getFollowingList(userId)
     }
-
-    val titleState = viewModel.title.collectAsState()
-    val followersListState = viewModel.followersList.collectAsState()
-    val followingListState = viewModel.followingList.collectAsState()
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -110,18 +106,22 @@ fun FollowerView(
                     )
                 }
             }
+
             Spacer(modifier = Modifier.height(16.dp))
+
             Text(
-                text = titleState.value, fontWeight = FontWeight.ExtraBold,
+                text = state.title,
+                fontWeight = FontWeight.ExtraBold,
                 fontFamily = Raleway,
                 fontSize = 20.sp,
                 modifier = Modifier.padding(start = 20.dp),
             )
+
             Spacer(modifier = Modifier.height(16.dp))
 
             val userList: List<SimpleUserModel> = when(viewType) {
-                FollowViewType.FOLLOWERS.type -> followersListState.value
-                FollowViewType.FOLLOWING.type -> followingListState.value
+                FollowViewType.FOLLOWERS.type -> state.followersList
+                FollowViewType.FOLLOWING.type -> state.followingList
                 else -> listOf()
             }
 
@@ -170,6 +170,7 @@ fun Follower(
                 .background(Color.White)
         )
             Spacer(modifier = Modifier.width(12.dp))
+
             Column {
                 Text(
                     text = username,

@@ -6,7 +6,7 @@ import android.kotlin.foodclub.views.home.CameraPreviewView
 import android.kotlin.foodclub.views.home.camera.CameraView
 import android.kotlin.foodclub.views.home.CreateView
 import android.kotlin.foodclub.views.home.discover.DiscoverView
-import android.kotlin.foodclub.views.home.FollowerView
+import android.kotlin.foodclub.views.home.followerFollowing.FollowerView
 import android.kotlin.foodclub.views.home.GalleryView
 import android.kotlin.foodclub.views.home.home.HomeView
 import android.kotlin.foodclub.views.home.myBasket.MyBasketView
@@ -189,12 +189,14 @@ fun NavGraphBuilder.homeNavigationGraph(
             )
         ) {
             val viewModel: FollowerFollowingViewModel = hiltViewModel()
+            val state = viewModel.state.collectAsState()
 
             it.arguments?.getString("userId")?.let { it1 ->
                 FollowerView(
                     navController = navController,
                     viewModel = viewModel,
                     viewType = FollowViewType.FOLLOWERS.title,
+                    state = state.value,
                     userId = it1.toLong()
                 )
             }
@@ -206,12 +208,14 @@ fun NavGraphBuilder.homeNavigationGraph(
             )
         ) {
             val viewModel: FollowerFollowingViewModel = hiltViewModel()
+            val state = viewModel.state.collectAsState()
 
             it.arguments?.getString("userId")?.let { it1 ->
                 FollowerView(
                     navController = navController,
                     viewModel = viewModel,
                     viewType = FollowViewType.FOLLOWING.title,
+                    state = state.value,
                     userId = it1.toLong()
                 )
             }

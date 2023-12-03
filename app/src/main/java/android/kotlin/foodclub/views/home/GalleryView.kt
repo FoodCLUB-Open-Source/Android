@@ -51,7 +51,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionsRequired
@@ -71,13 +70,13 @@ public fun GalleryView(
 ) {
     val context = LocalContext.current
 
-    var state = ""
+    var galleryState = ""
 
     if (stateEncoded.contains(GalleryState.STORY.state)) {
-        state = GalleryState.STORY.state
+        galleryState = GalleryState.STORY.state
     }
     if (stateEncoded.contains(GalleryState.RECIPE.state)) {
-        state = GalleryState.RECIPE.state
+        galleryState = GalleryState.RECIPE.state
     }
 
     val permissionState = rememberMultiplePermissionsState(
@@ -289,7 +288,7 @@ public fun GalleryView(
                             itemsPerRow = itemsPerRow,
                             navController = navController,
                             context = context,
-                            state = state,
+                            galleryState = galleryState,
                         )
                     }
 
@@ -360,7 +359,11 @@ fun <E> GalleryTab(
 }
 
 @Composable
-fun GalleryImageTab(images: List<Uri>, itemsPerRow: Int = 3, context: Context) {
+fun GalleryImageTab(
+    images: List<Uri>,
+    itemsPerRow: Int = 3,
+    context: Context
+) {
     var imageRows: MutableList<MutableList<ImageBitmap>> = arrayListOf()
     val imageRow: MutableList<ImageBitmap> = arrayListOf()
     var count = 0
@@ -432,7 +435,7 @@ fun GalleryVideoTab(
     itemsPerRow: Int = 3,
     navController: NavController,
     context: Context,
-    state: String
+    galleryState: String
 ) {
     var videoRows: MutableList<MutableList<Uri>> = arrayListOf()
     val videoRow: MutableList<Uri> = arrayListOf()
@@ -465,7 +468,7 @@ fun GalleryVideoTab(
                 val ratioModifier: Modifier = Modifier.weight(1f);
 
                 for (video in videoLine) {
-                    VideoItem(ratioModifier, video, navController, state)
+                    VideoItem(ratioModifier, video, navController, galleryState)
                 }
             }
         }
@@ -490,7 +493,7 @@ fun VideoItem(
     modifier: Modifier,
     videoID: Uri = ("").toUri(),
     navController: NavController,
-    state: String
+    galleryState: String
 ) {
     val context = LocalContext.current
     val bitmap = createVideoThumb(context = context, videoID)?.asImageBitmap()
@@ -505,7 +508,7 @@ fun VideoItem(
                     videoID.toString(),
                     StandardCharsets.UTF_8.toString()
                 )
-                navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
+                navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${galleryState.encodeUtf8()}")
             }
             .then(modifier)
     ) {

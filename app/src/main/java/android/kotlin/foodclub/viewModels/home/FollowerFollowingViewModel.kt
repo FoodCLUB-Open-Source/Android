@@ -3,11 +3,13 @@ package android.kotlin.foodclub.viewModels.home
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.helpers.Resource
+import android.kotlin.foodclub.views.home.followerFollowing.FollowerFollowingState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,28 +17,34 @@ import javax.inject.Inject
 class FollowerFollowingViewModel @Inject constructor(
     private val repository: ProfileRepository
 ) : ViewModel() {
-    private val _followersList = MutableStateFlow<List<SimpleUserModel>>(listOf())
-    val followersList: StateFlow<List<SimpleUserModel>> get() = _followersList
 
-    private val _followingList = MutableStateFlow<List<SimpleUserModel>>(listOf())
-    val followingList: StateFlow<List<SimpleUserModel>> get() = _followingList
+    companion object {
+        private val TAG = FollowerFollowingViewModel::class.java.simpleName
+    }
 
-    private val _error = MutableStateFlow("")
-    val error: StateFlow<String> get() = _error
-
-    private val _title = MutableStateFlow("")
-    val title: StateFlow<String> get() = _title
+    private val _state = MutableStateFlow(FollowerFollowingState.default())
+    val state: StateFlow<FollowerFollowingState>
+        get() = _state
 
     fun getFollowersList(userId: Long) {
         viewModelScope.launch() {
-            when(val resource = repository.retrieveProfileFollowers(userId)) {
+            when (val resource = repository.retrieveProfileFollowers(userId)) {
                 is Resource.Success -> {
-                    _error.value = ""
-                    _followersList.value = resource.data!!
-                    _title.value = "Followers"
+                    _state.update {
+                        it.copy(
+                            followersList = resource.data!!,
+                            title = "Followers",
+                            error = ""
+                        )
+                    }
                 }
+
                 is Resource.Error -> {
-                    _error.value = resource.message!!
+                    _state.update {
+                        it.copy(
+                            error = resource.message!!
+                        )
+                    }
                 }
             }
         }
@@ -46,13 +54,21 @@ class FollowerFollowingViewModel @Inject constructor(
         viewModelScope.launch() {
             when (val resource = repository.retrieveProfileFollowing(userId)) {
                 is Resource.Success -> {
-                    _error.value = ""
-                    _followingList.value = resource.data!!
-                    _title.value = "Following"
+                    _state.update {
+                        it.copy(
+                            followingList = resource.data!!,
+                            title = "Following",
+                            error = ""
+                        )
+                    }
                 }
 
                 is Resource.Error -> {
-                    _error.value = resource.message!!
+                    _state.update {
+                        it.copy(
+                            error = resource.message!!
+                        )
+                    }
                 }
             }
         }
