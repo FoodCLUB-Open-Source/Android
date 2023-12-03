@@ -39,7 +39,8 @@ fun UsernameView(
             onBackButtonClick()
         }
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             CustomTextField(
                 initialValue = username,
