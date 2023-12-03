@@ -21,11 +21,13 @@ import androidx.compose.ui.res.stringResource
 @Composable
 fun ConfirmEmailView(
     onValuesUpdate: () -> Unit, saveData: (String) -> Unit,
-    onBackButtonClick: () -> Unit, userSignUpInformation: State<SignUpUser>,
-    repeatedEmailState: State<String>, error: String
+    onBackButtonClick: () -> Unit,
+    userSignUpInformation: SignUpUser,
+    repeatedEmailState: String,
+    error: String
 ) {
-    val email by remember { mutableStateOf(userSignUpInformation.value.email) }
-    var repeatedEmail by remember { mutableStateOf(repeatedEmailState.value) }
+    val email by remember { mutableStateOf(userSignUpInformation.email) }
+    var repeatedEmail by remember { mutableStateOf(repeatedEmailState) }
     var initialEmailCorrectnessState = email == repeatedEmail
     var filledEmail by remember { mutableStateOf(false) }
 
