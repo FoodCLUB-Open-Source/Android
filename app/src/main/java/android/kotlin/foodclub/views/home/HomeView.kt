@@ -7,6 +7,7 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.domain.enums.Reactions
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.others.AnimatedIcon
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
@@ -758,12 +759,21 @@ fun HomeView(
                                                        contentScale = ContentScale.Crop,
                                                        modifier = Modifier.fillMaxSize()
                                                    )
-
+                                                   SnapReactionsView(
+                                                       modifier = Modifier
+                                                           .align(Alignment.BottomCenter)
+                                                           .padding(bottom = 150.dp),
+                                                       reactions = Reactions.values(),
+                                                       painter = rememberAsyncImagePainter(
+                                                           model = storyListData.value[it].thumbnailLink
+                                                       )
+                                                   )
                                                    Box(
                                                        modifier = Modifier
                                                            .align(Alignment.BottomStart)
                                                            .padding(15.dp)
                                                    ) {
+
                                                        Column(
                                                            modifier = Modifier.fillMaxWidth()
                                                        ) {
@@ -788,6 +798,7 @@ fun HomeView(
                                                                        .alpha(0.7f)
                                                                )
                                                            }
+
                                                            Text(
                                                                storyListData.value[it].createdAt, color = Color.Black,
                                                                fontFamily = Montserrat, fontSize = 12.sp,
@@ -805,6 +816,52 @@ fun HomeView(
                                }
 
                    }
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun SnapReactionsView(
+    modifier: Modifier,
+    reactions: Array<Reactions>,
+    painter: Painter
+) {
+
+    val state = rememberPagerState {
+        reactions.count()
+    }
+    Box(
+        modifier = modifier
+            .fillMaxWidth(0.9f)
+            .height(64.dp)
+            .alpha(1f)
+
+    ) {
+        Image(painter = painter, contentDescription =null,
+            modifier = Modifier
+                .fillMaxWidth()
+                .blur(
+                    radiusX = 5.dp,
+                    radiusY = 5.dp,
+                    edgeTreatment = BlurredEdgeTreatment(RoundedCornerShape(32.dp))
+                ),
+            contentScale = ContentScale.FillWidth
+            )
+
+        LazyRow(
+            modifier=Modifier.align(Alignment.Center),
+        ){
+            items(reactions){reaction->
+                if(reaction != Reactions.ALL){
+                    Image(
+                        painter = painterResource(id =reaction.drawable), contentDescription = null, contentScale = ContentScale.FillHeight, modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(5.dp)
+
+                    )
+                }
+            }
         }
     }
 }
