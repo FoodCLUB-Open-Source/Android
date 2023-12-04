@@ -58,7 +58,6 @@ fun HomeView(
     var showIngredientSheet by remember { mutableStateOf(false) }
     val localDensity = LocalDensity.current
 
-   // val videosState = viewModel.postListData.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
     var screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.94f
@@ -66,7 +65,6 @@ fun HomeView(
     if (screenHeightMinusBottomNavItem <= 650.dp) {
         screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.96f
     }
-   // val memories = viewModel.memoryListData.collectAsState()
     var showStories by remember {
         mutableStateOf(false)
     }
