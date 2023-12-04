@@ -95,6 +95,7 @@ fun NavGraphBuilder.homeNavigationGraph(
             val state = viewModel.state.collectAsState()
 
             MyBasketView(
+                navController = navController,
                 viewModel = viewModel,
                 state = state.value
             )
@@ -106,10 +107,12 @@ fun NavGraphBuilder.homeNavigationGraph(
         composable(route = BottomBarScreenObject.Play.route) {
             val viewModel = it.sharedHiltViewModel<DiscoverViewModel>(navController)
             val state = viewModel.state.collectAsState()
+            val myBasketViewModel = hiltViewModel<MyBasketViewModel>()
 
             DiscoverView(
                 navController = navController,
                 viewModel = viewModel,
+                myBasketViewModel = myBasketViewModel,
                 state = state.value
             )
         }
@@ -220,6 +223,7 @@ fun NavGraphBuilder.homeNavigationGraph(
             val state = viewModel.state.collectAsState()
 
             MyBasketView(
+                navController = navController,
                 viewModel = viewModel,
                 state = state.value
             )

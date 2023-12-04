@@ -9,6 +9,10 @@ class MyBasket {
 
     private var removedIds = ArrayList<String>()
 
+    fun getIngredientCount(): Int {
+        return ingredients.size
+    }
+
     fun addIngredient(ingredient: Ingredient) {
         val repeatedIngredients = ingredients.filter { element -> element.id == ingredient.id }
         if(repeatedIngredients.isNotEmpty()) {

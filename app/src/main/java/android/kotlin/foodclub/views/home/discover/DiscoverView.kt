@@ -8,6 +8,8 @@ import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.products.Ingredient
+import android.kotlin.foodclub.domain.models.products.MyBasketCache
+import android.kotlin.foodclub.domain.models.profile.UserPosts
 import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.CustomDatePicker
 import android.kotlin.foodclub.utils.composables.EditIngredientQuantityPicker
@@ -72,6 +74,8 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import android.kotlin.foodclub.viewModels.home.DiscoverViewModel
 import android.kotlin.foodclub.views.home.myDigitalPantry.TitlesSection
+import android.kotlin.foodclub.viewModels.home.MyBasketViewModel
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.heightIn
@@ -103,6 +107,7 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -130,7 +135,8 @@ import kotlinx.coroutines.launch
 fun DiscoverView(
     navController: NavController,
     viewModel: DiscoverViewModel,
-    state: DiscoverState
+    state: DiscoverState,
+    myBasketViewModel: MyBasketViewModel
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - dimensionResource(id = R.dimen.dim_240)
 
@@ -138,6 +144,7 @@ fun DiscoverView(
     if (screenHeight <= dimensionResource(id = R.dimen.dim_440)) {
         isSmallScreen = true
     }
+
 
     val systemUiController = rememberSystemUiController()
 
@@ -211,7 +218,8 @@ fun DiscoverView(
         item {
             MainSearchBar(
                 searchTextValue = state.mainSearchText,
-                navController = navController
+                navController = navController,
+                basketCache = viewModel.myBasketCache
             )
         }
 
@@ -358,12 +366,12 @@ fun DiscoverView(
                         style = TextStyle(
                             textDecoration = TextDecoration.Underline
                         ),
-                        fontSize = 16.sp,
+                        fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                         textAlign = TextAlign.Center
                     )
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
 
                 HorizontalPager(
@@ -437,8 +445,10 @@ fun DiscoverView(
 @Composable
 fun MainSearchBar(
     searchTextValue: String,
-    navController: NavController
+    navController: NavController,
+    basketCache: MyBasketCache
 ) {
+    val basketCount = basketCache.getBasket().getIngredientCount()
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -510,7 +520,7 @@ fun MainSearchBar(
                         modifier = Modifier.offset(x = (-5).dp, y =dimensionResource(id = R.dimen.dim_5)),
                         containerColor = foodClubGreen
                     )
-                    { Text(text = "5", color = Color.Black) }
+                    { Text(text = (basketCount).toString(), color = Color.Black) }
                 }
             ) {
                 Icon(
