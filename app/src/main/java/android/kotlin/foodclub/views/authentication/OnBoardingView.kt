@@ -4,6 +4,7 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.config.ui.light_blue
 import android.kotlin.foodclub.domain.models.others.OnBoardingItems
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
@@ -34,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -99,7 +101,7 @@ fun OnBoardingView() {
 fun OnBoardingScreen1() {
     Column(
         Modifier
-            .padding(10.dp)
+            .padding(dimensionResource(id = R.dimen.dim_10))
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -109,18 +111,18 @@ fun OnBoardingScreen1() {
             painter = painterResource(id = R.drawable.app_logo),
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.size(200.dp)
+            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_200))
         )
         Text(
             text = stringResource(id = R.string.foodCLUB),
             fontFamily = Montserrat,
             fontWeight = FontWeight.Black,
-            fontSize = 35.sp
+            fontSize = dimensionResource(id = R.dimen.fon_35).value.sp
         )
         Text(
             text = stringResource(id = R.string.art_of_food),
             fontFamily = Montserrat,
-            fontSize = 20.sp,
+            fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
             color = Color.Gray
         )
     }
@@ -130,7 +132,7 @@ fun OnBoardingScreen1() {
 fun OnBoardingScreen2() {
     Column(
         Modifier
-            .padding(10.dp)
+            .padding(dimensionResource(id = R.dimen.dim_10))
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -138,7 +140,7 @@ fun OnBoardingScreen2() {
     {
         Text(
             text = stringResource(id = R.string.dont_follow),
-            color = Color(0xFF3A7CA8),
+            color = light_blue,
             fontSize = 45.sp,
             fontWeight = FontWeight.ExtraBold
         )
@@ -155,7 +157,7 @@ fun OnBoardingScreen2() {
 fun OnBoardingScreen3() {
     Column(
         Modifier
-            .padding(30.dp)
+            .padding( dimensionResource(id = R.dimen.dim_30))
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
@@ -209,7 +211,7 @@ fun OnBoardingScreen3() {
 fun OnBoardingScreen4() {
     Column(
         Modifier
-            .padding(30.dp)
+            .padding( dimensionResource(id = R.dimen.dim_30))
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
@@ -252,14 +254,14 @@ fun OnBoardingScreen4() {
 
         Button(
             onClick = { localUriHandler.openUri(link) },
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3A7CA8)),
-            shape = RoundedCornerShape(10.dp)
+            colors = ButtonDefaults.buttonColors(containerColor = light_blue),
+            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))
         ) {
             Text(
                 text = stringResource(id = R.string.join_vip_discord),
                 fontFamily = Montserrat,
                 color = Color.White,
-                fontSize = 24.sp
+                fontSize = dimensionResource(id = R.dimen.fon_24).value.sp
             )
         }
 
@@ -271,19 +273,20 @@ fun InfoRow(imageID: Int, text: String) {
     Row(
         verticalAlignment = Alignment.CenterVertically, modifier = Modifier
             .fillMaxWidth()
-            .padding(5.dp)
+            .padding(dimensionResource(id = R.dimen.dim_5))
     )
     {
         Image(
             painter = painterResource(id = imageID),
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.size(55.dp)
+            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_55))
         )
         Text(
             text = text, fontFamily = Montserrat, modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp), color = Color.Gray, fontSize = 16.sp
+                .padding(dimensionResource(id = R.dimen.dim_10)),
+            color = Color.Gray, fontSize = dimensionResource(id = R.dimen.fon_16).value.sp
         )
     }
 }
@@ -322,7 +325,7 @@ fun OnBoardingItem(item: OnBoardingItems, modifier: Modifier) {
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Center,
             modifier = modifier
-                .padding(top = 60.dp)
+                .padding(top = dimensionResource(id = R.dimen.dim_60))
                 .fillMaxWidth(0.7f)
         ) {
             Text(
@@ -337,12 +340,12 @@ fun OnBoardingItem(item: OnBoardingItems, modifier: Modifier) {
 
             Text(
                 text = item.descr,
-                modifier = modifier.padding(top = 30.dp),
+                modifier = modifier.padding(top = dimensionResource(id = R.dimen.dim_30)),
                 color = Color.Black,
-                fontSize = 20.sp,
+                fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
                 textAlign = TextAlign.Start,
                 fontFamily = Montserrat,
-                lineHeight = 32.sp,
+                lineHeight = dimensionResource(id = R.dimen.fon_32).value.sp,
                 fontWeight = FontWeight(400)
             )
         }
@@ -353,8 +356,8 @@ fun OnBoardingItem(item: OnBoardingItems, modifier: Modifier) {
 fun Indicator(isSelected: Boolean) {
     Box(
         modifier = Modifier
-            .height(16.dp)
-            .width(16.dp)
+            .height( dimensionResource(id = R.dimen.dim_16))
+            .width( dimensionResource(id = R.dimen.dim_16))
             .clip(CircleShape)
             .background(
                 color = if (isSelected) foodClubGreen else Color.Gray
@@ -372,7 +375,7 @@ fun BottomSection(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(12.dp)
+            .padding(dimensionResource(id = R.dimen.dim_12))
     ) {
         NavArrows(
             size = size,
@@ -387,7 +390,7 @@ fun BottomSection(
 fun BoxScope.Indicators(size: Int, index: Int) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(30.dp),
+        horizontalArrangement = Arrangement.spacedBy( dimensionResource(id = R.dimen.dim_30)),
         modifier = Modifier.align(Alignment.BottomCenter)
     ) {
         repeat(size) {
@@ -423,7 +426,7 @@ fun BoxScope.NavArrows(
                 Image(
                     painter = painterResource(id = R.drawable.back_icon),
                     contentDescription = null,
-                    modifier = Modifier.size(50.dp)
+                    modifier = Modifier.size(dimensionResource(id = R.dimen.dim_50))
                 )
             }
 
@@ -443,7 +446,7 @@ fun BoxScope.NavArrows(
                 Image(
                     painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
                     contentDescription = null,
-                    modifier = Modifier.size(50.dp)
+                    modifier = Modifier.size(dimensionResource(id = R.dimen.dim_50))
                 )
             }
         }

@@ -5,6 +5,7 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.others.BottomSheetItem
 import android.kotlin.foodclub.domain.models.profile.UserPosts
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.CustomBottomSheet
@@ -58,7 +59,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import android.kotlin.foodclub.viewModels.home.ProfileViewModel
-import android.kotlin.foodclub.views.home.DeleteRecipeView
+import android.kotlin.foodclub.views.home.ShowProfilePosts
 import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -73,6 +74,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import coil.compose.AsyncImage
@@ -147,6 +149,10 @@ fun ProfileView(
         val bookmarkedPosts = state.bookmarkedPosts
         val tabItems = stringArrayResource(id = R.array.profile_tabs)
         var showBottomSheet by remember { mutableStateOf(false) }
+        var showUserOptionsSheet by remember { mutableStateOf(false) }
+
+        var showBlockView by remember { mutableStateOf(false) }
+        var showReportView by remember { mutableStateOf(false) }
 
         val galleryLauncher =
             rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocument()) {
@@ -174,10 +180,20 @@ fun ProfileView(
         var postId by remember {
             mutableLongStateOf(0)
         }
+
+        var userTabItems = listOf<UserPosts>()
+
+        if(pagerState.currentPage == 0){
+            userTabItems = userPosts
+        }
+        else if(pagerState.currentPage == 1){
+            userTabItems = bookmarkedPosts
+        }
+
         if (showDeleteRecipe){
             viewModel.getPostData(postId)
 
-            DeleteRecipeView(
+            ShowProfilePosts(
                 postId = postId,
                 viewModel = viewModel,
                 state = state,
@@ -187,7 +203,8 @@ fun ProfileView(
                 },
                 onBackPressed = {
                     showDeleteRecipe = false
-                }
+                },
+                posts = userPosts
             )
         }else{
             Column (modifier = Modifier
@@ -198,17 +215,17 @@ fun ProfileView(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 70.dp, start = 95.dp),
+                        .padding(top = dimensionResource(id = R.dimen.dim_70), start = dimensionResource(id = R.dimen.dim_95)),
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Box(if(userId == 0L) Modifier.clickable { showBottomSheet = true } else Modifier) {
                         AsyncImage(
-                            model = imageUri,
+                            model = imageUri ?: R.drawable.profilepicture,
                             contentDescription = stringResource(id = R.string.profile_picture),
                             modifier = Modifier
-                                .clip(RoundedCornerShape(60.dp))
-                                .height(124.dp)
-                                .width(124.dp),
+                                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_60)))
+                                .height(dimensionResource(id = R.dimen.dim_124))
+                                .width(dimensionResource(id = R.dimen.dim_124)),
                             contentScale = ContentScale.Crop
                         )
                         if(userId == 0L){
@@ -216,8 +233,8 @@ fun ProfileView(
                                 painter = painterResource(R.drawable.profile_picture_change_icon),
                                 contentDescription = stringResource(id = R.string.profile_picture_edit),
                                 modifier = Modifier
-                                    .height(46.dp)
-                                    .width(46.dp)
+                                    .height(dimensionResource(id = R.dimen.dim_46))
+                                    .width(dimensionResource(id = R.dimen.dim_46))
                                     .offset(
                                         x = (cos(PI / 4) * 62 + 39).dp,
                                         y = (sin(PI / 4) * 62 + 39).dp
@@ -225,28 +242,59 @@ fun ProfileView(
                             )
                         }
                     }
-                    Spacer(modifier = Modifier.width(40.dp))
-                    Button(shape = CircleShape,
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .height(53.dp)
-                            .width(53.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(255, 255, 255, 255)),
-                        contentPadding = PaddingValues(),
-                        onClick = { navController.navigate(HomeOtherRoutes.SettingsView.route) }
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.vector_1_),
-                            contentDescription = null,
-                        )
+                    Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_40)))
+                    if(userId ==0L) {
+                        Button(shape = CircleShape,
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .height(dimensionResource(id = R.dimen.dim_53))
+                                .width(dimensionResource(id = R.dimen.dim_53)),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(
+                                    255,
+                                    255,
+                                    255,
+                                    255
+                                )
+                            ),
+                            contentPadding = PaddingValues(),
+                            onClick = { navController.navigate("SETTINGS") }
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.vector_1_),
+                                contentDescription = "",
+                            )
+                        }
+                    }else{
+                        Button(shape = CircleShape,
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .height(dimensionResource(id = R.dimen.dim_53))
+                                .width(dimensionResource(id = R.dimen.dim_53)),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(
+                                    255,
+                                    255,
+                                    255,
+                                    255
+                                )
+                            ),
+                            contentPadding = PaddingValues(),
+                            onClick = { showUserOptionsSheet=true }
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.dots),
+                                contentDescription = "",
+                            )
+                        }
                     }
                 }
                 Column(
                     Modifier
                         .fillMaxSize()
                         .background(Color.White)
-                        .padding(top = 10.dp, start = 4.dp, end = 4.dp),
-                    verticalArrangement = Arrangement.spacedBy(5.dp),
+                        .padding(top = dimensionResource(id = R.dimen.dim_10), start =dimensionResource(id = R.dimen.dim_4), end =dimensionResource(id = R.dimen.dim_4)),
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_5)),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
@@ -254,14 +302,14 @@ fun ProfileView(
                         text = profile.username,
                         fontSize = 23.sp,
                         fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(top = 5.dp),
+                        modifier = Modifier.padding(top =dimensionResource(id = R.dimen.dim_5)),
                         letterSpacing = (-1).sp
                     )
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 5.dp),
-                        horizontalArrangement = Arrangement.spacedBy(70.dp, Alignment.CenterHorizontally)
+                            .padding(top =dimensionResource(id = R.dimen.dim_5)),
+                        horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_70), Alignment.CenterHorizontally)
                     ) {
                         ClickableText(
                             text = AnnotatedString(profile.totalUserFollowers.toString()),
@@ -273,7 +321,7 @@ fun ProfileView(
                                 color = Color.Black,
                                 fontFamily = Montserrat,
                                 fontWeight = FontWeight.SemiBold,
-                                fontSize = 17.sp
+                                fontSize = dimensionResource(id = R.dimen.fon_17).value.sp
                             )
                         )
                         ClickableText(
@@ -286,7 +334,7 @@ fun ProfileView(
                                 color = Color.Black,
                                 fontFamily = Montserrat,
                                 fontWeight = FontWeight.SemiBold,
-                                fontSize = 17.sp
+                                fontSize = dimensionResource(id = R.dimen.fon_17).value.sp
                             )
                         )
                     }
@@ -294,19 +342,19 @@ fun ProfileView(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(Color.White),
-                        horizontalArrangement = Arrangement.spacedBy(30.dp, Alignment.CenterHorizontally)
+                        horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_30), Alignment.CenterHorizontally)
                     ) {
                         Text(
                             fontFamily = Montserrat,
                             text = stringResource(id = R.string.followers),
-                            fontSize = 14.sp,
+                            fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
                             color = Color(127, 147, 141, 255),
                             fontWeight = FontWeight.Light
                         )
                         Text(
                             fontFamily = Montserrat,
                             text = stringResource(id = R.string.following),
-                            fontSize = 14.sp,
+                            fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
                             color = Color(127, 147, 141, 255),
                             fontWeight = FontWeight.Light
                         )
@@ -329,7 +377,7 @@ fun ProfileView(
                             TabRowDefaults.Indicator(
                                 modifier = Modifier
                                     .tabIndicatorOffset(tabPositions[pagerState.currentPage]),
-                                height = 2.dp,
+                                height =dimensionResource(id = R.dimen.dim_2),
                                 color = Color.Black
                             )
                         }
@@ -350,22 +398,12 @@ fun ProfileView(
                                             fontFamily = Montserrat,
                                             fontWeight = FontWeight.SemiBold,
                                             color = Color.Black,
-                                            fontSize = 16.sp,
+                                            fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                                         )
                                     )
                                 }
                             )
                         }
-                    }
-
-
-                    var userTabItems = listOf<UserPosts>()
-
-                    if(pagerState.currentPage == 0){
-                        userTabItems = userPosts
-                    }
-                    else if(pagerState.currentPage == 1){
-                        userTabItems = bookmarkedPosts
                     }
 
                     HorizontalPager(
@@ -376,7 +414,7 @@ fun ProfileView(
                             Modifier
                                 .fillMaxSize()
                                 .background(Color.White)
-                                .padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 110.dp)
+                                .padding(top =dimensionResource(id = R.dimen.dim_5), start = dimensionResource(id = R.dimen.dim_15), end = dimensionResource(id = R.dimen.dim_15), bottom = dimensionResource(id = R.dimen.dim_110))
                         ) {
                             LazyVerticalGrid(
                                 columns = GridCells.Fixed(2),
@@ -413,8 +451,50 @@ fun ProfileView(
                 ),
                 sheetTitle = stringResource(id = R.string.upload_photo),
                 onDismiss = { showBottomSheet = false },
-                modifier = Modifier.padding(bottom = 110.dp),
+                modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_110)),
+                containerColor = Color.White,
+                titleSpace = true
             )
+        } else {
+            if(showUserOptionsSheet){
+                android.kotlin.foodclub.utils.composables.BottomSheet(
+                    itemList = listOf(
+                        BottomSheetItem(1, "Block",null) {showUserOptionsSheet=false; showBlockView=true},
+                        BottomSheetItem(2, "Report",null) {showUserOptionsSheet=false;showReportView=true},
+                        BottomSheetItem(3, "Hide your FoodSNAPS",null) {},
+                        BottomSheetItem(4, "Copy profile URL",null) {},
+                        BottomSheetItem(5, "Share this Profile",null) {}
+                    ),
+                    sheetTitle = "",
+//                enableDragHandle = true,
+                    onDismiss = { showUserOptionsSheet = false;},
+                    modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_110)),
+                    containerColor = Color.Black,
+                    titleSpace = false
+                )
+            }
+
+            if(showBlockView){
+                android.kotlin.foodclub.utils.composables.BlockReportView(
+                    containerColor = Color.Black,
+                    text = "Block",
+                    type = "Block",
+                    userId = "User1",
+                    actionBlockReport = {},
+                    onDismiss = {showBlockView=false; showUserOptionsSheet=true}
+                )
+            }
+
+            if(showReportView){
+                android.kotlin.foodclub.utils.composables.BlockReportView(
+                    containerColor = Color.Black,
+                    text = "Report",
+                    type = "Report",
+                    userId = "User1",
+                    actionBlockReport = {},
+                    onDismiss = {showReportView=false; showUserOptionsSheet=true}
+                )
+            }
         }
     }
 }

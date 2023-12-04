@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.repositories.PostRepository
+import android.kotlin.foodclub.room.entity.ProfileModel
 import android.kotlin.foodclub.utils.helpers.StoreData
 import android.kotlin.foodclub.utils.helpers.UiEvent
 import android.kotlin.foodclub.views.home.profile.ProfileState
@@ -42,32 +43,6 @@ class ProfileViewModel @Inject constructor(
     private val _state = MutableStateFlow(ProfileState.default())
     val state: StateFlow<ProfileState>
         get() = _state
-//    private val _myUserId = MutableStateFlow(
-//        sessionCache.getActiveSession()?.sessionUser?.userId ?: 0
-//    )
-//    val myUserId: StateFlow<Long> get() = _myUserId
-//
-//    private val _profileModel = MutableStateFlow<UserProfile?>(null)
-//    val profileModel: StateFlow<UserProfile?> get() = _profileModel
-//
-//    private var _userDetails = MutableStateFlow<UserDetailsModel?>(null)
-//
-//    private val _bookmarkedPosts = MutableStateFlow<List<UserPosts>>(listOf())
-//    val bookmarkedPosts: StateFlow<List<UserPosts>> get() = _bookmarkedPosts
-//
-//    private val _userPosts = MutableStateFlow<List<UserPosts>>(listOf())
-//    val userPosts: StateFlow<List<UserPosts>> get() = _userPosts
-//
-//
-//    private val _error = MutableStateFlow("")
-//    val error: StateFlow<String> get() = _error
-//
-//    private val _isFollowedByUser = MutableStateFlow(false)
-//    val isFollowedByUser: StateFlow<Boolean> get() = _isFollowedByUser
-//
-//    // Below variables are related to DeleteRecipeView Composable
-//    private val _postData = MutableStateFlow<VideoModel?>(null)
-//    val postData: StateFlow<VideoModel?> get() = _postData
 
     private val _uiEvent = MutableSharedFlow<UiEvent>()
     val uiEvent = _uiEvent.asSharedFlow()
@@ -116,7 +91,57 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private fun getUserDetails(id: Long) {
+    /**
+     * This is the job of the repository - to be single source of data truth for the VM
+     * to make offline-first app,
+     * store room response data to profileModel or userDetails(not used right now)
+     * populate UI with room response data
+     * then check for internet connection(utils.helpers.ConnectivityUtils) and make api call
+     * compare the room db response and api call response
+     * update room db with profileModel or userDetails values
+     * */
+    private fun retrieveLocalUserDetails(id: Long){
+        viewModelScope.launch {
+            when(val dbResponse = profileRepository.retrieveLocalUserDetails(id)){
+                is Resource.Success -> {
+                    dbResponse.data!!.collect {
+                        Log.i(TAG,"room db response success $it")
+                    }
+                }
+                is Resource.Error -> {
+                    val dbResponseError = dbResponse.message
+                    Log.e(TAG,"error room db response $dbResponseError")
+                }
+            }
+        }
+    }
+
+    private fun insertLocalUserDetails(profileModel: ProfileModel){
+        viewModelScope.launch {
+            profileRepository.insertLocalUserDetails(profileModel)
+        }
+    }
+
+    private fun compareLocalAndRemoteData(remote: UserDetailsModel){
+        // or profileModel.value
+        // this can further be detailed for only updating a single data
+        // instead of adding all the remote data values to ProfileModel
+        if (state.value.userDetails != remote){
+            viewModelScope.launch {
+                profileRepository.updateLocalProfileData(
+                    ProfileModel(
+                        remote.id,
+                        remote.userName,
+                        remote.email,
+                        remote.profilePicture,
+                        remote.createdAt,
+                    )
+                )
+            }
+        }
+    }
+
+    private fun getUserDetails(id: Long){
         viewModelScope.launch {
             when (val resource = profileRepository.retrieveUserDetails(id)) {
                 is Resource.Success -> {

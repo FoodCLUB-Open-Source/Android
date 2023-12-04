@@ -3,7 +3,6 @@ package android.kotlin.foodclub.config.ui
 import android.kotlin.foodclub.R
 import androidx.annotation.DrawableRes
 
-
 sealed class BottomBarScreenObject(
     val route: String,
     val title: String,

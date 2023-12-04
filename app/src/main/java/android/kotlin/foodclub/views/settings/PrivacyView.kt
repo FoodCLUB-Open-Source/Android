@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -24,8 +25,8 @@ fun PrivacySetting(navController: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
-                .padding(top = 80.dp)
+                .padding( dimensionResource(id = R.dimen.dim_16))
+                .padding(top = dimensionResource(id = R.dimen.dim_80))
                 .background(Color.White),
         ) {
             SettingsTopBar(
@@ -33,11 +34,11 @@ fun PrivacySetting(navController: NavController) {
                 navController = navController
             )
 
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_50)))
 
             ChangePasswordButton(navController = navController)
 
-            Spacer(modifier = Modifier.height(60.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_60)))
 
             SettingsText(
                 text = stringResource(id = R.string.sent_your_data_request),

@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -79,7 +80,6 @@ fun EditIngredientQuantityPicker(
     val itemHeightDp = pixelsToDp(itemHeightPixels.value)
     val TAG = "IngredientsNumberPicker"
 
-    // setting selected states
     LaunchedEffect(quantityListState) {
         snapshotFlow { quantityListState.firstVisibleItemIndex }
             .map { index ->
@@ -199,18 +199,18 @@ fun EditIngredientQuantityPicker(
         Button(
             shape = RectangleShape,
             modifier = Modifier
-                .padding(start = 10.dp, end = 10.dp)
+                .padding(start = dimensionResource(id = R.dimen.dim_10), end = dimensionResource(id = R.dimen.dim_10))
                 .border(
-                    1.dp,
+                    dimensionResource(id = R.dimen.dim_1),
                     Color(126, 198, 11, 255),
-                    shape = RoundedCornerShape(15.dp)
+                    shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
                 )
-                .clip(RoundedCornerShape(15.dp))
+                .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
                 .fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(126, 198, 11, 255),
                 contentColor = Color.White
-            ), contentPadding = PaddingValues(15.dp),
+            ), contentPadding = PaddingValues( dimensionResource(id = R.dimen.dim_15)),
             onClick = {
                 ingredient.quantity = selectedQuantityState
                 ingredient.unit = QuantityUnit.parseUnit(selectedGrammageState)
@@ -221,7 +221,7 @@ fun EditIngredientQuantityPicker(
                 text = stringResource(id = R.string.save),
                 color = Color.White,
                 fontFamily = Montserrat,
-                fontSize = 20.sp,
+                fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
                 fontWeight = FontWeight(600),
                 lineHeight = 24.38.sp,
                 textAlign = TextAlign.Center
@@ -242,9 +242,9 @@ private fun PickerRow(
     currentColumn: Int
 ){
     val cornerShape: RoundedCornerShape = when (currentColumn) {
-        1 -> RoundedCornerShape(topStart = 5.dp,  bottomStart = 5.dp)
-        3-> RoundedCornerShape(topEnd = 5.dp, bottomEnd = 5.dp)
-        else -> RoundedCornerShape(0.dp)
+        1 -> RoundedCornerShape(topStart =dimensionResource(id = R.dimen.dim_5),  bottomStart =dimensionResource(id = R.dimen.dim_5))
+        3-> RoundedCornerShape(topEnd =dimensionResource(id = R.dimen.dim_5), bottomEnd =dimensionResource(id = R.dimen.dim_5))
+        else -> RoundedCornerShape(dimensionResource(id = R.dimen.dim_0))
     }
     Row(
         modifier = Modifier
@@ -256,7 +256,7 @@ private fun PickerRow(
                         shape = cornerShape,
                         color = background
                     )
-                    .padding(8.dp)
+                    .padding(dimensionResource(id = R.dimen.dim_8))
             ),
     ) {
         Box(
@@ -268,7 +268,7 @@ private fun PickerRow(
                 text = currentItem,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                fontSize = 18.sp,
+                fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
                 color = if (isSelected) Color.Black else Color.Gray
             )
         }

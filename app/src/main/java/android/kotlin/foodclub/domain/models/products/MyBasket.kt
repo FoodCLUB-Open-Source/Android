@@ -42,4 +42,16 @@ class MyBasket {
     fun clearSelectedIngredients() {
         selectedIngredients = mutableListOf()
     }
+
+    fun copy(
+        ingredients: MutableList<Ingredient> = this.ingredients.toMutableList(),
+        selectedIngredients: MutableList<String> = this.selectedIngredients.toMutableList(),
+        removedIds: ArrayList<String> = ArrayList(this.removedIds)
+    ): MyBasket {
+        val newBasket = MyBasket()
+        newBasket.ingredients = ingredients
+        newBasket.selectedIngredients = selectedIngredients
+        newBasket.removedIds = removedIds
+        return newBasket
+    }
 }

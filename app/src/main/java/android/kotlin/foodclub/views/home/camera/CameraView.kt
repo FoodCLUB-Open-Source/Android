@@ -71,6 +71,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -142,7 +143,7 @@ fun CameraView(
             //navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}")
         }
     )
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp + 10.dp
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp + dimensionResource(id = R.dimen.dim_10)
 
     val interactionSource = remember { MutableInteractionSource() }
 
@@ -220,22 +221,23 @@ fun CameraView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(screenHeight)
-                    .clip(RoundedCornerShape(20.dp))
+                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
             )
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(screenHeight)
-                    .padding(start = 20.dp, top = 50.dp, end = 20.dp, bottom = 20.dp)
+                    .padding(start = dimensionResource(id = R.dimen.dim_20), top = dimensionResource(id = R.dimen.dim_50), end = dimensionResource(id = R.dimen.dim_20), bottom = dimensionResource(id = R.dimen.dim_20))
             ) {
 
                 Box(
                     modifier = Modifier
-                        .width(40.dp)
-                        .height(40.dp)
-                        .clip(RoundedCornerShape(10.dp))
+                        .width(dimensionResource(id = R.dimen.dim_40))
+                        .height(dimensionResource(id = R.dimen.dim_40))
+                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
                         .background(Color.Black.copy(alpha = 0.9f))
                         .clickable {
+                            // Do something when the box is clicked
                             viewModel.onEvent(StopWatchEvent.onReset)
                             navController.popBackStack()
                         }
@@ -245,8 +247,8 @@ fun CameraView(
                         contentDescription = stringResource(id = R.string.story),
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .width(25.dp)
-                            .height(25.dp)
+                            .width(dimensionResource(id = R.dimen.dim_25))
+                            .height(dimensionResource(id = R.dimen.dim_25))
                             .align(Alignment.Center)
                     )
                 }
@@ -254,9 +256,9 @@ fun CameraView(
 
                     Box(
                         modifier = Modifier
-                            .width(60.dp)
-                            .height(40.dp)
-                            .clip(RoundedCornerShape(10.dp))
+                            .width(dimensionResource(id = R.dimen.dim_60))
+                            .height(dimensionResource(id = R.dimen.dim_40))
+                            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
                             .background(Color.White)
                             .align(Alignment.TopEnd)
                             .clickable {
@@ -268,8 +270,8 @@ fun CameraView(
                             contentDescription = stringResource(id = R.string.story),
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
-                                .width(20.dp)
-                                .height(20.dp)
+                                .width(dimensionResource(id = R.dimen.dim_20))
+                                .height(dimensionResource(id = R.dimen.dim_20))
                                 .align(Alignment.Center)
                         )
                     }
@@ -281,7 +283,7 @@ fun CameraView(
                     if (confirmDeletion)
                     {
                         AlertDialog(onDismissRequest = { confirmDeletion = !confirmDeletion },
-                            modifier = Modifier.background(Color(0x55FFBBBB), RoundedCornerShape(5.dp)).padding(5.dp),) {
+                            modifier = Modifier.background(Color(0x55FFBBBB), RoundedCornerShape(dimensionResource(id = R.dimen.dim_5))).padding(dimensionResource(id = R.dimen.dim_5)),) {
 
                             Column(horizontalAlignment = Alignment.CenterHorizontally){
                                 Text(text = "Do you want to delete the last clip made?")
@@ -336,7 +338,7 @@ fun CameraView(
                         ":${state.seconds}"
                     }
 
-                    Text(text = time, modifier = Modifier.padding(10.dp), color = Color.White)
+                    Text(text = time, modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_10)), color = Color.White)
                     val isPressed by interactionSource.collectIsPressedAsState()
                     IconButton(
                         onClick = {
@@ -393,8 +395,7 @@ fun CameraView(
                             //navController.navigate("GALLERY_VIEW")
                         },
                         modifier = Modifier
-                            //.align(Alignment.BottomCenter)
-                            .size(80.dp),
+                            .size(dimensionResource(id = R.dimen.dim_80)),
                         interactionSource = interactionSource,
                         enabled = state.minutes < 1
                     ) {
@@ -476,13 +477,13 @@ fun CameraView(
                         /*Icon(
                             painter = painterResource(if (recordingStarted.value) R.drawable.story_user else R.drawable.save),
                             contentDescription = "",
-                            modifier = Modifier.size(64.dp)
+                            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_64))
                         )*/
                     }
                 }
 
                 Row(modifier = Modifier
-                    .height(80.dp)
+                    .height(dimensionResource(id = R.dimen.dim_80))
                     .align(Alignment.BottomStart), verticalAlignment = Alignment.CenterVertically)
                 {
                     if (!recordingStarted.value) {
@@ -495,12 +496,11 @@ fun CameraView(
                                 contentScale = ContentScale.Crop,
                                 contentDescription = null,
                                 modifier = Modifier
-                                    //.align(Alignment.BottomStart)
-                                    .clip(RoundedCornerShape(5.dp))
+                                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_5)))
                                     .then(
                                         Modifier
-                                            .size(64.dp)
-                                            .border(2.dp, Color.White, RoundedCornerShape(5.dp))
+                                            .size(dimensionResource(id = R.dimen.dim_64))
+                                            .border(dimensionResource(id = R.dimen.dim_2), Color.White, RoundedCornerShape(dimensionResource(id = R.dimen.dim_5)))
                                     )
                                     .clickable {
                                         navController.navigate("GALLERY_VIEW/${stateString.encodeUtf8()}")
@@ -509,12 +509,11 @@ fun CameraView(
                         } else {
                             Box(
                                 modifier = Modifier
-                                    //.align(Alignment.BottomStart)
-                                    .clip(RoundedCornerShape(5.dp))
+                                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_5)))
                                     .then(
                                         Modifier
-                                            .size(64.dp)
-                                            .border(2.dp, Color.White, RoundedCornerShape(5.dp))
+                                            .size(dimensionResource(id = R.dimen.dim_64))
+                                            .border(dimensionResource(id = R.dimen.dim_2), Color.White, RoundedCornerShape(dimensionResource(id = R.dimen.dim_5)))
                                     )
                             )
                         }
@@ -525,7 +524,7 @@ fun CameraView(
                 Row(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
-                        .height(80.dp)
+                        .height(dimensionResource(id = R.dimen.dim_80))
                         .fillMaxWidth(0.3f),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -534,11 +533,11 @@ fun CameraView(
                     if (uris.isNotEmpty()) {
                         Box(
                             modifier = Modifier
-                                .width(40.dp)
-                                .height(38.dp)
-                                .background(Color.Gray, shape = RoundedCornerShape(10.dp))
+                                .width(dimensionResource(id = R.dimen.dim_40))
+                                .height( dimensionResource(id = R.dimen.dim_38))
+                                .background(Color.Gray, shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
                                 .clip(
-                                    RoundedCornerShape(10.dp)
+                                    RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))
                                 )
                                 .clickable {
                                     if (canDelete) {
@@ -551,8 +550,8 @@ fun CameraView(
                                 contentDescription = null,
                                 contentScale = ContentScale.FillWidth,
                                 modifier = Modifier
-                                    .height(25.dp)
-                                    .width(25.dp)
+                                    .height(dimensionResource(id = R.dimen.dim_25))
+                                    .width(dimensionResource(id = R.dimen.dim_25))
                                     .align(Alignment.Center)
                             )
                         }
@@ -560,9 +559,9 @@ fun CameraView(
                         Button(
                             onClick = { /*TODO*/ },
                             colors = ButtonDefaults.buttonColors(foodClubGreen),
-                            shape = RoundedCornerShape(10.dp),
-                            contentPadding = PaddingValues(0.dp),
-                            modifier = Modifier.height(38.dp)
+                            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
+                            contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_0)),
+                            modifier = Modifier.height( dimensionResource(id = R.dimen.dim_38))
                         ) {
                             Text(
                                 text = stringResource(id = R.string.continue_text),

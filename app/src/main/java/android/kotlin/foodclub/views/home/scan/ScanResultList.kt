@@ -3,6 +3,7 @@ package android.kotlin.foodclub.views.home.scan
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.utils.composables.CustomDatePicker
@@ -47,6 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -108,9 +110,9 @@ fun ScanResultView(
                 title = {
                     Text(
                         text = "Scan Results List",
-                        fontSize = 20.sp,
+                        fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
                         fontWeight = FontWeight.Bold,
-                        lineHeight = 48.sp,
+                        lineHeight = dimensionResource(id = R.dimen.fon_48).value.sp,
                         fontFamily = Montserrat
                     )
                 },
@@ -137,7 +139,7 @@ fun ScanResultView(
                         Text(
                             text = "Next",
                             color = foodClubGreen,
-                            fontSize = 20.sp,
+                            fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
                             fontWeight = FontWeight(600),
                             fontFamily = Montserrat
                         )
@@ -175,7 +177,7 @@ fun ScanResultView(
                             viewModel.onSubSearchTextChange(input)
                         }
                     )
-                    Spacer(modifier = Modifier.height(15.dp))
+                    Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_15)))
 
                     ScanResultList(
                         modifier = modifier,
@@ -195,8 +197,8 @@ fun ScanResultView(
                             contentAlignment = Alignment.Center
                         ) {
                             CustomDatePicker(
-                                modifier = Modifier.shadow(5.dp),
-                                shape = RoundedCornerShape(6.dp),
+                                modifier = Modifier.shadow(dimensionResource(id = R.dimen.dim_5)),
+                                shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_6)),
                                 datePickerState = datePickerState,
                                 datePickerColors = datePickerColors,
                                 datePickerDialogColors = datePickerDialogColors,
@@ -228,14 +230,14 @@ fun ScanResultList(
     view: String
 ) {
     Surface(
-        shadowElevation = 8.dp,
-        shape = RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp)
+        shadowElevation = dimensionResource(id = R.dimen.dim_8),
+        shape = RoundedCornerShape(topStart = dimensionResource(id = R.dimen.dim_18), topEnd = dimensionResource(id = R.dimen.dim_18))
     ) {
         Column(
             modifier = modifier
                 .fillMaxSize()
                 .background(
-                    shape = RoundedCornerShape(10.dp),
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
                     color = Color.White
                 )
         ) {
@@ -262,23 +264,23 @@ fun SearchResultIngredients(
     TextField(
         modifier = modifier
             .fillMaxWidth()
-            .padding(10.dp)
+            .padding(dimensionResource(id = R.dimen.dim_10))
             .clip(
-                RoundedCornerShape(15.dp)
+                RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
             ),
         colors = TextFieldDefaults.textFieldColors(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
-            containerColor = Color(0xFFF5F5F5)
+            containerColor = containerColor
         ),
         value = searchTextValue,
         onValueChange = {
-            onSearch(it) // Call the onSearch callback when text changes
+            onSearch(it) 
         },
         placeholder = {
             Text(
-                modifier = modifier.padding(top = 3.dp),
+                modifier = modifier.padding(top =dimensionResource(id = R.dimen.dim_3)),
                 text = "Search my ingredients",
                 color = Color.Gray,
                 textAlign = TextAlign.Center

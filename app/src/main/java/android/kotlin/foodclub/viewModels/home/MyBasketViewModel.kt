@@ -20,7 +20,7 @@ import javax.inject.Inject
 class MyBasketViewModel @Inject constructor(
     private val basketCache: MyBasketCache,
     private val productRepository: ProductRepository
-): ViewModel() {
+) : ViewModel() {
 
     companion object {
         private val TAG = MyBasketViewModel::class.java.simpleName
@@ -35,10 +35,13 @@ class MyBasketViewModel @Inject constructor(
         viewModelScope.launch {
             val basket = basketCache.getBasket()
             basket.clearSelectedIngredients()
-            _state.update { it.copy(
-                basket = basket,
-                selectedProductsList = basketCache.getBasket().selectedIngredients
-            ) }
+            _state.update {
+                it.copy(
+                    basket = basket,
+                    productsList = basket.ingredients,
+                    selectedProductsList = basketCache.getBasket().selectedIngredients
+                )
+            }
         }
     }
 
@@ -46,69 +49,102 @@ class MyBasketViewModel @Inject constructor(
         basketCache.saveBasket(state.value.basket!!)
     }
 
+
+    fun refreshBasket() {
+        _state.update { it.copy(productsList = basketCache.getBasket().ingredients) }
+    }
+
+    fun updateSelectedIngredients(selectedIngredients: List<Ingredient>) {
+        // TOOD Update state, selectedIngredients string or ingredient list
+    }
+
+    fun addIngredientsToBasket(ingredients: List<Ingredient>) {
+        ingredients.forEach { ingredient ->
+            addIngredient(ingredient = ingredient)
+        }
+
+        _state.update { it.copy(selectedProductsList = emptyList()) }
+    }
+
+
     fun addIngredient(ingredient: Ingredient) {
         val basket = state.value.basket!!
         basket.addIngredient(ingredient)
-        _state.update { it.copy(
-            basket = basket,
-            productsList = basket.ingredients
-        ) }
+        _state.update {
+            it.copy(
+                basket = basket,
+                productsList = basket.ingredients
+            )
+        }
         saveBasket()
     }
 
     fun removeIngredient(id: String) {
         val basket = state.value.basket!!
         basket.removeIngredient(id)
-        _state.update { it.copy(
-            basket = basket,
-            productsList = basket.ingredients
-        ) }
+        _state.update {
+            it.copy(
+                basket = basket,
+                productsList = basket.ingredients
+            )
+        }
         saveBasket()
     }
 
     fun selectIngredient(id: String) {
         val basket = state.value.basket!!
         basket.selectIngredient(id)
-        _state.update { it.copy(
-            basket = basket,
-            selectedProductsList = basket.selectedIngredients
-        ) }
+        _state.update {
+            it.copy(
+                basket = basket,
+                selectedProductsList = basket.selectedIngredients
+            )
+        }
     }
 
     fun unselectIngredient(id: String) {
         val basket = state.value.basket!!
         basket.unselectIngredient(id)
-        _state.update { it.copy(
-            basket = basket,
-            selectedProductsList = basket.selectedIngredients
-        ) }
+        _state.update {
+            it.copy(
+                basket = basket,
+                selectedProductsList = basket.selectedIngredients
+            )
+        }
     }
 
     fun deleteSelectedIngredients() {
         val basket = state.value.basket!!
         basket.deleteIngredients()
-        _state.update { it.copy(
-            basket = basket,
-            productsList = basket.ingredients,
-            selectedProductsList = basket.selectedIngredients
-        ) }
+        _state.update {
+            it.copy(
+                basket = basket,
+                productsList = basket.ingredients,
+                selectedProductsList = basket.selectedIngredients
+            )
+        }
         saveBasket()
     }
 
     fun fetchProductsDatabase(searchText: String) {
         viewModelScope.launch() {
-            when(val resource = productRepository.getProductsList(searchText)) {
+            when (val resource = productRepository.getProductsList(searchText)) {
                 is Resource.Success -> {
-                    _state.update { it.copy(
-                        error = "",
-                        productsDatabase = resource.data!!
-                    ) }
+                    _state.update {
+                        it.copy(
+                            error = "",
+                            productsDatabase = resource.data!!
+                        )
+                    }
                     Log.d(TAG, "database: ${state.value.productsDatabase.productsList}")
                 }
+
                 is Resource.Error -> {
-                    _state.update { it.copy(
-                        error = resource.message!!
-                    ) }
+                    _state.update {
+                        it.copy(
+                            error = resource.message!!
+                        )
+                    }
                     Log.d(TAG, "error: ${state.value.error}")
                 }
             }
@@ -117,7 +153,7 @@ class MyBasketViewModel @Inject constructor(
 
     fun fetchMoreProducts(searchText: String, onJobComplete: () -> Unit) {
         val job = viewModelScope.launch() {
-            when(
+            when (
                 val resource = productRepository.getProductsList(
                     searchText = searchText,
                     session = state.value.productsDatabase.getSessionIdFromUrl()
@@ -125,19 +161,24 @@ class MyBasketViewModel @Inject constructor(
             ) {
                 is Resource.Success -> {
                     val response = resource.data!!
-                    _state.update { it.copy(
-                        error = "",
-                        productsDatabase = ProductsData(
-                            searchText = it.productsDatabase.searchText,
-                            productsList = it.productsDatabase.productsList + response.productsList,
-                            nextUrl = response.nextUrl
+                    _state.update {
+                        it.copy(
+                            error = "",
+                            productsDatabase = ProductsData(
+                                searchText = it.productsDatabase.searchText,
+                                productsList = it.productsDatabase.productsList + response.productsList,
+                                nextUrl = response.nextUrl
+                            )
                         )
-                    ) }
+                    }
                 }
+
                 is Resource.Error -> {
-                    _state.update { it.copy(
-                        error = resource.message!!
-                    ) }
+                    _state.update {
+                        it.copy(
+                            error = resource.message!!
+                        )
+                    }
                     Log.d(TAG, "error: ${state.value.error}")
                 }
             }

@@ -5,7 +5,7 @@ data class UserDetailsModel(
     val userName: String,
     val email: String,
     val phoneNumber: String? = null,
-    var profilePicture: String,
+    var profilePicture: String? = null,
     val userBio: String? = null,
     val gender: String? = null,
     val createdAt: String,

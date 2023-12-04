@@ -2,6 +2,8 @@ package android.kotlin.foodclub.views.authentication
 
 import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.disabledContainerColor
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.viewModels.authentication.TermsAndConditionsViewModel
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -24,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -49,26 +52,26 @@ fun TermsAndConditions(
     Column(
         Modifier
             .fillMaxSize()
-            .padding(50.dp)) {
+            .padding(dimensionResource(id = R.dimen.dim_50))) {
         VerticalPDFReader(
             state = pdfState,
             modifier = Modifier
-                .height(500.dp)
+                .height(dimensionResource(id = R.dimen.dim_500))
                 .background(color = Color.White)
-                .border(1.dp, Color.Black, RectangleShape)
-                .padding(5.dp)
+                .border(dimensionResource(id = R.dimen.dim_1), Color.Black, RectangleShape)
+                .padding(dimensionResource(id = R.dimen.dim_5))
 
         )
-        Row (modifier = Modifier.padding(top = 20.dp)){
+        Row (modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_20))){
             Text(
                 text = stringResource(id = R.string.accept_terms),
-                modifier = Modifier.padding(top = 15.dp, end = 5.dp)
+                modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_15), end =dimensionResource(id = R.dimen.dim_5))
             )
             Checkbox(
                 checked = checkedState.value,
                 onCheckedChange = { checkedState.value = !checkedState.value},
                 colors = CheckboxDefaults.colors(
-                    checkedColor = Color(0xFF7EC60B)
+                    checkedColor = foodClubGreen
                 )
             )
         }
@@ -84,11 +87,11 @@ fun TermsAndConditions(
 
         }, modifier = Modifier
             .fillMaxWidth()
-            .padding(20.dp),
+            .padding(dimensionResource(id = R.dimen.dim_20)),
 
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF7EC60B),
-                disabledContainerColor = Color(0xFFC9C9C9),
+                containerColor = foodClubGreen,
+                disabledContainerColor = disabledContainerColor,
                 disabledContentColor = Color.White,
                 contentColor = Color.White
             )

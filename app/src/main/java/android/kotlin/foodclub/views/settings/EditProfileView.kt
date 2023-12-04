@@ -15,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -37,14 +38,14 @@ fun EditProfileSetting(
             keyboardType = KeyboardType.Text,
             onValueChange = { username = it })
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_12)))
 
         CustomTextField(
             placeholder = stringResource(id = R.string.email),
             keyboardType = KeyboardType.Text,
             onValueChange = { email = it })
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_16)))
 
         ConfirmButton(
             enabled = true,

@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -80,20 +81,20 @@ fun CameraPreviewView(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp)
+            .padding(dimensionResource(id = R.dimen.dim_20))
     ) {
 
         Button(
             onClick = {
                 navController.popBackStack()
             },
-            shape = RoundedCornerShape(10.dp),
-            contentPadding = PaddingValues(0.dp),
+            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
+            contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_0)),
             colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
             modifier = Modifier
-                .padding(vertical = 30.dp)
-                .width(40.dp)
-                .height(40.dp)
+                .padding(vertical = dimensionResource(id = R.dimen.dim_30))
+                .width(dimensionResource(id = R.dimen.dim_40))
+                .height(dimensionResource(id = R.dimen.dim_40))
 
         ) {
             Image(
@@ -101,8 +102,8 @@ fun CameraPreviewView(
                 contentDescription = stringResource(id = R.string.story),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .width(25.dp)
-                    .height(25.dp)
+                    .width(dimensionResource(id = R.dimen.dim_25))
+                    .height(dimensionResource(id = R.dimen.dim_25))
             )
         }
 
@@ -114,12 +115,12 @@ fun CameraPreviewView(
             },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(vertical = 40.dp)
-                .width(90.dp)
-                .height(55.dp)
+                .padding(vertical =  dimensionResource(id = R.dimen.dim_40))
+                .width(dimensionResource(id = R.dimen.dim_90))
+                .height(dimensionResource(id = R.dimen.dim_55))
             ,
-            contentPadding = PaddingValues(10.dp),
-            shape = RoundedCornerShape(10.dp),
+            contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_10)),
+            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
             colors = ButtonDefaults.buttonColors(containerColor = Color.White)
 
         ) {
@@ -128,8 +129,8 @@ fun CameraPreviewView(
                 contentDescription = stringResource(id = R.string.story),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .width(20.dp)
-                    .height(20.dp)
+                    .width(dimensionResource(id = R.dimen.dim_20))
+                    .height(dimensionResource(id = R.dimen.dim_20))
             )
         }
     }

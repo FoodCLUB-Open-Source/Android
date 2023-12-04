@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.utils.helpers.CreatorGraphicsConstants.BUSINESS
 import android.kotlin.foodclub.utils.helpers.CreatorGraphicsConstants.CLIMATE
 import android.kotlin.foodclub.utils.helpers.CreatorGraphicsConstants.GRAPHICS
@@ -66,6 +67,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -101,8 +103,8 @@ fun GraphicsCreatorsView(){
 
     Column(
         modifier = Modifier
-            .padding(top = 20.dp, end = 10.dp)
-            .clip(RoundedCornerShape(5.dp)),
+            .padding(top = dimensionResource(id = R.dimen.dim_20), end = dimensionResource(id = R.dimen.dim_10))
+            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_5))),
         horizontalAlignment = Alignment.End
     ) {
         if (showSheet) {
@@ -122,8 +124,8 @@ fun GraphicsCreatorsView(){
         IconButton(
             onClick = { isMenuExpanded = !isMenuExpanded },
             modifier = Modifier
-                .size(55.dp)
-                .clip(RoundedCornerShape(10.dp))
+                .size(dimensionResource(id = R.dimen.dim_55))
+                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
                 .background(Color.Gray)
         ) {
             Icon(
@@ -132,8 +134,7 @@ fun GraphicsCreatorsView(){
                 tint = Color.White
             )
         }
-        Spacer(modifier = Modifier.height(10.dp))
-        // Dropdown menu items
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
         if (isMenuExpanded) {
             listOfDesignsToApply.forEach { icon ->
                 IconButton(
@@ -144,9 +145,9 @@ fun GraphicsCreatorsView(){
                         currentTabItems = resourceProvider.getDrawableResources(icon.text)
                     },
                     modifier = Modifier
-                        .clip(RoundedCornerShape(10.dp))
+                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
                         .background(Color.Gray)
-                        .size(55.dp)
+                        .size(dimensionResource(id = R.dimen.dim_55))
                 ) {
                     Column(
                         modifier = Modifier.fillMaxSize(),
@@ -155,8 +156,8 @@ fun GraphicsCreatorsView(){
                     ) {
                         Icon(
                             modifier = Modifier
-                                .size(24.dp)
-                                .padding(top = 5.dp),
+                                .size(dimensionResource(id = R.dimen.dim_24))
+                                .padding(top =dimensionResource(id = R.dimen.dim_5)),
                             painter = painterResource(id = icon.icon),
                             contentDescription = null,
                             tint = Color.White
@@ -164,7 +165,7 @@ fun GraphicsCreatorsView(){
                         Text(text = icon.text, color = Color.White, fontSize = 8.sp)
                     }
                 }
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
             }
         }
     }
@@ -215,7 +216,7 @@ fun BottomSheet(
                         tileMode = TileMode.Decal
                     )
                 )
-                .shadow(5.dp, ambientColor = Color(0xFF214e6c), spotColor = Color(0xFF214e6c))
+                .shadow(dimensionResource(id = R.dimen.dim_5), ambientColor = Color(0xFF214e6c), spotColor = Color(0xFF214e6c))
         ){
             Image(
                 painter = painterResource(id = R.drawable.niose),
@@ -251,7 +252,7 @@ fun HeaderSection(
         HEALTH,
         BUSINESS
     )
-    // Find the index of the selected header
+
     if (currentSelectedHeader != null) {
         selectedHeaderIndex = mainTabItemsList.indexOf(currentSelectedHeader)
     }
@@ -279,21 +280,21 @@ fun HeaderSection(
 
             Row(
                 modifier = Modifier
-                    .padding(horizontal = 20.dp, vertical = 15.dp)
+                    .padding(horizontal = dimensionResource(id = R.dimen.dim_20), vertical = dimensionResource(id = R.dimen.dim_15))
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Start
             ) {
                 Text(
                     text = GRAPHICS,
                     color = Color.White,
-                    fontSize = 24.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_24).value.sp,
                     fontWeight = FontWeight(600)
                 )
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
             }
             Row(
                 modifier = Modifier
-                    .padding(horizontal = 20.dp, vertical = 10.dp)
+                    .padding(horizontal = dimensionResource(id = R.dimen.dim_20), vertical = dimensionResource(id = R.dimen.dim_10))
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Start
             ) {
@@ -344,10 +345,10 @@ fun TitlesRow(
                             )
                         }
                     }
-                    .padding(horizontal = 8.dp),
+                    .padding(horizontal = dimensionResource(id = R.dimen.dim_8)),
                 fontWeight = FontWeight(400),
                 color = if (isSelected) Color(0xFF58962d) else Color.White,
-                fontSize = 16.sp,
+                fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                 textAlign = TextAlign.Center,
             )
         }
@@ -361,13 +362,13 @@ fun ModalContent(
 ) {
     when (currentSelectedHeader) {
         TITLE -> {
-            TitleSection(currentTabItems = currentTabItems, padding = 10.dp)
+            TitleSection(currentTabItems = currentTabItems, padding = dimensionResource(id = R.dimen.dim_10))
         }
         INSTRUCTIONS -> {
-            InstructionSection(currentTabItems = currentTabItems, padding = 10.dp)
+            InstructionSection(currentTabItems = currentTabItems, padding = dimensionResource(id = R.dimen.dim_10))
         }
         CLIMATE -> {
-            ClimateSection(currentTabItems = currentTabItems, padding = 10.dp)
+            ClimateSection(currentTabItems = currentTabItems, padding = dimensionResource(id = R.dimen.dim_10))
         }
         NUTRIENTS -> {
             NutrientsSection(currentTabItems)
@@ -415,7 +416,7 @@ fun InstructionSection(
     LazyVerticalGrid(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 10.dp, horizontal = 20.dp),
+            .padding(vertical = dimensionResource(id = R.dimen.dim_10), horizontal = dimensionResource(id = R.dimen.dim_20)),
         columns = GridCells.Fixed(2),
         content = {
             currentTabItems[0]?.instructionSection?.instructions?.let { list ->
@@ -440,7 +441,7 @@ fun ClimateSection(
     LazyVerticalGrid(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 10.dp, horizontal = 20.dp),
+            .padding(vertical = dimensionResource(id = R.dimen.dim_10), horizontal = dimensionResource(id = R.dimen.dim_20)),
         columns = GridCells.Fixed(2),
         content = {
             currentTabItems[0]?.climateSection?.designs?.let { list ->
@@ -462,7 +463,7 @@ fun NutrientsSection(currentTabItems: List<TabDrawableResources?>) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 10.dp, horizontal = 20.dp)
+            .padding(vertical = dimensionResource(id = R.dimen.dim_10), horizontal = dimensionResource(id = R.dimen.dim_20))
     ) {
         Column(verticalArrangement = Arrangement.Top) {
             LazyVerticalGrid(
@@ -473,7 +474,7 @@ fun NutrientsSection(currentTabItems: List<TabDrawableResources?>) {
                         itemsIndexed(it) { index, id ->
                             if (index != list.lastIndex){
                                 Image(
-                                    modifier = Modifier.padding(10.dp),
+                                    modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_10)),
                                     painter = painterResource(id = id),
                                     contentDescription = "",
                                     contentScale = ContentScale.Crop
@@ -487,8 +488,8 @@ fun NutrientsSection(currentTabItems: List<TabDrawableResources?>) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(10.dp),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    .padding(dimensionResource(id = R.dimen.dim_10)),
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_10)),
                 verticalAlignment = Alignment.Bottom
             ) {
                 Image(
@@ -509,13 +510,13 @@ fun WorldSection(currentTabItems: List<TabDrawableResources?>) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 10.dp, horizontal = 20.dp)
+            .padding(vertical = dimensionResource(id = R.dimen.dim_10), horizontal = dimensionResource(id = R.dimen.dim_20))
     ){
         item {
             Text(
-                modifier = Modifier.padding(bottom = 10.dp),
+                modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_10)),
                 text = MOST_POPULAR,
-                fontSize = 16.sp,
+                fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                 fontWeight = FontWeight(700),
                 color = Color.White,
                 lineHeight = 16.48.sp
@@ -526,7 +527,7 @@ fun WorldSection(currentTabItems: List<TabDrawableResources?>) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(
-                    modifier = Modifier.padding(end = 5.dp)
+                    modifier = Modifier.padding(end =dimensionResource(id = R.dimen.dim_5))
                 ) {
                     val worldDesigns = currentTabItems[0]?.worldSectionDesigns?.world?.take(4)
                     worldDesigns!!.forEach {
@@ -541,7 +542,7 @@ fun WorldSection(currentTabItems: List<TabDrawableResources?>) {
                     val flagDesigns = currentTabItems[0]?.worldSectionDesigns?.world?.drop(4)
                     flagDesigns!!.forEach { id ->
                         Image(
-                            modifier = Modifier.size(112.dp),
+                            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_112)),
                             painter = painterResource(id = id),
                             contentDescription = "",
                             contentScale = ContentScale.Crop
@@ -551,16 +552,16 @@ fun WorldSection(currentTabItems: List<TabDrawableResources?>) {
             }
         }
         item {
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
             ReusableRow(title = LOCALLY_PRODUCED, onClick = {})
             val locallyProducedDesigns = currentTabItems[0]?.worldSectionDesigns?.locallyProducedBadges
             LazyVerticalGrid(
-                modifier = Modifier.height(400.dp),
+                modifier = Modifier.height(dimensionResource(id = R.dimen.dim_400)),
                 columns = GridCells.Fixed(3),
                 content = {
                     itemsIndexed(locallyProducedDesigns!!) { _, id->
                         Image(
-                            modifier = Modifier.padding(10.dp),
+                            modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_10)),
                             painter = painterResource(id = id),
                             contentDescription = "",
                             contentScale = ContentScale.Crop
@@ -579,13 +580,13 @@ fun StyleSection(currentTabItems: List<TabDrawableResources?>) {
         LazyVerticalGrid(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(vertical = 10.dp, horizontal = 20.dp),
+                .padding(vertical = dimensionResource(id = R.dimen.dim_10), horizontal = dimensionResource(id = R.dimen.dim_20)),
             columns = GridCells.Fixed(2),
             content = {
                 currentTabItems[0]?.styleSectionDesigns?.style?.let { list ->
                     itemsIndexed(list) { _, id ->
                         Image(
-                            modifier = Modifier.padding(10.dp),
+                            modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_10)),
                             painter = painterResource(id = id),
                             contentDescription = "",
                             contentScale = ContentScale.Crop
@@ -603,7 +604,7 @@ fun HealthSection(currentTabItems: List<TabDrawableResources?>){
     LazyColumn(
         Modifier
             .fillMaxSize()
-            .padding(vertical = 10.dp, horizontal = 20.dp)) {
+            .padding(vertical = dimensionResource(id = R.dimen.dim_10), horizontal = dimensionResource(id = R.dimen.dim_20))) {
         item {
             ReusableRow(title = HEALTH, onClick =  {})
         }
@@ -611,8 +612,8 @@ fun HealthSection(currentTabItems: List<TabDrawableResources?>){
             hotMeter!!.forEach { id->
                 Image(
                     modifier= Modifier
-                        .width(380.dp)
-                        .height(75.dp),
+                        .width(dimensionResource(id = R.dimen.dim_380))
+                        .height(dimensionResource(id = R.dimen.dim_75)),
                     painter = painterResource(id = id),
                     contentDescription = "",
                     contentScale = ContentScale.Crop
@@ -622,15 +623,15 @@ fun HealthSection(currentTabItems: List<TabDrawableResources?>){
         item {
             LazyVerticalGrid(
                 modifier = Modifier
-                    .height(300.dp)
+                    .height(dimensionResource(id = R.dimen.dim_300))
                     .fillMaxWidth()
-                    .padding(top = 10.dp),
+                    .padding(top = dimensionResource(id = R.dimen.dim_10)),
                 columns = GridCells.Fixed(3),
                 content = {
                     currentTabItems[0]?.healthSectionDesigns?.dietaryBadges?.let { list ->
                         itemsIndexed(list) { _, id ->
                             Image(
-                                modifier = Modifier.padding(5.dp),
+                                modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_5)),
                                 painter = painterResource(id = id),
                                 contentDescription = "",
                                 contentScale = ContentScale.Crop
@@ -648,7 +649,7 @@ fun HealthSection(currentTabItems: List<TabDrawableResources?>){
                 Text(
                     text = ORGANIC,
                     fontWeight = FontWeight(700),
-                    fontSize = 16.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                     color = Color.White,
                     lineHeight = 16.48.sp
                 )
@@ -657,15 +658,15 @@ fun HealthSection(currentTabItems: List<TabDrawableResources?>){
         item {
             LazyVerticalGrid(
                 modifier = Modifier
-                    .height(400.dp)
+                    .height(dimensionResource(id = R.dimen.dim_400))
                     .fillMaxWidth()
-                    .padding(top = 10.dp),
+                    .padding(top = dimensionResource(id = R.dimen.dim_10)),
                 columns = GridCells.Fixed(3),
                 content = {
                     currentTabItems[0]?.healthSectionDesigns?.organic?.let { list ->
                         itemsIndexed(list) { _, id ->
                             Image(
-                                modifier = Modifier.padding(15.dp),
+                                modifier = Modifier.padding( dimensionResource(id = R.dimen.dim_15)),
                                 painter = painterResource(id = id),
                                 contentDescription = "",
                                 contentScale = ContentScale.Crop
@@ -689,9 +690,9 @@ fun ReusableRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            modifier = Modifier.padding(10.dp),
+            modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_10)),
             text = title,
-            fontSize = 16.sp,
+            fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
             fontWeight = FontWeight(600),
             color = Color.White,
             lineHeight = 16.48.sp,
@@ -699,12 +700,12 @@ fun ReusableRow(
         )
         Text(
             modifier = Modifier
-                .padding(10.dp)
+                .padding(dimensionResource(id = R.dimen.dim_10))
                 .clickable { onClick() },
             text = SEE_ALL,
-            fontSize = 14.sp,
+            fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
             fontWeight = FontWeight(500),
-            color = Color(0xFF7EC60B),
+            color = foodClubGreen,
             lineHeight = 14.42.sp,
             textAlign = TextAlign.End
         )

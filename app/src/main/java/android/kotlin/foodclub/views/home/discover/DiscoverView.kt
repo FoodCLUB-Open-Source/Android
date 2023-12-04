@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.Satoshi
+import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.products.Ingredient
@@ -113,6 +114,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
@@ -132,10 +134,10 @@ fun DiscoverView(
     viewModel: DiscoverViewModel,
     state: DiscoverState
 ) {
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 240.dp
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp - dimensionResource(id = R.dimen.dim_240)
 
     var isSmallScreen by remember { mutableStateOf(false) }
-    if (screenHeight <= 440.dp) {
+    if (screenHeight <= dimensionResource(id = R.dimen.dim_440)) {
         isSmallScreen = true
     }
 
@@ -236,7 +238,7 @@ fun DiscoverView(
                 )
             }else{
                 // TODO figure out what do show here
-                Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_30)))
             }
         }
 
@@ -267,8 +269,8 @@ fun DiscoverView(
                     contentAlignment = Alignment.Center
                 ) {
                     CustomDatePicker(
-                        modifier = Modifier.shadow(5.dp),
-                        shape = RoundedCornerShape(6.dp),
+                        modifier = Modifier.shadow(dimensionResource(id = R.dimen.dim_5)),
+                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_6)),
                         datePickerState = datePickerState,
                         datePickerColors = datePickerColors,
                         datePickerDialogColors = datePickerDialogColors,
@@ -342,7 +344,7 @@ fun DiscoverView(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
                 Row(
                     horizontalArrangement = Arrangement.Center,
@@ -370,18 +372,18 @@ fun DiscoverView(
                     beyondBoundsPageCount = 1,
                     flingBehavior = fling,
                     modifier = Modifier
-                        .height(1000.dp)
-                        .padding(top = 0.dp),
+                        .height(dimensionResource(id = R.dimen.dim_1000))
+                        .padding(top =dimensionResource(id = R.dimen.dim_0)),
                     state = pagerState1
                 ) {
                     Box(
                         Modifier
                             .fillMaxWidth()
                             .padding(
-                                top = 5.dp,
-                                start = 15.dp,
-                                end = 15.dp,
-                                bottom = 100.dp
+                                top =dimensionResource(id = R.dimen.dim_5),
+                                start = dimensionResource(id = R.dimen.dim_15),
+                                end = dimensionResource(id = R.dimen.dim_15),
+                                bottom = dimensionResource(id = R.dimen.dim_100)
                             )
                     ) {
                         LazyVerticalGrid(columns = GridCells.Fixed(2)) {
@@ -442,7 +444,7 @@ fun MainSearchBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 60.dp, end = 20.dp, start = 20.dp, bottom = 10.dp),
+            .padding(top = dimensionResource(id = R.dimen.dim_60), end = dimensionResource(id = R.dimen.dim_20), start = dimensionResource(id = R.dimen.dim_20), bottom = dimensionResource(id = R.dimen.dim_10)),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -450,7 +452,7 @@ fun MainSearchBar(
             modifier = Modifier
                 .fillMaxWidth(0.85f)
                 .clip(
-                    RoundedCornerShape(15.dp)
+                    RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
                 )
                 .pointerInput(Unit) {
                     navController.navigate(HomeOtherRoutes.MySearchView.route)
@@ -459,7 +461,7 @@ fun MainSearchBar(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent,
-                containerColor = Color(0xFFF5F5F5)
+                containerColor = containerColor
             ),
             value = searchTextValue,
             onValueChange = {
@@ -467,7 +469,7 @@ fun MainSearchBar(
             },
             placeholder = {
                 Text(
-                    modifier = Modifier.padding(top = 3.dp),
+                    modifier = Modifier.padding(top =dimensionResource(id = R.dimen.dim_3)),
                     text = stringResource(id = R.string.search_for),
                     color = Color.Gray,
                     textAlign = TextAlign.Center
@@ -485,13 +487,13 @@ fun MainSearchBar(
             }
         )
 
-        Spacer(modifier = Modifier.width(5.dp))
+        Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_5)))
 
         Button(
-            shape = RoundedCornerShape(corner = CornerSize(25.dp)),
+            shape = RoundedCornerShape(corner = CornerSize(dimensionResource(id = R.dimen.dim_25))),
             modifier = Modifier
-                .height(56.dp)
-                .width(56.dp),
+                .height(dimensionResource(id = R.dimen.dim_56))
+                .width(dimensionResource(id = R.dimen.dim_56)),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(245, 245, 245, 255),
             ),
@@ -507,7 +509,7 @@ fun MainSearchBar(
                 },
                 badge = {
                     Badge(
-                        modifier = Modifier.offset(x = (-5).dp, y = 5.dp),
+                        modifier = Modifier.offset(x = (-5).dp, y =dimensionResource(id = R.dimen.dim_5)),
                         containerColor = foodClubGreen
                     )
                     { Text(text = "5", color = Color.Black) }
@@ -535,7 +537,7 @@ fun MainTabRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 10.dp),
+            .padding(start = dimensionResource(id = R.dimen.dim_20), end = dimensionResource(id = R.dimen.dim_20), top = dimensionResource(id = R.dimen.dim_10), bottom = dimensionResource(id = R.dimen.dim_10)),
         horizontalArrangement = horizontalArrangement
     ) {
         tabsList.forEachIndexed { index, data ->
@@ -551,7 +553,7 @@ fun MainTabRow(
                     .drawBehind {
                         if (isSelected) {
                             val strokeWidthPx = 2.dp.toPx()
-                            val topPaddingPx = 4.dp.toPx()
+                            val topPaddingPx =4.dp.toPx()
                             val underlineHeight = 2.dp.toPx()
                             val verticalOffset = size.height - (underlineHeight / 2) + topPaddingPx
                             drawLine(
@@ -565,13 +567,13 @@ fun MainTabRow(
 
                 fontWeight = if (isSelected) FontWeight(500) else FontWeight.Normal,
                 color = if (isSelected) Color.Black else Color(0xFFC2C2C2),
-                fontSize = 20.sp,
+                fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
                 lineHeight = 24.38.sp,
                 textAlign = TextAlign.Start,
                 fontFamily = Montserrat
             )
             if (tabsList[0] != stringResource(id = R.string.my_kitchen)) {
-                Spacer(modifier = Modifier.width(50.dp))
+                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_50)))
             }
         }
     }
@@ -588,7 +590,7 @@ fun SubSearchBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 20.dp, end = 20.dp, start = 20.dp, bottom = 15.dp),
+            .padding(top = dimensionResource(id = R.dimen.dim_20), end = dimensionResource(id = R.dimen.dim_20), start = dimensionResource(id = R.dimen.dim_20), bottom = dimensionResource(id = R.dimen.dim_15)),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -596,13 +598,13 @@ fun SubSearchBar(
             modifier = Modifier
                 .fillMaxWidth(0.68f)
                 .clip(
-                    RoundedCornerShape(15.dp)
+                    RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
                 ),
             colors = TextFieldDefaults.textFieldColors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent,
-                containerColor = Color(0xFFF5F5F5)
+                containerColor = containerColor
             ),
             value = searchTextValue,
             onValueChange = {
@@ -610,7 +612,7 @@ fun SubSearchBar(
             },
             placeholder = {
                 Text(
-                    modifier = Modifier.padding(top = 3.dp),
+                    modifier = Modifier.padding(top =dimensionResource(id = R.dimen.dim_3)),
                     text = stringResource(id = R.string.search_to),
                     color = Color.Gray,
                     textAlign = TextAlign.Center
@@ -631,10 +633,10 @@ fun SubSearchBar(
         )
 
         Button(
-            shape = RoundedCornerShape(corner = CornerSize(25.dp)),
+            shape = RoundedCornerShape(corner = CornerSize(dimensionResource(id = R.dimen.dim_25))),
             modifier = Modifier
-                .height(56.dp)
-                .width(56.dp),
+                .height(dimensionResource(id = R.dimen.dim_56))
+                .width(dimensionResource(id = R.dimen.dim_56)),
             colors = ButtonDefaults.buttonColors(
                 containerColor = foodClubGreen,
             ),
@@ -646,10 +648,10 @@ fun SubSearchBar(
             Icon(painterResource(id = R.drawable.camera_icon), contentDescription = "")
         }
         Button(
-            shape = RoundedCornerShape(corner = CornerSize(25.dp)),
+            shape = RoundedCornerShape(corner = CornerSize(dimensionResource(id = R.dimen.dim_25))),
             modifier = Modifier
-                .height(56.dp)
-                .width(56.dp),
+                .height(dimensionResource(id = R.dimen.dim_56))
+                .width(dimensionResource(id = R.dimen.dim_56)),
             colors = ButtonDefaults.buttonColors(
                 containerColor = foodClubGreen,
             ),
@@ -673,7 +675,7 @@ fun SubTabRow(
     var subTabIndex by remember { mutableIntStateOf(0) }
 
     LazyRow(
-        modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 5.dp, top = 10.dp),
+        modifier = Modifier.padding(start = dimensionResource(id = R.dimen.dim_20), end = dimensionResource(id = R.dimen.dim_20), bottom =dimensionResource(id = R.dimen.dim_5), top = dimensionResource(id = R.dimen.dim_10)),
         content = {
             itemsIndexed(subTabItemsList) { index, data ->
                 val selected = subTabIndex == index
@@ -704,12 +706,12 @@ fun SubTabRow(
                     text = data,
                     fontWeight = if (selected) FontWeight(500) else FontWeight.Normal,
                     color = if (selected) Color.Black else Color(0xFFC2C2C2),
-                    fontSize = 17.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_17).value.sp,
                     lineHeight = 20.88.sp,
                     textAlign = TextAlign.Start,
                     fontFamily = Montserrat
                 )
-                Spacer(modifier = Modifier.width(50.dp))
+                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_50)))
             }
         }
     )
@@ -764,9 +766,9 @@ fun IngredientsListColumn(
 ) {
     LazyColumn(
         modifier = Modifier
-            .padding(start = 15.dp, end = 15.dp)
+            .padding(start = dimensionResource(id = R.dimen.dim_15), end = dimensionResource(id = R.dimen.dim_15))
             .background(Color.White)
-            .height(275.dp),
+            .height(dimensionResource(id = R.dimen.dim_275)),
         content = {
             itemsIndexed(productsList) { _, item ->
                 var notSwiped by remember { mutableStateOf(false) }
@@ -811,7 +813,7 @@ fun IngredientsListColumn(
                             Modifier
                                 .fillMaxSize()
                                 .background(color)
-                                .padding(horizontal = 20.dp),
+                                .padding(horizontal = dimensionResource(id = R.dimen.dim_20)),
                             contentAlignment = alignment
                         ) {
                             Icon(
@@ -843,9 +845,9 @@ fun IngredientsListColumn(
                     }
                 )
 
-                Spacer(Modifier.height(8.dp))
-                Divider(thickness = 1.dp, modifier = Modifier.alpha(0.5f), color = Color.LightGray)
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(dimensionResource(id = R.dimen.dim_8)))
+                Divider(thickness =dimensionResource(id = R.dimen.dim_1), modifier = Modifier.alpha(0.5f), color = Color.LightGray)
+                Spacer(Modifier.height(dimensionResource(id = R.dimen.dim_8)))
 
             }
         }
@@ -885,16 +887,16 @@ fun SingleSearchIngredientItem(
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = modifier
-                        .height(48.dp)
-                        .width(48.dp)
+                        .height(dimensionResource(id = R.dimen.dim_48))
+                        .width(dimensionResource(id = R.dimen.dim_48))
                         .clip(CircleShape)
                 )
                 Text(
-                    modifier = modifier.padding(start = 6.dp),
+                    modifier = modifier.padding(start =dimensionResource(id = R.dimen.dim_6)),
                     text = item.type,
                     fontWeight = FontWeight(500),
                     lineHeight = 19.5.sp,
-                    fontSize = 16.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                     color = Color.Black
                 )
             }
@@ -906,13 +908,13 @@ fun SingleSearchIngredientItem(
             ) {
                 Text(
                     modifier = modifier
-                        .padding(start = 6.dp)
+                        .padding(start =dimensionResource(id = R.dimen.dim_6))
                         .clickable {
                             onEditQuantityClicked(item)
                         },
                     text = quantity,
                     fontWeight = FontWeight(500),
-                    fontSize = 16.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                     lineHeight = 19.5.sp,
                     fontFamily = Montserrat,
                     color = Color.Gray,
@@ -928,14 +930,14 @@ fun SingleSearchIngredientItem(
             ) {
                 Text(
                     modifier = modifier
-                        .padding(start = 10.dp)
+                        .padding(start = dimensionResource(id = R.dimen.dim_10))
                         .clickable {
                             onDateClicked(item)
                         },
                     text = expirationDate,
                     fontWeight = FontWeight(500),
                     textAlign = TextAlign.Start,
-                    fontSize = 16.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                     lineHeight = 19.5.sp,
                     fontFamily = Montserrat,
                     color = Color.Gray,
@@ -944,7 +946,7 @@ fun SingleSearchIngredientItem(
                 if (!isItemAdded) {
                     Box(
                         modifier = Modifier
-                            .size(24.dp)
+                            .size(dimensionResource(id = R.dimen.dim_24))
                             .clip(CircleShape)
                             .background(foodClubGreen)
                             .clickable {
@@ -993,8 +995,8 @@ fun EditIngredientBottomModal(
         val types = stringArrayResource(id = R.array.quantity_list).toList()
         Column(
             modifier = Modifier
-                .heightIn(max = 350.dp)
-                .padding(start = 10.dp, end = 10.dp)
+                .heightIn(max = dimensionResource(id = R.dimen.dim_350))
+                .padding(start = dimensionResource(id = R.dimen.dim_10), end = dimensionResource(id = R.dimen.dim_10))
         ) {
             EditIngredientQuantityPicker(
                 ingredient = ingredient,
@@ -1017,37 +1019,37 @@ fun AddIngredientDialog(headline: String, text: String){
         onDismissRequest = { }) {
         Card(
             modifier = Modifier
-                .clip(RoundedCornerShape(15.dp))
-                .width(500.dp)
+                .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
+                .width(dimensionResource(id = R.dimen.dim_500))
                 .fillMaxHeight(0.2f)
                 .background(Color.White),
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_16)),
             elevation = CardDefaults.cardElevation(
-                defaultElevation = 10.dp
+                defaultElevation = dimensionResource(id = R.dimen.dim_10)
             ),
             colors = CardDefaults.cardColors(containerColor = Color.White)
         ) {
             Column(
-                modifier = Modifier.padding(top = 10.dp),
+                modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_10)),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(10.dp),
+                        .padding(dimensionResource(id = R.dimen.dim_10)),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(34.dp)
+                            .size( dimensionResource(id = R.dimen.dim_34))
                             .clip(CircleShape)
                             .background(foodClubGreen),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            modifier = Modifier.size(24.dp),
+                            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_24)),
                             imageVector = Icons.Default.Check,
                             contentDescription = "",
                             tint = Color.White
@@ -1055,22 +1057,22 @@ fun AddIngredientDialog(headline: String, text: String){
                     }
                     Text(
                         text = headline,
-                        modifier = Modifier.padding(start = 10.dp),
+                        modifier = Modifier.padding(start = dimensionResource(id = R.dimen.dim_10)),
                         fontWeight = FontWeight(600),
                         lineHeight = 19.5.sp,
-                        fontSize = 16.sp,
+                        fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                         fontFamily = Montserrat
                     )
                 }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 10.dp, horizontal = 30.dp),
+                        .padding(vertical = dimensionResource(id = R.dimen.dim_10), horizontal = dimensionResource(id = R.dimen.dim_30)),
                 ) {
                     Text(
                         text = text,
                         fontFamily = Montserrat,
-                        fontSize = 14.sp,
+                        fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
                         lineHeight = 17.07.sp,
                         fontWeight = FontWeight(500)
                     )
@@ -1084,9 +1086,10 @@ fun AddIngredientDialog(headline: String, text: String){
 fun GridItem2(navController: NavController, dataItem: VideoModel, userName: String) {
     Card(
         modifier = Modifier
-            .height(272.dp)
-            .width(178.dp)
-            .padding(10.dp), shape = RoundedCornerShape(15.dp)
+            .height(dimensionResource(id = R.dimen.dim_272))
+            .width(dimensionResource(id = R.dimen.dim_178))
+            .padding(dimensionResource(id = R.dimen.dim_10)),
+                shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
     ) {
         Box(
             modifier = Modifier
@@ -1104,19 +1107,19 @@ fun GridItem2(navController: NavController, dataItem: VideoModel, userName: Stri
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(10.dp),
+                    .padding(dimensionResource(id = R.dimen.dim_10)),
                 verticalArrangement = Arrangement.Bottom
             ) {
                 Text(
                     text = userName,
                     fontFamily = Satoshi,
                     color = Color.White,
-                    fontSize = 15.sp
+                    fontSize = dimensionResource(id = R.dimen.fon_15).value.sp
                 )
                 Text(
                     text = dataItem.createdAt,
                     fontFamily = Satoshi,
-                    fontSize = 13.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
                     color = Color.White
                 )
             }
@@ -1139,7 +1142,7 @@ fun TabHomeDiscover(
         indicator = { tabPositions ->
             TabRowDefaults.Indicator(
                 modifier = Modifier.tabIndicatorOffset(tabPositions[pagerState1.currentPage]),
-                height = 0.dp,
+                height =dimensionResource(id = R.dimen.dim_0),
                 color = Color.Black
             )
         }
@@ -1184,9 +1187,9 @@ fun TabHomeDiscover(
 fun GridItem2(navController: NavController, dataItem: UserPosts, userName: String) {
     Card(
         modifier = Modifier
-            .height(272.dp)
-            .width(178.dp)
-            .padding(10.dp), shape = RoundedCornerShape(15.dp)
+            .height(dimensionResource(id = R.dimen.dim_272))
+            .width(dimensionResource(id = R.dimen.dim_178))
+            .padding(dimensionResource(id = R.dimen.dim_10)), shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
     ) {
 
         Box(
@@ -1205,13 +1208,14 @@ fun GridItem2(navController: NavController, dataItem: UserPosts, userName: Strin
             Column(
                 Modifier
                     .fillMaxSize()
-                    .padding(10.dp), verticalArrangement = Arrangement.Bottom
+                    .padding(dimensionResource(id = R.dimen.dim_10)),
+                        verticalArrangement = Arrangement.Bottom
             ) {
                 Text(
                     text = dataItem.totalLikes.toString(),
                     fontFamily = Satoshi,
                     color = Color.White,
-                    fontSize = 15.sp
+                    fontSize = dimensionResource(id = R.dimen.fon_15).value.sp
                 )
 
             }

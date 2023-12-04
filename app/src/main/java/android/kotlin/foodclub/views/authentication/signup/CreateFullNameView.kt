@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import android.kotlin.foodclub.R
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 
 @Composable
@@ -39,7 +40,7 @@ fun CreateFullNameView(
             onBackButtonClick()
         }
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_4))) {
             CustomTextField(
                 initialValue = name,
                 placeholder = stringResource(id = R.string.full_name),

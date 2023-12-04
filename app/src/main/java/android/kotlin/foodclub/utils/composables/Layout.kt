@@ -2,6 +2,7 @@ package android.kotlin.foodclub.utils.composables
 
 import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.Black
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.PlusJakartaSans
 import android.kotlin.foodclub.navigation.Graph
@@ -29,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
@@ -114,28 +116,28 @@ fun AuthLayout(
     Column(
         Modifier
             .fillMaxSize()
-            .padding(start = 32.dp, end = 32.dp, top = 100.dp, bottom = 32.dp)
+            .padding(start =  dimensionResource(id = R.dimen.dim_32), end =  dimensionResource(id = R.dimen.dim_32), top = dimensionResource(id = R.dimen.dim_100), bottom =  dimensionResource(id = R.dimen.dim_32))
     ) {
         Column(Modifier.weight(1F)) {
             BackButton(onBackButtonClick)
 
-            Column(Modifier.padding(top = 32.dp)) {
+            Column(Modifier.padding(top =  dimensionResource(id = R.dimen.dim_32))) {
                 header.split("\n").forEach {
                     Text(
                         text = it,
                         fontFamily = PlusJakartaSans,
                         fontWeight = FontWeight.SemiBold,
                         letterSpacing = TextUnit(-1.28f, TextUnitType.Sp),
-                        fontSize = 32.sp
+                        fontSize = dimensionResource(id = R.dimen.fon_32).value.sp
                     )
                 }
 
                 if (!subHeading.isNullOrEmpty()) {
                     Text(
                         text = subHeading,
-                        fontSize = if (subHeading.length > 50) 16.sp else 18.sp,
+                        fontSize = if (subHeading.length > 50) dimensionResource(id = R.dimen.fon_16).value.sp else dimensionResource(id = R.dimen.fon_18).value.sp,
                         fontFamily = Montserrat,
-                        color = Color(0xFF000000).copy(alpha = 0.4f)
+                        color = Black.copy(alpha = 0.4f)
                     )
                 }
             }
@@ -147,12 +149,12 @@ fun AuthLayout(
                 ) else message,
                 fontFamily = Montserrat,
                 color = if (errorOccurred) Color.Red else Color.Green,
-                modifier = Modifier.padding(bottom = 4.dp)
+                modifier = Modifier.padding(bottom =dimensionResource(id = R.dimen.dim_4))
             )
         }
 
         Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy( dimensionResource(id = R.dimen.dim_16)),
             modifier = Modifier
                 .weight(2F)
                 .fillMaxSize()

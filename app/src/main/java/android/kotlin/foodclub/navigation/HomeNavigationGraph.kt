@@ -16,9 +16,11 @@ import android.kotlin.foodclub.views.home.scan.ScanResultView
 import android.kotlin.foodclub.views.home.scan.ScanView
 import android.kotlin.foodclub.views.home.search.SearchView
 import android.kotlin.foodclub.views.home.TakeProfilePhotoView
+import android.kotlin.foodclub.views.home.TakeSnapView
 import android.kotlin.foodclub.views.home.scan.topbackbar
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -150,9 +152,6 @@ fun NavGraphBuilder.homeNavigationGraph(
 
         }
         composable(route = HomeOtherRoutes.VideoTrimmerView.route) {
-            val state = it.arguments?.getString("state") ?: ""
-//          CameraView(navController = navController, stateEncoded = state)
-
             CreateView()
         }
         composable(route = HomeOtherRoutes.CameraPreviewView.route) { backStackEntry ->
@@ -165,13 +164,6 @@ fun NavGraphBuilder.homeNavigationGraph(
                 state = state
             )
         }
-//        composable(route = HomeOtherRoutes.CreateRecipeView.route) {
-//            setBottomBarVisibility(false)
-//            CreateRecipeView(navController = navController)
-//
-////            CreateView()
-//        }
-
         composable(route = HomeOtherRoutes.GalleryView.route) {
             val stateEncoded = it.arguments?.getString("state") ?: ""
             val viewModel: GalleryViewModel = hiltViewModel()
@@ -254,6 +246,10 @@ fun NavGraphBuilder.homeNavigationGraph(
                 state = state.value
             )
         }
+        composable(route = HomeOtherRoutes.TakeSnapPhotoView.route) {
+            val viewModel: HomeViewModel = hiltViewModel()
+            TakeSnapView(viewModel = viewModel, navController = navController)
+        }
 
     }
 }
@@ -276,6 +272,7 @@ sealed class HomeOtherRoutes(val route: String) {
 
     object VideoTrimmerView : HomeOtherRoutes(route = "VIDEOTRIMMER")
     object TakeProfilePhotoView : HomeOtherRoutes(route = "TAKE_PROFILE_PHOTO_VIEW")
+    object TakeSnapPhotoView : HomeOtherRoutes(route = "TAKE_SNAP_VIEW")
     object ViewStories : HomeOtherRoutes(route = "VIEWSTORIES")
 
 }

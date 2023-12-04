@@ -25,6 +25,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -55,7 +56,7 @@ fun LearningViewUI() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 55.dp),
+            .padding(top = dimensionResource(id = R.dimen.dim_55)),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
 
@@ -63,23 +64,23 @@ fun LearningViewUI() {
 
         Text(
             text = stringResource(id = R.string.welcome_to_foodskills),
-            fontSize = 22.sp,
+            fontSize = dimensionResource(id = R.dimen.fon_22).value.sp,
             fontFamily = montserratFontFamily,
-            modifier = Modifier.padding(bottom = 10.dp)
+            modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_10))
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
         Box(
             modifier = Modifier
-                .clip(shape = RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp))
-                .width(350.dp)
-                .height(100.dp)
+                .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15)))
+                .width(dimensionResource(id = R.dimen.dim_350))
+                .height(dimensionResource(id = R.dimen.dim_100))
                 .background(Color.White)
         ) {
             Column(
                 modifier = Modifier
-                    .width(350.dp),
+                    .width(dimensionResource(id = R.dimen.dim_350)),
                 horizontalAlignment = Alignment.CenterHorizontally,
 
                 )
@@ -87,48 +88,48 @@ fun LearningViewUI() {
             {
                 Spacer(modifier = Modifier
                     .weight(2f)
-                    .padding(10.dp)
+                    .padding(dimensionResource(id = R.dimen.dim_10))
 
                 )
 
                 Text(
                     text = stringResource(id = R.string.kitchen_tools),
-                    fontSize = 18.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
-                    modifier = Modifier.padding(bottom = 5.dp, start = 55.dp, end = 20.dp) // SHIFTS TEXT UP. WE NEED SPACE FOR TEXT BELOW
+                    modifier = Modifier.padding(bottom =dimensionResource(id = R.dimen.dim_5), start = dimensionResource(id = R.dimen.dim_55), end = dimensionResource(id = R.dimen.dim_20))
 
                 )
 
                 Text(
                     text = stringResource(id = R.string.course_length),
-                    fontSize = 9.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_9).value.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
-                    modifier = Modifier.padding(bottom = 15.dp,  start = 41.dp, end = 20.dp)
+                    modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_15),  start = dimensionResource(id = R.dimen.dim_41), end = dimensionResource(id = R.dimen.dim_20))
 
                 )
 
 
                 Spacer(modifier = Modifier
                     .weight(1f)
-                    .padding(1.dp))
+                    .padding(dimensionResource(id = R.dimen.dim_1)))
 
             }
 
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(10.dp),
+                    .padding(dimensionResource(id = R.dimen.dim_10)),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = stringResource(id = R.string.forty_percent),
-                    fontSize = 30.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_30).value.sp,
                     fontFamily = montserratFontFamily,
                     color = customGreenColor,
-                    modifier = Modifier.padding(top = 1.dp,  end = 205.dp, bottom = 15.dp)
+                    modifier = Modifier.padding(top =dimensionResource(id = R.dimen.dim_1),  end = dimensionResource(id = R.dimen.dim_205), bottom = dimensionResource(id = R.dimen.dim_15))
 
                 )
 
@@ -137,17 +138,17 @@ fun LearningViewUI() {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(10.dp),
+                    .padding(dimensionResource(id = R.dimen.dim_10)),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
                 Text(
                     text = stringResource(id = R.string.completed),
-                    fontSize = 10.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_10).value.sp,
                     fontFamily = montserratFontFamily,
                     color = customGreenColor,
-                    modifier = Modifier.padding(top = 50.dp,  end = 205.dp, bottom = 15.dp)
+                    modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_50),  end = dimensionResource(id = R.dimen.dim_205), bottom = dimensionResource(id = R.dimen.dim_15))
 
                 )
 
@@ -156,16 +157,16 @@ fun LearningViewUI() {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(10.dp),
+                    .padding(dimensionResource(id = R.dimen.dim_10)),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = stringResource(id = R.string.dummy_duration),
-                    fontSize = 9.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_9).value.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
-                    modifier = Modifier.padding(top = 28.dp,  start = 203.dp, end = 20.dp)
+                    modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_28),  start = dimensionResource(id = R.dimen.dim_203), end = dimensionResource(id = R.dimen.dim_20))
 
                 )
             }
@@ -173,7 +174,7 @@ fun LearningViewUI() {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(1.dp),
+                    .padding(dimensionResource(id = R.dimen.dim_1)),
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.Bottom
             ) {
@@ -181,8 +182,8 @@ fun LearningViewUI() {
                     painterResource(id = R.drawable.right_arrow),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(75.dp)
-                        .padding(bottom = 25.dp, start = 20.dp)
+                        .size(dimensionResource(id = R.dimen.dim_75))
+                        .padding(bottom = dimensionResource(id = R.dimen.dim_25), start = dimensionResource(id = R.dimen.dim_20))
 
 
                 )
@@ -194,24 +195,24 @@ fun LearningViewUI() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 200.dp),
+            .padding(top = dimensionResource(id = R.dimen.dim_200)),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
         Box(
             modifier = Modifier
-                .clip(shape = RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp))
-                .width(350.dp)
-                .height(100.dp)
+                .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15)))
+                .width(dimensionResource(id = R.dimen.dim_350))
+                .height(dimensionResource(id = R.dimen.dim_100))
                 .background(Color.White)
         ) {
             Column(
                 modifier = Modifier
-                    .width(350.dp),
+                    .width(dimensionResource(id = R.dimen.dim_350)),
                 horizontalAlignment = Alignment.CenterHorizontally,
 
                 )
@@ -219,48 +220,48 @@ fun LearningViewUI() {
             {
                 Spacer(modifier = Modifier
                     .weight(2f)
-                    .padding(10.dp)
+                    .padding(dimensionResource(id = R.dimen.dim_10))
 
                 )
 
                 Text(
                     text = stringResource(id = R.string.health),
-                    fontSize = 18.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
-                    modifier = Modifier.padding(bottom = 5.dp, start = 5.dp, end = 36.dp) // SHIFTS TEXT UP. WE NEED SPACE FOR TEXT BELOW
+                    modifier = Modifier.padding(bottom =dimensionResource(id = R.dimen.dim_5), start =dimensionResource(id = R.dimen.dim_5), end =  dimensionResource(id = R.dimen.dim_36))
 
                 )
 
                 Text(
                     text = stringResource(id = R.string.course_length),
-                    fontSize = 9.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_9).value.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
-                    modifier = Modifier.padding(bottom = 15.dp,  start = 41.dp, end = 20.dp)
+                    modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_15),  start = dimensionResource(id = R.dimen.dim_41), end = dimensionResource(id = R.dimen.dim_20))
 
                 )
 
                 Spacer(modifier = Modifier
                     .weight(1f)
-                    .padding(1.dp))
+                    .padding(dimensionResource(id = R.dimen.dim_1)))
 
             }
 
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(10.dp),
+                    .padding(dimensionResource(id = R.dimen.dim_10)),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
                 Text(
                     text = stringResource(id = R.string.zero_percent),
-                    fontSize = 30.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_30).value.sp,
                     fontFamily = montserratFontFamily,
                     color = customGreenColor,
-                    modifier = Modifier.padding(top = 1.dp,  end = 205.dp, bottom = 15.dp)
+                    modifier = Modifier.padding(top =dimensionResource(id = R.dimen.dim_1),  end = dimensionResource(id = R.dimen.dim_205), bottom = dimensionResource(id = R.dimen.dim_15))
 
                 )
 
@@ -269,16 +270,16 @@ fun LearningViewUI() {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(10.dp),
+                    .padding(dimensionResource(id = R.dimen.dim_10)),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = stringResource(id = R.string.completed),
-                    fontSize = 10.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_10).value.sp,
                     fontFamily = montserratFontFamily,
                     color = customGreenColor,
-                    modifier = Modifier.padding(top = 50.dp,  end = 205.dp, bottom = 15.dp)
+                    modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_50),  end = dimensionResource(id = R.dimen.dim_205), bottom = dimensionResource(id = R.dimen.dim_15))
 
                 )
 
@@ -287,16 +288,16 @@ fun LearningViewUI() {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(10.dp),
+                    .padding(dimensionResource(id = R.dimen.dim_10)),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = stringResource(id = R.string.dummy_duration),
-                    fontSize = 9.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_9).value.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
-                    modifier = Modifier.padding(top = 28.dp,  start = 203.dp, end = 20.dp)
+                    modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_28),  start = dimensionResource(id = R.dimen.dim_203), end = dimensionResource(id = R.dimen.dim_20))
 
                 )
             }
@@ -304,7 +305,7 @@ fun LearningViewUI() {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(1.dp),
+                    .padding(dimensionResource(id = R.dimen.dim_1)),
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.Bottom
             ) {
@@ -312,8 +313,8 @@ fun LearningViewUI() {
                     painterResource(id = R.drawable.right_arrow),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(75.dp)
-                        .padding(bottom = 25.dp, start = 20.dp)
+                        .size(dimensionResource(id = R.dimen.dim_75))
+                        .padding(bottom = dimensionResource(id = R.dimen.dim_25), start = dimensionResource(id = R.dimen.dim_20))
 
 
                 )
@@ -325,24 +326,24 @@ fun LearningViewUI() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 420.dp),
+            .padding(top = dimensionResource(id = R.dimen.dim_420)),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
         Box(
             modifier = Modifier
-                .clip(shape = RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp))
-                .width(350.dp)
-                .height(100.dp)
+                .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15)))
+                .width(dimensionResource(id = R.dimen.dim_350))
+                .height(dimensionResource(id = R.dimen.dim_100))
                 .background(Color.White)
         ) {
             Column(
                 modifier = Modifier
-                    .width(350.dp),
+                    .width(dimensionResource(id = R.dimen.dim_350)),
                 horizontalAlignment = Alignment.CenterHorizontally,
 
                 )
@@ -350,48 +351,48 @@ fun LearningViewUI() {
             {
                 Spacer(modifier = Modifier
                     .weight(2f)
-                    .padding(10.dp)
+                    .padding(dimensionResource(id = R.dimen.dim_10))
 
                 )
 
                 Text(
                     text = stringResource(id = R.string.flavours),
-                    fontSize = 18.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
-                    modifier = Modifier.padding(bottom = 5.dp, start = 55.dp, end = 71.dp) // SHIFTS TEXT UP. WE NEED SPACE FOR TEXT BELOW
+                    modifier = Modifier.padding(bottom =dimensionResource(id = R.dimen.dim_5), start = dimensionResource(id = R.dimen.dim_55), end = dimensionResource(id = R.dimen.dim_71))
 
                 )
 
                 Text(
                     text = stringResource(id = R.string.course_length),
-                    fontSize = 9.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_9).value.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
-                    modifier = Modifier.padding(bottom = 15.dp,  start = 41.dp, end = 20.dp)
+                    modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_15),  start = dimensionResource(id = R.dimen.dim_41), end = dimensionResource(id = R.dimen.dim_20))
 
                 )
 
 
                 Spacer(modifier = Modifier
                     .weight(1f)
-                    .padding(1.dp))
+                    .padding(dimensionResource(id = R.dimen.dim_1)))
 
             }
 
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(10.dp),
+                    .padding(dimensionResource(id = R.dimen.dim_10)),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = stringResource(id = R.string.zero_percent),
-                    fontSize = 30.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_30).value.sp,
                     fontFamily = montserratFontFamily,
                     color = customGreenColor,
-                    modifier = Modifier.padding(top = 1.dp,  end = 205.dp, bottom = 15.dp)
+                    modifier = Modifier.padding(top =dimensionResource(id = R.dimen.dim_1),  end = dimensionResource(id = R.dimen.dim_205), bottom = dimensionResource(id = R.dimen.dim_15))
 
                 )
 
@@ -400,16 +401,16 @@ fun LearningViewUI() {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(10.dp),
+                    .padding(dimensionResource(id = R.dimen.dim_10)),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = stringResource(id = R.string.completed),
-                    fontSize = 10.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_10).value.sp,
                     fontFamily = montserratFontFamily,
                     color = customGreenColor,
-                    modifier = Modifier.padding(top = 50.dp,  end = 205.dp, bottom = 15.dp)
+                    modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_50),  end = dimensionResource(id = R.dimen.dim_205), bottom = dimensionResource(id = R.dimen.dim_15))
 
                 )
 
@@ -418,16 +419,16 @@ fun LearningViewUI() {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(10.dp),
+                    .padding(dimensionResource(id = R.dimen.dim_10)),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = stringResource(id = R.string.dummy_duration),
-                    fontSize = 9.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_9).value.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
-                    modifier = Modifier.padding(top = 28.dp,  start = 203.dp, end = 20.dp)
+                    modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_28),  start = dimensionResource(id = R.dimen.dim_203), end = dimensionResource(id = R.dimen.dim_20))
 
                 )
             }
@@ -435,7 +436,7 @@ fun LearningViewUI() {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(1.dp),
+                    .padding(dimensionResource(id = R.dimen.dim_1)),
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.Bottom
             ) {
@@ -443,8 +444,8 @@ fun LearningViewUI() {
                     painterResource(id = R.drawable.right_arrow),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(75.dp)
-                        .padding(bottom = 25.dp, start = 20.dp)
+                        .size(dimensionResource(id = R.dimen.dim_75))
+                        .padding(bottom = dimensionResource(id = R.dimen.dim_25), start = dimensionResource(id = R.dimen.dim_20))
 
 
                 )
@@ -456,24 +457,24 @@ fun LearningViewUI() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 310.dp),
+            .padding(top = dimensionResource(id = R.dimen.dim_310)),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
         Box(
             modifier = Modifier
-                .clip(shape = RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp))
-                .width(350.dp)
-                .height(100.dp)
+                .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15)))
+                .width(dimensionResource(id = R.dimen.dim_350))
+                .height(dimensionResource(id = R.dimen.dim_100))
                 .background(Color.White)
         ) {
             Column(
                 modifier = Modifier
-                    .width(350.dp),
+                    .width(dimensionResource(id = R.dimen.dim_350)),
                 horizontalAlignment = Alignment.CenterHorizontally,
 
                 )
@@ -481,32 +482,32 @@ fun LearningViewUI() {
             {
                 Spacer(modifier = Modifier
                     .weight(2f)
-                    .padding(10.dp)
+                    .padding(dimensionResource(id = R.dimen.dim_10))
 
                 )
 
                 Text(
                     text = stringResource(id = R.string.communities),
-                    fontSize = 18.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
-                    modifier = Modifier.padding(bottom = 5.dp, start = 55.dp, end = 19.dp) // SHIFTS TEXT UP. WE NEED SPACE FOR TEXT BELOW
+                    modifier = Modifier.padding(bottom =dimensionResource(id = R.dimen.dim_5), start = dimensionResource(id = R.dimen.dim_55), end = dimensionResource(id = R.dimen.dim_19))
 
                 )
 
                 Text(
                     text = stringResource(id = R.string.course_length),
-                    fontSize = 9.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_9).value.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
-                    modifier = Modifier.padding(bottom = 15.dp,  start = 41.dp, end = 20.dp)
+                    modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_15),  start = dimensionResource(id = R.dimen.dim_41), end = dimensionResource(id = R.dimen.dim_20))
 
                 )
 
 
                 Spacer(modifier = Modifier
                     .weight(1f)
-                    .padding(1.dp))
+                    .padding(dimensionResource(id = R.dimen.dim_1)))
 
             }
 
@@ -514,16 +515,16 @@ fun LearningViewUI() {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(10.dp),
+                    .padding(dimensionResource(id = R.dimen.dim_10)),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = stringResource(id = R.string.zero_percent),
-                    fontSize = 30.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_30).value.sp,
                     fontFamily = montserratFontFamily,
                     color = customGreenColor,
-                    modifier = Modifier.padding(top = 1.dp,  end = 205.dp, bottom = 15.dp)
+                    modifier = Modifier.padding(top =dimensionResource(id = R.dimen.dim_1),  end = dimensionResource(id = R.dimen.dim_205), bottom = dimensionResource(id = R.dimen.dim_15))
 
                 )
 
@@ -532,16 +533,16 @@ fun LearningViewUI() {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(10.dp),
+                    .padding(dimensionResource(id = R.dimen.dim_10)),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = stringResource(id = R.string.completed),
-                    fontSize = 10.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_10).value.sp,
                     fontFamily = montserratFontFamily,
                     color = customGreenColor,
-                    modifier = Modifier.padding(top = 50.dp,  end = 205.dp, bottom = 15.dp)
+                    modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_50),  end = dimensionResource(id = R.dimen.dim_205), bottom = dimensionResource(id = R.dimen.dim_15))
 
                 )
 
@@ -550,16 +551,16 @@ fun LearningViewUI() {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(10.dp),
+                    .padding(dimensionResource(id = R.dimen.dim_10)),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = stringResource(id = R.string.dummy_duration),
-                    fontSize = 9.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_9).value.sp,
                     fontFamily = montserratFontFamily,
                     color = Color.Black,
-                    modifier = Modifier.padding(top = 28.dp,  start = 203.dp, end = 20.dp)
+                    modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_28),  start = dimensionResource(id = R.dimen.dim_203), end = dimensionResource(id = R.dimen.dim_20))
 
                 )
             }
@@ -567,7 +568,7 @@ fun LearningViewUI() {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(1.dp),
+                    .padding(dimensionResource(id = R.dimen.dim_1)),
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.Bottom
             ) {
@@ -575,8 +576,8 @@ fun LearningViewUI() {
                     painterResource(id = R.drawable.right_arrow),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(75.dp)
-                        .padding(bottom = 25.dp, start = 20.dp)
+                        .size(dimensionResource(id = R.dimen.dim_75))
+                        .padding(bottom = dimensionResource(id = R.dimen.dim_25), start = dimensionResource(id = R.dimen.dim_20))
 
 
                 )
@@ -586,23 +587,23 @@ fun LearningViewUI() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 130.dp),
+                .padding(top = dimensionResource(id = R.dimen.dim_130)),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
 
         ) {
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
             Box(
                 modifier = Modifier
-                    .clip(shape = RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp))
-                    .width(350.dp)
-                    .height(150.dp)
+                    .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15)))
+                    .width(dimensionResource(id = R.dimen.dim_350))
+                    .height(dimensionResource(id = R.dimen.dim_150))
                     .background(Color.White)
             ) {
                 Column(
                     modifier = Modifier
-                        .width(350.dp),
+                        .width(dimensionResource(id = R.dimen.dim_350)),
                     horizontalAlignment = Alignment.CenterHorizontally,
 
                     )
@@ -611,37 +612,37 @@ fun LearningViewUI() {
                     Spacer(
                         modifier = Modifier
                             .weight(2f)
-                            .padding(10.dp)
+                            .padding(dimensionResource(id = R.dimen.dim_10))
 
                     )
 
                     Text(
                         text = stringResource(id = R.string.click_to_vote),
-                        fontSize = 19.sp,
+                        fontSize = dimensionResource(id = R.dimen.fon_19).value.sp,
                         fontFamily = PlusJakartaSans,
                         color = Color.Black,
                         modifier = Modifier.padding(
-                            bottom = 5.dp,
-                            start = 135.dp,
-                            end = 30.dp
+                            bottom =dimensionResource(id = R.dimen.dim_5),
+                            start = dimensionResource(id = R.dimen.dim_135),
+                            end = dimensionResource(id = R.dimen.dim_30)
                         )
 
                     )
 
                     Spacer(modifier = Modifier
                         .weight(1f)
-                        .padding(1.dp))
+                        .padding(dimensionResource(id = R.dimen.dim_1)))
 
                     Button(
-                        shape = RoundedCornerShape(9.dp),
+                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_9)),
 
                         onClick = { /* TODO: ON CLICK STUFF */ },
                         modifier = Modifier
                             .padding(
-                                bottom = 25.dp, start = 35.dp
+                                bottom = dimensionResource(id = R.dimen.dim_25), start =  dimensionResource(id = R.dimen.dim_35)
                             )
-                            .width(120.dp)
-                            .height(40.dp),
+                            .width(dimensionResource(id = R.dimen.dim_120))
+                            .height(dimensionResource(id = R.dimen.dim_40)),
 
                         colors = ButtonDefaults.buttonColors(
                             containerColor  = customGreenColor,
@@ -657,7 +658,7 @@ fun LearningViewUI() {
                 Row(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(10.dp),
+                        .padding(dimensionResource(id = R.dimen.dim_10)),
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -665,8 +666,8 @@ fun LearningViewUI() {
                         painterResource(id = R.drawable.temporary_image_placeholder),
                         contentDescription = null,
                         modifier = Modifier
-                            .size(185.dp)
-                            .padding(end = 65.dp)
+                            .size(dimensionResource(id = R.dimen.dim_185))
+                            .padding(end = dimensionResource(id = R.dimen.dim_65))
 
 
                     )

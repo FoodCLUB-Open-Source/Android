@@ -96,7 +96,6 @@ class PostRepository(
         }
     }
 
-    // USER VIEWS POST
     suspend fun userViewsPost(postId: Long, userId: Long): Resource<ViewsPostResponse, DefaultErrorResponse> {
         try {
             val response = api.viewsPost(postId, userId)

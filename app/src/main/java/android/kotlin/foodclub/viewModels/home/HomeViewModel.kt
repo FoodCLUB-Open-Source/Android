@@ -3,19 +3,21 @@ package android.kotlin.foodclub.viewModels.home
 import android.kotlin.foodclub.domain.enums.Reactions
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.home.VideoStats
+import android.kotlin.foodclub.domain.models.products.Ingredient
+import android.kotlin.foodclub.domain.models.products.MyBasketCache
+import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
 import android.kotlin.foodclub.domain.models.snaps.SnapModel
-import android.kotlin.foodclub.repositories.PostRepository
-import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.repositories.BookmarkRepository
 import android.kotlin.foodclub.repositories.LikesRepository
+import android.kotlin.foodclub.repositories.PostRepository
+import android.kotlin.foodclub.repositories.ProductRepository
 import android.kotlin.foodclub.repositories.StoryRepository
 import android.kotlin.foodclub.views.home.home.HomeState
+import android.kotlin.foodclub.utils.helpers.Resource
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +25,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -32,7 +35,10 @@ class HomeViewModel @Inject constructor(
     private val storyRepository: StoryRepository,
     private val likesRepository: LikesRepository,
     private val bookmarkRepository: BookmarkRepository,
-    private val sessionCache: SessionCache
+    private val sessionCache: SessionCache,
+    private val myBasketViewModel: MyBasketViewModel,
+    private val productRepository: ProductRepository,
+    private val basketCache: MyBasketCache,
 ) : ViewModel() {
 
     companion object {
@@ -195,6 +201,84 @@ class HomeViewModel @Inject constructor(
         _state.update { it.copy(memories = list) }
     }
 
+    fun addToShoppingList(ingredients: List<Ingredient>, selectedQuantity: Int) {
+        viewModelScope.launch {
+//            try {
+//                val updatedIngredients = ingredients.map { ingredient ->
+//                    ingredient.copy(quantity = selectedQuantity)
+//                }
+//
+//                // STORING SELECTED INGREDIENT
+//                _selectedIngredients.emit(updatedIngredients)
+//
+//                //myBasketViewModel.addIngredientsToBasket(updatedIngredients)
+//
+//            } catch (e: Exception) {
+//                _error.value = e.message ?: "Unknown error"
+//            }
+        }
+    }
+
+    fun fetchProductsDatabase(searchText: String) {
+        viewModelScope.launch() {
+//            when(val resource = productRepository.getProductsList(searchText)) {
+//                is Resource.Success -> {
+//                    _error.value = ""
+//                    _productsDatabase.value = resource.data!!
+//                    Log.d("MyBasketViewModel", "database: ${_productsDatabase.value.productsList}")
+//                }
+//                is Resource.Error -> {
+//                    _error.value = resource.message!!
+//                    Log.d("MyBasketViewModel", "error: ${_error.value}")
+//                }
+           // }
+        }
+    }
+
+//
+//    private fun calculateDefaultQuantities(numberOfPortions: Int): List<Ingredient> {
+//        return _selectedIngredients.value.map { ingredient ->
+//            val defaultQuantity = ingredient.quantity / numberOfPortions
+//            ingredient.copy(quantity = defaultQuantity)
+//        }
+//    }
+//
+//    fun onQuantityChange(newQuantity: Int) {
+//        _defaultIngredients.value = calculateDefaultQuantities(newQuantity)
+//        _selectedIngredients.value = calculateUpdatedQuantities(newQuantity)
+//
+//        _selectedQuantity.value = newQuantity
+//        _quantity.value = newQuantity
+//    }
+//
+//    private fun calculateUpdatedQuantities(newQuantity: Int): List<Ingredient> {
+//        return _selectedIngredients.value.map { ingredient ->
+//            val updatedQuantity = (ingredient.quantity * newQuantity) / 100
+//            ingredient.copy(quantity = updatedQuantity)
+//        }
+//    }
+//
+//
+//    fun toggleIngredientSelection(ingredient: Ingredient) {
+//        ingredient.isSelected = !ingredient.isSelected
+//
+//        // UPDATE SELECTED INGREDIENT
+//        val updatedSelectedIngredients = _selectedIngredients.value.toMutableList()
+//        if (ingredient.isSelected) {
+//            updatedSelectedIngredients.add(ingredient)
+//        } else {
+//            updatedSelectedIngredients.remove(ingredient)
+//        }
+//        _selectedIngredients.value = updatedSelectedIngredients
+//
+//        // TELLING MY BASKET VIEW MODEL TO UPDATE
+//        //myBasketViewModel.updateSelectedIngredients(_selectedIngredients.value)
+//        myBasketViewModel.addIngredientsToBasket(listOf(ingredient))
+//
+//        // RECOMPOSITION FOR MY BASKET
+//        myBasketViewModel.refreshBasket()
+//    }
+
     private fun getPostListData() {
         val user = sessionCache.getActiveSession()?.sessionUser ?: return
         viewModelScope.launch {
@@ -263,6 +347,21 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun postSnap(file: File) {
+        val user = sessionCache.getActiveSession()?.sessionUser
+        viewModelScope.launch {
+            when (val resource = storyRepository.postImageStory(user!!.userId, file)){
+                is Resource.Success -> {
+                    Log.i(TAG,"POST STORY ${resource.data}")
+                }
+                is Resource.Error -> {
+                    Log.e(TAG,"POST STORY ${resource.message}")
+                }
+            }
+        }
+    }
+
+    // USER VIEWS A STORY
     suspend fun userViewsStory(storyId: Long) {
         val user = sessionCache.getActiveSession()?.sessionUser ?: return
         viewModelScope.launch {

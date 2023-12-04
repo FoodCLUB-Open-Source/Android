@@ -10,7 +10,7 @@ data class UserDetailsDto(
     @SerializedName("phone_number")
     val phoneNumber: String? = null,
     @SerializedName("profile_picture")
-    val profilePicture: String,
+    val profilePicture: String? = null,
     @SerializedName("user_bio")
     val userBio: String? = null,
     val gender: String? = null,

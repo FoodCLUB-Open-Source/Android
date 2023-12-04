@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import android.kotlin.foodclub.R
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 
 @Composable
@@ -29,7 +30,7 @@ fun SignUpWithEmailView(
         header = stringResource(id = R.string.new_here),
         onBackButtonClick = onBackButtonClick
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_4))) {
             var userEmail by remember { mutableStateOf(userSignUpInformation.email) }
             var userPassword by remember { mutableStateOf(userSignUpInformation.password) }
 

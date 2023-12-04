@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -59,25 +60,25 @@ fun UploadingViewUI(modifier: Modifier = Modifier, progress: Float) {
             painter = painterResource(id = R.drawable.welcome_logo),
             contentDescription = null,
             modifier = Modifier
-                .size(80.dp)
-                .offset(y = -100.dp)
+                .size(dimensionResource(id = R.dimen.dim_80))
+                .offset(y = -dimensionResource(id = R.dimen.dim_100))
 
         )
 
         Text(
             text = stringResource(id = R.string.uploading),
-            fontSize = 22.sp,
+            fontSize = dimensionResource(id = R.dimen.fon_22).value.sp,
             fontFamily = montserratFontFamily,
-            modifier = Modifier.padding(top = 40.dp, bottom = 50.dp)
+            modifier = Modifier.padding(top =  dimensionResource(id = R.dimen.dim_40), bottom = dimensionResource(id = R.dimen.dim_50))
         )
 
         LinearProgressIndicator(
             progress = progress,
             modifier = Modifier
-                .offset(y = 60.dp)
-                .width(280.dp)
-                .height(8.dp)
-                .padding(horizontal = 16.dp),
+                .offset(y = dimensionResource(id = R.dimen.dim_60))
+                .width(dimensionResource(id = R.dimen.dim_280))
+                .height(dimensionResource(id = R.dimen.dim_8))
+                .padding(horizontal = dimensionResource(id = R.dimen.dim_16)),
             color = customGreenColor
         )
     }

@@ -71,6 +71,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -94,7 +95,7 @@ fun ScanView(
     viewModel: DiscoverViewModel,
     state: DiscoverState
 ) {
-    var scanState:String  by rememberSaveable { mutableStateOf("off") }
+    var scanState: String by rememberSaveable { mutableStateOf("off") }
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val permissionState = rememberMultiplePermissionsState(
@@ -102,7 +103,8 @@ fun ScanView(
             Manifest.permission.CAMERA,
         )
     )
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp + 10.dp
+    val screenHeight =
+        LocalConfiguration.current.screenHeightDp.dp + dimensionResource(id = R.dimen.dim_10)
 
     val previewView: PreviewView = remember { PreviewView(context) }
     val imageCapture: MutableState<ImageCapture?> = remember { mutableStateOf(null) }
@@ -118,30 +120,31 @@ fun ScanView(
 
     var Button1text = ""
     var Button2text = ""
-    var onclick1:() -> Unit={}
-    var onclick2:() -> Unit={}
+    var onclick1: () -> Unit = {}
+    var onclick2: () -> Unit = {}
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
-            .padding(14.dp) // Add overall padding to the Column
+            .padding(dimensionResource(id = R.dimen.dim_14))
     ) {
         when (scanState) {
 
-            "off" -> {Text(
-                text = "Once you've finished scanning, you can use Search to find ingredients you need",
-                modifier = Modifier.padding(10.dp),
-                color = Color.Gray,
-                fontFamily = Montserrat,
-                textAlign = TextAlign.Center
-            )
-                Button1text="Maybe Later"
-                Button2text="Scan"
-                onclick1={navController.navigate(BottomBarScreenObject.Play.route)}
-                onclick2= {
+            "off" -> {
+                Text(
+                    text = "Once you've finished scanning, you can use Search to find ingredients you need",
+                    modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_10)),
+                    color = Color.Gray,
+                    fontFamily = Montserrat,
+                    textAlign = TextAlign.Center
+                )
+                Button1text = "Maybe Later"
+                Button2text = "Scan"
+                onclick1 = { navController.navigate(BottomBarScreenObject.Play.route) }
+                onclick2 = {
                     scanState = "Scanning"
                     viewModel.scan(imageCapture.value!!, context)
-                    showCamPreview=!showCamPreview
+                    showCamPreview = !showCamPreview
                     showImage = !showImage
                     showBottomSheet = !showBottomSheet
 
@@ -150,19 +153,20 @@ fun ScanView(
 
             "Scanning" -> Text(
                 text = "Scan in process... ",
-                modifier = Modifier.padding(10.dp),
+                modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_10)),
                 color = Color.Gray,
                 fontFamily = Montserrat,
                 textAlign = TextAlign.Center
             )
 
-            "Completed" ->{ Text(
-                text = "Scan completed! \nCheckout the scan results below",
-                modifier = Modifier.padding(10.dp),
-                color = Color.Gray,
-                fontFamily = Montserrat,
-                textAlign = TextAlign.Center
-            )
+            "Completed" -> {
+                Text(
+                    text = "Scan completed! \nCheckout the scan results below",
+                    modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_10)),
+                    color = Color.Gray,
+                    fontFamily = Montserrat,
+                    textAlign = TextAlign.Center
+                )
                 Button1text = "Scan Again"
                 Button2text = "Next"
                 onclick1 = {
@@ -170,7 +174,7 @@ fun ScanView(
                     navController.navigate("ScanView_route")
                 }
 
-                onclick2 = {navController.navigate("ScanResultView_route")}
+                onclick2 = { navController.navigate("ScanResultView_route") }
             }
 
         }
@@ -189,47 +193,46 @@ fun ScanView(
 
         PermissionsRequired(
             multiplePermissionsState = permissionState,
-            permissionsNotGrantedContent = { /* ... */ },
-            permissionsNotAvailableContent = { /* ... */ }
+            permissionsNotGrantedContent = { },
+            permissionsNotAvailableContent = { }
         ) {
             Box(
                 modifier = Modifier
-                    .size(580.dp)
+                    .size(dimensionResource(id = R.dimen.dim_580))
                     .background(Color.Transparent)
             )
             {
-                // Scaffold with a Multi-Floating Action Button (Multi-FAB)
                 Scaffold(
                     floatingActionButton = {
-                        if (scanState=="Scanning"||scanState=="Completed")
-                        {
+                        if (scanState == "Scanning" || scanState == "Completed") {
                             MultiFloatingActionButton(
                                 items = listOf(
 
-                                     FabButtonItem(
-                                    iconRes = Icons.Filled.Refresh,
-                                    label = "Scan again"
-                                     ),
                                     FabButtonItem(
-                                    iconRes = Icons.Filled.AddCircle,
-                                     label = "Scan more"
+                                        iconRes = Icons.Filled.Refresh,
+                                        label = "Scan again"
+                                    ),
+                                    FabButtonItem(
+                                        iconRes = Icons.Filled.AddCircle,
+                                        label = "Scan more"
                                     ),
 
-                                ),
+                                    ),
 
-                            onFabItemClicked = {
-                            navController.navigate("ScanView_route")
+                                onFabItemClicked = {
+                                    navController.navigate("ScanView_route")
 
-//                                when (it.label) {
-//                                    "Scan again" -> {
-//                                        navController.navigate("ScanView_route")
-//                                    }
-//                                    " Scan more" -> {
-//                                    }
-//                                }
-                            },
-                                 fabIcon = FabButtonMain(),
-                                 fabOption = FabButtonSub()
+                                    when (it.label) {
+                                        "Scan again" -> {
+                                            navController.navigate("ScanView_route")
+                                        }
+
+                                        " Scan more" -> {
+                                        }
+                                    }
+                                },
+                                fabIcon = FabButtonMain(),
+                                fabOption = FabButtonSub()
                             )
                         }
                     }
@@ -244,48 +247,57 @@ fun ScanView(
                         )
                     }
 
-                        if(scanState=="Scanning"||scanState=="Completed") {
-                            state.capturedImage?.let { imageBitmap ->
-                                Image(
-                                    bitmap = imageBitmap,
-                                    contentDescription = null,
-                                    modifier = Modifier.fillMaxSize()
-                                )
-                            }
+                    if (scanState == "Scanning" || scanState == "Completed") {
+                        state.capturedImage?.let { imageBitmap ->
+                            Image(
+                                bitmap = imageBitmap,
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxSize()
+                            )
                         }
                     }
                 }
             }
-        if (scanState=="off"||scanState=="Completed")
-        {
+        }
+        if (scanState == "off" || scanState == "Completed") {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(18.dp) // Adjust padding for the buttons
+                    .padding(dimensionResource(id = R.dimen.dim_18))
             ) {
-                Buttons( text =Button1text, onClick =onclick1 , containerColor =Color.Transparent,textcolor= foodClubGreen)
-                Buttons(text =Button2text ,  onClick =onclick2, containerColor = foodClubGreen,textcolor=Color.White )
+                Buttons(
+                    text = Button1text,
+                    onClick = onclick1,
+                    containerColor = Color.Transparent,
+                    textcolor = foodClubGreen
+                )
+                Buttons(
+                    text = Button2text,
+                    onClick = onclick2,
+                    containerColor = foodClubGreen,
+                    textcolor = Color.White
+                )
             }
         }
-        if(scanState=="Scanning")
-        {
+        if (scanState == "Scanning") {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.Bottom) {
+                verticalArrangement = Arrangement.Bottom
+            ) {
 
                 Button(
-                    shape = RoundedCornerShape(50.dp),
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_50)),
                     modifier = Modifier
-                        .padding(8.dp)
-                        .clip(RoundedCornerShape(15.dp))
-                        .size(50.dp)
+                        .padding(dimensionResource(id = R.dimen.dim_8))
+                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
+                        .size(dimensionResource(id = R.dimen.dim_50))
                         .align(Alignment.End),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(126, 198, 11, 255),
                         contentColor = Color.White
                     ),
-                    contentPadding = PaddingValues(15.dp),
+                    contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_15)),
                     onClick = {
                         showBottomSheet = !showBottomSheet
                     }
@@ -296,7 +308,6 @@ fun ScanView(
                         contentDescription = null,
                         tint = Color.Black,
                         modifier = Modifier.clickable {
-                            // Handle click on the additional icon
                             showBottomSheet = !showBottomSheet
                         }
                     )
@@ -304,45 +315,44 @@ fun ScanView(
             }
         }
 
-            if (showBottomSheet) {
-                ModalBottomSheet(
-                    onDismissRequest = { showBottomSheet = false },
-                    sheetState = bottomSheetState,
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = "${state.scanResultItemList.size} Items Found",
-                            fontFamily = Montserrat,
-                            fontWeight = FontWeight.Bold,
-                        )
-                        Divider(
-                            color = Color.Gray,
-                            thickness = 0.8.dp,
-                            modifier = Modifier.padding(vertical = 16.dp)
-                        )
-                        val visibleItems = state.scanResultItemList.take(3)
-                        Row {
-                            visibleItems.forEach {
-                                horizontalBottomSheetItem(
-                                    icon = it.imageUrl,
-                                    text = it.type,
-
-                                )
-                            }
+        if (showBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showBottomSheet = false },
+                sheetState = bottomSheetState,
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "${state.scanResultItemList.size} Items Found",
+                        fontFamily = Montserrat,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Divider(
+                        color = Color.Gray,
+                        thickness = 0.8.dp,
+                        modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.dim_16))
+                    )
+                    val visibleItems = state.scanResultItemList.take(3)
+                    Row {
+                        visibleItems.forEach {
+                            horizontalBottomSheetItem(
+                                icon = it.imageUrl,
+                                text = it.type,
+                            )
+                        }
 
                             if(state.scanResultItemList.size>visibleItems.size)
                             {
-                                Column(modifier = Modifier.padding(8.dp),
+                                Column(modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_8)),
                                 horizontalAlignment = Alignment.CenterHorizontally
-                                )
-                                {
-                                    Icon(
-                                        imageVector = Icons.Default.AddCircle,
-                                        contentDescription = null,
-                                        tint = Color.Black,
-                                        modifier = Modifier
-                                            .clickable(onClick = {})
-                                            .size(35.dp)
+                            )
+                            {
+                                Icon(
+                                    imageVector = Icons.Default.AddCircle,
+                                    contentDescription = null,
+                                    tint = Color.Black,
+                                    modifier = Modifier
+                                        .clickable(onClick = {})
+                                        .size(dimensionResource(id = R.dimen.dim_35))
 
                                         // Handle click on the additional icon
                                     )
@@ -353,7 +363,7 @@ fun ScanView(
                                     )
                                 }
                             }
-                            Column(modifier = Modifier.padding(8.dp),
+                            Column(modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_8)),
                                 horizontalAlignment = Alignment.CenterHorizontally) {
 
                                 Icon(
@@ -367,7 +377,7 @@ fun ScanView(
                                         })
                                         .clip(CircleShape)
                                         .background(foodClubGreen)
-                                        .size(35.dp)
+                                        .size(dimensionResource(id = R.dimen.dim_35))
                                 )
                                 Text(
                                     text = "Next",
@@ -375,55 +385,60 @@ fun ScanView(
                                     )
                             }
 
-                        }
-
-                        Spacer(modifier = Modifier.height(25.dp))
-
                     }
-                }
 
+                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_25)))
+
+                }
             }
+
+        }
 
             if(BottomSheetNextButton) {
                 AddIngredientDialog(
                     stringResource(R.string.scanning_completed_heading),
                     stringResource(R.string.ingredients_import_notification, state.scanResultItemList.size)
-                )
-                LaunchedEffect(key1 = true) {
-                    delay(3000)
-                    BottomSheetNextButton=!BottomSheetNextButton
-                    showBottomSheet = !showBottomSheet
+            )
 
-                }
+            LaunchedEffect(key1 = true) {
+                delay(3000)
+                BottomSheetNextButton = !BottomSheetNextButton
+                showBottomSheet = !showBottomSheet
+
             }
         }
     }
+}
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun topbackbar(navController: NavController, screenContent: @Composable () -> Unit)
-{
+fun topbackbar(
+    navController: NavController,
+    screenContent: @Composable () -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {  Text(
-                    text = "Scan My Fridge",
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp), // Adjust padding as needed
-                    textAlign = TextAlign.Center
-                )
+                title = {
+                    Text(
+                        text = "Scan My Fridge",
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(dimensionResource(id = R.dimen.dim_16)),
+                        textAlign = TextAlign.Center
+                    )
                 },
                 navigationIcon = {
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowLeft,
                         contentDescription = null,
                         tint = Color.Black,
-                        modifier = Modifier.clickable(onClick = { navController.popBackStack() })
-                            .size(35.dp)
+                        modifier = Modifier
+                            .clickable(onClick = { navController.popBackStack() })
+                            .size(dimensionResource(id = R.dimen.dim_35))
                     )
                 },
                 actions = {
@@ -432,8 +447,13 @@ fun topbackbar(navController: NavController, screenContent: @Composable () -> Un
                         imageVector = Icons.Default.Clear,
                         contentDescription = null,
                         tint = Color.Black,
-                        modifier = Modifier.clickable (onClick = {navController.navigate(BottomBarScreenObject.Play.route)})
-                            .size(35.dp)
+                        modifier = Modifier
+                            .clickable(onClick = {
+                                navController.navigate(
+                                    BottomBarScreenObject.Play.route
+                                )
+                            })
+                            .size(dimensionResource(id = R.dimen.dim_35))
                     )
                 },
 
@@ -443,13 +463,13 @@ fun topbackbar(navController: NavController, screenContent: @Composable () -> Un
                     )
             )
         },
-   )
+    )
     { innerPadding ->
 
         Column(
             modifier = Modifier
                 .padding(innerPadding),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_16)),
         ) {
 
             screenContent()
@@ -463,64 +483,70 @@ fun topbackbar(navController: NavController, screenContent: @Composable () -> Un
 fun horizontalBottomSheetItem(icon: Any, text: String) {
     Column(
         modifier = Modifier
-            .padding(8.dp),
+            .padding(dimensionResource(id = R.dimen.dim_8)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         when (icon) {
             is Int -> {
-                // If icon is of type Int (resource ID), use painterResource
                 Image(
                     painter = painterResource(icon),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(35.dp)
+                        .size(dimensionResource(id = R.dimen.dim_35))
                         .clip(CircleShape),
                 )
             }
 
             is Painter -> {
-                // If icon is of type Painter, directly use it
                 Image(
                     painter = icon,
                     contentDescription = null,
                     modifier = Modifier
-                        .size(35.dp)
+                        .size(dimensionResource(id = R.dimen.dim_35))
                         .clip(CircleShape),
                 )
             }
         }
 
-            Text(
-                text = text,
-                fontFamily = Montserrat,
+        Text(
+            text = text,
+            fontFamily = Montserrat,
 
-                )
+            )
     }
 }
 
 @Composable
-fun Buttons(text:String,onClick: () -> Unit,containerColor:Color,textcolor:Color)
-{
+fun Buttons(
+    text: String,
+    onClick: () -> Unit,
+    containerColor: Color,
+    textcolor: Color
+) {
     Button(
-        shape = RoundedCornerShape(15.dp),
+        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)),
         modifier = Modifier
-            .padding(8.dp)
-            .border(1.dp, foodClubGreen, shape = RoundedCornerShape(15.dp))
-            .clip(RoundedCornerShape(15.dp))
+            .padding(dimensionResource(id = R.dimen.dim_8))
+            .border(
+                dimensionResource(id = R.dimen.dim_1),
+                foodClubGreen,
+                shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
+            )
+            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
             .fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
-            containerColor =containerColor,
+            containerColor = containerColor,
             contentColor = foodClubGreen
         ),
-        contentPadding = PaddingValues(15.dp),
+        contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_15)),
         onClick = onClick
     ) {
         Text(
             text = text,
             color = textcolor,
             fontFamily = Montserrat,
-            fontSize = 16.sp,
+            fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
             fontWeight = FontWeight.ExtraBold
         )
     }
