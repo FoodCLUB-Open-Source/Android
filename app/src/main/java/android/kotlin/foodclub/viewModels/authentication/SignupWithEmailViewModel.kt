@@ -8,9 +8,11 @@ import androidx.navigation.NavHostController
 import android.kotlin.foodclub.navigation.auth.AuthScreen
 import android.kotlin.foodclub.repositories.AuthRepository
 import android.kotlin.foodclub.utils.helpers.Resource
+import android.kotlin.foodclub.views.authentication.signup.SignUpState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,54 +20,58 @@ import javax.inject.Inject
 class SignupWithEmailViewModel @Inject constructor(
     val repository: AuthRepository
 ) : ViewModel() {
-    private val _status = MutableStateFlow(ApiCallStatus.DONE)
-    val status: StateFlow<ApiCallStatus> get() = _status
 
-    private val _error = MutableStateFlow("")
-    val error: StateFlow<String> get() = _error
+    companion object {
+        private val TAG = SignupWithEmailViewModel::class.java.simpleName
+    }
 
-    private val _userSignUpInformation = MutableStateFlow(
-        SignUpUser("", "", "", "")
-    )
-    val userSignUpInformation: StateFlow<SignUpUser> get() = _userSignUpInformation
-
-    private val _repeatedEmail = MutableStateFlow("")
-    val repeatedEmail: StateFlow<String> get() = _repeatedEmail
+    private val _state = MutableStateFlow(SignUpState.default())
+    val state: StateFlow<SignUpState>
+        get() = _state
 
     fun saveEmailPasswordData(email: String, password: String) {
-        _userSignUpInformation.value = SignUpUser(_userSignUpInformation.value.username,
-            email, password, _userSignUpInformation.value.name)
+
+        _state.update { it.copy(
+            userSignUpInformation = it.userSignUpInformation.copy(
+                email = email,
+                password = password
+            ),
+        ) }
     }
 
     fun saveRepeatedEmail(repeatedEmail: String) {
-        _repeatedEmail.value = repeatedEmail
+        _state.update { it.copy(
+            repeatedEmail = repeatedEmail
+        ) }
     }
 
     fun saveUsername(username: String) {
-        _userSignUpInformation.value = SignUpUser(
-            username, _userSignUpInformation.value.email, _userSignUpInformation.value.password,
-            _userSignUpInformation.value.name
-        )
+        _state.update { it.copy(
+            userSignUpInformation = it.userSignUpInformation.copy(
+                username = username
+            ),
+        ) }
     }
 
     fun saveFullName(name: String) {
-        _userSignUpInformation.value = SignUpUser(
-            _userSignUpInformation.value.username, _userSignUpInformation.value.email,
-            _userSignUpInformation.value.password, name
-        )
+        _state.update { it.copy(
+            userSignUpInformation = it.userSignUpInformation.copy(
+                name = name
+            ),
+        ) }
     }
 
      fun signUpUser(navController: NavHostController) {
          viewModelScope.launch {
              when (
-                 val resource = repository.signUp(_userSignUpInformation.value)
+                 val resource = repository.signUp(state.value.userSignUpInformation)
              ) {
                  is Resource.Success -> {
                      navController.navigate(
                          route = AuthScreen.VerifySignup.route
-                                 + "/${_userSignUpInformation.value.username}"
-                                 + "?password=${_userSignUpInformation.value.password}&email="
-                                 + _userSignUpInformation.value.email
+                                 + "/${state.value.userSignUpInformation.username}"
+                                 + "?password=${state.value.userSignUpInformation.password}&email="
+                                 + state.value.userSignUpInformation.email
                      ) {
                          popUpTo(AuthScreen.SignUp.route) {
                              inclusive = true
@@ -74,7 +80,9 @@ class SignupWithEmailViewModel @Inject constructor(
                  }
 
                  is Resource.Error -> {
-                     _error.value = resource.message!!
+                        _state.update { it.copy(
+                            error = resource.message!!
+                        ) }
                  }
              }
          }

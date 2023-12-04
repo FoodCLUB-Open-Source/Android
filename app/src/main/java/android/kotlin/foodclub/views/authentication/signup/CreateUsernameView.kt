@@ -21,11 +21,13 @@ import androidx.compose.ui.res.stringResource
 
 @Composable
 fun UsernameView(
-    onValuesUpdate: () -> Unit, saveData: (String) -> Unit,
-    onBackButtonClick: () -> Unit, userSignUpInformation: State<SignUpUser>,
+    onValuesUpdate: () -> Unit,
+    saveData: (String) -> Unit,
+    onBackButtonClick: () -> Unit,
+    userSignUpInformation: SignUpUser,
     error: String
 ) {
-    var username by remember { mutableStateOf(userSignUpInformation.value.username) }
+    var username by remember { mutableStateOf(userSignUpInformation.username) }
     var initialUsernameCorrectnessState = FieldsValidation.checkUsername(username) == null
     var filledUsername by remember { mutableStateOf(false) }
 

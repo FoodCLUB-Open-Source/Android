@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.views.home
+package android.kotlin.foodclub.views.home.scan
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -12,6 +12,8 @@ import android.kotlin.foodclub.utils.composables.FabButtonSub
 import android.kotlin.foodclub.utils.composables.MultiFloatingActionButton
 import android.kotlin.foodclub.utils.composables.engine.createImageCaptureUseCase
 import android.kotlin.foodclub.viewModels.home.DiscoverViewModel
+import android.kotlin.foodclub.views.home.discover.AddIngredientDialog
+import android.kotlin.foodclub.views.home.discover.DiscoverState
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.camera.core.CameraSelector
@@ -88,8 +90,12 @@ import kotlinx.coroutines.delay
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun ScanView(navController: NavController, viewModel: DiscoverViewModel) {
-    var scanstate: String by rememberSaveable { mutableStateOf("off") }
+fun ScanView(
+    navController: NavController,
+    viewModel: DiscoverViewModel,
+    state: DiscoverState
+) {
+    var scanState: String by rememberSaveable { mutableStateOf("off") }
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val permissionState = rememberMultiplePermissionsState(
@@ -122,7 +128,7 @@ fun ScanView(navController: NavController, viewModel: DiscoverViewModel) {
             .fillMaxSize()
             .padding(dimensionResource(id = R.dimen.dim_14))
     ) {
-        when (scanstate) {
+        when (scanState) {
 
             "off" -> {
                 Text(
@@ -136,8 +142,8 @@ fun ScanView(navController: NavController, viewModel: DiscoverViewModel) {
                 Button2text = "Scan"
                 onclick1 = { navController.navigate(BottomBarScreenObject.Play.route) }
                 onclick2 = {
-                    scanstate = "Scanning"
-                    viewModel.Scan(imageCapture.value!!, context)
+                    scanState = "Scanning"
+                    viewModel.scan(imageCapture.value!!, context)
                     showCamPreview = !showCamPreview
                     showImage = !showImage
                     showBottomSheet = !showBottomSheet
@@ -198,7 +204,7 @@ fun ScanView(navController: NavController, viewModel: DiscoverViewModel) {
             {
                 Scaffold(
                     floatingActionButton = {
-                        if (scanstate == "Scanning" || scanstate == "Completed") {
+                        if (scanState == "Scanning" || scanState == "Completed") {
                             MultiFloatingActionButton(
                                 items = listOf(
 
@@ -241,8 +247,8 @@ fun ScanView(navController: NavController, viewModel: DiscoverViewModel) {
                         )
                     }
 
-                    if (scanstate == "Scanning" || scanstate == "Completed") {
-                        viewModel.capturedImage.value?.let { imageBitmap ->
+                    if (scanState == "Scanning" || scanState == "Completed") {
+                        state.capturedImage?.let { imageBitmap ->
                             Image(
                                 bitmap = imageBitmap,
                                 contentDescription = null,
@@ -253,7 +259,7 @@ fun ScanView(navController: NavController, viewModel: DiscoverViewModel) {
                 }
             }
         }
-        if (scanstate == "off" || scanstate == "Completed") {
+        if (scanState == "off" || scanState == "Completed") {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -273,7 +279,7 @@ fun ScanView(navController: NavController, viewModel: DiscoverViewModel) {
                 )
             }
         }
-        if (scanstate == "Scanning") {
+        if (scanState == "Scanning") {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.End,
@@ -316,28 +322,27 @@ fun ScanView(navController: NavController, viewModel: DiscoverViewModel) {
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "${viewModel.ScanResultItemList.size} Items Found",
+                        text = "${state.scanResultItemList.size} Items Found",
                         fontFamily = Montserrat,
                         fontWeight = FontWeight.Bold,
                     )
                     Divider(
                         color = Color.Gray,
-                        thickness = dimensionResource(id = R.dimen.dim_0pt8),
+                        thickness = 0.8.dp,
                         modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.dim_16))
                     )
-                    val visibleItems = viewModel.ScanResultItemList.take(3)
+                    val visibleItems = state.scanResultItemList.take(3)
                     Row {
                         visibleItems.forEach {
                             horizontalBottomSheetItem(
                                 icon = it.imageUrl,
                                 text = it.type,
-
-                                )
+                            )
                         }
 
-                        if (viewModel.ScanResultItemList.size > visibleItems.size) {
-                            Column(
-                                modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_8)),
+                            if(state.scanResultItemList.size>visibleItems.size)
+                            {
+                                Column(modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_8)),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             )
                             {
@@ -349,37 +354,36 @@ fun ScanView(navController: NavController, viewModel: DiscoverViewModel) {
                                         .clickable(onClick = {})
                                         .size(dimensionResource(id = R.dimen.dim_35))
 
+                                        // Handle click on the additional icon
+                                    )
+                                    Text(
+                                        text = " ${state.scanResultItemList.size-visibleItems.size} " +
+                                                "More",
+                                        fontFamily = Montserrat,
+                                    )
+                                }
+                            }
+                            Column(modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_8)),
+                                horizontalAlignment = Alignment.CenterHorizontally) {
+
+                                Icon(
+                                    imageVector = Icons.Default.KeyboardArrowRight,
+                                    contentDescription = null,
+                                    tint = Color.Black,
+                                    modifier = Modifier
+                                        .clickable(onClick = {
+                                            BottomSheetNextButton = !BottomSheetNextButton
+                                            scanState = "Completed"
+                                        })
+                                        .clip(CircleShape)
+                                        .background(foodClubGreen)
+                                        .size(dimensionResource(id = R.dimen.dim_35))
                                 )
                                 Text(
-                                    text = " ${viewModel.ScanResultItemList.size - visibleItems.size} " +
-                                            "More",
+                                    text = "Next",
                                     fontFamily = Montserrat,
-                                )
+                                    )
                             }
-                        }
-                        Column(
-                            modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_8)),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-
-                            Icon(
-                                imageVector = Icons.Default.KeyboardArrowRight,
-                                contentDescription = null,
-                                tint = Color.Black,
-                                modifier = Modifier
-                                    .clickable(onClick = {
-                                        BottomSheetNextButton = !BottomSheetNextButton
-                                        scanstate = "Completed"
-                                    })
-                                    .clip(CircleShape)
-                                    .background(foodClubGreen)
-                                    .size(dimensionResource(id = R.dimen.dim_35))
-                            )
-                            Text(
-                                text = "Next",
-                                fontFamily = Montserrat,
-                            )
-                        }
 
                     }
 
@@ -390,14 +394,12 @@ fun ScanView(navController: NavController, viewModel: DiscoverViewModel) {
 
         }
 
-        if (BottomSheetNextButton) {
-            AddIngredientDialog(
-                stringResource(R.string.scanning_completed_heading),
-                stringResource(
-                    R.string.ingredients_import_notification,
-                    viewModel.ScanResultItemList.size
-                )
+            if(BottomSheetNextButton) {
+                AddIngredientDialog(
+                    stringResource(R.string.scanning_completed_heading),
+                    stringResource(R.string.ingredients_import_notification, state.scanResultItemList.size)
             )
+
             LaunchedEffect(key1 = true) {
                 delay(3000)
                 BottomSheetNextButton = !BottomSheetNextButton
@@ -411,7 +413,10 @@ fun ScanView(navController: NavController, viewModel: DiscoverViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun topbackbar(navController: NavController, screenContent: @Composable () -> Unit) {
+fun topbackbar(
+    navController: NavController,
+    screenContent: @Composable () -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -437,7 +442,7 @@ fun topbackbar(navController: NavController, screenContent: @Composable () -> Un
                     )
                 },
                 actions = {
-
+                    // Additional navigation icon on the right
                     Icon(
                         imageVector = Icons.Default.Clear,
                         contentDescription = null,
@@ -513,7 +518,12 @@ fun horizontalBottomSheetItem(icon: Any, text: String) {
 }
 
 @Composable
-fun Buttons(text: String, onClick: () -> Unit, containerColor: Color, textcolor: Color) {
+fun Buttons(
+    text: String,
+    onClick: () -> Unit,
+    containerColor: Color,
+    textcolor: Color
+) {
     Button(
         shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)),
         modifier = Modifier

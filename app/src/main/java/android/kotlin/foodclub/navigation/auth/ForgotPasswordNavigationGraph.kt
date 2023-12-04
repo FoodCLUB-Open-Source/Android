@@ -4,7 +4,7 @@ import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
 import android.kotlin.foodclub.viewModels.authentication.ForgotPasswordViewModel
 import android.kotlin.foodclub.views.authentication.forgotPassword.ChangePasswordView
 import android.kotlin.foodclub.views.authentication.forgotPassword.EmailSentView
-import android.kotlin.foodclub.views.authentication.forgotPassword.ForgotPasswordView
+import android.kotlin.foodclub.views.authentication.forgotPassword.forgotPasswordScreen.ForgotPasswordView
 import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -18,9 +18,7 @@ fun NavGraphBuilder.forgotPasswordNavigationGraph(navController: NavHostControll
     ) {
         composable(route = ForgotPasswordScreen.ForgotPasswordPage1.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<ForgotPasswordViewModel>(navController)
-            val errorOccurred = viewModel.errorOccurred.collectAsState()
-            val message = viewModel.message.collectAsState()
-            val email = viewModel.email.collectAsState()
+            val state = viewModel.state.collectAsState()
 
             ForgotPasswordView(
                 onValuesUpdate = {
@@ -33,16 +31,13 @@ fun NavGraphBuilder.forgotPasswordNavigationGraph(navController: NavHostControll
                         popUpTo(AuthScreen.Login.route) { inclusive = true }
                     }
                 },
-                email = email.value,
-                errorOccurred = errorOccurred,
-                message = message
+                onEmailChange = { viewModel.onEmailChange(it) },
+                state = state.value
             )
         }
         composable(ForgotPasswordScreen.ForgotPasswordPage2.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<ForgotPasswordViewModel>(navController)
-            val errorOccurred = viewModel.errorOccurred.collectAsState()
-            val message = viewModel.message.collectAsState()
-            val email = viewModel.email.collectAsState()
+            val state = viewModel.state.collectAsState()
 
             ChangePasswordView(
                 onValuesUpdate = { code, password ->
@@ -51,9 +46,7 @@ fun NavGraphBuilder.forgotPasswordNavigationGraph(navController: NavHostControll
                     }
                 },
                 onBackButtonClick = { navController.popBackStack() },
-                email = email.value,
-                errorOccurred = errorOccurred,
-                message = message
+                state = state.value,
             )
         }
         composable(route = ForgotPasswordScreen.ForgotPasswordPage3.route) {

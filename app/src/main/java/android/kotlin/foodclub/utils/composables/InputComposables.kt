@@ -30,6 +30,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
@@ -44,7 +45,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -303,7 +303,8 @@ fun CustomPasswordTextField(
  * @param onBackButtonClick Executes when the button is clicked.
  */
 @Composable
-fun BackButton(onBackButtonClick: () -> Unit) {
+fun BackButton(onBackButtonClick: () -> Unit, backgroundTransparent: Boolean = false,
+               buttonColor: Color = Color.Black) {
     Button(
         shape = RectangleShape,
         modifier = Modifier
@@ -312,16 +313,16 @@ fun BackButton(onBackButtonClick: () -> Unit) {
             .height( dimensionResource(id = R.dimen.dim_36))
             .offset(x = (-8).dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color.White,
-            contentColor = Color.White
+            containerColor = if(backgroundTransparent) Color.Transparent else Color.White,
+            contentColor = if(backgroundTransparent) Color.Transparent else Color.White
         ),
         contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_0)),
         onClick = { onBackButtonClick() }
     ) {
-        Image(
+        Icon(
             painter = painterResource(id = R.drawable.back_icon),
             contentDescription = stringResource(id = R.string.go_back),
-            contentScale = ContentScale.Crop,
+            tint = buttonColor,
             modifier = Modifier
                 .width( dimensionResource(id = R.dimen.dim_36))
                 .height( dimensionResource(id = R.dimen.dim_36))

@@ -5,9 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import android.kotlin.foodclub.repositories.AuthRepository
 import android.kotlin.foodclub.utils.helpers.Resource
+import android.kotlin.foodclub.views.authentication.forgotPassword.forgotPasswordScreen.ForgotPasswordState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,57 +17,68 @@ import javax.inject.Inject
 class ForgotPasswordViewModel @Inject constructor(
     val repository: AuthRepository
 ) : ViewModel() {
-    private val _errorOccurred = MutableStateFlow(false)
-    val errorOccurred: StateFlow<Boolean> get() = _errorOccurred
 
-    private val _message = MutableStateFlow("")
-    val message: StateFlow<String> get() = _message
-
-    private val _email = MutableStateFlow<String>("")
-    val email: StateFlow<String> get() = _email
+    private val _state = MutableStateFlow(ForgotPasswordState.default())
+    val state : StateFlow<ForgotPasswordState>
+        get() = _state
 
     fun sendCode(email: String, onSuccess: () -> Unit){
-        _email.value = email
         viewModelScope.launch {
             when(
                 val resource = repository.sendForgotPasswordCode(email)
             ) {
                 is Resource.Success -> {
-                    _errorOccurred.value = false
-                    _message.value = ""
+                    _state.update { it.copy(
+                        email = email,
+                        errorOccurred = false,
+                        message = ""
+                    ) }
                     onSuccess()
                 }
                 is Resource.Error -> {
-                    _errorOccurred.value = true
-                    _message.value = resource.message!!
+                    _state.update { it.copy(
+                        email = email,
+                        errorOccurred = true,
+                        message = resource.message!!
+                    ) }
                 }
             }
         }
     }
 
     fun changePassword(verificationCode: String, password: String, onSuccess: () -> Unit){
-        if(_email.value == "") {
-            _errorOccurred.value = true
-            _message.value = "Something went wrong. Try again."
+        if(state.value.email == "") {
+            _state.update { it.copy(
+                errorOccurred = true,
+                message = "Something went wrong. Try again."
+            ) }
             return
         }
         viewModelScope.launch {
             when(
                 val resource = repository.confirmForgotPasswordChange(
-                    ForgotChangePassword(_email.value, verificationCode, password)
+                    ForgotChangePassword(state.value.email, verificationCode, password)
                 )
             ) {
                 is Resource.Success -> {
-                    _errorOccurred.value = false
-                    _message.value = ""
+                    _state.update { it.copy(
+                        errorOccurred = false,
+                        message = ""
+                    ) }
                     onSuccess()
                 }
                 is Resource.Error -> {
-                    _errorOccurred.value = true
-                    _message.value = resource.message!!
+                    _state.update { it.copy(
+                        errorOccurred = true,
+                        message = resource.message!!
+                    ) }
                 }
             }
         }
+    }
+
+    fun onEmailChange(email: String){
+        _state.update { it.copy(email = email) }
     }
 
 }

@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.network.retrofit.dtoModels.profile
 
+import android.kotlin.foodclub.network.retrofit.dtoModels.posts.PostModelDto
 import com.google.gson.annotations.SerializedName
 
 data class UserProfileDto(
@@ -18,7 +19,7 @@ data class UserProfileDto(
     val totalUserFollowing: Int,
 
     @SerializedName("user_posts")
-    val userPosts: List<UserPostsDto> = listOf(),
+    val userPosts: List<PostModelDto> = listOf(),
 
     @SerializedName("top_creators")
     val topCreators: List<TopCreatorsDto> = listOf()

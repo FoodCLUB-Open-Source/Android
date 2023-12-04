@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.views.home
+package android.kotlin.foodclub.views.home.myDigitalPantry
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
@@ -9,6 +9,9 @@ import android.kotlin.foodclub.utils.composables.EditIngredientQuantityPicker
 import android.kotlin.foodclub.utils.composables.CustomDatePicker
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.viewModels.home.DiscoverViewModel
+import android.kotlin.foodclub.views.home.discover.DiscoverState
+import android.kotlin.foodclub.views.home.discover.itemExpirationDate
+import android.kotlin.foodclub.views.home.discover.itemQuantity
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -87,15 +90,16 @@ import coil.compose.AsyncImage
 @Composable
 fun MyDigitalPantryView(
     navController: NavController,
-    viewModel: DiscoverViewModel
+    viewModel: DiscoverViewModel,
+    state: DiscoverState
 ) {
     val modifier = Modifier
-    val userIngredients = viewModel.userIngredientsList.collectAsState()
+    val userIngredients = state.userIngredients
 
     var isShowEditScreen by remember { mutableStateOf(false) }
     var topBarTitleText by remember { mutableStateOf("") }
 
-    val searchText by viewModel.ingredientsSearchText.collectAsState()
+    val searchText = state.ingredientSearchText
 
     var isDatePickerVisible by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
@@ -173,7 +177,7 @@ fun MyDigitalPantryView(
                 if (isShowEditScreen) {
                     topBarTitleText = stringResource(id = R.string.edit_item)
                     EditIngredientView(
-                        ingredient = viewModel.ingredientToEdit.value!!,
+                        ingredient = state.ingredientToEdit!!,
                         onEditIngredient = { ingredient ->
                             viewModel.updateIngredient(ingredient)
                         }
@@ -190,11 +194,11 @@ fun MyDigitalPantryView(
                     Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_15)))
 
                     MyDigitalPantryList(
-                        modifier,
-                        userIngredients.value,
+                        modifier = modifier,
+                        productsList = state.userIngredients,
                         onAddDateClicked = { isDatePickerVisible = true },
                         onEditClicked = { item ->
-                            viewModel.ingredientToEdit.value = item
+                            viewModel.updateIngredient(item)
                             isShowEditScreen = !isShowEditScreen
                         },
                         view = stringResource(id = R.string.digitalPantry)

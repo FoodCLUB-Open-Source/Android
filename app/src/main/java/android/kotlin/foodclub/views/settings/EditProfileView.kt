@@ -24,11 +24,9 @@ import androidx.navigation.NavController
 @Composable
 fun EditProfileSetting(
     navController: NavController,
-    userState: State<UserDetailsModel?>,
+    user: UserDetailsModel?,
     viewModel: SettingsViewModel
 ) {
-    val user = userState.value
-
     SettingsLayout(
         label = stringResource(id = R.string.edit_profile),
         onBackAction = { navController.navigateUp() }) {

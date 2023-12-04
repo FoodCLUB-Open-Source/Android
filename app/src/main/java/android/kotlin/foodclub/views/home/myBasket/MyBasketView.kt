@@ -1,5 +1,6 @@
-package android.kotlin.foodclub.views.home
+package android.kotlin.foodclub.views.home.myBasket
 
+import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.config.ui.Montserrat
@@ -52,28 +53,30 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 
+
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun MyBasketView(
-    viewModel: MyBasketViewModel
+    viewModel: MyBasketViewModel,
+    state: MyBasketState
 ) {
     val systemUiController = rememberSystemUiController()
     var showSheet by remember { mutableStateOf(false) }
-    val productsList = viewModel.productsList.collectAsState()
-    val selectedProductsIds = viewModel.selectedProductsList.collectAsState()
+    val productsList = state.productsList
+    val selectedProductsIds = state.selectedProductsList
     var deleteSelected by remember { mutableStateOf(false) }
-    val selectedIngredients = viewModel.selectedIngredients.collectAsState()
+    //val selectedIngredients = viewModel.selectedIngredients.collectAsState()
 
     val triggerBottomSheetModal: () -> Unit = {
         // GETTING SELECTED INGREDIENT FROM HOME VIEW MODEL
-        val selectedIngredients = viewModel.selectedIngredients.value
-
-        // PASSING SELECTED INGREDIENT TO MY BASKET VIEW
-        viewModel.addIngredientsToBasket(selectedIngredients)
-        //viewModel.updateSelectedIngredients(emptyList())
+//        val selectedIngredients = viewModel.selectedIngredients.value
+//
+//        // PASSING SELECTED INGREDIENT TO MY BASKET VIEW
+//        viewModel.addIngredientsToBasket(selectedIngredients)
+//        //viewModel.updateSelectedIngredients(emptyList())
 
         showSheet = !showSheet
         systemUiController.setStatusBarColor(color = Color(0x00ACACAC), darkIcons = true)
@@ -91,12 +94,14 @@ fun MyBasketView(
     if (showSheet) {
         IngredientsBottomSheet(
             onDismiss = triggerBottomSheetModal,
-            productsDataFlow = viewModel.productsDatabase,
+            productsData = state.productsDatabase,
             loadMoreObjects = { searchText, onLoadCompleted ->
-                viewModel.fetchMoreProducts(searchText, onLoadCompleted) },
+                viewModel.fetchMoreProducts(searchText, onLoadCompleted)
+            },
             onListUpdate = { viewModel.fetchProductsDatabase(it) },
             onSave = { viewModel.addIngredient(it) }
         )
+
     }
     Column(
         modifier = Modifier
@@ -144,7 +149,9 @@ fun MyBasketView(
                         painter = painterResource(id = R.drawable.delete_bin_5_line__2_),
                         contentDescription = stringResource(id = R.string.go_back),
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier.width(20.dp).height(20.dp)
+                        modifier = Modifier
+                            .width(20.dp)
+                            .height(20.dp)
                     )
                 }
             }
@@ -163,7 +170,8 @@ fun MyBasketView(
                         .border(
                             1.dp, Color(126, 198, 11), RoundedCornerShape(20.dp)
                         )
-                        .clip(RoundedCornerShape(20.dp)).width(125.dp),
+                        .clip(RoundedCornerShape(20.dp))
+                        .width(125.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.White,
                         contentColor = Color(126, 198, 11)
@@ -180,56 +188,52 @@ fun MyBasketView(
                 }
             }
 
-            val updatedProductList = productsList.value.map { product ->
-                val isSelectedProduct = viewModel.selectedIngredients.value.any { it.id == product.id }
-                product.copy(isSelected = isSelectedProduct)
-            }
-
-            if (updatedProductList.isNotEmpty()) {
-                LazyColumn(
-                    modifier = Modifier.padding(end = 20.dp, start = 20.dp, bottom = 110.dp)
-                ) {
-//                    itemsIndexed(
-//                        items = updatedProductList,
-//                        key = { index, product -> "${product.id}_${index}" }
-//                    ) { index, product ->
+//            val updatedProductList = productsList.value.map { product ->
+//                val isSelectedProduct = viewModel.selectedIngredients.value.any { it.id == product.id }
+//                product.copy(isSelected = isSelectedProduct)
+//            }
 //
-//                    }
-
-                    itemsIndexed(
-                        items = productsList.value,
-                        key = { index, ingredient -> "${index}_${ingredient.id}" }
-                    ) { index, ingredient ->
-                        val product = ingredient
-                        BasketIngredient(
-                            ingredient = product,
-                            isShown = !selectedProductsIds.value.contains(product.id) || !deleteSelected,
-                            onSelectionChange = { bool ->
-                                if (bool) viewModel.selectIngredient(product.id)
-                                else viewModel.unselectIngredient(product.id)
-                            },
-                            onIngredientUpdate = { viewModel.saveBasket() }
-                        )
-                    }
+//            if (updatedProductList.isNotEmpty()) {
+            LazyColumn(
+                modifier = Modifier.padding(end = 20.dp, start = 20.dp, bottom = 110.dp)
+            ) {
+                itemsIndexed(
+                    items = productsList,
+                    key = { index, ingredient -> "${index}_${ingredient.id}" }
+                ) { index, ingredient ->
+                    BasketIngredient(
+                        ingredient = ingredient,
+                        isShown = !state.selectedProductsList.contains(ingredient.id) || !deleteSelected,
+                        onSelectionChange = { bool ->
+                            if (bool) viewModel.selectIngredient(ingredient.id)
+                            else viewModel.unselectIngredient(ingredient.id)
+                        },
+                        onIngredientUpdate = { viewModel.saveBasket() }
+                    )
                 }
             }
-        }
-    }
 
-    LaunchedEffect(deleteSelected) {
-        if (deleteSelected) {
-            delay(800)
-            viewModel.deleteSelectedIngredients()
-            deleteSelected = false
+
+        }
+
+        LaunchedEffect(deleteSelected) {
+            if (deleteSelected) {
+                delay(800)
+                viewModel.deleteSelectedIngredients()
+                deleteSelected = false
+            }
         }
     }
 }
 
 
 @Composable
-fun BasketIngredient(ingredient: Ingredient, isShown: Boolean,
-                     onSelectionChange: (isSelected: Boolean) -> Unit,
-                     onIngredientUpdate: () -> Unit) {
+fun BasketIngredient(
+    ingredient: Ingredient,
+    isShown: Boolean,
+    onSelectionChange: (isSelected: Boolean) -> Unit,
+    onIngredientUpdate: () -> Unit
+) {
     var isSelected by remember { mutableStateOf(ingredient.isSelected) }
 
     var quantity by remember { mutableStateOf(ingredient.quantity) }
@@ -242,21 +246,33 @@ fun BasketIngredient(ingredient: Ingredient, isShown: Boolean,
     }
 
 
-    AnimatedVisibility(visible = showItem, exit = shrinkOut(shrinkTowards = Alignment.TopCenter)) {
+    AnimatedVisibility(
+        visible = showItem,
+        exit = shrinkOut(shrinkTowards = Alignment.TopCenter)
+    ) {
         Column {
             Box(
-                modifier = Modifier.fillMaxWidth().height(140.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(140.dp)
                     .border(1.dp, Color(0xFFE8E8E8), RoundedCornerShape(15.dp))
-                    .clip(RoundedCornerShape(10.dp)).background(Color.White).padding(10.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(Color.White)
+                    .padding(10.dp)
             ) {
                 AsyncImage(
                     model = ingredient.imageUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.height(200.dp).width(130.dp).clip(RoundedCornerShape(12.dp))
+                    modifier = Modifier
+                        .height(200.dp)
+                        .width(130.dp)
+                        .clip(RoundedCornerShape(12.dp))
                 )
                 Box(
-                    modifier = Modifier.size(35.dp).align(Alignment.TopEnd)
+                    modifier = Modifier
+                        .size(35.dp)
+                        .align(Alignment.TopEnd)
                         .clip(RoundedCornerShape(30.dp))
                         .background(
                             if (isSelected) Color(0xFF7EC60B)
@@ -275,8 +291,12 @@ fun BasketIngredient(ingredient: Ingredient, isShown: Boolean,
                         contentScale = ContentScale.Crop,
                     )
                 }
-                Box(modifier = Modifier.padding(start = 140.dp, top = 10.dp).fillMaxSize()) {
-                    Box ( modifier = Modifier.width(115.dp) ) {
+                Box(
+                    modifier = Modifier
+                        .padding(start = 140.dp, top = 10.dp)
+                        .fillMaxSize()
+                ) {
+                    Box(modifier = Modifier.width(115.dp)) {
                         Text(
                             text = type,
                             lineHeight = 18.sp,
@@ -289,8 +309,10 @@ fun BasketIngredient(ingredient: Ingredient, isShown: Boolean,
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Image(
                                 painter = painterResource(id = R.drawable.baseline_arrow_left_24),
-                                contentDescription = "Profile Image",
-                                modifier = Modifier.size(50.dp).padding(end = 15.dp)
+                                contentDescription = stringResource(id = R.string.profile_picture),
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .padding(end = 15.dp)
                                     .clip(RoundedCornerShape(20.dp))
                                     .clickable {
                                         ingredient.decrementQuantity(5)
@@ -306,8 +328,10 @@ fun BasketIngredient(ingredient: Ingredient, isShown: Boolean,
                             )
                             Image(
                                 painter = painterResource(id = R.drawable.baseline_arrow_right_24),
-                                contentDescription = "Profile Image",
-                                modifier = Modifier.size(50.dp).padding(start = 15.dp)
+                                contentDescription = stringResource(id = R.string.profile_picture),
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .padding(start = 15.dp)
                                     .clip(RoundedCornerShape(20.dp))
                                     .clickable {
                                         ingredient.incrementQuantity(5)
@@ -323,4 +347,3 @@ fun BasketIngredient(ingredient: Ingredient, isShown: Boolean,
         }
     }
 }
-

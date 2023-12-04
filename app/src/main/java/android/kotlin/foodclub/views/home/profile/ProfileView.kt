@@ -1,11 +1,10 @@
-package android.kotlin.foodclub.views.home
+package android.kotlin.foodclub.views.home.profile
 
 import android.content.Intent
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.others.BottomSheetItem
-import android.kotlin.foodclub.domain.models.profile.UserPosts
 import android.kotlin.foodclub.config.ui.Montserrat
-import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.CustomBottomSheet
@@ -21,7 +20,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -37,7 +35,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
@@ -59,14 +56,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import android.kotlin.foodclub.viewModels.home.ProfileViewModel
+import android.kotlin.foodclub.views.home.ShowProfilePosts
 import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -90,17 +86,14 @@ fun ProfileView(
     navController: NavController,
     userId: Long,
     viewModel: ProfileViewModel,
+    state: ProfileState
 ) {
 
-    val profileModelState = viewModel.profileModel.collectAsState()
-    val bookmarkedPostsState = viewModel.bookmarkedPosts.collectAsState()
-    val sessionUserId = viewModel.myUserId.collectAsState()
     val context = LocalContext.current
-    val dataStore = viewModel.storeData
     var imageUri: Uri? by remember { mutableStateOf(null) }
 
     LaunchedEffect(key1 = true) {
-        dataStore.getImage().collect { image->
+        state.dataStore?.getImage()?.collect { image->
             if (image != null) {
                 imageUri = Uri.parse(image)
             }else{
@@ -111,9 +104,8 @@ fun ProfileView(
     }
 
     LaunchedEffect(userId) {
-        viewModel.setUser(userId)
-        if(userId != 0L && userId != sessionUserId.value) {
-            viewModel.isFollowedByUser(sessionUserId.value, userId)
+        if(userId != 0L && userId != state.sessionUserId) {
+            viewModel.isFollowedByUser(state.sessionUserId, userId)
         }
     }
 
@@ -129,8 +121,6 @@ fun ProfileView(
         }
     }
 
-    val isFollowed = viewModel.isFollowedByUser.collectAsState()
-
     val systemUiController = rememberSystemUiController()
 
     SideEffect {
@@ -143,14 +133,14 @@ fun ProfileView(
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState() { 2 }
 
-    if(profileModelState.value == null) {
+    if(state.userProfile == null) {
         Text(text = stringResource(id = R.string.loading))
     }
     else {
-        val profile = profileModelState.value
-        val userPosts = viewModel.userPosts.collectAsState()
-        val topCreators = profile!!.topCreators
-        val bookmarkedPosts = bookmarkedPostsState.value
+        val profile = state.userProfile
+        val userPosts = state.userPosts
+        val topCreators = profile.topCreators
+        val bookmarkedPosts = state.bookmarkedPosts
         val tabItems = stringArrayResource(id = R.array.profile_tabs)
         var showBottomSheet by remember { mutableStateOf(false) }
         var showUserOptionsSheet by remember { mutableStateOf(false) }
@@ -167,11 +157,11 @@ fun ProfileView(
                             Intent.FLAG_GRANT_READ_URI_PERMISSION
                         )
                     scope.launch {
-                        dataStore.storeImage(uri.toString())
+                        state.dataStore?.storeImage(uri.toString())
                     }
                     val file = uriToFile(uri, context)
                     viewModel.updateUserProfileImage(
-                        id = viewModel.myUserId.value,
+                        id = state.myUserId,
                         file = file!!,
                         uri = uri
                     )
@@ -185,10 +175,10 @@ fun ProfileView(
             mutableLongStateOf(0)
         }
 
-        var userTabItems = listOf<UserPosts>()
+        var userTabItems = listOf<VideoModel>()
 
         if(pagerState.currentPage == 0){
-            userTabItems = userPosts.value
+            userTabItems = userPosts
         }
         else if(pagerState.currentPage == 1){
             userTabItems = bookmarkedPosts
@@ -199,15 +189,16 @@ fun ProfileView(
 
             ShowProfilePosts(
                 postId = postId,
-                posts = userTabItems,
                 viewModel = viewModel,
+                state = state,
                 onPostDeleted = {
                     viewModel.updatePosts(postId)
                     showDeleteRecipe = false
                 },
                 onBackPressed = {
                     showDeleteRecipe = false
-                }
+                },
+                posts = userTabItems
             )
         }else{
             Column (modifier = Modifier
@@ -318,7 +309,7 @@ fun ProfileView(
                             text = AnnotatedString(profile.totalUserFollowers.toString()),
                             onClick = {
                                 navController.navigate("FOLLOWER_VIEW/${
-                                    if(userId != 0L) userId else sessionUserId.value}")
+                                    if(userId != 0L) userId else state.sessionUserId}")
                             },
                             style = TextStyle(
                                 color = Color.Black,
@@ -331,7 +322,7 @@ fun ProfileView(
                             text = AnnotatedString(profile.totalUserFollowing.toString()),
                             onClick = {
                                 navController.navigate("FOLLOWING_VIEW/${
-                                    if(userId != 0L) userId else sessionUserId.value}")
+                                    if(userId != 0L) userId else state.sessionUserId}")
                             },
                             style = TextStyle(
                                 color = Color.Black,
@@ -362,9 +353,15 @@ fun ProfileView(
                             fontWeight = FontWeight.Light
                         )
                     }
-                    if(userId != 0L && userId != sessionUserId.value) {
-                        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
-                        FollowButton(isFollowed.value, viewModel, sessionUserId.value, userId)
+                    if(userId != 0L && userId != state.sessionUserId) {
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        FollowButton(
+                            isFollowed = state.isFollowed,
+                            viewModel = viewModel,
+                            sessionUserId = state.sessionUserId,
+                            userId = userId
+                        )
                     }
                     TabRow(selectedTabIndex = pagerState.currentPage,
                         containerColor = Color.White,
@@ -496,69 +493,3 @@ fun ProfileView(
     }
 }
 
-@Composable
-fun GridItem(
-    dataItem: UserPosts,
-    triggerShowDeleteRecipe: (Long) -> Unit
-){
-    Card(modifier = Modifier
-        .height(dimensionResource(id = R.dimen.dim_272))
-        .width(dimensionResource(id = R.dimen.dim_178))
-        .padding(dimensionResource(id = R.dimen.dim_10))
-        ,shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))) {
-
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()){
-            Image(
-                painter = painterResource(id = R.drawable.salad_ingredient),
-                contentDescription = null,
-                contentScale = ContentScale.FillHeight,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clickable {
-                        triggerShowDeleteRecipe(dataItem.id.toLong())
-                    }
-            )
-        }
-    }
-}
-
-@Composable
-fun FollowButton(isFollowed: Boolean, viewModel: ProfileViewModel, sessionUserId: Long, userId: Long) {
-    val colors = if(isFollowed)
-        ButtonDefaults.buttonColors(
-            containerColor = Color(0xFFFFFFFF),
-            contentColor = Color.Black
-        )
-    else
-        ButtonDefaults.buttonColors(
-            containerColor = foodClubGreen,
-            contentColor = Color.White
-        )
-
-    val content = isFollowed(isFollowed)
-
-    val modifier = if(isFollowed) Modifier
-        .width(dimensionResource(id = R.dimen.dim_130))
-        .height(dimensionResource(id = R.dimen.dim_40))
-        .border(dimensionResource(id = R.dimen.dim_1), Color.Black, RoundedCornerShape(dimensionResource(id = R.dimen.dim_40)))
-        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_40)))
-    else Modifier
-        .width(dimensionResource(id = R.dimen.dim_130))
-        .height(dimensionResource(id = R.dimen.dim_40))
-
-    Button(
-        onClick = { if(isFollowed) viewModel.unfollowUser(sessionUserId, userId)
-            else viewModel.followUser(sessionUserId, userId) },
-        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_40)),
-        modifier = modifier,
-        colors = colors
-    ) {
-        Text(text = content)
-    }
-}
-@Composable
-fun isFollowed(isFollowed: Boolean): String {
-    return if(isFollowed) stringResource(id = R.string.unfollow) else stringResource(id = R.string.follow)
-}
