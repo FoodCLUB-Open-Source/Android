@@ -34,8 +34,8 @@ import android.kotlin.foodclub.viewModels.home.GalleryViewModel
 import android.kotlin.foodclub.viewModels.home.HomeViewModel
 import android.kotlin.foodclub.viewModels.home.MyBasketViewModel
 import android.kotlin.foodclub.viewModels.home.ProfileViewModel
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.hilt.navigation.compose.hiltViewModel
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -79,6 +79,8 @@ fun NavGraphBuilder.homeNavigationGraph(
                 navController.popBackStack()
                 return@composable
             }
+            LaunchedEffect(Unit) {viewModel.setUser(userId)}
+
 
             ProfileView(
                 navController = navController,
@@ -256,7 +258,6 @@ fun NavGraphBuilder.homeNavigationGraph(
 
 
 sealed class HomeOtherRoutes(val route: String) {
-    object DeleteRecipeView : HomeOtherRoutes(route = "DELETE_RECIPE")
     object SettingsView : HomeOtherRoutes(route = "SETTINGS")
     object CameraView : HomeOtherRoutes(route = "CAMERA_VIEW/{state}")
     object CreateRecipeView : HomeOtherRoutes(route = "CREATE_RECIPE_VIEW")
@@ -273,7 +274,6 @@ sealed class HomeOtherRoutes(val route: String) {
     object VideoTrimmerView : HomeOtherRoutes(route = "VIDEOTRIMMER")
     object TakeProfilePhotoView : HomeOtherRoutes(route = "TAKE_PROFILE_PHOTO_VIEW")
     object TakeSnapPhotoView : HomeOtherRoutes(route = "TAKE_SNAP_VIEW")
-    object ViewStories : HomeOtherRoutes(route = "VIEWSTORIES")
 
 }
 

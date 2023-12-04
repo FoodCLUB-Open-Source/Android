@@ -2,8 +2,6 @@ package android.kotlin.foodclub.viewModels.home
 
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.profile.UserDetailsModel
-import android.kotlin.foodclub.domain.models.profile.UserPosts
-import android.kotlin.foodclub.domain.models.profile.UserProfile
 import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
@@ -50,21 +48,17 @@ class ProfileViewModel @Inject constructor(
     init {
         if (sessionCache.getActiveSession()?.sessionUser?.userId == null) {
             sendUiEvent(UiEvent.Navigate(Graph.AUTHENTICATION))
-        } else {
-            val id = sessionCache.getActiveSession()!!.sessionUser.userId
-            getProfileModel(id)
-            getBookmarkedPosts(id)
-            getUserDetails(id)
         }
     }
 
 
     fun setUser(newUserId: Long) {
         if (newUserId != sessionCache.getActiveSession()!!.sessionUser.userId) {
-            getProfileModel(
-                if (newUserId != 0L) newUserId
-                else sessionCache.getActiveSession()!!.sessionUser.userId
-            )
+            val userId = if(newUserId == 0L) sessionCache.getActiveSession()!!.sessionUser.userId else
+                newUserId
+            getProfileModel(userId)
+            getBookmarkedPosts(userId)
+            getUserDetails(userId)
         }
     }
 
@@ -264,36 +258,42 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun getListOfMyRecipes(): List<UserPosts> {
+    fun getListOfMyRecipes(): List<VideoModel> {
         return state.value.userProfile!!.userPosts
     }
 
-    fun getListOfBookmarkedRecipes(): List<UserPosts> {
+    fun getListOfBookmarkedRecipes(): List<VideoModel> {
         return state.value.userProfile!!.userPosts
 //        return tabItems.filter { unit -> return@filter (unit.bookMarked == true) };
 
     }
 
     fun getPostData(postId: Long) {
-        val userId = sessionCache.getActiveSession()?.sessionUser?.userId ?: return
+//        val userId = sessionCache.getActiveSession()?.sessionUser?.userId ?: return
 
-        viewModelScope.launch {
-            when (val resource = postRepository.getPost(postId, userId)) {
-                is Resource.Success -> {
-                    _state.update {
-                        it.copy(
-                            error = "",
-                            postData = resource.data
-                        )
-                    }
-                    setTestPostData(resource.data!!.videoLink, resource.data.thumbnailLink)
-                }
-
-                is Resource.Error -> {
-                    _state.update { it.copy(error = resource.message!!) }
-                }
-            }
+        _state.update {
+            it.copy(
+                postData = it.userPosts.filter { it.videoId == postId }.getOrNull(0)
+            )
         }
+
+//        viewModelScope.launch {
+//            when (val resource = postRepository.getPost(postId, userId)) {
+//                is Resource.Success -> {
+//                    _state.update {
+//                        it.copy(
+//                            error = "",
+//                            postData = resource.data
+//                        )
+//                    }
+//                    setTestPostData(resource.data!!.videoLink, resource.data.thumbnailLink)
+//                }
+//
+//                is Resource.Error -> {
+//                    _state.update { it.copy(error = resource.message!!) }
+//                }
+//            }
+//        }
     }
 
     fun deleteCurrentPost(postId: Long) {
@@ -321,7 +321,7 @@ class ProfileViewModel @Inject constructor(
             it.copy(
                 error = "",
                 userPosts = it.userPosts.filter { post ->
-                    post.id != postId.toInt()
+                    post.videoId != postId
                 }
             )
         }

@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.network.retrofit.dtoMappers.profile
 
+import android.kotlin.foodclub.network.retrofit.dtoMappers.posts.PostToVideoMapper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,13 +12,7 @@ import javax.inject.Singleton
 object ProfileMappersModule {
     @Provides
     @Singleton
-    fun provideUserPostsMapper(): UserPostsMapper {
-        return UserPostsMapper()
-    }
-
-    @Provides
-    @Singleton
-    fun provideUserProfileMapper(userPostsMapper: UserPostsMapper): UserProfileMapper {
+    fun provideUserProfileMapper(userPostsMapper: PostToVideoMapper): UserProfileMapper {
         return UserProfileMapper(userPostsMapper)
     }
 

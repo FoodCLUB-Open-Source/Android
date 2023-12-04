@@ -3,15 +3,14 @@ package android.kotlin.foodclub.views.home
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.defaultButtonColors
+import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.others.AnimatedIcon
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
-import android.kotlin.foodclub.domain.models.profile.UserPosts
 import android.kotlin.foodclub.utils.composables.BackButton
 import android.kotlin.foodclub.utils.composables.LikeButton
 import android.kotlin.foodclub.utils.composables.PlayPauseButton
 import android.kotlin.foodclub.utils.composables.VideoLayout
 import android.kotlin.foodclub.utils.composables.VideoScroller
-import android.kotlin.foodclub.utils.composables.VideoPlayer
 import android.kotlin.foodclub.viewModels.home.ProfileViewModel
 import android.kotlin.foodclub.views.home.profile.ProfileState
 import androidx.activity.compose.BackHandler
@@ -56,9 +55,7 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -193,7 +190,7 @@ fun ConfirmDeleteDialog(
 @Composable
 fun ShowProfilePosts(
     postId: Long,
-    posts: List<UserPosts>,
+    posts: List<VideoModel>,
     viewModel: ProfileViewModel,
     state: ProfileState,
     onPostDeleted: () -> Unit,
@@ -226,11 +223,20 @@ fun ShowProfilePosts(
     BackHandler {
         onBackPressed()
     }
+    val initialVideo = posts.filter { it.videoId == postId }.getOrNull(0)
 
     Column(
         modifier = Modifier
             .height(screenHeightMinusBottomNavItem)
     ) {
+        val currentPostIndex = posts.indexOf(initialVideo)
+        val pagerState = rememberPagerState(
+            initialPage = if (currentPostIndex == -1) 0 else currentPostIndex,
+            initialPageOffsetFraction = 0f
+        ) {
+            posts.size
+        }
+
         if (infoDialog.value) {
             ConfirmDeleteDialog(
                 title = stringResource(id = R.string.delete_video),
@@ -240,19 +246,12 @@ fun ShowProfilePosts(
                 },
                 onConfirm = {
                     infoDialog.value = false
-                    viewModel.deleteCurrentPost(postId)
+                    viewModel.deleteCurrentPost(posts[pagerState.currentPage].videoId)
                     onPostDeleted()
                 }
             )
         }
-        if (state.postData != null) {
-            val pagerState = rememberPagerState(
-                initialPage = 0,
-                initialPageOffsetFraction = 0f
-            ) {
-                posts.size
-            }
-
+        if (initialVideo != null) {
             val fling = PagerDefaults.flingBehavior(
                 state = pagerState, lowVelocityAnimationSpec = tween(
                     easing = LinearEasing, durationMillis = 300
@@ -272,21 +271,22 @@ fun ShowProfilePosts(
                         AnimatedIcon(R.drawable.liked, 110.dp, localDensity)
                     )
                 }
+                val currentVideo = posts[vtPager]
 
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
                     var isLiked by remember {
-                        mutableStateOf(state.postData.currentViewerInteraction.isLiked)
+                        mutableStateOf(currentVideo.currentViewerInteraction.isLiked)
                     }
                     var isBookmarked by remember {
                         mutableStateOf(
-                            state.postData.currentViewerInteraction.isBookmarked
+                            currentVideo.currentViewerInteraction.isBookmarked
                         )
                     }
 
-                    VideoScroller(state.postData, pagerState, vtPager, onSingleTap = {
+                    VideoScroller(currentVideo, pagerState, vtPager, onSingleTap = {
                         pauseButtonVisibility = it.isPlaying
                         it.playWhenReady = !it.isPlaying
                     },
@@ -303,27 +303,24 @@ fun ShowProfilePosts(
 
                     hasVideoLoaded.value = true
 
-                    BackButton(onBackButtonClick = onBackPressed)
-
-                    if (state.postData.authorDetails == state.userProfile!!.username) {
-//                       TODO create delete button
-                        //                        DeleteButton(
-//                            alignment = Alignment.TopEnd,
-//                            onDeleteClicked = { infoDialog.value = true }
-//                        )
+                    if (currentVideo.authorDetails == state.userProfile!!.username) {
+                        DeleteButton(
+                            alignment = Alignment.TopEnd,
+                            onDeleteClicked = { infoDialog.value = true }
+                        )
                     }
                     LikeButton(doubleTapState) {}
 
                     val simpleUserModel = SimpleUserModel(
                         userId = state.myUserId.toInt(),
-                        username = state.postData.authorDetails,
+                        username = currentVideo.authorDetails,
                         profilePictureUrl = state.userProfile.profilePictureUrl
                     )
 
                     PlayPauseButton(buttonVisibility = pauseButtonVisibility)
                     VideoLayout(
                         userDetails = simpleUserModel,
-                        videoStats = state.postData.videoStats,
+                        videoStats = currentVideo.videoStats,
                         likeState = isLiked,
                         bookMarkState = isBookmarked,
                         category = stringResource(id = R.string.meat),
@@ -345,104 +342,70 @@ fun ShowProfilePosts(
                             .fillMaxWidth()
                             .align(Alignment.BottomCenter)
                     )
+                    Box(modifier = Modifier
+                        .padding(
+                            top = dimensionResource(id = R.dimen.dim_40),
+                            start = dimensionResource(id = R.dimen.dim_10)
+                        )
+                    ) {
+                        BackButton(onBackPressed, backgroundTransparent = true, Color.White)
+                    }
+
                 }
             }
         }
 
         LaunchedEffect(hasVideoLoaded.value) {
-            if (state.postData != null) {
+            if (initialVideo != null) {
                 delay(50)
                 controlPoint.value = false
             }
         }
     }
+}
 
-    @Composable
-    fun DeleteButton(
-        alignment: Alignment,
-        onDeleteClicked: () -> Unit
+@Composable
+fun DeleteButton(
+    alignment: Alignment,
+    onDeleteClicked: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .padding(
+                end = dimensionResource(id = R.dimen.dim_20),
+                top = dimensionResource(id = R.dimen.dim_50)
+            )
+            .fillMaxSize()
+            .wrapContentSize(align = alignment)
     ) {
-        Box(
+        Button(
+            shape = RectangleShape,
             modifier = Modifier
-                .padding(
-                    end = dimensionResource(id = R.dimen.dim_20),
-                    top = dimensionResource(id = R.dimen.dim_50)
+                .border(
+                    dimensionResource(id = R.dimen.dim_1),
+                    Color.Transparent,
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                 )
-                .fillMaxSize()
-                .wrapContentSize(align = alignment)
-        ) {
-            Button(
-                shape = RectangleShape,
-                modifier = Modifier
-                    .border(
-                        dimensionResource(id = R.dimen.dim_1),
-                        Color.Transparent,
-                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
-                    )
-                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
-                    .align(Alignment.BottomCenter)
-                    .width(dimensionResource(id = R.dimen.dim_40))
-                    .height(dimensionResource(id = R.dimen.dim_40)),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = Color.Transparent
-                ), contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_5)),
-                onClick = {
-                    onDeleteClicked()
-                }
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.delete),
-                    contentDescription = stringResource(id = R.string.delete_video),
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .width(dimensionResource(id = R.dimen.dim_25))
-                        .height(dimensionResource(id = R.dimen.dim_25))
-                )
+                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
+                .align(Alignment.BottomCenter)
+                .width(dimensionResource(id = R.dimen.dim_40))
+                .height(dimensionResource(id = R.dimen.dim_40)),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent,
+                contentColor = Color.Transparent
+            ), contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_5)),
+            onClick = {
+                onDeleteClicked()
             }
-        }
-    }
-
-    @Composable
-    fun BackButton(alignment: Alignment, onBackPressed: () -> Unit) {
-        Box(
-            modifier = Modifier
-                .padding(
-                    end = dimensionResource(id = R.dimen.dim_20),
-                    top = dimensionResource(id = R.dimen.dim_50)
-                )
-                .wrapContentSize(align = alignment)
         ) {
-            Button(
-                shape = RectangleShape,
+            Image(
+                painter = painterResource(id = R.drawable.delete),
+                contentDescription = stringResource(id = R.string.delete_video),
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .border(
-                        dimensionResource(id = R.dimen.dim_1),
-                        Color.Transparent,
-                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
-                    )
-                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
-                    .align(Alignment.BottomCenter)
-                    .width(dimensionResource(id = R.dimen.dim_40))
-                    .height(dimensionResource(id = R.dimen.dim_40)),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = Color.Transparent
-                ), contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_5)),
-                onClick = {
-                    onBackPressed()
-                }
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.back_icon),
-                    contentDescription = "Delete",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .width(dimensionResource(id = R.dimen.dim_25))
-                        .height(dimensionResource(id = R.dimen.dim_25)),
-                    colorFilter = ColorFilter.tint(Color.White)
-                )
-            }
+                    .width(dimensionResource(id = R.dimen.dim_25))
+                    .height(dimensionResource(id = R.dimen.dim_25))
+            )
         }
     }
 }

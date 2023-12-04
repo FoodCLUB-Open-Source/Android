@@ -5,7 +5,6 @@ import android.kotlin.foodclub.domain.enums.QuantityUnit
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.ProductsData
-import android.kotlin.foodclub.domain.models.profile.UserPosts
 import androidx.compose.ui.graphics.ImageBitmap
 
 data class DiscoverState(
@@ -14,7 +13,7 @@ data class DiscoverState(
     val userIngredients : List<Ingredient>,
     val searchResults : List<Ingredient>,
     val postList: List<VideoModel>,
-    val myFridgePosts: List<UserPosts>,
+    val myFridgePosts: List<VideoModel>,
     val sessionUserId: String,
     val sessionUserUsername: String,
     val productsData: ProductsData,

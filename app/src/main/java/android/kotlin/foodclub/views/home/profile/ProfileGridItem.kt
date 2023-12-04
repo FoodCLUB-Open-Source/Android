@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.views.home.profile
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.domain.models.profile.UserPosts
+import android.kotlin.foodclub.domain.models.home.VideoModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun GridItem(
-    dataItem: UserPosts,
+    dataItem: VideoModel,
     triggerShowDeleteRecipe: (Long) -> Unit
 ){
     Card(modifier = Modifier
@@ -41,7 +41,7 @@ fun GridItem(
                 modifier = Modifier
                     .fillMaxSize()
                     .clickable {
-                        triggerShowDeleteRecipe(dataItem.id.toLong())
+                        triggerShowDeleteRecipe(dataItem.videoId)
                     }
             )
         }

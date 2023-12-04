@@ -2,12 +2,13 @@ package android.kotlin.foodclub.network.retrofit.dtoMappers.profile
 
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.domain.models.profile.UserProfile
+import android.kotlin.foodclub.network.retrofit.dtoMappers.posts.PostToVideoMapper
 import android.kotlin.foodclub.network.retrofit.dtoModels.profile.TopCreatorsDto
 import android.kotlin.foodclub.network.retrofit.dtoModels.profile.UserProfileDto
 import android.kotlin.foodclub.network.retrofit.utils.DomainMapper
 
 class UserProfileMapper(
-    private val userPostsMapper: UserPostsMapper
+    private val userPostsMapper: PostToVideoMapper
 ): DomainMapper<UserProfileDto, UserProfile> {
     override fun mapToDomainModel(entity: UserProfileDto): UserProfile {
         return UserProfile(

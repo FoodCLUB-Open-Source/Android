@@ -3,9 +3,8 @@ package android.kotlin.foodclub.views.home.profile
 import android.content.Intent
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.others.BottomSheetItem
-import android.kotlin.foodclub.domain.models.profile.UserPosts
 import android.kotlin.foodclub.config.ui.Montserrat
-import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.CustomBottomSheet
@@ -21,7 +20,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -37,7 +35,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
@@ -64,10 +61,8 @@ import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -109,7 +104,6 @@ fun ProfileView(
     }
 
     LaunchedEffect(userId) {
-        viewModel.setUser(userId)
         if(userId != 0L && userId != state.sessionUserId) {
             viewModel.isFollowedByUser(state.sessionUserId, userId)
         }
@@ -181,7 +175,7 @@ fun ProfileView(
             mutableLongStateOf(0)
         }
 
-        var userTabItems = listOf<UserPosts>()
+        var userTabItems = listOf<VideoModel>()
 
         if(pagerState.currentPage == 0){
             userTabItems = userPosts
@@ -204,7 +198,7 @@ fun ProfileView(
                 onBackPressed = {
                     showDeleteRecipe = false
                 },
-                posts = userPosts
+                posts = userTabItems
             )
         }else{
             Column (modifier = Modifier

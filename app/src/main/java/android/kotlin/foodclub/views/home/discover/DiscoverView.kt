@@ -8,7 +8,6 @@ import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.products.Ingredient
-import android.kotlin.foodclub.domain.models.profile.UserPosts
 import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.CustomDatePicker
 import android.kotlin.foodclub.utils.composables.EditIngredientQuantityPicker
@@ -51,7 +50,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -1082,51 +1080,6 @@ fun AddIngredientDialog(headline: String, text: String){
     }
 }
 
-@Composable
-fun GridItem2(navController: NavController, dataItem: VideoModel, userName: String) {
-    Card(
-        modifier = Modifier
-            .height(dimensionResource(id = R.dimen.dim_272))
-            .width(dimensionResource(id = R.dimen.dim_178))
-            .padding(dimensionResource(id = R.dimen.dim_10)),
-                shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-        ) {
-            Image(
-                painter = rememberAsyncImagePainter(dataItem.thumbnailLink),
-                contentDescription = null,
-                Modifier
-                    .fillMaxSize()
-                    .clickable { navController.navigate("DELETE_RECIPE/${dataItem.videoId}") },
-                contentScale = ContentScale.FillHeight
-            )
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(dimensionResource(id = R.dimen.dim_10)),
-                verticalArrangement = Arrangement.Bottom
-            ) {
-                Text(
-                    text = userName,
-                    fontFamily = Satoshi,
-                    color = Color.White,
-                    fontSize = dimensionResource(id = R.dimen.fon_15).value.sp
-                )
-                Text(
-                    text = dataItem.createdAt,
-                    fontFamily = Satoshi,
-                    fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
-                    color = Color.White
-                )
-            }
-        }
-    }
-}
-
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TabHomeDiscover(
@@ -1184,7 +1137,7 @@ fun TabHomeDiscover(
 
 
 @Composable
-fun GridItem2(navController: NavController, dataItem: UserPosts, userName: String) {
+fun GridItem2(navController: NavController, dataItem: VideoModel, userName: String) {
     Card(
         modifier = Modifier
             .height(dimensionResource(id = R.dimen.dim_272))
@@ -1198,11 +1151,11 @@ fun GridItem2(navController: NavController, dataItem: UserPosts, userName: Strin
                 .fillMaxHeight()
         ) {
             Image(
-                painter = rememberAsyncImagePainter(dataItem.thumbnailUrl),
+                painter = rememberAsyncImagePainter(dataItem.thumbnailLink),
                 contentDescription = null,
                 Modifier
                     .fillMaxSize()
-                    .clickable { navController.navigate("DELETE_RECIPE/${dataItem.id}") },
+                    .clickable { navController.navigate("DELETE_RECIPE/${dataItem.videoId}") },
                 contentScale = ContentScale.FillHeight
             )
             Column(
@@ -1212,7 +1165,7 @@ fun GridItem2(navController: NavController, dataItem: UserPosts, userName: Strin
                         verticalArrangement = Arrangement.Bottom
             ) {
                 Text(
-                    text = dataItem.totalLikes.toString(),
+                    text = dataItem.videoStats.displayLike,
                     fontFamily = Satoshi,
                     color = Color.White,
                     fontSize = dimensionResource(id = R.dimen.fon_15).value.sp
