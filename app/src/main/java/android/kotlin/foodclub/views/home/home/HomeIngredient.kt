@@ -4,7 +4,7 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
-import android.kotlin.foodclub.viewModels.home.HomeViewModel
+import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -33,64 +34,76 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 
 @Composable
-fun HomeIngredient(
-    ingredientTitle: String,
-    ingredientImage: Int,
-    onQuantityChange: (Int) -> Unit,
-    onIngredientUpdate: () -> Unit,
-    ingredient: Ingredient,
-    viewModel: HomeViewModel,
-) {
-    var isSelected by remember { mutableStateOf(false) }
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 240.dp
+fun HomeIngredient(ingredient: Ingredient, quantityMultiplier: Float) {
+    var isSelected by remember { mutableStateOf(ingredient.isSelected) }
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp -
+            dimensionResource(id = R.dimen.dim_240)
     var isSmallScreen by remember { mutableStateOf(false) }
-    var quantity by remember { mutableStateOf(ingredient.quantity) }
-    val quantityState by viewModel.quantity.collectAsState()
-
-
+    var quantity by remember {
+        mutableIntStateOf((quantityMultiplier * ingredient.quantity).toInt())
+    }
+    LaunchedEffect(key1 = quantityMultiplier) {
+        Log.d("HomeIngredient", "change: $quantityMultiplier")
+        quantity = (quantityMultiplier * ingredient.quantity).toInt()
+    }
 
     Log.d("ScreenHeightLog", "Screen bottom sheet: $screenHeight")
-    if (screenHeight <= 440.dp) {
+    if (screenHeight <= dimensionResource(id = R.dimen.dim_440)) {
         isSmallScreen = true
     }
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(if (isSmallScreen) 100.dp else 130.dp)
-            .border(1.dp, Color(0xFFE8E8E8), RoundedCornerShape(15.dp))
-            .clip(RoundedCornerShape(10.dp))
+            .height(
+                if (isSmallScreen) dimensionResource(id = R.dimen.dim_100) else
+                    dimensionResource(id = R.dimen.dim_130)
+            )
+            .border(
+                1.dp, Color(0xFFE8E8E8),
+                RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
+            )
+            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
             .background(Color.White)
-            .padding(10.dp)
+            .padding(dimensionResource(id = R.dimen.dim_10))
     ) {
-        Image(
-            painter = painterResource(id = ingredientImage),
+        val ingredientImage = if(ingredient.imageUrl == "") {
+            R.drawable.salad_ingredient
+        } else ingredient.imageUrl
+        AsyncImage(
+            model = ingredientImage,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .height(110.dp)
-                .width(if (isSmallScreen) 85.dp else 100.dp)
-                .clip(RoundedCornerShape(12.dp))
+                .height(dimensionResource(id = R.dimen.dim_110))
+                .width(
+                    if (isSmallScreen) dimensionResource(id = R.dimen.dim_85) else
+                        dimensionResource(id = R.dimen.dim_100)
+                )
+                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)))
         )
         Box(
             modifier = Modifier // GREEN TICK
-                .size(35.dp)
+                .size(dimensionResource(id = R.dimen.dim_35))
                 .align(Alignment.TopEnd)
-                .clip(RoundedCornerShape(30.dp))
+                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_30)))
                 .background(
                     if (isSelected) foodClubGreen
                     else Color(0xFFECECEC)
                 )
-                .clickable { isSelected = !isSelected
-                    viewModel.toggleIngredientSelection(ingredient)}
-                .padding(4.dp),
+                .clickable {
+                    isSelected = !isSelected
+                    ingredient.isSelected = !ingredient.isSelected
+                }
+                .padding(dimensionResource(id = R.dimen.dim_4)),
             contentAlignment = Alignment.Center
         ) {
             Image(
@@ -100,15 +113,18 @@ fun HomeIngredient(
             )
         }
         Box(modifier = Modifier
-            .padding(start = if (isSmallScreen) 90.dp else 110.dp, top = 10.dp)
+            .padding(
+                start = if (isSmallScreen) dimensionResource(id = R.dimen.dim_90) else
+                    dimensionResource(id = R.dimen.dim_100),
+                top = dimensionResource(id = R.dimen.dim_10)
+            )
             .fillMaxSize()
         ) {
             Box(modifier = Modifier
-                .width(115.dp)
-                .padding(start = 10.dp)) {
+                .width(dimensionResource(id = R.dimen.dim_115))
+                .padding(start = dimensionResource(id = R.dimen.dim_10))) {
                 Text(
-                    // text = ingredientTitle,
-                    text = ingredientTitle,
+                    text = ingredient.type,
                     lineHeight = 18.sp,
                     modifier = Modifier
                         .align(Alignment.TopStart),
@@ -122,41 +138,30 @@ fun HomeIngredient(
                         painter = painterResource(id = R.drawable.baseline_arrow_left_24),
                         contentDescription = "Profile Image",
                         modifier = Modifier
-                            .size(50.dp)
-                            .padding(end = 15.dp)
-                            .clip(RoundedCornerShape(20.dp))
+                            .size(dimensionResource(id = R.dimen.dim_50))
+                            .padding(end = dimensionResource(id = R.dimen.dim_15))
+                            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
                             .clickable {
-                                // DECREASING INGREDIENT
-                                ingredient.decrementQuantity(5)
-                                quantity = ingredient.quantity
-                                onQuantityChange(quantity)
-                                onIngredientUpdate()
+                                ingredient.decrementQuantity((5 / quantityMultiplier).toInt())
+                                quantity = (quantityMultiplier * ingredient.quantity).toInt()
                             }
                     )
-                    LaunchedEffect(quantity) {
-                        // UPDATE QUANTITY WHEN IT CHANGES
-                        quantity = ingredient.quantity
-                    }
                     Text(
-                        //"200g",
-                        "$quantityState  g", // TEXT CHANGES WHEN U PRESS BUTTON
+                        quantity.toString() + ValueParser.quantityUnitToString(ingredient.unit),
                         color = Color.Black,
                         fontFamily = Montserrat,
                         fontSize = 14.sp
                     )
                     Image(
                         painter = painterResource(id = R.drawable.baseline_arrow_right_24),
-                        contentDescription = "Profile Image",
+                        contentDescription = null,
                         modifier = Modifier
-                            .size(50.dp)
-                            .padding(start = 15.dp)
-                            .clip(RoundedCornerShape(20.dp))
+                            .size(dimensionResource(id = R.dimen.dim_50))
+                            .padding(start = dimensionResource(id = R.dimen.dim_15))
+                            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
                             .clickable {
-                                // INCREASING INGREDIENT
-                                ingredient.incrementQuantity(5) // INCREMENT BY 5
-                                quantity = ingredient.quantity
-                                onQuantityChange(quantity)
-                                onIngredientUpdate()
+                                ingredient.incrementQuantity((5 / quantityMultiplier).toInt())
+                                quantity = (quantityMultiplier * ingredient.quantity).toInt()
                             }
                     )
                 }

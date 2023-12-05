@@ -3,10 +3,9 @@ package android.kotlin.foodclub.domain.models.recipes
 import android.kotlin.foodclub.domain.models.products.Ingredient
 
 data class Recipe(
-    val title: String,
+    val id: Long,
+    val postId: Long,
     val description: String,
-    val preparationTime: Int,
-    val servingSize: Int,
-    val category: String,
-    val ingredients: List<Ingredient>
+    val ingredients: List<Ingredient>,
+    val servingSize: Int
 )

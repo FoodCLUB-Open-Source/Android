@@ -170,7 +170,7 @@ fun HomeView(
         modifier = Modifier.height(screenHeightMinusBottomNavItem)
     ) {
         if (showIngredientSheet) {
-            HomeBottomSheetIngredients(triggerIngredientBottomSheetModal)
+            HomeBottomSheetIngredients(triggerIngredientBottomSheetModal, state.recipe)
         }
         if (showFeedOnUI) {
             VideoPager(

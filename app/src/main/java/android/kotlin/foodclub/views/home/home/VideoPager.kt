@@ -141,7 +141,7 @@ fun VideoPager(
                             )
                         }
                     },
-                    onInfoClick = onInfoClick,
+                    onInfoClick = {viewModel.getRecipe(197); onInfoClick()},
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)
