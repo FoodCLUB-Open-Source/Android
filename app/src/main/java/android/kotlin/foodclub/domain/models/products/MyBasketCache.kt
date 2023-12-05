@@ -10,16 +10,21 @@ class MyBasketCache(
 ) {
     private val gson = Gson().getAdapter(MyBasket::class.java)
     private var userId = sessionCache.getActiveSession()?.sessionUser?.userId?.toInt() ?: 0
+    private var basket: MyBasket? = null
 
-    fun saveBasket(basket: MyBasket) {
+    fun saveBasket(newBasket: MyBasket) {
         getUserId()
+        basket = newBasket
         sharedPreferences.edit().putString("basket$userId", gson.toJson(basket)).apply()
     }
 
     fun getBasket(): MyBasket {
         getUserId()
-        val json = sharedPreferences.getString("basket$userId", null) ?: return MyBasket()
-        return gson.fromJson(json)
+        if (basket == null) {
+            val json = sharedPreferences.getString("basket$userId", null)
+            basket = if (json != null) gson.fromJson(json) else MyBasket()
+        }
+        return basket!!
     }
 
     fun clearBasket() {

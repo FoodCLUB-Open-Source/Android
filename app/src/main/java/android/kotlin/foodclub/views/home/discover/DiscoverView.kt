@@ -8,6 +8,7 @@ import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.products.Ingredient
+import android.kotlin.foodclub.domain.models.products.MyBasketCache
 import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.CustomDatePicker
 import android.kotlin.foodclub.utils.composables.EditIngredientQuantityPicker
@@ -139,6 +140,7 @@ fun DiscoverView(
         isSmallScreen = true
     }
 
+
     val systemUiController = rememberSystemUiController()
 
     SideEffect {
@@ -211,7 +213,8 @@ fun DiscoverView(
         item {
             MainSearchBar(
                 searchTextValue = state.mainSearchText,
-                navController = navController
+                navController = navController,
+                basketCache = viewModel.myBasketCache
             )
         }
 
@@ -358,12 +361,12 @@ fun DiscoverView(
                         style = TextStyle(
                             textDecoration = TextDecoration.Underline
                         ),
-                        fontSize = 16.sp,
+                        fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                         textAlign = TextAlign.Center
                     )
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
 
                 HorizontalPager(
@@ -437,8 +440,10 @@ fun DiscoverView(
 @Composable
 fun MainSearchBar(
     searchTextValue: String,
-    navController: NavController
+    navController: NavController,
+    basketCache: MyBasketCache
 ) {
+    val basketCount = basketCache.getBasket().getIngredientCount()
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -510,7 +515,7 @@ fun MainSearchBar(
                         modifier = Modifier.offset(x = (-5).dp, y =dimensionResource(id = R.dimen.dim_5)),
                         containerColor = foodClubGreen
                     )
-                    { Text(text = "5", color = Color.Black) }
+                    { Text(text = (basketCount).toString(), color = Color.Black) }
                 }
             ) {
                 Icon(

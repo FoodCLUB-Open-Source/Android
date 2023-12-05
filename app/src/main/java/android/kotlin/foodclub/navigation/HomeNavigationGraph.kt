@@ -95,6 +95,7 @@ fun NavGraphBuilder.homeNavigationGraph(
             val state = viewModel.state.collectAsState()
 
             MyBasketView(
+                navController = navController,
                 viewModel = viewModel,
                 state = state.value
             )
@@ -220,6 +221,7 @@ fun NavGraphBuilder.homeNavigationGraph(
             val state = viewModel.state.collectAsState()
 
             MyBasketView(
+                navController = navController,
                 viewModel = viewModel,
                 state = state.value
             )

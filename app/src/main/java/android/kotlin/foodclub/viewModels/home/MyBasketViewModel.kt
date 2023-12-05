@@ -7,6 +7,8 @@ import android.kotlin.foodclub.domain.models.products.MyBasketCache
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.views.home.myBasket.MyBasketState
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -77,6 +79,7 @@ class MyBasketViewModel @Inject constructor(
             )
         }
         saveBasket()
+
     }
 
     fun removeIngredient(id: String) {
@@ -124,6 +127,7 @@ class MyBasketViewModel @Inject constructor(
             )
         }
         saveBasket()
+
     }
 
     fun fetchProductsDatabase(searchText: String) {

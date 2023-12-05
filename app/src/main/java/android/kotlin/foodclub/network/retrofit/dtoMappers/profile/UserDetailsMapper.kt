@@ -29,7 +29,7 @@ class UserDetailsMapper: DomainMapper<UserDetailsDto, UserDetailsModel> {
             userName = domainModel.userName,
             email = domainModel.email,
             phoneNumber = domainModel.phoneNumber,
-            profilePicture = domainModel.profilePicture,
+            profilePicture = domainModel.profilePicture ?: "default.jpg",
             userBio = domainModel.userBio,
             gender = domainModel.gender,
             createdAt = domainModel.createdAt,

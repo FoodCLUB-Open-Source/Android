@@ -2,9 +2,8 @@ package android.kotlin.foodclub.viewModels.home
 
 import android.content.Context
 import android.graphics.BitmapFactory
-import android.kotlin.foodclub.R
-import android.kotlin.foodclub.domain.enums.QuantityUnit
 import android.kotlin.foodclub.domain.models.products.Ingredient
+import android.kotlin.foodclub.domain.models.products.MyBasketCache
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.repositories.ProductRepository
 import android.kotlin.foodclub.repositories.ProfileRepository
@@ -15,8 +14,6 @@ import android.util.Log
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
@@ -36,7 +33,8 @@ class DiscoverViewModel @Inject constructor(
     private val postRepository: PostRepository,
     private val profileRepo: ProfileRepository,
     private val productsRepo: ProductRepository,
-    private val sessionCache: SessionCache
+    private val sessionCache: SessionCache,
+    val myBasketCache: MyBasketCache
 ) : ViewModel() {
 
     companion object {
