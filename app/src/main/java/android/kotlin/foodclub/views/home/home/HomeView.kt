@@ -179,6 +179,7 @@ fun HomeView(
                 viewModel = viewModel,
                 modifier = modifier,
                 localDensity = localDensity,
+                onInfoClick = triggerIngredientBottomSheetModal,
                 coroutineScope = coroutineScope
             )
         } else {

@@ -3,6 +3,10 @@ package android.kotlin.foodclub.views.home.home
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.defaultButtonColors
+import android.kotlin.foodclub.domain.enums.QuantityUnit
+import android.kotlin.foodclub.domain.models.products.Ingredient
+import android.kotlin.foodclub.viewModels.home.HomeViewModel
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +16,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -36,10 +41,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,6 +55,11 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var sliderPosition by remember { mutableStateOf(0f) }
     var isSmallScreen by remember { mutableStateOf(false) }
+
+    val viewModel: HomeViewModel = hiltViewModel()
+    val ingredientsList = listOf<Ingredient>()
+
+    val selectedIngredients by viewModel.selectedIngredients.collectAsState()
 
     if (screenHeight <= 440.dp) {
         isSmallScreen = true
@@ -58,28 +70,22 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
         sheetState = bottomSheetState,
         dragHandle = { BottomSheetDefaults.DragHandle() },
     ) {
-        Column(
-            modifier = Modifier
-                .height(screenHeight)
-                .padding(start = 16.dp, end = 16.dp)
-        ) {
+        Column(modifier = Modifier
+            .height(screenHeight)
+            .padding(start = 16.dp, end = 16.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 16.dp)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.example_recipe),
+                Box(modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 16.dp)) {
+                    Text("Chicken broth and meatballs",
                         color = Color.Black,
                         fontFamily = Montserrat,
                         fontSize = if (isSmallScreen) 18.sp else 22.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                        fontWeight = FontWeight.Bold)
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 Box(
@@ -102,7 +108,7 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
                         onClick = {}
                     ) {
                         Text(
-                            text = stringResource(id = R.string.copy_clip),
+                            "copy clip",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             fontFamily = Montserrat,
@@ -122,12 +128,10 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
                         .weight(1f)
                         .padding(start = if (isSmallScreen) 16.dp else 0.dp)
                 ) {
-                    Text(
-                        text = stringResource(id = R.string.serving_size),
+                    Text("Serving Size",
                         color = Color.Black,
                         fontFamily = Montserrat,
-                        fontSize = if (isSmallScreen) 14.sp else 17.sp
-                    )
+                        fontSize = if (isSmallScreen) 14.sp else 17.sp)
                 }
                 Box(
                     modifier = Modifier.padding(end = if (isSmallScreen) 10.dp else 0.dp)
@@ -135,43 +139,56 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
                     Slider(
                         modifier = Modifier.width(if (isSmallScreen) 150.dp else 200.dp),
                         value = sliderPosition,
-                        onValueChange = { sliderPosition = it },
+                        onValueChange = { newSliderPosition ->
+                            sliderPosition = newSliderPosition
+                            Log.d("Slider", "Slider value changed: $newSliderPosition")
+
+                            val newQuantity = ((newSliderPosition * 100)).toInt()
+                            viewModel.onQuantityChange(newQuantity.toInt())
+                        },
                         valueRange = 0f..10f,
-                        steps = 4,
+                        steps = 9,
                         colors = SliderDefaults.colors(
                             thumbColor = Color(0xFF7EC60B),
                             activeTrackColor = Color.Black,
                             inactiveTrackColor = Color.Black
                         ),
                     )
+                    // DISPLAYING NUMBER BELOW SLIDER + TRACKING IT
+                    Box(
+                        modifier = Modifier
+                            .width(20.dp)
+                            .offset(x = with(LocalDensity.current) { (sliderPosition * 63.dp.toPx() / density).toDp() + 1.dp },
+                                y = 45.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            (sliderPosition.toInt()).toString(),
+                            color = Color.Black,
+                            fontFamily = Montserrat,
+                            fontSize = 12.sp
+                        )
+                    }
                 }
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 16.dp)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.ingredients),
-                        color = Color.Black,
+                Box(modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 16.dp)) {
+                    Text("Ingredients", color = Color.Black,
                         fontFamily = Montserrat,
                         fontSize = if (isSmallScreen) 13.sp else 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                        fontWeight = FontWeight.Bold)
                 }
                 Spacer(modifier = Modifier.width(if (isSmallScreen) 10.dp else 16.dp))
                 Box(modifier = Modifier.padding(end = if (isSmallScreen) 16.dp else 16.dp)) {
-                    Text(
-                        text = stringResource(id = R.string.clear),
-                        color = Color(0xFF7EC60B),
+                    Text("Clear", color = Color(0xFF7EC60B),
                         fontFamily = Montserrat,
                         fontSize = if (isSmallScreen) 13.sp else 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                        fontWeight = FontWeight.Bold)
                 }
 
             }
@@ -185,9 +202,25 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
                 LazyColumn {
                     items(6) {
                         HomeIngredient(
-                            ingredientTitle = stringResource(id = R.string.example_ingredient),
-                            ingredientImage = R.drawable.salad_ingredient
+                            viewModel = viewModel,
+                            ingredientTitle = "Broccoli oil",
+                            ingredientImage = R.drawable.salad_ingredient,
+                            onQuantityChange = { newQuantity ->
+                                viewModel.onQuantityChange(newQuantity)
+                            },
+                            onIngredientUpdate = {
+
+                            },
+                            ingredient = Ingredient(
+                                id = "Ingredient_ID",
+                                type = "Broccoli Oil",
+                                quantity = 200,
+                                unit = QuantityUnit.GRAMS,
+                                imageUrl = "image_URL"
+                            )
                         )
+
+
                     }
                 }
             }
@@ -206,10 +239,17 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit) {
                         .fillMaxWidth(),
                     colors = defaultButtonColors(),
                     contentPadding = PaddingValues(15.dp),
-                    onClick = {}
+                    onClick = {
+                        // TEST1
+                        //viewModel.addToShoppingList(ingredientsList)
+                        //viewModel.fetchProductsDatabase("")
+
+                        viewModel.addToShoppingList(ingredientsList, viewModel.selectedQuantity.value)
+                        viewModel.fetchProductsDatabase("")
+                    }
                 ) {
                     Text(
-                        text = stringResource(id = R.string.add_to_my_shopping_list),
+                        "Add to my shopping list",
                         color = Color.White,
                         fontFamily = Montserrat,
                         fontSize = 16.sp,

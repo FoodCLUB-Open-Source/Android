@@ -40,6 +40,7 @@ fun VideoPager(
     viewModel: HomeViewModel,
     modifier: Modifier,
     localDensity: Density,
+    onInfoClick: () -> Unit,
     coroutineScope: CoroutineScope
 ) {
     if (videoList.isNotEmpty()) {
@@ -140,7 +141,7 @@ fun VideoPager(
                             )
                         }
                     },
-                    onInfoClick = {},
+                    onInfoClick = onInfoClick,
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)
