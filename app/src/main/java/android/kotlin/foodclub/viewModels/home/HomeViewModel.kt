@@ -5,7 +5,6 @@ import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.home.VideoStats
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.MyBasketCache
-import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
 import android.kotlin.foodclub.domain.models.snaps.SnapModel
@@ -14,6 +13,7 @@ import android.kotlin.foodclub.repositories.BookmarkRepository
 import android.kotlin.foodclub.repositories.LikesRepository
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.repositories.ProductRepository
+import android.kotlin.foodclub.repositories.RecipeRepository
 import android.kotlin.foodclub.repositories.StoryRepository
 import android.kotlin.foodclub.views.home.home.HomeState
 import android.kotlin.foodclub.utils.helpers.Resource
@@ -35,6 +35,7 @@ class HomeViewModel @Inject constructor(
     private val storyRepository: StoryRepository,
     private val likesRepository: LikesRepository,
     private val bookmarkRepository: BookmarkRepository,
+    private val recipeRepository: RecipeRepository,
     private val sessionCache: SessionCache,
     private val myBasketViewModel: MyBasketViewModel,
     private val productRepository: ProductRepository,
@@ -295,6 +296,28 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun getRecipe(postId: Long) {
+        viewModelScope.launch {
+            when(val resource = recipeRepository.getRecipe(postId)) {
+                is Resource.Success -> {
+                    _state.update { it.copy(
+                        recipe = resource.data
+                    ) }
+                }
+                is Resource.Error -> {
+                    _state.update { it.copy(error = resource.message!!) }
+                }
+            }
+        }
+    }
+
+    fun addIngredientsToBasket() {
+        val basket = basketCache.getBasket()
+        val selectedIngredients = _state.value.recipe?.ingredients?.filter { it.isSelected }
+        selectedIngredients?.forEach { basket.addIngredient(it) }
+        basketCache.saveBasket(basket)
     }
 
     private fun setTestData() {

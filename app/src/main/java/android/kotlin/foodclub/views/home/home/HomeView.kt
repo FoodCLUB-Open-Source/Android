@@ -170,7 +170,7 @@ fun HomeView(
         modifier = Modifier.height(screenHeightMinusBottomNavItem)
     ) {
         if (showIngredientSheet) {
-            HomeBottomSheetIngredients(triggerIngredientBottomSheetModal)
+            HomeBottomSheetIngredients(triggerIngredientBottomSheetModal, state.recipe)
         }
         if (showFeedOnUI) {
             VideoPager(
@@ -179,6 +179,7 @@ fun HomeView(
                 viewModel = viewModel,
                 modifier = modifier,
                 localDensity = localDensity,
+                onInfoClick = triggerIngredientBottomSheetModal,
                 coroutineScope = coroutineScope
             )
         } else {

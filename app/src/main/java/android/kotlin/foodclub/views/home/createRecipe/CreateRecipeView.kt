@@ -6,7 +6,6 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
-import android.kotlin.foodclub.domain.models.recipes.Recipe
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.viewModels.home.CreateRecipeViewModel
@@ -98,9 +97,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
-import android.kotlin.foodclub.views.home.createRecipe.CreateRecipeState
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -800,18 +797,18 @@ fun CreateRecipe(viewModel: CreateRecipeViewModel) {
 
         Button(
             onClick = {
-                val recipe = Recipe(
-                    title = recipeTitle,
-                    description = recipeDescription,
-                    preparationTime = preparationTime.toIntOrNull() ?: 0,
-                    servingSize = servingSize.toIntOrNull() ?: 0,
-                    category = category
-                )
-
-                coroutineScope.launch {
-                    val success = viewModel.createRecipe(recipe, "user_id_here")
-
-                }
+//                val recipe = Recipe(
+//                    title = recipeTitle,
+//                    description = recipeDescription,
+//                    preparationTime = preparationTime.toIntOrNull() ?: 0,
+//                    servingSize = servingSize.toIntOrNull() ?: 0,
+//                    category = category
+//                )
+//
+//                coroutineScope.launch {
+//                    val success = viewModel.createRecipe(recipe, "user_id_here")
+//
+//                }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -828,14 +825,14 @@ fun onRecipeSubmit(
     category: String
 ) {
 
-    val newRecipe = Recipe(
-        title = recipeTitle,
-        description = recipeDescription,
-        preparationTime = preparationTime.toIntOrNull() ?: 0,
-        servingSize = servingSize.toIntOrNull() ?: 0,
-        category = category,
-
-        )
+//    val newRecipe = Recipe(
+//        title = recipeTitle,
+//        description = recipeDescription,
+//        preparationTime = preparationTime.toIntOrNull() ?: 0,
+//        servingSize = servingSize.toIntOrNull() ?: 0,
+//        category = category,
+//
+//        )
 }
 
 @Composable
