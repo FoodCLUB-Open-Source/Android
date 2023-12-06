@@ -42,7 +42,10 @@ import com.auth0.jwt.interfaces.Verification
 
 @Composable
 fun SignupVerification(
-    navController: NavHostController, email: String?, username: String?, password: String?
+    navController: NavHostController,
+    email: String?,
+    username: String?,
+    password: String?
 ) {
     val viewModel: SignupVerificationViewModel = hiltViewModel()
 
