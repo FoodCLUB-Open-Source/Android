@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.viewModels.authentication
+package android.kotlin.foodclub.viewModels.authentication.forgotPassword
 
 import android.kotlin.foodclub.domain.models.auth.ForgotChangePassword
 import androidx.lifecycle.ViewModel
@@ -16,13 +16,13 @@ import javax.inject.Inject
 @HiltViewModel
 class ForgotPasswordViewModel @Inject constructor(
     val repository: AuthRepository
-) : ViewModel() {
+) : ViewModel(), ForgotPasswordEvents {
 
     private val _state = MutableStateFlow(ForgotPasswordState.default())
     val state : StateFlow<ForgotPasswordState>
         get() = _state
 
-    fun sendCode(email: String, onSuccess: () -> Unit){
+    override fun sendCode(email: String, onSuccess: () -> Unit){
         viewModelScope.launch {
             when(
                 val resource = repository.sendForgotPasswordCode(email)
@@ -46,7 +46,7 @@ class ForgotPasswordViewModel @Inject constructor(
         }
     }
 
-    fun changePassword(verificationCode: String, password: String, onSuccess: () -> Unit){
+    override fun changePassword(verificationCode: String, password: String, onSuccess: () -> Unit){
         if(state.value.email == "") {
             _state.update { it.copy(
                 errorOccurred = true,
@@ -77,7 +77,7 @@ class ForgotPasswordViewModel @Inject constructor(
         }
     }
 
-    fun onEmailChange(email: String){
+    override fun onEmailChange(email: String){
         _state.update { it.copy(email = email) }
     }
 
