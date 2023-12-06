@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.navigation.auth
 
 import android.kotlin.foodclub.navigation.Graph
-import android.kotlin.foodclub.viewModels.authentication.LogInWithEmailViewModel
+import android.kotlin.foodclub.viewModels.authentication.loginWithEmail.LogInWithEmailViewModel
 import android.kotlin.foodclub.viewModels.authentication.mainLogin.MainLogInAndSignUpViewModel
 import android.kotlin.foodclub.viewModels.authentication.TermsAndConditionsViewModel
 import android.kotlin.foodclub.views.authentication.loginWithEmail.LogInWithEmail
@@ -45,7 +45,7 @@ fun NavGraphBuilder.authNavigationGraph(
 
             LogInWithEmail(
                 navController = navController,
-                viewModel = viewModel,
+                events = viewModel,
                 state = state.value
             )
         }
