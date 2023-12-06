@@ -1,8 +1,7 @@
-package android.kotlin.foodclub.views.authentication
+package android.kotlin.foodclub.views.authentication.signupVerification
 
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.utils.composables.CustomCodeTextField
-import android.kotlin.foodclub.viewModels.authentication.SignupVerificationViewModel
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,7 +22,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import android.kotlin.foodclub.navigation.Graph
@@ -31,35 +29,34 @@ import android.kotlin.foodclub.navigation.auth.AuthScreen
 import android.kotlin.foodclub.utils.composables.AuthLayout
 import android.kotlin.foodclub.utils.composables.ConfirmButton
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.viewModels.authentication.signupVerification.SignupVerificationEvents
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import com.auth0.jwt.interfaces.Verification
 
 @Composable
 fun SignupVerification(
     navController: NavHostController,
     email: String?,
     username: String?,
-    password: String?
+    password: String?,
+    state : SignupVerificationState,
+    events : SignupVerificationEvents,
 ) {
-    val viewModel: SignupVerificationViewModel = hiltViewModel()
 
     LaunchedEffect(Unit) {
-        viewModel.setData(navController, username, password)
+        events.setData(navController, username, password)
     }
 
-    val errorOccurred = viewModel.errorOccurred.collectAsState()
-    val message = viewModel.message.collectAsState()
 
     AuthLayout(
         header = stringResource(id = R.string.verification_title),
         subHeading = verificationSubheading(email = email),
-        errorOccurred = errorOccurred.value, message = message.value,
+        errorOccurred = state.errorOccurred,
+        message = state.message,
         onBackButtonClick = {
             navController.navigate(AuthScreen.Login.route) {
                 popUpTo(Graph.AUTHENTICATION) { inclusive = true }
@@ -89,7 +86,11 @@ fun SignupVerification(
                     enabled = enableButton,
                     text = stringResource(id = R.string.verify),
                 ) {
-                    viewModel.verifyCode(currentCode)
+                    events.verifyCode(
+                        code = currentCode,
+                        navController = navController
+                    )
+
                     enableButton = false
                 }
                 Row(
@@ -106,7 +107,7 @@ fun SignupVerification(
                         text = AnnotatedString(stringResource(id = R.string.resend)),
                         onClick = {
                             if (!isTimerRunning) {
-                                viewModel.sendVerificationCode()
+                                events.sendVerificationCode(navController = navController)
                                 currentTime = TimeUnit.SECONDS.toMillis(61)
                                 isTimerRunning = true
                             }

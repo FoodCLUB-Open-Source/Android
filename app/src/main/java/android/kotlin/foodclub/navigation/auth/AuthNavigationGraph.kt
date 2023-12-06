@@ -3,10 +3,11 @@ package android.kotlin.foodclub.navigation.auth
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.viewModels.authentication.loginWithEmail.LogInWithEmailViewModel
 import android.kotlin.foodclub.viewModels.authentication.mainLogin.MainLogInAndSignUpViewModel
+import android.kotlin.foodclub.viewModels.authentication.signupVerification.SignupVerificationViewModel
 import android.kotlin.foodclub.viewModels.authentication.termsAndConditions.TermsAndConditionsViewModel
 import android.kotlin.foodclub.views.authentication.loginWithEmail.LogInWithEmail
 import android.kotlin.foodclub.views.authentication.MainLogInAndSignUp
-import android.kotlin.foodclub.views.authentication.SignupVerification
+import android.kotlin.foodclub.views.authentication.signupVerification.SignupVerification
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -69,11 +70,16 @@ fun NavGraphBuilder.authNavigationGraph(
                 }
             )
         ) { backStackEntry ->
+            val viewModel: SignupVerificationViewModel = hiltViewModel()
+            val state = viewModel.state.collectAsState()
+
             SignupVerification(
                 navController = navController,
                 email = backStackEntry.arguments?.getString(Auth.EMAIL.title),
                 username = backStackEntry.arguments?.getString(Auth.USERNAME.title),
-                password = backStackEntry.arguments?.getString(Auth.PASSWORD.title)
+                password = backStackEntry.arguments?.getString(Auth.PASSWORD.title),
+                state = state.value,
+                events = viewModel
             )
 
         }
