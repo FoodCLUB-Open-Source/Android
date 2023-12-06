@@ -1,9 +1,10 @@
-package android.kotlin.foodclub.views.home
+package android.kotlin.foodclub.views.home.search
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.views.home.discover.MainTabRow
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

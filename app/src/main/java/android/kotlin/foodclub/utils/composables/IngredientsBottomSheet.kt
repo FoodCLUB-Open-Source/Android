@@ -1,10 +1,10 @@
 package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.domain.models.products.Ingredient
-import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.domain.enums.DrawerContentState
+import android.kotlin.foodclub.domain.models.products.Ingredient
+import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -47,7 +47,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -72,7 +71,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 /**
@@ -97,7 +95,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun IngredientsBottomSheet(
     onDismiss: () -> Unit,
-    productsDataFlow: StateFlow<ProductsData>,
+    productsData: ProductsData,
     loadMoreObjects: (searchText: String, onLoadCompleted: () -> Unit)
     -> Unit = { _, _ -> },
     onListUpdate: (searchText: String) -> Unit = {},
@@ -145,7 +143,7 @@ fun IngredientsBottomSheet(
                     IngredientListView(
                         screenHeight = screenHeight,
                         savedSearchText = savedSearchText,
-                        productsDataFlow = productsDataFlow,
+                        productsData = productsData,
                         onDismiss = {
                             coroutineScope.launch {
                                 bottomSheetState.hide()
@@ -307,15 +305,14 @@ private fun IngredientSelectedView(
 private fun IngredientListView(
     screenHeight: Dp,
     savedSearchText: String,
-    productsDataFlow: StateFlow<ProductsData>,
+    productsData: ProductsData,
     onDismiss: () -> Unit,
     onListUpdate: (searchText: String) -> Unit,
     loadMoreObjects: (searchText: String, onLoadCompleted: () -> Unit) -> Unit,
     onIngredientSelect: (ingredient: Ingredient, searchText: String) -> Unit
 ) {
-    val productsData = productsDataFlow.collectAsState()
+    //val productsData = productsDataFlow.collectAsState()
     var searchText by remember { mutableStateOf(savedSearchText) }
-    val showingList = productsData.value
     val lazyListState = rememberLazyListState()
 
 
@@ -391,10 +388,10 @@ private fun IngredientListView(
                 }
             }
             items(
-                items = productsDataFlow.value.productsList,
+                items = productsData.productsList,
                 key = { it.id }
             ) {
-                if (showingList.productsList.contains(it)) {
+                if (productsData.productsList.contains(it)) {
                     IngredientComposable(
                         ingredient = it,
                         onClick = { ingredient -> onIngredientSelect(ingredient, searchText) }
@@ -408,7 +405,7 @@ private fun IngredientListView(
     var listLoading by remember { mutableStateOf(false) }
     val loadMore by remember {
         derivedStateOf {
-            lazyListState.firstVisibleItemIndex > productsDataFlow.value.productsList.size - 10
+            lazyListState.firstVisibleItemIndex > productsData.productsList.size - 10
         }
     }
 

@@ -1,5 +1,6 @@
-package android.kotlin.foodclub.views.home
+package android.kotlin.foodclub.views.home.myBasket
 
+import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.config.ui.Montserrat
@@ -27,15 +28,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,21 +56,33 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 
+
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun MyBasketView(
-    viewModel: MyBasketViewModel
+    viewModel: MyBasketViewModel,
+    navController: NavController,
+    state: MyBasketState
 ) {
     val systemUiController = rememberSystemUiController()
     var showSheet by remember { mutableStateOf(false) }
-    val productsList = viewModel.productsList.collectAsState()
-    val selectedProductsIds = viewModel.selectedProductsList.collectAsState()
+    val productsList = state.productsList
+    val selectedProductsIds = state.selectedProductsList
     var deleteSelected by remember { mutableStateOf(false) }
+    //val selectedIngredients = viewModel.selectedIngredients.collectAsState()
 
     val triggerBottomSheetModal: () -> Unit = {
+        // GETTING SELECTED INGREDIENT FROM HOME VIEW MODEL
+//        val selectedIngredients = viewModel.selectedIngredients.value
+//
+//        // PASSING SELECTED INGREDIENT TO MY BASKET VIEW
+//        viewModel.addIngredientsToBasket(selectedIngredients)
+//        //viewModel.updateSelectedIngredients(emptyList())
+
         showSheet = !showSheet
         systemUiController.setStatusBarColor(color = Color(0x00ACACAC), darkIcons = true)
         systemUiController.setNavigationBarColor(color = Color.Black, darkIcons = true)
@@ -85,9 +99,10 @@ fun MyBasketView(
     if (showSheet) {
         IngredientsBottomSheet(
             onDismiss = triggerBottomSheetModal,
-            productsDataFlow = viewModel.productsDatabase,
+            productsData = state.productsDatabase,
             loadMoreObjects = { searchText, onLoadCompleted ->
-                viewModel.fetchMoreProducts(searchText, onLoadCompleted) },
+                viewModel.fetchMoreProducts(searchText, onLoadCompleted)
+            },
             onListUpdate = { viewModel.fetchProductsDatabase(it) },
             onSave = { viewModel.addIngredient(it) }
         )
@@ -97,7 +112,7 @@ fun MyBasketView(
         modifier = Modifier
             .background(color = Color.White)
             .fillMaxSize()
-            .padding(top = dimensionResource(id = R.dimen.dim_60)),
+            .padding(top = 60.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(
@@ -111,13 +126,24 @@ fun MyBasketView(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
+                    IconButton(
+                        onClick = { navController.navigateUp() },
+                        modifier = Modifier
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.back_icon),
+                            contentDescription = "Back",
+                            tint = Color.Black
+                        )
+                    }
                     Text(
                         text = stringResource(id = R.string.my_basket),
                         fontSize = dimensionResource(id = R.dimen.fon_25).value.sp,
                         fontFamily = Montserrat,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black,
-                        style = TextStyle(letterSpacing = -1.sp)
+                        style = TextStyle(letterSpacing = -1.sp),
+                        modifier = Modifier.weight(1f)
                     )
                     Button(
                         shape = RectangleShape,
@@ -174,52 +200,61 @@ fun MyBasketView(
                     )
                 }
             }
-            LazyColumn (modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dim_20), start = dimensionResource(id = R.dimen.dim_20), bottom = dimensionResource(id = R.dimen.dim_110))) {
-                items(
-                    items = productsList.value,
-                    key = { ingredient -> ingredient.id }
-                ) { ingredient ->
-                    val product = ingredient
-                    BasketIngredient(
-                        ingredient = product,
-                        isShown = !selectedProductsIds.value.contains(product.id)||!deleteSelected,
-                        onSelectionChange = {bool ->
-                            if(bool) viewModel.selectIngredient(product.id)
-                            else viewModel.unselectIngredient(product.id) },
-                        onIngredientUpdate = { viewModel.saveBasket() }
-                    )
+            LazyColumn (modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dim_20), start = dimensionResource(id = R.dimen.dim_20), bottom = dimensionResource(id = R.dimen.dim_110)))
+               {
+                    itemsIndexed(
+                        items = productsList,
+                        key = { index, ingredient -> "${index}_${ingredient.id}" }
+                    ) { index, ingredient ->
+                        BasketIngredient(
+                            ingredient = ingredient,
+                            isShown = !state.selectedProductsList.contains(ingredient.id) || !deleteSelected,
+                            onSelectionChange = { bool ->
+                                if (bool) viewModel.selectIngredient(ingredient.id)
+                                else viewModel.unselectIngredient(ingredient.id)
+                            },
+                            onIngredientUpdate = { viewModel.saveBasket() }
+                        )
+                    }
                 }
+
+        }
+
+        LaunchedEffect(deleteSelected) {
+            if(deleteSelected) {
+                delay(800)
+                viewModel.deleteSelectedIngredients()
+                deleteSelected = false
             }
         }
 
     }
-
-    LaunchedEffect(deleteSelected) {
-        if(deleteSelected) {
-            delay(800)
-            viewModel.deleteSelectedIngredients()
-            deleteSelected = false
-        }
-    }
 }
 
+
 @Composable
-fun BasketIngredient(ingredient: Ingredient, isShown: Boolean,
-                     onSelectionChange: (isSelected: Boolean) -> Unit,
-                     onIngredientUpdate: () -> Unit) {
-    var isSelected by remember { mutableStateOf(false) }
+fun BasketIngredient(
+    ingredient: Ingredient,
+    isShown: Boolean,
+    onSelectionChange: (isSelected: Boolean) -> Unit,
+    onIngredientUpdate: () -> Unit
+) {
+    var isSelected by remember { mutableStateOf(ingredient.isSelected) }
 
     var quantity by remember { mutableStateOf(ingredient.quantity) }
     val type by remember { mutableStateOf(ingredient.type) }
     val unit by remember { mutableStateOf(ingredient.unit) }
 
     var showItem by remember { mutableStateOf(true) }
-    if(!isShown) {
+    if (!isShown) {
         showItem = false
     }
 
 
-    AnimatedVisibility(visible = showItem, exit = shrinkOut(shrinkTowards = Alignment.TopCenter)) {
+    AnimatedVisibility(
+        visible = showItem,
+        exit = shrinkOut(shrinkTowards = Alignment.TopCenter)
+    ) {
         Column {
             Box(
                 modifier = Modifier.fillMaxWidth().height(dimensionResource(id = R.dimen.dim_140))

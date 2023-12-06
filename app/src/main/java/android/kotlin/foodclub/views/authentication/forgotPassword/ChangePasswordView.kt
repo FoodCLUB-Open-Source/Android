@@ -6,6 +6,7 @@ import android.kotlin.foodclub.utils.composables.ConfirmButton
 import android.kotlin.foodclub.utils.composables.CustomPasswordTextField
 import android.kotlin.foodclub.utils.composables.CustomTextField
 import android.kotlin.foodclub.utils.helpers.FieldsValidation
+import android.kotlin.foodclub.views.authentication.forgotPassword.forgotPasswordScreen.ForgotPasswordState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
@@ -23,7 +24,7 @@ import androidx.compose.ui.unit.dp
 fun ChangePasswordView(
     onValuesUpdate: (password: String, code: String) -> Unit,
     onBackButtonClick: () -> Unit,
-    email: String, errorOccurred: State<Boolean>, message: State<String>
+    state: ForgotPasswordState,
 ){
     var verificationCode by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -35,8 +36,9 @@ fun ChangePasswordView(
 
     AuthLayout(
         header = stringResource(id = R.string.change_password),
-        subHeading = stringResource(id = R.string.change_password_subheading, email),
-        errorOccurred = errorOccurred.value, message = message.value,
+        subHeading = stringResource(id = R.string.change_password_subheading, state.email),
+        errorOccurred = state.errorOccurred,
+        message = state.message,
         onBackButtonClick = { onBackButtonClick() }) {
         Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_4))
         ) {

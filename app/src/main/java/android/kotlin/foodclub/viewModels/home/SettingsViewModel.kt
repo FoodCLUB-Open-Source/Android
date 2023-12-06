@@ -4,6 +4,7 @@ import android.kotlin.foodclub.domain.models.profile.UserDetailsModel
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.repositories.SettingsRepository
 import android.kotlin.foodclub.utils.helpers.Resource
+import android.kotlin.foodclub.views.settings.SettingsState
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,6 +14,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,14 +23,13 @@ class SettingsViewModel @Inject constructor(
     private val repository: SettingsRepository,
     val sessionCache: SessionCache
 ) : ViewModel() {
+    companion object {
+        private val TAG = SettingsViewModel::class.java.simpleName
+    }
 
-    var user by mutableStateOf<UserDetailsModel?>(null)
-
-    private val _errorType = MutableStateFlow<String?>(null)
-    val errorType: StateFlow<String?> get() = _errorType
-
-    private var _userDetails = MutableStateFlow<UserDetailsModel?>(null)
-    val userDetails: StateFlow<UserDetailsModel?> get() = _userDetails
+    private val _state = MutableStateFlow(SettingsState.default())
+    val state: StateFlow<SettingsState>
+        get() = _state
 
     init {
         val id = sessionCache.getActiveSession()!!.sessionUser.userId
@@ -38,50 +39,54 @@ class SettingsViewModel @Inject constructor(
     fun logout() {
         sessionCache.clearSession()
     }
+
     fun changePassword(oldPassword: String, newPassword: String) {
-        if(oldPassword == newPassword) {
-            _errorType.value = "Old and New passwords must be different."
+        if (oldPassword == newPassword) {
+            _state.update { it.copy(error = "Old and New passwords must be different.") }
             return
         }
 
         viewModelScope.launch {
-            when(val resource = repository.changePassword(oldPassword, newPassword)) {
+            when (repository.changePassword(oldPassword, newPassword)) {
                 is Resource.Success -> {
-                    _errorType.value = "Password changed successfully"
+                    _state.update { it.copy(error = "Password changed successfully") }
                 }
+
                 is Resource.Error -> {
-                    _errorType.value = "Bad request. Please review your old password"
+                    _state.update { it.copy(error = "Bad request. Please review your old password") }
                 }
             }
         }
     }
 
-    private fun getUserDetails(id: Long){
+    private fun getUserDetails(id: Long) {
         viewModelScope.launch {
-            when(val resource = repository.retrieveUserDetails(id)){
+            when (val resource = repository.retrieveUserDetails(id)) {
                 is Resource.Success -> {
-                    _userDetails.value = resource.data
-                    Log.i("MYTAG","getUserDetails success settings screen: ${resource.data}")
+                    _state.update { it.copy(user = resource.data) }
+                    Log.i(TAG, "getUserDetails success settings screen: ${resource.data}")
                 }
+
                 is Resource.Error -> {
-                    Log.i("MYTAG","getUserDetails failed: ${resource.message}")
+                    Log.i(TAG, "getUserDetails failed: ${resource.message}")
                 }
             }
         }
     }
 
-    fun updateUserDetails(userId: Long, model: UserDetailsModel){
+    fun updateUserDetails(userId: Long, model: UserDetailsModel) {
         viewModelScope.launch {
-            when(val resource = repository.updateUserDetails(userId, model)){
+            when (val resource = repository.updateUserDetails(userId, model)) {
                 is Resource.Success -> {
-                    Log.i("MYTAG","USER UPDATE SUCCESS ${resource.data}")
+                    Log.i(TAG, "USER UPDATE SUCCESS ${resource.data}")
                 }
+
                 is Resource.Error -> {
-                    Log.e("MYTAG","USER UPDATE FAILED ${resource.message}")
+                    Log.e(TAG, "USER UPDATE FAILED ${resource.message}")
 
                 }
             }
         }
-        _userDetails.value = model
+        _state.update { it.copy(user = model) }
     }
 }

@@ -8,7 +8,9 @@ class Ingredient(
     var quantity: Int,
     var unit: QuantityUnit,
     imageUrl: Any = "",
-    var expirationDate: String = ""
+    var expirationDate: String = "",
+
+    var isSelected: Boolean = false
 ) {
 
     var imageUrl: Any = imageUrl
@@ -20,5 +22,16 @@ class Ingredient(
 
     fun incrementQuantity(incrementValue: Int) {
         quantity += incrementValue
+    }
+
+    fun copy(
+        id: String = this.id,
+        type: String = this.type,
+        quantity: Int = this.quantity,
+        unit: QuantityUnit = this.unit,
+        imageUrl: Any = this.imageUrl,
+        isSelected: Boolean = this.isSelected
+    ): Ingredient {
+        return Ingredient(id, type, quantity, unit, imageUrl)
     }
 }

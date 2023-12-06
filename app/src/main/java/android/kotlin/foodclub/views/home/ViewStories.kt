@@ -65,6 +65,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import android.content.Context
 import android.content.SharedPreferences
+import android.kotlin.foodclub.views.home.home.HomeState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -75,12 +76,13 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ViewStories() {
-
-    val viewModel: HomeViewModel = hiltViewModel()
+fun ViewStories(
+    viewModel: HomeViewModel,
+    state : HomeState,
+) {
     // green screen issue is not happening when we use postListData instead of storyListData as below:
     // val videosState = viewModel.postListData.collectAsState()
-    val videosState = viewModel.storyListData.collectAsState()
+    val videosState = state.storyList
 
     val coroutineScope = rememberCoroutineScope()
     val localDensity = LocalDensity.current
@@ -105,12 +107,12 @@ fun ViewStories() {
     if (screenHeightMinusBottomNavItem <= dimensionResource(id = R.dimen.dim_650)) {
         screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.96f
     }
-    if (videosState.value.isNotEmpty()) {
+    if (videosState.isNotEmpty()) {
         val storyPagerState = rememberPagerState(
             initialPage = 0,
             initialPageOffsetFraction = 0f
         ){
-            videosState.value.size
+            videosState.size
         }
         val storyFling = PagerDefaults.flingBehavior(
             state = storyPagerState, lowVelocityAnimationSpec = tween(
@@ -122,7 +124,7 @@ fun ViewStories() {
         LaunchedEffect(storyPagerState.currentPage) { videoViewed = false }
         LaunchedEffect(videoViewed) {
             if(videoViewed) {
-                viewModel.userViewsStory(videosState.value[storyPagerState.currentPage].videoId)
+                viewModel.userViewsStory(videosState[storyPagerState.currentPage].videoId)
             }
         }
 
@@ -143,13 +145,13 @@ fun ViewStories() {
                 )
             }
             Box(modifier = Modifier.fillMaxSize()) {
-                VideoScroller(videosState.value[it], storyPagerState, it, onSingleTap = {
+                VideoScroller(videosState[it], storyPagerState, it, onSingleTap = {
                     pauseButtonVisibility = it.isPlaying
                     it.playWhenReady = !it.isPlaying
                 },
                     onDoubleTap = { exoPlayer, offset ->
                         coroutineScope.launch {
-                            videosState.value[it].currentViewerInteraction.isLiked =
+                            videosState[it].currentViewerInteraction.isLiked =
                                 true
                             val rotationAngle = (-10..10).random()
                             doubleTapState = Triple(offset, true, rotationAngle.toFloat())
@@ -166,7 +168,7 @@ fun ViewStories() {
 
 
                 var isLiked by remember {
-                    mutableStateOf(videosState.value[it].currentViewerInteraction.isLiked)
+                    mutableStateOf(videosState[it].currentViewerInteraction.isLiked)
                 }
 
                 Column() {
@@ -227,7 +229,7 @@ fun ViewStories() {
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
-                        .padding( dimensionResource(id = R.dimen.dim_15))
+                        .padding(dimensionResource(id = R.dimen.dim_15))
                 ) {
                     Column {
                         Row(
@@ -238,14 +240,16 @@ fun ViewStories() {
                                 painter = painterResource(id = R.drawable.story_user),
                                 contentDescription = stringResource(id = R.string.profile_image),
                                 modifier = Modifier
-                                    .size( dimensionResource(id = R.dimen.dim_35))
+                                    .size(dimensionResource(id = R.dimen.dim_35))
                                     .clip(CircleShape)
                                     .alpha(0.7f)
                             )
                             Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_10)))
                             Text(
-                                videosState.value[it].authorDetails, color = Color.White,
-                                fontFamily = Montserrat, fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
+                                text = videosState[it].authorDetails,
+                                color = Color.White,
+                                fontFamily = Montserrat,
+                                fontSize = dimensionResource(id = R.dimen.dim_18).value.sp,
                                 modifier = Modifier
                                     .padding(dimensionResource(id = R.dimen.dim_2))
                                     .alpha(0.7f)
@@ -302,7 +306,7 @@ fun ViewStories() {
                                         .alpha(0.7f)
                                         .clickable {
                                             isLiked = !isLiked
-                                            videosState.value[0].currentViewerInteraction.isLiked =
+                                            videosState[0].currentViewerInteraction.isLiked =
                                                 !isLiked
                                         }
                                 ) {
@@ -333,8 +337,8 @@ fun ViewStories() {
                                     )
                                     Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_3)))
                                     Text(
-                                        text = videosState.value[it].videoStats.displayLike,
                                         fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
+                                        text = videosState[it].videoStats.displayLike,
                                         fontFamily = Montserrat,
                                         color = if (isLiked) foodClubGreen else Color.White
                                     )

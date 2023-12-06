@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.views.authentication.forgotPassword
+package android.kotlin.foodclub.views.authentication.forgotPassword.forgotPasswordScreen
 
 import android.annotation.SuppressLint
 import android.kotlin.foodclub.utils.composables.AuthLayout
@@ -23,27 +23,29 @@ import androidx.compose.ui.res.dimensionResource
 @Composable
 fun ForgotPasswordView(
     onValuesUpdate: (email: String) -> Unit,
-    onBackButtonClick: () -> Unit, email: String,
-    errorOccurred: State<Boolean>, message: State<String>
+    onBackButtonClick: () -> Unit,
+    onEmailChange: (email: String) -> Unit,
+    state: ForgotPasswordState
 ) {
-    var userEmail by remember { mutableStateOf(email) }
 
-    var initialEmailCorrectnessState = FieldsValidation.checkEmail(userEmail) == null
+    var initialEmailCorrectnessState = FieldsValidation.checkEmail(state.email) == null
     var filledEmail by remember { mutableStateOf(false) }
 
     AuthLayout(
         header = stringResource(id = R.string.forgot_password),
         subHeading = stringResource(id = R.string.forgot_password_subheading),
-        errorOccurred = errorOccurred.value, message = message.value,
+        errorOccurred = state.errorOccurred,
+        message = state.message,
         onBackButtonClick = { onBackButtonClick() }
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_4))) {
-            CustomTextField(initialValue = userEmail,
+            CustomTextField(
+                initialValue = state.email,
                 placeholder = stringResource(id = R.string.email),
                 keyboardType = KeyboardType.Email,
                 onCorrectnessStateChange = { filledEmail = !filledEmail },
                 onValueChange = {
-                    userEmail = it
+                    onEmailChange(it)
                     initialEmailCorrectnessState = false
                 },
                 textValidation = true,
@@ -52,7 +54,7 @@ fun ForgotPasswordView(
             ConfirmButton(
                 enabled = (filledEmail || initialEmailCorrectnessState) || true,
                 text = stringResource(id = R.string.send_code)
-            ) { onValuesUpdate(userEmail) }
+            ) { onValuesUpdate(state.email) }
         }
     }
 }
