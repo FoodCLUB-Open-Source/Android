@@ -1,5 +1,20 @@
 <resources>
     <string name="app_name">FoodClub</string>
+    <string name="Done">Done</string>
+    <string name="Toggle_Palette_Font">Toggle Palette/Font</string>
+    <string name="Default">Default</string>
+    <string name="Custom_Color">Custom Color</string>
+    <string name="fontdisplay">Aa</string>
+    <string name="Delete">Delete</string>
+    <string name="PlusJakartaSans">PlusJakartaSans</string>
+    <string name="AvenirBlack">AvenirBlack</string>
+    <string name="AvenirBook">AvenirBook</string>
+    <string name="MontserratBold">MontserratBold</string>
+    <string name="MontserratMedium">MontserratMedium</string>
+    <string name="MontserratRegular">MontserratRegular</string>
+    <string name="MontserratSemibold">MontserratSemibold</string>
+    <string name="RalewayExtraBold">RalewayExtraBold</string>
+    <string name="Satoshi">Satoshi</string>
     <string name="foodCLUB">FoodCLUB</string>
     <string name="title_activity_create_username_view">CreateUsernameView</string>
     <string name="title_activity_preference_input_view">PreferenceInputView</string>
