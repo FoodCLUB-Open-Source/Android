@@ -11,7 +11,8 @@ import android.kotlin.foodclub.utils.composables.LikeButton
 import android.kotlin.foodclub.utils.composables.PlayPauseButton
 import android.kotlin.foodclub.utils.composables.VideoLayout
 import android.kotlin.foodclub.utils.composables.VideoScroller
-import android.kotlin.foodclub.viewModels.home.ProfileViewModel
+import android.kotlin.foodclub.viewModels.home.profile.ProfileEvents
+import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
 import android.kotlin.foodclub.views.home.profile.ProfileState
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.LinearEasing
@@ -191,7 +192,7 @@ fun ConfirmDeleteDialog(
 fun ShowProfilePosts(
     postId: Long,
     posts: List<VideoModel>,
-    viewModel: ProfileViewModel,
+    events: ProfileEvents,
     state: ProfileState,
     onPostDeleted: () -> Unit,
     onBackPressed: () -> Unit
@@ -246,7 +247,7 @@ fun ShowProfilePosts(
                 },
                 onConfirm = {
                     infoDialog.value = false
-                    viewModel.deleteCurrentPost(posts[pagerState.currentPage].videoId)
+                    events.deleteCurrentPost(posts[pagerState.currentPage].videoId)
                     onPostDeleted()
                 }
             )

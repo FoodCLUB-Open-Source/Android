@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.viewModels.home
+package android.kotlin.foodclub.viewModels.home.profile
 
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.profile.UserDetailsModel
@@ -32,7 +32,7 @@ class ProfileViewModel @Inject constructor(
     private val profileRepository: ProfileRepository,
     val sessionCache: SessionCache,
     val storeData: StoreData
-) : ViewModel() {
+) : ViewModel(), ProfileEvents {
 
     companion object {
         private val TAG = ProfileViewModel::class.java.simpleName
@@ -51,14 +51,153 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    override fun updateUserProfileImage(id: Long, file: File, uri: Uri) {
+        viewModelScope.launch {
+            when (val resource = profileRepository.updateUserProfileImage(id, file)) {
+                is Resource.Success -> {
+                    Log.i(TAG, "SUCCESSFULLY UPDATED IMAGE ${resource.data}")
+                }
 
-    fun setUser(newUserId: Long) {
+                is Resource.Error -> {
+                    Log.i(TAG, "ERROR UPDATING IMAGE ${resource.message}")
+                }
+            }
+        }
+        _state.update {
+            it.copy(
+                userDetails = it.userDetails!!.copy(
+                    profilePicture = uri.toString()
+                )
+            )
+        }
+        Log.i(TAG, "USER UPDATED IMG: ${state.value.userDetails!!.profilePicture}")
+    }
+
+
+    override fun setUser(newUserId: Long) {
         if (newUserId != sessionCache.getActiveSession()!!.sessionUser.userId) {
             val userId = if(newUserId == 0L) sessionCache.getActiveSession()!!.sessionUser.userId else
                 newUserId
             getProfileModel(userId)
             getBookmarkedPosts(userId)
             getUserDetails(userId)
+        }
+    }
+    override fun unfollowUser(sessionUserId: Long, userId: Long) {
+        viewModelScope.launch {
+            when (val resource = profileRepository.unfollowUser(sessionUserId, userId)) {
+                is Resource.Success -> {
+                    _state.update {
+                        it.copy(
+                            error = "",
+                            isFollowed = false
+                        )
+                    }
+                }
+
+                is Resource.Error -> {
+                    _state.update { it.copy(error = resource.message!!) }
+                }
+            }
+        }
+    }
+
+    override fun followUser(sessionUserId: Long, userId: Long) {
+        viewModelScope.launch {
+            when (val resource = profileRepository.followUser(sessionUserId, userId)) {
+                is Resource.Success -> {
+                    _state.update {
+                        it.copy(
+                            error = "",
+                            isFollowed = true
+                        )
+                    }
+                }
+
+                is Resource.Error -> {
+                    _state.update { it.copy(error = resource.message!!) }
+                }
+            }
+        }
+    }
+
+    override fun isFollowedByUser(sessionUserId: Long, userId: Long) {
+        viewModelScope.launch {
+            when (val resource = profileRepository.retrieveProfileFollowers(userId)) {
+                is Resource.Success -> {
+                    _state.update {
+                        it.copy(
+                            error = "",
+                            isFollowed = resource.data!!.any {
+                                it.userId.toLong() == sessionUserId
+                            }
+                        )
+                    }
+                }
+
+                is Resource.Error -> {
+                    _state.update { it.copy(error = resource.message!!) }
+                }
+            }
+        }
+    }
+
+    override fun getPostData(postId: Long) {
+//        val userId = sessionCache.getActiveSession()?.sessionUser?.userId ?: return
+
+        _state.update {
+            it.copy(
+                postData = it.userPosts.filter { it.videoId == postId }.getOrNull(0)
+            )
+        }
+
+//        viewModelScope.launch {
+//            when (val resource = postRepository.getPost(postId, userId)) {
+//                is Resource.Success -> {
+//                    _state.update {
+//                        it.copy(
+//                            error = "",
+//                            postData = resource.data
+//                        )
+//                    }
+//                    setTestPostData(resource.data!!.videoLink, resource.data.thumbnailLink)
+//                }
+//
+//                is Resource.Error -> {
+//                    _state.update { it.copy(error = resource.message!!) }
+//                }
+//            }
+//        }
+    }
+
+    override fun deleteCurrentPost(postId: Long) {
+        Log.i(TAG, "DELETED POST ID: $postId")
+        viewModelScope.launch {
+            when (val resource = postRepository.deletePost(postId)) {
+                is Resource.Success -> {
+                    _state.update {
+                        it.copy(
+                            error = "",
+                            postData = null
+                        )
+                    }
+                }
+
+                is Resource.Error -> {
+                    _state.update { it.copy(error = resource.message!!) }
+                }
+            }
+        }
+    }
+
+    override fun updatePosts(postId: Long) {
+        _state.update {
+            it.copy(
+                error = "",
+                userPosts = it.userPosts.filter { post ->
+                    post.videoId != postId
+                }
+            )
         }
     }
 
@@ -150,29 +289,6 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-
-    fun updateUserProfileImage(id: Long, file: File, uri: Uri) {
-        viewModelScope.launch {
-            when (val resource = profileRepository.updateUserProfileImage(id, file)) {
-                is Resource.Success -> {
-                    Log.i(TAG, "SUCCESSFULLY UPDATED IMAGE ${resource.data}")
-                }
-
-                is Resource.Error -> {
-                    Log.i(TAG, "ERROR UPDATING IMAGE ${resource.message}")
-                }
-            }
-        }
-        _state.update {
-            it.copy(
-                userDetails = it.userDetails!!.copy(
-                    profilePicture = uri.toString()
-                )
-            )
-        }
-        Log.i(TAG, "USER UPDATED IMG: ${state.value.userDetails!!.profilePicture}")
-    }
-
     private fun getBookmarkedPosts(userId: Long) {
         viewModelScope.launch {
             when (val resource = profileRepository.retrieveBookmarkedPosts(userId)) {
@@ -199,65 +315,6 @@ class ProfileViewModel @Inject constructor(
 
     }
 
-    fun unfollowUser(followerId: Long, userId: Long) {
-        viewModelScope.launch {
-            when (val resource = profileRepository.unfollowUser(followerId, userId)) {
-                is Resource.Success -> {
-                    _state.update {
-                        it.copy(
-                            error = "",
-                            isFollowed = false
-                        )
-                    }
-                }
-
-                is Resource.Error -> {
-                    _state.update { it.copy(error = resource.message!!) }
-                }
-            }
-        }
-    }
-
-    fun followUser(followerId: Long, userId: Long) {
-        viewModelScope.launch {
-            when (val resource = profileRepository.followUser(followerId, userId)) {
-                is Resource.Success -> {
-                    _state.update {
-                        it.copy(
-                            error = "",
-                            isFollowed = true
-                        )
-                    }
-                }
-
-                is Resource.Error -> {
-                    _state.update { it.copy(error = resource.message!!) }
-                }
-            }
-        }
-    }
-
-    fun isFollowedByUser(followerId: Long, userId: Long) {
-        viewModelScope.launch {
-            when (val resource = profileRepository.retrieveProfileFollowers(userId)) {
-                is Resource.Success -> {
-                    _state.update {
-                        it.copy(
-                            error = "",
-                            isFollowed = resource.data!!.any {
-                                it.userId.toLong() == followerId
-                            }
-                        )
-                    }
-                }
-
-                is Resource.Error -> {
-                    _state.update { it.copy(error = resource.message!!) }
-                }
-            }
-        }
-    }
-
     fun getListOfMyRecipes(): List<VideoModel> {
         return state.value.userProfile!!.userPosts
     }
@@ -266,65 +323,6 @@ class ProfileViewModel @Inject constructor(
         return state.value.userProfile!!.userPosts
 //        return tabItems.filter { unit -> return@filter (unit.bookMarked == true) };
 
-    }
-
-    fun getPostData(postId: Long) {
-//        val userId = sessionCache.getActiveSession()?.sessionUser?.userId ?: return
-
-        _state.update {
-            it.copy(
-                postData = it.userPosts.filter { it.videoId == postId }.getOrNull(0)
-            )
-        }
-
-//        viewModelScope.launch {
-//            when (val resource = postRepository.getPost(postId, userId)) {
-//                is Resource.Success -> {
-//                    _state.update {
-//                        it.copy(
-//                            error = "",
-//                            postData = resource.data
-//                        )
-//                    }
-//                    setTestPostData(resource.data!!.videoLink, resource.data.thumbnailLink)
-//                }
-//
-//                is Resource.Error -> {
-//                    _state.update { it.copy(error = resource.message!!) }
-//                }
-//            }
-//        }
-    }
-
-    fun deleteCurrentPost(postId: Long) {
-        Log.i(TAG, "DELETED POST ID: $postId")
-        viewModelScope.launch {
-            when (val resource = postRepository.deletePost(postId)) {
-                is Resource.Success -> {
-                    _state.update {
-                        it.copy(
-                            error = "",
-                            postData = null
-                        )
-                    }
-                }
-
-                is Resource.Error -> {
-                    _state.update { it.copy(error = resource.message!!) }
-                }
-            }
-        }
-    }
-
-    fun updatePosts(postId: Long) {
-        _state.update {
-            it.copy(
-                error = "",
-                userPosts = it.userPosts.filter { post ->
-                    post.videoId != postId
-                }
-            )
-        }
     }
 
     private fun setTestPostData(videoLink: String, thumbnailLink: String) {

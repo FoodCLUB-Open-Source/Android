@@ -10,6 +10,7 @@ import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.CustomBottomSheet
 import android.kotlin.foodclub.utils.helpers.UiEvent
 import android.kotlin.foodclub.utils.helpers.uriToFile
+import android.kotlin.foodclub.viewModels.home.profile.ProfileEvents
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -55,7 +56,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import android.kotlin.foodclub.viewModels.home.ProfileViewModel
+import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
 import android.kotlin.foodclub.views.home.ShowProfilePosts
 import android.net.Uri
 import android.util.Log
@@ -86,6 +87,7 @@ fun ProfileView(
     navController: NavController,
     userId: Long,
     viewModel: ProfileViewModel,
+    events: ProfileEvents,
     state: ProfileState
 ) {
 
@@ -105,7 +107,7 @@ fun ProfileView(
 
     LaunchedEffect(userId) {
         if(userId != 0L && userId != state.sessionUserId) {
-            viewModel.isFollowedByUser(state.sessionUserId, userId)
+            events.isFollowedByUser(state.sessionUserId, userId)
         }
     }
 
@@ -160,7 +162,7 @@ fun ProfileView(
                         state.dataStore?.storeImage(uri.toString())
                     }
                     val file = uriToFile(uri, context)
-                    viewModel.updateUserProfileImage(
+                    events.updateUserProfileImage(
                         id = state.myUserId,
                         file = file!!,
                         uri = uri
@@ -185,14 +187,14 @@ fun ProfileView(
         }
 
         if (showDeleteRecipe){
-            viewModel.getPostData(postId)
+            events.getPostData(postId)
 
             ShowProfilePosts(
                 postId = postId,
-                viewModel = viewModel,
+                events = events,
                 state = state,
                 onPostDeleted = {
-                    viewModel.updatePosts(postId)
+                    events.updatePosts(postId)
                     showDeleteRecipe = false
                 },
                 onBackPressed = {
@@ -256,7 +258,7 @@ fun ProfileView(
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.vector_1_),
-                                contentDescription = "",
+                                contentDescription = null,
                             )
                         }
                     }else{
@@ -358,7 +360,7 @@ fun ProfileView(
 
                         FollowButton(
                             isFollowed = state.isFollowed,
-                            viewModel = viewModel,
+                            events = events,
                             sessionUserId = state.sessionUserId,
                             userId = userId
                         )
@@ -414,7 +416,9 @@ fun ProfileView(
                                 columns = GridCells.Fixed(2),
                             ) {
                                 items(userTabItems) { dataItem ->
-                                    GridItem(dataItem, triggerShowDeleteRecipe = { tabItemId ->
+                                    GridItem(
+                                        dataItem = dataItem,
+                                        triggerShowDeleteRecipe = { tabItemId ->
                                         postId = tabItemId
                                         showDeleteRecipe = true
                                     })

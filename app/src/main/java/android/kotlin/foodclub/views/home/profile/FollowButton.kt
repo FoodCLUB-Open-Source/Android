@@ -1,7 +1,8 @@
 package android.kotlin.foodclub.views.home.profile
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.viewModels.home.ProfileViewModel
+import android.kotlin.foodclub.viewModels.home.profile.ProfileEvents
+import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -19,7 +20,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun FollowButton(
     isFollowed: Boolean,
-    viewModel: ProfileViewModel,
+    events: ProfileEvents,
     sessionUserId: Long,
     userId: Long
 ) {
@@ -46,8 +47,8 @@ fun FollowButton(
         .height(40.dp)
 
     Button(
-        onClick = { if(isFollowed) viewModel.unfollowUser(sessionUserId, userId)
-        else viewModel.followUser(sessionUserId, userId) },
+        onClick = { if(isFollowed) events.unfollowUser(sessionUserId, userId)
+        else events.followUser(sessionUserId, userId) },
         shape = RoundedCornerShape(40.dp),
         modifier = modifier,
         colors = colors
