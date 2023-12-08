@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.views.home.camera
 
+import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -19,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -117,7 +119,7 @@ fun RecordingClipsButton(
 
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.size(80.dp)
+        modifier = Modifier.size(dimensionResource(id = R.dimen.dim_80))
     ) {
 
         Canvas(modifier = Modifier.fillMaxSize())
@@ -134,10 +136,12 @@ fun RecordingClipsButton(
 
         CircularProgressIndicator(
             progress = progress,
-            strokeWidth = 5.dp,
+            strokeWidth = dimensionResource(id = R.dimen.dim_5),
             color = foodClubGreen,
-            modifier = Modifier.size(80.dp)
+            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_80))
         )
+
+        //val flt_25 = integerResource(id = R.integer.int_0pt5).toFloat()
 
         Canvas(modifier = Modifier.fillMaxSize())
         {
@@ -153,7 +157,7 @@ fun RecordingClipsButton(
 
         }
 
-        Canvas(modifier = Modifier.size(60.dp)) {
+        Canvas(modifier = Modifier.size(dimensionResource(id = R.dimen.dim_60))) {
             drawCircle(color = Color(0xFFCACBCB))
         }
         // Record button

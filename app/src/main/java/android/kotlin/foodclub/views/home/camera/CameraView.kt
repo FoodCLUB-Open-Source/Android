@@ -27,12 +27,6 @@ import androidx.camera.video.Recording
 import androidx.camera.video.VideoCapture
 import androidx.camera.video.VideoRecordEvent
 import androidx.camera.view.PreviewView
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -54,7 +48,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -66,7 +59,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -96,10 +88,6 @@ fun CameraView(
     stateEncoded: String,
     state: CameraState
 ) {
-
-    var seconds = (0)
-    var minutes = (0)
-
 
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -343,8 +331,6 @@ fun CameraView(
                     IconButton(
                         onClick = {
 
-                            //Temporarily ignore recording code
-
                             if(!holdOrPress) {
                                 if (!recordingStarted.value) {
                                     videoCapture.value?.let { videoCapture ->
@@ -384,6 +370,8 @@ fun CameraView(
                                                 }
                                             }
                                         }
+
+                                        val test = 0
                                     }
                                 } else {
                                     recordingStarted.value = false
@@ -410,6 +398,7 @@ fun CameraView(
                             }
                         }
 
+                        /*
                         if (holdOrPress) {
                             if (isPressed && state.minutes < 1) {
                                 Log.d("Recording Start","Preparing recording")
@@ -463,6 +452,8 @@ fun CameraView(
                                 }
                             }
                         }
+
+                         */
 
                         RecordingClipsButton(
                             isRecording = recordingStarted.value,
@@ -576,7 +567,6 @@ fun CameraView(
     }
 }
 
-
 fun loadCurrentThumbnail(context: Context): Bitmap? {
     val imageProjection = arrayOf(
         MediaStore.Images.Media._ID,
@@ -669,3 +659,4 @@ fun loadCurrentThumbnail(context: Context): Bitmap? {
         null
     )
 }
+
