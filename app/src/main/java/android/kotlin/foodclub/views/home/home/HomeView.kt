@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
+import android.kotlin.foodclub.viewModels.home.home.HomeEvents
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,7 +30,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import android.kotlin.foodclub.viewModels.home.HomeViewModel
+import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
 import android.kotlin.foodclub.views.home.SnapsView
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import androidx.compose.foundation.Image
@@ -49,7 +50,7 @@ import androidx.media3.common.util.UnstableApi
 @Composable
 fun HomeView(
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel,
+    events: HomeEvents,
     initialPage: Int? = 0,
     navController: NavHostController,
     triggerStoryView: () -> Unit,
@@ -170,13 +171,17 @@ fun HomeView(
         modifier = Modifier.height(screenHeightMinusBottomNavItem)
     ) {
         if (showIngredientSheet) {
-            HomeBottomSheetIngredients(triggerIngredientBottomSheetModal, state.recipe)
+            HomeBottomSheetIngredients(
+                events = events,
+                onDismiss = triggerIngredientBottomSheetModal,
+                recipe = state.recipe
+            )
         }
         if (showFeedOnUI) {
             VideoPager(
                 videoList = state.videoList,
                 initialPage = initialPage,
-                viewModel = viewModel,
+                events = events,
                 modifier = modifier,
                 localDensity = localDensity,
                 onInfoClick = triggerIngredientBottomSheetModal,

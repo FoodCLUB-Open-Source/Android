@@ -4,7 +4,8 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.domain.models.recipes.Recipe
 import android.kotlin.foodclub.utils.composables.CustomSlider
-import android.kotlin.foodclub.viewModels.home.HomeViewModel
+import android.kotlin.foodclub.viewModels.home.home.HomeEvents
+import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,12 +46,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeBottomSheetIngredients(onDismiss: () -> Unit, recipe: Recipe?) {
+fun HomeBottomSheetIngredients(
+    events: HomeEvents,
+    onDismiss: () -> Unit,
+    recipe: Recipe?
+) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 240.dp
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isSmallScreen by remember { mutableStateOf(false) }
-
-    val viewModel: HomeViewModel = hiltViewModel()
 
     if (screenHeight <= 440.dp) {
         isSmallScreen = true
@@ -207,7 +210,7 @@ fun HomeBottomSheetIngredients(onDismiss: () -> Unit, recipe: Recipe?) {
                             .fillMaxWidth(),
                         colors = defaultButtonColors(),
                         contentPadding = PaddingValues(15.dp),
-                        onClick = { viewModel.addIngredientsToBasket() }
+                        onClick = { events.addIngredientsToBasket() }
                     ) {
                         Text(
                             "Add to my shopping list",

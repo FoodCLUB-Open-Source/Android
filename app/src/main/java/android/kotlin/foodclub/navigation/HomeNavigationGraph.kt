@@ -31,7 +31,7 @@ import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.viewModels.home.DiscoverViewModel
 import android.kotlin.foodclub.viewModels.home.FollowerFollowingViewModel
 import android.kotlin.foodclub.viewModels.home.GalleryViewModel
-import android.kotlin.foodclub.viewModels.home.HomeViewModel
+import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
 import android.kotlin.foodclub.viewModels.home.MyBasketViewModel
 import android.kotlin.foodclub.viewModels.home.ProfileViewModel
 import androidx.compose.runtime.LaunchedEffect
@@ -60,7 +60,7 @@ fun NavGraphBuilder.homeNavigationGraph(
 
             HomeView(
                 navController = navController,
-                viewModel = viewModel,
+                events = viewModel,
                 triggerStoryView = triggerStory,
                 state = state.value
             )

@@ -8,7 +8,8 @@ import android.kotlin.foodclub.utils.composables.LikeButton
 import android.kotlin.foodclub.utils.composables.PlayPauseButton
 import android.kotlin.foodclub.utils.composables.VideoLayout
 import android.kotlin.foodclub.utils.composables.VideoScroller
-import android.kotlin.foodclub.viewModels.home.HomeViewModel
+import android.kotlin.foodclub.viewModels.home.home.HomeEvents
+import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -37,7 +38,7 @@ import kotlinx.coroutines.launch
 fun VideoPager(
     videoList: List<VideoModel>,
     initialPage: Int?,
-    viewModel: HomeViewModel,
+    events: HomeEvents,
     modifier: Modifier,
     localDensity: Density,
     onInfoClick: () -> Unit,
@@ -62,7 +63,7 @@ fun VideoPager(
         LaunchedEffect(pagerState.currentPage) { videoViewed = false }
         LaunchedEffect(videoViewed) {
             if (videoViewed) {
-                viewModel.userViewsPost(videoList[pagerState.currentPage].videoId)
+                events.userViewsPost(videoList[pagerState.currentPage].videoId)
             }
         }
 
@@ -114,7 +115,7 @@ fun VideoPager(
                 LikeButton(doubleTapState) {
                     isLiked = !isLiked
                     coroutineScope.launch {
-                        viewModel.updatePostLikeStatus(currentVideo.videoId, isLiked)
+                        events.updatePostLikeStatus(currentVideo.videoId, isLiked)
                     }
                 }
                 PlayPauseButton(buttonVisibility = pauseButtonVisibility)
@@ -129,19 +130,19 @@ fun VideoPager(
                     onLikeClick = {
                         isLiked = !isLiked
                         coroutineScope.launch {
-                            viewModel.updatePostLikeStatus(currentVideo.videoId, isLiked)
+                            events.updatePostLikeStatus(currentVideo.videoId, isLiked)
                         }
                     },
                     onBookmarkClick = {
                         isBookmarked = !isBookmarked
                         coroutineScope.launch {
-                            viewModel.updatePostBookmarkStatus(
+                            events.updatePostBookmarkStatus(
                                 currentVideo.videoId,
                                 isBookmarked
                             )
                         }
                     },
-                    onInfoClick = {viewModel.getRecipe(197); onInfoClick()},
+                    onInfoClick = {events.getRecipe(197); onInfoClick()},
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)
