@@ -124,6 +124,8 @@
     <string name="accept_terms">Accept terms and conditions</string>
     <string name="please_accept_terms">Please accept the terms and conditions</string>
     <string name="proceed">Proceed</string>
+
+   Home Screens
     - View Stories
     <string name="profile_image">Profile Image</string>
     - Uploading
@@ -188,7 +190,7 @@
     <string name="successfully_added"> Successfully added %1$d ingredient in your digital pantry, now you cna start your FoodCLUB journey!</string>
     <string name="scanning_completed_heading">Scanning completed!</string>
     <string name="ingredients_import_notification">%1$d items were detected in your fridge
-        and the results will be imported now...</string>
+        and the results will be imported now…</string>
     - Profile
     <string name="loading">Loading…</string>
     <string name="followers">Followers</string>
@@ -352,6 +354,15 @@
     <string name="bookmark">Bookmark</string>
     - CreatorsViewDraggableImageText
     <string name="textfield_placeholder">WRITE YOUR RECIPE NAME HERE</string>
-
+    - Scan
+    <string name="scan_my_fridge">Scan My Fridge</string>
+    <string name="scan">Scan</string>
+    <string name="maybe_later">Maybe Later</string>
+    <string name="once_youve_finished_scanning">Once you\'ve finished scanning, you can use Search to find ingredients you need</string>
+    <string name="scan_in_progress">Scan in progress…</string>
+    <string name="scan_complete">Scan completed! \nCheckout the scan results below</string>
+    <string name="scan_again">Scan Again</string>
+    <string name="scan_more">Scan More</string>
+    <string name="next">Next</string>
 
 </resources>
