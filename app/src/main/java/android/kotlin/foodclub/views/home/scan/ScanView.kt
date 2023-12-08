@@ -132,14 +132,14 @@ fun ScanView(
 
             "off" -> {
                 Text(
-                    text = "Once you've finished scanning, you can use Search to find ingredients you need",
+                    text = stringResource(id = R.string.once_youve_finished_scanning),
                     modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_10)),
                     color = Color.Gray,
                     fontFamily = Montserrat,
                     textAlign = TextAlign.Center
                 )
-                Button1text = "Maybe Later"
-                Button2text = "Scan"
+                Button1text = stringResource(id = R.string.maybe_later)
+                Button2text = stringResource(id = R.string.scan)
                 onclick1 = { navController.navigate(BottomBarScreenObject.Play.route) }
                 onclick2 = {
                     scanState = "Scanning"
@@ -152,7 +152,7 @@ fun ScanView(
             }
 
             "Scanning" -> Text(
-                text = "Scan in process... ",
+                text = stringResource(id = R.string.scan_in_progress),
                 modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_10)),
                 color = Color.Gray,
                 fontFamily = Montserrat,
@@ -161,14 +161,14 @@ fun ScanView(
 
             "Completed" -> {
                 Text(
-                    text = "Scan completed! \nCheckout the scan results below",
+                    text = stringResource(id = R.string.scan_complete),
                     modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_10)),
                     color = Color.Gray,
                     fontFamily = Montserrat,
                     textAlign = TextAlign.Center
                 )
-                Button1text = "Scan Again"
-                Button2text = "Next"
+                Button1text = stringResource(id = R.string.scan_again)
+                Button2text = stringResource(id = R.string.next)
                 onclick1 = {
 
                     navController.navigate("ScanView_route")
@@ -210,11 +210,11 @@ fun ScanView(
 
                                     FabButtonItem(
                                         iconRes = Icons.Filled.Refresh,
-                                        label = "Scan again"
+                                        label = stringResource(id = R.string.scan_again)
                                     ),
                                     FabButtonItem(
                                         iconRes = Icons.Filled.AddCircle,
-                                        label = "Scan more"
+                                        label = stringResource(id = R.string.scan_more)
                                     ),
 
                                     ),
@@ -380,7 +380,7 @@ fun ScanView(
                                         .size(dimensionResource(id = R.dimen.dim_35))
                                 )
                                 Text(
-                                    text = "Next",
+                                    text = stringResource(id = R.string.next),
                                     fontFamily = Montserrat,
                                     )
                             }
@@ -422,7 +422,7 @@ fun topbackbar(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Scan My Fridge",
+                        text = stringResource(id = R.string.scan_my_fridge),
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
@@ -442,7 +442,6 @@ fun topbackbar(
                     )
                 },
                 actions = {
-                    // Additional navigation icon on the right
                     Icon(
                         imageVector = Icons.Default.Clear,
                         contentDescription = null,
