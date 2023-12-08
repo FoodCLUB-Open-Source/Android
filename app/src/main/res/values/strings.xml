@@ -335,6 +335,8 @@
      - Video Layout
     <string name="info">Info</string>
     <string name="bookmark">Bookmark</string>
+    - CreatorsViewDraggableImageText
+    <string name="textfield_placeholder">WRITE YOUR RECIPE NAME HERE</string>
 
 
 </resources>

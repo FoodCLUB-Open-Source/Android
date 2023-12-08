@@ -102,6 +102,9 @@ dependencies {
     kapt("androidx.room:room-compiler:2.6.0")
     implementation("androidx.room:room-ktx:2.6.0")
 
+    // ffmpeg
+    implementation ("com.arthenica:ffmpeg-kit-full:6.0-2")
+
     implementation "androidx.navigation:navigation-compose:2.6.0"
     implementation "androidx.core:core-splashscreen:1.0.1"
     implementation("androidx.compose.foundation:foundation:1.6.0-alpha01")
