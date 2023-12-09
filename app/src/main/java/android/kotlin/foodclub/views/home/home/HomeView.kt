@@ -101,8 +101,8 @@ fun HomeView(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(95.dp)
-                .alpha(0.4f)
                 .background(color = Color(0xFF424242))
+                .alpha(0.4f)
         )
         if (showStories) {
             Image(
@@ -170,7 +170,11 @@ fun HomeView(
         modifier = Modifier.height(screenHeightMinusBottomNavItem)
     ) {
         if (showIngredientSheet) {
-            HomeBottomSheetIngredients(triggerIngredientBottomSheetModal, state.recipe)
+            HomeBottomSheetIngredients(
+                triggerIngredientBottomSheetModal,
+                state.recipe,
+                onAddToBasket = { viewModel.addIngredientsToBasket()}
+            )
         }
         if (showFeedOnUI) {
             VideoPager(
