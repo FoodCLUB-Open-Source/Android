@@ -93,12 +93,12 @@ fun ProfileView(
     var imageUri: Uri? by remember { mutableStateOf(null) }
 
     LaunchedEffect(key1 = true) {
-        state.dataStore?.getImage()?.collect { image->
+        viewModel.state.value.dataStore?.getImage()?.collect { image->
             if (image != null) {
                 imageUri = Uri.parse(image)
             }else{
                 imageUri = null
-                Log.i("ProfileView", "NULL IMG URI")
+                Log.e("ProfileView", "NULL IMG URI")
             }
         }
     }

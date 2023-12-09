@@ -1,13 +1,14 @@
 package android.kotlin.foodclub.room.util
 
 import android.kotlin.foodclub.utils.helpers.Resource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 
-inline fun <reified T, reified E> daoRequestFlow(call: () -> T): Resource<T, E> {
+suspend inline fun <reified T, reified E> daoRequestWithFlow(call: () -> Flow<T>): Resource<T, E> {
     return try {
-        val result = call()
+        val result = call().first()
         Resource.Success(result)
     } catch (e: Exception) {
         Resource.Error("Room Error $e.")
     }
 }
-
