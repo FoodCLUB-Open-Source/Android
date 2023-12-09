@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.viewModels.home
 
 import android.kotlin.foodclub.domain.models.home.VideoModel
+import android.kotlin.foodclub.domain.models.products.MyBasketCache
 import android.kotlin.foodclub.domain.models.profile.UserDetailsModel
 import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.helpers.Resource
@@ -9,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.repositories.PostRepository
+import android.kotlin.foodclub.repositories.RecipeRepository
 import android.kotlin.foodclub.room.entity.ProfileModel
 import android.kotlin.foodclub.utils.helpers.StoreData
 import android.kotlin.foodclub.utils.helpers.UiEvent
@@ -31,7 +33,9 @@ class ProfileViewModel @Inject constructor(
     private val postRepository: PostRepository,
     private val profileRepository: ProfileRepository,
     val sessionCache: SessionCache,
-    val storeData: StoreData
+    val storeData: StoreData,
+    private val recipeRepository: RecipeRepository,
+    private val basketCache: MyBasketCache
 ) : ViewModel() {
 
     companion object {
@@ -108,6 +112,31 @@ class ProfileViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun getRecipe(postId: Long) {
+        viewModelScope.launch {
+            when(val resource = recipeRepository.getRecipe(postId)) {
+                is Resource.Success -> {
+                    _state.update { it.copy(
+                        recipe = resource.data
+                    ) }
+                }
+                is Resource.Error -> {
+                    _state.update { it.copy(error = resource.message!!) }
+                }
+            }
+        }
+    }
+
+    fun addIngredientsToBasket() {
+        val basket = basketCache.getBasket()
+        val selectedIngredients = _state.value.recipe?.ingredients?.filter { it.isSelected }
+        selectedIngredients?.forEach {
+            it.isSelected = false
+            basket.addIngredient(it.copy())
+        }
+        basketCache.saveBasket(basket)
     }
 
     private fun insertLocalUserDetails(profileModel: ProfileModel){
