@@ -14,6 +14,7 @@ import android.kotlin.foodclub.utils.composables.CustomDatePicker
 import android.kotlin.foodclub.utils.composables.EditIngredientQuantityPicker
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
 import android.kotlin.foodclub.utils.helpers.ValueParser
+import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -71,7 +72,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import android.kotlin.foodclub.viewModels.home.DiscoverViewModel
+import android.kotlin.foodclub.viewModels.home.discover.DiscoverViewModel
 import android.kotlin.foodclub.views.home.myDigitalPantry.TitlesSection
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -130,10 +131,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun DiscoverView(
     navController: NavController,
-    viewModel: DiscoverViewModel,
+    events: DiscoverEvents,
     state: DiscoverState
 ) {
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp - dimensionResource(id = R.dimen.dim_240)
+    val screenHeight =
+        LocalConfiguration.current.screenHeightDp.dp - dimensionResource(id = R.dimen.dim_240)
 
     var isSmallScreen by remember { mutableStateOf(false) }
     if (screenHeight <= dimensionResource(id = R.dimen.dim_440)) {
@@ -182,10 +184,6 @@ fun DiscoverView(
         todayContentColor = Color.Red
     )
 
-    viewModel.getPostsByWorld(197)
-    viewModel.getPostsByUserId()
-    viewModel.myFridgePosts()
-
     val initialPage = 0
     val pagerState1 = rememberPagerState(
         initialPage = initialPage,
@@ -214,7 +212,7 @@ fun DiscoverView(
             MainSearchBar(
                 searchTextValue = state.mainSearchText,
                 navController = navController,
-                basketCache = viewModel.myBasketCache
+                basketCache = state.myBasketCache!!
             )
         }
 
@@ -228,18 +226,18 @@ fun DiscoverView(
         }
 
         item {
-            if (mainTabIndex == 0){
+            if (mainTabIndex == 0) {
                 SubSearchBar(
                     navController = navController,
                     searchTextValue = state.ingredientSearchText,
-                    onSearch = { input->
+                    onSearch = { input ->
                         searchText = input
-                        viewModel.onSubSearchTextChange(input)
+                        events.onSubSearchTextChange(input)
                     }
                 )
-            }else{
+            } else {
                 // TODO figure out what do show here
-                Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_30)))
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_30)))
             }
         }
 
@@ -259,7 +257,7 @@ fun DiscoverView(
                     ingredient = state.ingredientToEdit!!,
                     onDismissRequest = { isSheetOpen = it },
                     onEdit = {
-                        viewModel.updateIngredient(it)
+                        events.updateIngredient(it)
                     }
                 )
             }
@@ -280,15 +278,18 @@ fun DiscoverView(
                             if (date != null) {
                                 selectedDate = date
                                 state.ingredientToEdit!!.expirationDate = selectedDate
-                                viewModel.updateIngredient(state.ingredientToEdit!!)
+                                events.updateIngredient(state.ingredientToEdit!!)
                             }
                         }
                     )
                 }
             }
-            if (isDialogOpen){
-                AddIngredientDialog(stringResource(R.string.added), stringResource(R.string.successfully_added))
-                LaunchedEffect(key1 = true){
+            if (isDialogOpen) {
+                AddIngredientDialog(
+                    stringResource(R.string.added),
+                    stringResource(R.string.successfully_added)
+                )
+                LaunchedEffect(key1 = true) {
                     delay(3000)
                     isDialogOpen = false
                 }
@@ -302,45 +303,43 @@ fun DiscoverView(
                 if (searchText.isBlank()) {
                     IngredientsList(
                         Modifier,
-                        viewModel = viewModel,
+                        events = events,
                         productsList = state.userIngredients,
                         userIngredientsList = state.userIngredients,
                         onEditQuantityClicked = {
                             isSheetOpen = true
-                            viewModel.updateIngredient(it)
+                            events.updateIngredient(it)
                         },
                         onDateClicked = {
-                            viewModel.updateIngredient(it)
+                            events.updateIngredient(it)
                             isDatePickerVisible = true
-                            viewModel.updateIngredient(it)
+                            events.updateIngredient(it)
                         },
                         onIngredientAdd = {},
                         onDeleteIngredient = {
-                            viewModel.deleteIngredientFromList(it)
+                            events.deleteIngredientFromList(it)
                         }
                     )
                 } else {
                     IngredientsList(
                         Modifier,
-                        viewModel = viewModel,
+                        events = events,
                         productsList = state.searchResults,
                         userIngredientsList = state.userIngredients,
                         onEditQuantityClicked = {
-                            viewModel.updateIngredient(it)
-                            viewModel.updateIngredient(it)
+                            events.updateIngredient(it)
                         },
                         onDateClicked = {
                             isDatePickerVisible = true
-                            viewModel.updateIngredient(it)
-                            viewModel.updateIngredient(it)
+                            events.updateIngredient(it)
                         },
                         onIngredientAdd = {
-                            viewModel.addToUserIngredients(it)
+                            events.addToUserIngredients(it)
                             searchText = ""
                             isDialogOpen = true
                         },
                         onDeleteIngredient = {
-                            viewModel.deleteIngredientFromList(it)
+                            events.deleteIngredientFromList(it)
                         }
                     )
                 }
@@ -374,14 +373,14 @@ fun DiscoverView(
                     flingBehavior = fling,
                     modifier = Modifier
                         .height(dimensionResource(id = R.dimen.dim_1000))
-                        .padding(top =dimensionResource(id = R.dimen.dim_0)),
+                        .padding(top = dimensionResource(id = R.dimen.dim_0)),
                     state = pagerState1
                 ) {
                     Box(
                         Modifier
                             .fillMaxWidth()
                             .padding(
-                                top =dimensionResource(id = R.dimen.dim_5),
+                                top = dimensionResource(id = R.dimen.dim_5),
                                 start = dimensionResource(id = R.dimen.dim_15),
                                 end = dimensionResource(id = R.dimen.dim_15),
                                 bottom = dimensionResource(id = R.dimen.dim_100)
@@ -392,13 +391,13 @@ fun DiscoverView(
 
                             if (homePosts != null) {
                                 items(homePosts!!) { dataItem ->
-                                    viewModel.getPostData(dataItem.videoId)
+                                    events.getPostData(dataItem.videoId)
                                     GridItem2(navController, dataItem, userName)
                                 }
                             } else if (worldPosts != null) {
                                 items(worldPosts.value) { dataItem ->
 
-                                    viewModel.getPostData(dataItem.videoId)
+                                    events.getPostData(dataItem.videoId)
                                     GridItem2(navController, dataItem, userName)
                                 }
                             }
@@ -447,7 +446,12 @@ fun MainSearchBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = dimensionResource(id = R.dimen.dim_60), end = dimensionResource(id = R.dimen.dim_20), start = dimensionResource(id = R.dimen.dim_20), bottom = dimensionResource(id = R.dimen.dim_10)),
+            .padding(
+                top = dimensionResource(id = R.dimen.dim_60),
+                end = dimensionResource(id = R.dimen.dim_20),
+                start = dimensionResource(id = R.dimen.dim_20),
+                bottom = dimensionResource(id = R.dimen.dim_10)
+            ),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -455,7 +459,7 @@ fun MainSearchBar(
             modifier = Modifier
                 .fillMaxWidth(0.85f)
                 .clip(
-                    RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
+                    RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                 )
                 .pointerInput(Unit) {
                     navController.navigate(HomeOtherRoutes.MySearchView.route)
@@ -472,7 +476,7 @@ fun MainSearchBar(
             },
             placeholder = {
                 Text(
-                    modifier = Modifier.padding(top =dimensionResource(id = R.dimen.dim_3)),
+                    modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_3)),
                     text = stringResource(id = R.string.search_for),
                     color = Color.Gray,
                     textAlign = TextAlign.Center
@@ -512,7 +516,10 @@ fun MainSearchBar(
                 },
                 badge = {
                     Badge(
-                        modifier = Modifier.offset(x = (-5).dp, y =dimensionResource(id = R.dimen.dim_5)),
+                        modifier = Modifier.offset(
+                            x = (-5).dp,
+                            y = dimensionResource(id = R.dimen.dim_5)
+                        ),
                         containerColor = foodClubGreen
                     )
                     { Text(text = (basketCount).toString(), color = Color.Black) }
@@ -540,7 +547,12 @@ fun MainTabRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = dimensionResource(id = R.dimen.dim_20), end = dimensionResource(id = R.dimen.dim_20), top = dimensionResource(id = R.dimen.dim_10), bottom = dimensionResource(id = R.dimen.dim_10)),
+            .padding(
+                start = dimensionResource(id = R.dimen.dim_20),
+                end = dimensionResource(id = R.dimen.dim_20),
+                top = dimensionResource(id = R.dimen.dim_10),
+                bottom = dimensionResource(id = R.dimen.dim_10)
+            ),
         horizontalArrangement = horizontalArrangement
     ) {
         tabsList.forEachIndexed { index, data ->
@@ -556,7 +568,7 @@ fun MainTabRow(
                     .drawBehind {
                         if (isSelected) {
                             val strokeWidthPx = 2.dp.toPx()
-                            val topPaddingPx =4.dp.toPx()
+                            val topPaddingPx = 4.dp.toPx()
                             val underlineHeight = 2.dp.toPx()
                             val verticalOffset = size.height - (underlineHeight / 2) + topPaddingPx
                             drawLine(
@@ -593,7 +605,12 @@ fun SubSearchBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = dimensionResource(id = R.dimen.dim_20), end = dimensionResource(id = R.dimen.dim_20), start = dimensionResource(id = R.dimen.dim_20), bottom = dimensionResource(id = R.dimen.dim_15)),
+            .padding(
+                top = dimensionResource(id = R.dimen.dim_20),
+                end = dimensionResource(id = R.dimen.dim_20),
+                start = dimensionResource(id = R.dimen.dim_20),
+                bottom = dimensionResource(id = R.dimen.dim_15)
+            ),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -601,7 +618,7 @@ fun SubSearchBar(
             modifier = Modifier
                 .fillMaxWidth(0.68f)
                 .clip(
-                    RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
+                    RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                 ),
             colors = TextFieldDefaults.textFieldColors(
                 focusedIndicatorColor = Color.Transparent,
@@ -615,7 +632,7 @@ fun SubSearchBar(
             },
             placeholder = {
                 Text(
-                    modifier = Modifier.padding(top =dimensionResource(id = R.dimen.dim_3)),
+                    modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_3)),
                     text = stringResource(id = R.string.search_to),
                     color = Color.Gray,
                     textAlign = TextAlign.Center
@@ -678,7 +695,12 @@ fun SubTabRow(
     var subTabIndex by remember { mutableIntStateOf(0) }
 
     LazyRow(
-        modifier = Modifier.padding(start = dimensionResource(id = R.dimen.dim_20), end = dimensionResource(id = R.dimen.dim_20), bottom =dimensionResource(id = R.dimen.dim_5), top = dimensionResource(id = R.dimen.dim_10)),
+        modifier = Modifier.padding(
+            start = dimensionResource(id = R.dimen.dim_20),
+            end = dimensionResource(id = R.dimen.dim_20),
+            bottom = dimensionResource(id = R.dimen.dim_5),
+            top = dimensionResource(id = R.dimen.dim_10)
+        ),
         content = {
             itemsIndexed(subTabItemsList) { index, data ->
                 val selected = subTabIndex == index
@@ -723,7 +745,7 @@ fun SubTabRow(
 @Composable
 fun IngredientsList(
     modifier: Modifier,
-    viewModel: DiscoverViewModel,
+    events: DiscoverEvents,
     productsList: List<Ingredient>,
     onEditQuantityClicked: (Ingredient) -> Unit,
     onDateClicked: (Ingredient) -> Unit,
@@ -745,7 +767,7 @@ fun IngredientsList(
         )
 
         IngredientsListColumn(
-            viewModel = viewModel,
+            events = events,
             productsList = productsList,
             userIngredientsList = userIngredientsList,
             onEditQuantityClicked = { onEditQuantityClicked(it) },
@@ -759,7 +781,7 @@ fun IngredientsList(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IngredientsListColumn(
-    viewModel: DiscoverViewModel,
+    events: DiscoverEvents,
     productsList: List<Ingredient>,
     onEditQuantityClicked: (Ingredient) -> Unit,
     onDateClicked: (Ingredient) -> Unit,
@@ -769,7 +791,10 @@ fun IngredientsListColumn(
 ) {
     LazyColumn(
         modifier = Modifier
-            .padding(start = dimensionResource(id = R.dimen.dim_15), end = dimensionResource(id = R.dimen.dim_15))
+            .padding(
+                start = dimensionResource(id = R.dimen.dim_15),
+                end = dimensionResource(id = R.dimen.dim_15)
+            )
             .background(Color.White)
             .height(dimensionResource(id = R.dimen.dim_275)),
         content = {
@@ -833,15 +858,15 @@ fun IngredientsListColumn(
                             item = item,
                             userIngredientsList = userIngredientsList,
                             onEditQuantityClicked = {
-                                viewModel.updateIngredient(it)
+                                events.updateIngredient(it)
                                 onEditQuantityClicked(item)
                             },
                             onDateClicked = {
-                                viewModel.updateIngredient(it)
+                                events.updateIngredient(it)
                                 onDateClicked(item)
                             },
                             onAddItemClicked = {
-                                viewModel.updateIngredient(it)
+                                events.updateIngredient(it)
                                 onIngredientAdd(item)
                             }
                         )
@@ -849,7 +874,11 @@ fun IngredientsListColumn(
                 )
 
                 Spacer(Modifier.height(dimensionResource(id = R.dimen.dim_8)))
-                Divider(thickness =dimensionResource(id = R.dimen.dim_1), modifier = Modifier.alpha(0.5f), color = Color.LightGray)
+                Divider(
+                    thickness = dimensionResource(id = R.dimen.dim_1),
+                    modifier = Modifier.alpha(0.5f),
+                    color = Color.LightGray
+                )
                 Spacer(Modifier.height(dimensionResource(id = R.dimen.dim_8)))
 
             }
@@ -895,7 +924,7 @@ fun SingleSearchIngredientItem(
                         .clip(CircleShape)
                 )
                 Text(
-                    modifier = modifier.padding(start =dimensionResource(id = R.dimen.dim_6)),
+                    modifier = modifier.padding(start = dimensionResource(id = R.dimen.dim_6)),
                     text = item.type,
                     fontWeight = FontWeight(500),
                     lineHeight = 19.5.sp,
@@ -911,7 +940,7 @@ fun SingleSearchIngredientItem(
             ) {
                 Text(
                     modifier = modifier
-                        .padding(start =dimensionResource(id = R.dimen.dim_6))
+                        .padding(start = dimensionResource(id = R.dimen.dim_6))
                         .clickable {
                             onEditQuantityClicked(item)
                         },
@@ -999,7 +1028,10 @@ fun EditIngredientBottomModal(
         Column(
             modifier = Modifier
                 .heightIn(max = dimensionResource(id = R.dimen.dim_350))
-                .padding(start = dimensionResource(id = R.dimen.dim_10), end = dimensionResource(id = R.dimen.dim_10))
+                .padding(
+                    start = dimensionResource(id = R.dimen.dim_10),
+                    end = dimensionResource(id = R.dimen.dim_10)
+                )
         ) {
             EditIngredientQuantityPicker(
                 ingredient = ingredient,
@@ -1016,17 +1048,17 @@ fun EditIngredientBottomModal(
 }
 
 @Composable
-fun AddIngredientDialog(headline: String, text: String){
+fun AddIngredientDialog(headline: String, text: String) {
     Dialog(
         properties = DialogProperties(dismissOnClickOutside = false, dismissOnBackPress = false),
         onDismissRequest = { }) {
         Card(
             modifier = Modifier
-                .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
+                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
                 .width(dimensionResource(id = R.dimen.dim_500))
                 .fillMaxHeight(0.2f)
                 .background(Color.White),
-            shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_16)),
+            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16)),
             elevation = CardDefaults.cardElevation(
                 defaultElevation = dimensionResource(id = R.dimen.dim_10)
             ),
@@ -1046,7 +1078,7 @@ fun AddIngredientDialog(headline: String, text: String){
                 ) {
                     Box(
                         modifier = Modifier
-                            .size( dimensionResource(id = R.dimen.dim_34))
+                            .size(dimensionResource(id = R.dimen.dim_34))
                             .clip(CircleShape)
                             .background(foodClubGreen),
                         contentAlignment = Alignment.Center
@@ -1070,7 +1102,10 @@ fun AddIngredientDialog(headline: String, text: String){
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = dimensionResource(id = R.dimen.dim_10), horizontal = dimensionResource(id = R.dimen.dim_30)),
+                        .padding(
+                            vertical = dimensionResource(id = R.dimen.dim_10),
+                            horizontal = dimensionResource(id = R.dimen.dim_30)
+                        ),
                 ) {
                     Text(
                         text = text,
@@ -1088,7 +1123,10 @@ fun AddIngredientDialog(headline: String, text: String){
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TabHomeDiscover(
-    tabItems: List<String>, pagerState1: PagerState, scope: CoroutineScope, fontSize: TextUnit
+    tabItems: List<String>,
+    pagerState1: PagerState,
+    scope: CoroutineScope,
+    fontSize: TextUnit
 ) {
 
     TabRow(
@@ -1100,7 +1138,7 @@ fun TabHomeDiscover(
         indicator = { tabPositions ->
             TabRowDefaults.Indicator(
                 modifier = Modifier.tabIndicatorOffset(tabPositions[pagerState1.currentPage]),
-                height =dimensionResource(id = R.dimen.dim_0),
+                height = dimensionResource(id = R.dimen.dim_0),
                 color = Color.Black
             )
         }
@@ -1142,12 +1180,17 @@ fun TabHomeDiscover(
 
 
 @Composable
-fun GridItem2(navController: NavController, dataItem: VideoModel, userName: String) {
+fun GridItem2(
+    navController: NavController,
+    dataItem: VideoModel,
+    userName: String
+) {
     Card(
         modifier = Modifier
             .height(dimensionResource(id = R.dimen.dim_272))
             .width(dimensionResource(id = R.dimen.dim_178))
-            .padding(dimensionResource(id = R.dimen.dim_10)), shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
+            .padding(dimensionResource(id = R.dimen.dim_10)),
+        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
     ) {
 
         Box(
@@ -1167,7 +1210,7 @@ fun GridItem2(navController: NavController, dataItem: VideoModel, userName: Stri
                 Modifier
                     .fillMaxSize()
                     .padding(dimensionResource(id = R.dimen.dim_10)),
-                        verticalArrangement = Arrangement.Bottom
+                verticalArrangement = Arrangement.Bottom
             ) {
                 Text(
                     text = dataItem.videoStats.displayLike,

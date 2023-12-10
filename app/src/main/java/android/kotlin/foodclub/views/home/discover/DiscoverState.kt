@@ -4,6 +4,7 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.enums.QuantityUnit
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.products.Ingredient
+import android.kotlin.foodclub.domain.models.products.MyBasketCache
 import android.kotlin.foodclub.domain.models.products.ProductsData
 import androidx.compose.ui.graphics.ImageBitmap
 
@@ -20,7 +21,8 @@ data class DiscoverState(
     val error : String,
     val capturedImage : ImageBitmap?,
     val ingredientToEdit : Ingredient?,
-    val scanResultItemList : List<Ingredient>
+    val scanResultItemList : List<Ingredient>,
+    val myBasketCache: MyBasketCache?,
 ) {
     companion object {
         fun default() = DiscoverState(
@@ -76,7 +78,8 @@ data class DiscoverState(
 
 
                 // Add more items as needed
-            )
+            ),
+            myBasketCache = null,
 
         )
     }

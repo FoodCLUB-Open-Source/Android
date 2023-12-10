@@ -28,7 +28,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
-import android.kotlin.foodclub.viewModels.home.DiscoverViewModel
+import android.kotlin.foodclub.viewModels.home.discover.DiscoverViewModel
 import android.kotlin.foodclub.viewModels.home.FollowerFollowingViewModel
 import android.kotlin.foodclub.viewModels.home.GalleryViewModel
 import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
@@ -111,7 +111,7 @@ fun NavGraphBuilder.homeNavigationGraph(
 
             DiscoverView(
                 navController = navController,
-                viewModel = viewModel,
+                events = viewModel,
                 state = state.value
             )
         }

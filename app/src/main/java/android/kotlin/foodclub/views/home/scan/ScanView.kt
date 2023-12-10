@@ -11,7 +11,7 @@ import android.kotlin.foodclub.utils.composables.FabButtonMain
 import android.kotlin.foodclub.utils.composables.FabButtonSub
 import android.kotlin.foodclub.utils.composables.MultiFloatingActionButton
 import android.kotlin.foodclub.utils.composables.engine.createImageCaptureUseCase
-import android.kotlin.foodclub.viewModels.home.DiscoverViewModel
+import android.kotlin.foodclub.viewModels.home.discover.DiscoverViewModel
 import android.kotlin.foodclub.views.home.discover.AddIngredientDialog
 import android.kotlin.foodclub.views.home.discover.DiscoverState
 import android.os.Build
