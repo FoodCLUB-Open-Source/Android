@@ -34,7 +34,7 @@ class DiscoverViewModel @Inject constructor(
     private val profileRepo: ProfileRepository,
     private val productsRepo: ProductRepository,
     private val sessionCache: SessionCache,
-    val myBasketCache: MyBasketCache
+    private val myBasketCache: MyBasketCache
 ) : ViewModel(), DiscoverEvents {
 
     companion object {

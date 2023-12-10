@@ -238,7 +238,7 @@ fun NavGraphBuilder.homeNavigationGraph(
 
             MyDigitalPantryView(
                 navController = navController,
-                viewModel = viewModel,
+                events = viewModel,
                 state = state.value
             )
         }

@@ -8,6 +8,7 @@ import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.utils.composables.EditIngredientQuantityPicker
 import android.kotlin.foodclub.utils.composables.CustomDatePicker
 import android.kotlin.foodclub.utils.helpers.ValueParser
+import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverViewModel
 import android.kotlin.foodclub.views.home.discover.DiscoverState
 import android.kotlin.foodclub.views.home.discover.itemExpirationDate
@@ -89,7 +90,7 @@ import coil.compose.AsyncImage
 @Composable
 fun MyDigitalPantryView(
     navController: NavController,
-    viewModel: DiscoverViewModel,
+    events: DiscoverEvents,
     state: DiscoverState
 ) {
     val modifier = Modifier
@@ -178,7 +179,7 @@ fun MyDigitalPantryView(
                     EditIngredientView(
                         ingredient = state.ingredientToEdit!!,
                         onEditIngredient = { ingredient ->
-                            viewModel.updateIngredient(ingredient)
+                            events.updateIngredient(ingredient)
                         }
                     )
                 } else {
@@ -187,7 +188,7 @@ fun MyDigitalPantryView(
                         modifier = Modifier,
                         searchTextValue = searchText,
                         onSearch = { input ->
-                            viewModel.onSubSearchTextChange(input)
+                            events.onSubSearchTextChange(input)
                         }
                     )
                     Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_15)))
@@ -197,7 +198,7 @@ fun MyDigitalPantryView(
                         productsList = state.userIngredients,
                         onAddDateClicked = { isDatePickerVisible = true },
                         onEditClicked = { item ->
-                            viewModel.updateIngredient(item)
+                            events.updateIngredient(item)
                             isShowEditScreen = !isShowEditScreen
                         },
                         view = stringResource(id = R.string.digitalPantry)
