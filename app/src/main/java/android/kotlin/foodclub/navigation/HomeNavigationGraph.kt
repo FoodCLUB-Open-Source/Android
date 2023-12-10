@@ -125,7 +125,7 @@ fun NavGraphBuilder.homeNavigationGraph(
             {
                 ScanView(
                     navController = navController,
-                    viewModel = viewModel,
+                    events = viewModel,
                     state = state.value
                 )
             }
@@ -136,7 +136,7 @@ fun NavGraphBuilder.homeNavigationGraph(
 
             ScanResultView(
                 navController = navController,
-                viewModel = viewModel,
+                events = viewModel,
                 state = state.value
             )
 

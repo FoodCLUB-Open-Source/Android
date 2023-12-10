@@ -215,9 +215,35 @@ class DiscoverViewModel @Inject constructor(
         }
     }
 
-    fun addScanListToUserIngredients(ingredient: List<Ingredient>) {
+    override fun scan(imageCapture: ImageCapture, context: Context) {
+        imageCapture.takePicture(
+            ContextCompat.getMainExecutor(context),
+            object : ImageCapture.OnImageCapturedCallback() {
+                override fun onCaptureSuccess(image: ImageProxy) {
+                    val buffer = image.planes[0].buffer
+                    val bytes = ByteArray(buffer.remaining())
+
+                    buffer.get(bytes)
+
+                    val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                    _state.update {
+                        it.copy(
+                            capturedImage = bitmap.asImageBitmap()
+                        )
+                    }
+                    image.close()
+                }
+
+                override fun onError(exception: ImageCaptureException) {
+                    // Handle capture error
+                }
+            }
+        )
+    }
+
+    override fun addScanListToUserIngredients(ingredients: List<Ingredient>) {
         val updatedList = state.value.userIngredients.toMutableList()
-        updatedList.addAll(ingredient)
+        updatedList.addAll(ingredients)
         _state.update {
             it.copy(
                 userIngredients = updatedList,
@@ -245,35 +271,6 @@ class DiscoverViewModel @Inject constructor(
             }
         }
     }
-
-
-    fun scan(imageCapture: ImageCapture, context: Context) {
-        imageCapture.takePicture(
-            ContextCompat.getMainExecutor(context),
-            object : ImageCapture.OnImageCapturedCallback() {
-                override fun onCaptureSuccess(image: ImageProxy) {
-                    val buffer = image.planes[0].buffer
-                    val bytes = ByteArray(buffer.remaining())
-
-                    buffer.get(bytes)
-
-                    val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                    _state.update {
-                        it.copy(
-                            capturedImage = bitmap.asImageBitmap()
-                        )
-                    }
-                    image.close()
-                }
-
-                override fun onError(exception: ImageCaptureException) {
-                    // Handle capture error
-                }
-            }
-        )
-    }
-
-
 }
 
 
