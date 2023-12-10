@@ -32,7 +32,7 @@ import android.kotlin.foodclub.viewModels.home.DiscoverViewModel
 import android.kotlin.foodclub.viewModels.home.FollowerFollowingViewModel
 import android.kotlin.foodclub.viewModels.home.GalleryViewModel
 import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
-import android.kotlin.foodclub.viewModels.home.MyBasketViewModel
+import android.kotlin.foodclub.viewModels.home.myBasket.MyBasketViewModel
 import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -82,7 +82,6 @@ fun NavGraphBuilder.homeNavigationGraph(
 
             LaunchedEffect(Unit) {viewModel.setUser(userId)}
 
-
             ProfileView(
                 navController = navController,
                 userId = userId,
@@ -98,7 +97,7 @@ fun NavGraphBuilder.homeNavigationGraph(
 
             MyBasketView(
                 navController = navController,
-                viewModel = viewModel,
+                events = viewModel,
                 state = state.value
             )
         }
@@ -224,7 +223,7 @@ fun NavGraphBuilder.homeNavigationGraph(
 
             MyBasketView(
                 navController = navController,
-                viewModel = viewModel,
+                events = viewModel,
                 state = state.value
             )
         }

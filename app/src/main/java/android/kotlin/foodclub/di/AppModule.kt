@@ -5,7 +5,7 @@ import android.kotlin.foodclub.network.retrofit.utils.auth.RefreshTokenManager
 import android.kotlin.foodclub.domain.models.products.MyBasketCache
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.repositories.ProductRepository
-import android.kotlin.foodclub.viewModels.home.MyBasketViewModel
+import android.kotlin.foodclub.viewModels.home.myBasket.MyBasketViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
