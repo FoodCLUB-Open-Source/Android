@@ -46,7 +46,7 @@ fun EditProfileSetting(
             keyboardType = KeyboardType.Text,
             onValueChange = { email = it })
 
-        Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_16)))
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_16)))
 
         ConfirmButton(
             enabled = true,

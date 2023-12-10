@@ -87,7 +87,13 @@ fun SettingsView(
 
         Spacer(modifier = Modifier.height(screenSizeHeight * 0.03f))
 
-        Column(modifier = Modifier.border(width =dimensionResource(id = R.dimen.dim_1), colorGray, RoundedCornerShape(dimensionResource(id = R.dimen.dim_8)))) {
+        Column(
+            modifier = Modifier.border(
+                width = dimensionResource(id = R.dimen.dim_1),
+                colorGray,
+                RoundedCornerShape(dimensionResource(id = R.dimen.dim_8))
+            )
+        ) {
             SettingRow(
                 text = stringResource(id = R.string.help_and_support),
                 iconId = R.drawable.helpandsupport,
@@ -177,8 +183,11 @@ fun SettingsTopBar(
             IconButton(
                 onClick = { navController.navigateUp() },
                 modifier = Modifier
-                    .background(colorGray, RoundedCornerShape(dimensionResource(id = R.dimen.dim_8)))
-                    .size( dimensionResource(id = R.dimen.dim_35)),
+                    .background(
+                        colorGray,
+                        RoundedCornerShape(dimensionResource(id = R.dimen.dim_8))
+                    )
+                    .size(dimensionResource(id = R.dimen.dim_35)),
                 content = {
                     SettingsIcons(
                         size = 20,
@@ -219,7 +228,7 @@ fun SettingsProfile(
             )
         }
 
-        Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_15)))
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_15)))
 
         Row(
             horizontalArrangement = Arrangement.Center,
@@ -274,7 +283,7 @@ fun SettingRow(
         ) {
             SettingsIcons(size = 24, icon = iconId)
 
-            Spacer(modifier = Modifier.width( dimensionResource(id = R.dimen.dim_16)))
+            Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_16)))
 
             SettingsText(text = text, size = 14, weight = FontWeight.Normal, fontC = fontC)
 

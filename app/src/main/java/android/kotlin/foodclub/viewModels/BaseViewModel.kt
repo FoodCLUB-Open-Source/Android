@@ -12,14 +12,16 @@ import javax.inject.Inject
 @HiltViewModel
 class BaseViewModel @Inject constructor(
     val sessionCache: SessionCache
-): ViewModel(){
+) : ViewModel() {
     val currentSession: StateFlow<Session?> get() = sessionCache.session
 
     fun checkSession(navController: NavController) {
-        if(currentSession.value == null) {
-            navController.navigate(Graph.AUTHENTICATION) { popUpTo(Graph.HOME) {
-                inclusive = true
-            }}
+        if (currentSession.value == null) {
+            navController.navigate(Graph.AUTHENTICATION) {
+                popUpTo(Graph.HOME) {
+                    inclusive = true
+                }
+            }
         }
     }
 }
