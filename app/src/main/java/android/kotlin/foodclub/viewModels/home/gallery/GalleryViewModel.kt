@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.viewModels.home
+package android.kotlin.foodclub.viewModels.home.gallery
 
 import android.annotation.SuppressLint
 import android.content.ContentResolver

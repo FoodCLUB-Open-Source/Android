@@ -6,7 +6,6 @@ import android.graphics.Bitmap
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
-import android.kotlin.foodclub.viewModels.home.GalleryViewModel
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build

@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.viewModels.home
+package android.kotlin.foodclub.viewModels.settings
 
 import android.kotlin.foodclub.domain.models.profile.UserDetailsModel
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
@@ -6,9 +6,6 @@ import android.kotlin.foodclub.repositories.SettingsRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.views.settings.SettingsState
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +19,7 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val repository: SettingsRepository,
     val sessionCache: SessionCache
-) : ViewModel() {
+) : ViewModel(), SettingsEvents {
     companion object {
         private val TAG = SettingsViewModel::class.java.simpleName
     }
@@ -36,11 +33,11 @@ class SettingsViewModel @Inject constructor(
         getUserDetails(id)
     }
 
-    fun logout() {
+    override fun logout() {
         sessionCache.clearSession()
     }
 
-    fun changePassword(oldPassword: String, newPassword: String) {
+    override fun changePassword(oldPassword: String, newPassword: String) {
         if (oldPassword == newPassword) {
             _state.update { it.copy(error = "Old and New passwords must be different.") }
             return
@@ -74,7 +71,7 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun updateUserDetails(userId: Long, model: UserDetailsModel) {
+    override fun updateUserDetails(userId: Long, model: UserDetailsModel) {
         viewModelScope.launch {
             when (val resource = repository.updateUserDetails(userId, model)) {
                 is Resource.Success -> {

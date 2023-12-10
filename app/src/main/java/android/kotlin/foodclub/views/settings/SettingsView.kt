@@ -5,7 +5,8 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.navigation.SettingsScreen
 import android.kotlin.foodclub.utils.composables.SettingsLayout
-import android.kotlin.foodclub.viewModels.home.SettingsViewModel
+import android.kotlin.foodclub.viewModels.settings.SettingsEvents
+import android.kotlin.foodclub.viewModels.settings.SettingsViewModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -24,7 +25,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,7 +47,7 @@ val colorRed = Color(android.graphics.Color.parseColor("#C64E0B"))
 @Composable
 fun SettingsView(
     navController: NavHostController,
-    viewModel: SettingsViewModel,
+    events: SettingsEvents,
     state: SettingsState
 ) {
     SettingsLayout(
@@ -129,7 +129,7 @@ fun SettingsView(
             borderColor = Color.Black,
             destination = Graph.AUTHENTICATION,
             navController = navController,
-            onClick = { viewModel.logout() }
+            onClick = { events.logout() }
         )
     }
 }
