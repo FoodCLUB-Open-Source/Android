@@ -29,7 +29,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverViewModel
-import android.kotlin.foodclub.viewModels.home.FollowerFollowingViewModel
+import android.kotlin.foodclub.viewModels.home.follow.FollowerFollowingViewModel
 import android.kotlin.foodclub.viewModels.home.GalleryViewModel
 import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
 import android.kotlin.foodclub.viewModels.home.myBasket.MyBasketViewModel
@@ -191,7 +191,7 @@ fun NavGraphBuilder.homeNavigationGraph(
             it.arguments?.getString("userId")?.let { it1 ->
                 FollowerView(
                     navController = navController,
-                    viewModel = viewModel,
+                    events = viewModel,
                     viewType = FollowViewType.FOLLOWERS.title,
                     state = state.value,
                     userId = it1.toLong()
@@ -210,7 +210,7 @@ fun NavGraphBuilder.homeNavigationGraph(
             it.arguments?.getString("userId")?.let { it1 ->
                 FollowerView(
                     navController = navController,
-                    viewModel = viewModel,
+                    events = viewModel,
                     viewType = FollowViewType.FOLLOWING.title,
                     state = state.value,
                     userId = it1.toLong()

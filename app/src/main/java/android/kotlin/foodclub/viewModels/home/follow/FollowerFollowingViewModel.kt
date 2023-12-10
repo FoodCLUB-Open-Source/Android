@@ -1,6 +1,5 @@
-package android.kotlin.foodclub.viewModels.home
+package android.kotlin.foodclub.viewModels.home.follow
 
-import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.views.home.followerFollowing.FollowerFollowingState
@@ -16,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class FollowerFollowingViewModel @Inject constructor(
     private val repository: ProfileRepository
-) : ViewModel() {
+) : ViewModel(), FollowEvents {
 
     companion object {
         private val TAG = FollowerFollowingViewModel::class.java.simpleName
@@ -26,7 +25,7 @@ class FollowerFollowingViewModel @Inject constructor(
     val state: StateFlow<FollowerFollowingState>
         get() = _state
 
-    fun getFollowersList(userId: Long) {
+    override fun getFollowersList(userId: Long) {
         viewModelScope.launch() {
             when (val resource = repository.retrieveProfileFollowers(userId)) {
                 is Resource.Success -> {
@@ -50,7 +49,7 @@ class FollowerFollowingViewModel @Inject constructor(
         }
     }
 
-    fun getFollowingList(userId: Long) {
+    override fun getFollowingList(userId: Long) {
         viewModelScope.launch() {
             when (val resource = repository.retrieveProfileFollowing(userId)) {
                 is Resource.Success -> {
