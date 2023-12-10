@@ -9,8 +9,9 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.utils.composables.engine.createVideoCaptureUseCase
 import android.kotlin.foodclub.utils.composables.engine.startRecordingVideo
-import android.kotlin.foodclub.viewModels.home.CameraViewModel
-import android.kotlin.foodclub.viewModels.home.StopWatchEvent
+import android.kotlin.foodclub.viewModels.home.camera.CameraEvents
+import android.kotlin.foodclub.viewModels.home.camera.CameraViewModel
+import android.kotlin.foodclub.viewModels.home.camera.StopWatchEvent
 import android.kotlin.foodclub.views.home.GalleryState
 import android.net.Uri
 import android.os.Build
@@ -27,12 +28,6 @@ import androidx.camera.video.Recording
 import androidx.camera.video.VideoCapture
 import androidx.camera.video.VideoRecordEvent
 import androidx.camera.view.PreviewView
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -54,7 +49,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -66,7 +60,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -91,7 +84,7 @@ import java.nio.charset.StandardCharsets
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CameraView(
-    viewModel: CameraViewModel,
+    events: CameraEvents,
     navController: NavController,
     stateEncoded: String,
     state: CameraState
@@ -176,7 +169,7 @@ fun CameraView(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.onEvent(StopWatchEvent.onReset)
+        events.onEvent(StopWatchEvent.onReset)
         permissionState.launchMultiplePermissionRequest()
     }
 
@@ -238,7 +231,7 @@ fun CameraView(
                         .background(Color.Black.copy(alpha = 0.9f))
                         .clickable {
                             // Do something when the box is clicked
-                            viewModel.onEvent(StopWatchEvent.onReset)
+                            events.onEvent(StopWatchEvent.onReset)
                             navController.popBackStack()
                         }
                 ) {
@@ -300,7 +293,7 @@ fun CameraView(
                                     Button(colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                                         onClick = {
                                         uris.removeAt(uris.lastIndex)
-                                        viewModel.onEvent(StopWatchEvent.onRecall)
+                                        events.onEvent(StopWatchEvent.onRecall)
                                         removeUpdate(true)
                                         canDelete = false
                                         confirmDeletion = !confirmDeletion
@@ -349,7 +342,7 @@ fun CameraView(
                                 if (!recordingStarted.value) {
                                     videoCapture.value?.let { videoCapture ->
                                         recordingStarted.value = true
-                                        viewModel.onEvent(StopWatchEvent.onStart)
+                                        events.onEvent(StopWatchEvent.onStart)
                                         val mediaDir = context.externalCacheDirs.firstOrNull()?.let {
                                             File(
                                                 it,
@@ -387,7 +380,7 @@ fun CameraView(
                                     }
                                 } else {
                                     recordingStarted.value = false
-                                    viewModel.onEvent(StopWatchEvent.onStop)
+                                    events.onEvent(StopWatchEvent.onStop)
                                     recording?.stop()
                                 }
                             }
@@ -405,7 +398,7 @@ fun CameraView(
                             if (recordingStarted.value)
                             {
                                 recordingStarted.value = false
-                                viewModel.onEvent(StopWatchEvent.onStop)
+                                events.onEvent(StopWatchEvent.onStop)
                                 recording?.stop()
                             }
                         }
@@ -416,7 +409,7 @@ fun CameraView(
                                 if (!recordingStarted.value && canAdd) {
                                     videoCapture.value?.let { videoCapture ->
                                         recordingStarted.value = true
-                                        viewModel.onEvent(StopWatchEvent.onStart)
+                                        events.onEvent(StopWatchEvent.onStart)
                                         val mediaDir = context.externalCacheDirs.firstOrNull()?.let {
                                             File(
                                                 it,
@@ -457,7 +450,7 @@ fun CameraView(
                                 Log.d("Recording Start","Preparing to end recording")
                                 if (recordingStarted.value) {
                                     recordingStarted.value = false
-                                    viewModel.onEvent(StopWatchEvent.onStop)
+                                    events.onEvent(StopWatchEvent.onStop)
                                     recording?.stop()
                                     canAdd = false
                                 }
