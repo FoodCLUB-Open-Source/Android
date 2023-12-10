@@ -7,7 +7,7 @@ import android.kotlin.foodclub.views.home.camera.CameraView
 import android.kotlin.foodclub.views.home.CreateView
 import android.kotlin.foodclub.views.home.discover.DiscoverView
 import android.kotlin.foodclub.views.home.followerFollowing.FollowerView
-import android.kotlin.foodclub.views.home.GalleryView
+import android.kotlin.foodclub.views.home.gallery.GalleryView
 import android.kotlin.foodclub.views.home.home.HomeView
 import android.kotlin.foodclub.views.home.myBasket.MyBasketView
 import android.kotlin.foodclub.views.home.myDigitalPantry.MyDigitalPantryView
@@ -171,10 +171,11 @@ fun NavGraphBuilder.homeNavigationGraph(
         composable(route = HomeOtherRoutes.GalleryView.route) {
             val stateEncoded = it.arguments?.getString("state") ?: ""
             val viewModel: GalleryViewModel = hiltViewModel()
+            val state = viewModel.state.collectAsState()
 
             GalleryView(
                 navController = navController,
-                viewModel = viewModel,
+                state = state.value,
                 stateEncoded = stateEncoded
             )
         }

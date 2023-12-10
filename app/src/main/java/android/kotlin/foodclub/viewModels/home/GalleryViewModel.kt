@@ -1,36 +1,47 @@
 package android.kotlin.foodclub.viewModels.home
 
+import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
+import android.kotlin.foodclub.views.home.gallery.GalleryState
+import android.kotlin.foodclub.views.home.gallery.ItemType
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.util.Size
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
+@SuppressLint("StaticFieldLeak")
+@HiltViewModel
+class GalleryViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+) : ViewModel() {
+    companion object {
+        private val TAG = GalleryViewModel::class.java.simpleName
+    }
 
-data class MediaImageTest(var id: String) {
-    var count: Int = 0
-    var cover_ID: Long = 0;
-    var cover_name = "";
-}
+    private val _state = MutableStateFlow(GalleryState.default())
+    val state: StateFlow<GalleryState>
+        get() = _state
 
+    init {
+        _state.update { it.copy(title = "GalleryViewModel") }
+        getMediaContent(context, true, 150)
+    }
 
-class GalleryViewModel : ViewModel() {
-    private val _title = MutableStateFlow("GalleryViewModel View")
-    val title: StateFlow<String> get() = _title
-
-    val ResourceIds: MutableList<Pair<Uri, String>> = mutableListOf()
-    val tests: MutableList<MediaImageTest> = mutableListOf()
-    fun getMediaContent(
+    private fun getMediaContent(
         context: Context,
         limitSize: Boolean = false,
-        sizeLimit: Int = 10
-    ): MutableList<Uri> {
+        sizeLimit: Int = 150
+    ) {
         val imageProjection = arrayOf(
             MediaStore.Images.Media.DISPLAY_NAME,
             MediaStore.Images.Media.SIZE,
@@ -96,14 +107,15 @@ class GalleryViewModel : ViewModel() {
             }
         }
 
-        return uris
+        _state.update { it.copy(uris = uris) }
+        getVideoMediaContent(context, true, 150)
     }
 
-    fun getVideoMediaContent(
+    private fun getVideoMediaContent(
         context: Context,
         limitSize: Boolean = false,
-        sizeLimit: Int = 10
-    ): MutableList<Uri> {
+        sizeLimit: Int = 150
+    ) {
         val imageProjection = arrayOf(
             MediaStore.Video.Media.DISPLAY_NAME,
             MediaStore.Video.Media.SIZE,
@@ -113,8 +125,7 @@ class GalleryViewModel : ViewModel() {
         val imageSortOrder = "${MediaStore.Video.VideoColumns.DATE_TAKEN} DESC"
 
         val selectionArgs: Bundle = Bundle()
-        if (limitSize)
-        {
+        if (limitSize) {
             selectionArgs.putInt(ContentResolver.QUERY_ARG_LIMIT, sizeLimit)
         }
         val sortArgs = arrayOf(MediaStore.Images.ImageColumns.DATE_TAKEN)
@@ -130,9 +141,9 @@ class GalleryViewModel : ViewModel() {
             selectionArgs,
             null,
 
-        )
+            )
 
-        val uris = mutableListOf<Uri>()
+        val videoUris = mutableListOf<Uri>()
         var count = 0
 
         cursor.use {
@@ -158,7 +169,7 @@ class GalleryViewModel : ViewModel() {
                     }
 
                      */
-                    uris.add(contentUri)
+                    videoUris.add(contentUri)
                     count++;
                     // generate the thumbnail
                     //val thumbnail = (context).contentResolver.loadThumbnail(contentUri, Size(480, 480), null)
@@ -169,6 +180,46 @@ class GalleryViewModel : ViewModel() {
             }
         }
 
-        return uris
+        val currentUris = state.value.uris.toMutableList()
+        currentUris.addAll(videoUris)
+
+        _state.update { it.copy(uris = currentUris) }
+        setResources(context)
+    }
+
+    private fun setResources(context: Context) {
+        val resourceIds = mutableListOf<Pair<Uri, String>>()
+        val resourceDrawables = mutableListOf<Uri>()
+        val resourceUri = mutableListOf<Uri>()
+
+        for (uri in state.value.uris) {
+            val type = context.contentResolver.getType(uri)
+            val s = type?.let { type.substring(0, it.indexOf("/")) }
+            resourceIds.add(Pair(uri, s) as Pair<Uri, String>)
+        }
+
+        resourceIds.forEach { (name, type) ->
+            when (type) {
+                ItemType.IMAGE.type -> {
+                    resourceDrawables.add(name)
+                }
+
+                ItemType.VIDEO.type -> {
+                    resourceUri.add(name)
+                }
+
+                else -> {
+                    Log.e(TAG, "Unknown type: $type")
+                }
+            }
+        }
+
+        _state.update {
+            it.copy(
+                resourceIds = resourceIds,
+                resourceDrawables = resourceDrawables,
+                resourceUri = resourceUri
+            )
+        }
     }
 }

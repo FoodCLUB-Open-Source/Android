@@ -10,9 +10,8 @@ import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.utils.composables.engine.createVideoCaptureUseCase
 import android.kotlin.foodclub.utils.composables.engine.startRecordingVideo
 import android.kotlin.foodclub.viewModels.home.camera.CameraEvents
-import android.kotlin.foodclub.viewModels.home.camera.CameraViewModel
 import android.kotlin.foodclub.viewModels.home.camera.StopWatchEvent
-import android.kotlin.foodclub.views.home.GalleryState
+import android.kotlin.foodclub.views.home.gallery.GalleryType
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -99,11 +98,11 @@ fun CameraView(
 
     var stateString = ""
 
-    if (stateEncoded.contains(GalleryState.STORY.state)) {
-        stateString = GalleryState.STORY.state
+    if (stateEncoded.contains(GalleryType.STORY.state)) {
+        stateString = GalleryType.STORY.state
     }
-    if (stateEncoded.contains(GalleryState.RECIPE.state)) {
-        stateString = GalleryState.RECIPE.state
+    if (stateEncoded.contains(GalleryType.RECIPE.state)) {
+        stateString = GalleryType.RECIPE.state
     }
 
     val permissionState = rememberMultiplePermissionsState(

@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.views.home
+package android.kotlin.foodclub.views.home.gallery
 
 import android.Manifest
 import android.content.Context
@@ -50,7 +50,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.navigation.NavController
@@ -64,9 +63,9 @@ import java.nio.charset.StandardCharsets
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-public fun GalleryView(
+fun GalleryView(
     navController: NavController,
-    viewModel: GalleryViewModel,
+    state: GalleryState,
     stateEncoded:String,
     itemsPerRow: Int = 3
 ) {
@@ -74,11 +73,11 @@ public fun GalleryView(
 
     var galleryState = ""
 
-    if (stateEncoded.contains(GalleryState.STORY.state)) {
-        galleryState = GalleryState.STORY.state
+    if (stateEncoded.contains(GalleryType.STORY.state)) {
+        galleryState = GalleryType.STORY.state
     }
-    if (stateEncoded.contains(GalleryState.RECIPE.state)) {
-        galleryState = GalleryState.RECIPE.state
+    if (stateEncoded.contains(GalleryType.RECIPE.state)) {
+        galleryState = GalleryType.RECIPE.state
     }
 
     val permissionState = rememberMultiplePermissionsState(
@@ -88,47 +87,11 @@ public fun GalleryView(
         )
     )
 
-    val ResourceIds: MutableList<Pair<Uri, String>> = mutableListOf()
-    val ResourceDrawables: MutableList<Uri> = mutableListOf<Uri>();
-    val ResourceURI: MutableList<Uri> = mutableListOf<Uri>();
-
     LaunchedEffect(Unit) {
         permissionState.launchMultiplePermissionRequest()
     }
 
-
-    val uris = viewModel.getMediaContent(
-        context = context,
-        limitSize = true,
-        sizeLimit = 150
-    )
-
-    uris.addAll(
-        viewModel.getVideoMediaContent(
-            context = context,
-            limitSize = true,
-            sizeLimit = 150
-        )
-    )
-
-    val y = 0;
-    for (uri in uris) {
-        val type = context.contentResolver.getType(uri)
-        val s = type?.let { type.substring(0, it.indexOf("/")) }
-        ResourceIds.add(Pair(uri, s) as Pair<Uri, String>)
-    }
-    val x = 0;
-
-    ResourceIds.forEach()
-    { (name, type) ->
-        if (type == ItemType.IMAGE.type) {
-            ResourceDrawables.add(name)
-        } else {
-            ResourceURI.add(name)
-        }
-    }
-
-    if (ResourceURI.size < 150) {
+    if (state.resourceUri.size < 150) {
         // TODO fill or remove
     }
 
@@ -280,13 +243,13 @@ public fun GalleryView(
 
                     if (selectedImageOption) {
                         GalleryImageTab(
-                            images = ResourceDrawables,
+                            images = state.resourceDrawables,
                             itemsPerRow = itemsPerRow,
                             context = context
                         )
                     } else {
                         GalleryVideoTab(
-                            videos = ResourceURI,
+                            videos = state.resourceUri,
                             itemsPerRow = itemsPerRow,
                             navController = navController,
                             context = context,
@@ -530,7 +493,7 @@ enum class ItemType(val type: String) {
     VIDEO("video")
 }
 
-enum class GalleryState(val state: String) {
+enum class GalleryType(val state: String) {
     STORY("story"),
     RECIPE("recipe")
 }
