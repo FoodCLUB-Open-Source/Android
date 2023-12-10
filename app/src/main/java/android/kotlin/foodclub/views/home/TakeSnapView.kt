@@ -4,6 +4,7 @@ import android.kotlin.foodclub.utils.composables.PhotoTakenPreview
 import android.kotlin.foodclub.utils.composables.TakePhotoPreview
 import android.kotlin.foodclub.utils.helpers.takePhoto
 import android.kotlin.foodclub.utils.helpers.uriToFile
+import android.kotlin.foodclub.viewModels.home.home.HomeEvents
 import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
 import android.net.Uri
 import android.util.Log
@@ -24,7 +25,7 @@ import androidx.navigation.NavController
 @Composable
 fun TakeSnapView(
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel,
+    events: HomeEvents,
     navController: NavController
 ){
     val context = LocalContext.current
@@ -48,7 +49,7 @@ fun TakeSnapView(
                 onSaveClick = {
                     val file = uriToFile(photoUri!!, context)
                     if (file != null){
-                        viewModel.postSnap(file)
+                        events.postSnap(file)
                         navController.popBackStack()
                     }
                     else {

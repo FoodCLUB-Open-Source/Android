@@ -256,7 +256,7 @@ fun NavGraphBuilder.homeNavigationGraph(
             val viewModel: HomeViewModel = hiltViewModel()
 
             TakeSnapView(
-                viewModel = viewModel,
+                events = viewModel,
                 navController = navController
             )
         }
