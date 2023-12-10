@@ -248,13 +248,17 @@ fun NavGraphBuilder.homeNavigationGraph(
 
             TakeProfilePhotoView(
                 navController = navController,
-                viewModel = viewModel,
+                events = viewModel,
                 state = state.value
             )
         }
         composable(route = HomeOtherRoutes.TakeSnapPhotoView.route) {
             val viewModel: HomeViewModel = hiltViewModel()
-            TakeSnapView(viewModel = viewModel, navController = navController)
+
+            TakeSnapView(
+                viewModel = viewModel,
+                navController = navController
+            )
         }
 
     }

@@ -4,6 +4,7 @@ import android.kotlin.foodclub.utils.composables.PhotoTakenPreview
 import android.kotlin.foodclub.utils.composables.TakePhotoPreview
 import android.kotlin.foodclub.utils.helpers.takePhoto
 import android.kotlin.foodclub.utils.helpers.uriToFile
+import android.kotlin.foodclub.viewModels.home.profile.ProfileEvents
 import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
 import android.kotlin.foodclub.views.home.profile.ProfileState
 import android.net.Uri
@@ -26,12 +27,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun TakeProfilePhotoView(
     modifier: Modifier = Modifier,
-    viewModel: ProfileViewModel,
+    events: ProfileEvents,
     state: ProfileState,
     navController: NavController
 ){
     val context = LocalContext.current
-   // val dataStore = viewModel.storeData
     val scope = rememberCoroutineScope()
     val TAG = "TakeProfilePhotoView"
 
@@ -55,7 +55,7 @@ fun TakeProfilePhotoView(
                 onSaveClick = {
                     val file = uriToFile(photoUri!!, context)
                     if (file != null){
-                        viewModel.updateUserProfileImage(
+                        events.updateUserProfileImage(
                             state.myUserId,
                             file,
                             photoUri!!
