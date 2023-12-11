@@ -63,10 +63,6 @@ fun TermsAndConditions(
 
     val checkedState = remember { mutableStateOf(false) }
 
-    val pdfState = rememberVerticalPdfReaderState(
-        resource = ResourceType.Asset(R.raw.termsandcondition),
-        isZoomEnable = true
-    )
 
     Box(
         modifier = Modifier
@@ -97,7 +93,7 @@ fun TermsAndConditions(
             Text(
                 fontFamily = Montserrat,
                 fontWeight = FontWeight.Bold,
-                text = stringResource(id = R.string.toc_title),
+                text = stringResource(id = R.string.terms_condition_title),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
@@ -180,7 +176,7 @@ fun TermsAndConditions(
                     disabledContentColor = Color.White,
                 )
             ) {
-                Text(text = stringResource(id = R.string.decline_terms),
+                Text(text = stringResource(id = R.string.decline),
                     fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,)
             }
 
