@@ -30,6 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.foodClubGreen
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 
@@ -84,9 +86,9 @@ fun PreferenceItem(text: String, selectedPreferences: MutableList<String>) {
         mutableStateOf(false)
     }
     Card(
-        shape = RoundedCornerShape(5.dp),
-        modifier = Modifier.padding(3.dp),
-        colors = if (selectedOption) CardDefaults.cardColors(Color(0xFF7EC60B)) else CardDefaults.cardColors(
+        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_5)),
+        modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_3)),
+        colors = if (selectedOption) CardDefaults.cardColors(foodClubGreen) else CardDefaults.cardColors(
             Color(0xFFEEEEEE)
         ),
         onClick = {
@@ -97,14 +99,14 @@ fun PreferenceItem(text: String, selectedPreferences: MutableList<String>) {
                 selectedPreferences.add(text)
             }
         },
-        border = BorderStroke(1.dp, if (selectedOption) Color.Transparent else Color(0xFFDADADA))
+        border = BorderStroke(dimensionResource(id = R.dimen.dim_1), if (selectedOption) Color.Transparent else Color(0xFFDADADA))
     ) {
         Text(
             text = text,
             fontFamily = Montserrat,
-            fontSize = 13.sp,
+            fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
             color = if (selectedOption) Color.White else Color.Gray,
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_8)),
             maxLines = 1
         )
     }

@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.views.home
 
+import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -26,6 +27,7 @@ import androidx.compose.ui.layout.LayoutModifier
 import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -63,7 +65,7 @@ fun ProgressionBar(
         }
     }
 
-    Column(modifier = modifier.fillMaxWidth().height(10.dp).padding(top = 6.dp)) {
+    Column(modifier = modifier.fillMaxWidth().height(dimensionResource(id = R.dimen.dim_10)).padding(top =dimensionResource(id = R.dimen.dim_6))) {
         Slider(
             // new working version
             value = videoTime.toFloat(),
@@ -77,14 +79,14 @@ fun ProgressionBar(
                 changeIterations = (it / progressionRate).toInt()
             },*/
 
-            modifier = Modifier.fillMaxWidth().negativeMargin((-16).dp).padding(0.dp),
+            modifier = Modifier.fillMaxWidth().negativeMargin((-16).dp).padding(dimensionResource(id = R.dimen.dim_0)),
             colors = SliderDefaults.colors(
                 thumbColor = Color.Transparent,
                 activeTrackColor = foodClubGreen,
                 inactiveTrackColor = Color.White,
             ),
             thumb = {
-                Box(modifier = Modifier.size(0.dp).shadow(0.dp, clip = true)
+                Box(modifier = Modifier.size(dimensionResource(id = R.dimen.dim_0)).shadow(dimensionResource(id = R.dimen.dim_0), clip = true)
                         .background(foodClubGreen)
                 )
             }

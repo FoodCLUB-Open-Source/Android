@@ -16,15 +16,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import android.kotlin.foodclub.R
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 
 @Composable
 fun UsernameView(
-    onValuesUpdate: () -> Unit, saveData: (String) -> Unit,
-    onBackButtonClick: () -> Unit, userSignUpInformation: State<SignUpUser>,
+    onValuesUpdate: () -> Unit,
+    saveData: (String) -> Unit,
+    onBackButtonClick: () -> Unit,
+    userSignUpInformation: SignUpUser,
     error: String
 ) {
-    var username by remember { mutableStateOf(userSignUpInformation.value.username) }
+    var username by remember { mutableStateOf(userSignUpInformation.username) }
     var initialUsernameCorrectnessState = FieldsValidation.checkUsername(username) == null
     var filledUsername by remember { mutableStateOf(false) }
 
@@ -37,7 +40,7 @@ fun UsernameView(
             onBackButtonClick()
         }
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)
+        Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_4))
         ) {
             CustomTextField(
                 initialValue = username,

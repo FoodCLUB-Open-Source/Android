@@ -11,3 +11,10 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val foodClubGreen = Color(0xFF7EC60B)
+
+val disabledContainerColor = Color(0xFFC9C9C9)
+ val Black=Color(0xFF000000)
+val light_blue=Color(0xFF3A7CA8)
+
+val containerColor = Color(0xFFF5F5F5)
+val Orange =Color(0xFFFfa500)

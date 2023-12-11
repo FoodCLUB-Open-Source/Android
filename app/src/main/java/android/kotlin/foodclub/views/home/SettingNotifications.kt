@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -18,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,7 +34,7 @@ fun SettingNotifications(navController: NavController) {
     SettingsLayout(
         label= "Notifications",
         onBackAction = { navController.navigateUp() }) {
-            NotificationRow(stringResource(id = R.string.general_notifications), titlePadding = 4.dp)
+            NotificationRow(stringResource(id = R.string.general_notifications), titlePadding =dimensionResource(id = R.dimen.dim_4))
             NotificationRow(stringResource(id = R.string.system_and_service), isSubtitle = true)
             NotificationRow(stringResource(id = R.string.app_updates))
             NotificationRow(stringResource(id = R.string.payment_request))
@@ -43,13 +45,13 @@ fun SettingNotifications(navController: NavController) {
 fun NotificationRow(
     title: String,
     isSubtitle: Boolean = false,
-    titlePadding: Dp = 8.dp
+    titlePadding: Dp = dimensionResource(id = R.dimen.dim_8)
 ) {
     var isNotificationEnabled by remember {
         mutableStateOf(false)
     }
 
-    val verticalPadding = if (isSubtitle) 4.dp else 8.dp
+    val verticalPadding = if (isSubtitle) dimensionResource(id = R.dimen.dim_4) else dimensionResource(id = R.dimen.dim_8)
 
     Column(
         modifier = Modifier
@@ -78,7 +80,7 @@ fun NotificationRow(
                     },
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = Color.White,
-                        checkedTrackColor = Color(0xFF7EC60B),
+                        checkedTrackColor = foodClubGreen,
                         uncheckedThumbColor = Color.White,
                         uncheckedTrackColor = Color(0xFFBDBDBD),
                     )

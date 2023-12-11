@@ -3,6 +3,7 @@ package android.kotlin.foodclub.views.authentication
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.PlusJakartaSans
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.utils.composables.AuthLayout
 import android.kotlin.foodclub.utils.composables.ConfirmButton
 import androidx.compose.animation.core.animateDpAsState
@@ -38,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -73,25 +75,25 @@ fun ConfirmPhoneNumTopLayout(
                 painter = painterResource(R.drawable.back_icon),
                 contentDescription = stringResource(id = R.string.go_back),
                 modifier = Modifier
-                    .width(32.dp)
-                    .height(32.dp)
+                    .width( dimensionResource(id = R.dimen.dim_32))
+                    .height( dimensionResource(id = R.dimen.dim_32))
                     .offset(x = (-8).dp)
                     .clickable { navController?.popBackStack() }
             )
-            Box(modifier = Modifier.padding(top = 32.dp)) {
-                Column(verticalArrangement = Arrangement.spacedBy(28.dp)) {
+            Box(modifier = Modifier.padding(top =  dimensionResource(id = R.dimen.dim_32))) {
+                Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_28))) {
                     Text(
                         text = stringResource(id = R.string.confirm_identity),
                         textAlign = TextAlign.Left,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 30.sp,
+                        fontSize = dimensionResource(id = R.dimen.fon_30).value.sp,
                         fontFamily = PlusJakartaSans
                     )
                     Text(
                         text = stringResource(id = R.string.confirm_identity_subheading),
                         textAlign = TextAlign.Left,
                         fontWeight = FontWeight.Normal,
-                        fontSize = 16.sp,
+                        fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                         fontFamily = Montserrat
                     )
                 }
@@ -138,31 +140,31 @@ fun ConfirmPhoneNumMainLayout(
                 Text(
                     text = stringResource(id = R.string.plus_sign),
                     fontFamily = Montserrat,
-                    fontSize = 18.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
                     fontWeight = FontWeight.Bold
                 )
 
                 BasicTextField(
                     modifier = Modifier
-                        .padding(0.dp)
-                        .width(40.dp),
+                        .padding(dimensionResource(id = R.dimen.dim_0))
+                        .width(dimensionResource(id = R.dimen.dim_40)),
                     value = countryCode,
                     singleLine = true,
                     onValueChange = { onCodeUpdate(it.take(3)) },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                     textStyle = LocalTextStyle.current.copy(
                         fontFamily = Montserrat,
-                        fontSize = 18.sp,
+                        fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
                         fontWeight = FontWeight.Bold
                     ),
                 )
 
                 Text(
                     text = stringResource(id = R.string.vertical_line),
-                    fontSize = 25.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_25).value.sp,
                     fontFamily = Montserrat,
                     color = Color.LightGray,
-                    modifier = Modifier.padding(vertical = 3.dp, horizontal = 10.dp)
+                    modifier = Modifier.padding(vertical =dimensionResource(id = R.dimen.dim_3), horizontal = dimensionResource(id = R.dimen.dim_10))
                 )
 
                 BasicTextField(
@@ -171,24 +173,24 @@ fun ConfirmPhoneNumMainLayout(
                     onValueChange = { onPhoneUpdate(it.take(18)) },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                     modifier = Modifier
-                        .padding(0.dp)
+                        .padding(dimensionResource(id = R.dimen.dim_0))
                         .fillMaxWidth(),
                     textStyle = LocalTextStyle.current.copy(
                         fontFamily = Montserrat,
-                        fontSize = 18.sp,
+                        fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
                         color = Color.DarkGray
                     ),
                 )
             }
 
 
-            val offset: Dp by animateDpAsState(if (isError) 0.dp else 130.dp, label = "")
+            val offset: Dp by animateDpAsState(if (isError) dimensionResource(id = R.dimen.dim_0) else dimensionResource(id = R.dimen.dim_130), label = "")
 
             Box(
                 modifier = Modifier
-                    .padding(start = 74.dp + offset, bottom = 3.dp)
-                    .width(280.dp - offset)
-                    .height(3.dp)
+                    .padding(start = dimensionResource(id = R.dimen.dim_74) + offset, bottom =dimensionResource(id = R.dimen.dim_3))
+                    .width(dimensionResource(id = R.dimen.dim_280) - offset)
+                    .height(dimensionResource(id = R.dimen.dim_3))
             )
             {
                 val len: Float by animateFloatAsState(if (isError) 1f else 0.1666f, label = "")
@@ -204,13 +206,13 @@ fun ConfirmPhoneNumMainLayout(
 
             Divider()
 
-            Box(modifier = Modifier.height(20.dp))
+            Box(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
             {
                 if (isError) {
                     Text(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 75.dp, top = 2.dp),
+                            .padding(start = dimensionResource(id = R.dimen.dim_75), top = dimensionResource(id = R.dimen.dim_2)),
                         text = stringResource(id = R.string.invalid_number),
                         color = MaterialTheme.colorScheme.error,
                         fontFamily = Montserrat
@@ -234,12 +236,12 @@ fun ConfirmPhoneNumMainLayout(
                     checked = syncContacts,
                     onCheckedChange = { onSyncUpdate(it) },
                     colors = SwitchDefaults.colors(
-                        checkedTrackColor = Color(0xFF7EC60B),
+                        checkedTrackColor = foodClubGreen,
                         uncheckedTrackColor = Color.LightGray,
                         checkedThumbColor = Color.White,
                         uncheckedThumbColor = Color.White,
                         uncheckedBorderColor = Color.LightGray,
-                        checkedBorderColor = Color(0xFF7EC60B)
+                        checkedBorderColor = foodClubGreen
                     )
                 )
             }

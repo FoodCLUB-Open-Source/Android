@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -51,11 +52,11 @@ fun SettingsLayout(
             .background(Color.White),
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(16.dp).padding(top = 80.dp)
+            modifier = Modifier.fillMaxSize().padding( dimensionResource(id = R.dimen.dim_16)).padding(top = dimensionResource(id = R.dimen.dim_80))
                 .background(Color.White),
         ) {
             SettingsTopBar(label = label, onBackAction = onBackAction)
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_50)))
             content()
         }
     }
@@ -72,15 +73,15 @@ private fun SettingsTopBar(label: String, onBackAction: () -> Unit) {
             IconButton(
                 onClick = { onBackAction() },
                 modifier = Modifier
-                    .background(color = colorGray, RoundedCornerShape(8.dp))
-                    .size(35.dp),
+                    .background(color = colorGray, RoundedCornerShape(dimensionResource(id = R.dimen.dim_8)))
+                    .size( dimensionResource(id = R.dimen.dim_35)),
                 content = {
                     SettingsIcons(size = 20, icon =  R.drawable.back_icon)
                 }
             )
         }
 
-        Spacer(modifier = Modifier.width(20.dp))
+        Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_20)))
 
         Column {
             SettingsText(text = label, size = 28, weight = FontWeight.ExtraBold)

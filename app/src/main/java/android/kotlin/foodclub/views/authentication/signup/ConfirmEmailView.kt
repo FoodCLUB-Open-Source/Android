@@ -16,16 +16,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import android.kotlin.foodclub.R
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 
 @Composable
 fun ConfirmEmailView(
     onValuesUpdate: () -> Unit, saveData: (String) -> Unit,
-    onBackButtonClick: () -> Unit, userSignUpInformation: State<SignUpUser>,
-    repeatedEmailState: State<String>, error: String
+    onBackButtonClick: () -> Unit,
+    userSignUpInformation: SignUpUser,
+    repeatedEmailState: String,
+    error: String
 ) {
-    val email by remember { mutableStateOf(userSignUpInformation.value.email) }
-    var repeatedEmail by remember { mutableStateOf(repeatedEmailState.value) }
+    val email by remember { mutableStateOf(userSignUpInformation.email) }
+    var repeatedEmail by remember { mutableStateOf(repeatedEmailState) }
     var initialEmailCorrectnessState = email == repeatedEmail
     var filledEmail by remember { mutableStateOf(false) }
 
@@ -40,7 +43,7 @@ fun ConfirmEmailView(
         }
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_4))
         ) {
             CustomTextField(
                 initialValue = repeatedEmail,

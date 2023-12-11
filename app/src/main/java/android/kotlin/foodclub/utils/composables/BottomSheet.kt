@@ -2,6 +2,8 @@ package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.disabledContainerColor
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.others.BottomSheetItem
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -30,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -57,15 +60,15 @@ fun BottomSheet(itemList: List<BottomSheetItem>, sheetTitle: String,
                     text = sheetTitle,
                     fontFamily = Montserrat,
                     fontWeight = FontWeight.Bold,
-                    modifier = if (!enableDragHandle) Modifier.padding(top = 36.dp) else Modifier
+                    modifier = if (!enableDragHandle) Modifier.padding(top =  dimensionResource(id = R.dimen.dim_36)) else Modifier
                 )
                 Divider(
                     color = Color.Gray,
-                    thickness = 0.8.dp,
-                    modifier = Modifier.padding(vertical = 16.dp)
+                    thickness = dimensionResource(id = R.dimen.dim_0pt8),
+                    modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.dim_16))
                 )
             }else{
-                Spacer(modifier = Modifier.height(25.dp))
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_25)))
             }
             itemList.forEach {
                 BottomSheetItem(
@@ -75,23 +78,23 @@ fun BottomSheet(itemList: List<BottomSheetItem>, sheetTitle: String,
                     onClick = it.onClick
                 )
             }
-            Spacer(modifier = Modifier.height(25.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_25)))
             if(!titleSpace){
                 Button(
                     onClick = { onDismiss()},
-                    shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier.height(56.dp).clip(RoundedCornerShape(10.dp)).padding(10.dp,0.dp,10.dp,0.dp).fillMaxWidth(),
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
+                    modifier = Modifier.height(dimensionResource(id = R.dimen.dim_56)).clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))).padding(dimensionResource(id = R.dimen.dim_10),dimensionResource(id = R.dimen.dim_0),dimensionResource(id = R.dimen.dim_10),dimensionResource(id = R.dimen.dim_0)).fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF7EC60B),
-                        disabledContainerColor = Color(0xFFC9C9C9),
+                        containerColor = foodClubGreen,
+                        disabledContainerColor = disabledContainerColor,
                         disabledContentColor = Color.White,
                         contentColor = Color.White
                     )
                 ) {
-                    Text(text = "Cancel ", fontSize = 16.sp)
+                    Text(text = "Cancel ", fontSize = dimensionResource(id = R.dimen.fon_16).value.sp)
                 }
             }
-            Spacer(modifier = Modifier.height(25.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_25)))
         }
 
     }

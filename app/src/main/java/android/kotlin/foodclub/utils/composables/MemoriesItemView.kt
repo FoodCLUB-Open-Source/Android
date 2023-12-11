@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.utils.composables
 
+import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,10 +25,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
@@ -48,8 +49,8 @@ fun MemoriesItemView(
     ) {
         Box(
             modifier= modifier
-                .size(height = 118.dp, width = 146.dp)
-                .clip(RoundedCornerShape(15.dp))
+                .size(height = dimensionResource(id = R.dimen.dim_118), width = dimensionResource(id = R.dimen.dim_146))
+                .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
         ){
             Image(
                 painter = painter,
@@ -68,11 +69,11 @@ fun MemoriesItemView(
             )
 
         }
-        Spacer(modifier = Modifier.size(12.dp))
+        Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.dim_12)))
         Text(
            text=date,
             style = TextStyle(
-                fontSize = 12.sp,
+                fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
                 fontFamily = Montserrat,
                 fontStyle = FontStyle.Normal,
                 color = Color.Black
