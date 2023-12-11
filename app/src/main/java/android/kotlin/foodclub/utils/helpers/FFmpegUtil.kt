@@ -41,6 +41,7 @@ class FFmpegUtil(private val context: Context) {
     private val outputFileName = "output.mp4"
     private val outputDirectoryPath = context.filesDir.path
     private val outputPath = "$outputDirectoryPath/$outputFileName"
+    private val TAG = FFmpegUtil::class.java.simpleName
 
     /**
      * Executes an FFmpeg command to overlay an image onto a video and saves the result to a specified output path.
@@ -85,12 +86,14 @@ class FFmpegUtil(private val context: Context) {
             val session: FFmpegSession = FFmpegKit.execute(command)
 
             if (ReturnCode.isSuccess(session.returnCode) && session.state == SessionState.COMPLETED) {
-                Log.i("MYTAG", "SUCCESS")
+                Log.i(TAG, "SUCCESS")
             } else {
                 // Handle failure
-                Log.i("MYTAG", "ERROR ${session.logs}")
-                Log.i("MYTAG", "ERROR ${session.output}")
+                Log.i(TAG, "ERROR ${session.logs}")
+                Log.i(TAG, "ERROR ${session.output}")
             }
+            deleteTemporaryFile(videoFile)
+            deleteTemporaryFile(imageFile)
         }
     }
 
@@ -154,6 +157,24 @@ class FFmpegUtil(private val context: Context) {
         }
 
         return null
+    }
+
+    /**
+     * After FFmpeg command is finished, remove temporary files from storage.
+     * */
+    private fun deleteTemporaryFile(file: File) {
+        if (file.exists()) {
+            try {
+                val deleted = file.delete()
+                if (deleted) {
+                    Log.i(TAG, "Temporary file ${file.name} deleted successfully.")
+                } else {
+                    Log.e(TAG, "Failed to delete temporary file ${file.name}.")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while deleting file ${file.name}: ${e.localizedMessage}")
+            }
+        }
     }
 
 }
