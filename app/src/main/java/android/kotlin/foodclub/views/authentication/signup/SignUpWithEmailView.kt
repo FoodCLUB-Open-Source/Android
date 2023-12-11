@@ -22,16 +22,17 @@ import androidx.compose.ui.res.stringResource
 
 @Composable
 fun SignUpWithEmailView(
-    onValuesUpdate: (String, String) -> Unit, onBackButtonClick: () -> Unit,
-    userSignUpInformation: State<SignUpUser>
+    onValuesUpdate: (String, String) -> Unit,
+    onBackButtonClick: () -> Unit,
+    userSignUpInformation: SignUpUser
 ) {
     AuthLayout(
         header = stringResource(id = R.string.new_here),
         onBackButtonClick = onBackButtonClick
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_4))) {
-            var userEmail by remember { mutableStateOf(userSignUpInformation.value.email) }
-            var userPassword by remember { mutableStateOf(userSignUpInformation.value.password) }
+            var userEmail by remember { mutableStateOf(userSignUpInformation.email) }
+            var userPassword by remember { mutableStateOf(userSignUpInformation.password) }
 
             var initialEmailCorrectnessState = FieldsValidation.checkEmail(userEmail) == null
             var initialPasswordCorrectnessState =

@@ -14,7 +14,6 @@ import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.SignUpUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.FollowerUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.FollowingUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserDetailsMapper
-import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserPostsMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserProfileMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.recipes.RecipeMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.stories.StoryMapper
@@ -47,7 +46,7 @@ object RepositoriesModule {
         api: ProfileService,
         profileDataLocalSource: ProfileDataLocalSource,
         profileMapper: UserProfileMapper,
-        userPostsMapper: UserPostsMapper,
+        userPostsMapper: PostToVideoMapper,
         profileModelMapper: ProfileModelMapper,
         followerUserMapper: FollowerUserMapper,
         followingUserMapper: FollowingUserMapper,

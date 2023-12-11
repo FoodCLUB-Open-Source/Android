@@ -3,6 +3,7 @@ package android.kotlin.foodclub.views.settings
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.navigation.Graph
+import android.kotlin.foodclub.navigation.SettingsScreen
 import android.kotlin.foodclub.utils.composables.SettingsLayout
 import android.kotlin.foodclub.viewModels.home.SettingsViewModel
 import androidx.compose.foundation.Image
@@ -46,17 +47,16 @@ val colorRed = Color(android.graphics.Color.parseColor("#C64E0B"))
 @Composable
 fun SettingsView(
     navController: NavHostController,
-    viewModel: SettingsViewModel
+    viewModel: SettingsViewModel,
+    state: SettingsState
 ) {
-    val user = viewModel.userDetails.collectAsState()
-
     SettingsLayout(
         label = stringResource(id = R.string.settings),
         onBackAction = { navController.navigateUp() }) {
         val screenSizeHeight =
             LocalConfiguration.current.screenHeightDp.dp
 
-        user.value?.let {
+        state.user?.let {
             SettingsProfile(
                 userName = it.userName,
                 userImage = painterResource(id = R.drawable.story_user)
@@ -71,7 +71,8 @@ fun SettingsView(
             fontC = Color.Black,
             borderSize = 0,
             borderColor = Color.Gray,
-            destination = "SETTINGS_EDIT_PROFILE", navController
+            destination = SettingsScreen.EditProfile.route,
+            navController = navController
         )
 
         SettingRow(
@@ -80,7 +81,7 @@ fun SettingsView(
             fontC = Color.Black,
             borderSize = 0,
             borderColor = Color.Gray,
-            destination = "SETTINGS_PRIVACY",
+            destination = SettingsScreen.Privacy.route,
             navController = navController
         )
 

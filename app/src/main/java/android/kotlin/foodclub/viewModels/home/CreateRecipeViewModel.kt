@@ -5,10 +5,13 @@ import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.domain.models.recipes.Category
 import android.kotlin.foodclub.domain.models.recipes.Recipe
-import android.kotlin.foodclub.repositories.ProductRepository
 import android.kotlin.foodclub.repositories.RecipeRepository
+import android.kotlin.foodclub.repositories.ProductRepository
 import android.kotlin.foodclub.utils.helpers.Resource
+import android.kotlin.foodclub.views.home.createRecipe.CreateRecipeState
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,26 +28,17 @@ class CreateRecipeViewModel @Inject constructor(
     private val productsRepository: ProductRepository,
     private val recipeRepository: RecipeRepository,
 ) : ViewModel() {
-    private val _title = MutableStateFlow("CreateRecipeViewModel View")
-    val title: StateFlow<String> get() = _title
 
-    private val _ingredients = MutableStateFlow(listOf<Ingredient>())
-    val ingredients: StateFlow<List<Ingredient>> get() = _ingredients
-    private val _revealedIngredientId = MutableStateFlow("")
-    val revealedIngredientId: StateFlow<String> get() = _revealedIngredientId
+    companion object {
+        private val TAG = CreateRecipeViewModel::class.java.simpleName
+    }
 
-    private val _productsDatabase = MutableStateFlow(ProductsData("", "", listOf()))
-    val productsDatabase: StateFlow<ProductsData> get() = _productsDatabase
-
-    private val _categories = MutableStateFlow(listOf<Category>())
-    val categories: StateFlow<List<Category>> get() = _categories
-
-    private val _chosenCategories = MutableStateFlow(listOf<Category>())
-    val chosenCategories: StateFlow<List<Category>> get() = _chosenCategories
-
-    private val _error = MutableStateFlow("")
+    private val _state = MutableStateFlow(CreateRecipeState.default())
+    val state: StateFlow<CreateRecipeState>
+        get() = _state
 
     init {
+        _state.update { it.copy(title = TAG) }
         getTestData()
         fetchProductsDatabase()
     }
@@ -53,31 +47,72 @@ class CreateRecipeViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(Dispatchers.Default) {
                 val testIngredientsList = arrayListOf<Ingredient>()
-                testIngredientsList.add(Ingredient("1", "Tomato paste", 200, QuantityUnit.GRAMS, "https://kretu.sts3.pl/foodclub_drawable/salad_ingredient.png"))
-                testIngredientsList.add(Ingredient("2", "Potato wedges", 200, QuantityUnit.GRAMS, "https://kretu.sts3.pl/foodclub_drawable/salad_ingredient.png"))
-                testIngredientsList.add(Ingredient("3", "Pasta", 200, QuantityUnit.GRAMS, "https://kretu.sts3.pl/foodclub_drawable/salad_ingredient.png"))
-                _ingredients.emit(testIngredientsList)
+                testIngredientsList.add(
+                    Ingredient(
+                        "1",
+                        "Tomato paste",
+                        200,
+                        QuantityUnit.GRAMS,
+                        "https://kretu.sts3.pl/foodclub_drawable/salad_ingredient.png"
+                    )
+                )
+                testIngredientsList.add(
+                    Ingredient(
+                        "2",
+                        "Potato wedges",
+                        200,
+                        QuantityUnit.GRAMS,
+                        "https://kretu.sts3.pl/foodclub_drawable/salad_ingredient.png"
+                    )
+                )
+                testIngredientsList.add(
+                    Ingredient(
+                        "3",
+                        "Pasta",
+                        200,
+                        QuantityUnit.GRAMS,
+                        "https://kretu.sts3.pl/foodclub_drawable/salad_ingredient.png"
+                    )
+                )
+                _state.update { it.copy(ingredients = testIngredientsList) }
             }
         }
-        _categories.value = listOf(
-            Category(1, "Meat"), Category(2, "Keto"), Category(3, "High-protein"),
-            Category(4, "Vegan"), Category(5, "Low-fat"), Category(6,"Fat-reduction"),
-            Category(7, "Italian"), Category(8, "Chinese"), Category(9, "Vegetarian")
-        )
-        _chosenCategories.value = listOf(
-            Category(1, "Meat"), Category(6,"Fat-reduction"),
-            Category(7, "Italian")
-        )
+        _state.update {
+            it.copy(
+                categories = listOf(
+                    Category(1, "Meat"),
+                    Category(2, "Keto"),
+                    Category(3, "High-protein"),
+                    Category(4, "Vegan"),
+                    Category(5, "Low-fat"),
+                    Category(6, "Fat-reduction"),
+                    Category(7, "Italian"),
+                    Category(8, "Chinese"),
+                    Category(9, "Vegetarian")
+                ),
+                chosenCategories = listOf(
+                    Category(1, "Meat"),
+                    Category(6, "Fat-reduction"),
+                    Category(7, "Italian")
+                )
+            )
+        }
     }
+
     fun fetchProductsDatabase(searchText: String = "") {
         viewModelScope.launch {
-            when(val resource = productsRepository.getProductsList(searchText)) {
+            when (val resource = productsRepository.getProductsList(searchText)) {
                 is Resource.Success -> {
-                    _error.value = ""
-                    _productsDatabase.value = resource.data!!
+                    _state.update {
+                        it.copy(
+                            error = "",
+                            products = resource.data!!
+                        )
+                    }
                 }
+
                 is Resource.Error -> {
-                    _error.value = resource.message!!
+                    _state.update { it.copy(error = resource.message!!) }
                 }
             }
         }
@@ -85,61 +120,64 @@ class CreateRecipeViewModel @Inject constructor(
     }
 
     fun addIngredient(ingredient: Ingredient) {
-        val newIngredients = ArrayList(_ingredients.value)
+        val newIngredients = state.value.ingredients.toMutableList()
         newIngredients.add(ingredient)
-        _ingredients.update { newIngredients }
+        _state.update { it.copy(ingredients = newIngredients) }
     }
 
     fun onIngredientExpanded(ingredientId: String) {
-        if(_revealedIngredientId.value == ingredientId) return
-        _revealedIngredientId.value = ingredientId
+        if (state.value.revealedIngredientId == ingredientId) return
+        _state.update { it.copy(revealedIngredientId = ingredientId) }
     }
 
     fun onIngredientCollapsed(ingredientId: String) {
-        if(_revealedIngredientId.value != ingredientId) return
-        _revealedIngredientId.value = ""
+        if (state.value.revealedIngredientId != ingredientId) return
+        _state.update { it.copy(revealedIngredientId = "") }
     }
 
     fun onIngredientDeleted(ingredient: Ingredient) {
-        if(!_ingredients.value.contains(ingredient)) return
-        val newIngredients = ArrayList(_ingredients.value)
+        if(!state.value.ingredients.contains(ingredient)) return
+        val newIngredients =state.value.ingredients.toMutableList()
         newIngredients.remove(ingredient)
-        _ingredients.update { newIngredients }
-
+        _state.update { it.copy(ingredients = newIngredients) }
     }
 
     fun unselectCategory(category: Category) {
-        val newCategories = ArrayList(_chosenCategories.value)
+        val newCategories = state.value.chosenCategories.toMutableList()
         newCategories.remove(category)
-        _chosenCategories.update { newCategories }
+        _state.update { it.copy(chosenCategories = newCategories)}
     }
 
     fun selectCategory(category: Category) {
-        val newCategories = ArrayList(_chosenCategories.value)
+        val newCategories = state.value.chosenCategories.toMutableList()
         newCategories.add(category)
-        _chosenCategories.update { newCategories }
+        _state.update { it.copy(chosenCategories = newCategories)}
     }
 
     fun fetchMoreProducts(searchText: String, onJobComplete: () -> Unit) {
         val job = viewModelScope.launch() {
-            when(
+            when (
                 val resource = productsRepository.getProductsList(
-                    searchText,
-                    _productsDatabase.value.getSessionIdFromUrl()
+                   searchText =  searchText,
+                    session = state.value.products.getSessionIdFromUrl()
                 )
             ) {
                 is Resource.Success -> {
-                    _error.value = ""
                     val response = resource.data!!
-                    _productsDatabase.value = ProductsData(
-                        searchText = _productsDatabase.value.searchText,
-                        productsList = _productsDatabase.value.productsList + response.productsList,
-                        nextUrl = response.nextUrl
-                    )
+
+                    _state.update { it.copy(
+                        error = "",
+                        products = ProductsData(
+                            searchText = it.products.searchText,
+                            productsList = it.products.productsList + response.productsList,
+                            nextUrl = response.nextUrl
+                        )
+                    ) }
                 }
+
                 is Resource.Error -> {
-                    _error.value = resource.message!!
-                    Log.d("MyBasketViewModel", "error: ${_error.value}")
+                    _state.update { it.copy(error = resource.message!!) }
+                    Log.d(TAG, "error: ${_state.value.error}")
                 }
             }
         }

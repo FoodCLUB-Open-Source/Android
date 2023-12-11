@@ -3,9 +3,7 @@ package android.kotlin.foodclub.viewModels.home
 import android.kotlin.foodclub.domain.enums.Reactions
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.home.VideoStats
-import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.MyBasketCache
-import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
 import android.kotlin.foodclub.domain.models.snaps.SnapModel
@@ -13,8 +11,9 @@ import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.repositories.BookmarkRepository
 import android.kotlin.foodclub.repositories.LikesRepository
 import android.kotlin.foodclub.repositories.PostRepository
-import android.kotlin.foodclub.repositories.ProductRepository
+import android.kotlin.foodclub.repositories.RecipeRepository
 import android.kotlin.foodclub.repositories.StoryRepository
+import android.kotlin.foodclub.views.home.home.HomeState
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -22,7 +21,9 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -32,56 +33,27 @@ class HomeViewModel @Inject constructor(
     private val storyRepository: StoryRepository,
     private val likesRepository: LikesRepository,
     private val bookmarkRepository: BookmarkRepository,
+    private val recipeRepository: RecipeRepository,
     private val sessionCache: SessionCache,
-    private val myBasketViewModel: MyBasketViewModel,
-    private val productRepository: ProductRepository,
     private val basketCache: MyBasketCache,
 ) : ViewModel() {
-    private val _title = MutableStateFlow("HomeViewModel View")
-    val title: StateFlow<String> get() = _title
 
-    private val _postListData = MutableStateFlow<List<VideoModel>>(listOf())
-    val postListData: StateFlow<List<VideoModel>> get() = _postListData
+    companion object {
+        private val TAG = HomeViewModel::class.java.simpleName
+    }
 
-    private val _storyListData = MutableStateFlow<List<VideoModel>>(listOf())
-    val storyListData: StateFlow<List<VideoModel>> get() = _storyListData
-
-    private val _memoryListData = MutableStateFlow<List<MemoriesModel>>(listOf())
-    val memoryListData:StateFlow<List<MemoriesModel>> get() = _memoryListData
-
-    private val _error = MutableStateFlow("")
-    val error: StateFlow<String> get() = _error
-
-    private val _basket = MutableStateFlow(basketCache.getBasket())
-    private val _productsList = MutableStateFlow<List<Ingredient>>(_basket.value.ingredients)
-    val selectedIngredients: StateFlow<List<Ingredient>> get() = _selectedIngredients
-    private val _defaultIngredients = MutableStateFlow<List<Ingredient>>(listOf())
-    val defaultIngredients: StateFlow<List<Ingredient>> get() = _defaultIngredients
-
-    private val _quantity = MutableStateFlow(0)
-    val quantity: StateFlow<Int> get() = _quantity
-
-    private val _selectedQuantity = MutableStateFlow(0)
-    val selectedQuantity: StateFlow<Int> get() = _selectedQuantity
-    private val _selectedIngredients = MutableStateFlow<List<Ingredient>>(listOf())
-    private val _productsDatabase = MutableStateFlow(ProductsData("", "", listOf()))
-
-
-    val ingredients: StateFlow<List<Ingredient>> get() = _ingredients
-    private val _ingredients = MutableStateFlow<List<Ingredient>>(emptyList())
-
-
+    private val _state = MutableStateFlow(HomeState.default())
+    val state: StateFlow<HomeState>
+        get() = _state
 
     init {
         getPostListData()
         getUserFollowerStories()
         getMemoriesListData()
-        _defaultIngredients.value = calculateDefaultQuantities(1)
-
     }
 
     private fun getMemoriesListData() {
-        val list = mutableListOf<MemoriesModel>(
+        val list = mutableListOf(
             MemoriesModel(
                 stories = listOf(
                     SnapModel(
@@ -223,85 +195,7 @@ class HomeViewModel @Inject constructor(
                 dateTime = "23 November 2023"
             )
         )
-        _memoryListData.value = list
-    }
-
-    fun addToShoppingList(ingredients: List<Ingredient>, selectedQuantity: Int) {
-        viewModelScope.launch {
-            try {
-                val updatedIngredients = ingredients.map { ingredient ->
-                    ingredient.copy(quantity = selectedQuantity)
-                }
-
-                // STORING SELECTED INGREDIENT
-                _selectedIngredients.emit(updatedIngredients)
-
-                //myBasketViewModel.addIngredientsToBasket(updatedIngredients)
-
-            } catch (e: Exception) {
-                _error.value = e.message ?: "Unknown error"
-            }
-        }
-    }
-
-    fun fetchProductsDatabase(searchText: String) {
-        viewModelScope.launch() {
-            when(val resource = productRepository.getProductsList(searchText)) {
-                is Resource.Success -> {
-                    _error.value = ""
-                    _productsDatabase.value = resource.data!!
-                    Log.d("MyBasketViewModel", "database: ${_productsDatabase.value.productsList}")
-                }
-                is Resource.Error -> {
-                    _error.value = resource.message!!
-                    Log.d("MyBasketViewModel", "error: ${_error.value}")
-                }
-            }
-        }
-    }
-
-
-    private fun calculateDefaultQuantities(numberOfPortions: Int): List<Ingredient> {
-        return _selectedIngredients.value.map { ingredient ->
-            val defaultQuantity = ingredient.quantity / numberOfPortions
-            ingredient.copy(quantity = defaultQuantity)
-        }
-    }
-
-    fun onQuantityChange(newQuantity: Int) {
-        _defaultIngredients.value = calculateDefaultQuantities(newQuantity)
-        _selectedIngredients.value = calculateUpdatedQuantities(newQuantity)
-
-        _selectedQuantity.value = newQuantity
-        _quantity.value = newQuantity
-    }
-
-    private fun calculateUpdatedQuantities(newQuantity: Int): List<Ingredient> {
-        return _selectedIngredients.value.map { ingredient ->
-            val updatedQuantity = (ingredient.quantity * newQuantity) / 100
-            ingredient.copy(quantity = updatedQuantity)
-        }
-    }
-
-
-    fun toggleIngredientSelection(ingredient: Ingredient) {
-        ingredient.isSelected = !ingredient.isSelected
-
-        // UPDATE SELECTED INGREDIENT
-        val updatedSelectedIngredients = _selectedIngredients.value.toMutableList()
-        if (ingredient.isSelected) {
-            updatedSelectedIngredients.add(ingredient)
-        } else {
-            updatedSelectedIngredients.remove(ingredient)
-        }
-        _selectedIngredients.value = updatedSelectedIngredients
-
-        // TELLING MY BASKET VIEW MODEL TO UPDATE
-        //myBasketViewModel.updateSelectedIngredients(_selectedIngredients.value)
-        myBasketViewModel.addIngredientsToBasket(listOf(ingredient))
-
-        // RECOMPOSITION FOR MY BASKET
-        myBasketViewModel.refreshBasket()
+        _state.update { it.copy(memories = list) }
     }
 
     private fun getPostListData() {
@@ -309,25 +203,53 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             when(val resource = postRepository.getHomepagePosts(user.userId)) {
                 is Resource.Success -> {
-                    _error.value = ""
-                    _postListData.value = resource.data!!
+                    _state.update { it.copy(
+                        videoList = resource.data!!,
+                        error = ""
+                    ) }
 //                    setTestData()
                 }
                 is Resource.Error -> {
-                    _error.value = resource.message!!
+                    _state.update { it.copy(error = resource.message!!) }
                 }
             }
         }
     }
 
+    fun getRecipe(postId: Long) {
+        viewModelScope.launch {
+            when(val resource = recipeRepository.getRecipe(postId)) {
+                is Resource.Success -> {
+                    _state.update { it.copy(
+                        recipe = resource.data
+                    ) }
+                }
+                is Resource.Error -> {
+                    _state.update { it.copy(error = resource.message!!) }
+                }
+            }
+        }
+    }
+
+    fun addIngredientsToBasket() {
+        val basket = basketCache.getBasket()
+        val selectedIngredients = _state.value.recipe?.ingredients?.filter { it.isSelected }
+        selectedIngredients?.forEach {
+            it.isSelected = false
+            basket.addIngredient(it.copy())
+        }
+        basketCache.saveBasket(basket)
+    }
+
     private fun setTestData() {
-        if(_postListData.value.isEmpty()) return
-        _postListData.value = _postListData.value.map {
+        if(state.value.videoList.isEmpty()) return
+        val videos = state.value.videoList.map {
             VideoModel(it.videoId, it.authorDetails, it.videoStats,
                 "https://kretu.sts3.pl/foodclub_videos/daniel_vid2.mp4",
                 it.currentViewerInteraction, it.description, it.createdAt,
                 "https://kretu.sts3.pl/foodclub_thumbnails/daniel_vid2-thumbnail.jpg")
         }
+        _state.update { it.copy(videoList = videos) }
     }
 
     private fun getUserFollowerStories(){
@@ -335,7 +257,6 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             when(val resource = storyRepository.getUserFriendsStories(sessionCache.getActiveSession()!!.sessionUser.userId)) {
                 is Resource.Success -> {
-                    _error.value = ""
                     val originalList = resource.data
                     if (originalList?.size == 1) {
                         // ***** for testing purposes only *****
@@ -350,16 +271,35 @@ class HomeViewModel @Inject constructor(
                             )
                             duplicatedList.add(duplicatedItem)
                         }
-
-                        _storyListData.value = duplicatedList
+                        _state.update { it.copy(
+                            error = "",
+                            storyList = duplicatedList
+                        ) }
                     } else {
-                        _storyListData.value = originalList!!
+                        _state.update { it.copy(
+                            error = "",
+                            storyList = originalList!!
+                        ) }
                     }
 
-                    Log.i("MYTAG", "stories value: ${_storyListData.value}")
+                    Log.i(TAG, "stories value: ${state.value.storyList}")
                 }
                 is Resource.Error -> {
-                    _error.value = resource.message!!
+                    _state.update { it.copy(error = resource.message!!) }
+                }
+            }
+        }
+    }
+
+    fun postSnap(file: File) {
+        val user = sessionCache.getActiveSession()?.sessionUser
+        viewModelScope.launch {
+            when (val resource = storyRepository.postImageStory(user!!.userId, file)){
+                is Resource.Success -> {
+                    Log.i(TAG,"POST STORY ${resource.data}")
+                }
+                is Resource.Error -> {
+                    Log.e(TAG,"POST STORY ${resource.message}")
                 }
             }
         }
@@ -371,30 +311,24 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             when (val resource = storyRepository.userViewsStory(storyId, user.userId)) {
                 is Resource.Success -> {
-                    // LOG MESSAGE
-                    Log.i("MYTAG", "User Viewed the Story Successfully")
+                    Log.i(TAG, "User Viewed the Story Successfully")
                 }
                 is Resource.Error -> {
-                    // ERROR HANDLING
-                    Log.e("MYTAG", "Failed to View Story: ${resource.message}")
+                    Log.e(TAG, "Failed to View Story: ${resource.message}")
                 }
             }
         }
     }
 
-
-    // USER VIEWS A POST
     suspend fun userViewsPost(postId: Long) {
         val user = sessionCache.getActiveSession()?.sessionUser ?: return
         viewModelScope.launch {
             when (val resource = postRepository.userViewsPost(postId, user.userId)) {
                 is Resource.Success -> {
-                    // ON SUCCESS
-                    Log.i("MYTAG", "Viewed Post Successfully")
+                    Log.i(TAG, "Viewed Post Successfully")
                 }
                 is Resource.Error -> {
-                    // ERROR HANDLING
-                    Log.e("MYTAG", "Failed to View Post: ${resource.message}")
+                    Log.e(TAG, "Failed to View Post: ${resource.message}")
                 }
             }
         }
@@ -411,10 +345,10 @@ class HomeViewModel @Inject constructor(
                 )
             ){
                 is Resource.Success -> {
-                    Log.i("MYTAG","${resource.data}")
+                    Log.i(TAG,"${resource.data}")
                 }
                 is Resource.Error -> {
-                    Log.i("MYTAG","${resource.message}")
+                    Log.i(TAG,"${resource.message}")
                 }
             }
         }
@@ -422,16 +356,16 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun updatePostById(postId: Long, isLiked: Boolean) {
-        val currentList = _postListData.value.toMutableList() // Convert to a mutable list
+        val currentList = state.value.videoList.toMutableList()
 
         for (videoModel in currentList) {
             if (videoModel.videoId == postId) {
                 videoModel.currentViewerInteraction.isLiked = isLiked
-                break // Exit the loop after finding and updating the specific item
+                break
             }
         }
 
-        _postListData.value = currentList // Update with the modified list
+        _state.update { it.copy(videoList = currentList) }
     }
 
     suspend fun updatePostBookmarkStatus(postId: Long, isBookmarked: Boolean){
@@ -445,10 +379,10 @@ class HomeViewModel @Inject constructor(
                 )
             ){
                 is Resource.Success -> {
-                    Log.i("MYTAG","success: ${resource.data}")
+                    Log.i(TAG,"success: ${resource.data}")
                 }
                 is Resource.Error -> {
-                    Log.i("MYTAG","error: ${resource.message}")
+                    Log.i(TAG,"error: ${resource.message}")
                 }
             }
         }
@@ -456,16 +390,14 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun updateBookmarkStatus(postId: Long, isBookmarked: Boolean) {
-        val currentList = _postListData.value.toMutableList() // Convert to a mutable list
+        val currentList = state.value.videoList.toMutableList()
 
         for (videoModel in currentList) {
             if (videoModel.videoId == postId) {
                 videoModel.currentViewerInteraction.isBookmarked = isBookmarked
-                break // Exit the loop after finding and updating the specific item
-            }
+                break             }
         }
-
-        _postListData.value = currentList // Update with the modified list
+        _state.update { it.copy(videoList = currentList) }
     }
 
     object RecipesVideos {

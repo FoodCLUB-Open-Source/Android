@@ -19,13 +19,12 @@ fun NavGraphBuilder.signupNavigationGraph(navController: NavHostController) {
     ) {
         composable(route = SignUpScreen.SignUpPage1.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<SignupWithEmailViewModel>(navController)
-            val userSignUpInformation = viewModel.userSignUpInformation.collectAsState()
-            val repeatedEmail = viewModel.repeatedEmail.collectAsState()
+            val state = viewModel.state.collectAsState()
 
             SignUpWithEmailView(
                 onValuesUpdate = { email, pass ->
                     viewModel.saveEmailPasswordData(email, pass)
-                    if (repeatedEmail.value != email) {
+                    if (state.value.repeatedEmail != email) {
                         navController.navigate(route = SignUpScreen.SignUpPage2.route)
                     } else {
                         navController.navigate(route = SignUpScreen.SignUpPage3.route)
@@ -33,14 +32,15 @@ fun NavGraphBuilder.signupNavigationGraph(navController: NavHostController) {
 
                 },
                 onBackButtonClick = { navController.popBackStack() },
-                userSignUpInformation = userSignUpInformation
+                userSignUpInformation = state.value.userSignUpInformation
             )
         }
         composable(route = SignUpScreen.SignUpPage2.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<SignupWithEmailViewModel>(navController)
-            val userSignUpInformation = viewModel.userSignUpInformation.collectAsState()
-            val error = viewModel.error.collectAsState()
-            val repeatedEmail = viewModel.repeatedEmail.collectAsState()
+            val state = viewModel.state.collectAsState()
+           // val userSignUpInformation = viewModel.userSignUpInformation.collectAsState()
+           // val error = viewModel.error.collectAsState()
+           // val repeatedEmail = viewModel.repeatedEmail.collectAsState()
 
             ConfirmEmailView(
                 onValuesUpdate = {
@@ -50,15 +50,15 @@ fun NavGraphBuilder.signupNavigationGraph(navController: NavHostController) {
                 },
                 saveData = { viewModel.saveRepeatedEmail(it) },
                 onBackButtonClick = { navController.popBackStack() },
-                userSignUpInformation = userSignUpInformation,
-                repeatedEmailState = repeatedEmail,
-                error = error.value
+                userSignUpInformation = state.value.userSignUpInformation,
+                repeatedEmailState = state.value.repeatedEmail,
+                error = state.value.error
             )
         }
         composable(route = SignUpScreen.SignUpPage3.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<SignupWithEmailViewModel>(navController)
-            val userSignUpInformation = viewModel.userSignUpInformation.collectAsState()
-            val error = viewModel.error.collectAsState()
+            val state = viewModel.state.collectAsState()
+
 
             CreateFullNameView(
                 onValuesUpdate = { navController.navigate(SignUpScreen.SignUpPage4.route) },
@@ -68,21 +68,20 @@ fun NavGraphBuilder.signupNavigationGraph(navController: NavHostController) {
                         popUpTo(route = SignUpScreen.SignUpPage1.route) { inclusive = true }
                     }
                 },
-                userSignUpInformation = userSignUpInformation,
-                error = error.value
+                userSignUpInformation = state.value.userSignUpInformation,
+                error = state.value.error
             )
         }
         composable(route = SignUpScreen.SignUpPage4.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<SignupWithEmailViewModel>(navController)
-            val userSignUpInformation = viewModel.userSignUpInformation.collectAsState()
-            val error = viewModel.error.collectAsState()
+            val state = viewModel.state.collectAsState()
 
             UsernameView(
                 onValuesUpdate = { viewModel.signUpUser(navController) },
                 saveData = { viewModel.saveUsername(it) },
                 onBackButtonClick = { navController.popBackStack() },
-                userSignUpInformation = userSignUpInformation,
-                error = error.value
+                userSignUpInformation = state.value.userSignUpInformation,
+                error = state.value.error
             )
         }
     }

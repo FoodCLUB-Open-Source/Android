@@ -22,10 +22,11 @@ import androidx.compose.ui.res.stringResource
 @Composable
 fun CreateFullNameView(
     onValuesUpdate: () -> Unit, saveData: (String) -> Unit,
-    onBackButtonClick: () -> Unit, userSignUpInformation: State<SignUpUser>,
+    onBackButtonClick: () -> Unit,
+    userSignUpInformation: SignUpUser,
     error: String
 ) {
-    var name by remember { mutableStateOf(userSignUpInformation.value.name) }
+    var name by remember { mutableStateOf(userSignUpInformation.name) }
     var initialNameCorrectnessState = FieldsValidation.checkFullName(name) == null
     var filledName by remember { mutableStateOf(false) }
 

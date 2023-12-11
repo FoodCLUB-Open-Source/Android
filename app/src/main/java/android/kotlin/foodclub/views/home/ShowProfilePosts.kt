@@ -3,14 +3,17 @@ package android.kotlin.foodclub.views.home
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.defaultButtonColors
+import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.others.AnimatedIcon
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
-import android.kotlin.foodclub.domain.models.profile.UserPosts
+import android.kotlin.foodclub.utils.composables.BackButton
 import android.kotlin.foodclub.utils.composables.LikeButton
 import android.kotlin.foodclub.utils.composables.PlayPauseButton
 import android.kotlin.foodclub.utils.composables.VideoLayout
 import android.kotlin.foodclub.utils.composables.VideoScroller
 import android.kotlin.foodclub.viewModels.home.ProfileViewModel
+import android.kotlin.foodclub.views.home.home.HomeBottomSheetIngredients
+import android.kotlin.foodclub.views.home.profile.ProfileState
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -53,9 +56,7 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -95,15 +96,21 @@ fun ConfirmDeleteDialog(
         Box(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_450))) {
             Column {
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_130)))
-                Box(modifier = Modifier
-                    .height(dimensionResource(id = R.dimen.dim_490))
-                    .background(
-                        color = Color.White,
-                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_25), dimensionResource(id = R.dimen.dim_10), dimensionResource(id = R.dimen.dim_25), dimensionResource(id = R.dimen.dim_10))
-                    )
+                Box(
+                    modifier = Modifier
+                        .height(dimensionResource(id = R.dimen.dim_490))
+                        .background(
+                            color = Color.White,
+                            shape = RoundedCornerShape(
+                                dimensionResource(id = R.dimen.dim_25),
+                                dimensionResource(id = R.dimen.dim_10),
+                                dimensionResource(id = R.dimen.dim_25),
+                                dimensionResource(id = R.dimen.dim_10)
+                            )
+                        )
                 ) {
                     Column(
-                        modifier = Modifier.padding( dimensionResource(id = R.dimen.dim_16)),
+                        modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_16)),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
 
@@ -118,7 +125,7 @@ fun ConfirmDeleteDialog(
                             style = MaterialTheme.typography.headlineSmall,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             fontFamily = Montserrat,
-                            )
+                        )
                         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_8)))
 
 
@@ -126,12 +133,16 @@ fun ConfirmDeleteDialog(
                             text = desc,
                             textAlign = TextAlign.Center,
                             modifier = Modifier
-                                .padding(top = dimensionResource(id = R.dimen.dim_10), start = dimensionResource(id = R.dimen.dim_25), end = dimensionResource(id = R.dimen.dim_25))
+                                .padding(
+                                    top = dimensionResource(id = R.dimen.dim_10),
+                                    start = dimensionResource(id = R.dimen.dim_25),
+                                    end = dimensionResource(id = R.dimen.dim_25)
+                                )
                                 .fillMaxWidth(),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             fontFamily = Montserrat,
-                            )
+                        )
                         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_24)))
 
 
@@ -144,7 +155,7 @@ fun ConfirmDeleteDialog(
                                 text = stringResource(id = R.string.no),
                                 color = Color.White,
                                 fontFamily = Montserrat,
-                                )
+                            )
                         }
                         ElevatedButton(
                             onClick = onConfirm,
@@ -157,7 +168,7 @@ fun ConfirmDeleteDialog(
                                 text = stringResource(id = R.string.yes),
                                 color = Color.White,
                                 fontFamily = Montserrat,
-                                )
+                            )
                         }
 
 
@@ -175,20 +186,18 @@ fun ConfirmDeleteDialog(
 }
 
 
-
-@OptIn(ExperimentalFoundationApi::class,ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalFoundationApi::class)
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
 fun ShowProfilePosts(
     postId: Long,
-    posts: List<UserPosts>,
+    posts: List<VideoModel>,
     viewModel: ProfileViewModel,
+    state: ProfileState,
     onPostDeleted: () -> Unit,
     onBackPressed: () -> Unit
 ) {
-    val post = viewModel.postData.collectAsState()
-    val userId = viewModel.myUserId.collectAsState()
-    val userData = viewModel.profileModel.collectAsState()
+    var showIngredientSheet by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     val localDensity = LocalDensity.current
     val infoDialog = remember { mutableStateOf(false) }
@@ -199,8 +208,16 @@ fun ShowProfilePosts(
 
     var screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.94f
 
+    val triggerIngredientBottomSheetModal: () -> Unit = {
+        showIngredientSheet = !showIngredientSheet
+    }
+
     if (screenHeightMinusBottomNavItem <= dimensionResource(id = R.dimen.dim_650)) {
         screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.96f
+    }
+
+    LaunchedEffect(postId) {
+        viewModel.getRecipe(197)
     }
 
     SideEffect {
@@ -216,11 +233,20 @@ fun ShowProfilePosts(
     BackHandler {
         onBackPressed()
     }
+    val initialVideo = posts.filter { it.videoId == postId }.getOrNull(0)
 
     Column(
         modifier = Modifier
             .height(screenHeightMinusBottomNavItem)
     ) {
+        val currentPostIndex = posts.indexOf(initialVideo)
+        val pagerState = rememberPagerState(
+            initialPage = if (currentPostIndex == -1) 0 else currentPostIndex,
+            initialPageOffsetFraction = 0f
+        ) {
+            posts.size
+        }
+
         if (infoDialog.value) {
             ConfirmDeleteDialog(
                 title = stringResource(id = R.string.delete_video),
@@ -230,51 +256,51 @@ fun ShowProfilePosts(
                 },
                 onConfirm = {
                     infoDialog.value = false
-                    viewModel.deleteCurrentPost(postId)
+                    viewModel.deleteCurrentPost(posts[pagerState.currentPage].videoId)
                     onPostDeleted()
-                    }
+                }
             )
         }
-        if(post.value != null) {
-            val pagerState = rememberPagerState(
-                initialPage = 0,
-                initialPageOffsetFraction = 0f
-            ) {
-                posts.size
-            }
-
+        if (initialVideo != null) {
             val fling = PagerDefaults.flingBehavior(
                 state = pagerState, lowVelocityAnimationSpec = tween(
                     easing = LinearEasing, durationMillis = 300
                 )
             )
-
+            if (showIngredientSheet) {
+                HomeBottomSheetIngredients(
+                    triggerIngredientBottomSheetModal,
+                    state.recipe,
+                    onAddToBasket = { viewModel.addIngredientsToBasket()}
+                )
+            }
             VerticalPager(
                 state = pagerState,
                 flingBehavior = fling,
                 beyondBoundsPageCount = 1,
                 modifier = Modifier
-            ) { vtPager->
+            ) { vtPager ->
                 var pauseButtonVisibility by remember { mutableStateOf(false) }
-                val iconSize = dimensionResource(id = R.dimen.dim_110)
-                val doubleTapState by remember { mutableStateOf(
-                    AnimatedIcon(R.drawable.liked, iconSize = iconSize, localDensity)
-                ) }
-
+                val doubleTapState by remember {
+                    mutableStateOf(
+                        AnimatedIcon(R.drawable.liked, 110.dp, localDensity)
+                    )
+                }
+                val currentVideo = posts[vtPager]
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
                     var isLiked by remember {
-                        mutableStateOf(post.value!!.currentViewerInteraction.isLiked)
+                        mutableStateOf(currentVideo.currentViewerInteraction.isLiked)
                     }
                     var isBookmarked by remember {
                         mutableStateOf(
-                            post.value!!.currentViewerInteraction.isBookmarked
+                            currentVideo.currentViewerInteraction.isBookmarked
                         )
                     }
 
-                    VideoScroller(post.value!!, pagerState, vtPager, onSingleTap = {
+                    VideoScroller(currentVideo, pagerState, vtPager, onSingleTap = {
                         pauseButtonVisibility = it.isPlaying
                         it.playWhenReady = !it.isPlaying
                     },
@@ -291,28 +317,24 @@ fun ShowProfilePosts(
 
                     hasVideoLoaded.value = true
 
-                    BackButton(alignment = Alignment.TopStart, onBackPressed = onBackPressed)
-
-                    if (post.value!!.authorDetails == userData.value!!.username) {
+                    if (currentVideo.authorDetails == state.userProfile!!.username) {
                         DeleteButton(
                             alignment = Alignment.TopEnd,
-                            onDeleteClicked = {
-                                infoDialog.value = true
-                            }
+                            onDeleteClicked = { infoDialog.value = true }
                         )
                     }
                     LikeButton(doubleTapState) {}
 
                     val simpleUserModel = SimpleUserModel(
-                        userId = userId.value.toInt(),
-                        username = post.value!!.authorDetails,
-                        profilePictureUrl = userData.value!!.profilePictureUrl
+                        userId = state.myUserId.toInt(),
+                        username = currentVideo.authorDetails,
+                        profilePictureUrl = state.userProfile.profilePictureUrl
                     )
-
                     PlayPauseButton(buttonVisibility = pauseButtonVisibility)
+
                     VideoLayout(
                         userDetails = simpleUserModel,
-                        videoStats = post.value!!.videoStats,
+                        videoStats = currentVideo.videoStats,
                         likeState = isLiked,
                         bookMarkState = isBookmarked,
                         category = stringResource(id = R.string.meat),
@@ -329,20 +351,29 @@ fun ShowProfilePosts(
                                 // TODO bookmark functionality
                             }
                         },
-                        onInfoClick = {},
+                        onInfoClick = triggerIngredientBottomSheetModal,
                         modifier = Modifier
                             .fillMaxWidth()
                             .align(Alignment.BottomCenter)
                     )
+                    Box(modifier = Modifier
+                        .padding(
+                            top = dimensionResource(id = R.dimen.dim_40),
+                            start = dimensionResource(id = R.dimen.dim_10)
+                        )
+                    ) {
+                        BackButton(onBackPressed, backgroundTransparent = true, Color.White)
+                    }
+
                 }
             }
         }
-    }
-    
-    LaunchedEffect(hasVideoLoaded.value) {
-        if(post.value != null) {
-            delay(50)
-            controlPoint.value = false
+
+        LaunchedEffect(hasVideoLoaded.value) {
+            if (initialVideo != null) {
+                delay(50)
+                controlPoint.value = false
+            }
         }
     }
 }
@@ -351,18 +382,25 @@ fun ShowProfilePosts(
 fun DeleteButton(
     alignment: Alignment,
     onDeleteClicked: () -> Unit
-){
+) {
     Box(
         modifier = Modifier
-            .padding(end = dimensionResource(id = R.dimen.dim_20), top = dimensionResource(id = R.dimen.dim_50))
+            .padding(
+                end = dimensionResource(id = R.dimen.dim_20),
+                top = dimensionResource(id = R.dimen.dim_50)
+            )
             .fillMaxSize()
             .wrapContentSize(align = alignment)
     ) {
         Button(
             shape = RectangleShape,
             modifier = Modifier
-                .border(dimensionResource(id = R.dimen.dim_1), Color.Transparent, shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
-                .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
+                .border(
+                    dimensionResource(id = R.dimen.dim_1),
+                    Color.Transparent,
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
+                )
+                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
                 .align(Alignment.BottomCenter)
                 .width(dimensionResource(id = R.dimen.dim_40))
                 .height(dimensionResource(id = R.dimen.dim_40)),
@@ -381,42 +419,6 @@ fun DeleteButton(
                 modifier = Modifier
                     .width(dimensionResource(id = R.dimen.dim_25))
                     .height(dimensionResource(id = R.dimen.dim_25))
-            )
-        }
-    }
-}
-
-@Composable
-fun BackButton(alignment: Alignment, onBackPressed: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .padding(end = dimensionResource(id = R.dimen.dim_20), top = dimensionResource(id = R.dimen.dim_50))
-            .wrapContentSize(align = alignment)
-    ) {
-        Button(
-            shape = RectangleShape,
-            modifier = Modifier
-                .border(dimensionResource(id = R.dimen.dim_1), Color.Transparent, shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
-                .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
-                .align(Alignment.BottomCenter)
-                .width(dimensionResource(id = R.dimen.dim_40))
-                .height(dimensionResource(id = R.dimen.dim_40)),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent,
-                contentColor = Color.Transparent
-            ), contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_5)),
-            onClick = {
-                onBackPressed()
-            }
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.back_icon),
-                contentDescription = "Delete",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .width(dimensionResource(id = R.dimen.dim_25))
-                    .height(dimensionResource(id = R.dimen.dim_25)),
-                colorFilter = ColorFilter.tint(Color.White)
             )
         }
     }
