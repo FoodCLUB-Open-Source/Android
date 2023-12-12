@@ -383,7 +383,7 @@ fun CameraView(
                                     recording?.stop()
                                 }
                             }
-
+                            val test = 0 // Object ref of recording changes might be the issue
                             //navController.navigate("GALLERY_VIEW")
                         },
                         modifier = Modifier
