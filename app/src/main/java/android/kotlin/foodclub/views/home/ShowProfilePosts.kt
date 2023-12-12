@@ -13,6 +13,7 @@ import android.kotlin.foodclub.utils.composables.VideoLayout
 import android.kotlin.foodclub.utils.composables.VideoScroller
 import android.kotlin.foodclub.viewModels.home.profile.ProfileEvents
 import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
+import android.kotlin.foodclub.views.home.home.HomeBottomSheetIngredients
 import android.kotlin.foodclub.views.home.profile.ProfileState
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.LinearEasing
@@ -197,6 +198,7 @@ fun ShowProfilePosts(
     onPostDeleted: () -> Unit,
     onBackPressed: () -> Unit
 ) {
+    var showIngredientSheet by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     val localDensity = LocalDensity.current
     val infoDialog = remember { mutableStateOf(false) }
@@ -206,6 +208,10 @@ fun ShowProfilePosts(
     val hasVideoLoaded = remember { mutableStateOf(false) }
 
     var screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.94f
+
+    val triggerIngredientBottomSheetModal: () -> Unit = {
+        showIngredientSheet = !showIngredientSheet
+    }
 
     if (screenHeightMinusBottomNavItem <= dimensionResource(id = R.dimen.dim_650)) {
         screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.96f
@@ -258,14 +264,19 @@ fun ShowProfilePosts(
                     easing = LinearEasing, durationMillis = 300
                 )
             )
-
+            if (showIngredientSheet) {
+                HomeBottomSheetIngredients(
+                    triggerIngredientBottomSheetModal,
+                    state.recipe,
+                    onAddToBasket = { events.addIngredientsToBasket()}
+                )
+            }
             VerticalPager(
                 state = pagerState,
                 flingBehavior = fling,
                 beyondBoundsPageCount = 1,
                 modifier = Modifier
             ) { vtPager ->
-
                 var pauseButtonVisibility by remember { mutableStateOf(false) }
                 val doubleTapState by remember {
                     mutableStateOf(
@@ -273,7 +284,6 @@ fun ShowProfilePosts(
                     )
                 }
                 val currentVideo = posts[vtPager]
-
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -317,8 +327,8 @@ fun ShowProfilePosts(
                         username = currentVideo.authorDetails,
                         profilePictureUrl = state.userProfile.profilePictureUrl
                     )
-
                     PlayPauseButton(buttonVisibility = pauseButtonVisibility)
+
                     VideoLayout(
                         userDetails = simpleUserModel,
                         videoStats = currentVideo.videoStats,
@@ -338,7 +348,7 @@ fun ShowProfilePosts(
                                 // TODO bookmark functionality
                             }
                         },
-                        onInfoClick = {},
+                        onInfoClick = triggerIngredientBottomSheetModal,
                         modifier = Modifier
                             .fillMaxWidth()
                             .align(Alignment.BottomCenter)

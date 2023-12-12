@@ -6,6 +6,7 @@ import android.kotlin.foodclub.domain.models.recipes.Recipe
 import android.kotlin.foodclub.utils.composables.CustomSlider
 import android.kotlin.foodclub.viewModels.home.home.HomeEvents
 import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
+import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -47,9 +48,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeBottomSheetIngredients(
-    events: HomeEvents,
     onDismiss: () -> Unit,
-    recipe: Recipe?
+    recipe: Recipe?,
+    onAddToBasket: () -> Unit
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 240.dp
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -63,6 +64,7 @@ fun HomeBottomSheetIngredients(
         onDismissRequest = { onDismiss() },
         sheetState = bottomSheetState,
         dragHandle = { BottomSheetDefaults.DragHandle() },
+        scrimColor = Color.Transparent
     ) {
         if (recipe != null) {
             var ingredientsMultiplier by remember { mutableFloatStateOf(recipe.servingSize.toFloat()) }
@@ -210,7 +212,7 @@ fun HomeBottomSheetIngredients(
                             .fillMaxWidth(),
                         colors = defaultButtonColors(),
                         contentPadding = PaddingValues(15.dp),
-                        onClick = { events.addIngredientsToBasket() }
+                        onClick = { onAddToBasket()}
                     ) {
                         Text(
                             "Add to my shopping list",

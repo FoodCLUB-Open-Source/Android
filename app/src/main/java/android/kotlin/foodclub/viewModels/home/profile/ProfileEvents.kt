@@ -12,4 +12,5 @@ interface ProfileEvents {
     fun deleteCurrentPost(postId: Long)
     fun unfollowUser(sessionUserId: Long, userId: Long)
     fun followUser(sessionUserId: Long, userId: Long)
+    fun addIngredientsToBasket()
 }

@@ -5,7 +5,6 @@ import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.domain.models.profile.UserDetailsModel
 import android.kotlin.foodclub.domain.models.profile.UserProfile
 import android.kotlin.foodclub.network.retrofit.dtoMappers.posts.PostToVideoMapper
-import android.kotlin.foodclub.room.util.daoRequestFlow
 import android.kotlin.foodclub.network.retrofit.services.ProfileService
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.FollowerUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.FollowingUserMapper
@@ -20,13 +19,14 @@ import android.kotlin.foodclub.network.retrofit.responses.profile.RetrieveProfil
 import android.kotlin.foodclub.network.retrofit.responses.profile.RetrieveUserDetailsResponse
 import android.kotlin.foodclub.network.retrofit.responses.profile.UpdateUserProfileImageResponse
 import android.kotlin.foodclub.network.retrofit.utils.apiRequestFlow
-import android.kotlin.foodclub.room.entity.ProfileModel
+import android.kotlin.foodclub.room.entity.OfflineProfileModel
 import android.kotlin.foodclub.room.repository.datasource.ProfileDataLocalSource
-import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.ProfileModelMapper
+import android.kotlin.foodclub.room.entity.OfflineProfileVideosModel
+import android.kotlin.foodclub.room.repository.datasource.ProfileVideosDataLocalSource
+import android.kotlin.foodclub.room.util.daoRequestFlow
+import android.kotlin.foodclub.room.util.daoRequestWithFlow
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.util.Log
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
@@ -34,9 +34,9 @@ import java.io.File
 class ProfileRepository(
     private val api: ProfileService,
     private val profileDataLocalSource: ProfileDataLocalSource,
+    private val profileVideosDataLocalSource: ProfileVideosDataLocalSource,
     private val profileMapper: UserProfileMapper,
     private val userPostsMapper: PostToVideoMapper,
-    private val profileModelMapper: ProfileModelMapper,
     private val followerUserMapper: FollowerUserMapper,
     private val followingUserMapper: FollowingUserMapper,
     private val userDetailsMapper: UserDetailsMapper
@@ -83,26 +83,28 @@ class ProfileRepository(
         }
     }
 
-    fun retrieveLocalUserDetails(userId: Long): Resource<Flow<UserDetailsModel>, String> {
-        return when(val response = daoRequestFlow<Flow<UserDetailsModel>, String> {
+    suspend fun retrieveLocalUserDetails(userId: Long): Resource<OfflineProfileModel, String> {
+        return daoRequestWithFlow {
             profileDataLocalSource.getData(userId)
-                .map { profileModelMapper.mapToDomainModel(it) }
-        }){
-            is Resource.Success -> {
-                Resource.Success(response.data!!)
-            }
-            is Resource.Error -> {
-                Resource.Error(response.message!!)
-            }
         }
     }
 
-    suspend fun insertLocalUserDetails(profileModel: ProfileModel) {
-        return profileDataLocalSource.insertData(profileModel)
+    suspend fun insertLocalUserDetails(offlineProfileModel: OfflineProfileModel) {
+        daoRequestFlow<Unit, String> {
+            profileDataLocalSource.insertData(offlineProfileModel)
+        }
     }
 
-    suspend fun updateLocalProfileData(profileModel: ProfileModel) {
-        return profileDataLocalSource.updateData(profileModel)
+    suspend fun insertProfileVideosData(videosModel: OfflineProfileVideosModel) {
+        daoRequestFlow<Unit, String> {
+            profileVideosDataLocalSource.insertProfileVideosData(videosModel)
+        }
+    }
+
+    suspend fun retrieveAllLocalProfileVideos(): Resource<List<OfflineProfileVideosModel>, String> {
+        return daoRequestWithFlow {
+            profileVideosDataLocalSource.getAllProfileVideosData()
+        }
     }
 
     suspend fun updateUserProfileImage(
