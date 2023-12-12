@@ -13,8 +13,8 @@ import android.kotlin.foodclub.repositories.LikesRepository
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.repositories.RecipeRepository
 import android.kotlin.foodclub.repositories.StoryRepository
-import android.kotlin.foodclub.views.home.home.HomeState
 import android.kotlin.foodclub.utils.helpers.Resource
+import android.kotlin.foodclub.views.home.home.HomeState
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -255,7 +255,8 @@ class HomeViewModel @Inject constructor(
     private fun getUserFollowerStories(){
         if(sessionCache.getActiveSession()?.sessionUser == null) return
         viewModelScope.launch {
-            when(val resource = storyRepository.getUserFriendsStories(sessionCache.getActiveSession()!!.sessionUser.userId)) {
+           // when(val resource = storyRepository.getUserFriendsStories(sessionCache.getActiveSession()!!.sessionUser.userId)) {
+            when(val resource = storyRepository.getUserFriendsStories(10)) {
                 is Resource.Success -> {
                     val originalList = resource.data
                     if (originalList?.size == 1) {

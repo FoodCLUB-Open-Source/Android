@@ -5,7 +5,6 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -41,7 +40,6 @@ fun TapToSnapDialog(
             contentScale = ContentScale.Crop,
             colorFilter = ColorFilter.tint(Color.Black, BlendMode.Overlay),
             modifier = Modifier
-                .fillMaxSize()
                 .blur(
                     radiusX = 50.dp,
                     radiusY = 50.dp,
@@ -55,7 +53,7 @@ fun TapToSnapDialog(
             modifier = Modifier.align(Alignment.BottomStart)
         )
         Text(
-            text = stringResource(id = R.string.tap_to_snap_subheading),
+            text =stringResource(id = R.string.tap_to_snap_subheading),
             style = TextStyle(
                 fontSize = 20.sp,
                 fontFamily = Montserrat,
