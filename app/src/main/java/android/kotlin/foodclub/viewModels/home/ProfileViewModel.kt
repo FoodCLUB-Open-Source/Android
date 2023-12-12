@@ -14,7 +14,6 @@ import android.kotlin.foodclub.room.entity.OfflineProfileModel
 import android.kotlin.foodclub.room.entity.OfflineProfileVideosModel
 import android.kotlin.foodclub.utils.helpers.ConnectivityUtils
 import android.kotlin.foodclub.repositories.RecipeRepository
-import android.kotlin.foodclub.room.entity.ProfileModel
 import android.kotlin.foodclub.utils.helpers.StoreData
 import android.kotlin.foodclub.utils.helpers.UiEvent
 import android.kotlin.foodclub.views.home.profile.ProfileState
@@ -39,8 +38,7 @@ class ProfileViewModel @Inject constructor(
     private val postRepository: PostRepository,
     private val profileRepository: ProfileRepository,
     val sessionCache: SessionCache,
-    private val storeData: StoreData,
-    private val connectivityUtil: ConnectivityUtils
+    private val connectivityUtil: ConnectivityUtils,
     val storeData: StoreData,
     private val recipeRepository: RecipeRepository,
     private val basketCache: MyBasketCache
