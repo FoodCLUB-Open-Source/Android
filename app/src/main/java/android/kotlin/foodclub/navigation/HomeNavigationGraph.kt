@@ -72,7 +72,7 @@ fun NavGraphBuilder.homeNavigationGraph(
                 type = NavType.LongType
             })
         ) {
-            val viewModel: ProfileViewModel = hiltViewModel()
+            val viewModel = it.sharedHiltViewModel<ProfileViewModel>(navController = navController)
             val state = viewModel.state.collectAsState()
             val userId = it.arguments?.getLong("userId")
             if (userId == null) {
@@ -241,7 +241,7 @@ fun NavGraphBuilder.homeNavigationGraph(
             )
         }
         composable(route = HomeOtherRoutes.TakeProfilePhotoView.route) {
-            val viewModel: ProfileViewModel = hiltViewModel()
+            val viewModel = it.sharedHiltViewModel<ProfileViewModel>(navController = navController)
             val state = viewModel.state.collectAsState()
 
             TakeProfilePhotoView(

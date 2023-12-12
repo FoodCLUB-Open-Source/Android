@@ -1,12 +1,12 @@
 package android.kotlin.foodclub.room.repository.datasource
 
-import android.kotlin.foodclub.room.entity.ProfileModel
+import android.kotlin.foodclub.room.entity.OfflineProfileModel
 import kotlinx.coroutines.flow.Flow
 
 interface ProfileDataLocalSource {
 
-    suspend fun insertData(profileModel: ProfileModel)
-    fun getData(id: Long): Flow<ProfileModel>
-    suspend fun updateData(profileModel: ProfileModel)
+    suspend fun insertData(profileModel: OfflineProfileModel)
+    fun getData(id: Long): Flow<OfflineProfileModel>
+    suspend fun updateData(profileModel: OfflineProfileModel)
 
 }

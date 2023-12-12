@@ -68,7 +68,7 @@ fun TakeProfilePhotoView(
                         )
 
                         scope.launch {
-                            state.dataStore?.storeImage(photoUri!!.toString())
+                            viewModel.state.value.dataStore?.storeImage(photoUri!!.toString())
                         }
 
                         navController.popBackStack()

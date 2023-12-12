@@ -10,6 +10,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.repositories.PostRepository
+import android.kotlin.foodclub.room.entity.OfflineProfileModel
+import android.kotlin.foodclub.room.entity.OfflineProfileVideosModel
+import android.kotlin.foodclub.utils.helpers.ConnectivityUtils
 import android.kotlin.foodclub.repositories.RecipeRepository
 import android.kotlin.foodclub.room.entity.ProfileModel
 import android.kotlin.foodclub.utils.helpers.StoreData
@@ -19,6 +22,8 @@ import android.net.Uri
 import android.util.Log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,6 +31,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
+import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
@@ -33,6 +39,8 @@ class ProfileViewModel @Inject constructor(
     private val postRepository: PostRepository,
     private val profileRepository: ProfileRepository,
     val sessionCache: SessionCache,
+    private val storeData: StoreData,
+    private val connectivityUtil: ConnectivityUtils
     val storeData: StoreData,
     private val recipeRepository: RecipeRepository,
     private val basketCache: MyBasketCache
@@ -60,13 +68,29 @@ class ProfileViewModel @Inject constructor(
         if (newUserId != sessionCache.getActiveSession()!!.sessionUser.userId) {
             val userId = if(newUserId == 0L) sessionCache.getActiveSession()!!.sessionUser.userId else
                 newUserId
-            getProfileModel(userId)
-            getBookmarkedPosts(userId)
-            getUserDetails(userId)
+
+            _state.update { it.copy(dataStore = storeData) }
+
+            if (connectivityUtil.isNetworkAvailable()){
+                Log.i(TAG,"INTERNET CONNECTED")
+                viewModelScope.launch {
+                    getProfileModel(userId)
+                    getBookmarkedPosts(userId)
+                    getUserDetails(userId)
+                }
+                viewModelScope.launch {
+                    delay(2000)
+                    insertLocalUserDetails()
+                }
+            }else{
+                Log.i(TAG,"INTERNET NOT CONNECTED")
+                retrieveLocalUserDetails(userId)
+                retrieveAllOfflineProfileVideos()
+            }
         }
     }
 
-    private fun getProfileModel(userId: Long) {
+    private suspend fun getProfileModel(userId: Long) {
         viewModelScope.launch {
             when (val resource = profileRepository.retrieveProfileData(userId)) {
                 is Resource.Success -> {
@@ -80,6 +104,7 @@ class ProfileViewModel @Inject constructor(
                             myUserId = sessionCache.getActiveSession()!!.sessionUser.userId
                         )
                     }
+                    insertLocalProfileVideos()
                 }
 
                 is Resource.Error -> {
@@ -98,17 +123,35 @@ class ProfileViewModel @Inject constructor(
      * compare the room db response and api call response
      * update room db with profileModel or userDetails values
      * */
-    private fun retrieveLocalUserDetails(id: Long){
+    private fun insertLocalUserDetails(){
         viewModelScope.launch {
-            when(val dbResponse = profileRepository.retrieveLocalUserDetails(id)){
+            val combined = OfflineProfileModel(
+                userId = state.value.userDetails!!.id,
+                userName = state.value.userDetails!!.userName,
+                email =state.value.userDetails!!.email,
+                profilePicture = state.value.userDetails?.profilePicture,
+                totalUserFollowers = state.value.userProfile?.totalUserFollowers,
+                totalUserFollowing = state.value.userProfile?.totalUserFollowing,
+            )
+            profileRepository.insertLocalUserDetails(combined)
+        }
+    }
+
+    private fun retrieveLocalUserDetails(id: Long) {
+        viewModelScope.launch {
+            when (val resource = profileRepository.retrieveLocalUserDetails(id)) {
                 is Resource.Success -> {
-                    dbResponse.data!!.collect {
-                        Log.i(TAG,"room db response success $it")
+                    val user = resource.data
+                    _state.update {
+                        it.copy(
+                            offlineUserData = user
+                        )
                     }
+                    Log.i(TAG, "LOCAL USER DETAILS $user")
                 }
                 is Resource.Error -> {
-                    val dbResponseError = dbResponse.message
-                    Log.e(TAG,"error room db response $dbResponseError")
+                    // Handle the error case if needed
+                    Log.e(TAG, "Error retrieving local user details: ${resource.message}")
                 }
             }
         }
@@ -139,27 +182,61 @@ class ProfileViewModel @Inject constructor(
         basketCache.saveBasket(basket)
     }
 
-    private fun insertLocalUserDetails(profileModel: ProfileModel){
+    /**
+     * This insert can not be used to batch "right now" because it is not specified on video details
+     * This function uses async await to prevent race conditions
+     * */
+    private fun insertLocalProfileVideos() {
         viewModelScope.launch {
-            profileRepository.insertLocalUserDetails(profileModel)
+            val deferredUserPosts = async {
+                Log.i(TAG, "Inserting UserPosts...")
+                insertVideos(state.value.userProfile?.userPosts?.take(10), true)
+            }
+            deferredUserPosts.await()
+
+            val deferredBookmarkedPosts = async {
+                Log.i(TAG, "Inserting BookmarkedPosts...")
+                insertVideos(state.value.bookmarkedPosts.take(10), false)
+            }
+            deferredBookmarkedPosts.await()
         }
     }
 
-    private fun compareLocalAndRemoteData(remote: UserDetailsModel){
-        // or profileModel.value
-        // this can further be detailed for only updating a single data
-        // instead of adding all the remote data values to ProfileModel
-        if (state.value.userDetails != remote){
-            viewModelScope.launch {
-                profileRepository.updateLocalProfileData(
-                    ProfileModel(
-                        remote.id,
-                        remote.userName,
-                        remote.email,
-                        remote.profilePicture,
-                        remote.createdAt,
-                    )
+    private suspend fun insertVideos(videos: List<VideoModel>?, isVideoPost: Boolean) {
+        try {
+            videos?.forEach {
+                val video = OfflineProfileVideosModel(
+                    it.videoId,
+                    isVideoPost,
+                    it.authorDetails,
+                    it.videoLink,
+                    it.thumbnailLink,
+                    it.currentViewerInteraction.isLiked,
+                    it.currentViewerInteraction.isBookmarked,
+                    it.description,
+                    it.createdAt,
+                    it.videoStats.like,
+                    it.videoStats.comment,
+                    it.videoStats.share,
+                    it.videoStats.favourite,
+                    it.videoStats.views
                 )
+                profileRepository.insertProfileVideosData(video)
+            }
+        }catch (e: Exception){
+            Log.e(TAG, "Error inserting videos: ${e.message}")
+        }
+    }
+
+    private fun retrieveAllOfflineProfileVideos() {
+        viewModelScope.launch {
+            when(val response = profileRepository.retrieveAllLocalProfileVideos()){
+                is Resource.Success -> {
+                    Log.i(TAG,"Offline Profile Videos ${response.data}")
+                }
+                is Resource.Error -> {
+                    Log.e(TAG,"ERROR Offline Profile Videos ${response.message}")
+                }
             }
         }
     }
@@ -169,7 +246,6 @@ class ProfileViewModel @Inject constructor(
             when (val resource = profileRepository.retrieveUserDetails(id)) {
                 is Resource.Success -> {
                     _state.update { it.copy(userDetails = resource.data) }
-                    Log.i(TAG, "getUserDetails success: ${resource.data}")
                 }
 
                 is Resource.Error -> {
@@ -185,6 +261,14 @@ class ProfileViewModel @Inject constructor(
             when (val resource = profileRepository.updateUserProfileImage(id, file)) {
                 is Resource.Success -> {
                     Log.i(TAG, "SUCCESSFULLY UPDATED IMAGE ${resource.data}")
+
+                    _state.update {
+                        it.copy(
+                            userDetails = it.userDetails!!.copy(
+                                profilePicture = uri.toString()
+                            )
+                        )
+                    }
                 }
 
                 is Resource.Error -> {
@@ -192,14 +276,6 @@ class ProfileViewModel @Inject constructor(
                 }
             }
         }
-        _state.update {
-            it.copy(
-                userDetails = it.userDetails!!.copy(
-                    profilePicture = uri.toString()
-                )
-            )
-        }
-        Log.i(TAG, "USER UPDATED IMG: ${state.value.userDetails!!.profilePicture}")
     }
 
     private fun getBookmarkedPosts(userId: Long) {
