@@ -6,7 +6,11 @@ import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
+import android.kotlin.foodclub.viewModels.home.HomeViewModel
+import android.kotlin.foodclub.views.home.SnapsView
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,30 +22,26 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.dp
-import android.kotlin.foodclub.viewModels.home.HomeViewModel
-import android.kotlin.foodclub.views.home.SnapsView
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavHostController
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.ui.draw.alpha
 import androidx.media3.common.util.UnstableApi
+import androidx.navigation.NavHostController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -101,8 +101,8 @@ fun HomeView(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(95.dp)
-                .alpha(0.4f)
                 .background(color = Color(0xFF424242))
+                .alpha(0.4f)
         )
         if (showStories) {
             Image(
@@ -170,7 +170,11 @@ fun HomeView(
         modifier = Modifier.height(screenHeightMinusBottomNavItem)
     ) {
         if (showIngredientSheet) {
-            HomeBottomSheetIngredients(triggerIngredientBottomSheetModal, state.recipe)
+            HomeBottomSheetIngredients(
+                triggerIngredientBottomSheetModal,
+                state.recipe,
+                onAddToBasket = { viewModel.addIngredientsToBasket()}
+            )
         }
         if (showFeedOnUI) {
             VideoPager(
