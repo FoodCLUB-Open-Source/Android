@@ -1,7 +1,10 @@
 package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.BottomSheetItem
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,7 +27,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
@@ -32,11 +37,6 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import android.kotlin.foodclub.config.ui.BottomBarScreenObject
-import android.kotlin.foodclub.config.ui.foodClubGreen
-import android.kotlin.foodclub.navigation.HomeOtherRoutes
-import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.stringResource
 import okio.ByteString.Companion.encodeUtf8
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -72,7 +72,7 @@ fun BottomSheet(
                 onDismiss = onDismiss,
                 onClick = {
                     navController.navigate(route = "CAMERA_VIEW" + "/${"story".encodeUtf8()}")
-                    onDismiss()
+                    //onDismiss()
                 }
 
             )
@@ -83,7 +83,7 @@ fun BottomSheet(
                 onClick = {
 //                    navController.navigate("VIDEOTRIMMER")
                     navController.navigate(route = HomeOtherRoutes.CreateRecipeView.route)
-                    onDismiss()
+                    //onDismiss()
                 }
             )
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_25)))
