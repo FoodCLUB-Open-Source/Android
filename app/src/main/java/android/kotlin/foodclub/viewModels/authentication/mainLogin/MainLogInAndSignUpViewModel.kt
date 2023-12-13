@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.viewModels.authentication
+package android.kotlin.foodclub.viewModels.authentication.mainLogin
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 
-class MainLogInAndSignUpViewModel : ViewModel() {
+class MainLogInAndSignUpViewModel : ViewModel(), MainLoginAndSignUpEvents {
 
     var backgroundColor by mutableStateOf(Color.White)
     fun changeButtonUi(){
@@ -14,7 +14,7 @@ class MainLogInAndSignUpViewModel : ViewModel() {
         backgroundColor = Color(218, 218, 218, 80)
     }
 
-    fun reverseButtonUi(){
+    override fun reverseButtonUi(){
         backgroundColor = Color.White
     }
 
@@ -26,8 +26,8 @@ class MainLogInAndSignUpViewModel : ViewModel() {
 
     }
 
-    fun termsAndConditions(){
-
+    override fun termsAndConditions(){
+        // TODO : Navigate to Terms and Conditions Screen
     }
 
 

@@ -7,8 +7,8 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.domain.enums.Reactions
 import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
+import android.kotlin.foodclub.viewModels.home.home.HomeEvents
 import android.kotlin.foodclub.utils.composables.MemoriesItemView
-import android.kotlin.foodclub.viewModels.home.HomeViewModel
 import android.kotlin.foodclub.views.home.SnapsView
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -63,6 +63,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
+import android.kotlin.foodclub.views.home.SnapsView
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ExperimentalMotionApi
@@ -83,7 +88,7 @@ import okio.ByteString.Companion.encodeUtf8
 @Composable
 fun HomeView(
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel,
+    events: HomeEvents,
     initialPage: Int? = 0,
     navController: NavHostController,
     triggerStoryView: () -> Unit,
@@ -206,16 +211,17 @@ fun HomeView(
     ) {
         if (showIngredientSheet) {
             HomeBottomSheetIngredients(
-                triggerIngredientBottomSheetModal,
-                state.recipe,
-                onAddToBasket = { viewModel.addIngredientsToBasket()}
+                onDismiss = triggerIngredientBottomSheetModal,
+                recipe = state.recipe,
+                onAddToBasket = { events.addIngredientsToBasket()}
+
             )
         }
         if (showFeedOnUI) {
             VideoPager(
                 videoList = state.videoList,
                 initialPage = initialPage,
-                viewModel = viewModel,
+                events = events,
                 modifier = modifier,
                 localDensity = localDensity,
                 onInfoClick = triggerIngredientBottomSheetModal,

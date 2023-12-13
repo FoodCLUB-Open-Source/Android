@@ -116,12 +116,17 @@ fun AuthLayout(
     Column(
         Modifier
             .fillMaxSize()
-            .padding(start =  dimensionResource(id = R.dimen.dim_32), end =  dimensionResource(id = R.dimen.dim_32), top = dimensionResource(id = R.dimen.dim_100), bottom =  dimensionResource(id = R.dimen.dim_32))
+            .padding(
+                start = dimensionResource(id = R.dimen.dim_32),
+                end = dimensionResource(id = R.dimen.dim_32),
+                top = dimensionResource(id = R.dimen.dim_100),
+                bottom = dimensionResource(id = R.dimen.dim_32)
+            )
     ) {
         Column(Modifier.weight(1F)) {
             BackButton(onBackButtonClick)
 
-            Column(Modifier.padding(top =  dimensionResource(id = R.dimen.dim_32))) {
+            Column(Modifier.padding(top = dimensionResource(id = R.dimen.dim_32))) {
                 header.split("\n").forEach {
                     Text(
                         text = it,
@@ -135,7 +140,9 @@ fun AuthLayout(
                 if (!subHeading.isNullOrEmpty()) {
                     Text(
                         text = subHeading,
-                        fontSize = if (subHeading.length > 50) dimensionResource(id = R.dimen.fon_16).value.sp else dimensionResource(id = R.dimen.fon_18).value.sp,
+                        fontSize = if (subHeading.length > 50) dimensionResource(id = R.dimen.fon_16).value.sp else dimensionResource(
+                            id = R.dimen.fon_18
+                        ).value.sp,
                         fontFamily = Montserrat,
                         color = Black.copy(alpha = 0.4f)
                     )
@@ -149,12 +156,12 @@ fun AuthLayout(
                 ) else message,
                 fontFamily = Montserrat,
                 color = if (errorOccurred) Color.Red else Color.Green,
-                modifier = Modifier.padding(bottom =dimensionResource(id = R.dimen.dim_4))
+                modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_4))
             )
         }
 
         Column(
-            verticalArrangement = Arrangement.spacedBy( dimensionResource(id = R.dimen.dim_16)),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_16)),
             modifier = Modifier
                 .weight(2F)
                 .fillMaxSize()

@@ -8,7 +8,8 @@ import android.kotlin.foodclub.utils.composables.AuthLayout
 import android.kotlin.foodclub.utils.composables.ConfirmButton
 import android.kotlin.foodclub.utils.composables.CustomPasswordTextField
 import android.kotlin.foodclub.utils.composables.CustomTextField
-import android.kotlin.foodclub.viewModels.authentication.LogInWithEmailViewModel
+import android.kotlin.foodclub.viewModels.authentication.loginWithEmail.LogInWithEmailViewModel
+import android.kotlin.foodclub.viewModels.authentication.loginWithEmail.LoginWithEmailEvents
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,7 +18,6 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,14 +31,13 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 
 @Composable
 fun LogInWithEmail(
     navController: NavHostController,
-    viewModel: LogInWithEmailViewModel,
+    events: LoginWithEmailEvents,
     state: LoginState
 ) {
 
@@ -82,7 +81,7 @@ fun LogInWithEmail(
                     enabled = filledUsername && filledPassword,
                     text = stringResource(id = R.string.log_in)
                 ) {
-                    viewModel.logInUser(username, userPassword, navController)
+                    events.logInUser(username, userPassword, navController)
                 }
             }
 

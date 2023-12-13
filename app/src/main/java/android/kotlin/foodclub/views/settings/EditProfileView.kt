@@ -5,7 +5,8 @@ import android.kotlin.foodclub.domain.models.profile.UserDetailsModel
 import android.kotlin.foodclub.utils.composables.ConfirmButton
 import android.kotlin.foodclub.utils.composables.CustomTextField
 import android.kotlin.foodclub.utils.composables.SettingsLayout
-import android.kotlin.foodclub.viewModels.home.SettingsViewModel
+import android.kotlin.foodclub.viewModels.settings.SettingsEvents
+import android.kotlin.foodclub.viewModels.settings.SettingsViewModel
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
@@ -23,7 +24,7 @@ import androidx.navigation.NavController
 fun EditProfileSetting(
     navController: NavController,
     user: UserDetailsModel?,
-    viewModel: SettingsViewModel
+    events: SettingsEvents
 ) {
     SettingsLayout(
         label = stringResource(id = R.string.edit_profile),
@@ -45,7 +46,7 @@ fun EditProfileSetting(
             keyboardType = KeyboardType.Text,
             onValueChange = { email = it })
 
-        Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_16)))
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_16)))
 
         ConfirmButton(
             enabled = true,
@@ -54,7 +55,7 @@ fun EditProfileSetting(
             val testUser = user!!.copy(
                 phoneNumber = "07123931923"
             )
-            viewModel.updateUserDetails(testUser.id, testUser)
+            events.updateUserDetails(testUser.id, testUser)
         }
     }
 }

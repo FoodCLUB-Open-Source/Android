@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.navigation
 
 import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
-import android.kotlin.foodclub.viewModels.home.CreateRecipeViewModel
+import android.kotlin.foodclub.viewModels.home.createRecipe.CreateRecipeViewModel
 import android.kotlin.foodclub.views.home.createRecipe.CreateRecipeView
 import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavGraphBuilder
@@ -30,7 +30,7 @@ fun NavGraphBuilder.createRecipeNavigationGraph(
 
             CreateRecipeView(
                 navController = navController,
-                viewModel = viewModel,
+                events = viewModel,
                 state = state.value
             )
         }

@@ -9,9 +9,9 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.utils.composables.engine.createVideoCaptureUseCase
 import android.kotlin.foodclub.utils.composables.engine.startRecordingVideo
-import android.kotlin.foodclub.viewModels.home.CameraViewModel
-import android.kotlin.foodclub.viewModels.home.StopWatchEvent
-import android.kotlin.foodclub.views.home.GalleryState
+import android.kotlin.foodclub.viewModels.home.camera.CameraEvents
+import android.kotlin.foodclub.viewModels.home.camera.StopWatchEvent
+import android.kotlin.foodclub.views.home.gallery.GalleryType
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -83,7 +83,7 @@ import java.nio.charset.StandardCharsets
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CameraView(
-    viewModel: CameraViewModel,
+    events: CameraEvents,
     navController: NavController,
     stateEncoded: String,
     state: CameraState
@@ -98,11 +98,11 @@ fun CameraView(
 
     var stateString = ""
 
-    if (stateEncoded.contains(GalleryState.STORY.state)) {
-        stateString = GalleryState.STORY.state
+    if (stateEncoded.contains(GalleryType.STORY.state)) {
+        stateString = GalleryType.STORY.state
     }
-    if (stateEncoded.contains(GalleryState.RECIPE.state)) {
-        stateString = GalleryState.RECIPE.state
+    if (stateEncoded.contains(GalleryType.RECIPE.state)) {
+        stateString = GalleryType.RECIPE.state
     }
 
     val permissionState = rememberMultiplePermissionsState(
@@ -168,7 +168,7 @@ fun CameraView(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.onEvent(StopWatchEvent.onReset)
+        events.onEvent(StopWatchEvent.onReset)
         permissionState.launchMultiplePermissionRequest()
     }
 
@@ -230,7 +230,7 @@ fun CameraView(
                         .background(Color.Black.copy(alpha = 0.9f))
                         .clickable {
                             // Do something when the box is clicked
-                            viewModel.onEvent(StopWatchEvent.onReset)
+                            events.onEvent(StopWatchEvent.onReset)
                             navController.popBackStack()
                         }
                 ) {
@@ -292,7 +292,7 @@ fun CameraView(
                                     Button(colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                                         onClick = {
                                         uris.removeAt(uris.lastIndex)
-                                        viewModel.onEvent(StopWatchEvent.onRecall)
+                                        events.onEvent(StopWatchEvent.onRecall)
                                         removeUpdate(true)
                                         canDelete = false
                                         confirmDeletion = !confirmDeletion
@@ -341,7 +341,7 @@ fun CameraView(
                                 if (!recordingStarted.value) {
                                     videoCapture.value?.let { videoCapture ->
                                         recordingStarted.value = true
-                                        viewModel.onEvent(StopWatchEvent.onStart)
+                                        events.onEvent(StopWatchEvent.onStart)
                                         val mediaDir = context.externalCacheDirs.firstOrNull()?.let {
                                             File(
                                                 it,
@@ -379,7 +379,7 @@ fun CameraView(
                                     }
                                 } else {
                                     recordingStarted.value = false
-                                    viewModel.onEvent(StopWatchEvent.onStop)
+                                    events.onEvent(StopWatchEvent.onStop)
                                     recording?.stop() //Need the object refs to be consistent
                                 }
                             }
@@ -396,7 +396,7 @@ fun CameraView(
                             if (recordingStarted.value)
                             {
                                 recordingStarted.value = false
-                                viewModel.onEvent(StopWatchEvent.onStop)
+                                events.onEvent(StopWatchEvent.onStop)
                                 recording?.stop()
                             }
                         }
@@ -407,7 +407,7 @@ fun CameraView(
                                 if (!recordingStarted.value && canAdd) {
                                     videoCapture.value?.let { videoCapture ->
                                         recordingStarted.value = true
-                                        viewModel.onEvent(StopWatchEvent.onStart)
+                                        events.onEvent(StopWatchEvent.onStart)
                                         val mediaDir = context.externalCacheDirs.firstOrNull()?.let {
                                             File(
                                                 it,
@@ -448,7 +448,7 @@ fun CameraView(
                                 Log.d("Recording Start","Preparing to end recording")
                                 if (recordingStarted.value) {
                                     recordingStarted.value = false
-                                    viewModel.onEvent(StopWatchEvent.onStop)
+                                    events.onEvent(StopWatchEvent.onStop)
                                     recording?.stop()
                                     canAdd = false
                                 }

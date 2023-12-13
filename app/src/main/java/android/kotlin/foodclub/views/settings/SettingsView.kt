@@ -5,7 +5,8 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.navigation.SettingsScreen
 import android.kotlin.foodclub.utils.composables.SettingsLayout
-import android.kotlin.foodclub.viewModels.home.SettingsViewModel
+import android.kotlin.foodclub.viewModels.settings.SettingsEvents
+import android.kotlin.foodclub.viewModels.settings.SettingsViewModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -24,7 +25,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,7 +47,7 @@ val colorRed = Color(android.graphics.Color.parseColor("#C64E0B"))
 @Composable
 fun SettingsView(
     navController: NavHostController,
-    viewModel: SettingsViewModel,
+    events: SettingsEvents,
     state: SettingsState
 ) {
     SettingsLayout(
@@ -87,7 +87,13 @@ fun SettingsView(
 
         Spacer(modifier = Modifier.height(screenSizeHeight * 0.03f))
 
-        Column(modifier = Modifier.border(width =dimensionResource(id = R.dimen.dim_1), colorGray, RoundedCornerShape(dimensionResource(id = R.dimen.dim_8)))) {
+        Column(
+            modifier = Modifier.border(
+                width = dimensionResource(id = R.dimen.dim_1),
+                colorGray,
+                RoundedCornerShape(dimensionResource(id = R.dimen.dim_8))
+            )
+        ) {
             SettingRow(
                 text = stringResource(id = R.string.help_and_support),
                 iconId = R.drawable.helpandsupport,
@@ -114,7 +120,7 @@ fun SettingsView(
                 fontC = Color.Black,
                 borderSize = 0,
                 borderColor = Color.Transparent,
-                destination = "SETTINGS_PRIVACY",
+                destination = SettingsScreen.PrivacyPolicy.route,
                 navController = navController
             )
         }
@@ -129,7 +135,7 @@ fun SettingsView(
             borderColor = Color.Black,
             destination = Graph.AUTHENTICATION,
             navController = navController,
-            onClick = { viewModel.logout() }
+            onClick = { events.logout() }
         )
     }
 }
@@ -177,8 +183,11 @@ fun SettingsTopBar(
             IconButton(
                 onClick = { navController.navigateUp() },
                 modifier = Modifier
-                    .background(colorGray, RoundedCornerShape(dimensionResource(id = R.dimen.dim_8)))
-                    .size( dimensionResource(id = R.dimen.dim_35)),
+                    .background(
+                        colorGray,
+                        RoundedCornerShape(dimensionResource(id = R.dimen.dim_8))
+                    )
+                    .size(dimensionResource(id = R.dimen.dim_35)),
                 content = {
                     SettingsIcons(
                         size = 20,
@@ -219,7 +228,7 @@ fun SettingsProfile(
             )
         }
 
-        Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_15)))
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_15)))
 
         Row(
             horizontalArrangement = Arrangement.Center,
@@ -274,7 +283,7 @@ fun SettingRow(
         ) {
             SettingsIcons(size = 24, icon = iconId)
 
-            Spacer(modifier = Modifier.width( dimensionResource(id = R.dimen.dim_16)))
+            Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_16)))
 
             SettingsText(text = text, size = 14, weight = FontWeight.Normal, fontC = fontC)
 

@@ -1,7 +1,8 @@
 package android.kotlin.foodclub.navigation.auth
 
 import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
-import android.kotlin.foodclub.viewModels.authentication.ForgotPasswordViewModel
+import android.kotlin.foodclub.viewModels.authentication.forgotPassword.ForgotPasswordEvents
+import android.kotlin.foodclub.viewModels.authentication.forgotPassword.ForgotPasswordViewModel
 import android.kotlin.foodclub.views.authentication.forgotPassword.ChangePasswordView
 import android.kotlin.foodclub.views.authentication.forgotPassword.EmailSentView
 import android.kotlin.foodclub.views.authentication.forgotPassword.forgotPasswordScreen.ForgotPasswordView
@@ -19,10 +20,11 @@ fun NavGraphBuilder.forgotPasswordNavigationGraph(navController: NavHostControll
         composable(route = ForgotPasswordScreen.ForgotPasswordPage1.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<ForgotPasswordViewModel>(navController)
             val state = viewModel.state.collectAsState()
+            val events : ForgotPasswordEvents = viewModel
 
             ForgotPasswordView(
                 onValuesUpdate = {
-                    viewModel.sendCode(it) {
+                    events.sendCode(it) {
                         navController.navigate(route = ForgotPasswordScreen.ForgotPasswordPage2.route)
                     }
                 },
@@ -31,17 +33,18 @@ fun NavGraphBuilder.forgotPasswordNavigationGraph(navController: NavHostControll
                         popUpTo(AuthScreen.Login.route) { inclusive = true }
                     }
                 },
-                onEmailChange = { viewModel.onEmailChange(it) },
+                onEmailChange = { events.onEmailChange(it) },
                 state = state.value
             )
         }
         composable(ForgotPasswordScreen.ForgotPasswordPage2.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<ForgotPasswordViewModel>(navController)
             val state = viewModel.state.collectAsState()
+            val events : ForgotPasswordEvents = viewModel
 
             ChangePasswordView(
                 onValuesUpdate = { code, password ->
-                    viewModel.changePassword(code, password) {
+                    events.changePassword(code, password) {
                         navController.navigate(route = ForgotPasswordScreen.ForgotPasswordPage3.route)
                     }
                 },

@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.viewModels.authentication
+package android.kotlin.foodclub.viewModels.authentication.loginWithEmail
 
 import android.kotlin.foodclub.domain.models.session.Session
 import android.kotlin.foodclub.navigation.Graph
@@ -31,7 +31,7 @@ object LoginErrorCodes {
 class LogInWithEmailViewModel @Inject constructor(
     private val repository: AuthRepository,
     private val sessionCache: SessionCache
-) : ViewModel() {
+) : ViewModel(), LoginWithEmailEvents {
 
     private val _state = MutableStateFlow(LoginState.default())
     val state : StateFlow<LoginState>
@@ -44,7 +44,7 @@ class LogInWithEmailViewModel @Inject constructor(
     }
 
 
-    fun logInUser(userEmail: String?, userPassword: String?, navController: NavController) {
+    override fun logInUser(userEmail: String?, userPassword: String?, navController: NavController) {
         if (userEmail.isNullOrEmpty() || userPassword.isNullOrEmpty()) {
             _state.update { it.copy(loginStatus = LoginErrorCodes.EMPTY_CREDENTIALS) }
             return

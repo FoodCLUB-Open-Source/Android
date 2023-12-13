@@ -3,7 +3,7 @@ package android.kotlin.foodclub.views.home.followerFollowing
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Avenir
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
-import android.kotlin.foodclub.viewModels.home.FollowerFollowingViewModel
+import android.kotlin.foodclub.viewModels.home.follow.FollowerFollowingViewModel
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
@@ -27,13 +27,11 @@ import androidx.compose.material3.Button
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
@@ -43,6 +41,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.config.ui.Raleway
+import android.kotlin.foodclub.viewModels.home.follow.FollowEvents
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -51,7 +50,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 @Composable
 fun FollowerView(
     navController: NavController,
-    viewModel: FollowerFollowingViewModel,
+    events: FollowEvents,
     state: FollowerFollowingState,
     viewType: String,
     userId: Long
@@ -66,8 +65,8 @@ fun FollowerView(
     }
 
     LaunchedEffect(Unit) {
-        if(viewType == FollowViewType.FOLLOWERS.type) viewModel.getFollowersList(userId)
-        if(viewType == FollowViewType.FOLLOWING.type) viewModel.getFollowingList(userId)
+        if(viewType == FollowViewType.FOLLOWERS.type) events.getFollowersList(userId)
+        if(viewType == FollowViewType.FOLLOWING.type) events.getFollowingList(userId)
     }
 
     Box(modifier = Modifier
@@ -144,8 +143,11 @@ fun FollowerView(
 
 @Composable
 fun Follower(
-    navController: NavController, userId: Int, imageUrl: String,
-    username: String, completeName: String
+    navController: NavController,
+    userId: Int,
+    imageUrl: String,
+    username: String,
+    completeName: String
 ) {
     Row(
         modifier = Modifier

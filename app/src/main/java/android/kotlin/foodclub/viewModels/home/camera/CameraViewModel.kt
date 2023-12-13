@@ -1,8 +1,6 @@
-package android.kotlin.foodclub.viewModels.home
+package android.kotlin.foodclub.viewModels.home.camera
 
 import android.kotlin.foodclub.views.home.camera.CameraState
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -12,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class CameraViewModel : ViewModel() {
+class CameraViewModel : ViewModel(), CameraEvents {
     companion object {
         private val TAG = CameraViewModel::class.java.simpleName
     }
@@ -61,7 +59,7 @@ class CameraViewModel : ViewModel() {
         }
     }
 
-    fun onEvent(event: StopWatchEvent) {
+    override fun onEvent(event: StopWatchEvent) {
         when (event) {
             StopWatchEvent.onReset -> {
                 isCounting = false
