@@ -24,7 +24,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -114,7 +113,7 @@ fun SettingsView(
                 fontC = Color.Black,
                 borderSize = 0,
                 borderColor = Color.Transparent,
-                destination = "SETTINGS_PRIVACY",
+                destination = SettingsScreen.PrivacyPolicy.route,
                 navController = navController
             )
         }
