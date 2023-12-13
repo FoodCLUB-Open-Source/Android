@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.viewModels.home
+package android.kotlin.foodclub.viewModels.home.create
 
 import android.Manifest
 import android.app.Activity

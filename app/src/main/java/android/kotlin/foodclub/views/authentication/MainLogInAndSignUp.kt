@@ -4,7 +4,8 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.navigation.auth.AuthScreen
 import android.kotlin.foodclub.utils.composables.TermsAndConditionsInfoFooter
-import android.kotlin.foodclub.viewModels.authentication.MainLogInAndSignUpViewModel
+import android.kotlin.foodclub.viewModels.authentication.mainLogin.MainLogInAndSignUpViewModel
+import android.kotlin.foodclub.viewModels.authentication.mainLogin.MainLoginAndSignUpEvents
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -40,9 +41,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
@@ -50,7 +49,7 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun MainLogInAndSignUp(
     navController: NavHostController,
-    viewModel: MainLogInAndSignUpViewModel
+    events: MainLoginAndSignUpEvents
 ) {
 
     var interactionSource = remember { MutableInteractionSource() }
@@ -58,7 +57,7 @@ fun MainLogInAndSignUp(
 
 
     if (!isPressed) {
-        viewModel.reverseButtonUi()
+        events.reverseButtonUi()
     }
 
     var interactionSource1 = remember { MutableInteractionSource() }
@@ -66,7 +65,7 @@ fun MainLogInAndSignUp(
 
 
     if (!isPressed1) {
-        viewModel.reverseButtonUi()
+        events.reverseButtonUi()
     }
 
     Column(
@@ -160,7 +159,7 @@ fun MainLogInAndSignUp(
                 .fillMaxSize()
                 .padding(vertical =  dimensionResource(id = R.dimen.dim_32))
         ) {
-            TermsAndConditionsInfoFooter() { viewModel.termsAndConditions() }
+            TermsAndConditionsInfoFooter() { events.termsAndConditions() }
         }
     }
 }

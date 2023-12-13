@@ -2,21 +2,15 @@ package android.kotlin.foodclub.navigation
 
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
-import android.kotlin.foodclub.viewModels.home.CameraViewModel
-import android.kotlin.foodclub.viewModels.home.DiscoverViewModel
-import android.kotlin.foodclub.viewModels.home.FollowerFollowingViewModel
-import android.kotlin.foodclub.viewModels.home.GalleryViewModel
-import android.kotlin.foodclub.viewModels.home.HomeViewModel
-import android.kotlin.foodclub.viewModels.home.MyBasketViewModel
-import android.kotlin.foodclub.viewModels.home.ProfileViewModel
+import android.kotlin.foodclub.viewModels.home.camera.CameraViewModel
 import android.kotlin.foodclub.views.home.CameraPreviewView
 import android.kotlin.foodclub.views.home.CreateView
-import android.kotlin.foodclub.views.home.GalleryView
 import android.kotlin.foodclub.views.home.TakeProfilePhotoView
 import android.kotlin.foodclub.views.home.TakeSnapView
 import android.kotlin.foodclub.views.home.camera.CameraView
 import android.kotlin.foodclub.views.home.discover.DiscoverView
 import android.kotlin.foodclub.views.home.followerFollowing.FollowerView
+import android.kotlin.foodclub.views.home.gallery.GalleryView
 import android.kotlin.foodclub.views.home.home.HomeView
 import android.kotlin.foodclub.views.home.myBasket.MyBasketView
 import android.kotlin.foodclub.views.home.myDigitalPantry.MyDigitalPantryView
@@ -24,7 +18,6 @@ import android.kotlin.foodclub.views.home.profile.ProfileView
 import android.kotlin.foodclub.views.home.scan.ScanResultView
 import android.kotlin.foodclub.views.home.scan.ScanView
 import android.kotlin.foodclub.views.home.scan.topbackbar
-import android.kotlin.foodclub.views.home.search.SearchView
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.LaunchedEffect
@@ -36,6 +29,15 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import android.kotlin.foodclub.viewModels.home.discover.DiscoverViewModel
+import android.kotlin.foodclub.viewModels.home.follow.FollowerFollowingViewModel
+import android.kotlin.foodclub.viewModels.home.gallery.GalleryViewModel
+import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
+import android.kotlin.foodclub.viewModels.home.myBasket.MyBasketViewModel
+import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
+import android.kotlin.foodclub.views.home.search.SearchView
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -60,7 +62,7 @@ fun NavGraphBuilder.homeNavigationGraph(
 
             HomeView(
                 navController = navController,
-                viewModel = viewModel,
+                events = viewModel,
                 triggerStoryView = triggerStory,
                 state = state.value
             )
@@ -72,20 +74,21 @@ fun NavGraphBuilder.homeNavigationGraph(
                 type = NavType.LongType
             })
         ) {
-            val viewModel = it.sharedHiltViewModel<ProfileViewModel>(navController = navController)
+            val viewModel  = it.sharedHiltViewModel<ProfileViewModel>(navController = navController)
             val state = viewModel.state.collectAsState()
             val userId = it.arguments?.getLong("userId")
             if (userId == null) {
                 navController.popBackStack()
                 return@composable
             }
-            LaunchedEffect(Unit) {viewModel.setUser(userId)}
 
+            LaunchedEffect(Unit) {viewModel.setUser(userId)}
 
             ProfileView(
                 navController = navController,
                 userId = userId,
                 viewModel = viewModel,
+                events = viewModel,
                 state = state.value
             )
 
@@ -96,7 +99,7 @@ fun NavGraphBuilder.homeNavigationGraph(
 
             MyBasketView(
                 navController = navController,
-                viewModel = viewModel,
+                events = viewModel,
                 state = state.value
             )
         }
@@ -110,7 +113,7 @@ fun NavGraphBuilder.homeNavigationGraph(
 
             DiscoverView(
                 navController = navController,
-                viewModel = viewModel,
+                events = viewModel,
                 state = state.value
             )
         }
@@ -124,7 +127,7 @@ fun NavGraphBuilder.homeNavigationGraph(
             {
                 ScanView(
                     navController = navController,
-                    viewModel = viewModel,
+                    events = viewModel,
                     state = state.value
                 )
             }
@@ -135,7 +138,7 @@ fun NavGraphBuilder.homeNavigationGraph(
 
             ScanResultView(
                 navController = navController,
-                viewModel = viewModel,
+                events = viewModel,
                 state = state.value
             )
 
@@ -147,7 +150,7 @@ fun NavGraphBuilder.homeNavigationGraph(
             val state = viewModel.state.collectAsState()
 
             CameraView(
-                viewModel = viewModel,
+                events = viewModel,
                 navController = navController,
                 stateEncoded = stateEncoded,
                 state = state.value
@@ -170,10 +173,11 @@ fun NavGraphBuilder.homeNavigationGraph(
         composable(route = HomeOtherRoutes.GalleryView.route) {
             val stateEncoded = it.arguments?.getString("state") ?: ""
             val viewModel: GalleryViewModel = hiltViewModel()
+            val state = viewModel.state.collectAsState()
 
             GalleryView(
                 navController = navController,
-                viewModel = viewModel,
+                state = state.value,
                 stateEncoded = stateEncoded
             )
         }
@@ -189,7 +193,7 @@ fun NavGraphBuilder.homeNavigationGraph(
             it.arguments?.getString("userId")?.let { it1 ->
                 FollowerView(
                     navController = navController,
-                    viewModel = viewModel,
+                    events = viewModel,
                     viewType = FollowViewType.FOLLOWERS.title,
                     state = state.value,
                     userId = it1.toLong()
@@ -208,7 +212,7 @@ fun NavGraphBuilder.homeNavigationGraph(
             it.arguments?.getString("userId")?.let { it1 ->
                 FollowerView(
                     navController = navController,
-                    viewModel = viewModel,
+                    events = viewModel,
                     viewType = FollowViewType.FOLLOWING.title,
                     state = state.value,
                     userId = it1.toLong()
@@ -222,7 +226,7 @@ fun NavGraphBuilder.homeNavigationGraph(
 
             MyBasketView(
                 navController = navController,
-                viewModel = viewModel,
+                events = viewModel,
                 state = state.value
             )
         }
@@ -236,7 +240,7 @@ fun NavGraphBuilder.homeNavigationGraph(
 
             MyDigitalPantryView(
                 navController = navController,
-                viewModel = viewModel,
+                events = viewModel,
                 state = state.value
             )
         }
@@ -246,13 +250,17 @@ fun NavGraphBuilder.homeNavigationGraph(
 
             TakeProfilePhotoView(
                 navController = navController,
-                viewModel = viewModel,
+                events = viewModel,
                 state = state.value
             )
         }
         composable(route = HomeOtherRoutes.TakeSnapPhotoView.route) {
             val viewModel: HomeViewModel = hiltViewModel()
-            TakeSnapView(viewModel = viewModel, navController = navController)
+
+            TakeSnapView(
+                events = viewModel,
+                navController = navController
+            )
         }
 
     }

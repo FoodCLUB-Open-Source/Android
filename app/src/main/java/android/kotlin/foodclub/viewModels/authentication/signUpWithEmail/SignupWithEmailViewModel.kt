@@ -1,7 +1,5 @@
-package android.kotlin.foodclub.viewModels.authentication
+package android.kotlin.foodclub.viewModels.authentication.signUpWithEmail
 
-import android.kotlin.foodclub.domain.models.auth.SignUpUser
-import android.kotlin.foodclub.domain.enums.ApiCallStatus
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
@@ -19,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SignupWithEmailViewModel @Inject constructor(
     val repository: AuthRepository
-) : ViewModel() {
+) : ViewModel(), SignUpEmailEvents {
 
     companion object {
         private val TAG = SignupWithEmailViewModel::class.java.simpleName
@@ -29,7 +27,7 @@ class SignupWithEmailViewModel @Inject constructor(
     val state: StateFlow<SignUpState>
         get() = _state
 
-    fun saveEmailPasswordData(email: String, password: String) {
+    override fun saveEmailPasswordData(email: String, password: String) {
 
         _state.update { it.copy(
             userSignUpInformation = it.userSignUpInformation.copy(
@@ -39,13 +37,13 @@ class SignupWithEmailViewModel @Inject constructor(
         ) }
     }
 
-    fun saveRepeatedEmail(repeatedEmail: String) {
+    override fun saveRepeatedEmail(repeatedEmail: String) {
         _state.update { it.copy(
             repeatedEmail = repeatedEmail
         ) }
     }
 
-    fun saveUsername(username: String) {
+    override fun saveUsername(username: String) {
         _state.update { it.copy(
             userSignUpInformation = it.userSignUpInformation.copy(
                 username = username
@@ -53,7 +51,7 @@ class SignupWithEmailViewModel @Inject constructor(
         ) }
     }
 
-    fun saveFullName(name: String) {
+    override fun saveFullName(name: String) {
         _state.update { it.copy(
             userSignUpInformation = it.userSignUpInformation.copy(
                 name = name
@@ -61,7 +59,7 @@ class SignupWithEmailViewModel @Inject constructor(
         ) }
     }
 
-     fun signUpUser(navController: NavHostController) {
+     override fun signUpUser(navController: NavHostController) {
          viewModelScope.launch {
              when (
                  val resource = repository.signUp(state.value.userSignUpInformation)

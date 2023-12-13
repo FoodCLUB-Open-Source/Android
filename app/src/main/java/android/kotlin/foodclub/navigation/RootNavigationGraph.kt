@@ -9,9 +9,13 @@ import androidx.navigation.compose.NavHost
 
   @RequiresApi(Build.VERSION_CODES.TIRAMISU)
   @Composable
-fun RootNavigationGraph(navController: NavHostController, showSheet: Boolean,
-                        triggerBottomSheetModal:  () -> Unit, triggerStory: () -> Unit,
-                        setBottomBarVisibility: (Boolean) -> Unit) {
+fun RootNavigationGraph(
+      navController: NavHostController,
+      showSheet: Boolean,
+      triggerBottomSheetModal:  () -> Unit,
+      triggerStory: () -> Unit,
+      setBottomBarVisibility: (Boolean) -> Unit
+) {
     NavHost(
         navController = navController,
         route = Graph.ROOT,

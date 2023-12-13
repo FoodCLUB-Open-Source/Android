@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.viewModels.home
+package android.kotlin.foodclub.viewModels.home.discover
 
 import android.content.Context
 import android.graphics.BitmapFactory
@@ -34,8 +34,8 @@ class DiscoverViewModel @Inject constructor(
     private val profileRepo: ProfileRepository,
     private val productsRepo: ProductRepository,
     private val sessionCache: SessionCache,
-    val myBasketCache: MyBasketCache
-) : ViewModel() {
+    private val myBasketCache: MyBasketCache
+) : ViewModel(), DiscoverEvents {
 
     companion object {
         private val TAG = DiscoverViewModel::class.java.simpleName
@@ -50,6 +50,11 @@ class DiscoverViewModel @Inject constructor(
     // TODO add real data for scanResultItemList
 
     init {
+        _state.update { it.copy(myBasketCache = myBasketCache) }
+        getPostsByWorld(197)
+        getPostsByUserId()
+        myFridgePosts()
+
         viewModelScope.launch {
             fetchProductsDatabase(state.value.mainSearchText)
         }
@@ -59,7 +64,7 @@ class DiscoverViewModel @Inject constructor(
         _state.update { it.copy(mainSearchText = text) }
     }
 
-    fun onSubSearchTextChange(text: String) {
+    override fun onSubSearchTextChange(text: String) {
         _state.update { it.copy(ingredientSearchText = text) }
         searchJob?.cancel()
 
@@ -71,7 +76,7 @@ class DiscoverViewModel @Inject constructor(
         }
     }
 
-    fun addToUserIngredients(ingredient: Ingredient) {
+    override fun addToUserIngredients(ingredient: Ingredient) {
         val updatedList = state.value.userIngredients.toMutableList()
         updatedList.add(ingredient)
         _state.update {
@@ -82,18 +87,7 @@ class DiscoverViewModel @Inject constructor(
         }
     }
 
-    fun addScanListToUserIngredients(ingredient: List<Ingredient>) {
-        val updatedList = state.value.userIngredients.toMutableList()
-        updatedList.addAll(ingredient)
-        _state.update {
-            it.copy(
-                userIngredients = updatedList,
-                ingredientSearchText = ""
-            )
-        }
-    }
-
-    fun deleteIngredientFromList(ingredient: Ingredient) {
+    override fun deleteIngredientFromList(ingredient: Ingredient) {
         val updatedList = state.value.userIngredients.toMutableList()
         updatedList.remove(ingredient)
         _state.update {
@@ -103,7 +97,7 @@ class DiscoverViewModel @Inject constructor(
         }
     }
 
-    fun updateIngredient(ingredient: Ingredient) {
+    override fun updateIngredient(ingredient: Ingredient) {
         _state.update {
             it.copy(
                 userIngredients = state.value.userIngredients.map { item ->
@@ -128,52 +122,7 @@ class DiscoverViewModel @Inject constructor(
         Log.i(TAG, "LIST AFTER ${state.value.userIngredients[0].quantity}")
     }
 
-    private suspend fun fetchProductsDatabase(searchText: String) {
-        Log.e(TAG, "made call $searchText")
-
-        when (val resource = productsRepo.getProductsList(searchText)) {
-            is Resource.Success -> {
-                Log.e(TAG, "SUCCESS")
-                _state.update {
-                    it.copy(
-                        error = "",
-                        productsData = resource.data!!
-                    )
-                }
-            }
-
-            is Resource.Error -> {
-                _state.update { it.copy(error = resource.message!!) }
-            }
-        }
-    }
-
-    fun getPostsByWorld(worldCategory: Long) {
-        _state.update {
-            it.copy(
-                sessionUserId = sessionCache.getActiveSession()!!.sessionUser.userId.toString(),
-            )
-        }
-
-        viewModelScope.launch(Dispatchers.Main) {
-            when (val resource = postRepository.getWorldCategoryPosts(worldCategory, 10, 1)) {
-                is Resource.Success -> {
-                    _state.update {
-                        it.copy(
-                            postList = resource.data!!
-                        )
-                    }
-                }
-
-                is Resource.Error -> {
-                    // TODO deal with error
-                }
-            }
-        }
-    }
-
-
-    fun getPostData(postId: Long) {
+    override fun getPostData(postId: Long) {
         val userId = sessionCache.getActiveSession()?.sessionUser?.userId ?: return
         viewModelScope.launch {
             when (val resource = postRepository.getPost(
@@ -195,7 +144,7 @@ class DiscoverViewModel @Inject constructor(
         }
     }
 
-    fun getPostsByUserId() {
+    override fun getPostsByUserId() {
         viewModelScope.launch {
             when (val resource = postRepository.getHomepagePosts(
                 userId = state.value.sessionUserId.toLong(),
@@ -218,7 +167,7 @@ class DiscoverViewModel @Inject constructor(
 
     }
 
-    fun myFridgePosts() {
+    override fun myFridgePosts() {
         viewModelScope.launch {
             when (val resource =
                 profileRepo.retrieveProfileData(
@@ -242,7 +191,31 @@ class DiscoverViewModel @Inject constructor(
 
     }
 
-    fun scan(imageCapture: ImageCapture, context: Context) {
+    override fun getPostsByWorld(worldCategory: Long) {
+        _state.update {
+            it.copy(
+                sessionUserId = sessionCache.getActiveSession()!!.sessionUser.userId.toString(),
+            )
+        }
+
+        viewModelScope.launch(Dispatchers.Main) {
+            when (val resource = postRepository.getWorldCategoryPosts(worldCategory, 10, 1)) {
+                is Resource.Success -> {
+                    _state.update {
+                        it.copy(
+                            postList = resource.data!!
+                        )
+                    }
+                }
+
+                is Resource.Error -> {
+                    // TODO deal with error
+                }
+            }
+        }
+    }
+
+    override fun scan(imageCapture: ImageCapture, context: Context) {
         imageCapture.takePicture(
             ContextCompat.getMainExecutor(context),
             object : ImageCapture.OnImageCapturedCallback() {
@@ -268,7 +241,36 @@ class DiscoverViewModel @Inject constructor(
         )
     }
 
+    override fun addScanListToUserIngredients(ingredients: List<Ingredient>) {
+        val updatedList = state.value.userIngredients.toMutableList()
+        updatedList.addAll(ingredients)
+        _state.update {
+            it.copy(
+                userIngredients = updatedList,
+                ingredientSearchText = ""
+            )
+        }
+    }
 
+    private suspend fun fetchProductsDatabase(searchText: String) {
+        Log.e(TAG, "made call $searchText")
+
+        when (val resource = productsRepo.getProductsList(searchText)) {
+            is Resource.Success -> {
+                Log.e(TAG, "SUCCESS")
+                _state.update {
+                    it.copy(
+                        error = "",
+                        productsData = resource.data!!
+                    )
+                }
+            }
+
+            is Resource.Error -> {
+                _state.update { it.copy(error = resource.message!!) }
+            }
+        }
+    }
 }
 
 

@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.viewModels.home
+package android.kotlin.foodclub.viewModels.home.createRecipe
 
 import android.kotlin.foodclub.domain.enums.QuantityUnit
 import android.kotlin.foodclub.domain.models.products.Ingredient
@@ -10,8 +10,6 @@ import android.kotlin.foodclub.repositories.ProductRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.views.home.createRecipe.CreateRecipeState
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,7 +25,7 @@ import javax.inject.Inject
 class CreateRecipeViewModel @Inject constructor(
     private val productsRepository: ProductRepository,
     private val recipeRepository: RecipeRepository,
-) : ViewModel() {
+) : ViewModel(), CreateRecipeEvents {
 
     companion object {
         private val TAG = CreateRecipeViewModel::class.java.simpleName
@@ -99,7 +97,7 @@ class CreateRecipeViewModel @Inject constructor(
         }
     }
 
-    fun fetchProductsDatabase(searchText: String = "") {
+     override fun fetchProductsDatabase(searchText: String) {
         viewModelScope.launch {
             when (val resource = productsRepository.getProductsList(searchText)) {
                 is Resource.Success -> {
@@ -119,42 +117,42 @@ class CreateRecipeViewModel @Inject constructor(
 
     }
 
-    fun addIngredient(ingredient: Ingredient) {
+    override fun addIngredient(ingredient: Ingredient) {
         val newIngredients = state.value.ingredients.toMutableList()
         newIngredients.add(ingredient)
         _state.update { it.copy(ingredients = newIngredients) }
     }
 
-    fun onIngredientExpanded(ingredientId: String) {
+    override fun onIngredientExpanded(ingredientId: String) {
         if (state.value.revealedIngredientId == ingredientId) return
         _state.update { it.copy(revealedIngredientId = ingredientId) }
     }
 
-    fun onIngredientCollapsed(ingredientId: String) {
+    override fun onIngredientCollapsed(ingredientId: String) {
         if (state.value.revealedIngredientId != ingredientId) return
         _state.update { it.copy(revealedIngredientId = "") }
     }
 
-    fun onIngredientDeleted(ingredient: Ingredient) {
+    override fun onIngredientDeleted(ingredient: Ingredient) {
         if(!state.value.ingredients.contains(ingredient)) return
         val newIngredients =state.value.ingredients.toMutableList()
         newIngredients.remove(ingredient)
         _state.update { it.copy(ingredients = newIngredients) }
     }
 
-    fun unselectCategory(category: Category) {
+    override fun unselectCategory(category: Category) {
         val newCategories = state.value.chosenCategories.toMutableList()
         newCategories.remove(category)
         _state.update { it.copy(chosenCategories = newCategories)}
     }
 
-    fun selectCategory(category: Category) {
+    override fun selectCategory(category: Category) {
         val newCategories = state.value.chosenCategories.toMutableList()
         newCategories.add(category)
         _state.update { it.copy(chosenCategories = newCategories)}
     }
 
-    fun fetchMoreProducts(searchText: String, onJobComplete: () -> Unit) {
+    override fun fetchMoreProducts(searchText: String, onLoadCompleted: () -> Unit) {
         val job = viewModelScope.launch() {
             when (
                 val resource = productsRepository.getProductsList(
@@ -181,12 +179,12 @@ class CreateRecipeViewModel @Inject constructor(
                 }
             }
         }
-        job.invokeOnCompletion { onJobComplete() }
+        job.invokeOnCompletion { onLoadCompleted() }
     }
 
     // CREATE RECIPE FUNCTION
-    suspend fun createRecipe(recipe: Recipe, userId: String): Boolean {
-        return recipeRepository.createRecipe(recipe, userId)
+    override  suspend fun createRecipe(recipe: Recipe, userId: String): Boolean {
+            return recipeRepository.createRecipe(recipe, userId)
     }
 
 }

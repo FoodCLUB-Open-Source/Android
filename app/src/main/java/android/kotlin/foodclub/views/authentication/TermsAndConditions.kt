@@ -4,7 +4,8 @@ import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.disabledContainerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
-import android.kotlin.foodclub.viewModels.authentication.TermsAndConditionsViewModel
+import android.kotlin.foodclub.viewModels.authentication.termsAndConditions.TermsAndConditionsEvents
+import android.kotlin.foodclub.viewModels.authentication.termsAndConditions.TermsAndConditionsViewModel
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -28,8 +29,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.rizzi.bouquet.ResourceType
 import com.rizzi.bouquet.VerticalPDFReader
@@ -39,7 +38,7 @@ import com.rizzi.bouquet.rememberVerticalPdfReaderState
 @Composable
 fun TermsAndConditions(
     navController: NavHostController,
-    viewModel: TermsAndConditionsViewModel
+    events: TermsAndConditionsEvents
 ) {
 
     val checkedState = remember { mutableStateOf(false) }
@@ -81,7 +80,7 @@ fun TermsAndConditions(
         Button(onClick = {
 
             if(checkedState.value)
-                    viewModel.onChecked(checkedState.value,navController)
+                    events.onChecked(checkedState.value,navController)
             else
                     Toast.makeText(context,"Please accept terms and conditions to proceed",Toast.LENGTH_SHORT).show()
 

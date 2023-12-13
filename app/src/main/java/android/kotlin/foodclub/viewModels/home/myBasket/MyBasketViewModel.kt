@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.viewModels.home
+package android.kotlin.foodclub.viewModels.home.myBasket
 
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.ProductsData
@@ -7,8 +7,6 @@ import android.kotlin.foodclub.domain.models.products.MyBasketCache
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.views.home.myBasket.MyBasketState
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +20,7 @@ import javax.inject.Inject
 class MyBasketViewModel @Inject constructor(
     private val basketCache: MyBasketCache,
     private val productRepository: ProductRepository
-) : ViewModel() {
+) : ViewModel(), MyBasketEvents {
 
     companion object {
         private val TAG = MyBasketViewModel::class.java.simpleName
@@ -47,54 +45,11 @@ class MyBasketViewModel @Inject constructor(
         }
     }
 
-    fun saveBasket() {
+    override fun saveBasket() {
         basketCache.saveBasket(state.value.basket!!)
     }
 
-
-    fun refreshBasket() {
-        _state.update { it.copy(productsList = basketCache.getBasket().ingredients) }
-    }
-
-    fun updateSelectedIngredients(selectedIngredients: List<Ingredient>) {
-        // TOOD Update state, selectedIngredients string or ingredient list
-    }
-
-    fun addIngredientsToBasket(ingredients: List<Ingredient>) {
-        ingredients.forEach { ingredient ->
-            addIngredient(ingredient = ingredient)
-        }
-
-        _state.update { it.copy(selectedProductsList = emptyList()) }
-    }
-
-
-    fun addIngredient(ingredient: Ingredient) {
-        val basket = state.value.basket!!
-        basket.addIngredient(ingredient)
-        _state.update {
-            it.copy(
-                basket = basket,
-                productsList = basket.ingredients
-            )
-        }
-        saveBasket()
-
-    }
-
-    fun removeIngredient(id: String) {
-        val basket = state.value.basket!!
-        basket.removeIngredient(id)
-        _state.update {
-            it.copy(
-                basket = basket,
-                productsList = basket.ingredients
-            )
-        }
-        saveBasket()
-    }
-
-    fun selectIngredient(id: String) {
+    override fun selectIngredient(id: String) {
         val basket = state.value.basket!!
         basket.selectIngredient(id)
         _state.update {
@@ -105,7 +60,7 @@ class MyBasketViewModel @Inject constructor(
         }
     }
 
-    fun unselectIngredient(id: String) {
+    override fun unselectIngredient(id: String) {
         val basket = state.value.basket!!
         basket.unselectIngredient(id)
         _state.update {
@@ -116,7 +71,7 @@ class MyBasketViewModel @Inject constructor(
         }
     }
 
-    fun deleteSelectedIngredients() {
+    override fun deleteSelectedIngredients() {
         val basket = state.value.basket!!
         basket.deleteIngredients()
         _state.update {
@@ -130,7 +85,7 @@ class MyBasketViewModel @Inject constructor(
 
     }
 
-    fun fetchProductsDatabase(searchText: String) {
+    override fun fetchProductsDatabase(searchText: String) {
         viewModelScope.launch() {
             when (val resource = productRepository.getProductsList(searchText)) {
                 is Resource.Success -> {
@@ -155,7 +110,7 @@ class MyBasketViewModel @Inject constructor(
         }
     }
 
-    fun fetchMoreProducts(searchText: String, onJobComplete: () -> Unit) {
+    override fun fetchMoreProducts(searchText: String, onJobComplete: () -> Unit) {
         val job = viewModelScope.launch() {
             when (
                 val resource = productRepository.getProductsList(
@@ -188,5 +143,46 @@ class MyBasketViewModel @Inject constructor(
             }
         }
         job.invokeOnCompletion { onJobComplete() }
+    }
+
+    override fun addIngredient(ingredient: Ingredient) {
+        val basket = state.value.basket!!
+        basket.addIngredient(ingredient)
+        _state.update {
+            it.copy(
+                basket = basket,
+                productsList = basket.ingredients
+            )
+        }
+        saveBasket()
+
+    }
+
+    fun refreshBasket() {
+        _state.update { it.copy(productsList = basketCache.getBasket().ingredients) }
+    }
+
+    fun updateSelectedIngredients(selectedIngredients: List<Ingredient>) {
+        // TOOD Update state, selectedIngredients string or ingredient list
+    }
+
+    fun addIngredientsToBasket(ingredients: List<Ingredient>) {
+        ingredients.forEach { ingredient ->
+            addIngredient(ingredient = ingredient)
+        }
+
+        _state.update { it.copy(selectedProductsList = emptyList()) }
+    }
+
+    fun removeIngredient(id: String) {
+        val basket = state.value.basket!!
+        basket.removeIngredient(id)
+        _state.update {
+            it.copy(
+                basket = basket,
+                productsList = basket.ingredients
+            )
+        }
+        saveBasket()
     }
 }

@@ -2,6 +2,7 @@ package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.navigation.Graph
+import android.kotlin.foodclub.views.home.gallery.GalleryType
 import android.view.ViewGroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -24,7 +25,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -110,7 +110,7 @@ fun CameraPreviewView(
         Button(
             onClick = {
                 navController.navigate(
-                    route = if (state.contains(GalleryState.RECIPE.state)) "CREATE_RECIPE_VIEW" else Graph.HOME
+                    route = if (state.contains(GalleryType.RECIPE.state)) "CREATE_RECIPE_VIEW" else Graph.HOME
                 )
             },
             modifier = Modifier
