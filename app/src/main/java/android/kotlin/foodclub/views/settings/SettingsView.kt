@@ -120,7 +120,7 @@ fun SettingsView(
                 fontC = Color.Black,
                 borderSize = 0,
                 borderColor = Color.Transparent,
-                destination = "SETTINGS_PRIVACY",
+                destination = SettingsScreen.PrivacyPolicy.route,
                 navController = navController
             )
         }
