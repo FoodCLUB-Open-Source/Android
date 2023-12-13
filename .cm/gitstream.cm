@@ -24,7 +24,7 @@ automations:
   assign_code_experts:
     # Triggered when someone applies a suggest-reviewer label to a PR.
     if: 
-      - {{ pr.labels | match(term='suggest-reviewer') | some }}
+      - true
     run:
       - action: add-reviewers@v1
         args:
