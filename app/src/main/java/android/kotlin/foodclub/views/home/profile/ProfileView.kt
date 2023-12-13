@@ -62,7 +62,9 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -93,12 +95,12 @@ fun ProfileView(
     var imageUri: Uri? by remember { mutableStateOf(null) }
 
     LaunchedEffect(key1 = true) {
-        state.dataStore?.getImage()?.collect { image->
+        viewModel.state.value.dataStore?.getImage()?.collect { image->
             if (image != null) {
                 imageUri = Uri.parse(image)
             }else{
                 imageUri = null
-                Log.i("ProfileView", "NULL IMG URI")
+                Log.e("ProfileView", "NULL IMG URI")
             }
         }
     }
@@ -410,14 +412,33 @@ fun ProfileView(
                                 .background(Color.White)
                                 .padding(top =dimensionResource(id = R.dimen.dim_5), start = dimensionResource(id = R.dimen.dim_15), end = dimensionResource(id = R.dimen.dim_15), bottom = dimensionResource(id = R.dimen.dim_110))
                         ) {
+                            val lazyGridState = rememberLazyGridState()
+
                             LazyVerticalGrid(
                                 columns = GridCells.Fixed(2),
+                                state = lazyGridState
                             ) {
-                                items(userTabItems) { dataItem ->
+                                items(items = userTabItems,//userTabItems,
+                                    key = { it.videoId }
+                                ) { dataItem ->
                                     GridItem(dataItem, triggerShowDeleteRecipe = { tabItemId ->
                                         postId = tabItemId
                                         showDeleteRecipe = true
                                     })
+                                }
+                            }
+
+                            var listLoading by remember { mutableStateOf(false) }
+                            val loadMore = remember {
+                                derivedStateOf {
+                                    lazyGridState.firstVisibleItemIndex > userTabItems.size - 10
+                                }
+                            }
+
+                            LaunchedEffect(loadMore)
+                            {
+                                if (!listLoading) {
+                                    listLoading = true
                                 }
                             }
                         }
@@ -440,7 +461,7 @@ fun ProfileView(
                         title= stringResource(id = R.string.take_photo),
                         resourceId = R.drawable.take_photo,
                         onClick = {
-                          navController.navigate(route = HomeOtherRoutes.TakeProfilePhotoView.route)
+                            navController.navigate(route = HomeOtherRoutes.TakeProfilePhotoView.route)
                         })
                 ),
                 sheetTitle = stringResource(id = R.string.upload_photo),
@@ -492,4 +513,3 @@ fun ProfileView(
         }
     }
 }
-

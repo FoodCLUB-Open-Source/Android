@@ -30,7 +30,7 @@ import android.kotlin.foodclub.repositories.RecipeRepository
 import android.kotlin.foodclub.repositories.SettingsRepository
 import android.kotlin.foodclub.repositories.StoryRepository
 import android.kotlin.foodclub.room.repository.datasource.ProfileDataLocalSource
-import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.ProfileModelMapper
+import android.kotlin.foodclub.room.repository.datasource.ProfileVideosDataLocalSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -45,9 +45,9 @@ object RepositoriesModule {
     fun provideProfileRepository(
         api: ProfileService,
         profileDataLocalSource: ProfileDataLocalSource,
+        profileVideosDataLocalSource: ProfileVideosDataLocalSource,
         profileMapper: UserProfileMapper,
         userPostsMapper: PostToVideoMapper,
-        profileModelMapper: ProfileModelMapper,
         followerUserMapper: FollowerUserMapper,
         followingUserMapper: FollowingUserMapper,
         userDetailsMapper: UserDetailsMapper
@@ -55,9 +55,9 @@ object RepositoriesModule {
         return ProfileRepository(
             api,
             profileDataLocalSource,
+            profileVideosDataLocalSource,
             profileMapper,
             userPostsMapper,
-            profileModelMapper,
             followerUserMapper,
             followingUserMapper,
             userDetailsMapper
