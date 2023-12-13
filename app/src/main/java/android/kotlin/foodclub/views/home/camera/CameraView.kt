@@ -114,7 +114,7 @@ fun CameraView(
         )
     )
 
-    var recording: Recording? = remember { null }
+    var recording: Recording? by remember { mutableStateOf<Recording?>(null) }
     val previewView: PreviewView = remember { PreviewView(context) }
     val videoCapture: MutableState<VideoCapture<Recorder>?> = remember { mutableStateOf(null) }
     val recordingStarted: MutableState<Boolean> = remember { mutableStateOf(false) }
@@ -380,10 +380,9 @@ fun CameraView(
                                 } else {
                                     recordingStarted.value = false
                                     events.onEvent(StopWatchEvent.onStop)
-                                    recording?.stop()
+                                    recording?.stop() //Need the object refs to be consistent
                                 }
                             }
-
                             //navController.navigate("GALLERY_VIEW")
                         },
                         modifier = Modifier
