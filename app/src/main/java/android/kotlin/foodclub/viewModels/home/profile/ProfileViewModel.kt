@@ -2,7 +2,6 @@ package android.kotlin.foodclub.viewModels.home.profile
 
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.products.MyBasketCache
-import android.kotlin.foodclub.domain.models.profile.UserDetailsModel
 import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
@@ -39,7 +38,7 @@ class ProfileViewModel @Inject constructor(
     private val profileRepository: ProfileRepository,
     val sessionCache: SessionCache,
     private val connectivityUtil: ConnectivityUtils,
-    val storeData: StoreData,
+    private val storeData: StoreData,
     private val recipeRepository: RecipeRepository,
     private val basketCache: MyBasketCache
 ) : ViewModel(), ProfileEvents {
@@ -75,12 +74,12 @@ class ProfileViewModel @Inject constructor(
         }
         _state.update {
             it.copy(
-                userDetails = it.userDetails!!.copy(
-                    profilePicture = uri.toString()
+                userProfile = it.userProfile!!.copy(
+                    profilePictureUrl = uri.toString()
                 )
             )
         }
-        Log.i(TAG, "USER UPDATED IMG: ${state.value.userDetails!!.profilePicture}")
+        Log.i(TAG, "USER UPDATED IMG: ${state.value.userProfile!!.profilePictureUrl}")
     }
 
 
@@ -96,7 +95,6 @@ class ProfileViewModel @Inject constructor(
                 viewModelScope.launch {
                     getProfileModel(userId)
                     getBookmarkedPosts(userId)
-                    getUserDetails(userId)
                 }
                 viewModelScope.launch {
                     delay(2000)
@@ -273,10 +271,9 @@ class ProfileViewModel @Inject constructor(
     private fun insertLocalUserDetails(){
         viewModelScope.launch {
             val combined = OfflineProfileModel(
-                userId = state.value.userDetails!!.id,
-                userName = state.value.userDetails!!.userName,
-                email =state.value.userDetails!!.email,
-                profilePicture = state.value.userDetails?.profilePicture,
+                userId = state.value.myUserId,
+                userName = state.value.userProfile?.username,
+                profilePicture = state.value.userProfile?.profilePictureUrl,
                 totalUserFollowers = state.value.userProfile?.totalUserFollowers,
                 totalUserFollowing = state.value.userProfile?.totalUserFollowing,
             )
@@ -373,20 +370,6 @@ class ProfileViewModel @Inject constructor(
                 }
                 is Resource.Error -> {
                     Log.e(TAG,"ERROR Offline Profile Videos ${response.message}")
-                }
-            }
-        }
-    }
-
-    private fun getUserDetails(id: Long){
-        viewModelScope.launch {
-            when (val resource = profileRepository.retrieveUserDetails(id)) {
-                is Resource.Success -> {
-                    _state.update { it.copy(userDetails = resource.data) }
-                }
-
-                is Resource.Error -> {
-                    Log.i(TAG, "getUserDetails failed: ${resource.message}")
                 }
             }
         }

@@ -6,7 +6,6 @@ import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.navigation.SettingsScreen
 import android.kotlin.foodclub.utils.composables.SettingsLayout
 import android.kotlin.foodclub.viewModels.settings.SettingsEvents
-import android.kotlin.foodclub.viewModels.settings.SettingsViewModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -36,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -63,14 +63,16 @@ fun SettingsView(
             )
         }
 
-        Spacer(modifier = Modifier.height(screenSizeHeight * 0.1f))
+        Spacer(modifier = Modifier.height(height = dimensionResource(id = R.dimen.dim_30)))
 
         SettingRow(
             text = stringResource(id = R.string.edit_profile_information),
             iconId = R.drawable.editprofile,
             fontC = Color.Black,
-            borderSize = 0,
-            borderColor = Color.Gray,
+            size = 16,
+            lineHeight = 19.5.sp,
+            borderSize = 1,
+            borderColor = colorGray,
             destination = SettingsScreen.EditProfile.route,
             navController = navController
         )
@@ -79,8 +81,10 @@ fun SettingsView(
             text = stringResource(id = R.string.privacy_settings),
             iconId = R.drawable.privacysettings,
             fontC = Color.Black,
-            borderSize = 0,
-            borderColor = Color.Gray,
+            size = 16,
+            lineHeight = 19.5.sp,
+            borderSize = 1,
+            borderColor = colorGray,
             destination = SettingsScreen.Privacy.route,
             navController = navController
         )
@@ -97,7 +101,9 @@ fun SettingsView(
             SettingRow(
                 text = stringResource(id = R.string.help_and_support),
                 iconId = R.drawable.helpandsupport,
-                Color.Black,
+                fontC = Color.Black,
+                size = 16,
+                lineHeight = 20.sp,
                 borderSize = 0,
                 borderColor = Color.Transparent,
                 destination = "SETTINGS_PRIVACY",
@@ -108,6 +114,8 @@ fun SettingsView(
                 text = stringResource(id = R.string.contact_us),
                 iconId = R.drawable.contactus,
                 fontC = Color.Black,
+                size = 16,
+                lineHeight = 20.sp,
                 borderSize = 0,
                 borderColor = Color.Transparent,
                 destination = "SETTINGS_PRIVACY",
@@ -118,6 +126,8 @@ fun SettingsView(
                 text = stringResource(id = R.string.privacy_policy),
                 iconId = R.drawable.privacypolicy,
                 fontC = Color.Black,
+                size = 16,
+                lineHeight = 20.sp,
                 borderSize = 0,
                 borderColor = Color.Transparent,
                 destination = SettingsScreen.PrivacyPolicy.route,
@@ -131,8 +141,10 @@ fun SettingsView(
             text = stringResource(id = R.string.log_out),
             iconId = R.drawable.logout,
             fontC = colorRed,
-            borderSize = 0,
-            borderColor = Color.Black,
+            size = 16,
+            lineHeight = 19.5.sp,
+            borderSize = 1,
+            borderColor = colorGray,
             destination = Graph.AUTHENTICATION,
             navController = navController,
             onClick = { events.logout() }
@@ -158,7 +170,8 @@ fun SettingsText(
     size: Int,
     weight: FontWeight,
     fontC: Color = Color.Black,
-    textAlign: TextAlign = TextAlign.Center
+    textAlign: TextAlign = TextAlign.Center,
+    lineHeight: TextUnit? = null
 ) {
     Text(
         text = text,
@@ -166,7 +179,8 @@ fun SettingsText(
         color = fontC,
         fontFamily = Montserrat,
         fontWeight = weight,
-        textAlign = textAlign
+        textAlign = textAlign,
+        lineHeight = lineHeight ?: TextUnit.Unspecified
     )
 }
 
@@ -237,7 +251,8 @@ fun SettingsProfile(
             SettingsText(
                 text = userName,
                 size = 24,
-                weight = FontWeight.ExtraBold
+                weight = FontWeight.W600,
+                lineHeight = 40.sp
             )
         }
     }
@@ -248,6 +263,8 @@ fun SettingRow(
     text: String,
     iconId: Int,
     fontC: Color = Color.Black,
+    size: Int,
+    lineHeight: TextUnit? = null,
     borderSize: Int = 1,
     borderColor: Color = colorGray,
     destination: String,
@@ -285,7 +302,13 @@ fun SettingRow(
 
             Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_16)))
 
-            SettingsText(text = text, size = 14, weight = FontWeight.Normal, fontC = fontC)
+            SettingsText(
+                text = text,
+                size = size,
+                weight = FontWeight.Normal,
+                fontC = fontC,
+                lineHeight = lineHeight?: TextUnit.Unspecified
+            )
 
             Spacer(modifier = Modifier.weight(1f))
 
