@@ -71,9 +71,9 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    override fun updateUserDetails(userId: Long, model: UserDetailsModel) {
+    override fun updateUserDetails(userId: Long, user: UserDetailsModel) {
         viewModelScope.launch {
-            when (val resource = repository.updateUserDetails(userId, model)) {
+            when (val resource = repository.updateUserDetails(userId, user)) {
                 is Resource.Success -> {
                     Log.i(TAG, "USER UPDATE SUCCESS ${resource.data}")
                 }
@@ -84,6 +84,6 @@ class SettingsViewModel @Inject constructor(
                 }
             }
         }
-        _state.update { it.copy(user = model) }
+        _state.update { it.copy(user = user) }
     }
 }

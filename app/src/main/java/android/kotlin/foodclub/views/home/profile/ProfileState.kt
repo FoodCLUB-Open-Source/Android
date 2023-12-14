@@ -9,7 +9,6 @@ import android.kotlin.foodclub.utils.helpers.StoreData
 
 data class ProfileState(
     val userProfile: UserProfile?,
-    val userDetails: UserDetailsModel?,
     val offlineUserData: OfflineProfileModel?,
     val bookmarkedPosts: List<VideoModel>,
     val userPosts: List<VideoModel>,
@@ -26,7 +25,6 @@ data class ProfileState(
     companion object {
         fun default() = ProfileState(
             userProfile = null,
-            userDetails = null,
             offlineUserData = null,
             bookmarkedPosts = emptyList(),
             userPosts = emptyList(),
