@@ -272,7 +272,7 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             val combined = OfflineProfileModel(
                 userId = state.value.myUserId,
-                userName = state.value.userProfile!!.username,
+                userName = state.value.userProfile?.username,
                 profilePicture = state.value.userProfile?.profilePictureUrl,
                 totalUserFollowers = state.value.userProfile?.totalUserFollowers,
                 totalUserFollowing = state.value.userProfile?.totalUserFollowing,
