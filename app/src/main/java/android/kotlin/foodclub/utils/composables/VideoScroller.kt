@@ -7,6 +7,8 @@ import android.graphics.BitmapFactory
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.views.home.ProgressionBar
+import android.kotlin.foodclub.views.home.discover.ShimmerBrush
+import android.kotlin.foodclub.views.home.discover.checkInternetConnectivity
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
@@ -210,27 +212,36 @@ fun VideoScroller(
                 )
             }
         }
+        val context = LocalContext.current
+        val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
 
+        val brush = ShimmerBrush()
         DisposableEffect(key1 =
-        Box(modifier = Modifier.fillMaxSize()) {
-            AndroidView(factory = {
-                playerView
-            }, modifier = Modifier.pointerInput(Unit) {
-                detectTapGestures(onTap = {
-                    onSingleTap(exoPlayer)
-                }, onDoubleTap = { offset ->
-                    onDoubleTap(exoPlayer, offset)
+        if(isInternetConnected) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                AndroidView(factory = {
+                    playerView
+                }, modifier = Modifier.pointerInput(Unit) {
+                    detectTapGestures(onTap = {
+                        onSingleTap(exoPlayer)
+                    }, onDoubleTap = { offset ->
+                        onDoubleTap(exoPlayer, offset)
+                    })
                 })
-            })
-            ProgressionBar(totalDuration,
-                modifier = Modifier.align(Alignment.BottomEnd),
-                totalDuration = { totalDuration },
-                currentTime = { currentTime },
-                onSeekChanged = { timeMs: Float ->
-                    exoPlayer.seekTo(timeMs.toLong())
-                }
-            )
-        }, effect = {
+                ProgressionBar(totalDuration,
+                    modifier = Modifier.align(Alignment.BottomEnd),
+                    totalDuration = { totalDuration },
+                    currentTime = { currentTime },
+                    onSeekChanged = { timeMs: Float ->
+                        exoPlayer.seekTo(timeMs.toLong())
+                    }
+                )
+            }
+        } else {
+            Box(modifier = Modifier.fillMaxSize()
+                .background(brush))
+        },
+            effect = {
             onDispose {
                 thumbnail = thumbnail.copy(second = true)
                 exoPlayer.release()
@@ -274,7 +285,7 @@ fun BottomControls(
         Slider(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top =dimensionResource(id = R.dimen.dim_5)),
+                .padding(top = dimensionResource(id = R.dimen.dim_5)),
             value = videoTime.toFloat(),
             onValueChange = onSeekChanged,
             valueRange = 0f..duration.toFloat(),

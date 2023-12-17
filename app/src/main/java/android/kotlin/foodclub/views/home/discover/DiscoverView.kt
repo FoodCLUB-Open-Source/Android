@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.views.home.discover
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.Satoshi
@@ -13,9 +14,22 @@ import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.CustomDatePicker
 import android.kotlin.foodclub.utils.composables.EditIngredientQuantityPicker
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
+import android.kotlin.foodclub.utils.composables.ShimmerBrush
+import android.kotlin.foodclub.utils.composables.checkInternetConnectivity
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
+import android.kotlin.foodclub.views.home.myDigitalPantry.TitlesSection
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -31,64 +45,32 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
-import android.kotlin.foodclub.viewModels.home.discover.DiscoverViewModel
-import android.kotlin.foodclub.views.home.myDigitalPantry.TitlesSection
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DismissDirection
@@ -99,28 +81,59 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SwipeToDismiss
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -134,6 +147,10 @@ fun DiscoverView(
     events: DiscoverEvents,
     state: DiscoverState
 ) {
+    val context = LocalContext.current
+    val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
+
+    val brush = ShimmerBrush()
     val screenHeight =
         LocalConfiguration.current.screenHeightDp.dp - dimensionResource(id = R.dimen.dim_240)
 
@@ -218,26 +235,31 @@ fun DiscoverView(
 
         item {
             MainTabRow(
+                isInternetConnected,
+                brush,
                 tabsList = mainTabItemsList,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+
             ) {
                 mainTabIndex = it
             }
         }
 
-        item {
-            if (mainTabIndex == 0) {
-                SubSearchBar(
-                    navController = navController,
-                    searchTextValue = state.ingredientSearchText,
-                    onSearch = { input ->
-                        searchText = input
-                        events.onSubSearchTextChange(input)
-                    }
-                )
-            } else {
-                // TODO figure out what do show here
-                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_30)))
+        if(isInternetConnected) {
+            item {
+                if (mainTabIndex == 0) {
+                    SubSearchBar(
+                        navController = navController,
+                        searchTextValue = state.ingredientSearchText,
+                        onSearch = { input ->
+                            searchText = input
+                            events.onSubSearchTextChange(input)
+                        }
+                    )
+                } else {
+                    // TODO figure out what do show here
+                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_30)))
+                }
             }
         }
 
@@ -247,7 +269,9 @@ fun DiscoverView(
             SubTabRow(
                 onTabChanged = {
                     subTabIndex = it
-                }
+                },
+                isInternetConnected,
+                brush
             )
         }
 
@@ -296,78 +320,86 @@ fun DiscoverView(
             }
         }
 
+
         item {
             if (mainTabIndex == 0) {
                 homePosts = state.postList
 
-                if (searchText.isBlank()) {
-                    IngredientsList(
-                        Modifier,
-                        events = events,
-                        productsList = state.userIngredients,
-                        userIngredientsList = state.userIngredients,
-                        onEditQuantityClicked = {
-                            isSheetOpen = true
-                            events.updateIngredient(it)
-                        },
-                        onDateClicked = {
-                            events.updateIngredient(it)
-                            isDatePickerVisible = true
-                            events.updateIngredient(it)
-                        },
-                        onIngredientAdd = {},
-                        onDeleteIngredient = {
-                            events.deleteIngredientFromList(it)
-                        }
-                    )
-                } else {
-                    IngredientsList(
-                        Modifier,
-                        events = events,
-                        productsList = state.searchResults,
-                        userIngredientsList = state.userIngredients,
-                        onEditQuantityClicked = {
-                            events.updateIngredient(it)
-                        },
-                        onDateClicked = {
-                            isDatePickerVisible = true
-                            events.updateIngredient(it)
-                        },
-                        onIngredientAdd = {
-                            events.addToUserIngredients(it)
-                            searchText = ""
-                            isDialogOpen = true
-                        },
-                        onDeleteIngredient = {
-                            events.deleteIngredientFromList(it)
-                        }
-                    )
+                if(isInternetConnected){
+                    if (searchText.isBlank()) {
+                        IngredientsList(
+                            Modifier,
+                            events = events,
+                            productsList = state.userIngredients,
+                            userIngredientsList = state.userIngredients,
+                            onEditQuantityClicked = {
+                                isSheetOpen = true
+                                events.updateIngredient(it)
+                            },
+                            onDateClicked = {
+                                events.updateIngredient(it)
+                                isDatePickerVisible = true
+                                events.updateIngredient(it)
+                            },
+                            onIngredientAdd = {},
+                            onDeleteIngredient = {
+                                events.deleteIngredientFromList(it)
+                            }
+                        )
+                    } else {
+                        IngredientsList(
+                            Modifier,
+                            events = events,
+                            productsList = state.searchResults,
+                            userIngredientsList = state.userIngredients,
+                            onEditQuantityClicked = {
+                                events.updateIngredient(it)
+                            },
+                            onDateClicked = {
+                                isDatePickerVisible = true
+                                events.updateIngredient(it)
+                            },
+                            onIngredientAdd = {
+                                events.addToUserIngredients(it)
+                                searchText = ""
+                                isDialogOpen = true
+                            },
+                            onDeleteIngredient = {
+                                events.deleteIngredientFromList(it)
+                            }
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
-
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        modifier = Modifier.clickable {
-                            navController.navigate(route = HomeOtherRoutes.MyDigitalPantryView.route)
-                        },
-                        text = stringResource(id = R.string.see_all_ingredients),
-                        color = foodClubGreen,
-                        fontWeight = FontWeight.Bold,
-                        style = TextStyle(
-                            textDecoration = TextDecoration.Underline
-                        ),
-                        fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
-                        textAlign = TextAlign.Center
-                    )
-                }
 
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
 
+                if(isInternetConnected){
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            modifier = Modifier.clickable {
+                                navController.navigate(route = HomeOtherRoutes.MyDigitalPantryView.route)
+                            },
+                            text = stringResource(id = R.string.see_all_ingredients),
+                            color = foodClubGreen,
+                            fontWeight = FontWeight.Bold,
+                            style = TextStyle(
+                                textDecoration = TextDecoration.Underline
+                            ),
+                            fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+
+
+                val brush = ShimmerBrush()
                 HorizontalPager(
                     beyondBoundsPageCount = 1,
                     flingBehavior = fling,
@@ -389,19 +421,41 @@ fun DiscoverView(
                         LazyVerticalGrid(columns = GridCells.Fixed(2)) {
                             val userName = state.sessionUserUsername
 
-                            if (homePosts != null) {
-                                items(homePosts!!) { dataItem ->
-                                    events.getPostData(dataItem.videoId)
-                                    GridItem2(navController, dataItem, userName)
+                            if (isInternetConnected) {
+                                if (homePosts != null) {
+                                    items(homePosts!!) { dataItem ->
+                                        events.getPostData(dataItem.videoId)
+                                        GridItem2(navController, dataItem, userName)
+                                    }
+                                } else if (worldPosts != null) {
+                                    items(worldPosts.value) { dataItem ->
+                                        events.getPostData(dataItem.videoId)
+                                        GridItem2(navController, dataItem, userName)
+                                    }
                                 }
-                            } else if (worldPosts != null) {
-                                items(worldPosts.value) { dataItem ->
+                            }
+                            else if(isInternetConnected==false){
+                                items(8) {
+                                    val shimmerBrush = ShimmerBrush()
 
-                                    events.getPostData(dataItem.videoId)
-                                    GridItem2(navController, dataItem, userName)
+                                    Card(
+                                        modifier = Modifier
+                                            .height(dimensionResource(id = R.dimen.dim_272))
+                                            .width(dimensionResource(id = R.dimen.dim_178))
+                                            .padding(dimensionResource(id = R.dimen.dim_10)),
+                                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .fillMaxHeight()
+                                                .background(brush = shimmerBrush)
+                                        )
+                                    }
                                 }
                             }
                         }
+
                     }
                 }
 
@@ -538,9 +592,12 @@ fun MainSearchBar(
 
 @Composable
 fun MainTabRow(
+    isInternetConnected: Boolean,
+    brush: Brush,
     tabsList: Array<String>,
     horizontalArrangement: Arrangement.Horizontal,
-    onTabChanged: (Int) -> Unit
+    onTabChanged: (Int) -> Unit,
+
 ) {
     var mainTabIndex by remember { mutableIntStateOf(0) }
 
@@ -554,7 +611,7 @@ fun MainTabRow(
                 bottom = dimensionResource(id = R.dimen.dim_10)
             ),
         horizontalArrangement = horizontalArrangement
-    ) {
+    ) {if(isInternetConnected) {
         tabsList.forEachIndexed { index, data ->
             val isSelected = index == mainTabIndex
 
@@ -591,6 +648,40 @@ fun MainTabRow(
                 Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_50)))
             }
         }
+    }
+        else{tabsList.forEachIndexed { index, data ->
+        val isSelected = index == mainTabIndex
+
+        Text(
+            text = data,
+            modifier = Modifier
+                .background(brush)
+                .clickable {
+                }
+                .drawBehind {
+                    if (isSelected) {
+                        val strokeWidthPx = 2.dp.toPx()
+                        val topPaddingPx = 4.dp.toPx()
+                        val underlineHeight = 2.dp.toPx()
+                        val verticalOffset = size.height - (underlineHeight / 2) + topPaddingPx
+                        drawLine(
+                            color = Color.Black,
+                            strokeWidth = strokeWidthPx,
+                            start = Offset(0f, verticalOffset),
+                            end = Offset(size.width, verticalOffset)
+                        )
+                    }
+                },
+            color = Color.Transparent,
+            fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
+            lineHeight = 24.38.sp,
+            textAlign = TextAlign.Start,
+            fontFamily = Montserrat
+        )
+        if (tabsList[0] != stringResource(id = R.string.my_kitchen)) {
+            Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_50)))
+        }
+    }}
     }
 }
 
@@ -689,57 +780,98 @@ fun SubSearchBar(
 
 @Composable
 fun SubTabRow(
-    onTabChanged: (Int) -> Unit
+    onTabChanged: (Int) -> Unit,
+    isInternetConnected:Boolean,
+    brush:Brush
 ) {
     val subTabItemsList = stringArrayResource(id = R.array.discover_sub_tabs)
     var subTabIndex by remember { mutableIntStateOf(0) }
 
-    LazyRow(
-        modifier = Modifier.padding(
-            start = dimensionResource(id = R.dimen.dim_20),
-            end = dimensionResource(id = R.dimen.dim_20),
-            bottom = dimensionResource(id = R.dimen.dim_5),
-            top = dimensionResource(id = R.dimen.dim_10)
-        ),
-        content = {
-            itemsIndexed(subTabItemsList) { index, data ->
-                val selected = subTabIndex == index
 
-                Text(
-                    modifier = Modifier
-                        .drawBehind {
-                            if (selected) {
-                                val strokeWidthPx = 2.dp.toPx()
-                                val topPaddingPx =
-                                    4.dp.toPx()
-                                val underlineHeight =
-                                    2.dp.toPx()
-                                val verticalOffset =
-                                    size.height - (underlineHeight / 2) + topPaddingPx
-                                drawLine(
-                                    color = Color.Black,
-                                    strokeWidth = strokeWidthPx,
-                                    start = Offset(0f, verticalOffset),
-                                    end = Offset(size.width, verticalOffset)
-                                )
+        LazyRow(
+            modifier = Modifier.padding(
+                start = dimensionResource(id = R.dimen.dim_20),
+                end = dimensionResource(id = R.dimen.dim_20),
+                bottom = dimensionResource(id = R.dimen.dim_5),
+                top = dimensionResource(id = R.dimen.dim_10)
+            ),
+
+            content = {
+                if(isInternetConnected)
+                {
+                itemsIndexed(subTabItemsList) { index, data ->
+                    val selected = subTabIndex == index
+
+                    Text(
+                        modifier = Modifier
+                            .drawBehind {
+                                if (selected) {
+                                    val strokeWidthPx = 2.dp.toPx()
+                                    val topPaddingPx =
+                                        4.dp.toPx()
+                                    val underlineHeight =
+                                        2.dp.toPx()
+                                    val verticalOffset =
+                                        size.height - (underlineHeight / 2) + topPaddingPx
+                                    drawLine(
+                                        color = Color.Black,
+                                        strokeWidth = strokeWidthPx,
+                                        start = Offset(0f, verticalOffset),
+                                        end = Offset(size.width, verticalOffset)
+                                    )
+                                }
                             }
-                        }
-                        .clickable {
-                            subTabIndex = index
-                            onTabChanged(index)
-                        },
-                    text = data,
-                    fontWeight = if (selected) FontWeight(500) else FontWeight.Normal,
-                    color = if (selected) Color.Black else Color(0xFFC2C2C2),
-                    fontSize = dimensionResource(id = R.dimen.fon_17).value.sp,
-                    lineHeight = 20.88.sp,
-                    textAlign = TextAlign.Start,
-                    fontFamily = Montserrat
-                )
-                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_50)))
+                            .clickable {
+                                subTabIndex = index
+                                onTabChanged(index)
+                            },
+                        text = data,
+                        fontWeight = if (selected) FontWeight(500) else FontWeight.Normal,
+                        color = if (selected) Color.Black else Color(0xFFC2C2C2),
+                        fontSize = dimensionResource(id = R.dimen.fon_17).value.sp,
+                        lineHeight = 20.88.sp,
+                        textAlign = TextAlign.Start,
+                        fontFamily = Montserrat
+                    )
+                    Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_50)))
+                }
             }
-        }
-    )
+                else{itemsIndexed(subTabItemsList) { index, data ->
+                    val selected = subTabIndex == index
+
+                    Text(
+                        modifier = Modifier
+                            .background(brush)
+                            .drawBehind {
+                                if (selected) {
+                                    val strokeWidthPx = 2.dp.toPx()
+                                    val topPaddingPx =
+                                        4.dp.toPx()
+                                    val underlineHeight =
+                                        2.dp.toPx()
+                                    val verticalOffset =
+                                        size.height - (underlineHeight / 2) + topPaddingPx
+                                    drawLine(
+                                        color = Color.Black,
+                                        strokeWidth = strokeWidthPx,
+                                        start = Offset(0f, verticalOffset),
+                                        end = Offset(size.width, verticalOffset)
+                                    )
+                                }
+                            }
+                            .clickable {},
+                        text = data,
+                        color = Color.Transparent,
+                        fontSize = dimensionResource(id = R.dimen.fon_17).value.sp,
+                        lineHeight = 20.88.sp,
+                        textAlign = TextAlign.Start,
+                        fontFamily = Montserrat
+                    )
+                    Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_50)))
+                }
+        }})
+
+
 }
 
 @Composable
@@ -1178,7 +1310,6 @@ fun TabHomeDiscover(
     }
 }
 
-
 @Composable
 fun GridItem2(
     navController: NavController,
@@ -1192,34 +1323,34 @@ fun GridItem2(
             .padding(dimensionResource(id = R.dimen.dim_10)),
         shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
     ) {
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-        ) {
-            Image(
-                painter = rememberAsyncImagePainter(dataItem.thumbnailLink),
-                contentDescription = null,
-                Modifier
-                    .fillMaxSize()
-                    .clickable { navController.navigate("DELETE_RECIPE/${dataItem.videoId}") },
-                contentScale = ContentScale.FillHeight
-            )
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .padding(dimensionResource(id = R.dimen.dim_10)),
-                verticalArrangement = Arrangement.Bottom
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
             ) {
-                Text(
-                    text = dataItem.videoStats.displayLike,
-                    fontFamily = Satoshi,
-                    color = Color.White,
-                    fontSize = dimensionResource(id = R.dimen.fon_15).value.sp
+                Image(
+                    painter = rememberAsyncImagePainter(dataItem.thumbnailLink),
+                    contentDescription = null,
+                    Modifier
+                        .fillMaxSize()
+                        .clickable { navController.navigate("DELETE_RECIPE/${dataItem.videoId}") },
+                    contentScale = ContentScale.FillHeight
                 )
+                Column(
+                    Modifier
+                        .fillMaxSize()
+                        .padding(dimensionResource(id = R.dimen.dim_10)),
+                    verticalArrangement = Arrangement.Bottom
+                ) {
+                    Text(
+                        text = dataItem.videoStats.displayLike,
+                        fontFamily = Satoshi,
+                        color = Color.White,
+                        fontSize = dimensionResource(id = R.dimen.fon_15).value.sp
+                    )
 
-            }
+                }
+
         }
 
     }
