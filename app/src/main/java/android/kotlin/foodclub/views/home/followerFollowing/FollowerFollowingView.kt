@@ -41,9 +41,16 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.config.ui.Raleway
+import android.kotlin.foodclub.utils.composables.ShimmerBrush
+import android.kotlin.foodclub.utils.composables.checkInternetConnectivity
 import android.kotlin.foodclub.viewModels.home.follow.FollowEvents
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 
@@ -55,6 +62,10 @@ fun FollowerView(
     viewType: String,
     userId: Long
 ) {
+    val context = LocalContext.current
+    val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
+
+    val brush = ShimmerBrush()
     val systemUiController = rememberSystemUiController()
 
     SideEffect {
@@ -85,8 +96,12 @@ fun FollowerView(
                 Button(
                     shape = RectangleShape,
                     modifier = Modifier
-                        .border(dimensionResource(id = R.dimen.dim_1), Color(0xFFB8B8B8), shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
-                        .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
+                        .border(
+                            dimensionResource(id = R.dimen.dim_1),
+                            Color(0xFFB8B8B8),
+                            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
+                        )
+                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
                         .align(Alignment.BottomCenter)
                         .width(dimensionResource(id = R.dimen.dim_40))
                         .height(dimensionResource(id = R.dimen.dim_40)),
@@ -128,13 +143,52 @@ fun FollowerView(
 
             LazyColumn( modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_150)) ) {
                 items(userList.size) { index ->
-                    Follower(
-                        navController = navController,
-                        userId = userList[index].userId,
-                        imageUrl = userList[index].profilePictureUrl ?: "",
-                        username = userList[index].username,
-                        completeName = userList[index].username + stringResource(id = R.string.no_name_found)
-                    )
+                    if(isInternetConnected) {
+                        Follower(
+                            navController = navController,
+                            userId = userList[index].userId,
+                            imageUrl = userList[index].profilePictureUrl ?: "",
+                            username = userList[index].username,
+                            completeName = userList[index].username + stringResource(id = R.string.no_name_found)
+                        )
+                    }else{ Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(dimensionResource(id = R.dimen.dim_75))
+                            .padding(vertical = dimensionResource(id = R.dimen.dim_4))
+                            .clickable { },
+                        verticalAlignment = Alignment.CenterVertically
+                    ){ Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_16)))
+
+                        Box(
+                            modifier = Modifier
+                                .size(dimensionResource(id = R.dimen.dim_50))
+                                .clip(CircleShape)
+                                .background(brush)
+                                .padding(dimensionResource(id = R.dimen.dim_10))
+                        )
+                        Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_12)))
+                        Column {
+
+                            Box(
+                                Modifier
+                                    .padding(dimensionResource(id = R.dimen.dim_5))
+                                    .width(dimensionResource(id = R.dimen.dim_76))
+                                    .height(dimensionResource(id = R.dimen.dim_16))
+                                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
+                                    .background(brush)
+
+                            )
+                            Box(
+                                Modifier
+                                    .padding(dimensionResource(id = R.dimen.dim_5))
+                                    .width(dimensionResource(id = R.dimen.dim_32))
+                                    .height(dimensionResource(id = R.dimen.dim_16))
+                                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
+                                    .background(brush)
+
+                            )
+                        }}}
                 }
             }
         }
@@ -143,35 +197,36 @@ fun FollowerView(
 
 @Composable
 fun Follower(
+
     navController: NavController,
     userId: Int,
     imageUrl: String,
     username: String,
     completeName: String
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(dimensionResource(id = R.dimen.dim_75))
-            .padding(vertical =dimensionResource(id = R.dimen.dim_4))
-            .clickable {
-                navController.navigate(
-                    BottomBarScreenObject.Profile.route + "?userId=$userId"
-                )
-            },
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-
-        Spacer(modifier = Modifier.width( dimensionResource(id = R.dimen.dim_16)))
-
-        AsyncImage(
-            model = imageUrl,
-            contentDescription = null,
+        Row(
             modifier = Modifier
-                .size(dimensionResource(id = R.dimen.dim_50))
-                .clip(CircleShape)
-                .background(Color.White)
-        )
+                .fillMaxWidth()
+                .height(dimensionResource(id = R.dimen.dim_75))
+                .padding(vertical = dimensionResource(id = R.dimen.dim_4))
+                .clickable {
+                    navController.navigate(
+                        BottomBarScreenObject.Profile.route + "?userId=$userId"
+                    )
+                },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_16)))
+
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(dimensionResource(id = R.dimen.dim_50))
+                    .clip(CircleShape)
+                    .background(Color.White)
+            )
             Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_12)))
             Column {
                 Text(
@@ -188,7 +243,9 @@ fun Follower(
                 )
             }
 
-    }
+        }
+
+
 }
 
 enum class FollowViewType(val type: String) {

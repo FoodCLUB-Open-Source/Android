@@ -8,6 +8,8 @@ import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.CustomBottomSheet
+import android.kotlin.foodclub.utils.composables.ShimmerBrush
+import android.kotlin.foodclub.utils.composables.checkInternetConnectivity
 import android.kotlin.foodclub.utils.helpers.UiEvent
 import android.kotlin.foodclub.utils.helpers.uriToFile
 import android.kotlin.foodclub.viewModels.home.profile.ProfileEvents
@@ -63,6 +65,7 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -70,6 +73,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
@@ -92,8 +96,11 @@ fun ProfileView(
     events: ProfileEvents,
     state: ProfileState
 ) {
-
     val context = LocalContext.current
+    val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
+
+    val brush = ShimmerBrush()
+
     var imageUri: Uri? by remember { mutableStateOf(null) }
 
     LaunchedEffect(key1 = true) {
@@ -213,33 +220,66 @@ fun ProfileView(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = dimensionResource(id = R.dimen.dim_70), start = dimensionResource(id = R.dimen.dim_95)),
+                        .padding(
+                            top = dimensionResource(id = R.dimen.dim_70),
+                            start = dimensionResource(id = R.dimen.dim_95)
+                        ),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Box(if(userId == 0L) Modifier.clickable { showBottomSheet = true } else Modifier) {
-                        AsyncImage(
-                            model = imageUri ?: R.drawable.profilepicture,
-                            contentDescription = stringResource(id = R.string.profile_picture),
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_60)))
-                                .height(dimensionResource(id = R.dimen.dim_124))
-                                .width(dimensionResource(id = R.dimen.dim_124)),
-                            contentScale = ContentScale.Crop
-                        )
-                        if(userId == 0L){
-                            Image(
-                                painter = painterResource(R.drawable.profile_picture_change_icon),
-                                contentDescription = stringResource(id = R.string.profile_picture_edit),
+                    if(isInternetConnected) {
+                        Box(if (userId == 0L) Modifier.clickable {
+                            showBottomSheet = true
+                        } else Modifier) {
+                            AsyncImage(
+                                model = imageUri ?: R.drawable.profilepicture,
+                                contentDescription = stringResource(id = R.string.profile_picture),
                                 modifier = Modifier
-                                    .height(dimensionResource(id = R.dimen.dim_46))
-                                    .width(dimensionResource(id = R.dimen.dim_46))
-                                    .offset(
-                                        x = (cos(PI / 4) * 62 + 39).dp,
-                                        y = (sin(PI / 4) * 62 + 39).dp
-                                    )
+                                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_60)))
+                                    .height(dimensionResource(id = R.dimen.dim_124))
+                                    .width(dimensionResource(id = R.dimen.dim_124)),
+                                contentScale = ContentScale.Crop
                             )
+                            if (userId == 0L) {
+                                Image(
+                                    painter = painterResource(R.drawable.profile_picture_change_icon),
+                                    contentDescription = stringResource(id = R.string.profile_picture_edit),
+                                    modifier = Modifier
+                                        .height(dimensionResource(id = R.dimen.dim_46))
+                                        .width(dimensionResource(id = R.dimen.dim_46))
+                                        .offset(
+                                            x = (cos(PI / 4) * 62 + 39).dp,
+                                            y = (sin(PI / 4) * 62 + 39).dp
+                                        )
+                                )
+                            }
                         }
                     }
+                    else{
+                        Box( Modifier) {
+                            Box(
+                                 modifier = Modifier
+                                     .clip(CircleShape)
+                                     .height(dimensionResource(id = R.dimen.dim_124))
+                                     .width(dimensionResource(id = R.dimen.dim_124))
+                                     .background(brush),
+
+                            )
+                            if (userId == 0L) {
+                                Image(
+                                    painter = painterResource(R.drawable.profile_picture_change_icon),
+                                    contentDescription = stringResource(id = R.string.profile_picture_edit),
+                                    modifier = Modifier
+                                        .height(dimensionResource(id = R.dimen.dim_46))
+                                        .width(dimensionResource(id = R.dimen.dim_46))
+                                        .offset(
+                                            x = (cos(PI / 4) * 62 + 39).dp,
+                                            y = (sin(PI / 4) * 62 + 39).dp
+                                        )
+                                )
+                            }
+                        }
+
+                        }
                     Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_40)))
                     if(userId ==0L) {
                         Button(shape = CircleShape,
@@ -291,29 +331,46 @@ fun ProfileView(
                     Modifier
                         .fillMaxSize()
                         .background(Color.White)
-                        .padding(top = dimensionResource(id = R.dimen.dim_10), start =dimensionResource(id = R.dimen.dim_4), end =dimensionResource(id = R.dimen.dim_4)),
+                        .padding(
+                            top = dimensionResource(id = R.dimen.dim_10),
+                            start = dimensionResource(id = R.dimen.dim_4),
+                            end = dimensionResource(id = R.dimen.dim_4)
+                        ),
                     verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_5)),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        fontFamily = Montserrat,
-                        text = profile.username,
-                        fontSize = 23.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(top =dimensionResource(id = R.dimen.dim_5)),
-                        letterSpacing = (-1).sp
-                    )
+                    if(isInternetConnected) {
+                        Text(
+                            fontFamily = Montserrat,
+                            text = profile.username,
+                            fontSize = 23.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_5)),
+                            letterSpacing = (-1).sp
+                        )
+                    }
+                    else{
+                        Box(modifier = Modifier
+                            .width(dimensionResource(id = R.dimen.dim_114))
+                            .height(dimensionResource(id = R.dimen.dim_31))
+                            .background(brush))
+                    }
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top =dimensionResource(id = R.dimen.dim_5)),
+                            .padding(top = dimensionResource(id = R.dimen.dim_5)),
                         horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_70), Alignment.CenterHorizontally)
                     ) {
+                        if(isInternetConnected) {
                         ClickableText(
                             text = AnnotatedString(profile.totalUserFollowers.toString()),
+                            modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_20),dimensionResource(id = R.dimen.dim_0)),
                             onClick = {
-                                navController.navigate("FOLLOWER_VIEW/${
-                                    if(userId != 0L) userId else state.sessionUserId}")
+                                navController.navigate(
+                                    "FOLLOWER_VIEW/${
+                                        if (userId != 0L) userId else state.sessionUserId
+                                    }"
+                                )
                             },
                             style = TextStyle(
                                 color = Color.Black,
@@ -324,9 +381,13 @@ fun ProfileView(
                         )
                         ClickableText(
                             text = AnnotatedString(profile.totalUserFollowing.toString()),
+                            modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_20),dimensionResource(id = R.dimen.dim_0)),
                             onClick = {
-                                navController.navigate("FOLLOWING_VIEW/${
-                                    if(userId != 0L) userId else state.sessionUserId}")
+                                navController.navigate(
+                                    "FOLLOWING_VIEW/${
+                                        if (userId != 0L) userId else state.sessionUserId
+                                    }"
+                                )
                             },
                             style = TextStyle(
                                 color = Color.Black,
@@ -335,6 +396,18 @@ fun ProfileView(
                                 fontSize = dimensionResource(id = R.dimen.fon_17).value.sp
                             )
                         )
+                    }
+                        else{Box(Modifier
+
+                            .width(dimensionResource(id = R.dimen.dim_62))
+                            .height(dimensionResource(id = R.dimen.dim_17))
+                            .background(brush))
+
+                            Box(Modifier
+
+                                .width(dimensionResource(id = R.dimen.dim_62))
+                                .height(dimensionResource(id = R.dimen.dim_17))
+                                .background(brush))}
                     }
                     Row(
                         modifier = Modifier
@@ -412,7 +485,12 @@ fun ProfileView(
                             Modifier
                                 .fillMaxSize()
                                 .background(Color.White)
-                                .padding(top =dimensionResource(id = R.dimen.dim_5), start = dimensionResource(id = R.dimen.dim_15), end = dimensionResource(id = R.dimen.dim_15), bottom = dimensionResource(id = R.dimen.dim_110))
+                                .padding(
+                                    top = dimensionResource(id = R.dimen.dim_5),
+                                    start = dimensionResource(id = R.dimen.dim_15),
+                                    end = dimensionResource(id = R.dimen.dim_15),
+                                    bottom = dimensionResource(id = R.dimen.dim_110)
+                                )
                         ) {
                             val lazyGridState = rememberLazyGridState()
 
@@ -424,6 +502,8 @@ fun ProfileView(
                                     key = { it.videoId }
                                 ) { dataItem ->
                                     GridItem(
+                                        brush,
+                                        isInternetConnected,
                                         dataItem = dataItem,
                                         triggerShowDeleteRecipe = { tabItemId ->
                                         postId = tabItemId

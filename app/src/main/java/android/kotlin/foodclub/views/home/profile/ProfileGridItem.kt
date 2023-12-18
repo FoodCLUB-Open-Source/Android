@@ -3,6 +3,7 @@ package android.kotlin.foodclub.views.home.profile
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -15,35 +16,53 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontVariation.width
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun GridItem(
+    brush: Brush,
+    isInternetconnected:Boolean,
     dataItem: VideoModel,
     triggerShowDeleteRecipe: (Long) -> Unit
 ){
     Card(modifier = Modifier
-        .height(272.dp)
-        .width(178.dp)
-        .padding(10.dp)
-        ,shape = RoundedCornerShape(15.dp)
+        .height(dimensionResource(id = R.dimen.dim_272))
+        .width(dimensionResource(id = R.dimen.dim_178))
+        .padding(dimensionResource(id = R.dimen.dim_10))
+        ,shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
     ) {
 
-        Box(modifier = Modifier
+if(isInternetconnected) {
+    Box(
+        modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight()){
-            Image(
-                painter = painterResource(id = R.drawable.salad_ingredient),
-                contentDescription = null,
-                contentScale = ContentScale.FillHeight,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clickable {
-                        triggerShowDeleteRecipe(dataItem.videoId)
-                    }
-            )
+            .fillMaxHeight()
+    )
+    {
+        Image(
+            painter = painterResource(id = R.drawable.salad_ingredient),
+            contentDescription = null,
+            contentScale = ContentScale.FillHeight,
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable {
+                    triggerShowDeleteRecipe(dataItem.videoId)
+                }
+        )
+    }
+}
+        else{Box(
+    modifier = Modifier
+        .background(brush)
+        .fillMaxWidth()
+        .fillMaxHeight()
+)
+
         }
     }
 }

@@ -7,8 +7,6 @@ import android.graphics.BitmapFactory
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.views.home.ProgressionBar
-import android.kotlin.foodclub.views.home.discover.ShimmerBrush
-import android.kotlin.foodclub.views.home.discover.checkInternetConnectivity
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
