@@ -83,15 +83,15 @@ class ProfileRepository(
         }
     }
 
-    suspend fun retrieveLocalUserDetails(userId: Long): Resource<OfflineProfileModel, String> {
+    suspend fun retrieveLocalUserDetails(userId: Long): Resource<UserDetailsModel?, String> {
         return daoRequestWithFlow {
-            profileDataLocalSource.getData(userId)
+            profileDataLocalSource.getProfile(userId)
         }
     }
 
-    suspend fun insertLocalUserDetails(offlineProfileModel: OfflineProfileModel) {
+    suspend fun insertLocalUserDetails(offlineProfileModel: UserDetailsModel) {
         daoRequestFlow<Unit, String> {
-            profileDataLocalSource.insertData(offlineProfileModel)
+            profileDataLocalSource.insertProfile(offlineProfileModel)
         }
     }
 

@@ -98,10 +98,10 @@ class ProfileViewModel @Inject constructor(
                     getBookmarkedPosts(userId)
                     getUserDetails(userId)
                 }
-                viewModelScope.launch {
-                    delay(2000)
-                    insertLocalUserDetails()
-                }
+//                viewModelScope.launch {
+//                    delay(2000)
+//                    insertLocalUserDetails()
+//                }
             }else{
                 Log.i(TAG,"INTERNET NOT CONNECTED")
                 retrieveLocalUserDetails(userId)
@@ -272,13 +272,19 @@ class ProfileViewModel @Inject constructor(
      * */
     private fun insertLocalUserDetails(){
         viewModelScope.launch {
-            val combined = OfflineProfileModel(
-                userId = state.value.userDetails!!.id,
+            val combined = UserDetailsModel(
+                id = state.value.userDetails!!.id,
                 userName = state.value.userDetails!!.userName,
-                email =state.value.userDetails!!.email,
-                profilePicture = state.value.userDetails?.profilePicture,
-                totalUserFollowers = state.value.userProfile?.totalUserFollowers,
-                totalUserFollowing = state.value.userProfile?.totalUserFollowing,
+                email = state.value.userDetails!!.email,
+                profilePicture = state.value.userDetails!!.profilePicture ?: "",
+                userBio = state.value.userDetails!!.userBio ?: "",
+                gender = state.value.userDetails!!.gender ?: "",
+                createdAt = state.value.userDetails!!.createdAt,
+                dateOfBirth = state.value.userDetails!!.dateOfBirth ?: "",
+                dietaryPrefs = state.value.userDetails!!.dietaryPrefs ?: listOf(),
+                country = state.value.userDetails!!.country ?: "",
+                shippingAddress = state.value.userDetails!!.shippingAddress ?: "",
+                fullName = state.value.userDetails!!.fullName ?: ""
             )
             profileRepository.insertLocalUserDetails(combined)
         }

@@ -11,7 +11,6 @@ data class OfflineProfileModel(
     val userName: String,
     val email: String,
     var profilePicture: String? = null,
-
     val totalUserFollowers: Int? = null,
     val totalUserFollowing: Int? = null,
     )

@@ -58,22 +58,25 @@ class SettingsViewModel @Inject constructor(
 
     private fun getUserDetails(id: Long) {
         viewModelScope.launch {
-            when (val resource = repository.retrieveUserDetails(id)) {
-                is Resource.Success -> {
-                    _state.update { it.copy(user = resource.data) }
-                    Log.i(TAG, "getUserDetails success settings screen: ${resource.data}")
+            Log.d(TAG, "getUserDetails: $id")
+            repository.retrieveUserDetails(id).collect { userResource ->
+                when (userResource) {
+                    is Resource.Success -> {
+                        _state.update { it.copy(user = userResource.data) }
+                    }
+
+                    is Resource.Error -> {
+                        Log.e(TAG, "getUserDetails failed: ${userResource.message}")
+                    }
                 }
 
-                is Resource.Error -> {
-                    Log.i(TAG, "getUserDetails failed: ${resource.message}")
-                }
             }
         }
     }
 
-    override fun updateUserDetails(userId: Long, model: UserDetailsModel) {
+    override fun updateUserDetails(userId: Long, user: UserDetailsModel) {
         viewModelScope.launch {
-            when (val resource = repository.updateUserDetails(userId, model)) {
+            when (val resource = repository.updateUserDetails(userId, user)) {
                 is Resource.Success -> {
                     Log.i(TAG, "USER UPDATE SUCCESS ${resource.data}")
                 }
@@ -84,6 +87,6 @@ class SettingsViewModel @Inject constructor(
                 }
             }
         }
-        _state.update { it.copy(user = model) }
+        _state.update { it.copy(user = user) }
     }
 }

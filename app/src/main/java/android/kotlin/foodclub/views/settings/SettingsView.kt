@@ -6,7 +6,6 @@ import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.navigation.SettingsScreen
 import android.kotlin.foodclub.utils.composables.SettingsLayout
 import android.kotlin.foodclub.viewModels.settings.SettingsEvents
-import android.kotlin.foodclub.viewModels.settings.SettingsViewModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -50,6 +49,7 @@ fun SettingsView(
     events: SettingsEvents,
     state: SettingsState
 ) {
+
     SettingsLayout(
         label = stringResource(id = R.string.settings),
         onBackAction = { navController.navigateUp() }) {

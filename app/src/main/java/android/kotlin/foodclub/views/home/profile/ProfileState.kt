@@ -10,7 +10,7 @@ import android.kotlin.foodclub.utils.helpers.StoreData
 data class ProfileState(
     val userProfile: UserProfile?,
     val userDetails: UserDetailsModel?,
-    val offlineUserData: OfflineProfileModel?,
+    val offlineUserData: UserDetailsModel?,
     val bookmarkedPosts: List<VideoModel>,
     val userPosts: List<VideoModel>,
     val sessionUserId: Long,
