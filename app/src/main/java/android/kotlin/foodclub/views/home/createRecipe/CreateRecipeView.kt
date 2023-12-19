@@ -6,7 +6,6 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
-import android.kotlin.foodclub.domain.models.recipes.Recipe
 import android.kotlin.foodclub.utils.composables.CustomSlider
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
 import android.kotlin.foodclub.utils.helpers.ValueParser
@@ -32,7 +31,6 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -72,13 +70,13 @@ import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -91,7 +89,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
@@ -233,7 +230,10 @@ fun BottomSheetCategories(
                             fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                             color = Color.White,
                             letterSpacing = TextUnit(-0.64f, TextUnitType.Sp),
-                            modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.dim_12), horizontal = dimensionResource(id = R.dimen.dim_24)),
+                            modifier = Modifier.padding(
+                                vertical = dimensionResource(id = R.dimen.dim_12),
+                                horizontal = dimensionResource(id = R.dimen.dim_24)
+                            ),
                             maxLines = 1
                         )
                     }
@@ -254,12 +254,12 @@ fun CreateRecipeView(
     var showSheet by remember { mutableStateOf(false) }
     var showCategorySheet by remember { mutableStateOf(false) }
     val codeTriggered = remember { mutableStateOf(false) }
-    var servingSize by remember { mutableStateOf(0) }
+    var servingSize by remember { mutableIntStateOf(0) }
     var recipeName by remember { mutableStateOf("") }
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp - dimensionResource(id = R.dimen.dim_240)
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp -
+            dimensionResource(id = R.dimen.dim_240)
     var recipeDescription by remember { mutableStateOf("") }
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 240.dp
-    val categories = viewModel.chosenCategories.collectAsState()
+    val categories = state.chosenCategories
     val rows = listOf(
         stringArrayResource(id = R.array.quantity_list).toList(),
         stringArrayResource(id = R.array.discover_sub_tabs).toList(),
@@ -290,7 +290,7 @@ fun CreateRecipeView(
     val triggerBottomSheetModal: () -> Unit = {
         showSheet = !showSheet
         systemUiController.setStatusBarColor(
-            color = if (showSheet) Color(android.graphics.Color.parseColor("#ACACAC")) else Color.White,
+            color = if (showSheet) Color(0xFFACACAC) else Color.White,
             darkIcons = true
         )
         systemUiController.setNavigationBarColor(
@@ -445,7 +445,7 @@ fun CreateRecipeView(
                         onClick = triggerCategoryBottomSheetModal
                     )
                     FlowRow {
-                        categories.value.forEachIndexed { _, content ->
+                        categories.forEachIndexed { _, content ->
                             Card(
                                 shape = RoundedCornerShape(30.dp),
                                 modifier = Modifier
@@ -474,7 +474,7 @@ fun CreateRecipeView(
                                             contentColor = Color.White
                                         ), contentPadding = PaddingValues(0.dp),
                                         shape = CircleShape,
-                                        onClick = { viewModel.unselectCategory(content) }
+                                        onClick = { events.unselectCategory(content) }
                                     ) {
                                         Image(
                                             painter = painterResource(id = R.drawable.baseline_clear_24),
@@ -541,7 +541,11 @@ fun CreateRecipeView(
         Button(
             shape = RectangleShape,
             modifier = Modifier
-                .border(dimensionResource(id = R.dimen.dim_1), Color(126, 198, 11, 255), shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
+                .border(
+                    dimensionResource(id = R.dimen.dim_1),
+                    Color(126, 198, 11, 255),
+                    shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
+                )
                 .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter),
@@ -569,18 +573,22 @@ fun Ingredient(
     onCollapse: () -> Unit,
     onDelete: () -> Unit
 ) {
-    val ingredientXOffset = remember { mutableStateOf(0f) }
+    val ingredientXOffset = remember { mutableFloatStateOf(0f) }
     var showItem by remember { mutableStateOf(true) }
 
-    val transitionState = remember { MutableTransitionState(isRevealed).apply { targetState = !isRevealed }}
+    val transitionState = remember {
+        MutableTransitionState(isRevealed).apply { targetState = !isRevealed }
+    }
     val transition = updateTransition(transitionState, label = "")
     val offsetTransition by transition.animateFloat(
         label = stringResource(id = R.string.ingredient_offset_transitions),
         transitionSpec = { tween(durationMillis = 500) },
-        targetValueByState = { if (isRevealed) (-ingredientXOffset.value - 200f) else -ingredientXOffset.value }
+        targetValueByState = {
+            if (isRevealed) (-ingredientXOffset.floatValue - 200f) else -ingredientXOffset.floatValue
+        }
     )
 
-    var quantity by remember { mutableStateOf(ingredient.quantity) }
+    var quantity by remember { mutableIntStateOf(ingredient.quantity) }
     val type by remember { mutableStateOf(ingredient.type) }
     val unit by remember { mutableStateOf(ingredient.unit) }
 
@@ -596,7 +604,11 @@ fun Ingredient(
             Button(
                 shape = RectangleShape,
                 modifier = Modifier
-                    .border(dimensionResource(id = R.dimen.dim_1), containerColor, shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_22)))
+                    .border(
+                        dimensionResource(id = R.dimen.dim_1),
+                        containerColor,
+                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_22))
+                    )
                     .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_22)))
                     .width(dimensionResource(id = R.dimen.dim_50))
                     .height(dimensionResource(id = R.dimen.dim_50)),
@@ -619,11 +631,11 @@ fun Ingredient(
         Column {
             Box(modifier = Modifier
                 .offset {
-                    IntOffset((ingredientXOffset.value + offsetTransition).roundToInt(), 0)
+                    IntOffset((ingredientXOffset.floatValue + offsetTransition).roundToInt(), 0)
                 }
                 .pointerInput(key1 = "") {
                     detectHorizontalDragGestures { change, dragAmount ->
-                        val original = Offset(ingredientXOffset.value, 0f)
+                        val original = Offset(ingredientXOffset.floatValue, 0f)
                         val summed = original + Offset(x = dragAmount, y = 0f)
                         val newValue = Offset(summed.x.coerceIn(-200f, 0f), 0f)
                         if (newValue.x <= -20f) {
@@ -634,13 +646,15 @@ fun Ingredient(
                             return@detectHorizontalDragGestures
                         }
                         if (change.positionChange() != Offset.Zero) change.consume()
-                        ingredientXOffset.value = newValue.x
+                        ingredientXOffset.floatValue = newValue.x
                     }
                 }
                 .fillMaxWidth()
                 .height(dimensionResource(id = R.dimen.dim_100))
                 .border(
-                    dimensionResource(id = R.dimen.dim_1), Color(0xFFE8E8E8), shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
+                    dimensionResource(id = R.dimen.dim_1),
+                    Color(0xFFE8E8E8),
+                    shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
                 )
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
                 .background(Color.White)
@@ -677,7 +691,8 @@ fun Ingredient(
                                 painter = painterResource(id = R.drawable.baseline_arrow_left_24),
                                 contentDescription = null,
                                 modifier = Modifier
-                                    .size( dimensionResource(id = R.dimen.dim_35)).padding(end =dimensionResource(id = R.dimen.dim_5))
+                                    .size(dimensionResource(id = R.dimen.dim_35))
+                                    .padding(end =dimensionResource(id = R.dimen.dim_5))
                                     .clickable {
                                         ingredient.decrementQuantity(5)
                                         quantity = ingredient.quantity
@@ -693,7 +708,8 @@ fun Ingredient(
                                 painter = painterResource(id = R.drawable.baseline_arrow_right_24),
                                 contentDescription = null,
                                 modifier = Modifier
-                                    .size( dimensionResource(id = R.dimen.dim_35)).padding(start =dimensionResource(id = R.dimen.dim_5))
+                                    .size( dimensionResource(id = R.dimen.dim_35))
+                                    .padding(start =dimensionResource(id = R.dimen.dim_5))
                                     .clickable {
                                         ingredient.incrementQuantity(5)
                                         quantity = ingredient.quantity
@@ -724,10 +740,10 @@ fun SectionItem(
     actionColor: Color = Color.Black,
     onClick: () -> Unit
 ) {
-        Row ( modifier = Modifier
-            .fillMaxWidth()
-            .height(dimensionResource(id = R.dimen.dim_50)), verticalAlignment = Alignment.CenterVertically) {
-
+        Row (
+            modifier = Modifier.fillMaxWidth().height(dimensionResource(id = R.dimen.dim_50)),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
                 text = title,
                 fontFamily = Montserrat,
