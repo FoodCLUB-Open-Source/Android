@@ -13,19 +13,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
 
 @Composable
 fun PrivacySetting(navController: NavController) {
-    Box(modifier = Modifier.fillMaxWidth().background(Color.White)
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .background(Color.White)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding( dimensionResource(id = R.dimen.dim_16))
+                .padding(dimensionResource(id = R.dimen.dim_16))
                 .padding(top = dimensionResource(id = R.dimen.dim_80))
                 .background(Color.White),
         ) {
@@ -43,8 +45,9 @@ fun PrivacySetting(navController: NavController) {
             SettingsText(
                 text = stringResource(id = R.string.sent_your_data_request),
                 size = 16,
-                weight = FontWeight.W600,
-                textAlign = TextAlign.Left
+                weight = FontWeight.W400,
+                textAlign = TextAlign.Left,
+                lineHeight = 19.5.sp
             )
         }
     }
@@ -53,15 +56,17 @@ fun PrivacySetting(navController: NavController) {
 @Composable
 fun ChangePasswordButton(navController: NavController){
     Row(modifier = Modifier
-            .clickable { navController.navigate(SettingsScreen.ChangePassword.route) }
-            .fillMaxWidth()
-            .background(Color.Transparent)
+        .clickable { navController.navigate(SettingsScreen.ChangePassword.route) }
+        .fillMaxWidth()
+        .background(Color.Transparent)
     ){
         SettingsText(
             text = stringResource(id = R.string.change_password),
             size = 16,
-            weight = FontWeight.W600,
-            textAlign = TextAlign.Left)
+            weight = FontWeight.W400,
+            textAlign = TextAlign.Left,
+            lineHeight = 19.5.sp
+        )
 
         Spacer(modifier = Modifier.weight(1f))
 

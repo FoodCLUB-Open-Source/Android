@@ -25,7 +25,6 @@ data class ProfileState(
     companion object {
         fun default() = ProfileState(
             userProfile = null,
-            userDetails = null,
             offlineUserData = null,
             bookmarkedPosts = emptyList(),
             userPosts = emptyList(),

@@ -27,6 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -52,7 +53,7 @@ fun SettingsLayout(
             .background(Color.White),
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding( dimensionResource(id = R.dimen.dim_16)).padding(top = dimensionResource(id = R.dimen.dim_80))
+            modifier = Modifier.fillMaxSize().padding( dimensionResource(id = R.dimen.dim_16)).padding(top = dimensionResource(id = R.dimen.dim_50))
                 .background(Color.White),
         ) {
             SettingsTopBar(label = label, onBackAction = onBackAction)
@@ -84,7 +85,12 @@ private fun SettingsTopBar(label: String, onBackAction: () -> Unit) {
         Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_20)))
 
         Column {
-            SettingsText(text = label, size = 28, weight = FontWeight.ExtraBold)
+            SettingsText(
+                text = label,
+                size = 28,
+                weight = FontWeight.W600,
+                lineHeight = 48.sp
+            )
         }
     }
 }
@@ -108,7 +114,8 @@ private fun SettingsText(
     size: Int,
     weight: FontWeight,
     fontC: Color = Color.Black,
-    textAlign: TextAlign = TextAlign.Center
+    textAlign: TextAlign = TextAlign.Center,
+    lineHeight: TextUnit? = null
 ){
     Text(
         text = text,
@@ -116,6 +123,7 @@ private fun SettingsText(
         color = fontC,
         fontFamily = Montserrat,
         fontWeight = weight,
-        textAlign = textAlign
+        textAlign = textAlign,
+        lineHeight = lineHeight ?: TextUnit.Unspecified
     )
 }

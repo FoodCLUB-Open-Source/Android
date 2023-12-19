@@ -37,7 +37,7 @@ class ProfileViewModel @Inject constructor(
     private val profileRepository: ProfileRepository,
     val sessionCache: SessionCache,
     private val connectivityUtil: ConnectivityUtils,
-    val storeData: StoreData,
+    private val storeData: StoreData,
     private val recipeRepository: RecipeRepository,
     private val basketCache: MyBasketCache
 ) : ViewModel(), ProfileEvents {
@@ -73,12 +73,12 @@ class ProfileViewModel @Inject constructor(
         }
         _state.update {
             it.copy(
-                userDetails = it.userDetails!!.copy(
-                    profilePicture = uri.toString()
+                userProfile = it.userProfile!!.copy(
+                    profilePictureUrl = uri.toString()
                 )
             )
         }
-        Log.i(TAG, "USER UPDATED IMG: ${state.value.userDetails!!.profilePicture}")
+        Log.i(TAG, "USER UPDATED IMG: ${state.value.userProfile!!.profilePictureUrl}")
     }
 
 
@@ -94,7 +94,7 @@ class ProfileViewModel @Inject constructor(
                 viewModelScope.launch {
                     getProfileModel(userId)
                     getBookmarkedPosts(userId)
-                    getUserDetails(userId)
+                    //getUserDetails(userId)
                 }
 //                viewModelScope.launch {
 //                    delay(2000)

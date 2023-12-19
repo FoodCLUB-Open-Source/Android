@@ -7,9 +7,8 @@ import androidx.room.PrimaryKey
 data class OfflineProfileModel(
     @PrimaryKey
     val userId: Long,
-    val userName: String,
-    val email: String,
+    val userName: String?,
     var profilePicture: String? = null,
     val totalUserFollowers: Int? = null,
-    val totalUserFollowing: Int? = null,
+    val totalUserFollowing: Int? = null
     )
