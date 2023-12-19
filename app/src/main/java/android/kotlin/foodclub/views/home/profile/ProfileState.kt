@@ -34,7 +34,8 @@ data class ProfileState(
             myUserId = 0,
             error = "",
             postData = null,
-            recipe = null
+            recipe = null,
+            userDetails = null
         )
     }
 }
