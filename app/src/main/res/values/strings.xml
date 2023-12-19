@@ -282,8 +282,11 @@
     <string name="help_and_support">Help &amp; Support</string>
     <string name="privacy_settings">Privacy Settings</string>
     <string name="edit_profile_information">Edit Profile Information</string>
+    <string name="edit_profile_warning">After this, a confirmation email will be sent to your email account in order to confirm your address.</string>
+    <string name="update">Update</string>
+    <string name="settings_full_name">Full name</string>
     - Privacy
-    <string name="privacy">Privacy</string>
+    <string name="privacy">Privacy Settings</string>
     <string name="sent_your_data_request">If you would like to get sent your data, make changes to it or delete it, send an email to tech@foodclub.live</string>
     - Edit Profile
     <string name="edit_profile">Edit Profile</string>
