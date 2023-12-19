@@ -1,7 +1,6 @@
 package android.kotlin.foodclub.views.home.discover
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.Satoshi
@@ -15,21 +14,13 @@ import android.kotlin.foodclub.utils.composables.CustomDatePicker
 import android.kotlin.foodclub.utils.composables.EditIngredientQuantityPicker
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
 import android.kotlin.foodclub.utils.composables.ShimmerBrush
-import android.kotlin.foodclub.utils.composables.checkInternetConnectivity
 import android.kotlin.foodclub.utils.helpers.ValueParser
+import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
 import android.kotlin.foodclub.views.home.myDigitalPantry.TitlesSection
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.os.Build
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -72,6 +63,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.DismissValue
@@ -79,6 +71,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Tab
@@ -113,6 +106,8 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Red
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -126,6 +121,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -133,7 +129,10 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
+import coil.compose.ImagePainter
 import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -346,7 +345,8 @@ fun DiscoverView(
                                 events.deleteIngredientFromList(it)
                             }
                         )
-                    } else {
+                    }
+                    else {
                         IngredientsList(
                             Modifier,
                             events = events,
@@ -370,16 +370,13 @@ fun DiscoverView(
                         )
                     }
                 }
-
-
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
-
-                if(isInternetConnected){
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        if(isInternetConnected){
                         Text(
                             modifier = Modifier.clickable {
                                 navController.navigate(route = HomeOtherRoutes.MyDigitalPantryView.route)
@@ -394,12 +391,11 @@ fun DiscoverView(
                             textAlign = TextAlign.Center
                         )
                     }
+                        else{
+                            CircularProgressIndicator(color = foodClubGreen,
+                                strokeWidth = dimensionResource(id = R.dimen.dim_4))}
                 }
-
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
-
-
-                val brush = ShimmerBrush()
                 HorizontalPager(
                     beyondBoundsPageCount = 1,
                     flingBehavior = fling,
@@ -434,10 +430,8 @@ fun DiscoverView(
                                     }
                                 }
                             }
-                            else if(isInternetConnected==false){
+                            else {
                                 items(8) {
-                                    val shimmerBrush = ShimmerBrush()
-
                                     Card(
                                         modifier = Modifier
                                             .height(dimensionResource(id = R.dimen.dim_272))
@@ -449,7 +443,7 @@ fun DiscoverView(
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .fillMaxHeight()
-                                                .background(brush = shimmerBrush)
+                                                .background(brush)
                                         )
                                     }
                                 }
@@ -571,7 +565,7 @@ fun MainSearchBar(
                 badge = {
                     Badge(
                         modifier = Modifier.offset(
-                            x = (-5).dp,
+                            x = -dimensionResource(id = R.dimen.dim_5),
                             y = dimensionResource(id = R.dimen.dim_5)
                         ),
                         containerColor = foodClubGreen
@@ -600,7 +594,9 @@ fun MainTabRow(
 
 ) {
     var mainTabIndex by remember { mutableIntStateOf(0) }
-
+    val strokeWidthDp = dimensionResource(id = R.dimen.dim_2)
+    val topPaddingDp = dimensionResource(id = R.dimen.dim_4)
+    val underlineHeightDp = dimensionResource(id = R.dimen.dim_2)
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -624,9 +620,9 @@ fun MainTabRow(
                     }
                     .drawBehind {
                         if (isSelected) {
-                            val strokeWidthPx = 2.dp.toPx()
-                            val topPaddingPx = 4.dp.toPx()
-                            val underlineHeight = 2.dp.toPx()
+                            val strokeWidthPx = strokeWidthDp.toPx()
+                            val topPaddingPx = topPaddingDp.toPx()
+                            val underlineHeight = underlineHeightDp.toPx()
                             val verticalOffset = size.height - (underlineHeight / 2) + topPaddingPx
                             drawLine(
                                 color = Color.Black,
@@ -640,7 +636,7 @@ fun MainTabRow(
                 fontWeight = if (isSelected) FontWeight(500) else FontWeight.Normal,
                 color = if (isSelected) Color.Black else Color(0xFFC2C2C2),
                 fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
-                lineHeight = 24.38.sp,
+                lineHeight = dimensionResource(id = R.dimen.fon_24).value.sp,
                 textAlign = TextAlign.Start,
                 fontFamily = Montserrat
             )
@@ -660,9 +656,9 @@ fun MainTabRow(
                 }
                 .drawBehind {
                     if (isSelected) {
-                        val strokeWidthPx = 2.dp.toPx()
-                        val topPaddingPx = 4.dp.toPx()
-                        val underlineHeight = 2.dp.toPx()
+                        val strokeWidthPx = strokeWidthDp.toPx()
+                        val topPaddingPx = topPaddingDp.toPx()
+                        val underlineHeight = underlineHeightDp.toPx()
                         val verticalOffset = size.height - (underlineHeight / 2) + topPaddingPx
                         drawLine(
                             color = Color.Black,
@@ -674,7 +670,7 @@ fun MainTabRow(
                 },
             color = Color.Transparent,
             fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
-            lineHeight = 24.38.sp,
+            lineHeight =dimensionResource(id = R.dimen.fon_24).value.sp,
             textAlign = TextAlign.Start,
             fontFamily = Montserrat
         )
@@ -784,6 +780,9 @@ fun SubTabRow(
     isInternetConnected:Boolean,
     brush:Brush
 ) {
+    val strokeWidthDp = dimensionResource(id = R.dimen.dim_2)
+    val topPaddingDp = dimensionResource(id = R.dimen.dim_4)
+    val underlineHeightDp = dimensionResource(id = R.dimen.dim_2)
     val subTabItemsList = stringArrayResource(id = R.array.discover_sub_tabs)
     var subTabIndex by remember { mutableIntStateOf(0) }
 
@@ -806,11 +805,9 @@ fun SubTabRow(
                         modifier = Modifier
                             .drawBehind {
                                 if (selected) {
-                                    val strokeWidthPx = 2.dp.toPx()
-                                    val topPaddingPx =
-                                        4.dp.toPx()
-                                    val underlineHeight =
-                                        2.dp.toPx()
+                                    val strokeWidthPx = strokeWidthDp.toPx()
+                                    val topPaddingPx = topPaddingDp.toPx()
+                                    val underlineHeight = underlineHeightDp.toPx()
                                     val verticalOffset =
                                         size.height - (underlineHeight / 2) + topPaddingPx
                                     drawLine(
@@ -829,7 +826,7 @@ fun SubTabRow(
                         fontWeight = if (selected) FontWeight(500) else FontWeight.Normal,
                         color = if (selected) Color.Black else Color(0xFFC2C2C2),
                         fontSize = dimensionResource(id = R.dimen.fon_17).value.sp,
-                        lineHeight = 20.88.sp,
+                        lineHeight = dimensionResource(id = R.dimen.fon_21).value.sp,
                         textAlign = TextAlign.Start,
                         fontFamily = Montserrat
                     )
@@ -844,11 +841,11 @@ fun SubTabRow(
                             .background(brush)
                             .drawBehind {
                                 if (selected) {
-                                    val strokeWidthPx = 2.dp.toPx()
+                                    val strokeWidthPx = strokeWidthDp.toPx()
                                     val topPaddingPx =
-                                        4.dp.toPx()
+                                        topPaddingDp.toPx()
                                     val underlineHeight =
-                                        2.dp.toPx()
+                                        underlineHeightDp.toPx()
                                     val verticalOffset =
                                         size.height - (underlineHeight / 2) + topPaddingPx
                                     drawLine(
@@ -863,7 +860,7 @@ fun SubTabRow(
                         text = data,
                         color = Color.Transparent,
                         fontSize = dimensionResource(id = R.dimen.fon_17).value.sp,
-                        lineHeight = 20.88.sp,
+                        lineHeight = dimensionResource(id = R.dimen.fon_21).value.sp,
                         textAlign = TextAlign.Start,
                         fontFamily = Montserrat
                     )
@@ -1059,7 +1056,7 @@ fun SingleSearchIngredientItem(
                     modifier = modifier.padding(start = dimensionResource(id = R.dimen.dim_6)),
                     text = item.type,
                     fontWeight = FontWeight(500),
-                    lineHeight = 19.5.sp,
+                    lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
                     fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                     color = Color.Black
                 )
@@ -1079,7 +1076,7 @@ fun SingleSearchIngredientItem(
                     text = quantity,
                     fontWeight = FontWeight(500),
                     fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
-                    lineHeight = 19.5.sp,
+                    lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
                     fontFamily = Montserrat,
                     color = Color.Gray,
                     style = quantityTextStyle(quantity)
@@ -1102,7 +1099,7 @@ fun SingleSearchIngredientItem(
                     fontWeight = FontWeight(500),
                     textAlign = TextAlign.Start,
                     fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
-                    lineHeight = 19.5.sp,
+                    lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
                     fontFamily = Montserrat,
                     color = Color.Gray,
                     style = expirationDateTextStyle(expirationDate)
@@ -1226,7 +1223,7 @@ fun AddIngredientDialog(headline: String, text: String) {
                         text = headline,
                         modifier = Modifier.padding(start = dimensionResource(id = R.dimen.dim_10)),
                         fontWeight = FontWeight(600),
-                        lineHeight = 19.5.sp,
+                        lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
                         fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                         fontFamily = Montserrat
                     )
@@ -1243,7 +1240,7 @@ fun AddIngredientDialog(headline: String, text: String) {
                         text = text,
                         fontFamily = Montserrat,
                         fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
-                        lineHeight = 17.07.sp,
+                        lineHeight = dimensionResource(id = R.dimen.fon_17).value.sp,
                         fontWeight = FontWeight(500)
                     )
                 }
@@ -1314,8 +1311,10 @@ fun TabHomeDiscover(
 fun GridItem2(
     navController: NavController,
     dataItem: VideoModel,
-    userName: String
+    userName: String,
+    brush: Brush = ShimmerBrush(),
 ) {
+    val thumbnailPainter = rememberAsyncImagePainter(dataItem.thumbnailLink)
     Card(
         modifier = Modifier
             .height(dimensionResource(id = R.dimen.dim_272))
@@ -1323,38 +1322,52 @@ fun GridItem2(
             .padding(dimensionResource(id = R.dimen.dim_10)),
         shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
     ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-            ) {
-                Image(
-                    painter = rememberAsyncImagePainter(dataItem.thumbnailLink),
-                    contentDescription = null,
-                    Modifier
-                        .fillMaxSize()
-                        .clickable { navController.navigate("DELETE_RECIPE/${dataItem.videoId}") },
-                    contentScale = ContentScale.FillHeight
+        Box(
+            modifier = Modifier
+                .background(
+                    if (thumbnailPainter.state is AsyncImagePainter.State.Loading) brush
+                    else SolidColor(Color.Transparent)
                 )
-                Column(
-                    Modifier
-                        .fillMaxSize()
-                        .padding(dimensionResource(id = R.dimen.dim_10)),
-                    verticalArrangement = Arrangement.Bottom
-                ) {
-                    Text(
-                        text = dataItem.videoStats.displayLike,
-                        fontFamily = Satoshi,
-                        color = Color.White,
-                        fontSize = dimensionResource(id = R.dimen.fon_15).value.sp
-                    )
+                .fillMaxWidth()
+                .fillMaxHeight()
+        ) {
 
-                }
+            val thumbnailPainterOrDefault = if (thumbnailPainter != null) {
+                thumbnailPainter
+            } else {
+                painterResource(id=R.color.gray)
+            }
 
+            Image(
+                painter = thumbnailPainterOrDefault,
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable {
+                        navController.navigate("DELETE_RECIPE/${dataItem.videoId}")
+                    },
+                contentScale = ContentScale.FillHeight
+            )
+
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .padding(dimensionResource(id = R.dimen.dim_10)),
+                verticalArrangement = Arrangement.Bottom
+            ) {
+                Text(
+                    text = dataItem.videoStats.displayLike,
+                    fontFamily = Satoshi,
+                    color = Color.White,
+                    fontSize = dimensionResource(id = R.dimen.fon_15).value.sp
+                )
+            }
         }
-
     }
 }
+
+
+
 
 @Composable
 fun itemQuantity(item: Ingredient, unit: String): String {

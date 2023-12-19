@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.containerColor
+import android.kotlin.foodclub.config.ui.disabledContainerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
@@ -107,7 +108,7 @@ fun BottomSheetCategories(
     events: CreateRecipeEvents,
     state: CreateRecipeState
 ) {
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 150.dp
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp - dimensionResource(id = R.dimen.dim_150)
     var searchText by remember { mutableStateOf("") }
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val categories = state.categories
@@ -349,7 +350,7 @@ fun CreateRecipeView(
                             modifier = Modifier
                                 .border(
                                     dimensionResource(id = R.dimen.dim_1),
-                                    Color(0xFFB8B8B8),
+                                    disabledContainerColor,
                                     shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                                 )
                                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
@@ -357,7 +358,7 @@ fun CreateRecipeView(
                                 .width(dimensionResource(id = R.dimen.dim_40))
                                 .height(dimensionResource(id = R.dimen.dim_40)),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFFB8B8B8),
+                                containerColor = disabledContainerColor,
                                 contentColor = Color.White
                             ), contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_5)),
                             onClick = { navController.navigateUp() }
@@ -374,7 +375,7 @@ fun CreateRecipeView(
                     }
                     Text(
                         text= stringResource(id = R.string.my_new_recipe),
-                        modifier = Modifier.padding(start = 8.dp),
+                        modifier = Modifier.padding(start = dimensionResource(id = R.dimen.dim_8)),
                         fontFamily = Montserrat,
                         fontWeight = FontWeight.SemiBold,
                         letterSpacing = TextUnit(-1.12f, TextUnitType.Sp),

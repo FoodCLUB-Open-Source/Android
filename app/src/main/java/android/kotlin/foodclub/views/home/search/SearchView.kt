@@ -7,9 +7,8 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.utils.composables.ShimmerBrush
-import android.kotlin.foodclub.utils.composables.checkInternetConnectivity
+import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.kotlin.foodclub.views.home.discover.MainTabRow
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -166,7 +165,7 @@ fun SearchRow(
             BadgedBox(
                 badge = {
                     Badge(
-                        modifier = Modifier.offset(x = (-5).dp, y =dimensionResource(id = R.dimen.dim_5)),
+                        modifier = Modifier.offset(x = -dimensionResource(id = R.dimen.dim_5), y =dimensionResource(id = R.dimen.dim_5)),
                         containerColor = foodClubGreen
                     )
                     { Text(

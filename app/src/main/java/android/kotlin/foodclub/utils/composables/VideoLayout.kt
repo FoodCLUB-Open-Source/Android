@@ -8,6 +8,7 @@ import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.home.VideoStats
 import android.kotlin.foodclub.domain.models.others.AnimatedIcon
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
+import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.Spring
@@ -49,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
@@ -56,7 +58,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
@@ -184,7 +185,10 @@ fun VideoLayout(
     onInfoClick: (() -> Unit)? = null,
     onProfileClick: () -> Unit = {},
     onCategoryClick: () -> Unit = {},
-) {
+) {val context = LocalContext.current
+    val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
+
+    val brush = ShimmerBrush()
     Box(modifier.alpha(opacity)) {
         Box(
             modifier = Modifier
@@ -192,6 +196,8 @@ fun VideoLayout(
                 .padding(dimensionResource(id = R.dimen.dim_15))
         ) {
             VideoCategorySection(
+                brush,
+                isInternetConnected,
                 category = category,
                 onCategoryClick = onCategoryClick,
                 onProfileClick = onProfileClick,
@@ -206,6 +212,8 @@ fun VideoLayout(
                     .padding(dimensionResource(id = R.dimen.dim_15))
             ) {
                 VideoStats(
+                    brush,
+                    isInternetConnected,
                     videoStats = videoStats,
                     likeState = likeState,
                     bookMarkState = bookMarkState,
@@ -222,15 +230,14 @@ fun VideoLayout(
 
 @Composable
 private fun VideoCategorySection(
+    brush: Brush,
+    isInternetConnected:Boolean,
     category: String?,
     onCategoryClick: () -> Unit,
     onProfileClick: () -> Unit,
     userDetails: SimpleUserModel
 ) {
-    val context = LocalContext.current
-    val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
 
-    val brush = ShimmerBrush()
     Column {
         if (category != null && isInternetConnected) {
             Button(
@@ -287,8 +294,8 @@ private fun VideoCategorySection(
                 modifier = Modifier
                     .padding(dimensionResource(id = R.dimen.dim_2))
                     .background(brush)
-                    .width(50.dp)
-                    .height(15.dp)
+                    .width(dimensionResource(id = R.dimen.dim_50))
+                    .height(dimensionResource(id = R.dimen.dim_15))
 
             )
         }}
@@ -298,6 +305,8 @@ private fun VideoCategorySection(
 
 @Composable
 private fun VideoStats(
+    brush: Brush,
+    isInternetConnected: Boolean,
     videoStats: VideoStats,
     likeState: Boolean? = null,
     bookMarkState: Boolean? = null,
@@ -326,11 +335,11 @@ private fun VideoStats(
                     .width(dimensionResource(id = R.dimen.dim_50))
                     .height(dimensionResource(id = R.dimen.dim_80)),
             ) {
-                VideoLikeButton(videoStats, likeState, onLikeClick)
+                VideoLikeButton(brush, isInternetConnected , videoStats, likeState, onLikeClick)
             }
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
-            InfoButton(onInfoClick)
+            InfoButton(brush,isInternetConnected,onInfoClick)
         }
     }
 }
@@ -340,6 +349,10 @@ fun BookMarkButton(
     onBookmarkClick: () -> Unit,
     bookMarkState: Boolean
 ) {
+    val durationms1=dimensionResource(id = R.dimen.dim_14)
+    val durationms2=dimensionResource(id = R.dimen.dim_16)
+    val durationms3=dimensionResource(id = R.dimen.dim_22)
+
     Box(modifier = Modifier
         .size(dimensionResource(id = R.dimen.dim_55))
         .clickable { onBookmarkClick() }) {
@@ -356,10 +369,10 @@ fun BookMarkButton(
             targetValue = if (bookMarkState) dimensionResource(id = R.dimen.dim_22) else dimensionResource(id = R.dimen.dim_21),
             animationSpec = keyframes {
                 durationMillis = 400
-                14.dp.at(50)
+                durationms1.at(50)
                 maxBookmarkSize.at(190)
-                16.dp.at(330)
-                22.dp.at(400)
+                durationms2.at(330)
+                durationms3.at(400)
                     .with(FastOutLinearInEasing)
             }, label = ""
         )
@@ -377,14 +390,15 @@ fun BookMarkButton(
 
 @Composable
 fun VideoLikeButton(
+    brush:Brush,
+    isInternetConnected: Boolean,
     videoStats: VideoStats,
     likeState: Boolean,
     onLikeClick: () -> Unit
-) {  val context = LocalContext.current
-    val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
-
-    val brush = ShimmerBrush()
-
+) {
+    val durationms1=dimensionResource(id = R.dimen.dim_14)
+    val durationms2=dimensionResource(id = R.dimen.dim_16)
+    val durationms3=dimensionResource(id = R.dimen.dim_22)
     Column {
         Spacer(Modifier.weight(1f))
         Box(
@@ -414,10 +428,10 @@ fun VideoLikeButton(
                     targetValue = if (likeState) dimensionResource(id = R.dimen.dim_22) else dimensionResource(id = R.dimen.dim_21),
                     animationSpec = keyframes {
                         durationMillis = 400
-                        14.dp.at(50)
+                        durationms1.at(50)
                         maxSize.at(190)
-                        16.dp.at(330)
-                        22.dp.at(400)
+                        durationms2.at(330)
+                        durationms3.at(400)
                             .with(FastOutLinearInEasing)
                     }, label = ""
                 )
@@ -447,11 +461,8 @@ fun VideoLikeButton(
 }
 
 @Composable
-private fun InfoButton(onInfoClick: (() -> Unit)?) {
-    val context = LocalContext.current
-    val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
+private fun InfoButton(brush: Brush,isInternetConnected: Boolean,onInfoClick: (() -> Unit)?) {
 
-    val brush = ShimmerBrush()
     if (onInfoClick != null) {
         Button(
             onClick = { onInfoClick() },
@@ -471,8 +482,8 @@ private fun InfoButton(onInfoClick: (() -> Unit)?) {
                     fontSize = dimensionResource(id = R.dimen.fon_14).value.sp
                 )}
                 else{Box(modifier= Modifier
-                    .width(101.dp)
-                    .height(18.dp)
+                    .width(dimensionResource(id = R.dimen.dim_101))
+                    .height(dimensionResource(id = R.dimen.dim_18))
                     .background(brush))}
             }
         }

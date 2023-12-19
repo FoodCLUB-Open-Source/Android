@@ -53,6 +53,9 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.clip
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
@@ -250,13 +253,20 @@ fun VideoScroller(
     }
 
     if (thumbnail.second) {
-        AsyncImage(
-            model = thumbnail.first,
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
+        if (thumbnail.first != null) {
+            AsyncImage(
+                model = thumbnail.first,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            Box(
+                modifier = Modifier.fillMaxSize().background(Color.Gray)
+            )
+        }
     }
+
 }
 
 @ExperimentalMaterial3Api

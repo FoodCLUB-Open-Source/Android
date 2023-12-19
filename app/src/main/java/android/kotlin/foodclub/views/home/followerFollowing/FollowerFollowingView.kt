@@ -2,55 +2,53 @@ package android.kotlin.foodclub.views.home.followerFollowing
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Avenir
+import android.kotlin.foodclub.config.ui.BottomBarScreenObject
+import android.kotlin.foodclub.config.ui.Raleway
+import android.kotlin.foodclub.config.ui.disabledContainerColor
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
-import android.kotlin.foodclub.viewModels.home.follow.FollowerFollowingViewModel
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import android.kotlin.foodclub.utils.composables.ShimmerBrush
+import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
+import android.kotlin.foodclub.viewModels.home.follow.FollowEvents
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Button
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import android.kotlin.foodclub.config.ui.BottomBarScreenObject
-import android.kotlin.foodclub.config.ui.Raleway
-import android.kotlin.foodclub.utils.composables.ShimmerBrush
-import android.kotlin.foodclub.utils.composables.checkInternetConnectivity
-import android.kotlin.foodclub.viewModels.home.follow.FollowEvents
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 
@@ -98,7 +96,7 @@ fun FollowerView(
                     modifier = Modifier
                         .border(
                             dimensionResource(id = R.dimen.dim_1),
-                            Color(0xFFB8B8B8),
+                            disabledContainerColor,
                             shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                         )
                         .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
@@ -106,7 +104,7 @@ fun FollowerView(
                         .width(dimensionResource(id = R.dimen.dim_40))
                         .height(dimensionResource(id = R.dimen.dim_40)),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFB8B8B8),
+                        containerColor = disabledContainerColor,
                         contentColor = Color.White
                     ), contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_5)),
                     onClick = { navController.navigateUp() }
