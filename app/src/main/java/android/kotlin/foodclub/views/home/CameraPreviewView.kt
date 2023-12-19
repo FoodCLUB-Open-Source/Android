@@ -2,6 +2,7 @@ package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.navigation.Graph
+import android.kotlin.foodclub.views.home.gallery.GalleryType
 import android.view.ViewGroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -21,8 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -37,7 +39,7 @@ import androidx.navigation.NavController
 fun CameraPreviewView(
     uri: String,
     state:String,
-    navController: NavController // NEED NAV CONTROLLER
+    navController: NavController
 ) {
     val context = LocalContext.current
 
@@ -76,63 +78,59 @@ fun CameraPreviewView(
         }
     }
 
-    // NEXT BUTTON + VIDEO URI
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp)
+            .padding(dimensionResource(id = R.dimen.dim_20))
     ) {
 
         Button(
             onClick = {
                 navController.popBackStack()
             },
-            shape = RoundedCornerShape(10.dp),
-            contentPadding = PaddingValues(0.dp),
+            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
+            contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_0)),
             colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
             modifier = Modifier
-                .padding(vertical = 30.dp)
-                .width(40.dp)
-                .height(40.dp)
-                //.blur(radius = 20.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
+                .padding(vertical = dimensionResource(id = R.dimen.dim_30))
+                .width(dimensionResource(id = R.dimen.dim_40))
+                .height(dimensionResource(id = R.dimen.dim_40))
 
         ) {
             Image(
                 painter = painterResource(id = R.drawable.baseline_close_24),
-                contentDescription = "Story",
+                contentDescription = stringResource(id = R.string.story),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .width(25.dp)
-                    .height(25.dp)
+                    .width(dimensionResource(id = R.dimen.dim_25))
+                    .height(dimensionResource(id = R.dimen.dim_25))
             )
         }
 
         Button(
             onClick = {
                 navController.navigate(
-                    // URI ROUTE ON CLICK
-                    route = if (state.contains("recipe")) "CREATE_RECIPE_VIEW" else Graph.HOME//"CreateRecipeRoute/${Uri.encode(uri)}"
+                    route = if (state.contains(GalleryType.RECIPE.state)) "CREATE_RECIPE_VIEW" else Graph.HOME
                 )
             },
             modifier = Modifier
-                // ALIGNMENT
                 .align(Alignment.BottomEnd)
-                .padding(vertical = 40.dp)
-                .width(90.dp)
-                .height(55.dp)
+                .padding(vertical =  dimensionResource(id = R.dimen.dim_40))
+                .width(dimensionResource(id = R.dimen.dim_90))
+                .height(dimensionResource(id = R.dimen.dim_55))
             ,
-            contentPadding = PaddingValues(10.dp),
-            shape = RoundedCornerShape(10.dp),
+            contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_10)),
+            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
             colors = ButtonDefaults.buttonColors(containerColor = Color.White)
 
         ) {
             Image(
                 painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
-                contentDescription = "Story",
+                contentDescription = stringResource(id = R.string.story),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .width(20.dp)
-                    .height(20.dp)
+                    .width(dimensionResource(id = R.dimen.dim_20))
+                    .height(dimensionResource(id = R.dimen.dim_20))
             )
         }
     }

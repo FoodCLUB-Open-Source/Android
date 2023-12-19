@@ -14,7 +14,6 @@ import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.SignUpUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.FollowerUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.FollowingUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserDetailsMapper
-import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserPostsMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserProfileMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.recipes.RecipeMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.stories.StoryMapper
@@ -30,6 +29,8 @@ import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.repositories.RecipeRepository
 import android.kotlin.foodclub.repositories.SettingsRepository
 import android.kotlin.foodclub.repositories.StoryRepository
+import android.kotlin.foodclub.room.repository.datasource.ProfileDataLocalSource
+import android.kotlin.foodclub.room.repository.datasource.ProfileVideosDataLocalSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -43,14 +44,23 @@ object RepositoriesModule {
     @Singleton
     fun provideProfileRepository(
         api: ProfileService,
+        profileDataLocalSource: ProfileDataLocalSource,
+        profileVideosDataLocalSource: ProfileVideosDataLocalSource,
         profileMapper: UserProfileMapper,
-        userPostsMapper: UserPostsMapper,
+        userPostsMapper: PostToVideoMapper,
         followerUserMapper: FollowerUserMapper,
         followingUserMapper: FollowingUserMapper,
         userDetailsMapper: UserDetailsMapper
     ): ProfileRepository {
         return ProfileRepository(
-            api, profileMapper, userPostsMapper, followerUserMapper, followingUserMapper, userDetailsMapper
+            api,
+            profileDataLocalSource,
+            profileVideosDataLocalSource,
+            profileMapper,
+            userPostsMapper,
+            followerUserMapper,
+            followingUserMapper,
+            userDetailsMapper
         )
     }
 

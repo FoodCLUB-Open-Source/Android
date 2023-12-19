@@ -23,8 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun CustomSlider(sliderWidth: Dp, maxValue: Float, onValueChange: (Int) -> Unit) {
-    var sliderPosition by remember { mutableFloatStateOf(0f) }
+fun CustomSlider(sliderWidth: Dp, initialValue: Float = 0f, maxValue: Float, onValueChange: (Int) -> Unit) {
+    var sliderPosition by remember { mutableFloatStateOf(initialValue) }
     Column(modifier = Modifier.width(sliderWidth)) {
         Text(
             text = sliderPosition.toInt().toString(),
@@ -42,7 +42,7 @@ fun CustomSlider(sliderWidth: Dp, maxValue: Float, onValueChange: (Int) -> Unit)
             onValueChange = {
                 sliderPosition = it
                 onValueChange(it.toInt())
-                            },
+            },
             valueRange = 0f..maxValue,
             colors = SliderDefaults.colors(
                 thumbColor = foodClubGreen,

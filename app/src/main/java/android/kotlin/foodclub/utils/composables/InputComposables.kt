@@ -1,9 +1,11 @@
 package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.Black
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.PlusJakartaSans
 import android.kotlin.foodclub.config.ui.defaultButtonColors
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.config.ui.textFieldCustomColors
 import android.kotlin.foodclub.utils.helpers.FieldsValidation
 import androidx.compose.foundation.Image
@@ -28,6 +30,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
@@ -42,8 +45,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -63,7 +67,9 @@ import androidx.compose.ui.unit.sp
  * @param onFillCallback Executes when all 6 fields were filled with numbers
  */
 @Composable
-fun CustomCodeTextField(onFillCallback: (Boolean, String) -> Unit) {
+fun CustomCodeTextField(
+    onFillCallback: (Boolean, String) -> Unit
+) {
     var text by remember { mutableStateOf("") }
     BasicTextField(modifier = Modifier.fillMaxWidth(),
         value = text,
@@ -79,25 +85,32 @@ fun CustomCodeTextField(onFillCallback: (Boolean, String) -> Unit) {
         keyboardActions = KeyboardActions(),
         decorationBox = {
             Row(
-                modifier = Modifier.size(352.dp, 72.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.size(dimensionResource(id = R.dimen.dim_352), dimensionResource(id = R.dimen.dim_72)),
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_8)),
             ) {
                 repeat(6) { index ->
                     Box(
                         modifier = Modifier
-                            .size(52.dp, 72.dp)
+                            .size(
+                                dimensionResource(id = R.dimen.dim_52),
+                                dimensionResource(id = R.dimen.dim_72)
+                            )
                             .border(
-                                1.dp,
-                                color = if (text.length == index) Color(0xFF7EC60B)
-                                else Color(0xFF000000).copy(alpha = 0.3f),
-                                shape = RoundedCornerShape(16.dp)
+                                dimensionResource(id = R.dimen.dim_1),
+                                color = if (text.length == index) foodClubGreen
+                                else Black.copy(alpha = 0.3f),
+                                shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16))
                             ),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = text.getOrNull(index)?.toString() ?: "",
                             textAlign = TextAlign.Center,
-                            style = TextStyle(fontFamily = PlusJakartaSans, fontSize = 32.sp, fontWeight = FontWeight.SemiBold)
+                            style = TextStyle(
+                                fontFamily = PlusJakartaSans,
+                                fontSize = dimensionResource(id = R.dimen.fon_32).value.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
                         )
                     }
                 }
@@ -126,21 +139,39 @@ fun CustomCodeTextField(onFillCallback: (Boolean, String) -> Unit) {
  */
 @Composable
 fun CustomTextField(
-    placeholder: String, keyboardType: KeyboardType, modifier: Modifier = Modifier,
-    initialValue: String = "", textValidation: Boolean = false,
-    allowSpace: Boolean = false, validationMethod: (text: String) -> String? = { text -> text },
-    onCorrectnessStateChange: () -> Unit = {}, onValueChange: (text: String) -> Unit,
+    placeholder: String,
+    keyboardType: KeyboardType,
+    modifier: Modifier = Modifier,
+    label: String? = null,
+    initialValue: String = "",
+    textValidation: Boolean = false,
+    allowSpace: Boolean = false,
+    validationMethod: (text: String) -> String? = { text -> text },
+    onCorrectnessStateChange: () -> Unit = {},
+    onValueChange: (text: String) -> Unit,
 ) {
     var text by remember { mutableStateOf(initialValue) }
     var textValid by remember { mutableStateOf(false) }
     var errorMessage: String? by remember { mutableStateOf(null) }
 
+    val composableLabel: @Composable (() -> Unit)? = if (!label.isNullOrBlank()) {
+        @Composable {
+            Text(
+                modifier = Modifier.padding(
+                    bottom = dimensionResource(id = R.dimen.dim_5)
+                ),
+                text = label
+            )
+        }
+    } else null
+
     Column {
         TextField(
             value = text,
+            label  = composableLabel,
             onValueChange = {
                 var textValidCurrent = true
-                val currentVal = if(allowSpace) it else it.trim()
+                val currentVal = if (allowSpace) it else it.trim()
                 if (textValidation) {
                     errorMessage = validationMethod(currentVal)
                     textValidCurrent = errorMessage.isNullOrBlank()
@@ -155,15 +186,17 @@ fun CustomTextField(
                 textValid = textValidCurrent
             },
             placeholder = { Text(text = placeholder, color = Color(0xFF939393)) },
-            colors = if (errorMessage.isNullOrBlank()) textFieldCustomColors() else textFieldCustomColors(
+            colors = if (errorMessage.isNullOrBlank()) textFieldCustomColors(textColor = Color.Black) else textFieldCustomColors(
                 focusedIndicatorColor = Color.Red,
                 unfocusedIndicatorColor = Color.Red
             ),
             modifier = modifier
-                .border(1.dp, Color(0xFFDADADA), RoundedCornerShape(percent = 20))
-                .clip(RoundedCornerShape(10.dp))
-                .background(Color(0xFF000000).copy(alpha = 0.04F))
-                .padding(horizontal = 10.dp)
+                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
+                .background(Black.copy(alpha = 0.06F))
+                .padding(
+                    horizontal = dimensionResource(id = R.dimen.dim_10),
+                    vertical = dimensionResource(id = R.dimen.dim_5)
+                )
                 .fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType)
         )
@@ -171,7 +204,7 @@ fun CustomTextField(
         Text(
             text = errorMessage.toString(),
             color = if (!textValid && !errorMessage.isNullOrBlank()) Color.Red else Color.Transparent,
-            fontSize = 12.sp
+            fontSize = dimensionResource(id = R.dimen.fon_12).value.sp
         )
     }
 }
@@ -193,9 +226,13 @@ fun CustomTextField(
  */
 @Composable
 fun CustomPasswordTextField(
-    initialValue: String = "", placeholder: String, strengthValidation: Boolean = true,
-    onCorrectnessStateChange: () -> Unit, onValueChange: (text: String) -> Unit = {},
-    label: String? = null, textFieldColors: TextFieldColors = textFieldCustomColors(),
+    initialValue: String = "",
+    placeholder: String,
+    strengthValidation: Boolean = true,
+    onCorrectnessStateChange: () -> Unit,
+    onValueChange: (text: String) -> Unit = {},
+    label: String? = null,
+    textFieldColors: TextFieldColors = textFieldCustomColors(),
     errorTextFieldColors: TextFieldColors = textFieldCustomColors(
         focusedIndicatorColor = Color.Red,
         unfocusedIndicatorColor = Color.Red
@@ -206,8 +243,16 @@ fun CustomPasswordTextField(
     var passValid by remember { mutableStateOf(false) }
     var errorMessage: String? by remember { mutableStateOf(null) }
 
-    val composableLabel: @Composable (() -> Unit)? = if(!label.isNullOrBlank()) {
-        @Composable { Text(text = label) } } else null
+    val composableLabel: @Composable (() -> Unit)? = if (!label.isNullOrBlank()) {
+        @Composable {
+            Text(
+                modifier = Modifier.padding(
+                    bottom = dimensionResource(id = R.dimen.dim_5)
+                ),
+                text = label
+            )
+        }
+    } else null
 
     Column {
         TextField(
@@ -228,13 +273,20 @@ fun CustomPasswordTextField(
                 passValid = passValidCurrent
             },
             label = composableLabel,
-            placeholder = { Text(text = placeholder, color = Color(0xFF939393)) },
+            placeholder = {
+                Text(
+                    text = placeholder,
+                    color = Color(0xFF939393)
+                )
+            },
             colors = if (errorMessage.isNullOrBlank()) textFieldColors else errorTextFieldColors,
             modifier = Modifier
-                .border(1.dp, Color(0xFFDADADA), RoundedCornerShape(percent = 20))
-                .clip(RoundedCornerShape(10.dp))
-                .background(Color(0xFF000000).copy(alpha = 0.04F))
-                .padding(horizontal = 10.dp)
+                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
+                .background(Black.copy(alpha = 0.06F))
+                .padding(
+                    horizontal = dimensionResource(id = R.dimen.dim_10),
+                    vertical = dimensionResource(id = R.dimen.dim_5)
+                )
                 .fillMaxWidth(),
             trailingIcon = {
                 if (passVisible) {
@@ -266,7 +318,7 @@ fun CustomPasswordTextField(
         Text(
             text = errorMessage.toString(),
             color = if (!passValid && !errorMessage.isNullOrBlank()) Color.Red else Color.Transparent,
-            fontSize = 12.sp
+            fontSize = dimensionResource(id = R.dimen.fon_12).value.sp
         )
 
 
@@ -282,28 +334,29 @@ fun CustomPasswordTextField(
  * @param onBackButtonClick Executes when the button is clicked.
  */
 @Composable
-fun BackButton(onBackButtonClick: () -> Unit) {
+fun BackButton(onBackButtonClick: () -> Unit, backgroundTransparent: Boolean = false,
+               buttonColor: Color = Color.Black) {
     Button(
         shape = RectangleShape,
         modifier = Modifier
-            .clip(RoundedCornerShape(15.dp))
-            .width(36.dp)
-            .height(36.dp)
+            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
+            .width(dimensionResource(id = R.dimen.dim_36))
+            .height(dimensionResource(id = R.dimen.dim_36))
             .offset(x = (-8).dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color.White,
-            contentColor = Color.White
+            containerColor = if(backgroundTransparent) Color.Transparent else Color.White,
+            contentColor = if(backgroundTransparent) Color.Transparent else Color.White
         ),
-        contentPadding = PaddingValues(0.dp),
+        contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_0)),
         onClick = { onBackButtonClick() }
     ) {
-        Image(
+        Icon(
             painter = painterResource(id = R.drawable.back_icon),
-            contentDescription = "Back",
-            contentScale = ContentScale.Crop,
+            contentDescription = stringResource(id = R.string.go_back),
+            tint = buttonColor,
             modifier = Modifier
-                .width(36.dp)
-                .height(36.dp)
+                .width(dimensionResource(id = R.dimen.dim_36))
+                .height(dimensionResource(id = R.dimen.dim_36))
         )
     }
 }
@@ -315,12 +368,16 @@ fun AlternativeLoginOption(
 ) {
     Button(
         onClick = {},
-        shape = RoundedCornerShape(10.dp),
+        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
         modifier = Modifier
-            .border(1.dp, Color(0xFFDADADA), RoundedCornerShape(percent = 20))
-            .height(56.dp)
-            .width(105.dp)
-            .clip(RoundedCornerShape(10.dp)),
+            .border(
+                dimensionResource(id = R.dimen.dim_1),
+                Color(0xFFDADADA),
+                RoundedCornerShape(percent = 20)
+            )
+            .height(dimensionResource(id = R.dimen.dim_56))
+            .width(dimensionResource(id = R.dimen.dim_105))
+            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.White,
             contentColor = Color.White
@@ -329,7 +386,7 @@ fun AlternativeLoginOption(
         Image(
             painter = image,
             contentDescription = contentDescription,
-            modifier = Modifier.size(26.dp)
+            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_26))
         )
     }
 }
@@ -351,18 +408,18 @@ fun TermsAndConditionsInfoFooter(onClick: () -> Unit = {}) {
     ) {
         Text(
             color = Color.Gray,
-            text = "By using FoodCLUB you agree to our ",
+            text = stringResource(id = R.string.by_using),
             fontFamily = Montserrat,
-            fontSize = 10.sp
+            fontSize = dimensionResource(id = R.dimen.fon_10).value.sp
         )
 
         ClickableText(
-            text = AnnotatedString("Terms & Conditions"),
-            onClick={ onClick() },
+            text = AnnotatedString(text = stringResource(id = R.string.terms_and_conditions)),
+            onClick = { onClick() },
             style = TextStyle(
                 color = Color.Gray,
                 fontFamily = Montserrat,
-                fontSize = 10.sp,
+                fontSize = dimensionResource(id = R.dimen.fon_10).value.sp,
                 fontWeight = FontWeight.Bold,
                 textDecoration = TextDecoration.Underline
             )
@@ -381,10 +438,17 @@ fun TermsAndConditionsInfoFooter(onClick: () -> Unit = {}) {
  * @param onClick Executes when button is clicked
  */
 @Composable
-fun ConfirmButton(enabled: Boolean, text: String, onClick: () -> Unit) {
+fun ConfirmButton(
+    enabled: Boolean,
+    text: String,
+    onClick: () -> Unit
+) {
     Button(
-        shape = RoundedCornerShape(10.dp),
-        modifier = Modifier.height(56.dp).clip(RoundedCornerShape(10.dp)).fillMaxWidth(),
+        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
+        modifier = Modifier
+            .height(dimensionResource(id = R.dimen.dim_56))
+            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
+            .fillMaxWidth(),
         enabled = enabled,
         colors = defaultButtonColors(),
         onClick = { onClick() }
@@ -392,7 +456,7 @@ fun ConfirmButton(enabled: Boolean, text: String, onClick: () -> Unit) {
         Text(
             text = text,
             fontFamily = Montserrat,
-            fontSize = 16.sp
+            fontSize = dimensionResource(id = R.dimen.fon_16).value.sp
         )
     }
 }

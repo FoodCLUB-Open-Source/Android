@@ -35,7 +35,9 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -48,13 +50,12 @@ import androidx.navigation.compose.rememberNavController
 fun UploadedView(
     navController: NavController,
 ) {
-    UploadedViewUI(".")
+    UploadedViewUI()
 }
 
 @Composable
-fun UploadedViewUI(name: String, modifier: Modifier = Modifier) {
+fun UploadedViewUI(modifier: Modifier = Modifier) {
 
-    // FONT
     val montserratFontFamily = FontFamily(
         Font(R.font.montserratbold, FontWeight.Normal)
     )
@@ -68,17 +69,12 @@ fun UploadedViewUI(name: String, modifier: Modifier = Modifier) {
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            //horizontalArrangement = Arrangement.SpaceBetween
         ) {
-
-            // ********** TOP BAR STUFF **********
-
-            // LEFT BACK BUTTON
             Box(
                 modifier = Modifier
-                    .offset(34.dp, 50.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .size(37.dp)
+                    .offset( dimensionResource(id = R.dimen.dim_34), dimensionResource(id = R.dimen.dim_50))
+                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)))
+                    .size( dimensionResource(id = R.dimen.dim_37))
                     .background(Color.Transparent)
 
 
@@ -90,21 +86,19 @@ fun UploadedViewUI(name: String, modifier: Modifier = Modifier) {
                 )
             }
 
-            // CENTER TEXT
             Text(
-                text = "Post",
-                fontSize = 20.sp,
+                text = stringResource(id = R.string.post),
+                fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
                 fontFamily = montserratFontFamily,
-                modifier = Modifier.offset(130.dp, 56.dp)
+                modifier = Modifier.offset(dimensionResource(id = R.dimen.dim_130), dimensionResource(id = R.dimen.dim_56))
             )
 
 
-            // RIGHT CROSS BUTTON
             Box(
                 modifier = Modifier
-                    .offset(230.dp, 50.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .size(35.dp)
+                    .offset(dimensionResource(id = R.dimen.dim_230), dimensionResource(id = R.dimen.dim_50))
+                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)))
+                    .size( dimensionResource(id = R.dimen.dim_35))
                     .background(Color.Transparent)
 
 
@@ -117,100 +111,83 @@ fun UploadedViewUI(name: String, modifier: Modifier = Modifier) {
             }
 
 
-        }  // END OF ROW
-
-
-        // COLUMN FOR IMAGE + 2 BUTTONS
-
+        }
 
         Column(
             modifier = modifier.fillMaxSize()
         ) {
 
-            // BOX FOR TICK IMAGE
             Box(
                 modifier = Modifier
-                    .offset(160.dp, 250.dp)
+                    .offset(dimensionResource(id = R.dimen.dim_160), dimensionResource(id = R.dimen.dim_250))
             ) {
 
-                // BACKGROUND BOX
                 Box(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(Color.Gray.copy(alpha = 0.5f) ) // ALPHA SETS TRANSPARENCY
-                        .size(60.dp)
+                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
+                        .background(Color.Gray.copy(alpha = 0.5f))
+                        .size(dimensionResource(id = R.dimen.dim_60))
                 )
 
-                // TICK IMAGE
                 Image(
                     painter = painterResource(id = R.drawable.done_tick),
-                    contentDescription = "",
+                    contentDescription = null,
                     modifier = Modifier
-                        .size(60.dp)
+                        .size(dimensionResource(id = R.dimen.dim_60))
                 )
 
-                // CENTER TEXT
                 Text(
-                    text = "Successfully Uploaded!",
-                    fontSize = 18.sp,
+                    text = stringResource(id = R.string.uploaded),
+                    fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
                     color = Color.Gray, // MEANT TO BE WHITE BUT YOU WONT SEE IT, SO CHANGE WHEN THUMBNAIL IS IMPLEMENTED ETC
                     fontFamily = montserratFontFamily,
                     modifier = Modifier
-                        .offset(-75.dp, 56.dp)
+                        .offset(-dimensionResource(id = R.dimen.dim_75), dimensionResource(id = R.dimen.dim_56))
                         .align(Alignment.Center)
                 )
             }
 
-
-            // ********** TOP STUFF **********
-
             Row(
                 modifier = modifier
-                    .offset(0.dp, -55.dp)
-                    .height(25.dp),
+                    .offset(dimensionResource(id = R.dimen.dim_0), -dimensionResource(id = R.dimen.dim_55))
+                    .height(dimensionResource(id = R.dimen.dim_25)),
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                // THANK YOU TEXT
                 Text(
-                    text = "Thanks For Sharing On FoodCLUB!",
-                    fontSize = 11.sp,
+                    text = stringResource(id = R.string.sharing_thanks),
+                    fontSize = dimensionResource(id = R.dimen.fon_11).value.sp,
                     fontFamily = montserratFontFamily,
-                    modifier = Modifier.offset(105.dp, 56.dp)
+                    modifier = Modifier.offset(dimensionResource(id = R.dimen.dim_105), dimensionResource(id = R.dimen.dim_56))
                 )
 
-                // CLOUD TICK IMAGE
                 Image(
                     painter = painterResource(id = R.drawable.cloud_tick),
-                    contentDescription = "",
+                    contentDescription = null,
                     modifier = Modifier
-                        .offset(-140.dp, 56.dp)
-                        .width(20.dp)
-                        .height(20.dp),
+                        .offset(-dimensionResource(id = R.dimen.dim_140), dimensionResource(id = R.dimen.dim_56))
+                        .width(dimensionResource(id = R.dimen.dim_20))
+                        .height(dimensionResource(id = R.dimen.dim_20)),
                 )
             }
 
             Column(
-                modifier = modifier.fillMaxSize()
-                    .padding(bottom = 170.dp),
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(bottom = dimensionResource(id = R.dimen.dim_170)),
                 verticalArrangement = Arrangement.Bottom,
             ) {
 
-
-                // ********** BOTTOM STUFF **********
-
-
-                // INSTAGRAM SHARE BUTTON
                 Button(
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_16)),
                     onClick = {
-                        // Handle button click here *For the future*
+                        // TODO Add functionality to button
                     },
                     modifier = Modifier
-                        .offset(32.dp, 96.dp)
-                        .width(327.dp)
-                        .height(50.dp)
-                        .border(0.5.dp, Color.Black, shape = RoundedCornerShape(16.dp)),
+                        .offset( dimensionResource(id = R.dimen.dim_32), dimensionResource(id = R.dimen.dim_96))
+                        .width(dimensionResource(id = R.dimen.dim_327))
+                        .height(dimensionResource(id = R.dimen.dim_50))
+                        .border(dimensionResource(id = R.dimen.dim_0pt5), Color.Black, shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_16))),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.White,
                         contentColor = Color.Black
@@ -222,24 +199,27 @@ fun UploadedViewUI(name: String, modifier: Modifier = Modifier) {
                         Image(
                             painter = painterResource(id = R.drawable.instagram),
                             contentDescription = null,
-                            modifier = Modifier.size(45.dp)
+                            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_45))
                         )
-                        Spacer(modifier = Modifier.width(15.dp))
-                        Text("Share to Instagram", fontSize = 18.sp)
+                        Spacer(modifier = Modifier.width( dimensionResource(id = R.dimen.dim_15)))
+                        Text(
+                            text= stringResource(id = R.string.instagram_share),
+                            fontSize = dimensionResource(id = R.dimen.fon_18).value.sp
+                        )
                     }
                 }
 
-                // TIKTOK BUTTON
+
                 Button(
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_16)),
                     onClick = {
-                        // Handle button click here *For the future*
+                        // TODO Add functionality to button
                     },
                     modifier = Modifier
-                        .offset(32.dp, 126.dp)
-                        .width(327.dp)
-                        .height(50.dp)
-                        .border(0.5.dp, Color.Black, shape = RoundedCornerShape(16.dp)),
+                        .offset( dimensionResource(id = R.dimen.dim_32), dimensionResource(id = R.dimen.dim_126))
+                        .width(dimensionResource(id = R.dimen.dim_327))
+                        .height(dimensionResource(id = R.dimen.dim_50))
+                        .border(dimensionResource(id = R.dimen.dim_0pt5), Color.Black, shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_16))),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.White,
                         contentColor = Color.Black
@@ -253,15 +233,15 @@ fun UploadedViewUI(name: String, modifier: Modifier = Modifier) {
                         Image(
                             painter = painterResource(id = R.drawable.tiktok),
                             contentDescription = null,
-                            modifier = Modifier.size(45.dp) // Adjust te size as needed
+                            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_45))
                         )
-                        Spacer(modifier = Modifier.width(35.dp))
+                        Spacer(modifier = Modifier.width( dimensionResource(id = R.dimen.dim_35)))
 
                         Text(
-                            text = "Share to TikTok",
-                            fontSize = 18.sp,
+                            text = stringResource(id = R.string.tiktok_share),
+                            fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
                             modifier = Modifier
-                                .offset(-25.dp, 0.dp)
+                                .offset(-dimensionResource(id = R.dimen.dim_25), dimensionResource(id = R.dimen.dim_0))
 
                         )
                     }

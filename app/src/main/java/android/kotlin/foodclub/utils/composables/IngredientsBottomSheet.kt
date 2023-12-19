@@ -1,10 +1,10 @@
 package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.domain.models.products.Ingredient
-import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.domain.enums.DrawerContentState
+import android.kotlin.foodclub.domain.models.products.Ingredient
+import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -47,7 +47,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -60,7 +59,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -70,7 +71,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 /**
@@ -93,16 +93,19 @@ import kotlinx.coroutines.launch
  */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
-fun IngredientsBottomSheet(onDismiss: () -> Unit, productsDataFlow: StateFlow<ProductsData>,
-                           loadMoreObjects: (searchText: String, onLoadCompleted: () -> Unit)
-                           -> Unit = { _, _ -> },
-                           onListUpdate: (searchText: String) -> Unit = {},
-                           onSave: (ingredient: Ingredient) -> Unit = {}) {
+fun IngredientsBottomSheet(
+    onDismiss: () -> Unit,
+    productsData: ProductsData,
+    loadMoreObjects: (searchText: String, onLoadCompleted: () -> Unit)
+    -> Unit = { _, _ -> },
+    onListUpdate: (searchText: String) -> Unit = {},
+    onSave: (ingredient: Ingredient) -> Unit = {}
+) {
 
     var editedIngredient by remember { mutableStateOf<Ingredient?>(null) }
 
     val coroutineScope = rememberCoroutineScope()
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 150.dp
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp - dimensionResource(id = R.dimen.dim_150)
 
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val contentState = remember { mutableStateOf(DrawerContentState.IngredientListContent) }
@@ -140,7 +143,7 @@ fun IngredientsBottomSheet(onDismiss: () -> Unit, productsDataFlow: StateFlow<Pr
                     IngredientListView(
                         screenHeight = screenHeight,
                         savedSearchText = savedSearchText,
-                        productsDataFlow = productsDataFlow,
+                        productsData = productsData,
                         onDismiss = {
                             coroutineScope.launch {
                                 bottomSheetState.hide()
@@ -158,7 +161,7 @@ fun IngredientsBottomSheet(onDismiss: () -> Unit, productsDataFlow: StateFlow<Pr
                 }
 
                 DrawerContentState.IngredientAmountSelection -> {
-                    if(editedIngredient != null) {
+                    if (editedIngredient != null) {
                         IngredientSelectedView(
                             screenHeight = screenHeight,
                             selectedIngredient = editedIngredient!!,
@@ -183,33 +186,46 @@ fun IngredientsBottomSheet(onDismiss: () -> Unit, productsDataFlow: StateFlow<Pr
 
 @Composable
 private fun IngredientSelectedView(
-    screenHeight: Dp, selectedIngredient: Ingredient,
+    screenHeight: Dp,
+    selectedIngredient: Ingredient,
     onDismiss: () -> Unit, onSave: (ingredient: Ingredient) -> Unit
 ) {
     val valuesPickerState = rememberPickerState()
-    val pickerValues = remember { mutableStateOf((1..99).map { (it * 10).toString() +
-            ValueParser.quantityUnitToString(selectedIngredient.unit) } ) }
+    val pickerValues = remember {
+        mutableStateOf((1..99).map {
+            (it * 10).toString() +
+                    ValueParser.quantityUnitToString(selectedIngredient.unit)
+        })
+    }
 
     Box(
-        modifier = Modifier.fillMaxWidth().height(screenHeight)
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(screenHeight)
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(start = 17.dp, end = 17.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = dimensionResource(id = R.dimen.dim_17), end = dimensionResource(id = R.dimen.dim_17)),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
             Box(
-                modifier = Modifier.height(50.dp).fillMaxWidth()
+                modifier = Modifier
+                    .height(dimensionResource(id = R.dimen.dim_50))
+                    .fillMaxWidth()
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
-                    contentDescription = "Left Arrow",
-                    modifier = Modifier.size(24.dp).align(Alignment.CenterStart)
+                    contentDescription = stringResource(id = R.string.left_arrow),
+                    modifier = Modifier
+                        .size(dimensionResource(id = R.dimen.dim_24))
+                        .align(Alignment.CenterStart)
                         .clickable(onClick = { onDismiss() })
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_8)))
                 Text(
-                    text = "Add items",
+                    text = stringResource(id = R.string.add_items),
                     color = Color.White,
                     fontFamily = Montserrat,
                     modifier = Modifier.align(Alignment.Center)
@@ -218,22 +234,26 @@ private fun IngredientSelectedView(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxSize().padding(top = 30.dp, bottom = 40.dp)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = dimensionResource(id = R.dimen.dim_30), bottom =  dimensionResource(id = R.dimen.dim_40))
             ) {
                 AsyncImage(
                     model = selectedIngredient.imageUrl,
                     contentDescription = null,
-                    modifier = Modifier.size(130.dp).clip(CircleShape)
+                    modifier = Modifier
+                        .size(dimensionResource(id = R.dimen.dim_130))
+                        .clip(CircleShape)
                 )
-                Spacer(modifier = Modifier.height(35.dp))
+                Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_35)))
                 Picker(
                     state = valuesPickerState,
                     items = pickerValues.value,
                     visibleItemsCount = 3,
                     modifier = Modifier.weight(0.3f),
-                    textModifier = Modifier.padding(8.dp),
+                    textModifier = Modifier.padding(dimensionResource(id = R.dimen.dim_8)),
                     textStyle = TextStyle(
-                        fontSize = 20.sp,
+                        fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
                         color = Color(android.graphics.Color.parseColor("#545454"))
                     )
                 )
@@ -241,15 +261,16 @@ private fun IngredientSelectedView(
                     shape = RectangleShape,
                     modifier = Modifier
                         .border(
-                            1.dp,
+                            dimensionResource(id = R.dimen.dim_1),
                             Color(126, 198, 11, 255),
-                            shape = RoundedCornerShape(15.dp)
+                            shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
                         )
-                        .clip(RoundedCornerShape(15.dp)).fillMaxWidth(),
+                        .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
+                        .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(126, 198, 11, 255),
                         contentColor = Color.White
-                    ), contentPadding = PaddingValues(15.dp),
+                    ), contentPadding = PaddingValues( dimensionResource(id = R.dimen.dim_15)),
                     onClick = {
                         onSave(
                             Ingredient(
@@ -266,10 +287,10 @@ private fun IngredientSelectedView(
                     }
                 ) {
                     Text(
-                        text = "Save",
+                        text = stringResource(id = R.string.save),
                         color = Color.White,
                         fontFamily = Montserrat,
-                        fontSize = 16.sp,
+                        fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                         fontWeight = FontWeight.ExtraBold
                     )
                 }
@@ -284,25 +305,26 @@ private fun IngredientSelectedView(
 private fun IngredientListView(
     screenHeight: Dp,
     savedSearchText: String,
-    productsDataFlow: StateFlow<ProductsData>,
+    productsData: ProductsData,
     onDismiss: () -> Unit,
     onListUpdate: (searchText: String) -> Unit,
     loadMoreObjects: (searchText: String, onLoadCompleted: () -> Unit) -> Unit,
     onIngredientSelect: (ingredient: Ingredient, searchText: String) -> Unit
 ) {
-    val productsData = productsDataFlow.collectAsState()
+    //val productsData = productsDataFlow.collectAsState()
     var searchText by remember { mutableStateOf(savedSearchText) }
-    val showingList = productsData.value
     val lazyListState = rememberLazyListState()
 
 
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .height(screenHeight)) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(screenHeight)
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 17.dp, end = 17.dp),
+                .padding(start = dimensionResource(id = R.dimen.dim_17), end = dimensionResource(id = R.dimen.dim_17)),
             contentAlignment = Alignment.CenterStart
         ) {
             Row(
@@ -313,9 +335,9 @@ private fun IngredientListView(
                 Image(
                     painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
                     contentDescription = "Close Sheet",
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(dimensionResource(id = R.dimen.dim_24))
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_8)))
                 Text(
                     text = "Add items",
                     color = Color.White,
@@ -326,7 +348,7 @@ private fun IngredientListView(
 
         LazyColumn(
             state = lazyListState,
-            modifier = Modifier.padding(top = 30.dp)
+            modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_30))
         ) {
             item {
                 Row(
@@ -334,13 +356,13 @@ private fun IngredientListView(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp)
+                        .padding(dimensionResource(id = R.dimen.dim_20))
                 ) {
                     TextField(
                         value = searchText,
                         onValueChange = { searchText = it },
-                        placeholder = { Text(text = "Search here", fontSize = 15.sp) },
-                        shape = RoundedCornerShape(12.dp),
+                        placeholder = { Text(text = "Search here", fontSize = dimensionResource(id = R.dimen.fon_15).value.sp) },
+                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)),
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                         keyboardActions = KeyboardActions(
@@ -354,22 +376,22 @@ private fun IngredientListView(
                         ),
                         modifier = Modifier
                             .weight(1f)
-                            .height(51.dp)
+                            .height(dimensionResource(id = R.dimen.dim_51))
                     )
-                    Spacer(modifier = Modifier.width(20.dp))
+                    Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_20)))
                     Text(
                         text = "Clear",
                         color = Color(0x00545454),
                         modifier = Modifier.clickable { searchText = "" }
                     )
-                    Spacer(modifier = Modifier.width(20.dp))
+                    Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_20)))
                 }
             }
             items(
-                items = productsDataFlow.value.productsList,
+                items = productsData.productsList,
                 key = { it.id }
             ) {
-                if(showingList.productsList.contains(it)){
+                if (productsData.productsList.contains(it)) {
                     IngredientComposable(
                         ingredient = it,
                         onClick = { ingredient -> onIngredientSelect(ingredient, searchText) }
@@ -383,17 +405,19 @@ private fun IngredientListView(
     var listLoading by remember { mutableStateOf(false) }
     val loadMore by remember {
         derivedStateOf {
-            lazyListState.firstVisibleItemIndex > productsDataFlow.value.productsList.size - 10
+            lazyListState.firstVisibleItemIndex > productsData.productsList.size - 10
         }
     }
 
     LaunchedEffect(searchText) {
         delay(1500)
-        if(searchText.length > 3) { onListUpdate(searchText) }
+        if (searchText.length > 3) {
+            onListUpdate(searchText)
+        }
     }
 
     LaunchedEffect(loadMore) {
-        if(!listLoading) {
+        if (!listLoading) {
             listLoading = true
             loadMoreObjects(searchText) { listLoading = false }
         }
@@ -408,8 +432,8 @@ private fun IngredientComposable(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(70.dp)
-            .padding(start = 20.dp, top = 20.dp)
+            .height(dimensionResource(id = R.dimen.dim_70))
+            .padding(start = dimensionResource(id = R.dimen.dim_20), top = dimensionResource(id = R.dimen.dim_20))
             .clickable(onClick = { onClick(ingredient) })
     ) {
         Row(
@@ -421,10 +445,10 @@ private fun IngredientComposable(
                 model = ingredient.imageUrl,
                 contentDescription = null,
                 modifier = Modifier
-                    .size(40.dp)
+                    .size(dimensionResource(id = R.dimen.dim_40))
                     .clip(CircleShape)
             )
-            Spacer(modifier = Modifier.width(15.dp))
+            Spacer(modifier = Modifier.width( dimensionResource(id = R.dimen.dim_15)))
             Text(
                 text = ingredient.type,
                 color = Color.White,

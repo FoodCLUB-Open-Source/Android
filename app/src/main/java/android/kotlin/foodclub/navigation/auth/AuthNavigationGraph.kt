@@ -1,9 +1,13 @@
 package android.kotlin.foodclub.navigation.auth
 
 import android.kotlin.foodclub.navigation.Graph
-import android.kotlin.foodclub.views.authentication.LogInWithEmail
+import android.kotlin.foodclub.viewModels.authentication.loginWithEmail.LogInWithEmailViewModel
+import android.kotlin.foodclub.viewModels.authentication.mainLogin.MainLogInAndSignUpViewModel
+import android.kotlin.foodclub.viewModels.authentication.signupVerification.SignupVerificationViewModel
+import android.kotlin.foodclub.viewModels.authentication.termsAndConditions.TermsAndConditionsViewModel
+import android.kotlin.foodclub.views.authentication.loginWithEmail.LogInWithEmail
 import android.kotlin.foodclub.views.authentication.MainLogInAndSignUp
-import android.kotlin.foodclub.views.authentication.SignupVerification
+import android.kotlin.foodclub.views.authentication.signupVerification.SignupVerification
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -11,8 +15,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import android.kotlin.foodclub.views.authentication.TermsAndConditions
+import androidx.compose.runtime.collectAsState
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 
-fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, setBottomBarVisibility: (Boolean) -> Unit) {
+fun NavGraphBuilder.authNavigationGraph(
+    navController: NavHostController,
+    setBottomBarVisibility: (Boolean) -> Unit
+) {
     navigation(
         route = Graph.AUTHENTICATION,
         startDestination = AuthScreen.MainLogInAndSignUp.route
@@ -21,30 +31,56 @@ fun NavGraphBuilder.authNavigationGraph(navController: NavHostController, setBot
         forgotPasswordNavigationGraph(navController)
 
         composable(route = AuthScreen.MainLogInAndSignUp.route) {
-
+            val viewModel: MainLogInAndSignUpViewModel = viewModel()
             setBottomBarVisibility(false)
-            MainLogInAndSignUp(navController)
+
+            MainLogInAndSignUp(
+                navController = navController,
+                events = viewModel
+            )
 
         }
         composable(route = AuthScreen.Login.route) {
-            LogInWithEmail(navController)
+            val viewModel: LogInWithEmailViewModel = hiltViewModel()
+            val state = viewModel.state.collectAsState()
+
+            LogInWithEmail(
+                navController = navController,
+                events = viewModel,
+                state = state.value
+            )
         }
 
         composable(route = AuthScreen.TermsAndConditions.route) {
-            TermsAndConditions(navController)
+            val viewModel: TermsAndConditionsViewModel = viewModel()
+
+            TermsAndConditions(
+                navController = navController,
+                events = viewModel
+            )
         }
 
         composable(route = AuthScreen.VerifySignup.route + "/{username}?password={password}&email={email}",
 
             arguments = listOf(
-                navArgument("username") { type = NavType.StringType },
-                navArgument("password") { nullable = true
-                    type = NavType.StringType }
+                navArgument(Auth.USERNAME.title) { type = NavType.StringType },
+                navArgument(Auth.PASSWORD.title) {
+                    nullable = true
+                    type = NavType.StringType
+                }
             )
-        ) {backStackEntry ->
-            SignupVerification(navController,backStackEntry.arguments?.getString("email"),
-                backStackEntry.arguments?.getString("username"),
-                backStackEntry.arguments?.getString("password"))
+        ) { backStackEntry ->
+            val viewModel: SignupVerificationViewModel = hiltViewModel()
+            val state = viewModel.state.collectAsState()
+
+            SignupVerification(
+                navController = navController,
+                email = backStackEntry.arguments?.getString(Auth.EMAIL.title),
+                username = backStackEntry.arguments?.getString(Auth.USERNAME.title),
+                password = backStackEntry.arguments?.getString(Auth.PASSWORD.title),
+                state = state.value,
+                events = viewModel
+            )
 
         }
     }
@@ -59,4 +95,10 @@ sealed class AuthScreen(val route: String) {
     object VerifySignup : AuthScreen(route = "VERIFY_SIGN_UP")
 
     object TermsAndConditions : AuthScreen(route = "TERMS")
+}
+
+enum class Auth(val title: String) {
+    USERNAME("username"),
+    PASSWORD("password"),
+    EMAIL("email")
 }

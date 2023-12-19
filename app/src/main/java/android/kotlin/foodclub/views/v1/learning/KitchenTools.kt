@@ -25,7 +25,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -38,50 +41,41 @@ import androidx.navigation.compose.rememberNavController
 fun KitchenTools(
     navController: NavController,
 ) {
-    KitchenToolsUI(".")
+    KitchenToolsUI()
 }
 
 @Composable
-fun KitchenToolsUI(name: String, modifier: Modifier = Modifier) {
+fun KitchenToolsUI(modifier: Modifier = Modifier) {
 
-    // LIST FOR CARD TITLES
-    val cardTitle = listOf("Kitchen Tools", "Can Opening", "Food Preparation Tools")
+    // TODO these should be dynamic and come from the backend
+    val cardTitle = stringArrayResource(id = R.array.card_titles).toList()
 
-    // LIST FOR SUB-TEXT
-    val cardSubText = listOf("Course Length - Approx 20 mins", "Course Length - Approx 20 mins", "Course Length - Approx 20 mins")
+    val cardSubText = stringArrayResource(id = R.array.card_subtitles).toList()
 
-    // LIST FOR IMAGE
     val imageContents = listOf(R.drawable.temporary_image_placeholder, R.drawable.temporary_image_placeholder, R.drawable.temporary_image_placeholder)
 
-    // LIST FOR LEARN BUTTONS
-    val Learnbuttons = listOf("Learn", "Learn", "Learn")
+    val learnButtons = stringArrayResource(id = R.array.learn_buttons).toList()
 
-    // LIST FOR QUIZ BUTTONS
-    val Quizbuttons = listOf("Quiz", "Quiz", "Quiz")
-    
+    val quizButtons = stringArrayResource(id = R.array.quiz_buttons).toList()
 
-    // QUIZ BUTTON GREY COLOUR
     val customGreyColor = Color(0xFFE7E7E7)
 
-    // LEARN BUTTON GREEN COLOUR
     val customGreenColor = Color(0xFF80C40C)
 
-
-    // KITCHEN TOOL TITLE TEXT
     Text(
-        text = "Kitchen Tools",
-        fontSize = 24.sp,
+        text = stringResource(id = R.string.kitchen_tools),
+        fontSize = dimensionResource(id = R.dimen.fon_24).value.sp,
         fontFamily = Montserrat,
         fontWeight = FontWeight.SemiBold,
         letterSpacing = TextUnit(-0.96f, TextUnitType.Sp),
-        modifier = Modifier.padding(top = 32.dp, start = 70.dp)
+        modifier = Modifier.padding(top =  dimensionResource(id = R.dimen.dim_32), start = dimensionResource(id = R.dimen.dim_70))
     )
 
     Box(
         modifier = Modifier
-            .offset(18.dp, 29.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .size(32.dp)
+            .offset(dimensionResource(id = R.dimen.dim_18), dimensionResource(id = R.dimen.dim_29))
+            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)))
+            .size( dimensionResource(id = R.dimen.dim_32))
             .background(customGreyColor)
 
 
@@ -97,114 +91,102 @@ fun KitchenToolsUI(name: String, modifier: Modifier = Modifier) {
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .padding(top = 60.dp, start = 18.dp, end = 18.dp)
+            .padding(top = dimensionResource(id = R.dimen.dim_60), start = dimensionResource(id = R.dimen.dim_18), end = dimensionResource(id = R.dimen.dim_18))
     ) {
 
 
-        // HOW MANY ITEMS
-        items(3) { index ->
-            Spacer(modifier = Modifier.height(16.dp))
+        items(count = 3) { index ->
+            Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_16)))
 
-            // THE CARD STUFF
             Box(
                 modifier = Modifier
-                    .clip(shape = RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp))
+                    .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15)))
                     .fillMaxWidth()
-                    .height(230.dp)
+                    .height(dimensionResource(id = R.dimen.dim_230))
                     .background(Color.White)
             ) {
-
-                // INNER CARD CONTENTS
-
-                // TITLE TEXTS SETTINGS
                 Text(
-                    text = cardTitle.getOrNull(index) ?: "Default Text",
+                    text = cardTitle.getOrNull(index) ?: stringResource(id = R.string.default_text),
                     fontFamily = Montserrat,
-                    fontSize = 20.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = TextUnit(-0.8f, TextUnitType.Sp),
                     color = Color.Black,
                     modifier = Modifier
-                        .padding(top = 25.dp)
+                        .padding(top = dimensionResource(id = R.dimen.dim_25))
                         .align(Alignment.Center)
                 )
 
-                // IMAGE SETTINGS
                 Image(
                     painter = painterResource(id = imageContents.getOrNull(index) ?: R.drawable.temporary_image_placeholder),
-                    contentDescription = "",
+                    contentDescription = null,
                     modifier = Modifier
-                        .width(330.dp)
-                        .height(200.dp)
-                        .clip(shape = RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp))
-                        .padding(bottom = 105.dp)
+                        .width(dimensionResource(id = R.dimen.dim_330))
+                        .height(dimensionResource(id = R.dimen.dim_200))
+                        .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15), dimensionResource(id = R.dimen.dim_15)))
+                        .padding(bottom = dimensionResource(id = R.dimen.dim_105))
                         .align(Alignment.Center)
                 )
 
-                // SUB TEXTS SETTINGS
                 Text(
-                    text = cardSubText.getOrNull(index) ?: "Default Text",
+                    text = cardSubText.getOrNull(index) ?: stringResource(id = R.string.default_text),
                     fontFamily = Montserrat,
-                    fontSize = 12.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
                     letterSpacing = TextUnit(-0.8f, TextUnitType.Sp),
                     color = Color.Black,
                     modifier = Modifier
-                        .padding(top = 78.dp)
+                        .padding(top = dimensionResource(id = R.dimen.dim_78))
                         .align(Alignment.Center)
                 )
 
-                // LEARN MORE BUTTON SETTINGS
                 Button(
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)),
                     modifier = Modifier
-                        .padding(start = 55.dp, bottom = 15.dp)
-                        .height(35.dp)
-                        .width(100.dp)
+                        .padding(start = dimensionResource(id = R.dimen.dim_55), bottom = dimensionResource(id = R.dimen.dim_15))
+                        .height( dimensionResource(id = R.dimen.dim_35))
+                        .width(dimensionResource(id = R.dimen.dim_100))
                         .align(Alignment.BottomStart),
 
                     onClick = {
-                        // ON CLICK TO DO
+                        // TODO add click functionality
                     },
-
-                    // Button colour(s)
                     colors = ButtonDefaults.buttonColors(
                         containerColor  = customGreenColor,
                         contentColor = Color.White
                     )
                 ) {
-                    Text(text = Learnbuttons.getOrNull(index) ?: "",
+                    Text(
+                        text = learnButtons.getOrNull(index) ?: stringResource(id = R.string.default_text),
                         fontFamily = Montserrat,
                         letterSpacing = TextUnit(-0.64f, TextUnitType.Sp),
                         color = Color.White,
-                        fontSize = 13.sp
+                        fontSize = dimensionResource(id = R.dimen.fon_13).value.sp
 
                     )
                 }
 
-                // QUIZ BUTTON SETTINGS
                 Button(
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)),
                     modifier = Modifier
-                        .padding(end = 55.dp, bottom = 15.dp)
-                        .height(35.dp)
-                        .width(100.dp)
+                        .padding(end = dimensionResource(id = R.dimen.dim_55), bottom = dimensionResource(id = R.dimen.dim_15))
+                        .height( dimensionResource(id = R.dimen.dim_35))
+                        .width(dimensionResource(id = R.dimen.dim_100))
                         .align(Alignment.BottomEnd),
 
                     onClick = {
-                        // ON CLICK TO DO
+                        // TODO add click functionality
                     },
-
-                    // Button colour(s)
                     colors = ButtonDefaults.buttonColors(
                         containerColor  = customGreyColor,
                         contentColor = Color.White
                     )
                 ) {
-                    Text(text = Quizbuttons.getOrNull(index) ?: "",
+                    Text(
+                        text = quizButtons.getOrNull(index) ?: stringResource(id = R.string.default_text),
                         fontFamily = Montserrat,
                         letterSpacing = TextUnit(-0.64f, TextUnitType.Sp),
                         color = Color.Black,
-                        fontSize = 13.sp
+                        fontSize = dimensionResource(id = R.dimen.fon_13).value.sp
 
                     )
                 }

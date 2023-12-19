@@ -3,8 +3,10 @@ package android.kotlin.foodclub.views.home
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.di.SharedPreferencesModule.provideSharedPreferences
+import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.utils.composables.VideoScroller
-import android.kotlin.foodclub.viewModels.home.HomeViewModel
+import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearEasing
@@ -41,7 +43,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,59 +59,94 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import android.kotlin.foodclub.views.home.home.HomeState
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ViewStories(modifier: Modifier){
-    val viewModel: HomeViewModel = hiltViewModel()
+fun ViewStories(
+    viewModel: HomeViewModel,
+    state : HomeState,
+) {
     // green screen issue is not happening when we use postListData instead of storyListData as below:
     // val videosState = viewModel.postListData.collectAsState()
-    val videosState = viewModel.storyListData.collectAsState()
+    val videosState = state.storyList
 
     val coroutineScope = rememberCoroutineScope()
     val localDensity = LocalDensity.current
 
-    val storyPagerState = rememberPagerState(
-        initialPage = 0,
-        initialPageOffsetFraction = 0f
-    ){
-        4
-    }
-    val storyFling = PagerDefaults.flingBehavior(
-        state = storyPagerState, lowVelocityAnimationSpec = tween(
-            easing = LinearEasing, durationMillis = 300
-        )
-    )
+    val context = LocalContext.current
+    val sessionCache = SessionCache(provideSharedPreferences(context))
 
-    VerticalPager(
-        state = storyPagerState,
-        flingBehavior = storyFling,
-        beyondBoundsPageCount = 1,
-        modifier = modifier
-    ) {
-        var pauseButtonVisibility by remember { mutableStateOf(false) }
-        var doubleTapState by remember {
-            mutableStateOf(
-                Triple(
-                    Offset.Unspecified, //offset
-                    false, //double tap anim start
-                    0f //rotation angle
-                )
-            )
+    val userId = sessionCache.getActiveSession()?.sessionUser?.userId ?: return
+
+    val systemUiController = rememberSystemUiController()
+    SideEffect {
+        systemUiController.setSystemBarsColor(
+            color = Color.Transparent,
+            darkIcons = false
+        )
+        systemUiController.setNavigationBarColor(
+            color = Color.White
+        )
+    }
+    var screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.94f
+
+    if (screenHeightMinusBottomNavItem <= dimensionResource(id = R.dimen.dim_650)) {
+        screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.96f
+    }
+    if (videosState.isNotEmpty()) {
+        val storyPagerState = rememberPagerState(
+            initialPage = 0,
+            initialPageOffsetFraction = 0f
+        ){
+            videosState.size
         }
-        Box(modifier = Modifier.fillMaxSize()) {
-            if (videosState.value.isNotEmpty()) {
-                //BlurImage{
-                VideoScroller(videosState.value[it], storyPagerState, it, onSingleTap = {
+        val storyFling = PagerDefaults.flingBehavior(
+            state = storyPagerState, lowVelocityAnimationSpec = tween(
+                easing = LinearEasing, durationMillis = 300
+            )
+        )
+        var videoViewed by remember { mutableStateOf(false) }
+
+        LaunchedEffect(storyPagerState.currentPage) { videoViewed = false }
+        LaunchedEffect(videoViewed) {
+            if(videoViewed) {
+                viewModel.userViewsStory(videosState[storyPagerState.currentPage].videoId)
+            }
+        }
+
+        VerticalPager(
+            state = storyPagerState,
+            flingBehavior = storyFling,
+            beyondBoundsPageCount = 1,
+            modifier = Modifier.height(screenHeightMinusBottomNavItem)
+        ) {
+            var pauseButtonVisibility by remember { mutableStateOf(false) }
+            var doubleTapState by remember {
+                mutableStateOf(
+                    Triple(
+                        Offset.Unspecified,
+                        false,
+                        0f
+                    )
+                )
+            }
+            Box(modifier = Modifier.fillMaxSize()) {
+                VideoScroller(videosState[it], storyPagerState, it, onSingleTap = {
                     pauseButtonVisibility = it.isPlaying
                     it.playWhenReady = !it.isPlaying
                 },
                     onDoubleTap = { exoPlayer, offset ->
                         coroutineScope.launch {
-                            videosState.value[it].currentViewerInteraction.isLiked =
+                            videosState[it].currentViewerInteraction.isLiked =
                                 true
                             val rotationAngle = (-10..10).random()
                             doubleTapState = Triple(offset, true, rotationAngle.toFloat())
@@ -118,18 +154,20 @@ fun ViewStories(modifier: Modifier){
                             doubleTapState = Triple(offset, false, rotationAngle.toFloat())
                         }
                     },
-                    onVideoDispose = { pauseButtonVisibility = false },
+                    onVideoDispose = {
+                        pauseButtonVisibility = false
+                        videoViewed = true
+                    },
                     onVideoGoBackground = { pauseButtonVisibility = false }
                 )
-                //}
 
 
                 var isLiked by remember {
-                    mutableStateOf(videosState.value[it].currentViewerInteraction.isLiked)
+                    mutableStateOf(videosState[it].currentViewerInteraction.isLiked)
                 }
 
                 Column() {
-                    val iconSize = 110.dp
+                    val iconSize = dimensionResource(id = R.dimen.dim_110)
                     AnimatedVisibility(visible = doubleTapState.second,
                         enter = scaleIn(
                             spring(Spring.DampingRatioMediumBouncy),
@@ -163,7 +201,7 @@ fun ViewStories(modifier: Modifier){
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(top = 30.dp),
+                        .padding(top = dimensionResource(id = R.dimen.dim_30)),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -179,34 +217,36 @@ fun ViewStories(modifier: Modifier){
                             painter = painterResource(id = R.drawable.pause_video_button),
                             contentDescription = null,
                             tint = Color.Unspecified,
-                            modifier = Modifier.size(36.dp)
+                            modifier = Modifier.size( dimensionResource(id = R.dimen.dim_36))
                         )
                     }
                 }
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
-                        .padding(15.dp)
+                        .padding(dimensionResource(id = R.dimen.dim_15))
                 ) {
                     Column {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = modifier.padding(bottom = 15.dp)
+                            modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_15))
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.story_user),
-                                contentDescription = "Profile Image",
+                                contentDescription = stringResource(id = R.string.profile_image),
                                 modifier = Modifier
-                                    .size(35.dp)
+                                    .size(dimensionResource(id = R.dimen.dim_35))
                                     .clip(CircleShape)
                                     .alpha(0.7f)
                             )
-                            Spacer(modifier = Modifier.width(10.dp))
+                            Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_10)))
                             Text(
-                                videosState.value[it].authorDetails, color = Color.White,
-                                fontFamily = Montserrat, fontSize = 18.sp,
+                                text = videosState[it].authorDetails,
+                                color = Color.White,
+                                fontFamily = Montserrat,
+                                fontSize = dimensionResource(id = R.dimen.dim_18).value.sp,
                                 modifier = Modifier
-                                    .padding(2.dp)
+                                    .padding(dimensionResource(id = R.dimen.dim_2))
                                     .alpha(0.7f)
                             )
                         }
@@ -216,40 +256,40 @@ fun ViewStories(modifier: Modifier){
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
-                        .padding(15.dp)
+                        .padding( dimensionResource(id = R.dimen.dim_15))
                 ) {
                     Column {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier
                                 .align(Alignment.End)
-                                .width(50.dp)
-                                .height(50.dp)
+                                .width(dimensionResource(id = R.dimen.dim_50))
+                                .height(dimensionResource(id = R.dimen.dim_50))
                         ) {
                         }
-                        Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier
                                 .align(Alignment.End)
-                                .width(50.dp)
-                                .height(80.dp),
+                                .width(dimensionResource(id = R.dimen.dim_50))
+                                .height(dimensionResource(id = R.dimen.dim_80)),
                         ) {
                             Spacer(Modifier.weight(1f))
                             Box(
                                 modifier = Modifier
-                                    .width(50.dp)
-                                    .height(80.dp),
+                                    .width(dimensionResource(id = R.dimen.dim_50))
+                                    .height(dimensionResource(id = R.dimen.dim_80)),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Box(
                                     modifier = Modifier
-                                        .width(50.dp)
-                                        .height(80.dp)
-                                        .clip(RoundedCornerShape(30.dp))
+                                        .width(dimensionResource(id = R.dimen.dim_50))
+                                        .height(dimensionResource(id = R.dimen.dim_80))
+                                        .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_30)))
                                         .background(Color.Black.copy(alpha = 0.5f))
-                                        .blur(radius = 5.dp)
+                                        .blur(radius =dimensionResource(id = R.dimen.dim_5))
                                         .alpha(0.7f)
                                 ) {}
                                 Column(
@@ -257,17 +297,17 @@ fun ViewStories(modifier: Modifier){
                                     verticalArrangement = Arrangement.Center,
                                     modifier = Modifier
                                         .fillMaxSize()
-                                        .clip(RoundedCornerShape(30.dp))
+                                        .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_30)))
                                         .alpha(0.7f)
                                         .clickable {
                                             isLiked = !isLiked
-                                            videosState.value[0].currentViewerInteraction.isLiked =
+                                            videosState[0].currentViewerInteraction.isLiked =
                                                 !isLiked
                                         }
                                 ) {
-                                    val maxSize = 32.dp
+                                    val maxSize =  dimensionResource(id = R.dimen.dim_32)
                                     val iconSize by animateDpAsState(
-                                        targetValue = if (isLiked) 22.dp else 21.dp,
+                                        targetValue = if (isLiked) dimensionResource(id = R.dimen.dim_22) else dimensionResource(id = R.dimen.dim_21),
                                         animationSpec = keyframes {
                                             durationMillis = 400
                                             14.dp.at(50)
@@ -290,10 +330,10 @@ fun ViewStories(modifier: Modifier){
                                             .size(iconSize)
                                             .alpha(0.7f)
                                     )
-                                    Spacer(modifier = Modifier.height(3.dp))
+                                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_3)))
                                     Text(
-                                        text = videosState.value[it].videoStats.displayLike,
-                                        fontSize = 13.sp,
+                                        fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
+                                        text = videosState[it].videoStats.displayLike,
                                         fontFamily = Montserrat,
                                         color = if (isLiked) foodClubGreen else Color.White
                                     )
@@ -302,7 +342,7 @@ fun ViewStories(modifier: Modifier){
                             Spacer(Modifier.weight(1f))
                         }
 
-                        Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
                     }
                 }
             }

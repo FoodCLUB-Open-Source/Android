@@ -1,5 +1,21 @@
 <resources>
     <string name="app_name">FoodClub</string>
+    <string name="Done">Done</string>
+    <string name="Toggle_Palette_Font">Toggle Palette/Font</string>
+    <string name="Default">Default</string>
+    <string name="Custom_Color">Custom Color</string>
+    <string name="fontdisplay">Aa</string>
+    <string name="Delete">Delete</string>
+    <string name="PlusJakartaSans">PlusJakartaSans</string>
+    <string name="AvenirBlack">AvenirBlack</string>
+    <string name="AvenirBook">AvenirBook</string>
+    <string name="MontserratBold">MontserratBold</string>
+    <string name="MontserratMedium">MontserratMedium</string>
+    <string name="MontserratRegular">MontserratRegular</string>
+    <string name="MontserratSemibold">MontserratSemibold</string>
+    <string name="RalewayExtraBold">RalewayExtraBold</string>
+    <string name="Satoshi">Satoshi</string>
+    <string name="foodCLUB">FoodCLUB</string>
     <string name="title_activity_create_username_view">CreateUsernameView</string>
     <string name="title_activity_preference_input_view">PreferenceInputView</string>
     <string name="title_activity_preference_view">PreferenceView</string>
@@ -10,4 +26,727 @@
     <string name="title_activity_future_topic_vote_view">FutureTopicVoteView</string>
     <string name="title_activity_uploading_view">UploadingView</string>
     <string name="title_activity_uploaded_view">UploadedView</string>
+
+    Errors
+    <string name="error_message">Error %s</string>
+
+    Authentication Screens
+    - Forgot Password
+    <string name="change_password">Change Password</string>
+    <string name="change_password_subheading">We\'ve sent an email with password reset link to %s</string>
+    <string name="verification_code">Verification Code</string>
+    <string name="password">Password</string>
+    <string name="password_changed">Password Changed</string>
+    <string name="log_in">Log In</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="forgot_password_subheading">Don’t worry! It happens. Please enter the email associated with your account.</string>
+    <string name="email">Email</string>
+    <string name="send_code">Send Code</string>
+    - Sign up
+    <string name="sign_up">Sign Up</string>
+    <string name="confirm_email">Confirm Email</string>
+    <string name="confirm_email_subheading">So that you are sure you haven\'t mistyped it!</string>
+    <string name="continue_text">Continue</string>
+    <string name="put_your_name">Put your name</string>
+    <string name="put_your_name_subheading">So others know how to call you</string>
+    <string name="full_name">Full Name</string>
+    <string name="create">Create</string>
+    <string name="username">Username</string>
+    <string name="create_username">Create a username!</string>
+    <string name="create_username_subheading">So everyone can find you!</string>
+    <string name="new_here">New here?\nNo Problem</string>
+    - Confirm Identity
+    <string name="confirm_identity">Confirm Your Identity</string>
+    <string name="confirm_identity_subheading">Please confirm your country code and enter in your phone number</string>
+    <string name="go_back">Go Back</string>
+    <string name="plus_sign">+</string>
+    <string name="vertical_line">|</string>
+    <string name="invalid_number">Invalid Number</string>
+    <string name="sync_contacts">Sync Contacts</string>
+    - Login Email
+    <string name="forgot_password_question">Forgot Password?</string>
+    <string name="reset_here">Reset here</string>
+    <string name="welcome_back">Welcome back!</string>
+    <string name="welcome_back_subheading">Cooking just got social</string>
+    - Main login/signup
+    <string name="app_title">app title</string>
+    <string name="app_logo">app logo</string>
+    <string name="login_arrow">Log in →</string>
+    <string name="already_have_account">Already have an account?</string>
+    - Onboarding
+    <string name="art_of_food">The Art Of Food Is Here</string>
+    <string name="dont_follow">Don\'t follow,</string>
+    <string name="create_fullstop">create.</string>
+    <string name="our_mission">Our Mission</string>
+    <string name="did_you_know">Did you know?</string>
+    <string name="info_1">25% of climate change and 70% of fresh water is linked to food production</string>
+    <string name="info_2">70% of disease and illness are caused by nutrition</string>
+    <string name="info_3">We produce food across the glob to wipe out global hunger - but 40% of that food goes to waste</string>
+    <string name="info_4">1 in 10 people have a food disorder</string>
+    <string name="info_5">Social media has left us unconnected in our communities and our cultures</string>
+    <string name="you_are_part_mission">You\'re now  part of our mission</string>
+    <string name="join_community">Join our Discord VIP Community</string>
+    <string name="join_vip_discord">Join our VIP Discord Server</string>
+    <string name="discord_link">https://discord.gg/dA83mnQMqr</string>
+    <string name="join_our_community">Join our community for exclusive content and insight into the tech and business world</string>
+    <string name="join_1">Engage in lively discussions and events.</string>
+    <string name="join_2">Shape the future of food: help decide new features and innovation..</string>
+    <string name="join_3">Participate in special contests and giveaways.</string>
+    <string name="join_4">Be the first to savor insights into foodSNAPS, foodMAPS, foodSCHOOL, and our detectable AI-driven innovations..</string>
+    - Preferences
+    <string name="preferences_title">Tell us what you like!</string>
+    <string name="preferences_subheading">So we can bring you the latest recipes</string>
+    <string name="finish">Finish</string>
+    <string-array name="preferences">
+        <item>Italian</item>
+        <item>Mexican</item>
+        <item>Indian</item>
+        <item>Chinese</item>
+        <item>Vegan</item>
+        <item>Vegetarian</item>
+        <item>Thai</item>
+        <item>Japanese</item>
+        <item>Vietnamese</item>
+        <item>Paleo</item>
+        <item>Gluten-free</item>
+        <item>Low carb</item>
+        <item>Keto</item>
+    </string-array>
+    - Verification
+    <string name="verification_title">Verify your email</string>
+    <string name="verification_subheading">Please enter the code we\'ve sent to %s</string>
+    <string name="verification_subheading_alt">Please enter the code we\'ve sent to your email associated with this account</string>
+    <string name="verify">Verify</string>
+    <string name="wait_time">Wait %d seconds to </string>
+    <string name="resend">Resend</string>
+    <string name ="no_code">I didn\'t receive a code </string>
+    - Terms and Conditions
+    <string name="accept_terms">Accept terms and conditions</string>
+    <string name="please_accept_terms">Please accept the terms and conditions</string>
+    <string name="proceed">Proceed</string>
+    <string name="accept">Accept</string>
+    <string name="decline">Decline</string>
+    <string name="terms_condition_title">Terms &amp; Conditions</string>
+
+    <!-- TERMS AND CONDITION VIEW STRINGS -->
+
+    <!-- 1. Who you are contracting with -->
+    <string name="contracting_with_bold">1. Who you are contracting with\n\n</string>
+    <string name="contracting_with_description">The company that you are contracting with depends on where you are resident:\n\n</string>
+
+    <!-- 2. What services are covered by these Terms -->
+    <string name="services_covered_bold">2. What services are covered by these Terms\n\n</string>
+    <string name="services_covered_description">These Terms govern your use of FoodCLUB services (the “Platform”), which includes FoodCLUB apps, websites, software and related services, accessed via any platform or device. Our Community Guidelines also form part of our contract with you and, by agreeing to these Terms, you promise to us that you will comply with them.\n\nTo agree you must be 18 or older\n\n</string>
+
+    <!-- 3. Additional terms and policies that might apply depending on the features you use -->
+    <string name="additional_terms_bold">3. Additional terms and policies that might apply depending on the features you use\n\n</string>
+    <string name="additional_terms_description">Additional terms and policies may apply to certain products or features of the Platform that we may make available to you, if you post or live stream certain kinds of content, or if you use the Platform for business or commercial purposes. The main ones you should be aware of, and which form part of these Terms, are set out below for your information.\n\n</string>
+    <string name="intellectual_property_policy">● This policy applies to all content on the Platform that is protected by intellectual property rights.\n</string>
+    <string name="buyer_terms">● These terms apply when you buy items on FoodCLUB Shop in the future.\n\n</string>
+
+    <!-- 4. Using the Platform -->
+    <string name="using_platform_bold">4. Using the Platform\n\n</string>
+
+    <string name="platform_and_business_model_bold">Our Platform and business model\n\n</string>
+    <string name="platform_description_1">The Platform allows you and others to create, view, interact with, and share content, and interact with others. We also personalise your experience on the Platform, which shows you food content based on what we have determined could be interesting for you.\n\n</string>
+    <string name="platform_description_2">We want the Platform to be a safe place, so people can be who they are and have fun. We work with our Affiliates and use a mix of technology (including through automated means), human moderation, and reports from our users to identify infringements of and enforce these Terms and our Community Guidelines in order to protect you and all of our users.\n\n</string>
+    <string name="platform_description_3">We don\'t charge you a fee to use most of the features of the Platform. Instead, businesses and organisations pay us to show you ads for their products and services, and we may also charge sellers a commission on products sold on FoodCLUB later on.\n\n</string>
+    <string name="platform_description_4">Information on how we use data that we collect about you can be found in our Privacy Policy and Cookies Policy. These do not form part of this contract, but are important documents which we strongly recommend that you read.\n\n</string>
+    <string name="platform_description_5">The app is mainly free but features are voluntary and any costs will be made clear to you before you are charged anything.\n\n</string>
+    <string name="short_summary_using_platform">In short: You do not have to pay for your use of our Platform but, in exchange, we allow third parties to advertise or sell products to you and we receive payment for this.\n\n</string>
+
+    <string name="minimum_age">Minimum age\n\n</string>
+    <string name="minimum_age_description">You can only use the Platform if you are 13 years of age or older. We monitor for underage use and we will terminate your account if we reasonably suspect that you are underage. You can appeal our decision to terminate your account if you think we have made a mistake about your age.\n\n</string>
+    <string name="minimum_age_summary">In short: You need to be 13 or over to use our Platform.\n\n</string>
+
+    <string name="what_you_can_do_bold">What you can do on the Platform\n\n</string>
+    <string name="what_you_can_do_description">Under these Terms, you can use the Platform in order to:\n\n● create and share content;\n● interact with other users;\n● view content created by others; and\n● use the features and functionality on the Platform as provided to you from time to time.\n\nSee our Help Center for further information about the features of the Platform and how to use them.\n\n</string>
+    <string name="permission_we_give">The permission we give to you:\n\n</string>
+    <string name="permission_we_give_description">● is limited to what we have said we will allow in these Terms;\n● is only for you;\n● cannot be given to anyone else by you; and\n● can be withdrawn for the reasons allowed in these Terms.\n\n</string>
+    <string name="access_dependent_on_age">Access to certain features of the Platform depends on your age. For example:\n\n● Direct Messaging: You must be aged 16 or older to use the direct messaging functionality.\n● Virtual Items: You must be aged 18 or older to interact with virtual items.\n\n</string>
+    <string name="short_summary_what_you_can_do">In short: You can do many things on our Platform but you might not be able to use every feature if you are not old enough.\n\n</string>
+
+    <string name="what_you_cant_do_bold">What you can’t do on the Platform\n\n</string>
+    <string name="community_guidelines_description">Our Community Guidelines apply to everyone and to all content on the Platform. If you want to use the Platform, you can’t create, post, share, link to or otherwise interact with content in breach of our Community Guidelines.\n\n</string>
+    <string name="prohibited_actions">In any event, you must not use the Platform to:\n\n</string>
+    <string name="prohibited_actions_description">● do anything illegal;\n● do anything that violates applicable anti-money laundering, counter terrorist financing, export controls and economic sanctions laws or regulations;\n● negatively impact the enjoyment of other users;\n● engage with minors in an exploitative or inappropriate way;\n● undermine the Platform’s operations or security;\n● extract any data or content from the Platform using any automated system or software; or\n● use or attempt to use another user’s account without authorization.\n\n</string>
+    <string name="content_restrictions">You must also not post, live stream or otherwise distribute any content on the Platform which:\n\n</string>
+    <string name="content_restrictions_description">● infringes anyone else’s rights (such as intellectual property, privacy and/or personality rights of living or deceased people);\n● constitutes, encourages or provides instructions for a criminal offence, or dangerous activities that may lead to serious injury or death or self-harm;\n● spreads harmful misinformation such as misinformation that incites hate or prejudice or that misleads about or improperly influences elections or other civic processes;\n● contains a threat of any kind or which intimidates or harasses others, including posting any material that is intended to mock, humiliate, embarrass, intimidate, or hurt an individual;\n● is obscene, pornographic, hateful or inflammatory or which promotes sexually explicit material (e.g. by linking to adult or pornographic websites);\n● contains or promotes violence or discrimination based on race, ethnicity, national origin, religion, caste, sexual orientation, sex, gender identity, serious disease, disability, immigration status or age; or\n● otherwise contains harmful content (such as content that causes physical, mental or moral detriment to minors).\n\n</string>
+    <string name="branded_content_policy">If you post content on the Platform about a brand or a product in return for any payment or other incentive, you must comply with the Branded Content Policy. You must use appropriate disclosures including any functionality the Platform provides to ensure that any posts that are, for example, sponsored are clear. For more details about Branded Content on the Platform, see here.\n\n</string>
+    <string name="additional_guidelines">In addition, in relation to any such content you must not:\n\n</string>
+    <string name="additional_guidelines_description">● use surreptitious or subliminal techniques;\n● prejudice respect for human dignity;\n● include or promote any discrimination based on sex, racial or ethnic origin, nationality, religion or belief, disability, age or sexual orientation;\n● encourage behaviour prejudicial to health or safety or which is grossly prejudicial to the protection of the environment;\n● cause physical, mental or moral detriment to minors;\n● directly exhort minors to buy or hire a product or service or directly encourage minors to persuade their parents or others to purchase goods or services being advertised; or\n● exploit the special trust minors place in parents, teachers or other persons, or show minors in dangerous situations.\n\n</string>
+    <string name="respect_copyright">We respect copyright and other intellectual property rights. Please read our Intellectual Property policy. You can report suspected infringements of intellectual property rights on the Platform here:\n\n</string>
+    <string name="report_copyright">● Copyright: (insert webform)\n</string>
+    <string name="report_trademark">● Trademark: (insert webform)\n\n</string>
+    <string name="report_illegal_content">You can report suspected illegal content or content which otherwise breaches these Terms or our Community Guidelines through the reporting functionalities provided on the Platform or here.\n\n</string>
+    <string name="short_summary_cant_do">In short: Enjoy using our Platform but, for the benefit of all our users, there are rules you need to follow. If you see something that should not be on our Platform, please tell us.\n\n</string>
+
+    <string name="your_content_bold">Your content\n\n</string>
+    <string name="your_content_description">It is important that you understand what happens to the content that you create, post or share on the Platform:\n\n</string>
+    <string name="content_responsibility">● You are responsible for the content that you make available on the Platform and you should have all the rights needed to create, post or share content on the Platform.\n</string>
+    <string name="automatic_posting">● When you create, post or share content via one FoodCLUB app, that content may be automatically posted and shared across other FoodCLUB apps (although your privacy settings will still apply across each app).\n</string>
+    <string name="remove_or_restrict">● We may remove or restrict access to any content, including yours, if we reasonably believe (i) it is in breach of these Terms or our Community Guidelines; or (ii) it causes harm to us, Affiliates, our users or other third parties.\n</string>
+    <string name="notification_remove">● If we remove or restrict access to content, we will notify you without undue delay and state the reasons for our decision, unless it is not appropriate for us to do so or we reasonably believe that doing so would cause damage to us, Affiliates, our users or other third parties, or we are legally prevented from doing so. If you think we have made a mistake in removing or restricting access to your content, you can appeal through the appeal functionalities provided on the Platform and we will review our decision and decide again.\n</string>
+    <string name="content_usage">● Depending on your Platform settings, if other users of the Platform have used your content to create new content or shared your content on third-party services, then that new content may stay on the Platform or those third-party services even if you subsequently delete your content or your account.\n</string>
+    <string name="restrict_interaction">● You can restrict how other users interact with and use your content in your Platform settings. You should familiarise yourself with these settings before you post content on the Platform.\n\n</string>
+
+    <string name="ownership_and_licences_bold">Ownership of content and grant of licences\n\n</string>
+    <string name="ownership_and_licences_description">We don’t own your content. If you are the owner of the intellectual property rights in the content that you make available on the Platform, then nothing in these Terms changes that. To provide the Platform, we need certain rights from you (called a licence). The details of these licences are set out below. By creating, posting or otherwise making content available on the Platform, you grant to FoodCLUB a:\n\n</string>
+    <string name="non_exclusive">● non-exclusive (which means that you can licence your content to others),\n</string>
+    <string name="royalty_free">● royalty-free (which means that we don’t pay you for this licence),\n</string>
+    <string name="transferable">● transferable (which means that we can give the rights you give us to someone else),\n</string>
+    <string name="sub_licensable">● sub-licensable (which means that we can licence your content to others, e.g. to service providers that help us to provide the Platform or to trusted third parties that have entered into agreements with us to operate, develop and provide the Platform) and\n</string>
+    <string name="worldwide_licence">● worldwide (which means that the licence applies anywhere in the world) licence to use your content, including to reproduce (e.g. to copy), adapt or make derivative works (e.g. to translate and/or create captions), perform and communicate your content to the public (e.g. to display it), for the purposes of operating, developing and providing the Platform, subject to your Platform settings.\n\n</string>
+    <string name="licence_to_affiliates">The licence to your content that you grant to us extends to Affiliates as part of making the Platform available.\n\n</string>
+    <string name="user_licence">You also grant to each user of the Platform a non-exclusive, royalty-free, worldwide licence to access and use your content, including to reproduce (e.g. to copy, share or download), adapt or make derivative works (e.g. to include your content in their content) perform and communicate that content to the public (e.g. to display it) using the features and functions of the Platform for entertainment purposes, subject to your Platform settings.\n\n</string>
+    <string name="licence_end">Your licences to FoodCLUB and to users end when you close your account or when you or we remove your content from the Platform in accordance with these Terms. However, due to the nature of the Platform and our legal obligations, the licence granted will continue after you have removed your content to the extent that:\n\n</string>
+    <string name="licence_continuation">● you have allowed, via your Platform settings, other users of the Platform to use or reuse your content (e.g. by using Duet, Stitch, download or share functionalities); or\n</string>
+    <string name="legal_obligations">● we are obliged to store or process your content for legal reasons.\n\n</string>
+    <string name="comments_licence">If you choose to submit comments, ideas or feedback to us, you agree that we are free to use them for the purposes of operating, developing, improving and providing the Platform without compensation to you.\n\n</string>
+    <string name="short_summary_licences">In short: When you post content to the Platform, it remains yours, but we can show it to other users and use it to provide the Platform and other users may be able to use it too. That is what our Platform is all about. If you later take it down, copies of it made by other users may remain on the Platform.\n\n</string>
+
+    <!-- 5. What we promise to you -->
+    <string name="promise_to_you_bold">5. What we promise to you\n\n</string>
+    <string name="platform_promise_description">We promise to provide the Platform to you with reasonable skill and care and to act with professional diligence for so long as we choose to offer the Platform. We will also take all reasonable steps to keep the Platform a safe and secure environment for our users. We do not promise to offer the Platform forever or in its current form for any particular period of time.\n\n</string>
+    <string name="user_generated_content_disclaimer">The content on the Platform is mostly user-generated content or provided by third-party business users. In other words, FoodCLUB is not the creator of most of the content on the Platform (although FoodCLUB may produce some content). Therefore, subject to any mandatory regulations or laws (including sectorial regulations or laws) applicable to FoodCLUB, FoodCLUB cannot and does not promise that any of the content generated by users that you find on the Platform:\n</string>
+    <string name="user_content_disclaimer_1">● is accurate, complete, or up-to-date;\n</string>
+    <string name="user_content_disclaimer_2">● does not infringe third party rights;\n</string>
+    <string name="user_content_disclaimer_3">● is legal; or that it\n</string>
+    <string name="user_content_disclaimer_4">● will not offend you.\n\n</string>
+    <string name="user_content_disclaimer_summary">You understand and agree that the content you may see on the Platform does not represent our views or values and may not be suited to your purpose.\n\n</string>
+    <string name="third_party_links_disclaimer">The Platform may contain links to third-party websites, advertisements, services, offers, or other events or activities that are not provided, owned, or controlled by FoodCLUB. We do not endorse any such third-party websites, advertisements, services, offers, events, activities, information, materials, or products. You use them at your own risk.\n\n</string>
+    <string name="limitation_of_responsibility">Provided that we have acted with professional diligence, we do not take responsibility for loss or damage caused by us, unless it is:\n\n</string>
+    <string name="limitation_of_responsibility_1">● caused by our breach of these Terms; or\n</string>
+    <string name="limitation_of_responsibility_2">● reasonably foreseeable at the time of entering into these Terms (i.e. either it is obvious that it will happen or if, at the time of this contract, it is known that it might happen).\n\n</string>
+    <string name="beyond_our_control_disclaimer">We do not take responsibility for loss or damage if it is caused by events beyond our reasonable control.\n\n</string>
+    <string name="statutory_rights_notice">Nothing in these Terms affects any statutory rights that you cannot contractually agree to alter or give up, or are legally always entitled to as a consumer.\n\n</string>
+    <string name="unlawful_exclusion_notice">We do not exclude or limit in any way our liability to you where it would be unlawful to do so. You will always have the full protections of the laws that apply to you.\n\n</string>
+    <string name="eea_consumer_guarantee">If you are an EEA-based consumer, then EEA consumer laws provide you with a legal guarantee covering the Platform. If you have any questions about your legal guarantee, please contact us here.\n\n</string>
+    <string name="platform_experience_summary">In short: We will always seek to provide you with a great and safe user experience, but you take the Platform as it is and understand that we do not control everything that is on it. We also cannot promise that all the content posted on the Platform is to your liking. If you are an EEA consumer, you have a legal guarantee covering the Platform, and you can make a guarantee claim by contacting us.\n\n</string>
+
+    <!-- 6. Suspending or ending our relationship -->
+    <string name="suspending_ending_relationship_bold">6. Suspending or ending our relationship\n\n</string>
+    <string name="your_rights_description">Your rights\n\n</string>
+    <string name="close_account_instructions">You may end your relationship with FoodCLUB at any time by simply closing your account and stopping your use of the Platform. Instructions for how to do this are in our Help Centre.\n\n</string>
+    <string name="content_availability">However, depending on your Platform settings, some of your content may still be available on the Platform after you delete your account.\n\n</string>
+    <string name="eea_consumer_close_account">If you are an EEA-based consumer, then you can also close your account and withdraw from this contract at any time, either in-app or using the model withdrawal form here.\n\n</string>
+    <string name="closing_account_summary">In short: We want you to stay, but you can go whenever you want if you close your account and stop using the Platform. Your account applies across the Platform, so when you close your account within one FoodCLUB app, you will lose access to your account across all other FoodCLUB apps.\n\n</string>
+
+    <string name="foodclubs_rights_description">FoodCLUB’s rights\n\n</string>
+    <string name="investigate_and_take_down">In the event of any suspected breach of these Terms and our Community Guidelines, we may investigate. While we do so, we are allowed to take down some or all of your content, or suspend your access to some or all the features of the Platform, acting reasonably and objectively depending on the seriousness of the suspected breach.\n\n</string>
+    <string name="suspend_or_terminate_account">We, subsequently, might determine to temporarily or permanently suspend or terminate your account, or impose limits on, or restrict your access to features of the Platform if:\n</string>
+    <string name="material_or_repeated_breach">● we determine, acting reasonably and objectively, that you are in material or repeated breach of these Terms or our Community Guidelines;\n</string>
+    <string name="about_to_seriously_breach">● we have objective grounds to reasonably believe that you are about to seriously breach these Terms or our Community Guidelines;\n</string>
+    <string name="legally_required">● we are legally required to do so; or\n</string>
+    <string name="dealing_with_technical_issue">● it is reasonably required in response to dealing with a serious technical or security issue.\n\n</string>
+    <string name="previously_terminated_account">If we have previously terminated your account for breaches of these Terms or Community Guidelines, but you use our Platform again (for example, by opening another account), we are entitled to suspend or terminate any such accounts.\n\n</string>
+    <string name="notify_in_advance">We will notify you in advance in order to allow you time to download your data in-app (more information about how to do this is available here), unless it is not appropriate for us to do so or we reasonably believe that continued access to your account will cause damage to us, Affiliates, our users or other third parties, or we are legally prevented from doing so.\n\n</string>
+    <string name="appeal_mistake">If you think we have made a mistake in suspending or terminating your account, you can appeal through the appeal functionalities provided on the Platform or by clicking here and we will review our decision and decide again.\n\n</string>
+    <string name="suspension_termination_loss">For the avoidance of doubt, if we suspend or terminate your account, or you delete your account, you will lose access to all FoodCLUB apps.\n\n</string>
+
+    <!-- 7. Changes to these Terms or the Platform -->
+    <string name="changes_to_terms_bold">7. Changes to these Terms or the Platform\n\n</string>
+    <string name="what_happens_when_changes_description">What happens when we make changes\n\n</string>
+    <string name="make_changes_to_terms_platform">We may make changes to these Terms or the Platform from time to time. If we do, we will consider your reasonable interests before doing so.\n\n</string>
+    <string name="advance_notice_of_changes">We will also give you reasonable advance notice, in a transparent manner, of significant changes which will impact you and the date that they will come into force. The changes will only apply to our relationship going forward.\n\n</string>
+    <string name="urgent_changes_security">Where we need to make urgent changes for security, safety, legal or regulatory requirements, we may not be able to provide you with advance notice, but we will let you know as soon as we are able to.\n\n</string>
+    <string name="disagree_stop_using_platform">If you do not agree to the changes to the Terms or the Platform, you will have to stop using the Platform.\n\n</string>
+    <string name="short_summary_changes">In short: If these Terms change, we will tell you. It won’t change anything between us that has happened already but, if you want to keep using the Platform in the future, you will need to agree to the changes. Our Platform will evolve as we improve it.\n\n</string>
+    <string name="reasons_for_changes_bold">Reasons for changes\n\n</string>
+    <string name="reasons_for_changes_description">Reasons that we might make changes to these Terms or the Platform are:\n\n</string>
+    <string name="beyond_our_reasonable_control">● changes in circumstances beyond our reasonable control;\n</string>
+    <string name="changes_in_law">● changes in the law;\n</string>
+    <string name="platform_development_changes">● changes we make to the Platform in the usual course of developing our product;\n</string>
+    <string name="adapt_to_new_technologies">● to adapt to new technologies;\n</string>
+    <string name="reflect_changes_in_users">● to reflect changes in the number of people who use the Platform or any relevant feature or functionality of the Platform; or\n</string>
+    <string name="address_security_issue">● to address a security issue.\n\n</string>
+    <string name="short_summary_changes_2">In short: Our Platform will not stay the same forever, but we will be transparent when we make major changes.\n\n</string>
+
+    <!-- 8. Resolving disputes -->
+    <string name="resolving_disputes_bold">8. Resolving disputes\n\n</string>
+    <string name="governed_by_law">These Terms are governed by the law of the jurisdiction in which you are a resident.\n\n</string>
+    <string name="try_resolve_amicably">If we have a dispute, we will first try and resolve it with you amicably.\n\n</string>
+    <string name="cannot_resolve_dispute">If we cannot resolve our dispute, you or we can go to your local courts. You can also go to the following courts:\n\n</string>
+    <string name="courts_in_england_wales">● the courts of England &amp; Wales will have non-exclusive jurisdiction over disputes with FoodCLUB APP LTD.\n\n</string>
+    <string name="resident_in_eea">If you are resident in the EEA, you can also raise the dispute with an alternative dispute resolution body via the EU Commission’s Online Dispute Resolution (ODR) Platform.\n\n</string>
+    <string name="short_summary_disputes">In short: We hope we do not get into a dispute but, if we do, there are a couple of ways we can try to resolve it.\n\n</string>
+
+    <!-- 9. Other -->
+    <string name="other_bold">9. Other\n\n</string>
+    <string name="terms_permissions_not_transferred">These Terms, and any rights and permissions granted in them, may not be transferred or assigned by you, but may be assigned by FoodCLUB without restriction. If we do so, this will not affect your rights as a consumer. And, if you are not happy, you always have the right to terminate this contract and stop using the Platform at any time.\n\n</string>
+    <string name="other_in_short_text">In short: We have no plans to do so, but, if in the future we sell all or part of, or re-organise our business, another company may end up providing the Platform to you.\n\n</string>
+    <string name="we_may_reclaim_account">We may reclaim your account name and might make it available to other users when you have not logged into your account for 6 months or if we reasonably believe that your account name violates our Terms and/or Community Guidelines (e.g. your account name violates third party trademark).\n\n</string>
+    <string name="reclaim_account_short">In short: We may reclaim your account name in certain circumstances.\n\n</string>
+    <string name="delay_enforcing_provision">Even if we or you delay in enforcing a provision of these Terms, either of us can still enforce it later. If we or you do not insist immediately that you or we do anything the other is required to do under these Terms, or if there is a delay in taking steps against the other in respect of breaching these Terms, that will not mean that we or you do not have to do those things and it will not prevent us or you from taking steps against the other at a later date.\n\n</string>
+    <string name="short_terms_agreement">In short: Just because you or we do not rely on one of these Terms, this does not change the fact that we both agree that these Terms, as written, are the agreement between us.\n\n</string>
+
+    <!-- 10. Contact FoodCLUB -->
+    <string name="contact_foodclub_bold">10. Contacting FoodCLUB\n\n</string>
+    <string name="contact_information">You can contact us here: tech@foodclub.live\n\n</string>
+    <string name="additional_regulatory_info">In some countries, the law requires us to provide additional regulatory information and/or contact points within the country, even though we may not be physically present there.\n\n</string>
+
+   Home Screens
+    - View Stories
+    <string name="profile_image">Profile Image</string>
+    - Uploading
+    <string name="uploading">Uploading…</string>
+    -Uploaded
+    <string name="uploaded">Successfully Uploaded!</string>
+    <string name="post">Post</string>
+    <string name="sharing_thanks">Thanks For Sharing On FoodCLUB!</string>
+    <string name="instagram_share">Share to Instagram</string>
+    <string name="tiktok_share">Share to TikTok</string>
+    -Take Photo
+    <string name="take_photo">Take Photo</string>
+    <string name="switch_camera">Switch Camera</string>
+    <string name="close_camera">Close Camera</string>
+    -Settings Notifications
+    <string name="general_notifications">General notifications</string>
+    <string name="system_and_service">System &amp; Service update</string>
+    <string name="app_updates">App updates</string>
+    <string name="payment_request">Payment request</string>
+    - Search
+    <string name="recent_searches">Recent Searches</string>
+    <string-array name="dummy_search_history">
+        <item>Pizza</item>
+        <item>Easy and Quick</item>
+        <item>For Children</item>
+    </string-array>
+    <string name="add_to_basket">Add to Basket</string>
+    <string name="dummy_badge_number">5</string>
+    <string-array name="search_tabs">
+        <item>All</item>
+        <item>Recipes</item>
+        <item>Creators</item>
+    </string-array>
+    - Discover
+    <string name="discover_view">DiscoverView</string>
+    <string-array name="discover_tabs">
+        <item>My Kitchen</item>
+        <item>World</item>
+        <item>Categories</item>
+    </string-array>
+    <string name="see_all_ingredients">See all ingredients</string>
+    <string name="search_for">Search for recipes, usernames…</string>
+    <string name="my_kitchen">My Kitchen</string>
+    <string name="search_to">Search to find or add…</string>
+    <string-array name="discover_sub_tabs">
+        <item>Veg &amp; Fruits</item>
+        <item>Grains &amp; Cereals</item>
+        <item>Dairy &amp; Alternatives</item>
+    </string-array>
+    <string name="edit">Edit</string>
+    <string name="gram_unit">g</string>
+    <string-array name="quantity_list">
+        <item>Pint</item>
+        <item>Jar</item>
+        <item>Cup</item>
+        <item>Bottle</item>
+        <item>Bag</item>
+        <item>Sack</item>
+        <item>Can</item>
+    </string-array>
+    <string name="added">Added!</string>
+    <string name="successfully_added"> Successfully added %1$d ingredient in your digital pantry, now you cna start your FoodCLUB journey!</string>
+    <string name="scanning_completed_heading">Scanning completed!</string>
+    <string name="ingredients_import_notification">%1$d items were detected in your fridge
+        and the results will be imported now…</string>
+    - Profile
+    <string name="loading">Loading…</string>
+    <string name="followers">Followers</string>
+    <string name="following">Following</string>
+    <string name="profile_picture">Profile Picture</string>
+    <string name="profile_picture_edit">Edit Profile Picture</string>
+    <string name="select_from_gallery">Select from Gallery</string>
+    <string name="follow">Follow</string>
+    <string name="unfollow">Unfollow</string>
+    <string name="upload_photo">Upload Photo</string>
+    <string name="my_recipes">My Recipes</string>
+    <string name="bookmarked">Bookmarked</string>
+    <string-array name="profile_tabs">
+        <item>My Recipes</item>
+        <item>Bookmarked</item>
+    </string-array>
+    - My Digital Pantry
+    <string name="my_digital_pantry">My Digital Pantry</string>
+    <string name="save">Save</string>
+    <string name="edit_item">Edit Item</string>
+    <string name="all_my_ingredients">All My Ingredients</string>
+    <string name="digitalPantry">DigitalPantry</string>
+    <string name="search_my_ingredients">Search my ingredients</string>
+    <string name="name">Name</string>
+    <string name="quantity">Quantity</string>
+    <string name="unit">Unit</string>
+    <string name="expiration_date">Expiration Date</string>
+    <string name="remove">Remove</string>
+    <string name="quantity_colon">Quantity:</string>
+    - My Basket
+    <string name="my_basket">My Basket</string>
+    <string name="add_items_plus">Add items +</string>
+    - Main
+    <string name="home">Home</string>
+    <string name="discover">Discover</string>
+    <string name="navigation_icon">Navigation Icon</string>
+    <string name="create_a_story">Create a Story</string>
+    <string name="create_a_recipe">Create a Recipe</string>
+    - Home
+    <string name="weight_placeholder">200g</string>
+    <string name="tap_to_snap">Tap to Snap</string>
+    <string name="tap_to_snap_subheading">Are you ready? Its time to post a snap. Save this moment and share it with your friends.</string>
+    <string name="hand">Hand</string>
+    <string name="memories">Memories</string>
+    <string name="meat">Meat</string>
+    <string name="snaps">Snaps</string>
+    <string name="feed">Feed</string>
+    <string name="add_to_my_shopping_list">Add to my shopping list</string>
+    <string name="example_ingredient">Broccoli oil</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="clear">Clear</string>
+    <string name="serving_size">Serving Size</string>
+    <string name="copy_clip">Copy clip</string>
+    <string name="example_recipe">Chicken broth and meatballs</string>
+    - Gallery
+    <string name="gallery">Gallery</string>
+    <string name="story">story</string>
+    <string name="recipe">recipe</string>
+    <string name="image">image</string>
+    <string name="images">Images</string>
+    <string name="video">Video</string>
+    - Follow
+    <string name="no_name_found"> No name found</string>
+    - Camera
+    <string name="camera">Camera</string>
+    <string name="date_format">yyyy-MM-dd-HH-mm-ss-SSS</string>
+     - Create a Recipe
+    <string name="recipe_title">Recipe title</string>
+    <string name="ingredient_offset_transitions">Ingredient Offset Transitions</string>
+    <string name="share_recipe">Share Recipe</string>
+    <string name="categories">Categories</string>
+    <string name="vegan">Vegan</string>
+    <string name="serving_size_colon">Serving Size: %d</string>
+    <string name="add_my_recipes_name">Add my recipes name</string>
+    <string name="my_new_recipe">My New Recipe</string>
+     - Delete Recipe
+    <string name="delete_recipe">Delete Recipe</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="delete_video">Delete Video?</string>
+    <string name="delete_video_message">Are you sure you want to delete this video? This action cannot be undone.</string>
+    - Settings
+    <string name="settings">Settings</string>
+    <string name="notifications">Notifications</string>
+    <string name="user_images">User Images</string>
+    <string name="log_out">Log Out</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="contact_us">Contact Us</string>
+    <string name="help_and_support">Help &amp; Support</string>
+    <string name="privacy_settings">Privacy Settings</string>
+    <string name="edit_profile_information">Edit Profile Information</string>
+    <string name="edit_profile_warning">After this, a confirmation email will be sent to your email account in order to confirm your address.</string>
+    <string name="update">Update</string>
+    <string name="settings_full_name">Full name</string>
+    - Privacy
+    <string name="privacy">Privacy Settings</string>
+    <string name="sent_your_data_request">If you would like to get sent your data, make changes to it or delete it, send an email to tech@foodclub.live</string>
+    - Edit Profile
+    <string name="edit_profile">Edit Profile</string>
+    <string name="new_password">New Password</string>
+    - Future Topic Vote
+    <string name="future_topic_vote">Future Topic Vote</string>
+    <string name="send_votes">Send Votes</string>
+    <string name="default_text">Default Text</string>
+    <string name="vote_for_future_topics">Vote for future topics</string>
+    <string name="choose_from_the_options_below">Choose from the options below</string>
+    <string-array name="dummy_rice_list">
+        <item>Rice cultivation 1</item>
+        <item>Rice cultivation 2</item>
+        <item>Rice cultivation 3</item>
+        <item>Rice cultivation 4</item>
+    </string-array>
+    - Kitchen Tools
+    <string name="kitchen_tools">Kitchen Tools</string>
+    <string-array name="quiz_buttons">
+        <item>Quiz 1</item>
+        <item>Quiz 2</item>
+        <item>Quiz 3</item>
+    </string-array>
+    <string-array name="learn_buttons">
+        <item>Learn 1</item>
+        <item>Learn 2</item>
+        <item>Learn 3</item>
+    </string-array>
+    <string-array name="card_titles">
+        <item>Kitchen Tools</item>
+        <item>Can Opening</item>
+        <item>Food Prepararation Tools</item>
+    </string-array>
+    <string-array name="card_subtitles">
+        <item>Course Length = Approx 20 mins</item>
+        <item>Course Length = Approx 30 mins</item>
+        <item>Course Length = Approx 25 mins</item>
+    </string-array>
+    - Learning
+    <string name="vote_now">Vote Now</string>
+    <string name="click_to_vote">Click here to vote for future topics</string>
+    <string name="dummy_duration">20 mins</string>
+    <string name="completed">Completed</string>
+    <string name="zero_percent">0%</string>
+    <string name="twenty_percent">20%</string>
+    <string name="forty_percent">40%</string>
+    <string name="course_length">Course Length - Approx</string>
+    <string name="communities">Communities</string>
+    <string name="flavours">Flavours</string>
+    <string name="health">Health</string>
+    <string name="welcome_to_foodskills">Welcome to FoodSKILLS</string>
+    - Input Composables
+    <string name="terms_and_conditions">Terms and Conditions</string>
+    <string name="by_using">By using FoodCLUB you agree to our </string>
+     - Ingredients Bottomsheet
+    <string name="left_arrow">Left Arrow</string>
+    <string name="right_arrow">Right Arrow</string>
+    <string name="add_items">Add items</string>
+    <string name="cancel">Cancel</string>
+    <string name="select_expiration_date">Select Expiration Date</string>
+     - Story Viewer
+    <string name="foodsnaps">foodsnaps</string>
+    <string name="close_story">Close Story</string>
+    <string name="author_photo">Author Photo</string>
+    <string name="time_ago">%d ago</string>
+     - Video Layout
+    <string name="info">Info</string>
+    <string name="bookmark">Bookmark</string>
+    - CreatorsViewDraggableImageText
+    <string name="textfield_placeholder">WRITE YOUR RECIPE NAME HERE</string>
+    - Scan
+    <string name="scan_my_fridge">Scan My Fridge</string>
+    <string name="scan">Scan</string>
+    <string name="maybe_later">Maybe Later</string>
+    <string name="once_youve_finished_scanning">Once you\'ve finished scanning, you can use Search to find ingredients you need</string>
+    <string name="scan_in_progress">Scan in progress…</string>
+    <string name="scan_complete">Scan completed! \nCheckout the scan results below</string>
+    <string name="scan_again">Scan Again</string>
+    <string name="scan_more">Scan More</string>
+    <string name="next">Next</string>
+    <string name="privacy_policy_text">
+        &lt;b>Terms of Service&lt;/b>
+&lt;br>
+&lt;br>
+Last updated: November 2022
+&lt;br>
+
+
+These Terms of Service (“Terms”) contain the agreement between you and FoodCLUB in respect of the Platform described below. Please read these Terms carefully. Please also read our Privacy Policy, Cookies Policy and Community Guidelines.&lt;br>
+You form a contract with us when you confirm that you accept these Terms or when you otherwise use the Platform.&lt;br>
+In short: This is a contract between you and FoodCLUB. You should read it.&lt;br>
+&lt;br>
+&lt;b>1. Who you are contracting with&lt;/b>&lt;br>&lt;br>
+The company that you are contracting with depends on where you are resident:&lt;br>
+&lt;ul>&lt;li>If you are resident in the United Kingdom, your contract is with FoodCLUB APP LTD., which is a company registered in England with its registered office at Wakenhills, Hedgehog Lane, Haslemere, United Kingdom.&lt;/li>&lt;/ul>&lt;br>
+In short: The specific FoodCLUB company that you have a contract with depends on where you are resident. If we say “FoodCLUB”, “we” or “us” in these Terms, we are referring to that specific company unless we say otherwise.&lt;br>
+&lt;br>
+&lt;b>2. What services are covered by these Terms&lt;/b>
+&lt;br>&lt;br>
+These Terms govern your use of FoodCLUB services (the “Platform”), which includes FoodCLUB apps, websites, software and related services, accessed via any platform or device. Our Community Guidelines also form part of our contract with you and, by agreeing to these Terms, you promise to us that you will comply with them.&lt;br>
+To agree you must be 18 or older.&lt;br>
+&lt;br>
+        &lt;b>3. Additional terms and policies that might apply depending on the features you use&lt;/b>
+&lt;br>&lt;br>
+Additional terms and policies may apply to certain products or features of the Platform that we may make available to you, if you post or live stream certain kinds of content, or if you use the Platform for business or commercial purposes. The main ones you should be aware of, and which form part of these Terms, are set out below for your information.
+Intellectual Property Policy: This policy applies to all content on the Platform that is protected by intellectual property rights.
+FoodCLUB Shop Buyer Terms: These terms apply when you buy items on FoodCLUB Shop in the future.&lt;br>
+In short: These Terms cover your use of the Platform. There may be some additional terms and policies that will apply if you want to access additional functionality, post or live stream certain kinds of content, or use the Platform for business or commercial purposes.&lt;br>
+&lt;br>
+        &lt;b>4. Using the Platform&lt;/b>
+&lt;br>&lt;br>
+Our Platform and business model&lt;br>
+The Platform allows you and others to create, view, interact with, and share content, and interact with others. We also personalise your experience on the Platform, which shows you food content based on what we have determined could be interesting for you.&lt;br>
+We want the Platform to be a safe place, so people can be who they are and have fun. We work with our Affiliates and use a mix of technology (including through automated means), human moderation, and reports from our users to identify infringements of and enforce these Terms and our Community Guidelines in order to protect you and all of our users.&lt;br>
+We don\'t charge you a fee to use most of the features of the Platform. Instead, businesses and organisations pay us to show you ads for their products and services, and we may also charge sellers a commission on products sold on FoodCLUB later on.&lt;br>
+Information on how we use data that we collect about you can be found in our Privacy Policy and Cookies Policy. These do not form part of this contract, but are important documents which we strongly recommend that you read.&lt;br>
+The app is mainly free but features are voluntary and any costs will be made clear to you before you are charged anything.&lt;br>
+In short: You do not have to pay for your use of our Platform but, in exchange, we allow third parties to advertise or sell products to you and we receive payment for this.&lt;br>
+&lt;br>
+&lt;b>Account details&lt;/b>
+&lt;br>&lt;br>
+You can use some basic features of the Platform without having an account. If you use the Platform without an account, then these Terms will still apply to such use and we will still process your personal data in accordance with our Privacy Policy.&lt;br>
+To access the full functionality of the Platform, you must create an account with us. We may offer different types of accounts in the future, for example, businesses and for kids in addition.&lt;br>
+Your account details, content and settings (including your privacy settings), and any changes you make, will sync across another FoodCLUB app.&lt;br>
+When you create an account to access and use the Platform, you must provide accurate and up-to-date information about yourself (such as your date of birth). You agree to maintain and promptly update your details if they change. See our Help Center for information on opening an account.&lt;br>
+It is important that you take reasonable steps to keep your account password confidential and that you do not disclose it to any third party. If you know or suspect that any third party knows your password or has accessed your account, please let us know straight away here.&lt;br>
+In short: Your account is important. Keep it safe. Keep your details up to date. When you create an account in one FoodCLUB app, you will be able to access other FoodCLUB apps using that account (provided those apps are available in your country) and your account details, content and settings will sync across those apps.
+&lt;br>&lt;br>
+&lt;b>Minimum age&lt;/b>
+        &lt;br>
+&lt;br>You can only use the Platform if you are 13 years of age or older. We monitor for underage use and we will terminate your account if we reasonably suspect that you are underage. You can appeal our decision to terminate your account if you think we have made a mistake about your age.
+In short: You need to be 13 or over to use our Platform.
+&lt;br>
+        &lt;br>
+&lt;b>What you can do on the Platform&lt;/b>
+&lt;br>
+        &lt;br>
+Under these Terms, you can use the Platform in order to:&lt;br>
+&lt;ul>
+        &lt;li>create and share content;&lt;/li>
+&lt;li>interact with other users;&lt;/li>
+&lt;li>view content created by others; &lt;/li>&lt;/ul>and
+use the features and functionality on the Platform as provided to you from time to time.&lt;br>
+See our Help Center for further information about the features of the Platform and how to use them.&lt;br>
+The permission we give to you:&lt;br>
+is limited to what we have said we will allow in these Terms;
+is only for you;
+cannot be given to anyone else by you; and
+can be withdrawn for the reasons allowed in these Terms.&lt;br>
+Access to certain features of the Platform depends on your age. For example:&lt;br>
+Direct Messaging: You must be aged 16 or older to use the direct messaging functionality.&lt;br>
+Virtual Items: You must be aged 18 or older to interact with virtual items.&lt;br>
+In short: You can do many things on our Platform but you might not be able to use every feature if you are not old enough.&lt;br>&lt;br>
+
+&lt;b>What you can’t do on the Platform&lt;/b>
+&lt;br>&lt;br>
+Our Community Guidelines apply to everyone and to all content on the Platform. If you want to use the Platform, you can’t create, post, share, link to or otherwise interact with content in breach of our Community Guidelines.&lt;br>
+In any event, you must not use the Platform to:&lt;br>
+do anything illegal;&lt;br>
+do anything that violates applicable anti-money laundering, counter terrorist financing, export controls and economic sanctions laws or regulations;
+negatively impact the enjoyment of other users;&lt;br>
+engage with minors in an exploitative or inappropriate way;&lt;br>
+undermine the Platform’s operations or security;&lt;br>
+extract any data or content from the Platform using any automated system or software; or&lt;br>
+use or attempt to use another user’s account without authorisation.&lt;br>
+You must also not post, live stream or otherwise distribute any content on the Platform which:&lt;br>
+infringes anyone else’s rights (such as intellectual property, privacy and/or personality rights of living or deceased people);&lt;br>
+constitutes, encourages or provides instructions for a criminal offence, or dangerous activities that may lead to serious injury or death or self-harm;
+spreads harmful misinformation such as misinformation that incites hate or prejudice or that misleads about or improperly influences elections or other civic processes;
+contains a threat of any kind or which intimidates or harasses others, including posting any material that is intended to mock, humiliate, embarrass, intimidate, or hurt an individual;
+is obscene, pornographic, hateful or inflammatory or which promotes sexually explicit material (e.g. by linking to adult or pornographic websites);
+contains or promotes violence or discrimination based on race, ethnicity, national origin, religion, caste, sexual orientation, sex, gender identity, serious disease, disability, immigration status or age; or
+otherwise contains harmful content (such as content that causes physical, mental or moral detriment to minors).
+If you post content on the Platform about a brand or a product in return for any payment or other incentive, you must comply with the Branded Content Policy. You must use appropriate disclosures including any functionality the Platform provides to ensure that any posts that are, for example, sponsored are clear. For more details about Branded Content on the Platform, see here. In addition, in relation to any such content you must not:
+use surreptitious or subliminal techniques;
+prejudice respect for human dignity;
+include or promote any discrimination based on sex, racial or ethnic origin, nationality, religion or belief, disability, age or sexual orientation;
+encourage behaviour prejudicial to health or safety or which is grossly prejudicial to the protection of the environment;
+cause physical, mental or moral detriment to minors;
+directly exhort minors to buy or hire a product or service or directly encourage minors to persuade their parents or others to purchase goods or services being advertised; or
+exploit the special trust minors place in parents, teachers or other persons, or show minors in dangerous situations.
+We respect copyright and other intellectual property rights. Please read our Intellectual Property policy. You can report suspected infringements of intellectual property rights on the Platform here:
+Copyright: (insertwebform)
+Trademark: (insert webform)
+You can report suspected illegal content or content which otherwise breaches these Terms or our Community Guidelines through the reporting functionalities provided on the Platform or here.
+In short: Enjoy using our Platform but, for the benefit of all our users, there are rules you need to follow. If you see something that should not be on our Platform, please tell us.
+&lt;br>&lt;br>
+&lt;b>Your content &lt;/b>
+&lt;br>&lt;br>
+It is important that you understand what happens to the content that you create, post or share on the Platform:
+You are responsible for the content that you make available on the Platform and you should have all the rights needed to create, post or share content on the Platform.
+When you create, post or share content via one FoodCLUB app, that content may be automatically posted and shared across other FoodCLUB apps (although your privacy settings will still apply across each app).
+We may remove or restrict access to any content, including yours, if we reasonably believe (i) it is in breach of these Terms or our Community Guidelines; or (ii) it causes harm to us, Affiliates, our users or other third parties.
+If we remove or restrict access to content, we will notify you without undue delay and state the reasons for our decision, unless it is not appropriate for us to do so or we reasonably believe that doing so would cause damage to us, Affiliates, our users or other third parties, or we are legally prevented from doing so. If you think we have made a mistake in removing or restricting access to your content, you can appeal through the appeal functionalities provided on the Platform and we will review our decision and decide again.
+Depending on your Platform settings, if other users of the Platform have used your content to create new content or shared your content on third party services, then that new content may stay on the Platform or those third party services even if you subsequently delete your content or your account.
+You can restrict how other users interact with and use your content in your Platform settings. You should familiarise yourself with these settings before you post content on the Platform.
+&lt;br>&lt;br>
+&lt;b>Ownership of content and grant of licences&lt;/b>
+&lt;br>&lt;br>
+We don’t own your content. If you are the owner of the intellectual property rights in the content that you make available on the Platform, then nothing in these Terms changes that.
+To provide the Platform, we need certain rights from you (called a licence). The details of these licences are set out below.
+By creating, posting or otherwise making content available on the Platform, you grant to FoodCLUB a:
+non-exclusive (which means that you can licence your content to others),
+royalty-free (which means that we don’t pay you for this licence),
+transferable (which means that we can give the rights you give us to someone else),
+sub-licensable (which means that we can licence your content to others, e.g. to service providers that help us to provide the Platform or to trusted third parties that have entered into agreements with us to operate, develop and provide the Platform) and
+worldwide (which means that the licence applies anywhere in the world) licence to use your content, including to reproduce (e.g. to copy), adapt or make derivative works (e.g. to translate and/or create captions), perform and communicate your content to the public (e.g. to display it), for the purposes of operating, developing and providing the Platform, subject to your Platform settings.
+The licence to your content that you grant to us extends to Affiliates as part of making the Platform available.
+You also grant to each user of the Platform a non-exclusive, royalty-free, worldwide licence to access and use your content, including to reproduce (e.g. to copy, share or download), adapt or make derivative works (e.g. to include your content in their content) perform and communicate that content to the public (e.g. to display it) using the features and functions of the Platform for entertainment purposes, subject to your Platform settings.
+Your licences to FoodCLUB and to users end when you close your account or when you or we remove your content from the Platform in accordance with these Terms. However, due to the nature of the Platform and our legal obligations, the licence granted will continue after you have removed your content to the extent that:
+you have allowed, via your Platform settings, other users of the Platform to use or reuse your content (e.g. by using Duet, Stitch, download or share functionalities); or
+we are obliged to store or process your content for legal reasons.
+If you choose to submit comments, ideas or feedback to us, you agree that we are free to use them for the purposes of operating, developing, improving and providing the Platform without compensation to you.
+In short: When you post content to the Platform, it remains yours, but we can show it to other users and use it to provide the Platform and other users may be able to use it too. That is what our Platform is all about. If you later take it down, copies of it made by other users may remain on the Platform.
+&lt;br>&lt;br>
+&lt;b>5. What we promise to you &lt;/b>
+&lt;br>&lt;br>
+We promise to provide the Platform to you with reasonable skill and care and to act with professional diligence for so long as we choose to offer the Platform. We will also take all reasonable steps to keep the Platform a safe and secure environment for our users. We do not promise to offer the Platform forever or in its current form for any particular period of time.
+The content on the Platform is mostly user generated content or provided by third party business users. In other words, FoodCLUB is not the creator of most of the content on the Platform (although FoodCLUB may produce some content). Therefore, subject to any mandatory regulations or laws (including sectorial regulations or laws) applicable to FoodCLUB, FoodCLUB cannot and does not promise that any of the content generated by users that you find on the Platform:
+is accurate, complete or up-to-date;
+does not infringe third party rights;
+is legal; or that it
+will not offend you.
+You understand and agree that the content you may see on the Platform does not represent our views or values and may not be suited to your purpose.
+The Platform may contain links to third party websites, advertisements, services, offers or other events or activities that are not provided, owned or controlled by FoodCLUB. We do not endorse any such third party websites, advertisements, services, offers, events, activities, information, materials or products. You use them at your own risk.
+Provided that we have acted with professional diligence, we do not take responsibility for loss or damage caused by us, unless it is:
+caused by our breach of these Terms; or
+reasonably foreseeable at the time of entering into these Terms (i.e. either it is obvious that it will happen or if, at the time of this contract, it is known that it might happen).
+We do not take responsibility for loss or damage if it is caused by events beyond our reasonable control.
+Nothing in these Terms affects any statutory rights that you cannot contractually agree to alter or give up, or are legally always entitled to as a consumer.
+We do not exclude or limit in any way our liability to you where it would be unlawful to do so. You will always have the full protections of the laws that apply to you.
+If you are an EEA-based consumer, then EEA consumer laws provide you with a legal guarantee covering the Platform. If you have any questions about your legal guarantee, please contact us here.
+In short: We will always seek to provide you with a great and safe user experience, but you take the Platform as it is and understand that we do not control everything that is on it. We also cannot promise that all the content posted on the Platform is to your liking. If you are an EEA consumer, you have a legal guarantee covering the Platform, and you can make a guarantee claim by contacting us.
+&lt;br>&lt;br>
+&lt;b>6. Suspending or ending our relationship&lt;/b>
+&lt;br>&lt;br>
+Your rights
+&lt;br>
+You may end your relationship with FoodCLUB at any time by simply closing your account and stopping your use of the Platform. Instructions for how to do this are in our Help Centre. However, depending on your Platform settings, some of your content may still be available on the Platform after you delete your account.
+If you are an EEA-based consumer, then you can also close your account and withdraw from this contract at any time, either in-app or using the model withdrawal form here.
+In short: We want you to stay, but you can go whenever you want if you close your account and stop using the Platform. Your account applies across the Platform, so when you close your account within one FoodCLUB app, you will lose access to your account across all other FoodCLUB apps.
+&lt;br>
+FoodCLUB’s rights
+&lt;br>
+In the event of any suspected breach of these Terms and our Community Guidelines, we may investigate. While we do so, we are allowed to take down some or all of your content, or suspend your access to some or all the features of the Platform, acting reasonably and objectively depending on the seriousness of the suspected breach.
+We, subsequently, might determine to temporarily or permanently suspend or terminate your account, or impose limits on, or restrict your access to features of the Platform if:
+we determine, acting reasonably and objectively, that you are in material or repeated breach of these Terms or our Community Guidelines;
+we have objective grounds to reasonably believe that you are about to seriously breach these Terms or our Community Guidelines;
+we are legally required to do so; or
+it is reasonably required in response to dealing with a serious technical or security issue.
+If we have previously terminated your account for breaches of these Terms or Community Guidelines, but you use our Platform again (for example, by opening another account), we are entitled to suspend or terminate any such accounts.
+We will notify you in advance in order to allow you time to download your data in-app (more information about how to do this is available here), unless it is not appropriate for us to do so or we reasonably believe that continued access to your account will cause damage to us, Affiliates, our users or other third parties, or we are legally prevented from doing so.
+If you think we have made a mistake in suspending or terminating your account, you can appeal through the appeal functionalities provided on the Platform or by clicking here and we will review our decision and decide again.
+For the avoidance of doubt, if we suspend or terminate your account, or you delete your account, you will lose access to all FoodCLUB apps.
+In short: We have rules and, if you break them, FoodCLUB can take action against you which may include closing your account. When your account is suspended or closed you will lose your access to the Platform, including all FoodCLUB apps.
+&lt;br>&lt;br>
+&lt;b>7. Changes to these Terms or the Platform&lt;/b>
+&lt;br>&lt;br>
+What happens when we make changes
+&lt;br>
+We may make changes to these Terms or the Platform from time to time. If we do, we will consider your reasonable interests before doing so.
+We will also give you reasonable advance notice, in a transparent manner, of significant changes which will impact you and the date that they will come into force. The changes will only apply to our relationship going forward.
+Where we need to make urgent changes for security, safety, legal or regulatory requirements, we may not be able to provide you with advance notice, but we will let you know as soon as we are able to.
+If you do not agree to the changes to the Terms or the Platform, you will have to stop using the Platform.
+In short: If these Terms change, we will tell you. It won’t change anything between us that has happened already but, if you want to keep using the Platform in the future, you will need to agree to the changes. Our Platform will evolve as we improve it.
+&lt;br>
+Reasons for changes
+&lt;br>
+Reasons that we might make changes to these Terms or the Platform are:
+changes in circumstances beyond our reasonable control;
+changes in the law;
+changes we make to the Platform in the usual course of developing our product;
+to adapt to new technologies;
+to reflect changes in the number of people who use the Platform or any relevant feature or functionality of the Platform; or
+to address a security issue.
+In short: Our Platform will not stay the same forever, but we will be transparent when we make major changes.
+&lt;br>&lt;br>
+&lt;b>8. Resolving disputes&lt;/b>
+&lt;br>&lt;br>
+These Terms are governed by the law of the jurisdiction in which you are a resident.
+If we have a dispute, we will first try and resolve it with you amicably.
+If we cannot resolve our dispute, you or we can go to your local courts. You can also go to the following courts:
+the courts of England &amp; Wales will have non-exclusive jurisdiction over disputes with FoodCLUB APP LTD.
+If you are resident in the EEA, you can also raise the dispute with an alternative dispute resolution body via the EU Commission’s Online Dispute Resolution (ODR) Platform.
+In short: We hope we do not get into a dispute but, if we do, there are a couple of ways we can try to resolve it.
+&lt;br>&lt;br>
+&lt;b>9. Other&lt;/b>
+&lt;br>&lt;br>
+These Terms, and any rights and permissions granted in them, may not be transferred or assigned by you, but may be assigned by FoodCLUB without restriction. If we do so, this will not affect your rights as a consumer. And, if you are not happy, you always have the right to terminate this contract and stop using the Platform at any time.
+In short: We have no plans to do so, but, if in the future we sell all or part of, or re-organise our business, another company may end up providing the Platform to you.
+We may reclaim your account name and might make it available to other users when you have not logged into your account for 6 months or if we reasonably believe that your account name violates our Terms and/or Community Guidelines (e.g. your account name violates third party trademark).
+In short: We may reclaim your account name in certain circumstances.
+Even if we or you delay in enforcing a provision of these Terms, either of us can still enforce it later. If we or you do not insist immediately that you or we do anything the other is required to do under these Terms, or if there is a delay in taking steps against the other in respect of breaching these Terms, that will not mean that we or you do not have to do those things and it will not prevent us or you from taking steps against the other at a later date.
+In short: Just because you or we do not rely on one of these Terms, this does not change the fact that we both agree that these Terms, as written, are the agreement between us.
+&lt;br>&lt;br>
+&lt;b>10. Contacting FoodCLUB&lt;/b>
+&lt;br>&lt;br>
+You can contact us here: tech@foodclub.live
+In some countries, the law requires us to provide additional regulatory information and/or contact points within the country, even though we may not be physically present there.
+
+    </string>
+
 </resources>

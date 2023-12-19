@@ -1,12 +1,17 @@
 package android.kotlin.foodclub.di
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.kotlin.foodclub.network.retrofit.utils.auth.RefreshTokenManager
 import android.kotlin.foodclub.domain.models.products.MyBasketCache
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
+import android.kotlin.foodclub.repositories.ProductRepository
+import android.kotlin.foodclub.viewModels.home.myBasket.MyBasketViewModel
+import android.kotlin.foodclub.utils.helpers.ConnectivityUtils
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Named
 import javax.inject.Singleton
@@ -36,4 +41,17 @@ object AppModule {
     ): MyBasketCache {
         return MyBasketCache(basketPreferences, sessionCache)
     }
+
+    @Provides
+    @Singleton
+    fun provideMyBasketViewModel(
+        basketCache: MyBasketCache,
+        productRepository: ProductRepository
+    ): MyBasketViewModel = MyBasketViewModel(basketCache, productRepository)
+
+    @Provides
+    @Singleton
+    fun provideConnectivityUtils(
+        @ApplicationContext context: Context
+    ): ConnectivityUtils = ConnectivityUtils(context)
 }

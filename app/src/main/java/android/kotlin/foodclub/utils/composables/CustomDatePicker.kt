@@ -1,6 +1,8 @@
 package android.kotlin.foodclub.utils.composables
 
+import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -43,17 +47,18 @@ fun CustomDatePicker(
                 shape = RectangleShape,
                 modifier = Modifier
                     .border(
-                        1.dp,
+                        dimensionResource(id = R.dimen.dim_1),
                         foodClubGreen,
-                        shape = RoundedCornerShape(15.dp)
+                        shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
                     )
-                    .clip(RoundedCornerShape(15.dp)
+                    .clip(
+                        RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
                     ),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = foodClubGreen,
                     contentColor = Color.White
                 ),
-                contentPadding = PaddingValues(15.dp),
+                contentPadding = PaddingValues( dimensionResource(id = R.dimen.dim_15)),
                 onClick = {
                     val selected = datePickerState.selectedDateMillis
                     if (selected != null){
@@ -64,7 +69,7 @@ fun CustomDatePicker(
                     onDismiss()
                 })
             {
-                Text("Save")
+                Text(text = stringResource(id = R.string.save))
             }
         },
         dismissButton = {
@@ -72,21 +77,21 @@ fun CustomDatePicker(
                 shape = RectangleShape,
                 modifier = Modifier
                     .border(
-                        1.dp,
+                        dimensionResource(id = R.dimen.dim_1),
                         Color.Gray,
-                        shape = RoundedCornerShape(15.dp)
+                        shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
                     )
-                    .clip(RoundedCornerShape(15.dp)),
+                    .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Gray,
                     contentColor = Color.White
                 ),
-                contentPadding = PaddingValues(15.dp),
+                contentPadding = PaddingValues( dimensionResource(id = R.dimen.dim_15)),
                 onClick = {
                     onDismiss()
                 })
             {
-                Text("Cancel")
+                Text( text = stringResource(id = R.string.cancel))
             }
         },
         colors = datePickerDialogColors
@@ -96,7 +101,7 @@ fun CustomDatePicker(
             colors = datePickerColors,
             title = {
                 Text(
-                    "Select Expiration Date",
+                    text = stringResource(id = R.string.select_expiration_date),
                     color = foodClubGreen
                 )
             }

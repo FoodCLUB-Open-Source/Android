@@ -1,7 +1,10 @@
 package android.kotlin.foodclub.views.home
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.BottomSheetItem
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,12 +22,15 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
@@ -32,16 +38,17 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import okio.ByteString.Companion.encodeUtf8
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheet(onDismiss: () -> Unit, navController: NavHostController) {
+fun BottomSheet(
+    onDismiss: () -> Unit,
+    navController: NavHostController
+) {
     ModalBottomSheet(
         containerColor = Color.White,
         onDismissRequest = { onDismiss() },
-        //sheetState = modalBottomSheetState,
         dragHandle = { BottomSheetDefaults.DragHandle() },
     ) {
 
@@ -51,35 +58,36 @@ fun BottomSheet(onDismiss: () -> Unit, navController: NavHostController) {
             verticalArrangement = Arrangement.Top
         ) {
             Text(
-                text = "Create",
+                text = stringResource(id = R.string.create),
                 fontFamily = Montserrat,
                 fontWeight = FontWeight.Bold,
             )
             Divider(
                 color = Color.Gray,
-                thickness = 0.8.dp,
-                modifier = Modifier.padding(vertical = 16.dp)
+                thickness = dimensionResource(id = R.dimen.dim_0pt8),
+                modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.dim_16))
             )
             BottomSheetItem(
                 icon = R.drawable.story_bottom_sheet_icon,
-                text = "Create a Story",
+                text = stringResource(id = R.string.create_a_story),
+                onDismiss = onDismiss,
                 onClick = {
-                    navController.navigate("CAMERA_VIEW/${"story".encodeUtf8()}")
-                    onDismiss()
+                    navController.navigate(route = "CAMERA_VIEW" + "/${"story".encodeUtf8()}")
+                    //onDismiss()
                 }
 
             )
             BottomSheetItem(
                 icon = R.drawable.recipe_bottom_sheet_icon,
-                text = "Create a Recipe",
-//                onClick = { navController.navigate("CAMERA_VIEW/${"recipe".encodeUtf8()}")}//"CREATE_RECIPE_VIEW") }
+                text = stringResource(id = R.string.create_a_recipe),
+                onDismiss = onDismiss,
                 onClick = {
 //                    navController.navigate("VIDEOTRIMMER")
-                    navController.navigate("CREATE_RECIPE_VIEW")
-                    onDismiss()
+                    navController.navigate(route = HomeOtherRoutes.CreateRecipeView.route)
+                    //onDismiss()
                 }
             )
-            Spacer(modifier = Modifier.height(25.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_25)))
         }
 
     }
@@ -98,10 +106,10 @@ fun BottomBar(navController: NavHostController, triggerBottomSheetModal: () -> U
     val currentDestination = navBackStackEntry?.destination
 
     val bottomBarDestination = screens.any { currentDestination?.route?.startsWith(it.route) == true }
-    var screenHeight = LocalConfiguration.current.screenHeightDp.dp * 0.13f
+    var screenHeight = LocalConfiguration.current.screenHeightDp.dp * 0.12f
 
-    if (screenHeight < 90.dp) {
-        screenHeight = 110.dp
+    if (screenHeight < dimensionResource(id = R.dimen.dim_90)) {
+        screenHeight = dimensionResource(id = R.dimen.dim_110)
     }
     if (bottomBarDestination) {
         NavigationBar (containerColor = Color.White, modifier = Modifier.height(screenHeight)) {
@@ -130,11 +138,11 @@ fun RowScope.AddItem(
         icon = {
             Icon(
                 painter = icon,
-                modifier = Modifier.size(if (screen.route == "CREATE") 40.dp else 20.dp),
-                contentDescription = "Navigation Icon",
+                modifier = Modifier.size(if (screen.route == "CREATE") dimensionResource(id = R.dimen.dim_40) else dimensionResource(id = R.dimen.dim_20)),
+                contentDescription = stringResource(id = R.string.navigation_icon),
                 tint = when {
                     screen is BottomBarScreenObject.Create -> Color.Unspecified
-                    currentDestination?.hierarchy?.any { it.route?.startsWith(screen.route) == true } == true -> Color(0xFF7EC60B)
+                    currentDestination?.hierarchy?.any { it.route?.startsWith(screen.route) == true } == true -> foodClubGreen
                     else -> Color(0xFFB9B9B9)
                 }
 

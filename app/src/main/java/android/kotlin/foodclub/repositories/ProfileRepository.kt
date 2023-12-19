@@ -1,14 +1,14 @@
 package android.kotlin.foodclub.repositories
 
+import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.domain.models.profile.UserDetailsModel
-import android.kotlin.foodclub.domain.models.profile.UserPosts
 import android.kotlin.foodclub.domain.models.profile.UserProfile
+import android.kotlin.foodclub.network.retrofit.dtoMappers.posts.PostToVideoMapper
 import android.kotlin.foodclub.network.retrofit.services.ProfileService
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.FollowerUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.FollowingUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserDetailsMapper
-import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserPostsMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserProfileMapper
 import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorResponse
 import android.kotlin.foodclub.network.retrofit.responses.profile.FollowUnfollowResponse
@@ -19,6 +19,12 @@ import android.kotlin.foodclub.network.retrofit.responses.profile.RetrieveProfil
 import android.kotlin.foodclub.network.retrofit.responses.profile.RetrieveUserDetailsResponse
 import android.kotlin.foodclub.network.retrofit.responses.profile.UpdateUserProfileImageResponse
 import android.kotlin.foodclub.network.retrofit.utils.apiRequestFlow
+import android.kotlin.foodclub.room.entity.OfflineProfileModel
+import android.kotlin.foodclub.room.repository.datasource.ProfileDataLocalSource
+import android.kotlin.foodclub.room.entity.OfflineProfileVideosModel
+import android.kotlin.foodclub.room.repository.datasource.ProfileVideosDataLocalSource
+import android.kotlin.foodclub.room.util.daoRequestFlow
+import android.kotlin.foodclub.room.util.daoRequestWithFlow
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.util.Log
 import okhttp3.MultipartBody
@@ -27,8 +33,10 @@ import java.io.File
 
 class ProfileRepository(
     private val api: ProfileService,
+    private val profileDataLocalSource: ProfileDataLocalSource,
+    private val profileVideosDataLocalSource: ProfileVideosDataLocalSource,
     private val profileMapper: UserProfileMapper,
-    private val userPostsMapper: UserPostsMapper,
+    private val userPostsMapper: PostToVideoMapper,
     private val followerUserMapper: FollowerUserMapper,
     private val followingUserMapper: FollowingUserMapper,
     private val userDetailsMapper: UserDetailsMapper
@@ -75,6 +83,30 @@ class ProfileRepository(
         }
     }
 
+    suspend fun retrieveLocalUserDetails(userId: Long): Resource<OfflineProfileModel, String> {
+        return daoRequestWithFlow {
+            profileDataLocalSource.getData(userId)
+        }
+    }
+
+    suspend fun insertLocalUserDetails(offlineProfileModel: OfflineProfileModel) {
+        daoRequestFlow<Unit, String> {
+            profileDataLocalSource.insertData(offlineProfileModel)
+        }
+    }
+
+    suspend fun insertProfileVideosData(videosModel: OfflineProfileVideosModel) {
+        daoRequestFlow<Unit, String> {
+            profileVideosDataLocalSource.insertProfileVideosData(videosModel)
+        }
+    }
+
+    suspend fun retrieveAllLocalProfileVideos(): Resource<List<OfflineProfileVideosModel>, String> {
+        return daoRequestWithFlow {
+            profileVideosDataLocalSource.getAllProfileVideosData()
+        }
+    }
+
     suspend fun updateUserProfileImage(
         userId: Long,
         file: File
@@ -101,7 +133,7 @@ class ProfileRepository(
 
     suspend fun retrieveBookmarkedPosts(
         userId: Long, pageSize: Int? = null, pageNo: Int? = null
-    ): Resource<List<UserPosts>, DefaultErrorResponse> {
+    ): Resource<List<VideoModel>, DefaultErrorResponse> {
         return when(
             val resource = apiRequestFlow<RetrievePostsListResponse, DefaultErrorResponse> {
                 api.getBookmarkedPosts(userId, pageNo, pageSize)

@@ -30,7 +30,8 @@ class MainActivity : ComponentActivity() {
 
         installSplashScreen().setKeepOnScreenCondition { keepSplashOnScreen }
         Handler(Looper.getMainLooper()).postDelayed({
-            keepSplashOnScreen = false }, delay)
+            keepSplashOnScreen = false
+        }, delay)
         setContent {
 
             // this is for taking profile picture with camera
@@ -45,7 +46,13 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 MainLayout(navController = navController) { showSheet, triggerBottomSheetModal,
                                                             triggerStory, setBottomBarVisibility ->
-                    RootNavigationGraph(navController, showSheet, triggerBottomSheetModal, triggerStory, setBottomBarVisibility)
+                    RootNavigationGraph(
+                        navController,
+                        showSheet,
+                        triggerBottomSheetModal,
+                        triggerStory,
+                        setBottomBarVisibility
+                    )
                 }
             }
         }

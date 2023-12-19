@@ -7,6 +7,7 @@ import android.kotlin.foodclub.network.retrofit.dtoMappers.edamam.EdamamFoodProd
 import android.kotlin.foodclub.network.retrofit.dtoModels.edamam.EdamamFoodProductsDto
 import android.kotlin.foodclub.network.retrofit.utils.apiRequestFlow
 import android.kotlin.foodclub.utils.helpers.Resource
+import android.util.Log
 
 class ProductRepository(
     private val api: ProductsService,
@@ -17,6 +18,7 @@ class ProductRepository(
     suspend fun getProductsList(
         searchText: String, session: Int? = null
     ): Resource<ProductsData, DefaultErrorResponse> {
+        Log.d("ProductRepository", "Testing API request: $searchText")
         return when(
             val resource = apiRequestFlow<EdamamFoodProductsDto, DefaultErrorResponse> {
                 api.getFoodProducts(session, APP_ID, APP_KEY, searchText)

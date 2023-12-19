@@ -4,6 +4,7 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.config.ui.light_blue
 import android.kotlin.foodclub.domain.models.others.OnBoardingItems
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
@@ -34,7 +35,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -62,7 +65,6 @@ fun OnBoardingView() {
                 .fillMaxHeight(0.9f)
                 .fillMaxWidth()
         ) { page ->
-            //OnBoardingItem(modifier = modifier, item = items[page])
             if (page == 0) {
                 OnBoardingScreen1()
             }
@@ -99,7 +101,7 @@ fun OnBoardingView() {
 fun OnBoardingScreen1() {
     Column(
         Modifier
-            .padding(10.dp)
+            .padding(dimensionResource(id = R.dimen.dim_10))
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -109,18 +111,18 @@ fun OnBoardingScreen1() {
             painter = painterResource(id = R.drawable.app_logo),
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.size(200.dp)
+            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_200))
         )
         Text(
-            text = "FoodCLUB",
+            text = stringResource(id = R.string.foodCLUB),
             fontFamily = Montserrat,
             fontWeight = FontWeight.Black,
-            fontSize = 35.sp
+            fontSize = dimensionResource(id = R.dimen.fon_35).value.sp
         )
         Text(
-            text = "The Art of Food is Here",
+            text = stringResource(id = R.string.art_of_food),
             fontFamily = Montserrat,
-            fontSize = 20.sp,
+            fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
             color = Color.Gray
         )
     }
@@ -130,20 +132,20 @@ fun OnBoardingScreen1() {
 fun OnBoardingScreen2() {
     Column(
         Modifier
-            .padding(10.dp)
+            .padding(dimensionResource(id = R.dimen.dim_10))
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     )
     {
         Text(
-            text = "Don't follow,",
-            color = Color(0xFF3A7CA8),
+            text = stringResource(id = R.string.dont_follow),
+            color = light_blue,
             fontSize = 45.sp,
             fontWeight = FontWeight.ExtraBold
         )
         Text(
-            text = "create.",
+            text = stringResource(id = R.string.create_fullstop),
             color = foodClubGreen,
             fontSize = 80.sp,
             fontWeight = FontWeight.ExtraBold
@@ -155,7 +157,7 @@ fun OnBoardingScreen2() {
 fun OnBoardingScreen3() {
     Column(
         Modifier
-            .padding(30.dp)
+            .padding( dimensionResource(id = R.dimen.dim_30))
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
@@ -163,39 +165,42 @@ fun OnBoardingScreen3() {
         Text(
             fontFamily = Montserrat,
             fontWeight = FontWeight.ExtraBold,
-            text = "Our Mission",
+            text = stringResource(id = R.string.our_mission),
             fontSize = 40.sp
         )
         Text(
             fontFamily = Montserrat,
             fontWeight = FontWeight.Bold,
-            text = "Did you know?",
+            text = stringResource(id = R.string.did_you_know),
             fontSize = 27.5.sp,
             modifier = Modifier.align(Alignment.Start)
         )
 
         InfoRow(
             imageID = R.drawable.carbon_footprint,
-            text = "25% of climate change and 70% of fresh water is linked to food production"
+            text = stringResource(id = R.string.info_1)
         )
         InfoRow(
             imageID = R.drawable.sad_heart,
-            text = "70% of disease and illness are caused by nutrition"
+            text = stringResource(id = R.string.info_2)
         )
         InfoRow(
             imageID = R.drawable.globe,
-            text = "We produce food across the glob to wipe out global hunger - but 40% of that food goes to waste"
+            text = stringResource(id = R.string.info_3)
         )
-        InfoRow(imageID = R.drawable._00m, text = "1 in 10 people have a food disorder")
+        InfoRow(
+            imageID = R.drawable._00m,
+            text = stringResource(id = R.string.info_4)
+        )
         InfoRow(
             imageID = R.drawable.loneliness,
-            text = "Social media has left us unconnected in our communities and our cultures"
+            text = stringResource(id = R.string.info_5)
         )
 
         Text(
             fontFamily = Montserrat,
             fontWeight = FontWeight.Bold,
-            text = "You're now part of our mission.",
+            text = stringResource(id = R.string.you_are_part_mission),
             fontSize = 21.5.sp,
             modifier = Modifier.align(Alignment.Start)
         )
@@ -206,7 +211,7 @@ fun OnBoardingScreen3() {
 fun OnBoardingScreen4() {
     Column(
         Modifier
-            .padding(30.dp)
+            .padding( dimensionResource(id = R.dimen.dim_30))
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
@@ -214,46 +219,49 @@ fun OnBoardingScreen4() {
         Text(
             fontFamily = Montserrat,
             fontWeight = FontWeight.Bold,
-            text = "Join Our Discord VIP Community",
+            text = stringResource(id = R.string.join_community),
             fontSize = 40.sp
         )
 
         InfoRow(
             imageID = R.drawable.crown,
-            text = "Join our community for exclusive content and insight into the tech and business world"
+            text = stringResource(id = R.string.join_our_community)
         )
         Divider()
-        InfoRow(imageID = R.drawable.crown, text = "Engage in lively discussions and events.")
+        InfoRow(
+            imageID = R.drawable.crown,
+            text = stringResource(id = R.string.join_1)
+        )
         Divider()
         InfoRow(
             imageID = R.drawable.innovation,
-            text = "Shape the future of food: help decide new features and innovation."
+            text = stringResource(id = R.string.join_2)
         )
         Divider()
         InfoRow(
             imageID = R.drawable.giveaways,
-            text = "Participate in special contests and giveaways."
+            text = stringResource(id = R.string.join_3)
         )
         Divider()
         InfoRow(
             imageID = R.drawable.gold_medal,
-            text = "Be the first to savor insights into foodSNAPS, foodMAPS, foodSCHOOL, and our detectable AI-driven innovations."
+            text = stringResource(id = R.string.join_4)
         )
 
-        val link = "https://discord.gg/dA83mnQMqr"
+        val link = stringResource(id = R.string.discord_link)
 
         val localUriHandler = LocalUriHandler.current
 
         Button(
             onClick = { localUriHandler.openUri(link) },
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3A7CA8)),
-            shape = RoundedCornerShape(10.dp)
+            colors = ButtonDefaults.buttonColors(containerColor = light_blue),
+            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))
         ) {
             Text(
-                text = "Join the VIP Discord Server",
+                text = stringResource(id = R.string.join_vip_discord),
                 fontFamily = Montserrat,
                 color = Color.White,
-                fontSize = 24.sp
+                fontSize = dimensionResource(id = R.dimen.fon_24).value.sp
             )
         }
 
@@ -265,19 +273,20 @@ fun InfoRow(imageID: Int, text: String) {
     Row(
         verticalAlignment = Alignment.CenterVertically, modifier = Modifier
             .fillMaxWidth()
-            .padding(5.dp)
+            .padding(dimensionResource(id = R.dimen.dim_5))
     )
     {
         Image(
             painter = painterResource(id = imageID),
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.size(55.dp)
+            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_55))
         )
         Text(
             text = text, fontFamily = Montserrat, modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp), color = Color.Gray, fontSize = 16.sp
+                .padding(dimensionResource(id = R.dimen.dim_10)),
+            color = Color.Gray, fontSize = dimensionResource(id = R.dimen.fon_16).value.sp
         )
     }
 }
@@ -316,7 +325,7 @@ fun OnBoardingItem(item: OnBoardingItems, modifier: Modifier) {
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Center,
             modifier = modifier
-                .padding(top = 60.dp)
+                .padding(top = dimensionResource(id = R.dimen.dim_60))
                 .fillMaxWidth(0.7f)
         ) {
             Text(
@@ -331,12 +340,12 @@ fun OnBoardingItem(item: OnBoardingItems, modifier: Modifier) {
 
             Text(
                 text = item.descr,
-                modifier = modifier.padding(top = 30.dp),
+                modifier = modifier.padding(top = dimensionResource(id = R.dimen.dim_30)),
                 color = Color.Black,
-                fontSize = 20.sp,
+                fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
                 textAlign = TextAlign.Start,
                 fontFamily = Montserrat,
-                lineHeight = 32.sp,
+                lineHeight = dimensionResource(id = R.dimen.fon_32).value.sp,
                 fontWeight = FontWeight(400)
             )
         }
@@ -347,8 +356,8 @@ fun OnBoardingItem(item: OnBoardingItems, modifier: Modifier) {
 fun Indicator(isSelected: Boolean) {
     Box(
         modifier = Modifier
-            .height(16.dp)
-            .width(16.dp)
+            .height( dimensionResource(id = R.dimen.dim_16))
+            .width( dimensionResource(id = R.dimen.dim_16))
             .clip(CircleShape)
             .background(
                 color = if (isSelected) foodClubGreen else Color.Gray
@@ -366,10 +375,8 @@ fun BottomSection(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(12.dp)
+            .padding(dimensionResource(id = R.dimen.dim_12))
     ) {
-        // Indicators
-        //Indicators(size, index)
         NavArrows(
             size = size,
             index = index,
@@ -383,7 +390,7 @@ fun BottomSection(
 fun BoxScope.Indicators(size: Int, index: Int) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(30.dp),
+        horizontalArrangement = Arrangement.spacedBy( dimensionResource(id = R.dimen.dim_30)),
         modifier = Modifier.align(Alignment.BottomCenter)
     ) {
         repeat(size) {
@@ -419,7 +426,7 @@ fun BoxScope.NavArrows(
                 Image(
                     painter = painterResource(id = R.drawable.back_icon),
                     contentDescription = null,
-                    modifier = Modifier.size(50.dp)
+                    modifier = Modifier.size(dimensionResource(id = R.dimen.dim_50))
                 )
             }
 
@@ -439,7 +446,7 @@ fun BoxScope.NavArrows(
                 Image(
                     painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
                     contentDescription = null,
-                    modifier = Modifier.size(50.dp)
+                    modifier = Modifier.size(dimensionResource(id = R.dimen.dim_50))
                 )
             }
         }

@@ -10,15 +10,11 @@ import java.io.FileOutputStream
 
 fun uriToFile(uri: Uri, context: Context): File? {
 
+    val TAG = "UriToFile"
     val contentResolver = context.contentResolver
-    // Retrieve the display name from the URI.
     val displayName = getDisplayNameFromUri(uri, contentResolver)
-
-    // Provide a default name if the display name is null or empty.
     val defaultFileName = "default_file_name.jpg"
     val fileName = displayName.ifEmpty { defaultFileName }
-
-    // Create a file in the app's cache directory with the file name.
     val file = File(context.cacheDir, fileName)
 
     try {
@@ -33,9 +29,9 @@ fun uriToFile(uri: Uri, context: Context): File? {
             return file
         }
     } catch (e: Exception) {
-        Log.e("MYTAG", "Error while converting URI to File", e)
-        Log.e("MYTAG", "Error while converting URI to File", e.cause)
-        Log.e("MYTAG", "Error while converting URI to File", Throwable(e.message))
+        Log.e(TAG, "Error while converting URI to File", e)
+        Log.e(TAG, "Error while converting URI to File", e.cause)
+        Log.e(TAG, "Error while converting URI to File", Throwable(e.message))
     }
     return null
 }

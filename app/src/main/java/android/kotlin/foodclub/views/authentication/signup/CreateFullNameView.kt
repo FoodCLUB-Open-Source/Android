@@ -15,34 +15,50 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import android.kotlin.foodclub.R
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 
 @Composable
-fun CreateFullNameView(onValuesUpdate: () -> Unit, saveData: (String) -> Unit,
-                       onBackButtonClick: () -> Unit, userSignUpInformation: State<SignUpUser>,
-                       error: String) {
-    var name by remember { mutableStateOf(userSignUpInformation.value.name) }
+fun CreateFullNameView(
+    onValuesUpdate: () -> Unit, saveData: (String) -> Unit,
+    onBackButtonClick: () -> Unit,
+    userSignUpInformation: SignUpUser,
+    error: String
+) {
+    var name by remember { mutableStateOf(userSignUpInformation.name) }
     var initialNameCorrectnessState = FieldsValidation.checkFullName(name) == null
     var filledName by remember { mutableStateOf(false) }
 
-    AuthLayout(header = "Put your name!", subHeading = "So others know how to call you!",
-        errorOccurred = true, message = error,
+    AuthLayout(
+        header = stringResource(id = R.string.put_your_name),
+        subHeading = stringResource(id = R.string.put_your_name_subheading),
+        errorOccurred = true,
+        message = error,
         onBackButtonClick = {
             saveData(name)
             onBackButtonClick()
-        }) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            CustomTextField(initialValue = name,
-                placeholder = "Full name", keyboardType = KeyboardType.Text,
+        }
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_4))) {
+            CustomTextField(
+                initialValue = name,
+                placeholder = stringResource(id = R.string.full_name),
+                keyboardType = KeyboardType.Text,
                 onCorrectnessStateChange = { filledName = !filledName },
                 allowSpace = true,
-                onValueChange = { name = it
-                    initialNameCorrectnessState = false }, textValidation = true,
+                onValueChange = {
+                    name = it
+                    initialNameCorrectnessState = false
+                },
+                textValidation = true,
                 validationMethod = { text -> FieldsValidation.checkFullName(text) }
             )
 
             ConfirmButton(
                 enabled = filledName || initialNameCorrectnessState,
-                text = "Continue") {
+                text = stringResource(id = R.string.continue_text)
+            ) {
                 saveData(name)
                 onValuesUpdate()
             }

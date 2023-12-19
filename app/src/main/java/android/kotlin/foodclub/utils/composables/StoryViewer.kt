@@ -42,25 +42,34 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun StoryView(storyEnabled: Boolean, storyDetails: StoryModel,
-              callbackDisableStory: () -> Unit, currentOffset: IntOffset,
-              modifier: Modifier = Modifier
+fun StoryView(
+    storyEnabled: Boolean,
+    storyDetails: StoryModel,
+    callbackDisableStory: () -> Unit,
+    currentOffset: IntOffset,
+    modifier: Modifier = Modifier
 ) {
 
     AnimatedVisibility(
         visible = storyEnabled,
         enter =
-        // slideInVertically(initialOffsetY = { (1.5 * it).toInt() } )
-        slideIn(animationSpec = tween(durationMillis = 250)) { IntOffset(- it.width / 2, - it.height / 2).plus(currentOffset) }
+        slideIn(animationSpec = tween(durationMillis = 250)) {
+            IntOffset(
+                -it.width / 2,
+                -it.height / 2
+            ).plus(currentOffset)
+        }
                 + scaleIn(animationSpec = tween(durationMillis = 250)),
-        exit = slideOut(){ IntOffset(- it.width / 2, - it.height / 2).plus(currentOffset) }
+        exit = slideOut() { IntOffset(-it.width / 2, -it.height / 2).plus(currentOffset) }
                 + scaleOut(animationSpec = tween(durationMillis = 250))
     ) {
         val density = LocalDensity.current
@@ -81,7 +90,9 @@ fun StoryView(storyEnabled: Boolean, storyDetails: StoryModel,
                 positionalThreshold = { distance: Float -> distance },
                 velocityThreshold = { with(density) { 125.dp.toPx() } },
                 confirmValueChange = {
-                    if(it == DragValue.End) { callbackDisableStory() }
+                    if (it == DragValue.End) {
+                        callbackDisableStory()
+                    }
                     return@AnchoredDraggableState true
                 }
             )
@@ -103,7 +114,7 @@ fun StoryView(storyEnabled: Boolean, storyDetails: StoryModel,
         ) {
             Image(
                 painter = storyDetails.storyPhoto,
-                contentDescription = "foodsnap",
+                contentDescription = stringResource(id = R.string.foodsnaps),
                 contentScale = ContentScale.Crop,
                 alignment = Alignment.Center,
                 modifier = Modifier.fillMaxSize()
@@ -113,7 +124,7 @@ fun StoryView(storyEnabled: Boolean, storyDetails: StoryModel,
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 60.dp)
+                    .padding(horizontal = dimensionResource(id = R.dimen.dim_20), vertical = dimensionResource(id = R.dimen.dim_60))
             ) {
                 StoryInfo(
                     painter = storyDetails.authorPhotoPainter,
@@ -122,15 +133,18 @@ fun StoryView(storyEnabled: Boolean, storyDetails: StoryModel,
                 )
                 Button(
                     onClick = { callbackDisableStory() },
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0x00FFFFFF).copy(alpha = 0.1f),
                         contentColor = Color(0x00FFFFFF).copy(alpha = 0.1f)
                     ),
-                    contentPadding = PaddingValues(4.dp),
-                    modifier = Modifier.size(40.dp)
+                    contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_4)),
+                    modifier = Modifier.size(dimensionResource(id = R.dimen.dim_40))
                 ) {
-                    Image(painter = painterResource(R.drawable.baseline_close_24), contentDescription = "close story")
+                    Image(
+                        painter = painterResource(R.drawable.baseline_close_24),
+                        contentDescription = stringResource(id = R.string.close_story)
+                    )
                 }
             }
         }
@@ -139,28 +153,35 @@ fun StoryView(storyEnabled: Boolean, storyDetails: StoryModel,
 }
 
 @Composable
-fun StoryInfo(painter: Painter, name: String, time: Long, modifier: Modifier = Modifier) {
-    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+fun StoryInfo(
+    painter: Painter,
+    name: String,
+    time: Long,
+    modifier: Modifier = Modifier
+) {
+    Row(horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_10))) {
         Image(
             painter = painter,
-            contentDescription = "author photo",
+            contentDescription = stringResource(id = R.string.author_photo),
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .size(45.dp)
+                .size(dimensionResource(id = R.dimen.dim_45))
                 .clip(CircleShape)
         )
 
-        Column(verticalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterVertically),
-            modifier = Modifier.height(45.dp)) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_5), Alignment.CenterVertically),
+            modifier = Modifier.height(dimensionResource(id = R.dimen.dim_45))
+        ) {
             Text(
                 text = name,
                 color = Color.White,
-                fontSize = 16.sp
+                fontSize = dimensionResource(id = R.dimen.fon_16).value.sp
             )
             Text(
-                text = TimeUtil.getHoursAgoFromNow(time) + " ago",
+                text = stringResource(id = R.string.time_ago, TimeUtil.getHoursAgoFromNow(time)),
                 color = Color.White,
-                fontSize = 12.sp
+                fontSize = dimensionResource(id = R.dimen.fon_12).value.sp
             )
         }
     }

@@ -16,25 +16,34 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import android.kotlin.foodclub.R
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 
 @Composable
 fun SignUpWithEmailView(
-    onValuesUpdate: (String, String) -> Unit, onBackButtonClick: () -> Unit,
-    userSignUpInformation: State<SignUpUser>
+    onValuesUpdate: (String, String) -> Unit,
+    onBackButtonClick: () -> Unit,
+    userSignUpInformation: SignUpUser
 ) {
-    AuthLayout(header = "New Here?\nNo problem!", onBackButtonClick = onBackButtonClick) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            var userEmail by remember { mutableStateOf(userSignUpInformation.value.email) }
-            var userPassword by remember { mutableStateOf(userSignUpInformation.value.password) }
+    AuthLayout(
+        header = stringResource(id = R.string.new_here),
+        onBackButtonClick = onBackButtonClick
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_4))) {
+            var userEmail by remember { mutableStateOf(userSignUpInformation.email) }
+            var userPassword by remember { mutableStateOf(userSignUpInformation.password) }
 
             var initialEmailCorrectnessState = FieldsValidation.checkEmail(userEmail) == null
-            var initialPasswordCorrectnessState = FieldsValidation.checkPassword(userPassword) == null
+            var initialPasswordCorrectnessState =
+                FieldsValidation.checkPassword(userPassword) == null
             var filledEmail by remember { mutableStateOf(false) }
             var filledPassword by remember { mutableStateOf(false) }
 
 
-            CustomTextField(initialValue = userEmail,
-                placeholder = "Email",
+            CustomTextField(
+                initialValue = userEmail,
+                placeholder = stringResource(id = R.string.email),
                 keyboardType = KeyboardType.Email,
                 onCorrectnessStateChange = { filledEmail = !filledEmail },
                 onValueChange = {
@@ -44,7 +53,9 @@ fun SignUpWithEmailView(
                 textValidation = true,
                 validationMethod = { text -> FieldsValidation.checkEmail(text) })
 
-            CustomPasswordTextField(initialValue = userPassword, placeholder = "Password",
+            CustomPasswordTextField(
+                initialValue = userPassword,
+                placeholder = stringResource(id = R.string.password),
                 onCorrectnessStateChange = {
                     filledPassword = !filledPassword
                     initialPasswordCorrectnessState = false
@@ -54,57 +65,9 @@ fun SignUpWithEmailView(
             ConfirmButton(
                 enabled = (filledEmail || initialEmailCorrectnessState)
                         && (filledPassword || initialPasswordCorrectnessState),
-                text = "Sign Up"
+                text = stringResource(id = R.string.sign_up)
             ) { onValuesUpdate(userEmail, userPassword) }
-//                Button(
-//                    shape = RoundedCornerShape(10.dp),
-//                    modifier = Modifier
-//                        .height(56.dp)
-//                        .clip(RoundedCornerShape(10.dp))
-//                        .fillMaxWidth(),
-//                    enabled = (filledEmail || initialEmailCorrectnessState)
-//                            && (filledPassword || initialPasswordCorrectnessState),
-//                    colors = ButtonDefaults.buttonColors(
-//                        containerColor = Color(0xFF7EC60B),
-//                        disabledContainerColor = Color(0xFFC9C9C9),
-//                        disabledContentColor = Color.White,
-//                        contentColor = Color.White
-//                    ),
-//                    onClick = { onValuesUpdate(userEmail, userPassword) }
-//                ) {
-//                    Text(
-//                        text = "Sign Up",
-//                        fontFamily = Montserrat,
-//                        fontSize = 16.sp
-//                    )
-//                }
         }
-
-//            Image(
-//                painterResource(id = R.drawable.login_with),
-//                contentDescription = "or login with",
-//                modifier = Modifier.fillMaxWidth().height(20.dp),
-//                alignment = Alignment.Center
-//            )
-
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),
-//                horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
-//            ) {
-//                AlternativeLoginOption(
-//                    image = painterResource(R.drawable.facebook_ic),
-//                    contentDescription = "Log in using facebook"
-//                )
-//                AlternativeLoginOption(
-//                    image = painterResource(R.drawable.google_ic),
-//                    contentDescription = "Log in using google"
-//                )
-//                AlternativeLoginOption(
-//                    image = painterResource(R.mipmap.instagram_icon),
-//                    contentDescription = "Log in using instagram"
-//                )
-//
-//            }
 
     }
 }
