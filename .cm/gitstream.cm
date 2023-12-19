@@ -14,10 +14,21 @@ automations:
           label: "{{ calc.etr }} min review"
           color: {{ 'E94637' if (calc.etr >= 20) else ('FBBD10' if (calc.etr >= 5) else '36A853') }}
   # Post a comment that lists the best experts for the files that were modified.
-  explain_code_experts:
-    if:
+  #explain_code_experts:
+  #  if:
+   #   - true
+  #  run:
+   #   - action: explain-code-experts@v1 
+    #    args:
+    #      gt: 10
+  assign_code_experts:
+    # Triggered when someone applies a suggest-reviewer label to a PR.
+    if: 
       - true
     run:
+      - action: add-reviewers@v1
+        args:
+          reviewers: {{ repo | codeExperts(gt=10) }}
       - action: explain-code-experts@v1 
         args:
           gt: 10 

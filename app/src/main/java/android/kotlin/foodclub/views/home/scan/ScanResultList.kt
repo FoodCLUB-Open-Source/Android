@@ -8,7 +8,8 @@ import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.utils.composables.CustomDatePicker
 import android.kotlin.foodclub.utils.composables.LoadingProgressBar
-import android.kotlin.foodclub.viewModels.home.DiscoverViewModel
+import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
+import android.kotlin.foodclub.viewModels.home.discover.DiscoverViewModel
 import android.kotlin.foodclub.views.home.discover.DiscoverState
 import android.kotlin.foodclub.views.home.myDigitalPantry.EditIngredientView
 import android.kotlin.foodclub.views.home.myDigitalPantry.SwipeableItemsLazyColumn
@@ -37,7 +38,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,7 +52,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
@@ -61,7 +60,7 @@ import androidx.navigation.NavController
 @Composable
 fun ScanResultView(
     navController: NavController,
-    viewModel: DiscoverViewModel,
+    events: DiscoverEvents,
     state: DiscoverState
 )
 {
@@ -132,7 +131,7 @@ fun ScanResultView(
                     TextButton(
                         onClick = {
                             loading=!loading
-                            viewModel.addScanListToUserIngredients(state.scanResultItemList)
+                            events.addScanListToUserIngredients(state.scanResultItemList)
 
                         }
                     ) {
@@ -165,7 +164,7 @@ fun ScanResultView(
                     EditIngredientView(
                         ingredient = state.ingredientToEdit!!,
                         onEditIngredient = { ingr ->
-                            viewModel.updateIngredient(ingr)
+                            events.updateIngredient(ingr)
                         }
                     )
                 }else{
@@ -174,7 +173,7 @@ fun ScanResultView(
                         modifier = Modifier,
                         searchTextValue = searchText,
                         onSearch = { input->
-                            viewModel.onSubSearchTextChange(input)
+                            events.onSubSearchTextChange(input)
                         }
                     )
                     Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_15)))
@@ -185,7 +184,7 @@ fun ScanResultView(
                         onAddDateClicked = { isDatePickerVisible = true },
                         onEditClicked = {
                                 item->
-                            viewModel.updateIngredient(item)
+                            events.updateIngredient(item)
                             isShowEditScreen = false
                         },
                         view = "DigitalPantry"

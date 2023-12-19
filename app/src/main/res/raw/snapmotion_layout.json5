@@ -1,0 +1,98 @@
+{
+  ConstraintSets: {
+    start: {
+      paren: {
+
+      },
+      memories_text: {
+        top: ['spacer', 'bottom', 5],
+        start: ['paren', 'start', 20],
+        translationZ: 1
+      },
+      memories_item_view: {
+        top: ['memories_text', 'bottom', 16],
+        start: ['paren', 'start', 20],
+        translationZ: 1
+      },
+      memories_divider: {
+        top: ['memories_item_view', 'bottom', 16],
+        height: 0.5,
+        translationZ: 1
+      },
+
+      today_text: {
+        top: ['memories_divider', 'bottom', 16],
+        start: ['paren', 'start', 20],
+        translationZ: 1
+      },
+      tap_to_snap: {
+        height: 350,
+        width: ['spread'],
+        start: ['paren', 'start', 10],
+        end: ['paren', 'end', 10],
+        bottom: ['paren', 'bottom', 30],
+        translationZ: 1
+      },
+      snap_story_view: {
+        height: 350,
+        start: ['paren', 'start', 0],
+        end: ['paren', 'end', 0],
+        bottom: ['paren', 'bottom', 10],
+        translationZ: 1
+      },
+      stories_view: {
+        visibility: 'invisible',
+        translationZ: 0,
+      },
+
+
+    },
+    end: {
+      paren: {
+
+      },
+
+      memories_text: {
+        visibility: 'gone',
+        translationZ: 0
+      },
+      memories_item_view: {
+        visibility: 'gone',
+        translationZ: 0
+      },
+      memories_divider: {
+        visibility: 'gone',
+        translationZ: 0
+      },
+      today_text: {
+        visibility: 'gone',
+        translationZ: 0
+      },
+      tap_to_snap: {
+        visibility: 'gone',
+        translationZ: 0
+      },
+      snap_story_view: {
+        visibility: 'gone',
+        translationZ: 0
+      },
+      stories_view: {
+        scaleY: 1.0,
+        scaleX: 1.0,
+        translationZ: 1
+      },
+
+
+    },
+
+  },
+  Transitions: {
+    default: {
+      from: 'start',
+      to: 'end',
+      pathMotionArc: 'startVertical',
+      duration: 900,
+      staggered: 0.4,
+    }
+  }
+}

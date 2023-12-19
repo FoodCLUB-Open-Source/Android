@@ -1,9 +1,11 @@
 package android.kotlin.foodclub.navigation
 
 import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
-import android.kotlin.foodclub.viewModels.home.SettingsViewModel
+import android.kotlin.foodclub.viewModels.settings.SettingsEvents
+import android.kotlin.foodclub.viewModels.settings.SettingsViewModel
 import android.kotlin.foodclub.views.settings.ChangePasswordSettings
 import android.kotlin.foodclub.views.settings.EditProfileSetting
+import android.kotlin.foodclub.views.settings.PrivacyPolicyView
 import android.kotlin.foodclub.views.settings.PrivacySetting
 import android.kotlin.foodclub.views.settings.SettingsView
 import androidx.compose.runtime.collectAsState
@@ -23,7 +25,7 @@ fun NavGraphBuilder.settingsNavigationGraph(navController: NavHostController) {
 
             SettingsView(
                 navController = navController,
-                viewModel = viewModel,
+                events = viewModel,
                 state = state.value
             )
         }
@@ -34,7 +36,7 @@ fun NavGraphBuilder.settingsNavigationGraph(navController: NavHostController) {
             EditProfileSetting(
                 navController = navController,
                 user = state.value.user,
-                viewModel = viewModel
+                events = viewModel
             )
         }
         composable(SettingsScreen.Privacy.route) { entry ->
@@ -45,12 +47,17 @@ fun NavGraphBuilder.settingsNavigationGraph(navController: NavHostController) {
         composable(SettingsScreen.ChangePassword.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<SettingsViewModel>(navController)
             val state = viewModel.state.collectAsState()
+            val events: SettingsEvents = viewModel
 
             ChangePasswordSettings(
                 error = state.value.error,
                 onBackAction = { navController.popBackStack() }) { oldPassword, newPassword ->
-                viewModel.changePassword(oldPassword, newPassword)
+                events.changePassword(oldPassword, newPassword)
             }
+        }
+        composable(SettingsScreen.PrivacyPolicy.route) { entry ->
+
+            PrivacyPolicyView(navController = navController)
         }
     }
 }
@@ -58,6 +65,7 @@ fun NavGraphBuilder.settingsNavigationGraph(navController: NavHostController) {
 sealed class SettingsScreen(val route: String) {
     object Main : SettingsScreen(route = "SETTINGS_MENU")
     object Privacy : SettingsScreen(route = "SETTINGS_PRIVACY")
+    object PrivacyPolicy : SettingsScreen(route = "SETTINGS_PRIVACY_POLICY")
     object EditProfile : SettingsScreen(route = "SETTINGS_EDIT_PROFILE")
     object ChangePassword : SettingsScreen(route = "SETTINGS_CHANGE_PASS")
 }

@@ -7,7 +7,7 @@ inline fun <reified T, reified E> daoRequestFlow(call: () -> T): Resource<T, E> 
         val result = call()
         Resource.Success(result)
     } catch (e: Exception) {
-        Resource.Error("Error occurred while accessing the database.")
+        Resource.Error("Room Error $e.")
     }
 }
 

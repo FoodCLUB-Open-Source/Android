@@ -5,7 +5,8 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.disabledContainerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
-import android.kotlin.foodclub.viewModels.authentication.TermsAndConditionsViewModel
+import android.kotlin.foodclub.viewModels.authentication.termsAndConditions.TermsAndConditionsEvents
+import android.kotlin.foodclub.viewModels.authentication.termsAndConditions.TermsAndConditionsViewModel
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -64,7 +65,7 @@ import com.rizzi.bouquet.rememberVerticalPdfReaderState
 @Composable
 fun TermsAndConditions(
     navController: NavHostController,
-    viewModel: TermsAndConditionsViewModel
+    events: TermsAndConditionsEvents
 ) {
 
     val checkedState = remember { mutableStateOf(false) }
@@ -351,7 +352,6 @@ fun TermsAndConditions(
         }
 
         val context = LocalContext.current
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()

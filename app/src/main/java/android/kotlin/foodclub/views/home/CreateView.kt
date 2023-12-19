@@ -3,7 +3,7 @@ package android.kotlin.foodclub.views.home
 import android.app.Activity
 import android.graphics.Bitmap
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.viewModels.home.CreateViewModel
+import android.kotlin.foodclub.viewModels.home.create.CreateViewModel
 import android.media.MediaMetadataRetriever
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -41,7 +41,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.MediaItem
