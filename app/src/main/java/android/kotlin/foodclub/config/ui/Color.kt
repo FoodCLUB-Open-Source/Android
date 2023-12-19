@@ -18,3 +18,8 @@ val light_blue=Color(0xFF3A7CA8)
 
 val containerColor = Color(0xFFF5F5F5)
 val Orange =Color(0xFFFfa500)
+
+val darkGrey = Color(0xFFCACBCB)
+val transparentWhite = Color(0x55FFFFFF)
+
+val confirmScreenColor = Color(0x55FFBBBB)

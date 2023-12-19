@@ -6,6 +6,7 @@ import android.content.ContentUris
 import android.content.Context
 import android.graphics.Bitmap
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.confirmScreenColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.utils.composables.engine.createVideoCaptureUseCase
 import android.kotlin.foodclub.utils.composables.engine.startRecordingVideo
@@ -275,7 +276,7 @@ fun CameraView(
                     if (confirmDeletion)
                     {
                         AlertDialog(onDismissRequest = { confirmDeletion = !confirmDeletion },
-                            modifier = Modifier.background(Color(0x55FFBBBB), RoundedCornerShape(dimensionResource(id = R.dimen.dim_5))).padding(dimensionResource(id = R.dimen.dim_5)),) {
+                            modifier = Modifier.background(confirmScreenColor, RoundedCornerShape(dimensionResource(id = R.dimen.dim_5))).padding(dimensionResource(id = R.dimen.dim_5)),) {
 
                             Column(horizontalAlignment = Alignment.CenterHorizontally){
                                 Text(text = "Do you want to delete the last clip made?")

@@ -54,7 +54,7 @@ class CameraViewModel : ViewModel(), CameraEvents {
                         }
                     }
                 }
-                delay(8)
+                delay(7)
             }
         }
     }
