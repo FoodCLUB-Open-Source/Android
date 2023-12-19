@@ -1,7 +1,6 @@
 package android.kotlin.foodclub.room.dao
 
 import android.kotlin.foodclub.domain.models.profile.UserDetailsModel
-import android.kotlin.foodclub.room.entity.OfflineProfileModel
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert

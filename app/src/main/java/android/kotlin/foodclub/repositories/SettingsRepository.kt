@@ -5,7 +5,6 @@ import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserDetailsMa
 import android.kotlin.foodclub.network.retrofit.dtoModels.settings.ChangePasswordDto
 import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorResponse
 import android.kotlin.foodclub.network.retrofit.responses.general.SingleMessageResponse
-import android.kotlin.foodclub.network.retrofit.responses.profile.RetrieveUserDetailsResponse
 import android.kotlin.foodclub.network.retrofit.responses.settings.UpdateUserDetailsResponse
 import android.kotlin.foodclub.network.retrofit.services.SettingsService
 import android.kotlin.foodclub.network.retrofit.utils.apiRequestFlow
@@ -13,10 +12,7 @@ import android.kotlin.foodclub.room.repository.datasource.ProfileDataLocalSource
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.util.Log
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
-import retrofit2.Response
 
 class SettingsRepository(
     private val api: SettingsService,
@@ -54,8 +50,8 @@ class SettingsRepository(
                     Resource.Error("User details not found in database")
                 }
             }.also {
-            retrieveUserFromService(userId)
-        }
+                retrieveUserFromService(userId)
+            }
     }
 
     private suspend fun retrieveUserFromService(userId: Long) {
