@@ -90,10 +90,6 @@ fun CameraView(
     state: CameraState
 ) {
 
-    var seconds = (0)
-    var minutes = (0)
-
-
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -336,8 +332,6 @@ fun CameraView(
                     IconButton(
                         onClick = {
 
-                            //Temporarily ignore recording code
-
                             if(!holdOrPress) {
                                 if (!recordingStarted.value) {
                                     videoCapture.value?.let { videoCapture ->
@@ -377,6 +371,8 @@ fun CameraView(
                                                 }
                                             }
                                         }
+
+                                        val test = 0
                                     }
                                 } else {
                                     recordingStarted.value = false
@@ -402,6 +398,7 @@ fun CameraView(
                             }
                         }
 
+                        /*
                         if (holdOrPress) {
                             if (isPressed && state.minutes < 1) {
                                 Log.d("Recording Start","Preparing recording")
@@ -455,6 +452,8 @@ fun CameraView(
                                 }
                             }
                         }
+
+                         */
 
                         RecordingClipsButton(
                             isRecording = recordingStarted.value,
@@ -568,7 +567,6 @@ fun CameraView(
     }
 }
 
-
 fun loadCurrentThumbnail(context: Context): Bitmap? {
     val imageProjection = arrayOf(
         MediaStore.Images.Media._ID,
@@ -661,3 +659,4 @@ fun loadCurrentThumbnail(context: Context): Bitmap? {
         null
     )
 }
+

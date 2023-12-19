@@ -141,10 +141,13 @@ fun RecordingClipsButton(
 
         CircularProgressIndicator(
             progress = progress,
-            strokeWidth = 5.dp,
+            strokeWidth = dimensionResource(id = R.dimen.dim_5),
             color = foodClubGreen,
-            modifier = Modifier.size(dim_80)
+            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_80))
+
         )
+
+        //val flt_25 = integerResource(id = R.integer.int_0pt5).toFloat()
 
         Canvas(modifier = Modifier.fillMaxSize())
         {
@@ -162,8 +165,8 @@ fun RecordingClipsButton(
 
         Canvas(modifier = Modifier.size(dim_60)) {
             drawCircle(color = darkGrey)
+            // Record button
         }
-        // Record button
-    }
 
+    }
 }
