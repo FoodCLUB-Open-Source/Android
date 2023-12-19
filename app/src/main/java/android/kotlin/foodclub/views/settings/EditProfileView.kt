@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.views.settings
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.domain.models.profile.UserDetailsModel
+import android.kotlin.foodclub.localdatasource.room.entity.UserDetailsModel
 import android.kotlin.foodclub.utils.composables.ConfirmButton
 import android.kotlin.foodclub.utils.composables.CustomTextField
 import android.kotlin.foodclub.utils.composables.SettingsLayout

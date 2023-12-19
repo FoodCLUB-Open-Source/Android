@@ -1,6 +1,6 @@
 package android.kotlin.foodclub.viewModels.settings
 
-import android.kotlin.foodclub.domain.models.profile.UserDetailsModel
+import android.kotlin.foodclub.localdatasource.room.entity.UserDetailsModel
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.repositories.SettingsRepository
 import android.kotlin.foodclub.utils.helpers.Resource
@@ -58,15 +58,18 @@ class SettingsViewModel @Inject constructor(
 
     private fun getUserDetails(id: Long) {
         viewModelScope.launch {
-            when (val resource = repository.retrieveUserDetails(id)) {
-                is Resource.Success -> {
-                    _state.update { it.copy(user = resource.data) }
-                    Log.i(TAG, "getUserDetails success settings screen: ${resource.data}")
+            Log.d(TAG, "getUserDetails: $id")
+            repository.retrieveUserDetails(id).collect { userResource ->
+                when (userResource) {
+                    is Resource.Success -> {
+                        _state.update { it.copy(user = userResource.data) }
+                    }
+
+                    is Resource.Error -> {
+                        Log.e(TAG, "getUserDetails failed: ${userResource.message}")
+                    }
                 }
 
-                is Resource.Error -> {
-                    Log.i(TAG, "getUserDetails failed: ${resource.message}")
-                }
             }
         }
     }

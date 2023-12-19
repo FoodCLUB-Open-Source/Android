@@ -1,6 +1,6 @@
 package android.kotlin.foodclub.network.retrofit.dtoMappers.profile
 
-import android.kotlin.foodclub.domain.models.profile.UserDetailsModel
+import android.kotlin.foodclub.localdatasource.room.entity.UserDetailsModel
 import android.kotlin.foodclub.network.retrofit.dtoModels.profile.UserDetailsDto
 import android.kotlin.foodclub.network.retrofit.utils.DomainMapper
 

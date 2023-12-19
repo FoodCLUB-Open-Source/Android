@@ -1,6 +1,6 @@
-package android.kotlin.foodclub.room.repository.datasource
+package android.kotlin.foodclub.localdatasource.localdatasource.profilevideoslocaldatasource
 
-import android.kotlin.foodclub.room.entity.OfflineProfileVideosModel
+import android.kotlin.foodclub.localdatasource.room.entity.OfflineProfileVideosModel
 import kotlinx.coroutines.flow.Flow
 
 interface ProfileVideosDataLocalSource {

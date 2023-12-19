@@ -1,13 +1,12 @@
-package android.kotlin.foodclub.room.repository.datasource_impl
+package android.kotlin.foodclub.localdatasource.localdatasource.profilevideoslocaldatasource
 
-import android.kotlin.foodclub.room.dao.UserProfileVideosDao
-import android.kotlin.foodclub.room.entity.OfflineProfileVideosModel
-import android.kotlin.foodclub.room.repository.datasource.ProfileVideosDataLocalSource
+import android.kotlin.foodclub.localdatasource.room.dao.UserProfileVideosDao
+import android.kotlin.foodclub.localdatasource.room.entity.OfflineProfileVideosModel
 import kotlinx.coroutines.flow.Flow
 
 class ProfileVideosDataLocalSourceImpl(
     private val userProfileVideosDao: UserProfileVideosDao
-): ProfileVideosDataLocalSource  {
+): ProfileVideosDataLocalSource {
     override suspend fun insertProfileVideosData(videosModel: OfflineProfileVideosModel) {
         userProfileVideosDao.insertProfileVideosData(videosModel)
     }
