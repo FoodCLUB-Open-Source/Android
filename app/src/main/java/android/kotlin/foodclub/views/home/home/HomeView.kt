@@ -63,11 +63,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
-import android.kotlin.foodclub.views.home.SnapsView
+import androidx.activity.compose.BackHandler
+import androidx.compose.ui.draw.BlurredEdgeTreatment
+import androidx.compose.ui.draw.blur
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ExperimentalMotionApi
@@ -78,7 +78,6 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import okio.ByteString.Companion.encodeUtf8
 
 
@@ -121,6 +120,17 @@ fun HomeView(
     var feedTransparency by remember { mutableFloatStateOf(1f) }
     var snapsTransparency by remember { mutableFloatStateOf(0.7f) }
 
+    BackHandler {
+        if (showStories){
+            showStories = !showStories
+        }
+        if (!showFeedOnUI) {
+            showFeedOnUI = true
+            snapsTransparency = 0.7f
+            feedTransparency = 1f
+        }
+    }
+
     SideEffect {
         systemUiController.setSystemBarsColor(
             color = Color.Transparent,
@@ -135,74 +145,93 @@ fun HomeView(
         modifier = Modifier
             .fillMaxWidth()
             .zIndex(1f),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.BottomCenter
     ) {
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(95.dp)
+                .blur(20.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
+                .background(
+                    brush = if (showFeedOnUI) {
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color.White.copy(alpha = 0.6f),
+                                Color.White.copy(alpha = 0.4f),
+                                Color.Transparent
+                            )
+                        )
+                    } else {
+                        Brush.linearGradient(
+                            colors = listOf(Color(0xFF424242), Color(0xFF424242))
+                        )
+                    }
+                )
+        )
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(95.dp)
-                .background(color = Color(0xFF424242))
-                .alpha(0.4f)
-        )
-        if (showStories) {
-            Image(
-                painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
-                contentDescription = null,
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .alpha(feedTransparency)
-                    .padding(start = 22.dp, bottom = 18.dp)
-                    .clickable { showStories = !showStories }
-            )
-        }
-
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 10.dp)
         ) {
-            Text(
-                modifier = modifier
-                    .alpha(feedTransparency)
-                    .clickable {
-                        showFeedOnUI = true
-                        snapsTransparency = 0.7f
-                        feedTransparency = 1f
-                    },
-                text = "Feed",
-                fontFamily = Montserrat,
-                fontSize = 18.sp,
-                style = TextStyle(color = Color.White),
-                lineHeight = 21.94.sp,
-                fontWeight = if (showFeedOnUI) FontWeight.Bold else FontWeight.Medium
-            )
-            Text(
+            if (showStories) {
+                Image(
+                    painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .alpha(feedTransparency)
+                        .padding(start = 22.dp, bottom = 18.dp)
+                        .clickable { showStories = !showStories }
+                )
+            }
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .padding(8.dp)
-                    .alpha(0.7f),
-                text = "|",
-                fontFamily = Montserrat,
-                fontSize = 18.sp,
-                style = TextStyle(color = Color.LightGray),
-                lineHeight = 21.94.sp
-            )
-            Text(
-                modifier = modifier
-                    .alpha(snapsTransparency)
-                    .clickable {
-                        feedTransparency = 0.7f
-                        snapsTransparency = 1f
-                        showFeedOnUI = false
-                    },
-                text = "Snaps",
-                fontFamily = Montserrat,
-                fontSize = 18.sp,
-                style = TextStyle(color = Color.White),
-                lineHeight = 21.94.sp,
-                fontWeight = if (!showFeedOnUI) FontWeight.Bold else FontWeight.Medium
-            )
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 10.dp)
+            ) {
+                Text(
+                    modifier = modifier
+                        .alpha(feedTransparency)
+                        .clickable {
+                            showFeedOnUI = true
+                            snapsTransparency = 0.7f
+                            feedTransparency = 1f
+                        },
+                    text = "Feed",
+                    fontFamily = Montserrat,
+                    fontSize = 18.sp,
+                    style = TextStyle(color = Color.White),
+                    lineHeight = 21.94.sp,
+                    fontWeight = if (showFeedOnUI) FontWeight.Bold else FontWeight.Medium
+                )
+                Text(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .alpha(0.7f),
+                    text = "|",
+                    fontFamily = Montserrat,
+                    fontSize = 18.sp,
+                    style = TextStyle(color = Color.LightGray),
+                    lineHeight = 21.94.sp
+                )
+                Text(
+                    modifier = modifier
+                        .alpha(snapsTransparency)
+                        .clickable {
+                            feedTransparency = 0.7f
+                            snapsTransparency = 1f
+                            showFeedOnUI = false
+                        },
+                    text = "Snaps",
+                    fontFamily = Montserrat,
+                    fontSize = 18.sp,
+                    style = TextStyle(color = Color.White),
+                    lineHeight = 21.94.sp,
+                    fontWeight = if (!showFeedOnUI) FontWeight.Bold else FontWeight.Medium
+                )
+            }
         }
     }
 
@@ -451,7 +480,7 @@ fun HomeView(
 
             }
         }
-        }
+    }
 }
 
 
