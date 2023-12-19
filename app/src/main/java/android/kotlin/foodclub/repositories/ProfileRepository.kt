@@ -2,7 +2,7 @@ package android.kotlin.foodclub.repositories
 
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
-import android.kotlin.foodclub.domain.models.profile.UserDetailsModel
+import android.kotlin.foodclub.localdatasource.room.entity.UserDetailsModel
 import android.kotlin.foodclub.domain.models.profile.UserProfile
 import android.kotlin.foodclub.network.retrofit.dtoMappers.posts.PostToVideoMapper
 import android.kotlin.foodclub.network.retrofit.services.ProfileService
@@ -19,12 +19,11 @@ import android.kotlin.foodclub.network.retrofit.responses.profile.RetrieveProfil
 import android.kotlin.foodclub.network.retrofit.responses.profile.RetrieveUserDetailsResponse
 import android.kotlin.foodclub.network.retrofit.responses.profile.UpdateUserProfileImageResponse
 import android.kotlin.foodclub.network.retrofit.utils.apiRequestFlow
-import android.kotlin.foodclub.room.entity.OfflineProfileModel
-import android.kotlin.foodclub.room.repository.datasource.ProfileDataLocalSource
-import android.kotlin.foodclub.room.entity.OfflineProfileVideosModel
-import android.kotlin.foodclub.room.repository.datasource.ProfileVideosDataLocalSource
-import android.kotlin.foodclub.room.util.daoRequestFlow
-import android.kotlin.foodclub.room.util.daoRequestWithFlow
+import android.kotlin.foodclub.localdatasource.localdatasource.userdetailslocaldatasource.UserDetailsLocalDataSource
+import android.kotlin.foodclub.localdatasource.room.entity.OfflineProfileVideosModel
+import android.kotlin.foodclub.localdatasource.localdatasource.profilevideoslocaldatasource.ProfileVideosDataLocalSource
+import android.kotlin.foodclub.localdatasource.util.daoRequestFlow
+import android.kotlin.foodclub.localdatasource.util.daoRequestWithFlow
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.util.Log
 import okhttp3.MultipartBody
@@ -33,7 +32,7 @@ import java.io.File
 
 class ProfileRepository(
     private val api: ProfileService,
-    private val profileDataLocalSource: ProfileDataLocalSource,
+    private val profileDataLocalSource: UserDetailsLocalDataSource,
     private val profileVideosDataLocalSource: ProfileVideosDataLocalSource,
     private val profileMapper: UserProfileMapper,
     private val userPostsMapper: PostToVideoMapper,

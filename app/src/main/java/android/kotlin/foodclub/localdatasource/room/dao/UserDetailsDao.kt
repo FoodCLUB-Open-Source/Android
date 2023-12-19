@@ -1,6 +1,6 @@
-package android.kotlin.foodclub.room.dao
+package android.kotlin.foodclub.localdatasource.room.dao
 
-import android.kotlin.foodclub.domain.models.profile.UserDetailsModel
+import android.kotlin.foodclub.localdatasource.room.entity.UserDetailsModel
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -15,7 +15,7 @@ interface UserDetailsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertProfileData(profileModel: UserDetailsModel)
 
-    @Query("SELECT * FROM profile_data WHERE id=:id")
+    @Query("SELECT * FROM user_details WHERE id=:id")
     fun getProfileData(id: Long): Flow<UserDetailsModel>
 
     @Update
@@ -24,7 +24,7 @@ interface UserDetailsDao {
     @Delete
     fun deleteProfileData(profile: UserDetailsModel)
 
-    @Query("DELETE FROM profile_data")
+    @Query("DELETE FROM user_details")
     fun clearProfileData()
 
 }

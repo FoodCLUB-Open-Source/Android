@@ -1,8 +1,7 @@
-package android.kotlin.foodclub.room.entity
+package android.kotlin.foodclub.localdatasource.room.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.Relation
 
 @Entity("profile_data")
 data class OfflineProfileModel(

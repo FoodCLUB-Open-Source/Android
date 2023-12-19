@@ -1,6 +1,6 @@
 package android.kotlin.foodclub.repositories
 
-import android.kotlin.foodclub.domain.models.profile.UserDetailsModel
+import android.kotlin.foodclub.localdatasource.room.entity.UserDetailsModel
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserDetailsMapper
 import android.kotlin.foodclub.network.retrofit.dtoModels.settings.ChangePasswordDto
 import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorResponse
@@ -8,16 +8,18 @@ import android.kotlin.foodclub.network.retrofit.responses.general.SingleMessageR
 import android.kotlin.foodclub.network.retrofit.responses.settings.UpdateUserDetailsResponse
 import android.kotlin.foodclub.network.retrofit.services.SettingsService
 import android.kotlin.foodclub.network.retrofit.utils.apiRequestFlow
-import android.kotlin.foodclub.room.repository.datasource.ProfileDataLocalSource
+import android.kotlin.foodclub.localdatasource.localdatasource.userdetailslocaldatasource.UserDetailsLocalDataSource
+import android.kotlin.foodclub.network.remotedatasource.settingsremotedatasource.SettingsRemoteDataSource
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class SettingsRepository(
-    private val api: SettingsService,
+    //private val api: SettingsService,
+    private val settingsRemoteDataSource: SettingsRemoteDataSource,
     private val userDetailsMapper: UserDetailsMapper,
-    private val profileDataLocalSource: ProfileDataLocalSource
+    private val userDetailsLocalDataSource: UserDetailsLocalDataSource
 ) {
     companion object {
         private val TAG = SettingsRepository::class.java.simpleName
@@ -28,7 +30,7 @@ class SettingsRepository(
     ): Resource<SingleMessageResponse, DefaultErrorResponse> {
         return when (
             val resource = apiRequestFlow<SingleMessageResponse, DefaultErrorResponse> {
-                api.changePassword(ChangePasswordDto(oldPassword, newPassword))
+                settingsRemoteDataSource.changePassword(ChangePasswordDto(oldPassword, newPassword))
             }
         ) {
             is Resource.Success -> {
@@ -42,7 +44,7 @@ class SettingsRepository(
     }
 
     suspend fun retrieveUserDetails(userId: Long): Flow<Resource<UserDetailsModel, DefaultErrorResponse>> {
-        return profileDataLocalSource.getProfile(userId)
+        return userDetailsLocalDataSource.getProfile(userId)
             .map<UserDetailsModel?, Resource<UserDetailsModel, DefaultErrorResponse>> { userDetails ->
                 if (userDetails != null) {
                     Resource.Success(userDetails)
@@ -55,13 +57,13 @@ class SettingsRepository(
     }
 
     private suspend fun retrieveUserFromService(userId: Long) {
-        val userFromService = api.retrieveUserDetails(userId)
+        val userFromService = settingsRemoteDataSource.retrieveUserDetails(userId)
 
         if (userFromService.isSuccessful) {
             val userDetailsDto = userFromService.body()?.data
             if (userDetailsDto != null) {
                 val userDetailsModel = userDetailsMapper.mapToDomainModel(userDetailsDto)
-                profileDataLocalSource.insertProfile(userDetailsModel)
+                userDetailsLocalDataSource.insertProfile(userDetailsModel)
             } else {
                 Log.i(TAG, "Response body or data is null")
             }
@@ -77,14 +79,14 @@ class SettingsRepository(
     ): Resource<UpdateUserDetailsResponse, DefaultErrorResponse> {
         return when (
             val resource = apiRequestFlow<UpdateUserDetailsResponse, DefaultErrorResponse> {
-                api.updateUserDetails(
+                settingsRemoteDataSource.updateUserDetails(
                     userId,
                     userDetailsMapper.mapFromDomainModel(userDetailsModel)
                 )
             }
         ) {
             is Resource.Success -> {
-                profileDataLocalSource.insertProfile(userDetailsModel)
+                userDetailsLocalDataSource.insertProfile(userDetailsModel)
                 Log.i(TAG, "USER UPDATE SUCCESS ${resource.data}")
                 Resource.Success(resource.data!!.body()!!)
             }

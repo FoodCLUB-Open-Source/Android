@@ -1,6 +1,6 @@
-package android.kotlin.foodclub.room.dao
+package android.kotlin.foodclub.localdatasource.room.dao
 
-import android.kotlin.foodclub.room.entity.OfflineProfileVideosModel
+import android.kotlin.foodclub.localdatasource.room.entity.OfflineProfileVideosModel
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy

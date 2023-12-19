@@ -1,6 +1,6 @@
 package android.kotlin.foodclub.viewModels.settings
 
-import android.kotlin.foodclub.domain.models.profile.UserDetailsModel
+import android.kotlin.foodclub.localdatasource.room.entity.UserDetailsModel
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.repositories.SettingsRepository
 import android.kotlin.foodclub.utils.helpers.Resource

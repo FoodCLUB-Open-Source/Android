@@ -1,9 +1,8 @@
 package android.kotlin.foodclub.views.home.profile
 
 import android.kotlin.foodclub.domain.models.home.VideoModel
-import android.kotlin.foodclub.domain.models.profile.UserDetailsModel
+import android.kotlin.foodclub.localdatasource.room.entity.UserDetailsModel
 import android.kotlin.foodclub.domain.models.profile.UserProfile
-import android.kotlin.foodclub.room.entity.OfflineProfileModel
 import android.kotlin.foodclub.domain.models.recipes.Recipe
 import android.kotlin.foodclub.utils.helpers.StoreData
 

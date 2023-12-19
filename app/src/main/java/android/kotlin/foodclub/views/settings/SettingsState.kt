@@ -1,6 +1,6 @@
 package android.kotlin.foodclub.views.settings
 
-import android.kotlin.foodclub.domain.models.profile.UserDetailsModel
+import android.kotlin.foodclub.localdatasource.room.entity.UserDetailsModel
 
 data class SettingsState(
     val error: String,

@@ -2,7 +2,7 @@ package android.kotlin.foodclub.viewModels.home.profile
 
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.products.MyBasketCache
-import android.kotlin.foodclub.domain.models.profile.UserDetailsModel
+import android.kotlin.foodclub.localdatasource.room.entity.UserDetailsModel
 import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
@@ -10,8 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.repositories.PostRepository
-import android.kotlin.foodclub.room.entity.OfflineProfileModel
-import android.kotlin.foodclub.room.entity.OfflineProfileVideosModel
+import android.kotlin.foodclub.localdatasource.room.entity.OfflineProfileVideosModel
 import android.kotlin.foodclub.utils.helpers.ConnectivityUtils
 import android.kotlin.foodclub.repositories.RecipeRepository
 import android.kotlin.foodclub.utils.helpers.StoreData
@@ -22,7 +21,6 @@ import android.util.Log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

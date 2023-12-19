@@ -1,10 +1,10 @@
-package android.kotlin.foodclub.domain.models.profile
+package android.kotlin.foodclub.localdatasource.room.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "profile_data")
+@Entity(tableName = "user_details")
 data class UserDetailsModel(
     @PrimaryKey(autoGenerate = false)
     val id: Long,
