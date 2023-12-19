@@ -7,7 +7,6 @@ import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.disabledContainerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
-import android.kotlin.foodclub.domain.models.recipes.Recipe
 import android.kotlin.foodclub.utils.composables.CustomSlider
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
 import android.kotlin.foodclub.utils.helpers.ValueParser
@@ -33,7 +32,6 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -237,7 +235,10 @@ fun BottomSheetCategories(
                             fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                             color = Color.White,
                             letterSpacing = TextUnit(-0.64f, TextUnitType.Sp),
-                            modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.dim_12), horizontal = dimensionResource(id = R.dimen.dim_24)),
+                            modifier = Modifier.padding(
+                                vertical = dimensionResource(id = R.dimen.dim_12),
+                                horizontal = dimensionResource(id = R.dimen.dim_24)
+                            ),
                             maxLines = 1
                         )
                     }
@@ -257,8 +258,7 @@ fun CreateRecipeView(
     var showSheet by remember { mutableStateOf(false) }
     var showCategorySheet by remember { mutableStateOf(false) }
     val codeTriggered = remember { mutableStateOf(false) }
-    var sliderPosition by remember { mutableFloatStateOf(0f) }
-    var servingSize by remember { mutableStateOf(0) }
+    var servingSize by remember { mutableIntStateOf(0) }
     var recipeName by remember { mutableStateOf("") }
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - dimensionResource(id = R.dimen.dim_240)
     val rows = listOf(
@@ -551,7 +551,9 @@ fun Ingredient(
     val ingredientXOffset = remember { mutableFloatStateOf(0f) }
     var showItem by remember { mutableStateOf(true) }
 
-    val transitionState = remember { MutableTransitionState(isRevealed).apply { targetState = !isRevealed }}
+    val transitionState = remember {
+        MutableTransitionState(isRevealed).apply { targetState = !isRevealed }
+    }
     val transition = updateTransition(transitionState, label = "")
     val offsetTransition by transition.animateFloat(
         label = stringResource(id = R.string.ingredient_offset_transitions),
@@ -577,7 +579,11 @@ fun Ingredient(
             Button(
                 shape = RectangleShape,
                 modifier = Modifier
-                    .border(dimensionResource(id = R.dimen.dim_1), containerColor, shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_22)))
+                    .border(
+                        dimensionResource(id = R.dimen.dim_1),
+                        containerColor,
+                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_22))
+                    )
                     .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_22)))
                     .width(dimensionResource(id = R.dimen.dim_50))
                     .height(dimensionResource(id = R.dimen.dim_50)),
@@ -621,7 +627,9 @@ fun Ingredient(
                 .fillMaxWidth()
                 .height(dimensionResource(id = R.dimen.dim_100))
                 .border(
-                    dimensionResource(id = R.dimen.dim_1), Color(0xFFE8E8E8), shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
+                    dimensionResource(id = R.dimen.dim_1),
+                    Color(0xFFE8E8E8),
+                    shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
                 )
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
                 .background(Color.White)
@@ -658,8 +666,8 @@ fun Ingredient(
                                 painter = painterResource(id = R.drawable.baseline_arrow_left_24),
                                 contentDescription = null,
                                 modifier = Modifier
-                                    .size( dimensionResource(id = R.dimen.dim_35))
-                                    .padding(end =dimensionResource(id = R.dimen.dim_5))
+                                    .size(dimensionResource(id = R.dimen.dim_35))
+                                    .padding(end = dimensionResource(id = R.dimen.dim_5))
                                     .clickable {
                                         ingredient.decrementQuantity(5)
                                         quantity = ingredient.quantity
@@ -707,10 +715,10 @@ fun SectionItem(
     actionColor: Color = Color.Black,
     onClick: () -> Unit
 ) {
-        Row ( modifier = Modifier
-            .fillMaxWidth()
-            .height(dimensionResource(id = R.dimen.dim_50)), verticalAlignment = Alignment.CenterVertically) {
-
+        Row (
+            modifier = Modifier.fillMaxWidth().height(dimensionResource(id = R.dimen.dim_50)),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
                 text = title,
                 fontFamily = Montserrat,
