@@ -216,7 +216,12 @@ fun CameraView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(screenHeight)
-                    .padding(start = dimensionResource(id = R.dimen.dim_20), top = dimensionResource(id = R.dimen.dim_50), end = dimensionResource(id = R.dimen.dim_20), bottom = dimensionResource(id = R.dimen.dim_20))
+                    .padding(
+                        start = dimensionResource(id = R.dimen.dim_20),
+                        top = dimensionResource(id = R.dimen.dim_50),
+                        end = dimensionResource(id = R.dimen.dim_20),
+                        bottom = dimensionResource(id = R.dimen.dim_20)
+                    )
             ) {
 
                 Box(
@@ -272,10 +277,15 @@ fun CameraView(
                     if (confirmDeletion)
                     {
                         AlertDialog(onDismissRequest = { confirmDeletion = !confirmDeletion },
-                            modifier = Modifier.background(confirmScreenColor, RoundedCornerShape(dimensionResource(id = R.dimen.dim_5))).padding(dimensionResource(id = R.dimen.dim_5)),) {
+                            modifier = Modifier
+                                .background(
+                                    confirmScreenColor,
+                                    RoundedCornerShape(dimensionResource(id = R.dimen.dim_5))
+                                )
+                                .padding(dimensionResource(id = R.dimen.dim_5)),) {
 
                             Column(horizontalAlignment = Alignment.CenterHorizontally){
-                                Text(text = "Do you want to delete the last clip made?")
+                                Text(text = stringResource(R.string.Delete_Clip_Message))
 
                                 Row(horizontalArrangement = Arrangement.SpaceEvenly) {
                                     Button(colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
@@ -283,7 +293,7 @@ fun CameraView(
                                         confirmDeletion = !confirmDeletion
 
                                     }) {
-                                        Text(text="Cancel")
+                                        Text(text= stringResource(id = R.string.Cancel))
                                     }
 
                                     Button(colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
@@ -294,7 +304,7 @@ fun CameraView(
                                         canDelete = false
                                         confirmDeletion = !confirmDeletion
                                     }) {
-                                        Text(text="Confirm")
+                                        Text(text= stringResource(id = R.string.Confirm))
                                     }
                                 }
                             }
@@ -372,7 +382,6 @@ fun CameraView(
                                             }
                                         }
 
-                                        val test = 0
                                     }
                                 } else {
                                     recordingStarted.value = false
@@ -491,7 +500,11 @@ fun CameraView(
                                     .then(
                                         Modifier
                                             .size(dimensionResource(id = R.dimen.dim_64))
-                                            .border(dimensionResource(id = R.dimen.dim_2), Color.White, RoundedCornerShape(dimensionResource(id = R.dimen.dim_5)))
+                                            .border(
+                                                dimensionResource(id = R.dimen.dim_2),
+                                                Color.White,
+                                                RoundedCornerShape(dimensionResource(id = R.dimen.dim_5))
+                                            )
                                     )
                                     .clickable {
                                         navController.navigate("GALLERY_VIEW/${stateString.encodeUtf8()}")
@@ -504,7 +517,11 @@ fun CameraView(
                                     .then(
                                         Modifier
                                             .size(dimensionResource(id = R.dimen.dim_64))
-                                            .border(dimensionResource(id = R.dimen.dim_2), Color.White, RoundedCornerShape(dimensionResource(id = R.dimen.dim_5)))
+                                            .border(
+                                                dimensionResource(id = R.dimen.dim_2),
+                                                Color.White,
+                                                RoundedCornerShape(dimensionResource(id = R.dimen.dim_5))
+                                            )
                                     )
                             )
                         }
@@ -525,8 +542,11 @@ fun CameraView(
                         Box(
                             modifier = Modifier
                                 .width(dimensionResource(id = R.dimen.dim_40))
-                                .height( dimensionResource(id = R.dimen.dim_38))
-                                .background(Color.Gray, shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
+                                .height(dimensionResource(id = R.dimen.dim_38))
+                                .background(
+                                    Color.Gray,
+                                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))
+                                )
                                 .clip(
                                     RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))
                                 )

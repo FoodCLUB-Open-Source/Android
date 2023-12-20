@@ -124,9 +124,6 @@ fun RecordingClipsButton(
         modifier = Modifier.size(dimensionResource(id = R.dimen.dim_80))
     ) {
 
-        val dim_80 = dimensionResource(id = R.dimen.dim_80)
-        val dim_60 = dimensionResource(id = R.dimen.dim_60)
-
         Canvas(modifier = Modifier.fillMaxSize())
         {
             drawArc(
@@ -147,8 +144,6 @@ fun RecordingClipsButton(
 
         )
 
-        //val flt_25 = integerResource(id = R.integer.int_0pt5).toFloat()
-
         Canvas(modifier = Modifier.fillMaxSize())
         {
             clipArcs.forEach {
@@ -163,9 +158,9 @@ fun RecordingClipsButton(
 
         }
 
-        Canvas(modifier = Modifier.size(dim_60)) {
+        Canvas(modifier = Modifier.size(dimensionResource(id = R.dimen.dim_60)
+        )) {
             drawCircle(color = darkGrey)
-            // Record button
         }
 
     }
