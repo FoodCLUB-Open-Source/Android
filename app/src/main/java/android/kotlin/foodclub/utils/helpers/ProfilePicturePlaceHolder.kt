@@ -16,7 +16,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 @Composable
-fun ProfilePictureChange()
+fun ProfilePicturePlaceHolder()
 {
     Image(
         painter = painterResource(R.drawable.profile_picture_change_icon),
