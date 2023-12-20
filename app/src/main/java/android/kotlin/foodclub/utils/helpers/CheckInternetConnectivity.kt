@@ -17,6 +17,3 @@ fun checkInternetConnectivity(context: Context): Boolean {
         return networkInfo != null && networkInfo.isConnected
     }
 }
-
-
-

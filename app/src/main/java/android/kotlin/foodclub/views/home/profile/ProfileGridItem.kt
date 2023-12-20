@@ -43,7 +43,7 @@ fun GridItem(
         ,shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
     ) {
 
-    if(isInternetconnected) {
+if(isInternetconnected) {
     Box(
         modifier = Modifier
             .background(
