@@ -2,13 +2,10 @@ package android.kotlin.foodclub.repositories
 
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
-import android.kotlin.foodclub.localdatasource.room.entity.UserDetailsModel
 import android.kotlin.foodclub.domain.models.profile.UserProfile
 import android.kotlin.foodclub.network.retrofit.dtoMappers.posts.PostToVideoMapper
-import android.kotlin.foodclub.network.retrofit.services.ProfileService
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.FollowerUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.FollowingUserMapper
-import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserDetailsMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserProfileMapper
 import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorResponse
 import android.kotlin.foodclub.network.retrofit.responses.profile.FollowUnfollowResponse
@@ -16,29 +13,25 @@ import android.kotlin.foodclub.network.retrofit.responses.profile.RetrieveFollow
 import android.kotlin.foodclub.network.retrofit.responses.profile.RetrieveFollowingListResponse
 import android.kotlin.foodclub.network.retrofit.responses.profile.RetrievePostsListResponse
 import android.kotlin.foodclub.network.retrofit.responses.profile.RetrieveProfileResponse
-import android.kotlin.foodclub.network.retrofit.responses.profile.RetrieveUserDetailsResponse
 import android.kotlin.foodclub.network.retrofit.responses.profile.UpdateUserProfileImageResponse
 import android.kotlin.foodclub.network.retrofit.utils.apiRequestFlow
-import android.kotlin.foodclub.localdatasource.localdatasource.userdetailslocaldatasource.UserDetailsLocalDataSource
 import android.kotlin.foodclub.localdatasource.room.entity.OfflineProfileVideosModel
 import android.kotlin.foodclub.localdatasource.localdatasource.profilevideoslocaldatasource.ProfileVideosDataLocalSource
 import android.kotlin.foodclub.localdatasource.util.daoRequestFlow
 import android.kotlin.foodclub.localdatasource.util.daoRequestWithFlow
+import android.kotlin.foodclub.network.remotedatasource.profile_remote_datasource.ProfileRemoteDataSource
 import android.kotlin.foodclub.utils.helpers.Resource
-import android.util.Log
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 
 class ProfileRepository(
-    private val api: ProfileService,
-    private val profileDataLocalSource: UserDetailsLocalDataSource,
+    private val profileRemoteDataSource: ProfileRemoteDataSource,
     private val profileVideosDataLocalSource: ProfileVideosDataLocalSource,
     private val profileMapper: UserProfileMapper,
     private val userPostsMapper: PostToVideoMapper,
     private val followerUserMapper: FollowerUserMapper,
-    private val followingUserMapper: FollowingUserMapper,
-    private val userDetailsMapper: UserDetailsMapper
+    private val followingUserMapper: FollowingUserMapper
 ) {
 
     suspend fun retrieveProfileData(
@@ -46,7 +39,7 @@ class ProfileRepository(
     ): Resource<UserProfile, DefaultErrorResponse> {
         return when(
             val resource = apiRequestFlow<RetrieveProfileResponse, DefaultErrorResponse> {
-                api.retrieveProfileData(userId, pageNo, pageSize)
+                profileRemoteDataSource.retrieveProfileData(userId, pageNo, pageSize )
             }
         ) {
             is Resource.Success -> {
@@ -61,57 +54,13 @@ class ProfileRepository(
         }
     }
 
-    suspend fun retrieveUserDetails(userId: Long): Resource<UserDetailsModel, DefaultErrorResponse> {
-        return when (val resource = apiRequestFlow<RetrieveUserDetailsResponse, DefaultErrorResponse> {
-            api.retrieveUserDetails(userId)
-        }) {
-            is Resource.Success -> {
-                val userDetailsDto = resource.data?.body()?.data
-                if (userDetailsDto != null) {
-                    val userDetailsModel = userDetailsMapper.mapToDomainModel(userDetailsDto)
-                    Resource.Success(userDetailsModel)
-                } else {
-                    Log.i("MYTAG","Response body or data is null")
-                    Resource.Error("Response body or data is null")
-                }
-            }
-            is Resource.Error -> {
-                Log.i("MYTAG","${resource.message}")
-                Resource.Error(resource.message ?: "Unknown error")
-            }
-        }
-    }
-
-    suspend fun retrieveLocalUserDetails(userId: Long): Resource<UserDetailsModel?, String> {
-        return daoRequestWithFlow {
-            profileDataLocalSource.getProfile(userId)
-        }
-    }
-
-    suspend fun insertLocalUserDetails(offlineProfileModel: UserDetailsModel) {
-        daoRequestFlow<Unit, String> {
-            profileDataLocalSource.insertProfile(offlineProfileModel)
-        }
-    }
-
-    suspend fun insertProfileVideosData(videosModel: OfflineProfileVideosModel) {
-        daoRequestFlow<Unit, String> {
-            profileVideosDataLocalSource.insertProfileVideosData(videosModel)
-        }
-    }
-
-    suspend fun retrieveAllLocalProfileVideos(): Resource<List<OfflineProfileVideosModel>, String> {
-        return daoRequestWithFlow {
-            profileVideosDataLocalSource.getAllProfileVideosData()
-        }
-    }
-
     suspend fun updateUserProfileImage(
         userId: Long,
         file: File
     ): Resource<UpdateUserProfileImageResponse, DefaultErrorResponse> {
         return when (val resource = apiRequestFlow<UpdateUserProfileImageResponse, DefaultErrorResponse> {
-            api.updateUserProfileImage(
+
+            profileRemoteDataSource.updateUserProfileImage(
                 userId,
                 imagePart = MultipartBody.Part
                     .createFormData(
@@ -135,7 +84,7 @@ class ProfileRepository(
     ): Resource<List<VideoModel>, DefaultErrorResponse> {
         return when(
             val resource = apiRequestFlow<RetrievePostsListResponse, DefaultErrorResponse> {
-                api.getBookmarkedPosts(userId, pageNo, pageSize)
+                profileRemoteDataSource.getBookmarkedPosts(userId, pageNo, pageSize)
             }
         ) {
             is Resource.Success -> {
@@ -157,7 +106,7 @@ class ProfileRepository(
     ): Resource<List<SimpleUserModel>, DefaultErrorResponse> {
         return when(
             val resource = apiRequestFlow<RetrieveFollowerListResponse, DefaultErrorResponse> {
-                api.retrieveProfileFollowers(userId, pageNo, pageSize)
+                profileRemoteDataSource.retrieveProfileFollowers(userId, pageNo, pageSize)
             }
         ) {
             is Resource.Success -> {
@@ -179,7 +128,7 @@ class ProfileRepository(
     ): Resource<List<SimpleUserModel>, DefaultErrorResponse> {
         return when(
             val resource = apiRequestFlow<RetrieveFollowingListResponse, DefaultErrorResponse> {
-                api.retrieveProfileFollowing(userId, pageNo, pageSize)
+                profileRemoteDataSource.retrieveProfileFollowing(userId, pageNo, pageSize)
             }
         ) {
             is Resource.Success -> {
@@ -201,7 +150,7 @@ class ProfileRepository(
     ): Resource<FollowUnfollowResponse, DefaultErrorResponse> {
         return when(
             val resource = apiRequestFlow<FollowUnfollowResponse, DefaultErrorResponse> {
-                api.followUser(followerId, userId)
+                profileRemoteDataSource.followUser(followerId, userId)
             }
         ) {
             is Resource.Success -> {
@@ -219,7 +168,7 @@ class ProfileRepository(
     ): Resource<FollowUnfollowResponse, DefaultErrorResponse> {
         return when(
             val resource = apiRequestFlow<FollowUnfollowResponse, DefaultErrorResponse> {
-                api.unfollowUser(followerId, userId)
+                profileRemoteDataSource.unfollowUser(followerId, userId)
             }
         ) {
             is Resource.Success -> {
@@ -231,4 +180,18 @@ class ProfileRepository(
             }
         }
     }
+
+    // local data related
+    suspend fun insertProfileVideosData(videosModel: OfflineProfileVideosModel) {
+        daoRequestFlow<Unit, String> {
+            profileVideosDataLocalSource.insertProfileVideosData(videosModel)
+        }
+    }
+
+    suspend fun retrieveAllLocalProfileVideos(): Resource<List<OfflineProfileVideosModel>, String> {
+        return daoRequestWithFlow {
+            profileVideosDataLocalSource.getAllProfileVideosData()
+        }
+    }
+
 }

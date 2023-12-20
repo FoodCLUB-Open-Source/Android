@@ -6,10 +6,9 @@ import android.kotlin.foodclub.network.retrofit.dtoModels.settings.ChangePasswor
 import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorResponse
 import android.kotlin.foodclub.network.retrofit.responses.general.SingleMessageResponse
 import android.kotlin.foodclub.network.retrofit.responses.settings.UpdateUserDetailsResponse
-import android.kotlin.foodclub.network.retrofit.services.SettingsService
 import android.kotlin.foodclub.network.retrofit.utils.apiRequestFlow
 import android.kotlin.foodclub.localdatasource.localdatasource.userdetailslocaldatasource.UserDetailsLocalDataSource
-import android.kotlin.foodclub.network.remotedatasource.settingsremotedatasource.SettingsRemoteDataSource
+import android.kotlin.foodclub.network.remotedatasource.settings_remote_datasource.SettingsRemoteDataSource
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.util.Log
 import kotlinx.coroutines.flow.Flow

@@ -102,7 +102,6 @@ class ProfileViewModel @Inject constructor(
 //                }
             }else{
                 Log.i(TAG,"INTERNET NOT CONNECTED")
-                retrieveLocalUserDetails(userId)
                 retrieveAllOfflineProfileVideos()
             }
         }
@@ -284,27 +283,6 @@ class ProfileViewModel @Inject constructor(
                 shippingAddress = state.value.userDetails!!.shippingAddress ?: "",
                 fullName = state.value.userDetails!!.fullName ?: ""
             )
-            profileRepository.insertLocalUserDetails(combined)
-        }
-    }
-
-    private fun retrieveLocalUserDetails(id: Long) {
-        viewModelScope.launch {
-            when (val resource = profileRepository.retrieveLocalUserDetails(id)) {
-                is Resource.Success -> {
-                    val user = resource.data
-                    _state.update {
-                        it.copy(
-                            offlineUserData = user
-                        )
-                    }
-                    Log.i(TAG, "LOCAL USER DETAILS $user")
-                }
-                is Resource.Error -> {
-                    // Handle the error case if needed
-                    Log.e(TAG, "Error retrieving local user details: ${resource.message}")
-                }
-            }
         }
     }
 
@@ -377,20 +355,6 @@ class ProfileViewModel @Inject constructor(
                 }
                 is Resource.Error -> {
                     Log.e(TAG,"ERROR Offline Profile Videos ${response.message}")
-                }
-            }
-        }
-    }
-
-    private fun getUserDetails(id: Long){
-        viewModelScope.launch {
-            when (val resource = profileRepository.retrieveUserDetails(id)) {
-                is Resource.Success -> {
-                    _state.update { it.copy(userDetails = resource.data) }
-                }
-
-                is Resource.Error -> {
-                    Log.i(TAG, "getUserDetails failed: ${resource.message}")
                 }
             }
         }
