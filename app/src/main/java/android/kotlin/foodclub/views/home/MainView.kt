@@ -106,7 +106,7 @@ fun BottomBar(navController: NavHostController, triggerBottomSheetModal: () -> U
     val currentDestination = navBackStackEntry?.destination
 
     val bottomBarDestination = screens.any { currentDestination?.route?.startsWith(it.route) == true }
-    var screenHeight = LocalConfiguration.current.screenHeightDp.dp * 0.13f
+    var screenHeight = LocalConfiguration.current.screenHeightDp.dp * 0.12f
 
     if (screenHeight < dimensionResource(id = R.dimen.dim_90)) {
         screenHeight = dimensionResource(id = R.dimen.dim_110)

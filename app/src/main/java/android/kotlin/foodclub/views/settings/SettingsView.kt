@@ -50,6 +50,7 @@ fun SettingsView(
     events: SettingsEvents,
     state: SettingsState
 ) {
+
     SettingsLayout(
         label = stringResource(id = R.string.settings),
         onBackAction = { navController.navigateUp() }) {

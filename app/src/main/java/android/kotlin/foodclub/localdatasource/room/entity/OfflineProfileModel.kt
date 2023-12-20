@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.room.entity
+package android.kotlin.foodclub.localdatasource.room.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
