@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.di
 
+import android.kotlin.foodclub.localdatasource.localdatasource.profile_bookmarked_local_datasource.ProfileBookmarkedLocalDataSource
 import android.kotlin.foodclub.network.retrofit.services.AuthenticationService
 import android.kotlin.foodclub.network.retrofit.services.PostsService
 import android.kotlin.foodclub.network.retrofit.services.ProductsService
@@ -27,10 +28,14 @@ import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.repositories.RecipeRepository
 import android.kotlin.foodclub.repositories.SettingsRepository
 import android.kotlin.foodclub.repositories.StoryRepository
-import android.kotlin.foodclub.localdatasource.localdatasource.userdetailslocaldatasource.UserDetailsLocalDataSource
-import android.kotlin.foodclub.localdatasource.localdatasource.profilevideoslocaldatasource.ProfileVideosDataLocalSource
+import android.kotlin.foodclub.localdatasource.localdatasource.user_details_local_datasource.UserDetailsLocalDataSource
+import android.kotlin.foodclub.localdatasource.localdatasource.profile_posts_local_datasource.ProfilePostsLocalDataSource
+import android.kotlin.foodclub.localdatasource.localdatasource.profile_local_datasource.ProfileLocalDataSource
 import android.kotlin.foodclub.network.remotedatasource.profile_remote_datasource.ProfileRemoteDataSource
 import android.kotlin.foodclub.network.remotedatasource.settings_remote_datasource.SettingsRemoteDataSource
+import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.LocalDataMapper
+import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserLocalBookmarksMapper
+import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserLocalPostsMapper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,7 +49,12 @@ object RepositoriesModule {
     @Singleton
     fun provideProfileRepository(
         profileRemoteDataSource: ProfileRemoteDataSource,
-        profileVideosDataLocalSource: ProfileVideosDataLocalSource,
+        profileLocalDataSource: ProfileLocalDataSource,
+        profileVideosDataLocalSource: ProfilePostsLocalDataSource,
+        profileBookmarkedLocalDataSource: ProfileBookmarkedLocalDataSource,
+        localDataMapper: LocalDataMapper,
+        userLocalPostsMapper: UserLocalPostsMapper,
+        userLocalBookmarksMapper: UserLocalBookmarksMapper,
         profileMapper: UserProfileMapper,
         userPostsMapper: PostToVideoMapper,
         followerUserMapper: FollowerUserMapper,
@@ -52,7 +62,12 @@ object RepositoriesModule {
     ): ProfileRepository {
         return ProfileRepository(
             profileRemoteDataSource,
+            profileLocalDataSource,
             profileVideosDataLocalSource,
+            profileBookmarkedLocalDataSource,
+            localDataMapper,
+            userLocalPostsMapper,
+            userLocalBookmarksMapper,
             profileMapper,
             userPostsMapper,
             followerUserMapper,

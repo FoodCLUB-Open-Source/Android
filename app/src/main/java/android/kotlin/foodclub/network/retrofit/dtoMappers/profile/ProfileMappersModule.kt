@@ -34,4 +34,22 @@ object ProfileMappersModule {
         return UserDetailsMapper()
     }
 
+    @Provides
+    @Singleton
+    fun provideLocalDataMapper(): LocalDataMapper {
+        return LocalDataMapper()
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserLocalPostsMapper(): UserLocalPostsMapper {
+        return UserLocalPostsMapper()
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserLocalBookmarksMapper(): UserLocalBookmarksMapper {
+        return UserLocalBookmarksMapper()
+    }
+
 }

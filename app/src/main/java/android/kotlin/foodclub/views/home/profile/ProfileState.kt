@@ -1,15 +1,14 @@
 package android.kotlin.foodclub.views.home.profile
 
 import android.kotlin.foodclub.domain.models.home.VideoModel
-import android.kotlin.foodclub.localdatasource.room.entity.UserDetailsModel
 import android.kotlin.foodclub.domain.models.profile.UserProfile
 import android.kotlin.foodclub.domain.models.recipes.Recipe
+import android.kotlin.foodclub.localdatasource.room.entity.OfflineProfileModel
 import android.kotlin.foodclub.utils.helpers.StoreData
 
 data class ProfileState(
     val userProfile: UserProfile?,
-    val userDetails: UserDetailsModel?,
-    val offlineUserData: UserDetailsModel?,
+    val offlineProfileModel: OfflineProfileModel?,
     val bookmarkedPosts: List<VideoModel>,
     val userPosts: List<VideoModel>,
     val sessionUserId: Long,
@@ -25,7 +24,7 @@ data class ProfileState(
     companion object {
         fun default() = ProfileState(
             userProfile = null,
-            offlineUserData = null,
+            offlineProfileModel = null,
             bookmarkedPosts = emptyList(),
             userPosts = emptyList(),
             sessionUserId = 0,
@@ -35,7 +34,6 @@ data class ProfileState(
             error = "",
             postData = null,
             recipe = null,
-            userDetails = null
         )
     }
 }
