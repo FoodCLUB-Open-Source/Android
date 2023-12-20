@@ -9,10 +9,11 @@ import android.kotlin.foodclub.utils.composables.PlayPauseButton
 import android.kotlin.foodclub.utils.composables.VideoLayout
 import android.kotlin.foodclub.utils.composables.VideoScroller
 import android.kotlin.foodclub.viewModels.home.home.HomeEvents
-import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
+import android.kotlin.foodclub.views.VideoPagerLoadingSkeleton
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
@@ -149,5 +151,12 @@ fun VideoPager(
                 )
             }
         }
+    }
+    else{
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Gray)
+        )
+        { VideoPagerLoadingSkeleton() }
     }
 }
