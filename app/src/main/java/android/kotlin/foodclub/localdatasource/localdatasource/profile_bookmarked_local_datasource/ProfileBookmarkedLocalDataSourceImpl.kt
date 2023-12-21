@@ -20,7 +20,7 @@ class ProfileBookmarkedLocalDataSourceImpl @Inject constructor(
         profileBookmarksDao.updateBookmarkedVideosData(videosModel)
     }
 
-    override fun getAllBookmarkedBookmarkedVideosData(): Flow<List<OfflineUserBookmarksModel>> {
+    override fun getAllBookmarkedVideosData(): Flow<List<OfflineUserBookmarksModel>> {
         return profileBookmarksDao.getAllBookmarkedVideosData()
     }
 }

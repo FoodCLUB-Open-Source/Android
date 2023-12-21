@@ -20,10 +20,14 @@ import android.kotlin.foodclub.localdatasource.localdatasource.profile_posts_loc
 import android.kotlin.foodclub.localdatasource.localdatasource.profile_local_datasource.ProfileLocalDataSource
 import android.kotlin.foodclub.network.remotedatasource.profile_remote_datasource.ProfileRemoteDataSource
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.LocalDataMapper
+import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.OfflineProfileDataMapper
+import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.SharedVideoMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserLocalBookmarksMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserLocalPostsMapper
 import android.kotlin.foodclub.utils.helpers.Resource
-import android.util.Log
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.first
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
@@ -36,8 +40,10 @@ class ProfileRepository(
     private val localDataMapper: LocalDataMapper,
     private val localVideosMapper: UserLocalPostsMapper,
     private val userLocalBookmarksMapper: UserLocalBookmarksMapper,
+    private val sharedVideoMapper: SharedVideoMapper,
     private val profileMapper: UserProfileMapper,
     private val userPostsMapper: PostToVideoMapper,
+    private val offlineProfileMapper: OfflineProfileDataMapper,
     private val followerUserMapper: FollowerUserMapper,
     private val followingUserMapper: FollowingUserMapper
 ) {
@@ -81,7 +87,6 @@ class ProfileRepository(
             is Resource.Success -> {
                 val bookmarkedPosts = resource.data!!.body()!!.data.take(10)
                 val mappedBookmarks = userLocalBookmarksMapper.mapToDomainModel(bookmarkedPosts)
-                Log.i("MYTAG","B-POSTS $mappedBookmarks")
 
                 profileBookmarkedLocalDataSource.insertBookmarkedVideosData(mappedBookmarks)
 
@@ -95,6 +100,16 @@ class ProfileRepository(
             is Resource.Error -> {
                 Resource.Error(resource.message!!)
             }
+        }
+    }
+
+    suspend fun getAllOfflineData(userId: Long): Triple<UserProfile, List<VideoModel>, List<VideoModel>> {
+        return coroutineScope {
+            val profileData = async { profileLocalDataSource.getProfileData(userId).first() }
+            val userPosts = async { profilePostsLocalDataSource.getAllProfileVideosData().first().map { sharedVideoMapper.mapToDomainModel(it) } }
+            val bookmarks = async { profileBookmarkedLocalDataSource.getAllBookmarkedVideosData().first().map { sharedVideoMapper.mapToDomainModel(it) } }
+            val mappedProfile = offlineProfileMapper.mapToDomainModel(profileData.await())
+            Triple(mappedProfile, userPosts.await(), bookmarks.await())
         }
     }
 

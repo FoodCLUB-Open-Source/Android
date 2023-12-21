@@ -8,7 +8,7 @@ interface ProfileBookmarkedLocalDataSource {
     suspend fun insertBookmarkedVideosData(videos: List<OfflineUserBookmarksModel>)
     fun getBookmarkedVideosData(id: Long): Flow<OfflineUserBookmarksModel>
     suspend fun updateBookmarkedVideosData(videosModel: OfflineUserBookmarksModel)
-    fun getAllBookmarkedBookmarkedVideosData(): Flow<List<OfflineUserBookmarksModel>>
+    fun getAllBookmarkedVideosData(): Flow<List<OfflineUserBookmarksModel>>
 
 
 }

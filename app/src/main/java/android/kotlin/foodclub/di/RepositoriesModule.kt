@@ -34,6 +34,8 @@ import android.kotlin.foodclub.localdatasource.localdatasource.profile_local_dat
 import android.kotlin.foodclub.network.remotedatasource.profile_remote_datasource.ProfileRemoteDataSource
 import android.kotlin.foodclub.network.remotedatasource.settings_remote_datasource.SettingsRemoteDataSource
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.LocalDataMapper
+import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.OfflineProfileDataMapper
+import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.SharedVideoMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserLocalBookmarksMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserLocalPostsMapper
 import dagger.Module
@@ -57,6 +59,8 @@ object RepositoriesModule {
         userLocalBookmarksMapper: UserLocalBookmarksMapper,
         profileMapper: UserProfileMapper,
         userPostsMapper: PostToVideoMapper,
+        sharedVideoMapper: SharedVideoMapper,
+        offlineProfileMapper: OfflineProfileDataMapper,
         followerUserMapper: FollowerUserMapper,
         followingUserMapper: FollowingUserMapper
     ): ProfileRepository {
@@ -68,8 +72,10 @@ object RepositoriesModule {
             localDataMapper,
             userLocalPostsMapper,
             userLocalBookmarksMapper,
+            sharedVideoMapper,
             profileMapper,
             userPostsMapper,
+            offlineProfileMapper,
             followerUserMapper,
             followingUserMapper
         )

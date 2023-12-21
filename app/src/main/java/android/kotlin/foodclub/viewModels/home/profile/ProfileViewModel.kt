@@ -32,7 +32,6 @@ class ProfileViewModel @Inject constructor(
     private val postRepository: PostRepository,
     private val profileRepository: ProfileRepository,
     val sessionCache: SessionCache,
-    private val connectivityUtil: ConnectivityUtils,
     private val storeData: StoreData,
     private val recipeRepository: RecipeRepository,
     private val basketCache: MyBasketCache
@@ -85,14 +84,9 @@ class ProfileViewModel @Inject constructor(
 
             _state.update { it.copy(dataStore = storeData) }
 
-            if (connectivityUtil.isNetworkAvailable()){
-                Log.i(TAG,"INTERNET CONNECTED")
-                viewModelScope.launch {
-                    getProfileModel(userId)
-                    getBookmarkedPosts(userId)
-                }
-            }else{
-                Log.i(TAG,"INTERNET NOT CONNECTED")
+            viewModelScope.launch {
+                getProfileModel(userId)
+                getBookmarkedPosts(userId)
             }
         }
     }
@@ -238,11 +232,18 @@ class ProfileViewModel @Inject constructor(
                             myUserId = sessionCache.getActiveSession()!!.sessionUser.userId
                         )
                     }
-//                    insertLocalProfileVideos()
                 }
 
                 is Resource.Error -> {
-                    _state.update { it.copy(error = resource.message!!) }
+                    val combinedData = profileRepository.getAllOfflineData(userId)
+                    _state.update { state->
+                        state.copy(
+                            userProfile = combinedData.first,
+                            userPosts = combinedData.second,
+                            bookmarkedPosts = combinedData.third,
+                            error = resource.message!!
+                        )
+                    }
                 }
             }
         }
