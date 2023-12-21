@@ -9,16 +9,13 @@ import android.kotlin.foodclub.utils.composables.ShimmerBrush
 import android.kotlin.foodclub.utils.helpers.ProfilePicturePlaceHolder
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.kotlin.foodclub.viewModels.home.profile.ProfileEvents
-import android.kotlin.foodclub.views.home.profile.FollowButton
 import android.kotlin.foodclub.views.home.profile.ProfileState
-import android.kotlin.foodclub.views.home.profile.isFollowed
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.keyframes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -71,7 +68,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ExperimentalMotionApi
@@ -437,10 +433,10 @@ fun ProfileViewLoadingSkeleton (
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
                 Button(
                     onClick = { },
-                    shape = RoundedCornerShape(40.dp),
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_40)),
                     modifier = Modifier
-                        .width(130.dp)
-                        .height(40.dp),
+                        .width(dimensionResource(id = R.dimen.dim_130))
+                        .height(dimensionResource(id = R.dimen.dim_40)),
                     colors =ButtonDefaults.buttonColors(
                         containerColor = foodClubGreen,
                         contentColor = Color.White
