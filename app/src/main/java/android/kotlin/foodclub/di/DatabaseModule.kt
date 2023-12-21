@@ -1,9 +1,9 @@
 package android.kotlin.foodclub.di
 
 import android.app.Application
-import android.kotlin.foodclub.room.db.FoodCLUBDatabase
-import android.kotlin.foodclub.room.dao.UserDetailsDao
-import android.kotlin.foodclub.room.dao.UserProfileVideosDao
+import android.kotlin.foodclub.localdatasource.room.database.FoodCLUBDatabase
+import android.kotlin.foodclub.localdatasource.room.dao.UserDetailsDao
+import android.kotlin.foodclub.localdatasource.room.dao.UserProfileVideosDao
 import androidx.room.Room
 import dagger.Module
 import dagger.Provides

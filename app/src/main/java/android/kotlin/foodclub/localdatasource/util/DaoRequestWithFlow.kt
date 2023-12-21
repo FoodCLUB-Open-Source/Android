@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.room.util
+package android.kotlin.foodclub.localdatasource.util
 
 import android.kotlin.foodclub.utils.helpers.Resource
 import kotlinx.coroutines.flow.Flow

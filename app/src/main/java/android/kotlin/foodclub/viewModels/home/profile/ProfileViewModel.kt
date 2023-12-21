@@ -2,6 +2,7 @@ package android.kotlin.foodclub.viewModels.home.profile
 
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.products.MyBasketCache
+import android.kotlin.foodclub.localdatasource.room.entity.UserDetailsModel
 import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
@@ -9,8 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.repositories.PostRepository
-import android.kotlin.foodclub.room.entity.OfflineProfileModel
-import android.kotlin.foodclub.room.entity.OfflineProfileVideosModel
+import android.kotlin.foodclub.localdatasource.room.entity.OfflineProfileVideosModel
 import android.kotlin.foodclub.utils.helpers.ConnectivityUtils
 import android.kotlin.foodclub.repositories.RecipeRepository
 import android.kotlin.foodclub.utils.helpers.StoreData
@@ -21,7 +21,6 @@ import android.util.Log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -95,11 +94,12 @@ class ProfileViewModel @Inject constructor(
                 viewModelScope.launch {
                     getProfileModel(userId)
                     getBookmarkedPosts(userId)
+                    //getUserDetails(userId)
                 }
-                viewModelScope.launch {
-                    delay(2000)
-                    insertLocalUserDetails()
-                }
+//                viewModelScope.launch {
+//                    delay(2000)
+//                    insertLocalUserDetails()
+//                }
             }else{
                 Log.i(TAG,"INTERNET NOT CONNECTED")
                 retrieveLocalUserDetails(userId)
@@ -270,12 +270,19 @@ class ProfileViewModel @Inject constructor(
      * */
     private fun insertLocalUserDetails(){
         viewModelScope.launch {
-            val combined = OfflineProfileModel(
-                userId = state.value.myUserId,
-                userName = state.value.userProfile?.username,
-                profilePicture = state.value.userProfile?.profilePictureUrl,
-                totalUserFollowers = state.value.userProfile?.totalUserFollowers,
-                totalUserFollowing = state.value.userProfile?.totalUserFollowing,
+            val combined = UserDetailsModel(
+                id = state.value.userDetails!!.id,
+                userName = state.value.userDetails!!.userName,
+                email = state.value.userDetails!!.email,
+                profilePicture = state.value.userDetails!!.profilePicture ?: "",
+                userBio = state.value.userDetails!!.userBio ?: "",
+                gender = state.value.userDetails!!.gender ?: "",
+                createdAt = state.value.userDetails!!.createdAt,
+                dateOfBirth = state.value.userDetails!!.dateOfBirth ?: "",
+                dietaryPrefs = state.value.userDetails!!.dietaryPrefs ?: listOf(),
+                country = state.value.userDetails!!.country ?: "",
+                shippingAddress = state.value.userDetails!!.shippingAddress ?: "",
+                fullName = state.value.userDetails!!.fullName ?: ""
             )
             profileRepository.insertLocalUserDetails(combined)
         }
@@ -370,6 +377,20 @@ class ProfileViewModel @Inject constructor(
                 }
                 is Resource.Error -> {
                     Log.e(TAG,"ERROR Offline Profile Videos ${response.message}")
+                }
+            }
+        }
+    }
+
+    private fun getUserDetails(id: Long){
+        viewModelScope.launch {
+            when (val resource = profileRepository.retrieveUserDetails(id)) {
+                is Resource.Success -> {
+                    _state.update { it.copy(userDetails = resource.data) }
+                }
+
+                is Resource.Error -> {
+                    Log.i(TAG, "getUserDetails failed: ${resource.message}")
                 }
             }
         }
