@@ -4,6 +4,11 @@
     <value>
       <entry key="app">
         <State>
+          <!-- Your local changes here -->
+        </State>
+      </entry>
+      <entry key="p">
+        <State>
           <targetSelectedWithDropDown>
             <Target>
               <type value="QUICK_BOOT_TARGET" />
