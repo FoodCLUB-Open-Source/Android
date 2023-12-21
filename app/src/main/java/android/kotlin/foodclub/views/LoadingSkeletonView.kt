@@ -11,12 +11,14 @@ import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.kotlin.foodclub.viewModels.home.profile.ProfileEvents
 import android.kotlin.foodclub.views.home.profile.FollowButton
 import android.kotlin.foodclub.views.home.profile.ProfileState
+import android.kotlin.foodclub.views.home.profile.isFollowed
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.keyframes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -69,6 +71,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ExperimentalMotionApi
@@ -116,7 +119,8 @@ fun VideoPagerLoadingSkeleton() {
 
         Column (horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.Bottom,
-            modifier = Modifier.align(Alignment.BottomEnd)
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
                 .padding(dimensionResource(id = R.dimen.dim_15))){
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -252,14 +256,6 @@ fun VideoPagerLoadingSkeleton() {
                 }
             }
         }
-
-
-
-
-
-
-
-
     }
 }
 
@@ -439,13 +435,23 @@ fun ProfileViewLoadingSkeleton (
             }
             if(userId != 0L && userId != state.sessionUserId) {
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+                Button(
+                    onClick = { },
+                    shape = RoundedCornerShape(40.dp),
+                    modifier = Modifier
+                        .width(130.dp)
+                        .height(40.dp),
+                    colors =ButtonDefaults.buttonColors(
+                        containerColor = foodClubGreen,
+                        contentColor = Color.White
+                    )
+                ) {
+                    Box(modifier= Modifier
+                        .width(dimensionResource(id = R.dimen.dim_101))
+                        .height(dimensionResource(id = R.dimen.dim_18))
+                        .background(brush))
 
-                FollowButton(
-                    isFollowed = state.isFollowed,
-                    events = events,
-                    sessionUserId = state.sessionUserId,
-                    userId = userId
-                )
+                }
             }
             TabRow(selectedTabIndex = pagerState.currentPage,
                 containerColor = Color.White,
@@ -507,9 +513,9 @@ fun ProfileViewLoadingSkeleton (
                             state = lazyGridState
                         ) {items(2){
                             Card(modifier = Modifier
-                            .height(dimensionResource(id = R.dimen.dim_272))
-                            .width(dimensionResource(id = R.dimen.dim_178))
-                            .padding(dimensionResource(id = R.dimen.dim_10))
+                                .height(dimensionResource(id = R.dimen.dim_272))
+                                .width(dimensionResource(id = R.dimen.dim_178))
+                                .padding(dimensionResource(id = R.dimen.dim_10))
                             ,shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                         ) {
                             Box(
