@@ -9,6 +9,7 @@ import android.kotlin.foodclub.domain.enums.Reactions
 import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
 import android.kotlin.foodclub.viewModels.home.home.HomeEvents
 import android.kotlin.foodclub.utils.composables.MemoriesItemView
+import android.kotlin.foodclub.utils.helpers.fadingEdge
 import android.kotlin.foodclub.views.home.SnapsView
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -64,10 +65,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.activity.compose.BackHandler
-import androidx.compose.ui.draw.BlurredEdgeTreatment
-import androidx.compose.ui.draw.blur
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ExperimentalMotionApi
@@ -151,20 +151,22 @@ fun HomeView(
             Modifier
                 .fillMaxWidth()
                 .height(95.dp)
-                .blur(20.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
-                .background(
-                    brush = if (showFeedOnUI) {
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color.White.copy(alpha = 0.6f),
-                                Color.White.copy(alpha = 0.4f),
-                                Color.Transparent
+                .then(
+                    if (showFeedOnUI) {
+                        Modifier.fadingEdge(
+                            Brush.verticalGradient(
+                                0.5f to Color.Black,
+                                1f to Color.Transparent,
+                                tileMode = TileMode.Mirror
                             )
-                        )
+                        ).alpha(0.4f)
+                    } else Modifier
+                )
+                .background(
+                    color = if (showFeedOnUI) {
+                        Color.Black
                     } else {
-                        Brush.linearGradient(
-                            colors = listOf(Color(0xFF424242), Color(0xFF424242))
-                        )
+                        Color(0xFF424242)
                     }
                 )
         )
