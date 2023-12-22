@@ -5,6 +5,7 @@ import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.domain.models.recipes.Category
 import android.kotlin.foodclub.domain.models.recipes.Recipe
+import android.kotlin.foodclub.domain.models.recipes.allCategories
 import android.kotlin.foodclub.repositories.RecipeRepository
 import android.kotlin.foodclub.repositories.ProductRepository
 import android.kotlin.foodclub.utils.helpers.Resource
@@ -77,17 +78,7 @@ class CreateRecipeViewModel @Inject constructor(
         }
         _state.update {
             it.copy(
-                categories = listOf(
-                    Category(1, "Meat"),
-                    Category(2, "Keto"),
-                    Category(3, "High-protein"),
-                    Category(4, "Vegan"),
-                    Category(5, "Low-fat"),
-                    Category(6, "Fat-reduction"),
-                    Category(7, "Italian"),
-                    Category(8, "Chinese"),
-                    Category(9, "Vegetarian")
-                ),
+                categories = allCategories,
                 chosenCategories = listOf(
                     Category(1, "Meat"),
                     Category(6, "Fat-reduction"),

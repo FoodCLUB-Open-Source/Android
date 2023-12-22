@@ -4,6 +4,7 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Black
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.PlusJakartaSans
+import android.kotlin.foodclub.config.ui.borderBlue
 import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.config.ui.textFieldCustomColors
@@ -37,6 +38,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -60,8 +62,53 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchBar(onTextChange: (String) -> Unit, placeholder: String) {
+    var text by remember { mutableStateOf("") }
+    TextField(
+        value = text,
+        onValueChange = { text = it; onTextChange(it) },
+        placeholder = {
+            Text(
+                text = placeholder,
+                color = Color.Black.copy(alpha = 0.4f),
+                letterSpacing = TextUnit(-0.64f, TextUnitType.Sp),
+                fontFamily = Montserrat,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        },
+        leadingIcon = {
+            Icon(
+                painter = painterResource(id = R.drawable.search_icon_ingredients),
+                contentDescription = null
+            )
+        },
+        colors = TextFieldDefaults.textFieldColors(
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            containerColor = Color.White,
+            cursorColor = foodClubGreen,
+            focusedTextColor = Color.Black.copy(alpha = 0.4f),
+            unfocusedTextColor = Color.Black.copy(alpha = 0.4f)
+        ),
+        modifier = Modifier
+            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_16)))
+            .border(1.dp, borderBlue, RoundedCornerShape(dimensionResource(id = R.dimen.dim_16)))
+            .padding(
+                horizontal = dimensionResource(id = R.dimen.dim_4),
+                vertical = dimensionResource(id = R.dimen.dim_2)
+            )
+            .fillMaxWidth()
+    )
+}
+
 
 /**
  * Custom code verification text field
