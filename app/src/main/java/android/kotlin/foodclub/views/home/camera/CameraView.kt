@@ -6,6 +6,7 @@ import android.content.ContentUris
 import android.content.Context
 import android.graphics.Bitmap
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.confirmScreenColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.utils.composables.engine.createVideoCaptureUseCase
 import android.kotlin.foodclub.utils.composables.engine.startRecordingVideo
@@ -88,10 +89,6 @@ fun CameraView(
     stateEncoded: String,
     state: CameraState
 ) {
-
-    var seconds = (0)
-    var minutes = (0)
-
 
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -219,7 +216,12 @@ fun CameraView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(screenHeight)
-                    .padding(start = dimensionResource(id = R.dimen.dim_20), top = dimensionResource(id = R.dimen.dim_50), end = dimensionResource(id = R.dimen.dim_20), bottom = dimensionResource(id = R.dimen.dim_20))
+                    .padding(
+                        start = dimensionResource(id = R.dimen.dim_20),
+                        top = dimensionResource(id = R.dimen.dim_50),
+                        end = dimensionResource(id = R.dimen.dim_20),
+                        bottom = dimensionResource(id = R.dimen.dim_20)
+                    )
             ) {
 
                 Box(
@@ -275,10 +277,15 @@ fun CameraView(
                     if (confirmDeletion)
                     {
                         AlertDialog(onDismissRequest = { confirmDeletion = !confirmDeletion },
-                            modifier = Modifier.background(Color(0x55FFBBBB), RoundedCornerShape(dimensionResource(id = R.dimen.dim_5))).padding(dimensionResource(id = R.dimen.dim_5)),) {
+                            modifier = Modifier
+                                .background(
+                                    confirmScreenColor,
+                                    RoundedCornerShape(dimensionResource(id = R.dimen.dim_5))
+                                )
+                                .padding(dimensionResource(id = R.dimen.dim_5)),) {
 
                             Column(horizontalAlignment = Alignment.CenterHorizontally){
-                                Text(text = "Do you want to delete the last clip made?")
+                                Text(text = stringResource(R.string.Delete_Clip_Message))
 
                                 Row(horizontalArrangement = Arrangement.SpaceEvenly) {
                                     Button(colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
@@ -286,7 +293,7 @@ fun CameraView(
                                         confirmDeletion = !confirmDeletion
 
                                     }) {
-                                        Text(text="Cancel")
+                                        Text(text= stringResource(id = R.string.Cancel))
                                     }
 
                                     Button(colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
@@ -297,7 +304,7 @@ fun CameraView(
                                         canDelete = false
                                         confirmDeletion = !confirmDeletion
                                     }) {
-                                        Text(text="Confirm")
+                                        Text(text= stringResource(id = R.string.Confirm))
                                     }
                                 }
                             }
@@ -334,8 +341,6 @@ fun CameraView(
                     val isPressed by interactionSource.collectIsPressedAsState()
                     IconButton(
                         onClick = {
-
-                            //Temporarily ignore recording code
 
                             if(!holdOrPress) {
                                 if (!recordingStarted.value) {
@@ -376,6 +381,7 @@ fun CameraView(
                                                 }
                                             }
                                         }
+
                                     }
                                 } else {
                                     recordingStarted.value = false
@@ -401,6 +407,7 @@ fun CameraView(
                             }
                         }
 
+                        /*
                         if (holdOrPress) {
                             if (isPressed && state.minutes < 1) {
                                 Log.d("Recording Start","Preparing recording")
@@ -455,6 +462,8 @@ fun CameraView(
                             }
                         }
 
+                         */
+
                         RecordingClipsButton(
                             isRecording = recordingStarted.value,
                             removeClip = removeClip,
@@ -491,7 +500,11 @@ fun CameraView(
                                     .then(
                                         Modifier
                                             .size(dimensionResource(id = R.dimen.dim_64))
-                                            .border(dimensionResource(id = R.dimen.dim_2), Color.White, RoundedCornerShape(dimensionResource(id = R.dimen.dim_5)))
+                                            .border(
+                                                dimensionResource(id = R.dimen.dim_2),
+                                                Color.White,
+                                                RoundedCornerShape(dimensionResource(id = R.dimen.dim_5))
+                                            )
                                     )
                                     .clickable {
                                         navController.navigate("GALLERY_VIEW/${stateString.encodeUtf8()}")
@@ -504,7 +517,11 @@ fun CameraView(
                                     .then(
                                         Modifier
                                             .size(dimensionResource(id = R.dimen.dim_64))
-                                            .border(dimensionResource(id = R.dimen.dim_2), Color.White, RoundedCornerShape(dimensionResource(id = R.dimen.dim_5)))
+                                            .border(
+                                                dimensionResource(id = R.dimen.dim_2),
+                                                Color.White,
+                                                RoundedCornerShape(dimensionResource(id = R.dimen.dim_5))
+                                            )
                                     )
                             )
                         }
@@ -525,8 +542,11 @@ fun CameraView(
                         Box(
                             modifier = Modifier
                                 .width(dimensionResource(id = R.dimen.dim_40))
-                                .height( dimensionResource(id = R.dimen.dim_38))
-                                .background(Color.Gray, shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
+                                .height(dimensionResource(id = R.dimen.dim_38))
+                                .background(
+                                    Color.Gray,
+                                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))
+                                )
                                 .clip(
                                     RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))
                                 )
@@ -566,7 +586,6 @@ fun CameraView(
         }
     }
 }
-
 
 fun loadCurrentThumbnail(context: Context): Bitmap? {
     val imageProjection = arrayOf(
@@ -660,3 +679,4 @@ fun loadCurrentThumbnail(context: Context): Bitmap? {
         null
     )
 }
+

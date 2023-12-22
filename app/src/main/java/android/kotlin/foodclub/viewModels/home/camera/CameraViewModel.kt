@@ -26,6 +26,8 @@ class CameraViewModel : ViewModel(), CameraEvents {
     private var prevMilliseconds = mutableListOf<Int>()
     private var prevTotalMilliseconds = mutableListOf<Int>()
 
+    private var timerDelay: Long = 8
+
     init {
         // TODO Not sure this is the best way to do this, either use a delay, Timer or CountDownTimer
         viewModelScope.launch(Dispatchers.IO) {
@@ -54,7 +56,7 @@ class CameraViewModel : ViewModel(), CameraEvents {
                         }
                     }
                 }
-                delay(8)
+                delay(timerDelay)
             }
         }
     }

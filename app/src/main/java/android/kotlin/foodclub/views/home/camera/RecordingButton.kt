@@ -1,6 +1,9 @@
 package android.kotlin.foodclub.views.home.camera
 
+import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.darkGrey
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.config.ui.transparentWhite
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloatAsState
@@ -19,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -33,22 +37,22 @@ fun RecordingButton(isRecording: Boolean) {
 
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.size(80.dp)
+        modifier = Modifier.size(dimensionResource(id = R.dimen.dim_80))
     ) {
         CircularProgressIndicator(
             progress = 1f,
             strokeWidth = 5.dp,
             color = Color.White,
-            modifier = Modifier.size(80.dp)
+            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_80))
         )
         CircularProgressIndicator(
             progress = progress,
             strokeWidth = 5.dp,
             color = foodClubGreen,
-            modifier = Modifier.size(80.dp)
+            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_80))
         )
-        Canvas(modifier = Modifier.size(60.dp)) {
-            drawCircle(color = Color(0xFFCACBCB))
+        Canvas(modifier = Modifier.size(dimensionResource(id = R.dimen.dim_60))) {
+            drawCircle(color = darkGrey)
         }
         // Record button
     }
@@ -117,13 +121,13 @@ fun RecordingClipsButton(
 
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.size(80.dp)
+        modifier = Modifier.size(dimensionResource(id = R.dimen.dim_80))
     ) {
 
         Canvas(modifier = Modifier.fillMaxSize())
         {
             drawArc(
-                color = Color(0x55FFFFFF),
+                color = transparentWhite,
                 startAngle = -90f,
                 sweepAngle = 360f,
                 useCenter = false,
@@ -134,9 +138,10 @@ fun RecordingClipsButton(
 
         CircularProgressIndicator(
             progress = progress,
-            strokeWidth = 5.dp,
+            strokeWidth = dimensionResource(id = R.dimen.dim_5),
             color = foodClubGreen,
-            modifier = Modifier.size(80.dp)
+            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_80))
+
         )
 
         Canvas(modifier = Modifier.fillMaxSize())
@@ -153,10 +158,10 @@ fun RecordingClipsButton(
 
         }
 
-        Canvas(modifier = Modifier.size(60.dp)) {
-            drawCircle(color = Color(0xFFCACBCB))
+        Canvas(modifier = Modifier.size(dimensionResource(id = R.dimen.dim_60)
+        )) {
+            drawCircle(color = darkGrey)
         }
-        // Record button
-    }
 
+    }
 }
