@@ -68,6 +68,8 @@ import androidx.activity.compose.BackHandler
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ExperimentalMotionApi
@@ -100,7 +102,7 @@ fun HomeView(
 
     var screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.94f
 
-    if (screenHeightMinusBottomNavItem <= 650.dp) {
+    if (screenHeightMinusBottomNavItem <= dimensionResource(id = R.dimen.dim_650)) {
         screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.96f
     }
     var showStories by remember {
@@ -150,16 +152,18 @@ fun HomeView(
         Box(
             Modifier
                 .fillMaxWidth()
-                .height(95.dp)
+                .height(dimensionResource(id = R.dimen.dim_95))
                 .then(
                     if (showFeedOnUI) {
-                        Modifier.fadingEdge(
-                            Brush.verticalGradient(
-                                0.5f to Color.Black,
-                                1f to Color.Transparent,
-                                tileMode = TileMode.Mirror
+                        Modifier
+                            .fadingEdge(
+                                Brush.verticalGradient(
+                                    0.5f to Color.Black,
+                                    1f to Color.Transparent,
+                                    tileMode = TileMode.Mirror
+                                )
                             )
-                        ).alpha(0.4f)
+                            .alpha(0.4f)
                     } else Modifier
                 )
                 .background(
@@ -182,7 +186,10 @@ fun HomeView(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
                         .alpha(feedTransparency)
-                        .padding(start = 22.dp, bottom = 18.dp)
+                        .padding(
+                            start = dimensionResource(id = R.dimen.dim_22),
+                            bottom = dimensionResource(id = R.dimen.dim_18)
+                        )
                         .clickable { showStories = !showStories }
                 )
             }
@@ -191,7 +198,7 @@ fun HomeView(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 10.dp)
+                    .padding(bottom = dimensionResource(id = R.dimen.dim_10))
             ) {
                 Text(
                     modifier = modifier
@@ -201,22 +208,22 @@ fun HomeView(
                             snapsTransparency = 0.7f
                             feedTransparency = 1f
                         },
-                    text = "Feed",
+                    text = stringResource(id = R.string.feed),
                     fontFamily = Montserrat,
-                    fontSize = 18.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
                     style = TextStyle(color = Color.White),
-                    lineHeight = 21.94.sp,
+                    lineHeight = dimensionResource(id = R.dimen.fon_21_94).value.sp,
                     fontWeight = if (showFeedOnUI) FontWeight.Bold else FontWeight.Medium
                 )
                 Text(
                     modifier = Modifier
-                        .padding(8.dp)
+                        .padding(dimensionResource(id = R.dimen.dim_8))
                         .alpha(0.7f),
-                    text = "|",
+                    text = stringResource(id = R.string.pipe_symbol),
                     fontFamily = Montserrat,
-                    fontSize = 18.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
                     style = TextStyle(color = Color.LightGray),
-                    lineHeight = 21.94.sp
+                    lineHeight = dimensionResource(id = R.dimen.fon_21_94).value.sp
                 )
                 Text(
                     modifier = modifier
@@ -226,11 +233,11 @@ fun HomeView(
                             snapsTransparency = 1f
                             showFeedOnUI = false
                         },
-                    text = "Snaps",
+                    text = stringResource(id = R.string.snaps),
                     fontFamily = Montserrat,
-                    fontSize = 18.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
                     style = TextStyle(color = Color.White),
-                    lineHeight = 21.94.sp,
+                    lineHeight = dimensionResource(id = R.dimen.fon_21_94).value.sp,
                     fontWeight = if (!showFeedOnUI) FontWeight.Bold else FontWeight.Medium
                 )
             }
@@ -307,27 +314,27 @@ fun HomeView(
 
                 ) {
                     Box(modifier = Modifier
-                        .layoutId("paren")
+                        .layoutId(stringResource(id = R.string.parent))
                         .fillMaxSize())
 
                     Spacer(
                         modifier = modifier
-                            .size(90.dp)
-                            .layoutId("spacer")
+                            .size(dimensionResource(id = R.dimen.dim_90))
+                            .layoutId(stringResource(id = R.string.spacer))
                     )
                     Text(
-                        text="Memories",
+                        text= stringResource(id = R.string.memories),
                         style = TextStyle(
                             fontWeight = FontWeight.Bold,
                             color = Color.Black,
-                            fontSize = 20.sp,
+                            fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
                             fontFamily = Montserrat
                         ),
-                        modifier = Modifier.layoutId("memories_text")
+                        modifier = Modifier.layoutId(stringResource(id = R.string.memories_text))
 
                     )
                     Spacer(
-                        modifier = modifier.size(12.dp)
+                        modifier = modifier.size(dimensionResource(id = R.dimen.dim_12))
                     )
 
 
@@ -337,7 +344,7 @@ fun HomeView(
                                 .clickable {
                                     showStories = !showStories
                                 }
-                                .layoutId("memories_item_view")
+                                .layoutId(stringResource(id = R.string.memories_item_view))
 
                             ,
                             painter = painterResource(id = R.drawable.nosnapsfortheday),
@@ -347,7 +354,7 @@ fun HomeView(
                     else{
                         LazyRow(
                             modifier = Modifier
-                                .layoutId("memories_item_view")
+                                .layoutId(stringResource(id = R.string.memories_item_view))
                         ){
                             items(state.memories){
                                 val painter: Painter =  rememberImagePainter(data = it.stories[0].imageUrl)
@@ -359,34 +366,34 @@ fun HomeView(
                                     painter = painter,
                                     date = it.dateTime
                                 )
-                                Spacer(modifier = Modifier.width(12.dp))
+                                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_12)))
 
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.height(5.dp))
+                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_5)))
                     Spacer(modifier = Modifier
                         .fillMaxWidth()
                         .background(color = Color.Black)
-                        .layoutId("memories_divider")
+                        .layoutId(stringResource(id = R.string.memories_divider))
                     )
-                    Spacer(modifier = Modifier.height(25.dp))
+                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_25)))
                     Text(
-                        text ="Today",
+                        text = stringResource(id = R.string.today),
                         style = TextStyle(
                             fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp,
+                            fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
                             fontFamily = Montserrat,
                             color = Color.Black
                         ),
                         modifier = Modifier
-                            .layoutId("today_text")
+                            .layoutId(stringResource(id = R.string.today_text))
                     )
 
                     if(storyListData.isEmpty()){
                         TapToSnapDialog(modifier =
                         Modifier
-                            .layoutId("tap_to_snap")
+                            .layoutId(stringResource(id = R.string.tap_to_snap_string))
                             .clickable {
                                 navController.navigate("CAMERA_VIEW/${"story".encodeUtf8()}")
                             }
@@ -403,11 +410,11 @@ fun HomeView(
                                     reverseDirection = true,
                                     orientation = Orientation.Vertical,
                                 )
-                                .layoutId("snap_story_view")
+                                .layoutId(stringResource(id = R.string.snap_story_view))
                         )
                         Box(modifier = Modifier
                             .fillMaxSize()
-                            .layoutId("stories_view")
+                            .layoutId(stringResource(id = R.string.stories_view))
 
                         )
                         {
@@ -427,7 +434,7 @@ fun HomeView(
                                     SnapReactionsView(
                                         modifier = Modifier
                                             .align(Alignment.BottomCenter)
-                                            .padding(bottom = 150.dp),
+                                            .padding(bottom = dimensionResource(id = R.dimen.dim_150)),
                                         reactions = Reactions.values(),
                                         painter = rememberAsyncImagePainter(
                                             model = storyListData[it].thumbnailLink
@@ -436,7 +443,7 @@ fun HomeView(
                                     Box(
                                         modifier = Modifier
                                             .align(Alignment.BottomStart)
-                                            .padding(15.dp)
+                                            .padding(dimensionResource(id = R.dimen.dim_15))
                                     ) {
 
                                         Column(
@@ -444,32 +451,32 @@ fun HomeView(
                                         ) {
                                             Row(
                                                 verticalAlignment = Alignment.CenterVertically,
-                                                modifier = Modifier.padding(bottom = 15.dp)
+                                                modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_15))
                                             ) {
                                                 Image(
                                                     painter = painterResource(id = R.drawable.story_user),
-                                                    contentDescription = "Profile Image",
+                                                    contentDescription = stringResource(id = R.string.profile_image),
                                                     modifier = Modifier
-                                                        .size(35.dp)
+                                                        .size(dimensionResource(id = R.dimen.dim_35))
                                                         .clip(CircleShape)
                                                         .alpha(0.7f)
                                                 )
-                                                Spacer(modifier = Modifier.width(10.dp))
+                                                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_10)))
                                                 Text(
                                                     storyListData[it].authorDetails, color = Color.Black,
-                                                    fontFamily = Montserrat, fontSize = 18.sp,
+                                                    fontFamily = Montserrat, fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
                                                     modifier = Modifier
-                                                        .padding(2.dp)
+                                                        .padding(dimensionResource(id = R.dimen.dim_2))
                                                         .alpha(0.7f)
                                                 )
                                             }
 
                                             Text(
                                                 storyListData[it].createdAt, color = Color.Black,
-                                                fontFamily = Montserrat, fontSize = 12.sp,
+                                                fontFamily = Montserrat, fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
                                                 fontWeight = FontWeight.SemiBold,
                                                 modifier = Modifier
-                                                    .padding(2.dp)
+                                                    .padding(dimensionResource(id = R.dimen.dim_2))
                                                     .alpha(0.7f)
                                             )
                                         }
@@ -479,10 +486,7 @@ fun HomeView(
                         }
                     }
                 }
-
             }
         }
     }
 }
-
-

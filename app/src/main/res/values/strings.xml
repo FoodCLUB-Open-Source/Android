@@ -245,6 +245,17 @@
     <string name="serving_size">Serving Size</string>
     <string name="copy_clip">Copy clip</string>
     <string name="example_recipe">Chicken broth and meatballs</string>
+    <string name="parent">parent</string>
+    <string name="spacer">spacer</string>
+    <string name="memories_item_view">memories_item_view</string>
+    <string name="memories_divider">memories_divider</string>
+    <string name="today">Today</string>
+    <string name="tap_to_snap_string">tap_to_snap</string>
+    <string name="today_text">today_text</string>
+    <string name="snap_story_view">snap_story_view</string>
+    <string name="stories_view">stories_view</string>
+    <string name="memories_text">memories_text</string>
+    <string name="pipe_symbol">|</string>
     - Gallery
     <string name="gallery">Gallery</string>
     <string name="story">story</string>
