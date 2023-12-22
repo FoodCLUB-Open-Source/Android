@@ -3,11 +3,16 @@ package android.kotlin.foodclub.views.home.createRecipe
 import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.borderBlue
+import android.kotlin.foodclub.config.ui.categorySelectedBlue
 import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
+import android.kotlin.foodclub.domain.models.recipes.Category
+import android.kotlin.foodclub.domain.models.recipes.allCategories
 import android.kotlin.foodclub.utils.composables.CustomSlider
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
+import android.kotlin.foodclub.utils.composables.SearchBar
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.viewModels.home.createRecipe.CreateRecipeEvents
 import android.kotlin.foodclub.viewModels.home.createRecipe.CreateRecipeViewModel
@@ -40,11 +45,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -64,6 +66,7 @@ import androidx.compose.ui.unit.sp
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.BottomSheetDefaults
@@ -82,6 +85,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
@@ -89,6 +93,9 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
@@ -116,7 +123,7 @@ fun BottomSheetCategories(
     val selectedCategories = state.chosenCategories
 
     LaunchedEffect(searchText) {
-        if(searchText.isEmpty()) {
+        if (searchText.isEmpty()) {
             displayedCategories = categories
             return@LaunchedEffect
         }
@@ -134,14 +141,17 @@ fun BottomSheetCategories(
         Column(
             Modifier
                 .fillMaxWidth()
-                .height(screenHeight)) {
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    start = dimensionResource(id = R.dimen.dim_30),
-                    end = dimensionResource(id = R.dimen.dim_17)
-                ),
-                contentAlignment = Alignment.CenterStart) {
+                .height(screenHeight)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = dimensionResource(id = R.dimen.dim_30),
+                        end = dimensionResource(id = R.dimen.dim_17)
+                    ),
+                contentAlignment = Alignment.CenterStart
+            ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Start
@@ -175,7 +185,8 @@ fun BottomSheetCategories(
                         Text(
                             text = "Search here",
                             fontSize = dimensionResource(id = R.dimen.fon_15).value.sp
-                        ) },
+                        )
+                    },
                     shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
@@ -207,7 +218,7 @@ fun BottomSheetCategories(
                     val isSelected = selectedCategories.contains(category)
 
                     Card(
-                        shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_16)),
+                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16)),
                         modifier = Modifier
                             .padding(
                                 vertical = dimensionResource(id = R.dimen.dim_12),
@@ -215,11 +226,11 @@ fun BottomSheetCategories(
                             )
                             .height(dimensionResource(id = R.dimen.dim_46)),
                         colors = if (isSelected)
-                                CardDefaults.cardColors(foodClubGreen)
-                            else
-                                CardDefaults.cardColors(Color.Transparent),
+                            CardDefaults.cardColors(foodClubGreen)
+                        else
+                            CardDefaults.cardColors(Color.Transparent),
                         onClick = {
-                            if(isSelected) events.unselectCategory(category)
+                            if (isSelected) events.unselectCategory(category)
                             else events.selectCategory(category)
                         },
                         border = BorderStroke(dimensionResource(id = R.dimen.dim_1), containerColor)
@@ -258,7 +269,6 @@ fun CreateRecipeView(
     var recipeName by remember { mutableStateOf("") }
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp -
             dimensionResource(id = R.dimen.dim_240)
-    var recipeDescription by remember { mutableStateOf("") }
     val categories = state.chosenCategories
     val rows = listOf(
         stringArrayResource(id = R.array.quantity_list).toList(),
@@ -272,8 +282,8 @@ fun CreateRecipeView(
     }
     LaunchedEffect(key1 = codeTriggered.value) {
         systemUiController.setSystemBarsColor(
-                color = Color.White,
-                darkIcons = true
+            color = Color.White,
+            darkIcons = true
         )
         if (!codeTriggered.value) {
             codeTriggered.value = true
@@ -315,7 +325,8 @@ fun CreateRecipeView(
                 onDismiss = triggerBottomSheetModal,
                 productsData = state.products,
                 loadMoreObjects = { searchText, onLoadCompleted ->
-                    events.fetchMoreProducts(searchText, onLoadCompleted) },
+                    events.fetchMoreProducts(searchText, onLoadCompleted)
+                },
                 onListUpdate = { events.fetchProductsDatabase(it) },
                 onSave = { events.addIngredient(it) }
             )
@@ -331,59 +342,72 @@ fun CreateRecipeView(
 
         LazyColumn(
             modifier = Modifier
-                .padding(bottom = dimensionResource(id = R.dimen.dim_70), start = 8.dp, end = 8.dp)
+                .padding(
+                    bottom = dimensionResource(id = R.dimen.dim_70),
+                    start = dimensionResource(id = R.dimen.dim_8),
+                    end = dimensionResource(id = R.dimen.dim_8)
+                )
                 .background(Color.White)
         ) {
             item {
-                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(
+                    dimensionResource(id = R.dimen.dim_16)
+                )) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 55.dp, bottom = 20.dp)
-                            .height(50.dp),
+                            .padding(
+                                top = dimensionResource(id = R.dimen.dim_55),
+                                bottom = dimensionResource(id = R.dimen.dim_20)
+                            )
+                            .height(dimensionResource(id = R.dimen.dim_50)),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Box(
                             modifier = Modifier
-                                .padding(end = 10.dp)
+                                .padding(end = dimensionResource(id = R.dimen.dim_10))
                                 .background(Color.Transparent),
                             contentAlignment = Alignment.Center,
                         ) {
                             Button(
                                 shape = RectangleShape,
                                 modifier = Modifier
-                                    .border(
-                                        1.dp,
-                                        Color(0xFFB8B8B8),
-                                        shape = RoundedCornerShape(15.dp)
+                                    .clip(
+                                        RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                                     )
-                                    .clip(RoundedCornerShape(15.dp))
                                     .align(Alignment.BottomCenter)
-                                    .width(40.dp)
-                                    .height(40.dp),
+                                    .width(dimensionResource(id = R.dimen.dim_40))
+                                    .height(dimensionResource(id = R.dimen.dim_40)),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = Color(0xFFB8B8B8),
                                     contentColor = Color.White
-                                ), contentPadding = PaddingValues(5.dp),
+                                ),
+                                contentPadding = PaddingValues(
+                                    dimensionResource(id = R.dimen.dim_5)
+                                ),
                                 onClick = { navController.navigateUp() }
                             ) {
                                 Image(
-                                    painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
-                                    contentDescription = "Back",
+                                    painter = painterResource(
+                                        id = R.drawable.baseline_arrow_back_ios_new_24
+                                    ),
+                                    contentDescription = null,
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier
-                                        .width(20.dp)
-                                        .height(20.dp)
+                                        .width(dimensionResource(id = R.dimen.dim_20))
+                                        .height(dimensionResource(id = R.dimen.dim_20))
                                 )
                             }
                         }
                         Text(
-                            "My New Recipe",
-                            modifier = Modifier.padding(start = 8.dp),
+                            text = stringResource(id = R.string.my_new_recipe),
+                            modifier = Modifier.padding(
+                                start = dimensionResource(id = R.dimen.dim_8)
+                            ),
                             fontFamily = Montserrat,
                             fontWeight = FontWeight.SemiBold,
                             letterSpacing = TextUnit(-1.12f, TextUnitType.Sp),
-                            fontSize = 28.sp
+                            fontSize = dimensionResource(id = R.dimen.fon_28).value.sp
                         )
                     }
                     OutlinedTextField(
@@ -391,139 +415,65 @@ fun CreateRecipeView(
                         onValueChange = { recipeName = it },
                         placeholder = {
                             Text(
-                                "Add recipe’s name", fontFamily = Montserrat, fontSize = 15.sp,
-                                color = Color(0xFFB3B3B3)
+                                text = stringResource(id = R.string.add_recipe_name),
+                                fontFamily = Montserrat,
+                                fontSize = dimensionResource(id = R.dimen.fon_15).value.sp,
+                                color = Color.Black.copy(alpha = 0.4f)
                             )
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             focusedBorderColor = Color.Black,
-                            unfocusedBorderColor = Color(0xFFE8E8E8)
+                            unfocusedBorderColor = borderBlue
                         )
                     )
-                    OutlinedTextField(
-                        value = recipeDescription,
-                        onValueChange = { recipeDescription = it },
-                        placeholder = {
-                            Text(
-                                "Add a description", fontFamily = Montserrat, fontSize = 15.sp,
-                                color = Color(0xFFB3B3B3)
-                            )
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            focusedBorderColor = Color.Black,
-                            unfocusedBorderColor = Color(0xFFE8E8E8)
-                        )
-                    )
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(60.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                    Column {
                         Text(
-                            text = "Serving Size",
+                            text = stringResource(id = R.string.serving_size),
                             fontFamily = Montserrat,
                             fontWeight = FontWeight.SemiBold,
                             letterSpacing = TextUnit(-0.72f, TextUnitType.Sp),
-                            fontSize = 18.sp
+                            fontSize = dimensionResource(id = R.dimen.fon_18).value.sp
                         )
-                        Spacer(modifier = Modifier.weight(1f))
                         CustomSlider(
-                            sliderWidth = if (isSmallScreen) 150.dp else 200.dp,
-                            maxValue = 10f,
-                            onValueChange = { servingSize = it }
+                            maxValue = 16f,
+                            onValueChange = { servingSize = it },
+                            tickMarksEnabled = true
                         )
                     }
-                    SectionItem(
-                        title = "Categories",
-                        action = "Vegan",
-                        icon = Icons.Default.KeyboardArrowDown,
-                        onClick = triggerCategoryBottomSheetModal
-                    )
-                    FlowRow {
-                        categories.forEachIndexed { _, content ->
-                            Card(
-                                shape = RoundedCornerShape(30.dp),
-                                modifier = Modifier
-                                    .padding(5.dp)
-                                    .height(32.dp),
-                                colors = CardDefaults.cardColors(foodClubGreen),
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.padding(horizontal = 8.dp)
-                                ) {
-                                    Text(
-                                        text = content.name,
-                                        fontFamily = Montserrat,
-                                        fontSize = 12.sp,
-                                        color = Color.White,
-                                        modifier = Modifier.padding(8.dp),
-                                        maxLines = 1
-                                    )
-                                    Button(
-                                        modifier = Modifier
-                                            .border(2.dp, Color.White, shape = CircleShape)
-                                            .size(22.dp),
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = Color.Transparent,
-                                            contentColor = Color.White
-                                        ), contentPadding = PaddingValues(0.dp),
-                                        shape = CircleShape,
-                                        onClick = { events.unselectCategory(content) }
-                                    ) {
-                                        Image(
-                                            painter = painterResource(id = R.drawable.baseline_clear_24),
-                                            contentDescription = null,
-                                            contentScale = ContentScale.Crop,
-                                            modifier = Modifier
-                                                .size(15.dp)
-                                                .clip(RoundedCornerShape(12.dp))
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Divider(
-                        color = Color(0xFFE8E8E8),
-                        thickness = 1.dp
-                    )
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(80.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("Ingredients", fontFamily = Montserrat, fontSize = 14.sp)
-                        Spacer(modifier = Modifier.weight(1f))
-                        Button(
-                            shape = RectangleShape,
-                            modifier = Modifier
-                                .border(1.dp, foodClubGreen, RoundedCornerShape(20.dp))
-                                .clip(RoundedCornerShape(20.dp))
-                                .width(120.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.White,
-                                contentColor = Color(126, 198, 11, 255)
-                            ), contentPadding = PaddingValues(15.dp),
 
-                            onClick = { triggerBottomSheetModal() }
-                        ) {
-                            Text(
-                                "Add +",
-                                color = Color(126, 198, 11, 255),
+                    CategoriesSection(
+                        categories = categories,
+                        onCategoryRemove = { events.unselectCategory(it) },
+                        onCategoryAdd = { events.selectCategory(it) }
+                    )
+                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_2)))
+
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.ingredients),
+                            fontFamily = Montserrat,
+                            fontWeight = FontWeight.SemiBold,
+                            letterSpacing = TextUnit(-0.72f, TextUnitType.Sp),
+                            fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
+                        )
+                        ClickableText(
+                            text = AnnotatedString(stringResource(id = R.string.clear_all)),
+                            onClick = {},
+                            style = TextStyle(
+                                color = foodClubGreen,
+                                fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
+                                letterSpacing = TextUnit(-0.48f, TextUnitType.Sp),
                                 fontFamily = Montserrat,
-                                fontSize = 14.sp
+                                fontWeight = FontWeight.SemiBold
                             )
-                        }
+                        )
                     }
-                    Spacer(modifier = Modifier.height(2.dp))
+                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_2)))
                 }
 
             }
@@ -534,7 +484,7 @@ fun CreateRecipeView(
                     onExpand = { events.onIngredientExpanded(ingredient.id) },
                     onCollapse = { events.onIngredientCollapsed(ingredient.id) },
                     onDelete = { events.onIngredientDeleted(ingredient) }
-                    )
+                )
             }
         }
 
@@ -543,23 +493,25 @@ fun CreateRecipeView(
             modifier = Modifier
                 .border(
                     dimensionResource(id = R.dimen.dim_1),
-                    Color(126, 198, 11, 255),
-                    shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
+                    foodClubGreen,
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                 )
-                .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
+                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(126, 198, 11, 255),
+                containerColor = foodClubGreen,
                 contentColor = Color.White
-            ), contentPadding = PaddingValues( dimensionResource(id = R.dimen.dim_15)),
+            ), contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_15)),
             onClick = { /* Create Recipe */ }
         ) {
             Text(
                 text = stringResource(id = R.string.share_recipe),
                 color = Color.White,
                 fontFamily = Montserrat,
-                fontSize = dimensionResource(id = R.dimen.fon_16).value.sp, fontWeight = FontWeight.ExtraBold)
+                fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
+                fontWeight = FontWeight.ExtraBold
+            )
         }
     }
 }
@@ -597,10 +549,12 @@ fun Ingredient(
         visible = showItem,
         exit = shrinkOut(shrinkTowards = Alignment.TopCenter)
     ) {
-        Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier
-            .fillMaxWidth()
-            .height(dimensionResource(id = R.dimen.dim_100))
-            .padding(end = dimensionResource(id = R.dimen.dim_15))) {
+        Box(
+            contentAlignment = Alignment.CenterEnd, modifier = Modifier
+                .fillMaxWidth()
+                .height(dimensionResource(id = R.dimen.dim_100))
+                .padding(end = dimensionResource(id = R.dimen.dim_15))
+        ) {
             Button(
                 shape = RectangleShape,
                 modifier = Modifier
@@ -654,7 +608,7 @@ fun Ingredient(
                 .border(
                     dimensionResource(id = R.dimen.dim_1),
                     Color(0xFFE8E8E8),
-                    shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                 )
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
                 .background(Color.White)
@@ -667,7 +621,8 @@ fun Ingredient(
                     modifier = Modifier
                         .height(dimensionResource(id = R.dimen.dim_80))
                         .width(dimensionResource(id = R.dimen.dim_80))
-                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_12))))
+                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)))
+                )
                 Box(
                     modifier = Modifier
                         .padding(start = dimensionResource(id = R.dimen.dim_95))
@@ -675,9 +630,11 @@ fun Ingredient(
                         .height(dimensionResource(id = R.dimen.dim_70)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Box ( modifier = Modifier
-                        .width(dimensionResource(id = R.dimen.dim_105))
-                        .align(Alignment.CenterStart) ) {
+                    Box(
+                        modifier = Modifier
+                            .width(dimensionResource(id = R.dimen.dim_105))
+                            .align(Alignment.CenterStart)
+                    ) {
                         Text(
                             text = type,
                             modifier = Modifier.align(Alignment.TopStart),
@@ -685,14 +642,14 @@ fun Ingredient(
                             fontWeight = FontWeight.Normal
                         )
                     }
-                    Box ( modifier = Modifier.align(Alignment.CenterEnd) ) {
+                    Box(modifier = Modifier.align(Alignment.CenterEnd)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Image(
                                 painter = painterResource(id = R.drawable.baseline_arrow_left_24),
                                 contentDescription = null,
                                 modifier = Modifier
                                     .size(dimensionResource(id = R.dimen.dim_35))
-                                    .padding(end =dimensionResource(id = R.dimen.dim_5))
+                                    .padding(end = dimensionResource(id = R.dimen.dim_5))
                                     .clickable {
                                         ingredient.decrementQuantity(5)
                                         quantity = ingredient.quantity
@@ -708,8 +665,8 @@ fun Ingredient(
                                 painter = painterResource(id = R.drawable.baseline_arrow_right_24),
                                 contentDescription = null,
                                 modifier = Modifier
-                                    .size( dimensionResource(id = R.dimen.dim_35))
-                                    .padding(start =dimensionResource(id = R.dimen.dim_5))
+                                    .size(dimensionResource(id = R.dimen.dim_35))
+                                    .padding(start = dimensionResource(id = R.dimen.dim_5))
                                     .clickable {
                                         ingredient.incrementQuantity(5)
                                         quantity = ingredient.quantity
@@ -725,9 +682,155 @@ fun Ingredient(
     }
 
     LaunchedEffect(showItem) {
-        if(!showItem) {
+        if (!showItem) {
             delay(800)
             onDelete()
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun CategoriesSection(
+    categories: List<Category>,
+    onCategoryRemove: (Category) -> Unit,
+    onCategoryAdd: (Category) -> Unit
+) {
+    var searchText by remember { mutableStateOf("") }
+    Column {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = stringResource(id = R.string.categories),
+                fontFamily = Montserrat,
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = TextUnit(-0.72f, TextUnitType.Sp),
+                fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
+            )
+            ClickableText(
+                text = AnnotatedString(stringResource(id = R.string.clear_all)),
+                onClick = {},
+                style = TextStyle(
+                    color = foodClubGreen,
+                    fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
+                    letterSpacing = TextUnit(-0.48f, TextUnitType.Sp),
+                    fontFamily = Montserrat,
+                    fontWeight = FontWeight.SemiBold
+                )
+            )
+        }
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_32)))
+        SearchBar(
+            onTextChange = { searchText = it },
+            placeholder = stringResource(id = R.string.categories_search_placeholder)
+        )
+    }
+    FlowRow {
+        if (searchText.isNotEmpty() && categories.size < 3) {
+            allCategories.filter {
+                it.name.startsWith(searchText.uppercase()) && !categories.contains(it)
+            }.forEachIndexed { _, content ->
+                Card(
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_30)),
+                    modifier = Modifier
+                        .padding(dimensionResource(id = R.dimen.dim_5))
+                        .height(dimensionResource(id = R.dimen.dim_32)),
+                    colors = CardDefaults.cardColors(foodClubGreen),
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(
+                            horizontal = dimensionResource(id = R.dimen.dim_8)
+                        )
+                    ) {
+                        Text(
+                            text = content.name,
+                            fontFamily = Montserrat,
+                            fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
+                            color = Color.White,
+                            modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_8)),
+                            maxLines = 1
+                        )
+                        Button(
+                            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_22)),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Transparent,
+                                contentColor = Color.White
+                            ),
+                            contentPadding = PaddingValues(
+                                dimensionResource(id = R.dimen.dim_0)
+                            ),
+                            shape = CircleShape,
+                            onClick = { onCategoryAdd(content) }
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.baseline_clear_24),
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .size(dimensionResource(id = R.dimen.dim_15))
+                                    .clip(
+                                        RoundedCornerShape(
+                                            dimensionResource(
+                                                id = R.dimen.dim_12
+                                            )
+                                        )
+                                    )
+                                    .rotate(45f)
+                            )
+                        }
+                    }
+                }
+            }
+        } else {
+            categories.forEachIndexed { _, content ->
+                Card(
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_30)),
+                    modifier = Modifier
+                        .padding(dimensionResource(id = R.dimen.dim_5))
+                        .height(dimensionResource(id = R.dimen.dim_32)),
+                    colors = CardDefaults.cardColors(categorySelectedBlue),
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(
+                            horizontal = dimensionResource(id = R.dimen.dim_8)
+                        )
+                    ) {
+                        Text(
+                            text = content.name,
+                            fontFamily = Montserrat,
+                            fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
+                            color = Color.White,
+                            modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_8)),
+                            maxLines = 1
+                        )
+                        Button(
+                            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_22)),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Transparent,
+                                contentColor = Color.White
+                            ),
+                            contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_0)),
+                            shape = CircleShape,
+                            onClick = { onCategoryRemove(content) }
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.baseline_clear_24),
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .size(dimensionResource(id = R.dimen.dim_15))
+                                    .clip(
+                                        RoundedCornerShape(dimensionResource(id = R.dimen.dim_12))
+                                    )
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -740,44 +843,47 @@ fun SectionItem(
     actionColor: Color = Color.Black,
     onClick: () -> Unit
 ) {
-        Row (
-            modifier = Modifier.fillMaxWidth().height(dimensionResource(id = R.dimen.dim_50)),
-            verticalAlignment = Alignment.CenterVertically
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(dimensionResource(id = R.dimen.dim_50)),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = title,
+            fontFamily = Montserrat,
+            fontSize = dimensionResource(id = R.dimen.fon_14).value.sp
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Button(
+            shape = RectangleShape,
+            modifier = Modifier
+                .border(
+                    dimensionResource(id = R.dimen.dim_1),
+                    Color(126, 198, 11, 255),
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_20))
+                )
+                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
+                .width(dimensionResource(id = R.dimen.dim_120)),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.White,
+                contentColor = Color(126, 198, 11, 255)
+            ),
+            contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_15)),
+            onClick = {
+                onClick()
+            }
         ) {
             Text(
-                text = title,
+                text = stringResource(id = R.string.add_items_plus),
+                color = Color(126, 198, 11, 255),
                 fontFamily = Montserrat,
-                fontSize = dimensionResource(id = R.dimen.fon_14).value.sp)
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Button(
-                shape = RectangleShape,
-                modifier = Modifier
-                    .border(
-                        dimensionResource(id = R.dimen.dim_1),
-                        Color(126, 198, 11, 255),
-                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_20))
-                    )
-                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
-                    .width(dimensionResource(id = R.dimen.dim_120)),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White,
-                    contentColor = Color(126, 198, 11, 255)
-                ),
-                contentPadding = PaddingValues( dimensionResource(id = R.dimen.dim_15)),
-                onClick = {
-                    onClick()
-                }
-            ) {
-                Text(
-                    text = stringResource(id = R.string.add_items_plus),
-                    color = Color(126, 198, 11, 255),
-                    fontFamily = Montserrat,
-                    fontSize = dimensionResource(id = R.dimen.fon_14).value.sp
-                )
-            }
+                fontSize = dimensionResource(id = R.dimen.fon_14).value.sp
+            )
         }
+    }
 }
 
 @Composable
@@ -793,16 +899,15 @@ fun CreateRecipe(viewModel: CreateRecipeViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding( dimensionResource(id = R.dimen.dim_16))
+            .padding(dimensionResource(id = R.dimen.dim_16))
     ) {
         TextField(
             value = recipeTitle,
             onValueChange = { newValue -> recipeTitle = newValue },
-            label = { Text(text = stringResource(id = R.string.recipe_title)) }
         )
 
 
-        Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_16)))
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_16)))
 
         Button(
             onClick = {

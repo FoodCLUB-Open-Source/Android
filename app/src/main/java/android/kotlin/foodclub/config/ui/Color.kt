@@ -18,3 +18,5 @@ val light_blue=Color(0xFF3A7CA8)
 
 val containerColor = Color(0xFFF5F5F5)
 val Orange =Color(0xFFFfa500)
+val borderBlue = Color(0xFF3A7CA8).copy(alpha = 0.1f)
+val categorySelectedBlue = Color(0xFF397BA8)
