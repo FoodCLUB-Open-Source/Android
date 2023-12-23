@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.views.home.profile
 
 import android.kotlin.foodclub.domain.models.home.VideoModel
-import android.kotlin.foodclub.domain.models.profile.UserDetailsModel
+import android.kotlin.foodclub.localdatasource.room.entity.UserDetailsModel
 import android.kotlin.foodclub.domain.models.profile.UserProfile
 import android.kotlin.foodclub.domain.models.recipes.Recipe
 import android.kotlin.foodclub.utils.helpers.StoreData
@@ -9,7 +9,8 @@ import android.kotlin.foodclub.utils.helpers.StoreData
 data class ProfileState(
     val userProfile: UserProfile?,
     val userDetails: UserDetailsModel?,
-    val bookmarkedPosts : List<VideoModel>,
+    val offlineUserData: UserDetailsModel?,
+    val bookmarkedPosts: List<VideoModel>,
     val userPosts: List<VideoModel>,
     val sessionUserId: Long,
     val dataStore: StoreData?,
@@ -24,7 +25,7 @@ data class ProfileState(
     companion object {
         fun default() = ProfileState(
             userProfile = null,
-            userDetails = null,
+            offlineUserData = null,
             bookmarkedPosts = emptyList(),
             userPosts = emptyList(),
             sessionUserId = 0,
@@ -33,7 +34,8 @@ data class ProfileState(
             myUserId = 0,
             error = "",
             postData = null,
-            recipe = null
+            recipe = null,
+            userDetails = null
         )
     }
 }

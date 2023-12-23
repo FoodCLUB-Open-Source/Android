@@ -53,6 +53,9 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.clip
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
@@ -210,27 +213,36 @@ fun VideoScroller(
                 )
             }
         }
+        val context = LocalContext.current
+        val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
 
+        val brush = ShimmerBrush()
         DisposableEffect(key1 =
-        Box(modifier = Modifier.fillMaxSize()) {
-            AndroidView(factory = {
-                playerView
-            }, modifier = Modifier.pointerInput(Unit) {
-                detectTapGestures(onTap = {
-                    onSingleTap(exoPlayer)
-                }, onDoubleTap = { offset ->
-                    onDoubleTap(exoPlayer, offset)
+        if(isInternetConnected) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                AndroidView(factory = {
+                    playerView
+                }, modifier = Modifier.pointerInput(Unit) {
+                    detectTapGestures(onTap = {
+                        onSingleTap(exoPlayer)
+                    }, onDoubleTap = { offset ->
+                        onDoubleTap(exoPlayer, offset)
+                    })
                 })
-            })
-            ProgressionBar(totalDuration,
-                modifier = Modifier.align(Alignment.BottomEnd),
-                totalDuration = { totalDuration },
-                currentTime = { currentTime },
-                onSeekChanged = { timeMs: Float ->
-                    exoPlayer.seekTo(timeMs.toLong())
-                }
-            )
-        }, effect = {
+                ProgressionBar(totalDuration,
+                    modifier = Modifier.align(Alignment.BottomEnd),
+                    totalDuration = { totalDuration },
+                    currentTime = { currentTime },
+                    onSeekChanged = { timeMs: Float ->
+                        exoPlayer.seekTo(timeMs.toLong())
+                    }
+                )
+            }
+        } else {
+            Box(modifier = Modifier.fillMaxSize()
+                .background(brush))
+        },
+            effect = {
             onDispose {
                 thumbnail = thumbnail.copy(second = true)
                 exoPlayer.release()
@@ -241,13 +253,20 @@ fun VideoScroller(
     }
 
     if (thumbnail.second) {
-        AsyncImage(
-            model = thumbnail.first,
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
+        if (thumbnail.first != null) {
+            AsyncImage(
+                model = thumbnail.first,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            Box(
+                modifier = Modifier.fillMaxSize().background(Color.Gray)
+            )
+        }
     }
+
 }
 
 @ExperimentalMaterial3Api
@@ -274,7 +293,7 @@ fun BottomControls(
         Slider(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top =dimensionResource(id = R.dimen.dim_5)),
+                .padding(top = dimensionResource(id = R.dimen.dim_5)),
             value = videoTime.toFloat(),
             onValueChange = onSeekChanged,
             valueRange = 0f..duration.toFloat(),

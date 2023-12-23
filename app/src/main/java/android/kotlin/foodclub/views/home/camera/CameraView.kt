@@ -6,12 +6,13 @@ import android.content.ContentUris
 import android.content.Context
 import android.graphics.Bitmap
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.confirmScreenColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.utils.composables.engine.createVideoCaptureUseCase
 import android.kotlin.foodclub.utils.composables.engine.startRecordingVideo
-import android.kotlin.foodclub.viewModels.home.CameraViewModel
-import android.kotlin.foodclub.viewModels.home.StopWatchEvent
-import android.kotlin.foodclub.views.home.GalleryState
+import android.kotlin.foodclub.viewModels.home.camera.CameraEvents
+import android.kotlin.foodclub.viewModels.home.camera.StopWatchEvent
+import android.kotlin.foodclub.views.home.gallery.GalleryType
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -27,12 +28,6 @@ import androidx.camera.video.Recording
 import androidx.camera.video.VideoCapture
 import androidx.camera.video.VideoRecordEvent
 import androidx.camera.view.PreviewView
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -54,7 +49,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -66,7 +60,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -91,26 +84,22 @@ import java.nio.charset.StandardCharsets
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CameraView(
-    viewModel: CameraViewModel,
+    events: CameraEvents,
     navController: NavController,
     stateEncoded: String,
     state: CameraState
 ) {
-
-    var seconds = (0)
-    var minutes = (0)
-
 
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
     var stateString = ""
 
-    if (stateEncoded.contains(GalleryState.STORY.state)) {
-        stateString = GalleryState.STORY.state
+    if (stateEncoded.contains(GalleryType.STORY.state)) {
+        stateString = GalleryType.STORY.state
     }
-    if (stateEncoded.contains(GalleryState.RECIPE.state)) {
-        stateString = GalleryState.RECIPE.state
+    if (stateEncoded.contains(GalleryType.RECIPE.state)) {
+        stateString = GalleryType.RECIPE.state
     }
 
     val permissionState = rememberMultiplePermissionsState(
@@ -122,7 +111,7 @@ fun CameraView(
         )
     )
 
-    var recording: Recording? = remember { null }
+    var recording: Recording? by remember { mutableStateOf<Recording?>(null) }
     val previewView: PreviewView = remember { PreviewView(context) }
     val videoCapture: MutableState<VideoCapture<Recorder>?> = remember { mutableStateOf(null) }
     val recordingStarted: MutableState<Boolean> = remember { mutableStateOf(false) }
@@ -176,7 +165,7 @@ fun CameraView(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.onEvent(StopWatchEvent.onReset)
+        events.onEvent(StopWatchEvent.onReset)
         permissionState.launchMultiplePermissionRequest()
     }
 
@@ -227,7 +216,12 @@ fun CameraView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(screenHeight)
-                    .padding(start = dimensionResource(id = R.dimen.dim_20), top = dimensionResource(id = R.dimen.dim_50), end = dimensionResource(id = R.dimen.dim_20), bottom = dimensionResource(id = R.dimen.dim_20))
+                    .padding(
+                        start = dimensionResource(id = R.dimen.dim_20),
+                        top = dimensionResource(id = R.dimen.dim_50),
+                        end = dimensionResource(id = R.dimen.dim_20),
+                        bottom = dimensionResource(id = R.dimen.dim_20)
+                    )
             ) {
 
                 Box(
@@ -238,7 +232,7 @@ fun CameraView(
                         .background(Color.Black.copy(alpha = 0.9f))
                         .clickable {
                             // Do something when the box is clicked
-                            viewModel.onEvent(StopWatchEvent.onReset)
+                            events.onEvent(StopWatchEvent.onReset)
                             navController.popBackStack()
                         }
                 ) {
@@ -283,10 +277,15 @@ fun CameraView(
                     if (confirmDeletion)
                     {
                         AlertDialog(onDismissRequest = { confirmDeletion = !confirmDeletion },
-                            modifier = Modifier.background(Color(0x55FFBBBB), RoundedCornerShape(dimensionResource(id = R.dimen.dim_5))).padding(dimensionResource(id = R.dimen.dim_5)),) {
+                            modifier = Modifier
+                                .background(
+                                    confirmScreenColor,
+                                    RoundedCornerShape(dimensionResource(id = R.dimen.dim_5))
+                                )
+                                .padding(dimensionResource(id = R.dimen.dim_5)),) {
 
                             Column(horizontalAlignment = Alignment.CenterHorizontally){
-                                Text(text = "Do you want to delete the last clip made?")
+                                Text(text = stringResource(R.string.Delete_Clip_Message))
 
                                 Row(horizontalArrangement = Arrangement.SpaceEvenly) {
                                     Button(colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
@@ -294,18 +293,18 @@ fun CameraView(
                                         confirmDeletion = !confirmDeletion
 
                                     }) {
-                                        Text(text="Cancel")
+                                        Text(text= stringResource(id = R.string.Cancel))
                                     }
 
                                     Button(colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                                         onClick = {
                                         uris.removeAt(uris.lastIndex)
-                                        viewModel.onEvent(StopWatchEvent.onRecall)
+                                        events.onEvent(StopWatchEvent.onRecall)
                                         removeUpdate(true)
                                         canDelete = false
                                         confirmDeletion = !confirmDeletion
                                     }) {
-                                        Text(text="Confirm")
+                                        Text(text= stringResource(id = R.string.Confirm))
                                     }
                                 }
                             }
@@ -343,13 +342,11 @@ fun CameraView(
                     IconButton(
                         onClick = {
 
-                            //Temporarily ignore recording code
-
                             if(!holdOrPress) {
                                 if (!recordingStarted.value) {
                                     videoCapture.value?.let { videoCapture ->
                                         recordingStarted.value = true
-                                        viewModel.onEvent(StopWatchEvent.onStart)
+                                        events.onEvent(StopWatchEvent.onStart)
                                         val mediaDir = context.externalCacheDirs.firstOrNull()?.let {
                                             File(
                                                 it,
@@ -384,14 +381,14 @@ fun CameraView(
                                                 }
                                             }
                                         }
+
                                     }
                                 } else {
                                     recordingStarted.value = false
-                                    viewModel.onEvent(StopWatchEvent.onStop)
-                                    recording?.stop()
+                                    events.onEvent(StopWatchEvent.onStop)
+                                    recording?.stop() //Need the object refs to be consistent
                                 }
                             }
-
                             //navController.navigate("GALLERY_VIEW")
                         },
                         modifier = Modifier
@@ -405,18 +402,19 @@ fun CameraView(
                             if (recordingStarted.value)
                             {
                                 recordingStarted.value = false
-                                viewModel.onEvent(StopWatchEvent.onStop)
+                                events.onEvent(StopWatchEvent.onStop)
                                 recording?.stop()
                             }
                         }
 
+                        /*
                         if (holdOrPress) {
                             if (isPressed && state.minutes < 1) {
                                 Log.d("Recording Start","Preparing recording")
                                 if (!recordingStarted.value && canAdd) {
                                     videoCapture.value?.let { videoCapture ->
                                         recordingStarted.value = true
-                                        viewModel.onEvent(StopWatchEvent.onStart)
+                                        events.onEvent(StopWatchEvent.onStart)
                                         val mediaDir = context.externalCacheDirs.firstOrNull()?.let {
                                             File(
                                                 it,
@@ -457,12 +455,14 @@ fun CameraView(
                                 Log.d("Recording Start","Preparing to end recording")
                                 if (recordingStarted.value) {
                                     recordingStarted.value = false
-                                    viewModel.onEvent(StopWatchEvent.onStop)
+                                    events.onEvent(StopWatchEvent.onStop)
                                     recording?.stop()
                                     canAdd = false
                                 }
                             }
                         }
+
+                         */
 
                         RecordingClipsButton(
                             isRecording = recordingStarted.value,
@@ -500,7 +500,11 @@ fun CameraView(
                                     .then(
                                         Modifier
                                             .size(dimensionResource(id = R.dimen.dim_64))
-                                            .border(dimensionResource(id = R.dimen.dim_2), Color.White, RoundedCornerShape(dimensionResource(id = R.dimen.dim_5)))
+                                            .border(
+                                                dimensionResource(id = R.dimen.dim_2),
+                                                Color.White,
+                                                RoundedCornerShape(dimensionResource(id = R.dimen.dim_5))
+                                            )
                                     )
                                     .clickable {
                                         navController.navigate("GALLERY_VIEW/${stateString.encodeUtf8()}")
@@ -513,7 +517,11 @@ fun CameraView(
                                     .then(
                                         Modifier
                                             .size(dimensionResource(id = R.dimen.dim_64))
-                                            .border(dimensionResource(id = R.dimen.dim_2), Color.White, RoundedCornerShape(dimensionResource(id = R.dimen.dim_5)))
+                                            .border(
+                                                dimensionResource(id = R.dimen.dim_2),
+                                                Color.White,
+                                                RoundedCornerShape(dimensionResource(id = R.dimen.dim_5))
+                                            )
                                     )
                             )
                         }
@@ -534,8 +542,11 @@ fun CameraView(
                         Box(
                             modifier = Modifier
                                 .width(dimensionResource(id = R.dimen.dim_40))
-                                .height( dimensionResource(id = R.dimen.dim_38))
-                                .background(Color.Gray, shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
+                                .height(dimensionResource(id = R.dimen.dim_38))
+                                .background(
+                                    Color.Gray,
+                                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))
+                                )
                                 .clip(
                                     RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))
                                 )
@@ -575,7 +586,6 @@ fun CameraView(
         }
     }
 }
-
 
 fun loadCurrentThumbnail(context: Context): Bitmap? {
     val imageProjection = arrayOf(
@@ -669,3 +679,4 @@ fun loadCurrentThumbnail(context: Context): Bitmap? {
         null
     )
 }
+

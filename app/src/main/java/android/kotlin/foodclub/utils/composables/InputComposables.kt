@@ -91,12 +91,15 @@ fun CustomCodeTextField(
                 repeat(6) { index ->
                     Box(
                         modifier = Modifier
-                            .size(dimensionResource(id = R.dimen.dim_52), dimensionResource(id = R.dimen.dim_72))
+                            .size(
+                                dimensionResource(id = R.dimen.dim_52),
+                                dimensionResource(id = R.dimen.dim_72)
+                            )
                             .border(
                                 dimensionResource(id = R.dimen.dim_1),
                                 color = if (text.length == index) foodClubGreen
                                 else Black.copy(alpha = 0.3f),
-                                shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_16))
+                                shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16))
                             ),
                         contentAlignment = Alignment.Center
                     ) {
@@ -139,6 +142,7 @@ fun CustomTextField(
     placeholder: String,
     keyboardType: KeyboardType,
     modifier: Modifier = Modifier,
+    label: String? = null,
     initialValue: String = "",
     textValidation: Boolean = false,
     allowSpace: Boolean = false,
@@ -150,9 +154,21 @@ fun CustomTextField(
     var textValid by remember { mutableStateOf(false) }
     var errorMessage: String? by remember { mutableStateOf(null) }
 
+    val composableLabel: @Composable (() -> Unit)? = if (!label.isNullOrBlank()) {
+        @Composable {
+            Text(
+                modifier = Modifier.padding(
+                    bottom = dimensionResource(id = R.dimen.dim_5)
+                ),
+                text = label
+            )
+        }
+    } else null
+
     Column {
         TextField(
             value = text,
+            label  = composableLabel,
             onValueChange = {
                 var textValidCurrent = true
                 val currentVal = if (allowSpace) it else it.trim()
@@ -170,15 +186,17 @@ fun CustomTextField(
                 textValid = textValidCurrent
             },
             placeholder = { Text(text = placeholder, color = Color(0xFF939393)) },
-            colors = if (errorMessage.isNullOrBlank()) textFieldCustomColors() else textFieldCustomColors(
+            colors = if (errorMessage.isNullOrBlank()) textFieldCustomColors(textColor = Color.Black) else textFieldCustomColors(
                 focusedIndicatorColor = Color.Red,
                 unfocusedIndicatorColor = Color.Red
             ),
             modifier = modifier
-                .border(dimensionResource(id = R.dimen.dim_1), Color(0xFFDADADA), RoundedCornerShape(percent = 20))
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
-                .background(Black.copy(alpha = 0.04F))
-                .padding(horizontal = dimensionResource(id = R.dimen.dim_10))
+                .background(Black.copy(alpha = 0.06F))
+                .padding(
+                    horizontal = dimensionResource(id = R.dimen.dim_10),
+                    vertical = dimensionResource(id = R.dimen.dim_5)
+                )
                 .fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType)
         )
@@ -208,9 +226,13 @@ fun CustomTextField(
  */
 @Composable
 fun CustomPasswordTextField(
-    initialValue: String = "", placeholder: String, strengthValidation: Boolean = true,
-    onCorrectnessStateChange: () -> Unit, onValueChange: (text: String) -> Unit = {},
-    label: String? = null, textFieldColors: TextFieldColors = textFieldCustomColors(),
+    initialValue: String = "",
+    placeholder: String,
+    strengthValidation: Boolean = true,
+    onCorrectnessStateChange: () -> Unit,
+    onValueChange: (text: String) -> Unit = {},
+    label: String? = null,
+    textFieldColors: TextFieldColors = textFieldCustomColors(),
     errorTextFieldColors: TextFieldColors = textFieldCustomColors(
         focusedIndicatorColor = Color.Red,
         unfocusedIndicatorColor = Color.Red
@@ -222,7 +244,14 @@ fun CustomPasswordTextField(
     var errorMessage: String? by remember { mutableStateOf(null) }
 
     val composableLabel: @Composable (() -> Unit)? = if (!label.isNullOrBlank()) {
-        @Composable { Text(text = label) }
+        @Composable {
+            Text(
+                modifier = Modifier.padding(
+                    bottom = dimensionResource(id = R.dimen.dim_5)
+                ),
+                text = label
+            )
+        }
     } else null
 
     Column {
@@ -252,10 +281,12 @@ fun CustomPasswordTextField(
             },
             colors = if (errorMessage.isNullOrBlank()) textFieldColors else errorTextFieldColors,
             modifier = Modifier
-                .border(dimensionResource(id = R.dimen.dim_1), Color(0xFFDADADA), RoundedCornerShape(percent = 20))
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
-                .background(Black.copy(alpha = 0.04F))
-                .padding(horizontal = dimensionResource(id = R.dimen.dim_10))
+                .background(Black.copy(alpha = 0.06F))
+                .padding(
+                    horizontal = dimensionResource(id = R.dimen.dim_10),
+                    vertical = dimensionResource(id = R.dimen.dim_5)
+                )
                 .fillMaxWidth(),
             trailingIcon = {
                 if (passVisible) {
@@ -308,9 +339,9 @@ fun BackButton(onBackButtonClick: () -> Unit, backgroundTransparent: Boolean = f
     Button(
         shape = RectangleShape,
         modifier = Modifier
-            .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
-            .width( dimensionResource(id = R.dimen.dim_36))
-            .height( dimensionResource(id = R.dimen.dim_36))
+            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
+            .width(dimensionResource(id = R.dimen.dim_36))
+            .height(dimensionResource(id = R.dimen.dim_36))
             .offset(x = (-8).dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = if(backgroundTransparent) Color.Transparent else Color.White,
@@ -324,8 +355,8 @@ fun BackButton(onBackButtonClick: () -> Unit, backgroundTransparent: Boolean = f
             contentDescription = stringResource(id = R.string.go_back),
             tint = buttonColor,
             modifier = Modifier
-                .width( dimensionResource(id = R.dimen.dim_36))
-                .height( dimensionResource(id = R.dimen.dim_36))
+                .width(dimensionResource(id = R.dimen.dim_36))
+                .height(dimensionResource(id = R.dimen.dim_36))
         )
     }
 }
@@ -339,7 +370,11 @@ fun AlternativeLoginOption(
         onClick = {},
         shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
         modifier = Modifier
-            .border(dimensionResource(id = R.dimen.dim_1), Color(0xFFDADADA), RoundedCornerShape(percent = 20))
+            .border(
+                dimensionResource(id = R.dimen.dim_1),
+                Color(0xFFDADADA),
+                RoundedCornerShape(percent = 20)
+            )
             .height(dimensionResource(id = R.dimen.dim_56))
             .width(dimensionResource(id = R.dimen.dim_105))
             .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))),

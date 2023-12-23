@@ -4,11 +4,13 @@ import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.containerColor
+import android.kotlin.foodclub.config.ui.disabledContainerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
 import android.kotlin.foodclub.utils.helpers.ValueParser
-import android.kotlin.foodclub.viewModels.home.CreateRecipeViewModel
+import android.kotlin.foodclub.viewModels.home.createRecipe.CreateRecipeEvents
+import android.kotlin.foodclub.viewModels.home.createRecipe.CreateRecipeViewModel
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateFloat
@@ -103,10 +105,10 @@ import kotlin.math.roundToInt
 @Composable
 fun BottomSheetCategories(
     onDismiss: () -> Unit,
-    viewModel: CreateRecipeViewModel,
+    events: CreateRecipeEvents,
     state: CreateRecipeState
 ) {
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 150.dp
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp - dimensionResource(id = R.dimen.dim_150)
     var searchText by remember { mutableStateOf("") }
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val categories = state.categories
@@ -217,8 +219,8 @@ fun BottomSheetCategories(
                             else
                                 CardDefaults.cardColors(Color.Transparent),
                         onClick = {
-                            if(isSelected) viewModel.unselectCategory(category)
-                            else viewModel.selectCategory(category)
+                            if(isSelected) events.unselectCategory(category)
+                            else events.selectCategory(category)
                         },
                         border = BorderStroke(dimensionResource(id = R.dimen.dim_1), containerColor)
                     ) {
@@ -242,7 +244,7 @@ fun BottomSheetCategories(
 @Composable
 fun CreateRecipeView(
     navController: NavController,
-    viewModel: CreateRecipeViewModel,
+    events: CreateRecipeEvents,
     state: CreateRecipeState
 ) {
     val systemUiController = rememberSystemUiController()
@@ -307,15 +309,15 @@ fun CreateRecipeView(
                 onDismiss = triggerBottomSheetModal,
                 productsData = state.products,
                 loadMoreObjects = { searchText, onLoadCompleted ->
-                    viewModel.fetchMoreProducts(searchText, onLoadCompleted) },
-                onListUpdate = { viewModel.fetchProductsDatabase(it) },
-                onSave = { viewModel.addIngredient(it) }
+                    events.fetchMoreProducts(searchText, onLoadCompleted) },
+                onListUpdate = { events.fetchProductsDatabase(it) },
+                onSave = { events.addIngredient(it) }
             )
         }
         if (showCategorySheet) {
             BottomSheetCategories(
                 onDismiss = triggerCategoryBottomSheetModal,
-                viewModel = viewModel,
+                events = events,
                 state = state
             )
         }
@@ -348,7 +350,7 @@ fun CreateRecipeView(
                             modifier = Modifier
                                 .border(
                                     dimensionResource(id = R.dimen.dim_1),
-                                    Color(0xFFB8B8B8),
+                                    disabledContainerColor,
                                     shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                                 )
                                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
@@ -356,7 +358,7 @@ fun CreateRecipeView(
                                 .width(dimensionResource(id = R.dimen.dim_40))
                                 .height(dimensionResource(id = R.dimen.dim_40)),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFFB8B8B8),
+                                containerColor = disabledContainerColor,
                                 contentColor = Color.White
                             ), contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_5)),
                             onClick = { navController.navigateUp() }
@@ -373,7 +375,7 @@ fun CreateRecipeView(
                     }
                     Text(
                         text= stringResource(id = R.string.my_new_recipe),
-                        modifier = Modifier.padding(start = 8.dp),
+                        modifier = Modifier.padding(start = dimensionResource(id = R.dimen.dim_8)),
                         fontFamily = Montserrat,
                         fontWeight = FontWeight.SemiBold,
                         letterSpacing = TextUnit(-1.12f, TextUnitType.Sp),
@@ -474,7 +476,7 @@ fun CreateRecipeView(
                                         contentColor = Color.White
                                     ), contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_0)),
                                     shape = CircleShape,
-                                    onClick = { viewModel.unselectCategory(content) }
+                                    onClick = { events.unselectCategory(content) }
                                 ) {
                                     Image(
                                         painter = painterResource(id = R.drawable.baseline_clear_24),
@@ -538,9 +540,9 @@ fun CreateRecipeView(
                 Ingredient(
                     ingredient = ingredient,
                     isRevealed = state.revealedIngredientId == ingredient.id,
-                    onExpand = { viewModel.onIngredientExpanded(ingredient.id) },
-                    onCollapse = { viewModel.onIngredientCollapsed(ingredient.id) },
-                    onDelete = { viewModel.onIngredientDeleted(ingredient) }
+                    onExpand = { events.onIngredientExpanded(ingredient.id) },
+                    onCollapse = { events.onIngredientCollapsed(ingredient.id) },
+                    onDelete = { events.onIngredientDeleted(ingredient) }
                     )
             }
         }

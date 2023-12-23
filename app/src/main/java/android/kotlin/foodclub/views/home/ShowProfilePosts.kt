@@ -11,7 +11,8 @@ import android.kotlin.foodclub.utils.composables.LikeButton
 import android.kotlin.foodclub.utils.composables.PlayPauseButton
 import android.kotlin.foodclub.utils.composables.VideoLayout
 import android.kotlin.foodclub.utils.composables.VideoScroller
-import android.kotlin.foodclub.viewModels.home.ProfileViewModel
+import android.kotlin.foodclub.viewModels.home.profile.ProfileEvents
+import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
 import android.kotlin.foodclub.views.home.home.HomeBottomSheetIngredients
 import android.kotlin.foodclub.views.home.profile.ProfileState
 import androidx.activity.compose.BackHandler
@@ -192,7 +193,7 @@ fun ConfirmDeleteDialog(
 fun ShowProfilePosts(
     postId: Long,
     posts: List<VideoModel>,
-    viewModel: ProfileViewModel,
+    events: ProfileEvents,
     state: ProfileState,
     onPostDeleted: () -> Unit,
     onBackPressed: () -> Unit
@@ -214,10 +215,6 @@ fun ShowProfilePosts(
 
     if (screenHeightMinusBottomNavItem <= dimensionResource(id = R.dimen.dim_650)) {
         screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.96f
-    }
-
-    LaunchedEffect(postId) {
-        viewModel.getRecipe(197)
     }
 
     SideEffect {
@@ -256,7 +253,7 @@ fun ShowProfilePosts(
                 },
                 onConfirm = {
                     infoDialog.value = false
-                    viewModel.deleteCurrentPost(posts[pagerState.currentPage].videoId)
+                    events.deleteCurrentPost(posts[pagerState.currentPage].videoId)
                     onPostDeleted()
                 }
             )
@@ -271,7 +268,7 @@ fun ShowProfilePosts(
                 HomeBottomSheetIngredients(
                     triggerIngredientBottomSheetModal,
                     state.recipe,
-                    onAddToBasket = { viewModel.addIngredientsToBasket()}
+                    onAddToBasket = { events.addIngredientsToBasket()}
                 )
             }
             VerticalPager(

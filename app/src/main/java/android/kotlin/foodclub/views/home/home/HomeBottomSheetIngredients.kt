@@ -4,8 +4,9 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.domain.models.recipes.Recipe
 import android.kotlin.foodclub.utils.composables.CustomSlider
-import android.kotlin.foodclub.viewModels.home.HomeViewModel
-import android.kotlin.foodclub.viewModels.home.ProfileViewModel
+import android.kotlin.foodclub.viewModels.home.home.HomeEvents
+import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
+import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -49,13 +50,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 fun HomeBottomSheetIngredients(
     onDismiss: () -> Unit,
     recipe: Recipe?,
-    onAddToBasket: () -> Unit) {
+    onAddToBasket: () -> Unit
+) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 240.dp
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isSmallScreen by remember { mutableStateOf(false) }
-
-    val viewModel: HomeViewModel = hiltViewModel()
-    val profViewModel :ProfileViewModel = hiltViewModel()
 
     if (screenHeight <= 440.dp) {
         isSmallScreen = true

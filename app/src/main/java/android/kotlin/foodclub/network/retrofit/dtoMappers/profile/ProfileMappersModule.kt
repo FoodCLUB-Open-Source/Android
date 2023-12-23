@@ -34,10 +34,4 @@ object ProfileMappersModule {
         return UserDetailsMapper()
     }
 
-    @Provides
-    @Singleton
-    fun provideProfileModelMapper(): ProfileModelMapper {
-        return ProfileModelMapper()
-    }
-
 }

@@ -1,8 +1,11 @@
 package android.kotlin.foodclub.di
 
-import android.kotlin.foodclub.room.db.ProfileDao
-import android.kotlin.foodclub.room.repository.datasource.ProfileDataLocalSource
-import android.kotlin.foodclub.room.repository.datasource_impl.ProfileDataLocalSourceImpl
+import android.kotlin.foodclub.localdatasource.room.dao.UserDetailsDao
+import android.kotlin.foodclub.localdatasource.room.dao.UserProfileVideosDao
+import android.kotlin.foodclub.localdatasource.localdatasource.userdetailslocaldatasource.UserDetailsLocalDataSource
+import android.kotlin.foodclub.localdatasource.localdatasource.profilevideoslocaldatasource.ProfileVideosDataLocalSource
+import android.kotlin.foodclub.localdatasource.localdatasource.userdetailslocaldatasource.UserDetailsLocalDataSourceImpl
+import android.kotlin.foodclub.localdatasource.localdatasource.profilevideoslocaldatasource.ProfileVideosDataLocalSourceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,8 +18,13 @@ class LocalDataModule {
 
     @Singleton
     @Provides
-    fun provideProfileLocalDataSource(profileDAO: ProfileDao): ProfileDataLocalSource {
-        return ProfileDataLocalSourceImpl(profileDAO)
+    fun provideUserDetailsLocalDataSource(userDetailsDao: UserDetailsDao): UserDetailsLocalDataSource {
+        return UserDetailsLocalDataSourceImpl(userDetailsDao)
     }
 
+    @Singleton
+    @Provides
+    fun provideVideosDataLocalSource(userProfileVideosDao: UserProfileVideosDao): ProfileVideosDataLocalSource {
+        return ProfileVideosDataLocalSourceImpl(userProfileVideosDao)
+    }
 }

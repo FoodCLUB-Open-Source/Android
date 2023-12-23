@@ -17,6 +17,7 @@ import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.io.InputStream
 
 /**
  * This is class is used to overlay an image on top of a video
@@ -41,6 +42,7 @@ class FFmpegUtil(private val context: Context) {
     private val outputFileName = "output.mp4"
     private val outputDirectoryPath = context.filesDir.path
     private val outputPath = "$outputDirectoryPath/$outputFileName"
+    private val TAG = FFmpegUtil::class.java.simpleName
 
     /**
      * Executes an FFmpeg command to overlay an image onto a video and saves the result to a specified output path.
@@ -85,12 +87,48 @@ class FFmpegUtil(private val context: Context) {
             val session: FFmpegSession = FFmpegKit.execute(command)
 
             if (ReturnCode.isSuccess(session.returnCode) && session.state == SessionState.COMPLETED) {
-                Log.i("MYTAG", "SUCCESS")
+                Log.i(TAG, "SUCCESS")
             } else {
                 // Handle failure
-                Log.i("MYTAG", "ERROR ${session.logs}")
-                Log.i("MYTAG", "ERROR ${session.output}")
+                Log.i(TAG, "ERROR ${session.logs}")
+                Log.i(TAG, "ERROR ${session.output}")
             }
+            deleteTemporaryFile(videoFile)
+            deleteTemporaryFile(imageFile)
+        }
+    }
+
+    /**
+     * Creates a temporary video file by copying the content of a video file from the assets folder.
+     *
+     * @param assetFileName The name of the video file in the assets folder.
+     * @return A File object representing the temporary video file, or null if an error occurs.
+     */
+    fun createTempVideoFile(assetFileName: String): File? {
+        val assetManager = context.assets
+
+        try {
+            // Open the video file from the assets folder
+            val inputStream: InputStream = assetManager.open(assetFileName)
+
+            // Create a temporary file
+            val tempFile = File.createTempFile("temp_video", ".mp4", context.cacheDir)
+
+            // Copy the content of the video from the assets folder to the temporary file
+            val outputStream = FileOutputStream(tempFile)
+            val buffer = ByteArray(1024)
+            var length: Int
+            while (inputStream.read(buffer).also { length = it } > 0) {
+                outputStream.write(buffer, 0, length)
+            }
+
+            // Close streams
+            inputStream.close()
+            outputStream.close()
+            return tempFile
+        } catch (e: IOException) {
+            e.printStackTrace()
+            return null
         }
     }
 
@@ -154,6 +192,24 @@ class FFmpegUtil(private val context: Context) {
         }
 
         return null
+    }
+
+    /**
+     * After FFmpeg command is finished, remove temporary files from storage.
+     * */
+    private fun deleteTemporaryFile(file: File) {
+        if (file.exists()) {
+            try {
+                val deleted = file.delete()
+                if (deleted) {
+                    Log.i(TAG, "Temporary file ${file.name} deleted successfully.")
+                } else {
+                    Log.e(TAG, "Failed to delete temporary file ${file.name}.")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while deleting file ${file.name}: ${e.localizedMessage}")
+            }
+        }
     }
 
 }

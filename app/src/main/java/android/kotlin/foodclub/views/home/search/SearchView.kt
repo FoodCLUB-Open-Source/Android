@@ -1,9 +1,13 @@
 package android.kotlin.foodclub.views.home.search
 
+
+
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.utils.composables.ShimmerBrush
+import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.kotlin.foodclub.views.home.discover.MainTabRow
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -37,11 +41,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
@@ -55,7 +61,10 @@ import androidx.navigation.NavController
 @Composable
 fun SearchView(
     navController: NavController
-){
+){ val context = LocalContext.current
+    val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
+
+    val brush = ShimmerBrush()
     var mainTabIndex by remember { mutableIntStateOf(0) }
     val mainTabItemsList = stringArrayResource(id = R.array.search_tabs)
 
@@ -70,6 +79,8 @@ fun SearchView(
         )
 
         MainTabRow(
+            isInternetConnected,
+            brush,
             tabsList = mainTabItemsList,
             horizontalArrangement = Arrangement.Start
         ) {
@@ -154,7 +165,7 @@ fun SearchRow(
             BadgedBox(
                 badge = {
                     Badge(
-                        modifier = Modifier.offset(x = (-5).dp, y =dimensionResource(id = R.dimen.dim_5)),
+                        modifier = Modifier.offset(x = -dimensionResource(id = R.dimen.dim_5), y =dimensionResource(id = R.dimen.dim_5)),
                         containerColor = foodClubGreen
                     )
                     { Text(
