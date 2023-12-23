@@ -5,7 +5,7 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.navigation.auth.AuthScreen
 import android.kotlin.foodclub.utils.composables.BottomSheet
 import android.kotlin.foodclub.utils.composables.TermsAndConditionsInfoFooter
-import android.kotlin.foodclub.viewModels.authentication.MainLogInAndSignUpViewModel
+import android.kotlin.foodclub.viewModels.authentication.mainLogin.MainLogInAndSignUpViewModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

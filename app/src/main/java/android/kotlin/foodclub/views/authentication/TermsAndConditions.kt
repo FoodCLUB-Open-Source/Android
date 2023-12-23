@@ -6,8 +6,8 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.disabledContainerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.navigation.auth.AuthScreen
-import android.kotlin.foodclub.viewModels.authentication.MainLogInAndSignUpViewModel
-import android.kotlin.foodclub.viewModels.authentication.TermsAndConditionsViewModel
+import android.kotlin.foodclub.viewModels.authentication.mainLogin.MainLogInAndSignUpViewModel
+import android.kotlin.foodclub.viewModels.authentication.termsAndConditions.TermsAndConditionsViewModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -409,7 +409,7 @@ fun TermsAndConditions(
 @Composable
 fun TermsAndConditionsSimplified(
     navController: NavHostController,
-    viewModel: MainLogInAndSignUpViewModel
+    viewModel: MainLogInAndSignUpViewModel,
 ) {
     Box(
         modifier = Modifier
