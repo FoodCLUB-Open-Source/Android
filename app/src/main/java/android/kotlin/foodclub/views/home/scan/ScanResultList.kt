@@ -9,7 +9,6 @@ import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.utils.composables.CustomDatePicker
 import android.kotlin.foodclub.utils.composables.LoadingProgressBar
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
-import android.kotlin.foodclub.viewModels.home.discover.DiscoverViewModel
 import android.kotlin.foodclub.views.home.discover.DiscoverState
 import android.kotlin.foodclub.views.home.myDigitalPantry.EditIngredientView
 import android.kotlin.foodclub.views.home.myDigitalPantry.SwipeableItemsLazyColumn
@@ -26,7 +25,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -76,18 +74,6 @@ fun ScanResultView(
     var isDatePickerVisible by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
     var selectedDate by remember { mutableStateOf("") }
-
-    val datePickerDialogColors = DatePickerDefaults.colors(
-        containerColor = Color.White,
-        titleContentColor = Color.White,
-        headlineContentColor = Color.White,
-    )
-    val datePickerColors = DatePickerDefaults.colors(
-        weekdayContentColor = Color.Gray,
-        selectedDayContainerColor = Color.Red,
-        todayDateBorderColor = Color.Red,
-        todayContentColor = Color.Red
-    )
 
     var loading by rememberSaveable { mutableStateOf(false) }
     BackHandler {
@@ -197,11 +183,11 @@ fun ScanResultView(
                         ) {
                             CustomDatePicker(
                                 modifier = Modifier.shadow(dimensionResource(id = R.dimen.dim_5)),
-                                shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_6)),
                                 datePickerState = datePickerState,
-                                datePickerColors = datePickerColors,
-                                datePickerDialogColors = datePickerDialogColors,
-                                onDismiss = { isDatePickerVisible = false },
+                                onDismiss = {
+                                    isDatePickerVisible = false
+                                    datePickerState.setSelection(null)
+                                },
                                 onSave = { date ->
                                     if (date != null){
                                         selectedDate = date

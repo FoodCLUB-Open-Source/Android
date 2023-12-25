@@ -7,10 +7,12 @@ import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.MyBasketCache
 import android.kotlin.foodclub.domain.models.products.ProductsData
 import androidx.compose.ui.graphics.ImageBitmap
+import kotlinx.coroutines.flow.MutableStateFlow
 
 data class DiscoverState(
     val mainSearchText : String,
     val ingredientSearchText : String,
+    val searchTextFlow: MutableStateFlow<String>,
     val userIngredients : List<Ingredient>,
     val searchResults : List<Ingredient>,
     val postList: List<VideoModel>,
@@ -28,6 +30,7 @@ data class DiscoverState(
         fun default() = DiscoverState(
             mainSearchText = "",
             ingredientSearchText = "",
+            searchTextFlow = MutableStateFlow(""),
             userIngredients = emptyList(),
             searchResults = emptyList(),
             postList = emptyList(),

@@ -64,14 +64,12 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.DismissValue
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Tab
@@ -106,7 +104,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -121,7 +118,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -130,9 +126,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
-import coil.compose.ImagePainter
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -187,18 +181,6 @@ fun DiscoverView(
     } else {
         1f
     }
-
-    val datePickerDialogColors = DatePickerDefaults.colors(
-        containerColor = Color.White,
-        titleContentColor = Color.White,
-        headlineContentColor = Color.White,
-    )
-    val datePickerColors = DatePickerDefaults.colors(
-        weekdayContentColor = Color.Gray,
-        selectedDayContainerColor = Color.Red,
-        todayDateBorderColor = Color.Red,
-        todayContentColor = Color.Red
-    )
 
     val initialPage = 0
     val pagerState1 = rememberPagerState(
@@ -292,16 +274,16 @@ fun DiscoverView(
                 ) {
                     CustomDatePicker(
                         modifier = Modifier.shadow(dimensionResource(id = R.dimen.dim_5)),
-                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_6)),
                         datePickerState = datePickerState,
-                        datePickerColors = datePickerColors,
-                        datePickerDialogColors = datePickerDialogColors,
-                        onDismiss = { isDatePickerVisible = false },
+                        onDismiss = {
+                            isDatePickerVisible = false
+                            datePickerState.setSelection(null)
+                                    },
                         onSave = { date ->
                             if (date != null) {
                                 selectedDate = date
                                 state.ingredientToEdit!!.expirationDate = selectedDate
-                                events.updateIngredient(state.ingredientToEdit!!)
+                                events.updateIngredient(state.ingredientToEdit)
                             }
                         }
                     )
@@ -310,7 +292,9 @@ fun DiscoverView(
             if (isDialogOpen) {
                 AddIngredientDialog(
                     stringResource(R.string.added),
-                    stringResource(R.string.successfully_added)
+                    stringResource(R.string.successfully_added_first),
+                    stringResource(R.string.successfully_added_second),
+                    state.ingredientToEdit!!.type
                 )
                 LaunchedEffect(key1 = true) {
                     delay(3000)
@@ -350,7 +334,7 @@ fun DiscoverView(
                         IngredientsList(
                             Modifier,
                             events = events,
-                            productsList = state.searchResults,
+                            productsList = state.productsData.productsList,
                             userIngredientsList = state.userIngredients,
                             onEditQuantityClicked = {
                                 events.updateIngredient(it)
@@ -1067,20 +1051,26 @@ fun SingleSearchIngredientItem(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start
             ) {
-                Text(
-                    modifier = modifier
-                        .padding(start = dimensionResource(id = R.dimen.dim_6))
-                        .clickable {
-                            onEditQuantityClicked(item)
-                        },
-                    text = quantity,
-                    fontWeight = FontWeight(500),
-                    fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
-                    lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
-                    fontFamily = Montserrat,
-                    color = Color.Gray,
-                    style = quantityTextStyle(quantity)
-                )
+                if (isItemAdded){
+                    Text(
+                        modifier = modifier
+                            .padding(start = dimensionResource(id = R.dimen.dim_6))
+                            .clickable {
+                                onEditQuantityClicked(item)
+                            },
+                        text = quantity,
+                        fontWeight = FontWeight(500),
+                        fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
+                        lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
+                        fontFamily = Montserrat,
+                        color = Color.Gray,
+                        style = quantityTextStyle(quantity)
+                    )
+
+                }else{
+                    Box(modifier = Modifier.weight(1f, fill = false))
+                    Spacer(modifier = Modifier.weight(1f, fill = true))
+                }
             }
         }
         Column(modifier = modifier.weight(1f)) {
@@ -1089,22 +1079,25 @@ fun SingleSearchIngredientItem(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(
-                    modifier = modifier
-                        .padding(start = dimensionResource(id = R.dimen.dim_10))
-                        .clickable {
-                            onDateClicked(item)
-                        },
-                    text = expirationDate,
-                    fontWeight = FontWeight(500),
-                    textAlign = TextAlign.Start,
-                    fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
-                    lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
-                    fontFamily = Montserrat,
-                    color = Color.Gray,
-                    style = expirationDateTextStyle(expirationDate)
-                )
-                if (!isItemAdded) {
+                if (isItemAdded){
+                    Text(
+                        modifier = modifier
+                            .padding(start = dimensionResource(id = R.dimen.dim_20))
+                            .clickable {
+                                onDateClicked(item)
+                            },
+                        text = expirationDate,
+                        fontWeight = FontWeight(500),
+                        textAlign = TextAlign.Start,
+                        fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
+                        lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
+                        fontFamily = Montserrat,
+                        color = Color.Gray,
+                        style = expirationDateTextStyle(expirationDate)
+                    )
+                }else{
+                    Box(modifier = Modifier.weight(1f, fill = false))
+                    Spacer(modifier = Modifier.weight(1f, fill = true))
                     Box(
                         modifier = Modifier
                             .size(dimensionResource(id = R.dimen.dim_24))
@@ -1177,7 +1170,12 @@ fun EditIngredientBottomModal(
 }
 
 @Composable
-fun AddIngredientDialog(headline: String, text: String) {
+fun AddIngredientDialog(
+    headline: String,
+    textFirst: String,
+    textSecond: String? = "",
+    ingrName: String? = ""
+) {
     Dialog(
         properties = DialogProperties(dismissOnClickOutside = false, dismissOnBackPress = false),
         onDismissRequest = { }) {
@@ -1237,7 +1235,7 @@ fun AddIngredientDialog(headline: String, text: String) {
                         ),
                 ) {
                     Text(
-                        text = text,
+                        text = "$textFirst $ingrName $textSecond",
                         fontFamily = Montserrat,
                         fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
                         lineHeight = dimensionResource(id = R.dimen.fon_17).value.sp,

@@ -20,14 +20,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(FlowPreview::class)
 @HiltViewModel
 class DiscoverViewModel @Inject constructor(
     private val postRepository: PostRepository,
@@ -45,8 +48,6 @@ class DiscoverViewModel @Inject constructor(
     val state: StateFlow<DiscoverState>
         get() = _state
 
-    private var searchJob: Job? = null
-
     // TODO add real data for scanResultItemList
 
     init {
@@ -56,8 +57,15 @@ class DiscoverViewModel @Inject constructor(
         myFridgePosts()
 
         viewModelScope.launch {
-            fetchProductsDatabase(state.value.mainSearchText)
+            _state.value.searchTextFlow
+                .debounce(1000)
+                .filter { it.isNotEmpty() }
+                .distinctUntilChanged()
+                .collect { searchText ->
+                    fetchProductsDatabase(searchText)
+                }
         }
+
     }
 
     fun onMainSearchTextChange(text: String) {
@@ -65,15 +73,8 @@ class DiscoverViewModel @Inject constructor(
     }
 
     override fun onSubSearchTextChange(text: String) {
-        _state.update { it.copy(ingredientSearchText = text) }
-        searchJob?.cancel()
-
-        searchJob = viewModelScope.launch {
-            if (text != "") {
-                delay(1000)
-                fetchProductsDatabase(state.value.ingredientSearchText)
-            }
-        }
+        _state.value = _state.value.copy(ingredientSearchText = text)
+        _state.value.searchTextFlow.value = text
     }
 
     override fun addToUserIngredients(ingredient: Ingredient) {
@@ -118,8 +119,6 @@ class DiscoverViewModel @Inject constructor(
         }
 
         _state.update { it.copy(ingredientToEdit = ingredient) }
-
-        Log.i(TAG, "LIST AFTER ${state.value.userIngredients[0].quantity}")
     }
 
     override fun getPostData(postId: Long) {
