@@ -265,32 +265,12 @@ fun ProfileViewLoadingSkeleton (
     events: ProfileEvents,
     state: ProfileState
 ) {
-
-
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState() { 2 }
 
     Text(text = stringResource(id = R.string.loading))
-
-    val userPosts = state.userPosts
-
-    val bookmarkedPosts = state.bookmarkedPosts
-    var userTabItems = listOf<VideoModel>()
-
-    if(pagerState.currentPage == 0){
-        userTabItems = userPosts
-    }
-    else if(pagerState.currentPage == 1){
-        userTabItems = bookmarkedPosts
-    }
     val tabItems = stringArrayResource(id = R.array.profile_tabs)
     var showUserOptionsSheet by remember { mutableStateOf(false) }
-    var showDeleteRecipe by remember {
-        mutableStateOf(false)
-    }
-    var postId by remember {
-        mutableLongStateOf(0)
-    }
 
     Column (modifier = Modifier
         .fillMaxSize()
