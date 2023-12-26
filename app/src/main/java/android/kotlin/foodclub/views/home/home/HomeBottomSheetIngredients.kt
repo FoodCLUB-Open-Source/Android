@@ -1,12 +1,10 @@
 package android.kotlin.foodclub.views.home.home
 
+import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.domain.models.recipes.Recipe
 import android.kotlin.foodclub.utils.composables.CustomSlider
-import android.kotlin.foodclub.viewModels.home.home.HomeEvents
-import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
-import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,10 +38,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,11 +51,11 @@ fun HomeBottomSheetIngredients(
     recipe: Recipe?,
     onAddToBasket: () -> Unit
 ) {
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp - 240.dp
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp - dimensionResource(id = R.dimen.dim_240)
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isSmallScreen by remember { mutableStateOf(false) }
 
-    if (screenHeight <= 440.dp) {
+    if (screenHeight <= dimensionResource(id = R.dimen.dim_440)) {
         isSmallScreen = true
     }
     ModalBottomSheet(
@@ -73,7 +72,10 @@ fun HomeBottomSheetIngredients(
             Column(
                 modifier = Modifier
                     .height(screenHeight)
-                    .padding(start = 16.dp, end = 16.dp)
+                    .padding(
+                        start = dimensionResource(id = R.dimen.dim_16),
+                        end = dimensionResource(id = R.dimen.dim_16)
+                    )
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -83,39 +85,41 @@ fun HomeBottomSheetIngredients(
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(start = 16.dp)
+                            .padding(start = dimensionResource(id = R.dimen.dim_16))
                     ) {
                         Text(
-                            "Chicken broth and meatballs",
+                            stringResource(id = R.string.example_recipe),
                             color = Color.Black,
                             fontFamily = Montserrat,
-                            fontSize = if (isSmallScreen) 18.sp else 22.sp,
+                            fontSize = if (isSmallScreen) dimensionResource(id = R.dimen.dim_18).value.sp else dimensionResource(id = R.dimen.dim_22).value.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }
-                    Spacer(modifier = Modifier.width(16.dp))
+                    Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_16)))
                     Box(
-                        modifier = Modifier.padding(end = 16.dp, bottom = 16.dp)
+                        modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dim_16), bottom = dimensionResource(id = R.dimen.dim_16))
                     ) {
                         Button(
                             shape = RectangleShape,
                             modifier = Modifier
                                 .border(
-                                    1.dp, Color(0xFF3A7CA8), shape = RoundedCornerShape(20.dp)
+                                    dimensionResource(id = R.dimen.dim_1),
+                                    Color(0xFF3A7CA8),
+                                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_20))
                                 )
-                                .clip(RoundedCornerShape(20.dp))
-                                .width(80.dp)
-                                .height(30.dp),
+                                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
+                                .width(dimensionResource(id = R.dimen.dim_80))
+                                .height(dimensionResource(id = R.dimen.dim_30)),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color.White,
                                 contentColor = Color(0xFF3A7CA8)
                             ),
-                            contentPadding = PaddingValues(bottom = 2.dp),
+                            contentPadding = PaddingValues(bottom = dimensionResource(id = R.dimen.dim_2)),
                             onClick = {}
                         ) {
                             Text(
-                                "copy clip",
-                                fontSize = 12.sp,
+                                stringResource(id = R.string.copy_clip),
+                                fontSize = dimensionResource(id = R.dimen.dim_12).value.sp,
                                 fontWeight = FontWeight.Bold,
                                 fontFamily = Montserrat,
                                 color = Color(0xFF3A7CA8),
@@ -126,26 +130,34 @@ fun HomeBottomSheetIngredients(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(if (isSmallScreen) 0.dp else 16.dp),
+                        .padding(
+                            if (isSmallScreen) dimensionResource(id = R.dimen.dim_0) else dimensionResource(
+                                id = R.dimen.dim_16
+                            )
+                        ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(start = if (isSmallScreen) 16.dp else 0.dp)
+                            .padding(
+                                start = if (isSmallScreen) dimensionResource(id = R.dimen.dim_16) else dimensionResource(
+                                    id = R.dimen.dim_0
+                                )
+                            )
                     ) {
                         Text(
-                            "Serving Size",
+                            stringResource(id = R.string.serving_size),
                             color = Color.Black,
                             fontFamily = Montserrat,
-                            fontSize = if (isSmallScreen) 14.sp else 17.sp
+                            fontSize = if (isSmallScreen) dimensionResource(id = R.dimen.dim_14).value.sp else dimensionResource(id = R.dimen.dim_17).value.sp
                         )
                     }
                     Box(
-                        modifier = Modifier.padding(end = if (isSmallScreen) 10.dp else 0.dp)
+                        modifier = Modifier.padding(end = if (isSmallScreen) dimensionResource(id = R.dimen.dim_10) else dimensionResource(id = R.dimen.dim_0))
                     ) {
                         CustomSlider(
-                            sliderWidth = if (isSmallScreen) 150.dp else 200.dp,
+                            sliderWidth = if (isSmallScreen) dimensionResource(id = R.dimen.dim_150) else dimensionResource(id = R.dimen.dim_200),
                             initialValue = ingredientsDivider,
                             maxValue = 24f,
                             onValueChange = {
@@ -161,31 +173,35 @@ fun HomeBottomSheetIngredients(
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(start = 16.dp)
+                            .padding(start = dimensionResource(id = R.dimen.dim_16))
                     ) {
                         Text(
-                            "Ingredients", color = Color.Black,
+                            stringResource(id = R.string.ingredients), color = Color.Black,
                             fontFamily = Montserrat,
-                            fontSize = if (isSmallScreen) 13.sp else 16.sp,
+                            fontSize = if (isSmallScreen) dimensionResource(id = R.dimen.dim_13).value.sp else dimensionResource(id = R.dimen.dim_16).value.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }
-                    Spacer(modifier = Modifier.width(if (isSmallScreen) 10.dp else 16.dp))
-                    Box(modifier = Modifier.padding(end = if (isSmallScreen) 16.dp else 16.dp)) {
+                    Spacer(modifier = Modifier.width(if (isSmallScreen) dimensionResource(id = R.dimen.dim_10) else dimensionResource(id = R.dimen.dim_16)))
+                    Box(modifier = Modifier.padding(end = if (isSmallScreen) dimensionResource(id = R.dimen.dim_10) else dimensionResource(id = R.dimen.dim_16))) {
                         Text(
-                            "Clear", color = Color(0xFF7EC60B),
+                            stringResource(id = R.string.clear), color = Color(0xFF7EC60B),
                             fontFamily = Montserrat,
-                            fontSize = if (isSmallScreen) 13.sp else 16.sp,
+                            fontSize = if (isSmallScreen) dimensionResource(id = R.dimen.dim_13).value.sp else dimensionResource(id = R.dimen.dim_16).value.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }
 
                 }
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_16)))
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(if (isSmallScreen) 210.dp else 300.dp),
+                        .height(
+                            if (isSmallScreen) dimensionResource(id = R.dimen.dim_210) else dimensionResource(
+                                id = R.dimen.dim_300
+                            )
+                        ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     LazyColumn {
@@ -197,7 +213,7 @@ fun HomeBottomSheetIngredients(
                         }
                     }
                 }
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
@@ -206,26 +222,29 @@ fun HomeBottomSheetIngredients(
                         shape = RectangleShape,
                         modifier = Modifier
                             .border(
-                                1.dp, Color(126, 198, 11), RoundedCornerShape(15.dp)
+                                dimensionResource(id = R.dimen.dim_1),
+                                Color(126, 198, 11),
+                                RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                             )
-                            .clip(RoundedCornerShape(15.dp))
+                            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
                             .fillMaxWidth(),
                         colors = defaultButtonColors(),
-                        contentPadding = PaddingValues(15.dp),
-                        onClick = { onAddToBasket()}
+                        contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_15)),
+                        onClick = {
+                            onAddToBasket()
+                            onDismiss()
+                        }
                     ) {
                         Text(
-                            "Add to my shopping list",
+                            stringResource(id = R.string.add_to_my_shopping_list),
                             color = Color.White,
                             fontFamily = Montserrat,
-                            fontSize = 16.sp,
+                            fontSize = dimensionResource(id = R.dimen.dim_16).value.sp,
                             fontWeight = FontWeight.ExtraBold
                         )
                     }
                 }
             }
         }
-
     }
-
 }
