@@ -1,6 +1,5 @@
 package android.kotlin.foodclub.views.home.myBasket
 
-import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.config.ui.Montserrat
@@ -9,7 +8,6 @@ import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.viewModels.home.myBasket.MyBasketEvents
-import android.kotlin.foodclub.viewModels.home.myBasket.MyBasketViewModel
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.Image
@@ -47,10 +45,10 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -62,10 +60,8 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 
 
-@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun MyBasketView(
-    // viewModel: MyBasketViewModel,
     events: MyBasketEvents,
     navController: NavController,
     state: MyBasketState
@@ -114,7 +110,7 @@ fun MyBasketView(
         modifier = Modifier
             .background(color = Color.White)
             .fillMaxSize()
-            .padding(top = 60.dp),
+            .padding(top = dimensionResource(id = R.dimen.dim_60)),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(
@@ -137,7 +133,7 @@ fun MyBasketView(
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.back_icon),
-                        contentDescription = "Back",
+                        contentDescription = stringResource(id = R.string.go_back),
                         tint = Color.Black
                     )
                 }
@@ -147,7 +143,7 @@ fun MyBasketView(
                     fontFamily = Montserrat,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black,
-                    style = TextStyle(letterSpacing = -1.sp),
+                    style = TextStyle(letterSpacing = (-1).sp),
                     modifier = Modifier.weight(1f)
                 )
                 Button(
@@ -227,8 +223,8 @@ fun MyBasketView(
             {
                 itemsIndexed(
                     items = productsList,
-                    key = { index, ingredient -> "${index}_${ingredient.id}" }
-                ) { index, ingredient ->
+                    key = { _, ingredient -> ingredient.quantity }
+                ) { _, ingredient ->
                     BasketIngredient(
                         ingredient = ingredient,
                         isShown = !state.selectedProductsList.contains(ingredient.id) || !deleteSelected,
