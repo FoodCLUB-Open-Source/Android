@@ -4,6 +4,7 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.disabledContainerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.navigation.auth.AuthScreen
 import android.kotlin.foodclub.viewModels.authentication.termsAndConditions.TermsAndConditionsEvents
 import android.kotlin.foodclub.viewModels.authentication.termsAndConditions.TermsAndConditionsViewModel
 import androidx.compose.foundation.Image
@@ -347,9 +348,7 @@ fun TermsAndConditions(
             // DECLINE BUTTON
             Button(
                 onClick = {
-                    /*
-                    TO DO IN THE FUTURE
-                     */
+                    navController.navigate(AuthScreen.MainLogInAndSignUp.route)
                 },
                 modifier = Modifier
                     .weight(1f)
@@ -378,10 +377,7 @@ fun TermsAndConditions(
             // PROCEED BUTTON
             Button(
                 onClick = {
-                    /*
-                    TO DO IN THE FUTURE
-                     */
-
+                          navController.navigate(AuthScreen.SignUp.route)
                 }, modifier = Modifier
                     .weight(1f)
                     .width(dimensionResource(id = R.dimen.dim_164))
