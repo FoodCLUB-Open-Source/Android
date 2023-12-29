@@ -8,6 +8,7 @@ import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.config.ui.textFieldCustomColors
 import android.kotlin.foodclub.utils.helpers.FieldsValidation
+import android.kotlin.foodclub.views.authentication.TermsAndConditionsSimplified
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -30,10 +31,13 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -396,11 +400,12 @@ fun AlternativeLoginOption(
  *
  * Footer with text "By using FoodClub you agree to our Terms & Conditions" with clickable
  * "Terms & Conditions". When clicked, it opens screen where user can read FoodCLUB T&C.
- *
- * @param onClick Optional function which is executed when clicked on the clickable text
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TermsAndConditionsInfoFooter(onClick: () -> Unit = {}) {
+fun TermsAndConditionsInfoFooter() {
+    var showBottomSheet by remember { mutableStateOf(false) }
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     Row(
         Modifier.fillMaxSize(),
         verticalAlignment = Alignment.Bottom,
@@ -415,7 +420,7 @@ fun TermsAndConditionsInfoFooter(onClick: () -> Unit = {}) {
 
         ClickableText(
             text = AnnotatedString(text = stringResource(id = R.string.terms_and_conditions)),
-            onClick = { onClick() },
+            onClick = { showBottomSheet = true },
             style = TextStyle(
                 color = Color.Gray,
                 fontFamily = Montserrat,
@@ -423,6 +428,18 @@ fun TermsAndConditionsInfoFooter(onClick: () -> Unit = {}) {
                 fontWeight = FontWeight.Bold,
                 textDecoration = TextDecoration.Underline
             )
+        )
+    }
+
+    if (showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet = false
+            },
+            sheetState = bottomSheetState,
+            content = {
+                TermsAndConditionsSimplified()
+            }
         )
     }
 }

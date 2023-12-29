@@ -6,8 +6,6 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.disabledContainerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.navigation.auth.AuthScreen
-import android.kotlin.foodclub.viewModels.authentication.mainLogin.MainLogInAndSignUpViewModel
-import android.kotlin.foodclub.viewModels.authentication.termsAndConditions.TermsAndConditionsViewModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -28,12 +26,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -50,14 +45,7 @@ import androidx.navigation.compose.rememberNavController
 
 @SuppressLint("UnrememberedMutableInteractionSource", "StateFlowValueCalledInComposition")
 @Composable
-fun TermsAndConditions(
-    navController: NavHostController,
-    viewModel: TermsAndConditionsViewModel
-) {
-
-    val checkedState = remember { mutableStateOf(false) }
-
-
+fun TermsAndConditions(navController: NavHostController) {
     Box(
         modifier = Modifier
             .width(dimensionResource(id = R.dimen.dim_428))
@@ -341,7 +329,6 @@ fun TermsAndConditions(
 
         }
 
-        val context = LocalContext.current
 
         Row(
             modifier = Modifier
@@ -384,7 +371,7 @@ fun TermsAndConditions(
             // PROCEED BUTTON
             Button(
                 onClick = {
-                    navController.navigate(AuthScreen.MainLogInAndSignUp.route)
+                    navController.navigate(AuthScreen.SignUp.route)
                 }, modifier = Modifier
                     .weight(1f)
                     .width(dimensionResource(id = R.dimen.dim_164))
@@ -407,10 +394,7 @@ fun TermsAndConditions(
 }
 
 @Composable
-fun TermsAndConditionsSimplified(
-    navController: NavHostController,
-    viewModel: MainLogInAndSignUpViewModel,
-) {
+fun TermsAndConditionsSimplified() {
     Box(
         modifier = Modifier
             .width(dimensionResource(id = R.dimen.dim_428))
@@ -688,7 +672,6 @@ fun TermsAndConditionsSimplified(
 @Composable
 fun TermsAndConditionsPreview() {
     val navController = rememberNavController()
-    val viewModel = remember { TermsAndConditionsViewModel() }
-    TermsAndConditions(navController = navController, viewModel = viewModel)
+    TermsAndConditions(navController)
 }
 
