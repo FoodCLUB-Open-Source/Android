@@ -36,7 +36,7 @@ fun NavGraphBuilder.authNavigationGraph(
 
             MainLogInAndSignUp(
                 navController = navController,
-                events = viewModel
+                viewModel = viewModel,
             )
 
         }
@@ -56,7 +56,7 @@ fun NavGraphBuilder.authNavigationGraph(
 
             TermsAndConditions(
                 navController = navController,
-                events = viewModel
+                viewModel = viewModel,
             )
         }
 

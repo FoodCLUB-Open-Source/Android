@@ -5,7 +5,6 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.navigation.auth.AuthScreen
 import android.kotlin.foodclub.utils.composables.TermsAndConditionsInfoFooter
 import android.kotlin.foodclub.viewModels.authentication.mainLogin.MainLogInAndSignUpViewModel
-import android.kotlin.foodclub.viewModels.authentication.mainLogin.MainLoginAndSignUpEvents
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -49,119 +48,123 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun MainLogInAndSignUp(
     navController: NavHostController,
-    events: MainLoginAndSignUpEvents
+    viewModel: MainLogInAndSignUpViewModel
 ) {
-
-    var interactionSource = remember { MutableInteractionSource() }
+    val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
-
     if (!isPressed) {
-        events.reverseButtonUi()
+        viewModel.reverseButtonUi()
     }
 
-    var interactionSource1 = remember { MutableInteractionSource() }
+    val interactionSource1 = remember { MutableInteractionSource() }
     val isPressed1 by interactionSource1.collectIsPressedAsState()
 
-
     if (!isPressed1) {
-        events.reverseButtonUi()
+        viewModel.reverseButtonUi()
     }
 
-    Column(
-        Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
         Column(
             Modifier
-                .weight(7F)
                 .fillMaxSize()
-                .padding(top = dimensionResource(id = R.dimen.dim_120)),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy( dimensionResource(id = R.dimen.dim_36))
+                .background(Color.White)
         ) {
-            Image(
-                painterResource(id = R.drawable.welcome_logo),
-                contentDescription = stringResource(id = R.string.app_logo),
-                modifier = Modifier
-                    .width(dimensionResource(id = R.dimen.dim_80))
-                    .height(dimensionResource(id = R.dimen.dim_80))
-            )
-            Image(
-                painterResource(id = R.drawable.foodclub),
-                contentDescription = stringResource(id = R.string.app_title),
-                modifier = Modifier.height(dimensionResource(id = R.dimen.dim_40))
-
-            )
-        }
-        Column(
-            Modifier
-                .weight(8F)
-                .fillMaxSize()
-                .padding(horizontal = dimensionResource(id = R.dimen.dim_48), vertical = dimensionResource(id = R.dimen.dim_48)),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_18))
-        ) {
-            Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_8))) {
-                Button(
-                    shape = RectangleShape,
+            Column(
+                Modifier
+                    .weight(7F)
+                    .fillMaxSize()
+                    .padding(top = dimensionResource(id = R.dimen.dim_120)),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_36))
+            ) {
+                Image(
+                    painterResource(id = R.drawable.welcome_logo),
+                    contentDescription = stringResource(id = R.string.app_logo),
                     modifier = Modifier
-                        .border(dimensionResource(id = R.dimen.dim_1), Color.LightGray, shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
-                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
-                        .fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(126, 198, 11, 255),
-                        contentColor = Color.White
+                        .width(dimensionResource(id = R.dimen.dim_80))
+                        .height(dimensionResource(id = R.dimen.dim_80))
+                )
+                Image(
+                    painterResource(id = R.drawable.foodclub),
+                    contentDescription = stringResource(id = R.string.app_title),
+                    modifier = Modifier.height(dimensionResource(id = R.dimen.dim_40))
+
+                )
+            }
+            Column(
+                Modifier
+                    .weight(8F)
+                    .fillMaxSize()
+                    .padding(
+                        horizontal = dimensionResource(id = R.dimen.dim_48),
+                        vertical = dimensionResource(id = R.dimen.dim_48)
                     ),
-                    contentPadding = PaddingValues( dimensionResource(id = R.dimen.dim_15)),
-                    onClick = {
-                        navController.navigate(AuthScreen.TermsAndConditions.route)
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_18))
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_8))) {
+                    Button(
+                        shape = RectangleShape,
+                        modifier = Modifier
+                            .border(
+                                dimensionResource(id = R.dimen.dim_1),
+                                Color.LightGray,
+                                shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))
+                            )
+                            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
+                            .fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(126, 198, 11, 255),
+                            contentColor = Color.White
+                        ),
+                        contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_15)),
+                        onClick = {
+                            navController.navigate(AuthScreen.TermsAndConditions.route)
+                        }
+                    ) {
+                        Text(
+                            color = Color.White,
+                            text = stringResource(id = R.string.sign_up),
+                            fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
+                            fontFamily = Montserrat
+                        )
                     }
+                }
+
+                Row(
+                    modifier = Modifier.wrapContentWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     Text(
-                        color = Color.White,
-                        text = stringResource(id = R.string.sign_up),
+                        color = Color.Black,
+                        text = stringResource(id = R.string.already_have_account),
+                        fontFamily = Montserrat,
                         fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
-                        fontFamily = Montserrat
+                        modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dim_5))
+                    )
+
+                    ClickableText(
+                        text = AnnotatedString(stringResource(id = R.string.login_arrow)),
+                        onClick = {
+                            navController.navigate(route = AuthScreen.Login.route)
+                        },
+                        style = TextStyle(
+                            color = Color(126, 198, 11, 255),
+                            fontFamily = Montserrat,
+                            fontSize = dimensionResource(id = R.dimen.fon_14).value.sp
+                        )
                     )
                 }
             }
 
-            Row(
-                modifier = Modifier.wrapContentWidth(),
-                horizontalArrangement = Arrangement.SpaceAround
-            ) {
-                Text(
-                    color = Color.Black,
-                    text = stringResource(id = R.string.already_have_account),
-                    fontFamily = Montserrat,
-                    fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
-                    modifier = Modifier.padding(end =dimensionResource(id = R.dimen.dim_5))
-                )
+            Box(
+                Modifier
+                    .weight(5F)
+                    .fillMaxSize()
+                    .padding(vertical = dimensionResource(id = R.dimen.dim_32))
+            ) { TermsAndConditionsInfoFooter() }
+        }
 
-                ClickableText(
-                    text = AnnotatedString(stringResource(id = R.string.login_arrow)),
-                    onClick = {
-                        navController.navigate(route = AuthScreen.Login.route)
-                    },
-                    style = TextStyle(
-                        color = Color(126, 198, 11, 255),
-                        fontFamily = Montserrat,
-                        fontSize = dimensionResource(id = R.dimen.fon_14).value.sp
-                    )
-                )
-            }
-        }
-        Box(
-            Modifier
-                .weight(5F)
-                .fillMaxSize()
-                .padding(vertical =  dimensionResource(id = R.dimen.dim_32))
-        ) {
-            TermsAndConditionsInfoFooter() { events.termsAndConditions() }
-        }
-    }
 }
 
 @Composable
