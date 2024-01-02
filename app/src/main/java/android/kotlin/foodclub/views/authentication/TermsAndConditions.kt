@@ -70,10 +70,6 @@ fun TermsAndConditions(navController: NavHostController) {
                 modifier = Modifier
                     .width(dimensionResource(id = R.dimen.dim_36))
                     .height(dimensionResource(id = R.dimen.dim_36))
-                    //.padding(end = dimensionResource(id = R.dimen.dim_25))
-                    .clickable {
-                        navController.popBackStack()
-                    }
 
             )
             Text(
@@ -339,10 +335,9 @@ fun TermsAndConditions(navController: NavHostController) {
                     end = dimensionResource(id = R.dimen.dim_46)
                 )
         ) {
-            // DECLINE BUTTON
             Button(
                 onClick = {
-                    navController.popBackStack()
+                    navController.navigate(AuthScreen.MainLogInAndSignUp.route)
                 },
                 modifier = Modifier
                     .weight(1f)
@@ -368,10 +363,9 @@ fun TermsAndConditions(navController: NavHostController) {
 
             Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_25)))
 
-            // PROCEED BUTTON
             Button(
                 onClick = {
-                    navController.navigate(AuthScreen.SignUp.route)
+                          navController.navigate(AuthScreen.SignUp.route)
                 }, modifier = Modifier
                     .weight(1f)
                     .width(dimensionResource(id = R.dimen.dim_164))

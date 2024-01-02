@@ -34,6 +34,7 @@ import java.util.concurrent.TimeUnit
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.viewModels.authentication.signupVerification.SignupVerificationEvents
+import androidx.activity.compose.BackHandler
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 
@@ -51,6 +52,11 @@ fun SignupVerification(
         events.setData(navController, username, password)
     }
 
+    BackHandler {
+        navController.navigate(AuthScreen.MainLogInAndSignUp.route) {
+            popUpTo(Graph.AUTHENTICATION) { inclusive = true }
+        }
+    }
 
     AuthLayout(
         header = stringResource(id = R.string.verification_title),
@@ -58,7 +64,7 @@ fun SignupVerification(
         errorOccurred = state.errorOccurred,
         message = state.message,
         onBackButtonClick = {
-            navController.navigate(AuthScreen.Login.route) {
+            navController.navigate(AuthScreen.MainLogInAndSignUp.route) {
                 popUpTo(Graph.AUTHENTICATION) { inclusive = true }
             }
         }

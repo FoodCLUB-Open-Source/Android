@@ -227,8 +227,8 @@ fun MyBasketView(
             {
                 itemsIndexed(
                     items = productsList,
-                    key = { index, ingredient -> "${index}_${ingredient.id}" }
-                ) { index, ingredient ->
+                    key = { _, item -> "${item.id}_${item.quantity}" }
+                ) { _, ingredient ->
                     BasketIngredient(
                         ingredient = ingredient,
                         isShown = !state.selectedProductsList.contains(ingredient.id) || !deleteSelected,
@@ -240,7 +240,6 @@ fun MyBasketView(
                     )
                 }
             }
-
         }
 
         LaunchedEffect(deleteSelected) {
