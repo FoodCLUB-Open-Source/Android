@@ -2,13 +2,12 @@ package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.foodClubGreen
-import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerColors
+import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,7 +20,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -31,16 +29,25 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 fun CustomDatePicker(
     modifier: Modifier,
-    shape: RoundedCornerShape,
     datePickerState: DatePickerState,
-    datePickerDialogColors: DatePickerColors,
-    datePickerColors: DatePickerColors,
     onDismiss: () -> Unit,
     onSave: (String?) -> Unit
 ) {
+    val datePickerDialogColors = DatePickerDefaults.colors(
+        containerColor = Color.White,
+        titleContentColor = Color.White,
+        headlineContentColor = Color.White,
+    )
+    val datePickerColors = DatePickerDefaults.colors(
+        weekdayContentColor = Color.Gray,
+        selectedDayContainerColor = Color.Red,
+        todayDateBorderColor = Color.Red,
+        todayContentColor = Color.Red
+    )
+
     DatePickerDialog(
         modifier = modifier,
-        shape = shape,
+        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_6)),
         onDismissRequest = { onDismiss() },
         confirmButton = {
             TextButton(

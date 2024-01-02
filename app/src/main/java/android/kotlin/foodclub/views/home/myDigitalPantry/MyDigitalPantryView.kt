@@ -9,7 +9,6 @@ import android.kotlin.foodclub.utils.composables.EditIngredientQuantityPicker
 import android.kotlin.foodclub.utils.composables.CustomDatePicker
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
-import android.kotlin.foodclub.viewModels.home.discover.DiscoverViewModel
 import android.kotlin.foodclub.views.home.discover.DiscoverState
 import android.kotlin.foodclub.views.home.discover.itemExpirationDate
 import android.kotlin.foodclub.views.home.discover.itemQuantity
@@ -105,18 +104,6 @@ fun MyDigitalPantryView(
     val datePickerState = rememberDatePickerState()
     var selectedDate by remember { mutableStateOf("") }
 
-    val datePickerDialogColors = DatePickerDefaults.colors(
-        containerColor = Color.White,
-        titleContentColor = Color.White,
-        headlineContentColor = Color.White,
-    )
-    val datePickerColors = DatePickerDefaults.colors(
-        weekdayContentColor = Color.Gray,
-        selectedDayContainerColor = Color.Red,
-        todayDateBorderColor = Color.Red,
-        todayContentColor = Color.Red
-    )
-
     BackHandler {
         navController.popBackStack()
     }
@@ -211,11 +198,11 @@ fun MyDigitalPantryView(
                         ) {
                             CustomDatePicker(
                                 modifier = Modifier.shadow(dimensionResource(id = R.dimen.dim_5)),
-                                shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_6)),
                                 datePickerState = datePickerState,
-                                datePickerColors = datePickerColors,
-                                datePickerDialogColors = datePickerDialogColors,
-                                onDismiss = { isDatePickerVisible = false },
+                                onDismiss = {
+                                    isDatePickerVisible = false
+                                    datePickerState.setSelection(null)
+                                },
                                 onSave = { date ->
                                     if (date != null) {
                                         selectedDate = date

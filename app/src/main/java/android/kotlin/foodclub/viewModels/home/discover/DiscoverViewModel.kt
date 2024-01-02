@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.MyBasketCache
+import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.repositories.ProductRepository
 import android.kotlin.foodclub.repositories.ProfileRepository
@@ -20,14 +21,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(FlowPreview::class)
 @HiltViewModel
 class DiscoverViewModel @Inject constructor(
     private val postRepository: PostRepository,
@@ -45,8 +50,6 @@ class DiscoverViewModel @Inject constructor(
     val state: StateFlow<DiscoverState>
         get() = _state
 
-    private var searchJob: Job? = null
-
     // TODO add real data for scanResultItemList
 
     init {
@@ -54,10 +57,7 @@ class DiscoverViewModel @Inject constructor(
         getPostsByWorld(197)
         getPostsByUserId()
         myFridgePosts()
-
-        viewModelScope.launch {
-            fetchProductsDatabase(state.value.mainSearchText)
-        }
+        observeAndFetchSearchedIngredients()
     }
 
     fun onMainSearchTextChange(text: String) {
@@ -65,14 +65,19 @@ class DiscoverViewModel @Inject constructor(
     }
 
     override fun onSubSearchTextChange(text: String) {
-        _state.update { it.copy(ingredientSearchText = text) }
-        searchJob?.cancel()
+        _state.value = _state.value.copy(ingredientSearchText = text)
+    }
 
-        searchJob = viewModelScope.launch {
-            if (text != "") {
-                delay(1000)
-                fetchProductsDatabase(state.value.ingredientSearchText)
-            }
+    private fun observeAndFetchSearchedIngredients () {
+        viewModelScope.launch {
+            _state
+                .map { it.ingredientSearchText }
+                .debounce(1000)
+                .filter { it.isNotEmpty() }
+                .distinctUntilChanged()
+                .collect { searchText ->
+                    fetchProductsDatabase(searchText)
+                }
         }
     }
 
@@ -82,7 +87,12 @@ class DiscoverViewModel @Inject constructor(
         _state.update {
             it.copy(
                 userIngredients = updatedList,
-                ingredientSearchText = ""
+                ingredientSearchText = "",
+                productsData = ProductsData(
+                    searchText = "",
+                    nextUrl = "",
+                    productsList = emptyList(),
+                )
             )
         }
     }
@@ -118,8 +128,6 @@ class DiscoverViewModel @Inject constructor(
         }
 
         _state.update { it.copy(ingredientToEdit = ingredient) }
-
-        Log.i(TAG, "LIST AFTER ${state.value.userIngredients[0].quantity}")
     }
 
     override fun getPostData(postId: Long) {

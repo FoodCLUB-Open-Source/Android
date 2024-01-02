@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 
 data class DiscoverState(
     val mainSearchText : String,
-    val ingredientSearchText : String,
+    var ingredientSearchText : String,
     val userIngredients : List<Ingredient>,
     val searchResults : List<Ingredient>,
     val postList: List<VideoModel>,
