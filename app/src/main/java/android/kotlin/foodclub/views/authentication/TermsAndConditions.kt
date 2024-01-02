@@ -79,7 +79,6 @@ fun TermsAndConditions(
                 modifier = Modifier
                     .width(dimensionResource(id = R.dimen.dim_36))
                     .height(dimensionResource(id = R.dimen.dim_36))
-                    //.padding(end = dimensionResource(id = R.dimen.dim_25))
 
             )
             Text(
@@ -345,7 +344,6 @@ fun TermsAndConditions(
                     end = dimensionResource(id = R.dimen.dim_46)
                 )
         ) {
-            // DECLINE BUTTON
             Button(
                 onClick = {
                     navController.navigate(AuthScreen.MainLogInAndSignUp.route)
@@ -374,7 +372,6 @@ fun TermsAndConditions(
 
             Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_25)))
 
-            // PROCEED BUTTON
             Button(
                 onClick = {
                           navController.navigate(AuthScreen.SignUp.route)
