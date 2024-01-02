@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.MyBasketCache
+import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.repositories.ProductRepository
 import android.kotlin.foodclub.repositories.ProfileRepository
@@ -26,6 +27,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -55,17 +57,7 @@ class DiscoverViewModel @Inject constructor(
         getPostsByWorld(197)
         getPostsByUserId()
         myFridgePosts()
-
-        viewModelScope.launch {
-            _state.value.searchTextFlow
-                .debounce(1000)
-                .filter { it.isNotEmpty() }
-                .distinctUntilChanged()
-                .collect { searchText ->
-                    fetchProductsDatabase(searchText)
-                }
-        }
-
+        observeAndFetchSearchedIngredients()
     }
 
     fun onMainSearchTextChange(text: String) {
@@ -74,7 +66,19 @@ class DiscoverViewModel @Inject constructor(
 
     override fun onSubSearchTextChange(text: String) {
         _state.value = _state.value.copy(ingredientSearchText = text)
-        _state.value.searchTextFlow.value = text
+    }
+
+    private fun observeAndFetchSearchedIngredients () {
+        viewModelScope.launch {
+            _state
+                .map { it.ingredientSearchText }
+                .debounce(1000)
+                .filter { it.isNotEmpty() }
+                .distinctUntilChanged()
+                .collect { searchText ->
+                    fetchProductsDatabase(searchText)
+                }
+        }
     }
 
     override fun addToUserIngredients(ingredient: Ingredient) {
@@ -83,7 +87,12 @@ class DiscoverViewModel @Inject constructor(
         _state.update {
             it.copy(
                 userIngredients = updatedList,
-                ingredientSearchText = ""
+                ingredientSearchText = "",
+                productsData = ProductsData(
+                    searchText = "",
+                    nextUrl = "",
+                    productsList = emptyList(),
+                )
             )
         }
     }

@@ -1174,7 +1174,7 @@ fun AddIngredientDialog(
     headline: String,
     textFirst: String,
     textSecond: String? = "",
-    ingrName: String? = ""
+    ingredientName: String? = ""
 ) {
     Dialog(
         properties = DialogProperties(dismissOnClickOutside = false, dismissOnBackPress = false),
@@ -1235,7 +1235,7 @@ fun AddIngredientDialog(
                         ),
                 ) {
                     Text(
-                        text = "$textFirst $ingrName $textSecond",
+                        text = "$textFirst $ingredientName $textSecond",
                         fontFamily = Montserrat,
                         fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
                         lineHeight = dimensionResource(id = R.dimen.fon_17).value.sp,
