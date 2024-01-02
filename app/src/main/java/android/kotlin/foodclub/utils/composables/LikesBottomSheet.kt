@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -47,21 +48,19 @@ fun LikesBottomSheet(
     userList: List<SimpleUserModel>,
     onDismiss: () -> Unit
 ) {
-
-
-        ModalBottomSheet(
-            onDismissRequest = onDismiss,
-            modifier =Modifier.height(dimensionResource(id = R.dimen.dim_600) ),
-            sheetState = bottomSheetState,
-            containerColor = Color.DarkGray
-        ) {
-            LikesContent(videoStats,userList = userList)
-        }
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        modifier = Modifier.height(dimensionResource(id = R.dimen.dim_600)),
+        sheetState = bottomSheetState,
+        containerColor = Color.DarkGray
+    ) {
+        LikesContent(videoStats, userList = userList)
+    }
 
 }
 
 @Composable
-private fun LikesContent(videoStats: VideoStats,userList: List<SimpleUserModel>) {
+private fun LikesContent(videoStats: VideoStats, userList: List<SimpleUserModel>) {
 
     Box(
         modifier = Modifier
@@ -73,32 +72,34 @@ private fun LikesContent(videoStats: VideoStats,userList: List<SimpleUserModel>)
             )
 
     ) {
-            Row(
+        Row(
             verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.align(Alignment.Center),){
-                Image(painter = painterResource(id = R.drawable.liked),
-                    contentDescription ="",
-                    modifier = Modifier
-                        .size(dimensionResource(id = R.dimen.dim_10))
+            modifier = Modifier.align(Alignment.Center),
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.liked),
+                contentDescription = "",
+                modifier = Modifier
+                    .size(dimensionResource(id = R.dimen.dim_10))
 
-                    )
-                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_5)))
-                Text(
-                    text = videoStats.displayLike,
-                    modifier = Modifier,
+            )
+            Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_5)))
+            Text(
+                text = videoStats.displayLike,
+                modifier = Modifier,
 
-                    style = TextStyle(
-                        fontSize = dimensionResource(id = R.dimen.fon_15).value.sp,
-                        lineHeight = dimensionResource(id = R.dimen.fon_28).value.sp,
-                        fontFamily = FontFamily(Font(R.font.montserratmedium)),
-                        fontWeight = FontWeight(500),
-                        color = Color.White,
-                    )
+                style = TextStyle(
+                    fontSize = dimensionResource(id = R.dimen.fon_15).value.sp,
+                    lineHeight = dimensionResource(id = R.dimen.fon_28).value.sp,
+                    fontFamily = FontFamily(Font(R.font.montserratmedium)),
+                    fontWeight = FontWeight(500),
+                    color = Color.White,
                 )
-                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_10)))
-                Text(
-                text = "Likes",
-                    modifier = Modifier,
+            )
+            Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_10)))
+            Text(
+                text = stringResource(id = R.string.Likes),
+                modifier = Modifier,
 
                 style = TextStyle(
                     fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
@@ -107,15 +108,18 @@ private fun LikesContent(videoStats: VideoStats,userList: List<SimpleUserModel>)
                     fontWeight = FontWeight(500),
                     color = Color.White,
                 )
-            )}
-
-
+            )
+        }
 
 
     }
     if (userList.isEmpty()) {
 
-        CircularProgressIndicator(modifier = Modifier.fillMaxSize().padding(dimensionResource(id = R.dimen.dim_16)))
+        CircularProgressIndicator(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(dimensionResource(id = R.dimen.dim_16))
+        )
     } else {
         LazyColumn(
             state = rememberLazyListState(),
@@ -132,7 +136,7 @@ private fun LikesContent(videoStats: VideoStats,userList: List<SimpleUserModel>)
         )
     }
 
-    }
+}
 
 @Composable
 fun UserItem(user: SimpleUserModel) {

@@ -456,12 +456,9 @@ fun VideoLikeButton(
                             onLikeClick()
                         },
                         onLongClick = {
-
                             showBottomSheet = !showBottomSheet
-                            Log.i(TAG, "onLongClickonLongClick ")
                         },
                     ),
-
             ) {
                 val maxSize =  dimensionResource(id = R.dimen.dim_32)
                 val iconSize by animateDpAsState(
@@ -475,7 +472,6 @@ fun VideoLikeButton(
                             .with(FastOutLinearInEasing)
                     }, label = ""
                 )
-
                 Icon(
                     painter = painterResource(id = R.drawable.like),
                     contentDescription = null,
@@ -497,7 +493,6 @@ fun VideoLikeButton(
         }
         Spacer(Modifier.weight(1f))
     }
-
 }
 
 @Composable
