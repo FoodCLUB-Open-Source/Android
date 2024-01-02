@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -104,7 +105,7 @@ fun HomeBottomSheetIngredients(
                             modifier = Modifier
                                 .border(
                                     dimensionResource(id = R.dimen.dim_1),
-                                    Color(0xFF3A7CA8),
+                                    colorResource(R.color.home_bottom_sheet_ingredients_copy_button_color),
                                     shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_20))
                                 )
                                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
@@ -112,7 +113,7 @@ fun HomeBottomSheetIngredients(
                                 .height(dimensionResource(id = R.dimen.dim_30)),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color.White,
-                                contentColor = Color(0xFF3A7CA8)
+                                contentColor = colorResource(R.color.home_bottom_sheet_ingredients_copy_button_color)
                             ),
                             contentPadding = PaddingValues(bottom = dimensionResource(id = R.dimen.dim_2)),
                             onClick = {}
@@ -122,7 +123,7 @@ fun HomeBottomSheetIngredients(
                                 fontSize = dimensionResource(id = R.dimen.dim_12).value.sp,
                                 fontWeight = FontWeight.Bold,
                                 fontFamily = Montserrat,
-                                color = Color(0xFF3A7CA8),
+                                color = colorResource(R.color.home_bottom_sheet_ingredients_copy_button_color),
                             )
                         }
                     }
