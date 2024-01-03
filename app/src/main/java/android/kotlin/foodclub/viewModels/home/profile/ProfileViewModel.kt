@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.repositories.PostRepository
-import android.kotlin.foodclub.utils.helpers.ConnectivityUtils
 import android.kotlin.foodclub.repositories.RecipeRepository
 import android.kotlin.foodclub.utils.helpers.StoreData
 import android.kotlin.foodclub.utils.helpers.UiEvent
@@ -235,12 +234,14 @@ class ProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-                    val combinedData = profileRepository.getAllOfflineData(userId)
+                    val profileData = profileRepository.getUserProfileData(userId)
+                    val postVideosData = profileRepository.getUserPosts()
+                    val bookmarkedVideosData = profileRepository.getBookmarkedVideos()
                     _state.update { state->
                         state.copy(
-                            userProfile = combinedData.first,
-                            userPosts = combinedData.second,
-                            bookmarkedPosts = combinedData.third,
+                            userProfile = profileData,
+                            userPosts = postVideosData,
+                            bookmarkedPosts = bookmarkedVideosData,
                             error = resource.message!!
                         )
                     }

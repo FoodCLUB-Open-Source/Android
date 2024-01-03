@@ -25,9 +25,7 @@ import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.SharedVideoMa
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserLocalBookmarksMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserLocalPostsMapper
 import android.kotlin.foodclub.utils.helpers.Resource
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
@@ -103,14 +101,38 @@ class ProfileRepository(
         }
     }
 
-    suspend fun getAllOfflineData(userId: Long): Triple<UserProfile, List<VideoModel>, List<VideoModel>> {
-        return coroutineScope {
-            val profileData = async { profileLocalDataSource.getProfileData(userId).first() }
-            val userPosts = async { profilePostsLocalDataSource.getAllProfileVideosData().first().map { sharedVideoMapper.mapToDomainModel(it) } }
-            val bookmarks = async { profileBookmarkedLocalDataSource.getAllBookmarkedVideosData().first().map { sharedVideoMapper.mapToDomainModel(it) } }
-            val mappedProfile = offlineProfileMapper.mapToDomainModel(profileData.await())
-            Triple(mappedProfile, userPosts.await(), bookmarks.await())
+    suspend fun getUserProfileData(userId: Long): UserProfile {
+        val profileData = profileLocalDataSource.getProfileData(userId).firstOrNull()
+        profileData?.let { user->
+            return offlineProfileMapper.mapToDomainModel(user)
         }
+        return UserProfile(
+            "User",
+            "",
+            0,
+            0,
+            0,
+            emptyList(),
+            emptyList()
+        )
+    }
+
+    suspend fun getUserPosts(): List<VideoModel> {
+        val profileVideos = profilePostsLocalDataSource.getAllProfileVideosData().firstOrNull()
+        profileVideos?.let { posts ->
+            return posts.map { videos ->
+                sharedVideoMapper.mapToDomainModel(videos)
+            }
+        } ?: return emptyList()
+    }
+
+    suspend fun getBookmarkedVideos(): List<VideoModel> {
+        val bookmarkedVideos =  profileBookmarkedLocalDataSource.getAllBookmarkedVideosData().firstOrNull()
+        bookmarkedVideos?.let { bookmarks ->
+            return bookmarks.map { videos ->
+                sharedVideoMapper.mapToDomainModel(videos)
+            }
+        } ?: return emptyList()
     }
 
     suspend fun updateUserProfileImage(
