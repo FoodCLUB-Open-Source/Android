@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.utils.composables
 
+import android.content.ContentValues.TAG
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.defaultButtonColors
@@ -9,6 +10,7 @@ import android.kotlin.foodclub.domain.models.home.VideoStats
 import android.kotlin.foodclub.domain.models.others.AnimatedIcon
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.Spring
@@ -20,8 +22,10 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,13 +42,18 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -388,6 +397,7 @@ fun BookMarkButton(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun VideoLikeButton(
     brush:Brush,
@@ -399,6 +409,26 @@ fun VideoLikeButton(
     val durationms1=dimensionResource(id = R.dimen.dim_14)
     val durationms2=dimensionResource(id = R.dimen.dim_16)
     val durationms3=dimensionResource(id = R.dimen.dim_22)
+
+    var showBottomSheet by rememberSaveable { mutableStateOf(false) }
+    val bottomSheetState = rememberModalBottomSheetState(showBottomSheet)
+
+    val userList: List<SimpleUserModel> = List(videoStats.displayLike.toInt()) { index ->
+        SimpleUserModel(
+            userId = index + 1,
+            username = "User $index",
+            profilePictureUrl = "null"
+        )
+    }
+
+    if (showBottomSheet) {
+        LikesBottomSheet(
+            videoStats,
+            bottomSheetState,
+            userList,
+        ) { showBottomSheet = false }
+
+    }
     Column {
         Spacer(Modifier.weight(1f))
         Box(
@@ -421,7 +451,14 @@ fun VideoLikeButton(
                 modifier = Modifier
                     .fillMaxSize()
                     .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_30)))
-                    .clickable { onLikeClick() }
+                    .combinedClickable(
+                        onClick = {
+                            onLikeClick()
+                        },
+                        onLongClick = {
+                            showBottomSheet = !showBottomSheet
+                        },
+                    ),
             ) {
                 val maxSize =  dimensionResource(id = R.dimen.dim_32)
                 val iconSize by animateDpAsState(
@@ -435,7 +472,6 @@ fun VideoLikeButton(
                             .with(FastOutLinearInEasing)
                     }, label = ""
                 )
-
                 Icon(
                     painter = painterResource(id = R.drawable.like),
                     contentDescription = null,
@@ -457,7 +493,6 @@ fun VideoLikeButton(
         }
         Spacer(Modifier.weight(1f))
     }
-
 }
 
 @Composable
