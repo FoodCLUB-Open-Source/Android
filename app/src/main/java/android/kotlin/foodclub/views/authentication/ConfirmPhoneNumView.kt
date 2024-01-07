@@ -66,21 +66,21 @@ fun ConfirmPhoneNumView(navController: NavHostController) {
 
 @Composable
 fun ConfirmPhoneNumTopLayout(
-    navController: NavHostController? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navController: NavHostController? = null
 ) {
     Box(modifier.fillMaxHeight(0.3f)) {
         Column {
             Image(
                 painter = painterResource(R.drawable.back_icon),
                 contentDescription = stringResource(id = R.string.go_back),
-                modifier = Modifier
+                modifier = modifier
                     .width( dimensionResource(id = R.dimen.dim_32))
                     .height( dimensionResource(id = R.dimen.dim_32))
                     .offset(x = (-8).dp)
                     .clickable { navController?.popBackStack() }
             )
-            Box(modifier = Modifier.padding(top =  dimensionResource(id = R.dimen.dim_32))) {
+            Box(modifier = modifier.padding(top =  dimensionResource(id = R.dimen.dim_32))) {
                 Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_28))) {
                     Text(
                         text = stringResource(id = R.string.confirm_identity),
@@ -103,7 +103,6 @@ fun ConfirmPhoneNumTopLayout(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConfirmPhoneNumMainLayout(
     navController: NavHostController? = null,

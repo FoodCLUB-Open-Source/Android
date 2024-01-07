@@ -8,7 +8,7 @@ import android.kotlin.foodclub.domain.models.others.BottomSheetItem
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.CustomBottomSheet
-import android.kotlin.foodclub.utils.composables.ShimmerBrush
+import android.kotlin.foodclub.utils.composables.shimmerBrush
 import android.kotlin.foodclub.utils.helpers.ProfilePicturePlaceHolder
 import android.kotlin.foodclub.utils.helpers.UiEvent
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
@@ -95,7 +95,7 @@ fun ProfileView(
     val context = LocalContext.current
     val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
 
-    val brush = ShimmerBrush()
+    val brush = shimmerBrush()
 
     if (!isInternetConnected || state.userProfile == null) {
         ProfileViewLoadingSkeleton(

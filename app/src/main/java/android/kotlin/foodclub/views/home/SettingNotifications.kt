@@ -1,12 +1,12 @@
 package android.kotlin.foodclub.views.home
 
+import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.utils.composables.SettingsLayout
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import android.kotlin.foodclub.R
-import android.kotlin.foodclub.config.ui.foodClubGreen
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -24,7 +24,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 

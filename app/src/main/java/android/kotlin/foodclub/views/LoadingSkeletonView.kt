@@ -4,8 +4,7 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.config.ui.foodClubGreen
-import android.kotlin.foodclub.domain.models.home.VideoModel
-import android.kotlin.foodclub.utils.composables.ShimmerBrush
+import android.kotlin.foodclub.utils.composables.shimmerBrush
 import android.kotlin.foodclub.utils.helpers.ProfilePicturePlaceHolder
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.kotlin.foodclub.viewModels.home.profile.ProfileEvents
@@ -69,17 +68,15 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMotionApi::class)
 @Composable
 fun VideoPagerLoadingSkeleton() {
     val context = LocalContext.current
     val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
 
-    val brush = ShimmerBrush()
+    val brush = shimmerBrush()
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -123,9 +120,9 @@ fun VideoPagerLoadingSkeleton() {
                     .align(Alignment.End)
                     .size(dimensionResource(id = R.dimen.dim_50))
             ) {
-                val durationms1=dimensionResource(id = R.dimen.dim_14)
-                val durationms2=dimensionResource(id = R.dimen.dim_16)
-                val durationms3=dimensionResource(id = R.dimen.dim_22)
+                val durationMs1=dimensionResource(id = R.dimen.dim_14)
+                val durationMs2=dimensionResource(id = R.dimen.dim_16)
+                val durationMs3=dimensionResource(id = R.dimen.dim_22)
 
                 Box(modifier = Modifier
                     .size(dimensionResource(id = R.dimen.dim_55))
@@ -143,10 +140,10 @@ fun VideoPagerLoadingSkeleton() {
                         targetValue = dimensionResource(id = R.dimen.dim_21),
                         animationSpec = keyframes {
                             durationMillis = 400
-                            durationms1.at(50)
+                            durationMs1.at(50)
                             maxBookmarkSize.at(190)
-                            durationms2.at(330)
-                            durationms3.at(400)
+                            durationMs2.at(330)
+                            durationMs3.at(400)
                                 .with(FastOutLinearInEasing)
                         }, label = ""
                     )
@@ -170,9 +167,9 @@ fun VideoPagerLoadingSkeleton() {
                     .width(dimensionResource(id = R.dimen.dim_50))
                     .height(dimensionResource(id = R.dimen.dim_80)),
             ) {
-                val durationms1=dimensionResource(id = R.dimen.dim_14)
-                val durationms2=dimensionResource(id = R.dimen.dim_16)
-                val durationms3=dimensionResource(id = R.dimen.dim_22)
+                val durationMs1=dimensionResource(id = R.dimen.dim_14)
+                val durationMs2=dimensionResource(id = R.dimen.dim_16)
+                val durationMs3=dimensionResource(id = R.dimen.dim_22)
                 Column {
                     Spacer(Modifier.weight(1f))
                     Box(
@@ -202,10 +199,10 @@ fun VideoPagerLoadingSkeleton() {
                                 targetValue = dimensionResource(id = R.dimen.dim_21),
                                 animationSpec = keyframes {
                                     durationMillis = 400
-                                    durationms1.at(50)
+                                    durationMs1.at(50)
                                     maxSize.at(190)
-                                    durationms2.at(330)
-                                    durationms3.at(400)
+                                    durationMs2.at(330)
+                                    durationMs3.at(400)
                                         .with(FastOutLinearInEasing)
                                 }, label = ""
                             )

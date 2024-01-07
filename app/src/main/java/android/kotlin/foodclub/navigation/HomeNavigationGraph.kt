@@ -17,7 +17,7 @@ import android.kotlin.foodclub.views.home.myDigitalPantry.MyDigitalPantryView
 import android.kotlin.foodclub.views.home.profile.ProfileView
 import android.kotlin.foodclub.views.home.scan.ScanResultView
 import android.kotlin.foodclub.views.home.scan.ScanView
-import android.kotlin.foodclub.views.home.scan.topbackbar
+import android.kotlin.foodclub.views.home.scan.TopBackBar
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.LaunchedEffect
@@ -36,8 +36,6 @@ import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
 import android.kotlin.foodclub.viewModels.home.myBasket.MyBasketViewModel
 import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
 import android.kotlin.foodclub.views.home.search.SearchView
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -104,7 +102,7 @@ fun NavGraphBuilder.homeNavigationGraph(
             )
         }
         composable(route = BottomBarScreenObject.Create.route) {
-            CreateView()
+//            CreateView()
         }
 
         composable(route = BottomBarScreenObject.Play.route) {
@@ -123,7 +121,7 @@ fun NavGraphBuilder.homeNavigationGraph(
             val viewModel = it.sharedHiltViewModel<DiscoverViewModel>(navController)
             val state = viewModel.state.collectAsState()
 
-            topbackbar(navController = navController)
+            TopBackBar(navController = navController)
             {
                 ScanView(
                     navController = navController,
@@ -158,7 +156,7 @@ fun NavGraphBuilder.homeNavigationGraph(
 
         }
         composable(route = HomeOtherRoutes.VideoTrimmerView.route) {
-            CreateView()
+//            CreateView()
         }
         composable(route = HomeOtherRoutes.CameraPreviewView.route) { backStackEntry ->
             val uri = backStackEntry.arguments?.getString("uri") ?: ""

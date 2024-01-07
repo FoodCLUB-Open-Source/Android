@@ -62,6 +62,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import android.kotlin.foodclub.views.home.home.HomeState
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -69,7 +70,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun ViewStories(
     viewModel: HomeViewModel,
@@ -165,7 +166,7 @@ fun ViewStories(
                     mutableStateOf(videosState[it].currentViewerInteraction.isLiked)
                 }
 
-                Column() {
+                Column {
                     val iconSize = dimensionResource(id = R.dimen.dim_110)
                     AnimatedVisibility(visible = doubleTapState.second,
                         enter = scaleIn(

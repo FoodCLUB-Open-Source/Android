@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
-@SuppressLint("StaticFieldLeak")
 @HiltViewModel
 class GalleryViewModel @Inject constructor(
     @ApplicationContext private val context: Context,

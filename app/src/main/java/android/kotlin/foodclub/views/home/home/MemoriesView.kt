@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import okio.ByteString.Companion.encodeUtf8
 
@@ -68,7 +69,7 @@ fun MemoriesView(
         } else {
             LazyRow() {
                 items(memories) {
-                    val painter: Painter = rememberImagePainter(data = it.stories[0].imageUrl)
+                    val painter: Painter = rememberAsyncImagePainter(model = it.stories[0].imageUrl)
                     MemoriesItemView(
                         modifier = Modifier.clickable {
                             showStories1 = !showStories1

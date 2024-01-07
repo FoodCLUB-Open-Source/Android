@@ -6,7 +6,7 @@ import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.config.ui.Raleway
 import android.kotlin.foodclub.config.ui.disabledContainerColor
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
-import android.kotlin.foodclub.utils.composables.ShimmerBrush
+import android.kotlin.foodclub.utils.composables.shimmerBrush
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.kotlin.foodclub.viewModels.home.follow.FollowEvents
 import androidx.compose.foundation.Image
@@ -63,7 +63,7 @@ fun FollowerView(
     val context = LocalContext.current
     val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
 
-    val brush = ShimmerBrush()
+    val brush = shimmerBrush()
     val systemUiController = rememberSystemUiController()
 
     SideEffect {

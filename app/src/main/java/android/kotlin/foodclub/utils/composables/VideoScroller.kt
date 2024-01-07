@@ -54,8 +54,6 @@ import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.ui.draw.clip
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
@@ -102,7 +100,7 @@ fun extractThumbnailFromMedia(assetFileDesc: AssetFileDescriptor?, atTime: Int):
 }
 
 @SuppressLint("CoroutineCreationDuringComposition")
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class)
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
 fun VideoScroller(
@@ -124,7 +122,7 @@ fun VideoScroller(
     var currentTime by remember { mutableStateOf(0L) }
     var bufferedPercentage by remember { mutableStateOf(0) }
 
-    var job: Job? = null
+    val job: Job?
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = true) {
@@ -213,10 +211,9 @@ fun VideoScroller(
                 )
             }
         }
-        val context = LocalContext.current
         val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
 
-        val brush = ShimmerBrush()
+        val brush = shimmerBrush()
         DisposableEffect(key1 =
         if(isInternetConnected) {
             Box(modifier = Modifier.fillMaxSize()) {

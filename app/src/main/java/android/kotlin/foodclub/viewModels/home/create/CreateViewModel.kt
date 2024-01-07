@@ -27,6 +27,10 @@ import java.io.File
 import java.io.IOException
 import java.util.UUID
 
+
+/**
+ * DO NOT USE THIS VIEW MODEL - memory leaks!!!
+ * */
 class CreateViewModel : ViewModel() {
 
     private val TAG = "MainActivity"

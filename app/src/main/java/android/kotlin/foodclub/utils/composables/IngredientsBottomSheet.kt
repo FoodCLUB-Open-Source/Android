@@ -300,7 +300,6 @@ private fun IngredientSelectedView(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun IngredientListView(
     screenHeight: Dp,
@@ -368,11 +367,13 @@ private fun IngredientListView(
                         keyboardActions = KeyboardActions(
                             onDone = { /* Handle onDone event if needed */ }
                         ),
-                        colors = TextFieldDefaults.textFieldColors(
-                            containerColor = Color.White,
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White,
+                            disabledContainerColor = Color.White,
                             cursorColor = Color.Black,
                             focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
+                            unfocusedIndicatorColor = Color.Transparent,
                         ),
                         modifier = Modifier
                             .weight(1f)

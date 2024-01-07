@@ -2,18 +2,15 @@ package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.stories.StoryModel
-import android.kotlin.foodclub.domain.enums.DragValue
 import android.kotlin.foodclub.utils.helpers.TimeUtil
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.gestures.DraggableState
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
@@ -47,10 +44,9 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun StoryView(
     storyEnabled: Boolean,
@@ -70,7 +66,7 @@ fun StoryView(
             ).plus(currentOffset)
         }
                 + scaleIn(animationSpec = tween(durationMillis = 250)),
-        exit = slideOut() { IntOffset(-it.width / 2, -it.height / 2).plus(currentOffset) }
+        exit = slideOut { IntOffset(-it.width / 2, -it.height / 2).plus(currentOffset) }
                 + scaleOut(animationSpec = tween(durationMillis = 250))
     ) {
         val density = LocalDensity.current
@@ -109,7 +105,7 @@ fun StoryView(
 //        }
 
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .draggable(
                     state = dragState,
                     orientation = Orientation.Vertical
@@ -122,12 +118,12 @@ fun StoryView(
                 contentDescription = stringResource(id = R.string.foodsnaps),
                 contentScale = ContentScale.Crop,
                 alignment = Alignment.Center,
-                modifier = Modifier.fillMaxSize()
+                modifier = modifier.fillMaxSize()
             )
 
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxWidth()
                     .padding(
                         horizontal = dimensionResource(id = R.dimen.dim_20),
@@ -147,7 +143,7 @@ fun StoryView(
                         contentColor = Color(0x00FFFFFF).copy(alpha = 0.1f)
                     ),
                     contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_4)),
-                    modifier = Modifier.size(dimensionResource(id = R.dimen.dim_40))
+                    modifier = modifier.size(dimensionResource(id = R.dimen.dim_40))
                 ) {
                     Image(
                         painter = painterResource(R.drawable.baseline_close_24),
@@ -172,14 +168,14 @@ fun StoryInfo(
             painter = painter,
             contentDescription = stringResource(id = R.string.author_photo),
             contentScale = ContentScale.Crop,
-            modifier = Modifier
+            modifier = modifier
                 .size(dimensionResource(id = R.dimen.dim_45))
                 .clip(CircleShape)
         )
 
         Column(
             verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_5), Alignment.CenterVertically),
-            modifier = Modifier.height(dimensionResource(id = R.dimen.dim_45))
+            modifier = modifier.height(dimensionResource(id = R.dimen.dim_45))
         ) {
             Text(
                 text = name,

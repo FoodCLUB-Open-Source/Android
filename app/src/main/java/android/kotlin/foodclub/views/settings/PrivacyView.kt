@@ -80,5 +80,5 @@ fun ChangePasswordButton(navController: NavController){
 @Composable
 @Preview
 fun PrivacySetting() {
-    PrivacySetting(rememberNavController())
+    rememberNavController()
 }

@@ -101,7 +101,7 @@ fun VideoPager(
                     pauseButtonVisibility = it.isPlaying
                     it.playWhenReady = !it.isPlaying
                 },
-                    onDoubleTap = { exoPlayer, offset ->
+                    onDoubleTap = { _, offset ->
                         coroutineScope.launch {
                             doubleTapState.animate(offset)
                         }

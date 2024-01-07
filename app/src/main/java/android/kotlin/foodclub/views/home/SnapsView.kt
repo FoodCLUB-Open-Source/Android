@@ -65,7 +65,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun SnapsView(
     memoriesModel: MemoriesModel,
-    modifier: Modifier,
 ) {
 
     val systemUiController = rememberSystemUiController()

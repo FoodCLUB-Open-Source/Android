@@ -21,8 +21,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -42,7 +40,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PrivacyPolicyView(navController: NavController) {
     Box(modifier = Modifier
@@ -73,8 +70,10 @@ fun PrivacyPolicyView(navController: NavController) {
                                 annotatedString = Html.fromHtml(stringResource(id = R.string.privacy_policy_text), FROM_HTML_MODE_LEGACY).toAnnotatedString()
                             ),
                             readOnly = true,
-                            colors = TextFieldDefaults.textFieldColors(
-                                containerColor = Color.White,
+                            colors = TextFieldDefaults.colors(
+                                focusedContainerColor = Color.White,
+                                unfocusedContainerColor = Color.White,
+                                disabledContainerColor = Color.White,
                             ),
                             onValueChange = {},
                         )

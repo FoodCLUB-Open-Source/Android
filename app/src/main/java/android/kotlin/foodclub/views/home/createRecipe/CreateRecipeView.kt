@@ -70,6 +70,7 @@ import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.TextField
@@ -182,11 +183,13 @@ fun BottomSheetCategories(
                     keyboardActions = KeyboardActions(
                         onDone = { /* Handle onDone event if needed */ }
                     ),
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.White,
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White,
+                        disabledContainerColor = Color.White,
                         cursorColor = Color.Black,
                         focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
+                        unfocusedIndicatorColor = Color.Transparent,
                     ),
                     modifier = Modifier
                         .weight(1f)
@@ -240,7 +243,7 @@ fun BottomSheetCategories(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CreateRecipeView(
     navController: NavController,
@@ -395,9 +398,9 @@ fun CreateRecipeView(
                     },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                    colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color.Black,
-                        unfocusedBorderColor = Color(0xFFE8E8E8)
+                        unfocusedBorderColor = Color(0xFFE8E8E8),
                     )
                 )
                 Row(

@@ -217,7 +217,6 @@ fun MyDigitalPantryView(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchMyIngredients(
     modifier: Modifier,
@@ -232,11 +231,13 @@ fun SearchMyIngredients(
             .clip(
                 RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
             ),
-        colors = TextFieldDefaults.textFieldColors(
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = containerColor,
+            unfocusedContainerColor = containerColor,
+            disabledContainerColor = containerColor,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
-            containerColor = containerColor
         ),
         value = searchTextValue,
         onValueChange = { onSearch(it) },

@@ -22,15 +22,13 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontVariation.width
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 
 @Composable
 fun GridItem(
     brush: Brush,
-    isInternetconnected:Boolean,
+    isInternetConnected:Boolean,
     dataItem: VideoModel,
     triggerShowDeleteRecipe: (Long) -> Unit
 ){
@@ -43,7 +41,7 @@ fun GridItem(
         ,shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
     ) {
 
-    if(isInternetconnected) {
+    if(isInternetConnected) {
     Box(
         modifier = Modifier
             .background(

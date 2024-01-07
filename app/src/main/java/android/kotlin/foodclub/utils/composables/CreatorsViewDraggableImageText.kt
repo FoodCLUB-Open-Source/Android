@@ -59,7 +59,6 @@ import kotlin.math.roundToInt
  *    )
  * */
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreatorsViewDraggableImageText(
     imageResource: Int,
@@ -82,12 +81,14 @@ fun CreatorsViewDraggableImageText(
     var offsetX by remember { mutableStateOf(halfScreenWidth.value) }
     var offsetY by remember { mutableStateOf(heightInDp.value) }
 
-    val defaultTextFieldColors = TextFieldDefaults.textFieldColors(
+    val defaultTextFieldColors = TextFieldDefaults.colors(
         disabledTextColor = Color.Transparent,
-        containerColor = Color.Transparent,
+        focusedContainerColor = Color.Transparent,
+        unfocusedContainerColor = Color.Transparent,
+        disabledContainerColor = Color.Transparent,
         focusedIndicatorColor = Color.Transparent,
         unfocusedIndicatorColor = Color.Transparent,
-        disabledIndicatorColor = Color.Transparent
+        disabledIndicatorColor = Color.Transparent,
     )
 
 

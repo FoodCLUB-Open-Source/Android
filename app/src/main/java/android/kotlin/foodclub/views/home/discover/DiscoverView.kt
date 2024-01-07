@@ -13,7 +13,7 @@ import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.CustomDatePicker
 import android.kotlin.foodclub.utils.composables.EditIngredientQuantityPicker
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
-import android.kotlin.foodclub.utils.composables.ShimmerBrush
+import android.kotlin.foodclub.utils.composables.shimmerBrush
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
@@ -142,7 +142,7 @@ fun DiscoverView(
     val context = LocalContext.current
     val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
 
-    val brush = ShimmerBrush()
+    val brush = shimmerBrush()
     val screenHeight =
         LocalConfiguration.current.screenHeightDp.dp - dimensionResource(id = R.dimen.dim_240)
 
@@ -501,11 +501,13 @@ fun MainSearchBar(
                         }
                     )
                 },
-            colors = TextFieldDefaults.textFieldColors(
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = containerColor,
+                unfocusedContainerColor = containerColor,
+                disabledContainerColor = containerColor,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent,
-                containerColor = containerColor
             ),
             value = searchTextValue,
             onValueChange = {
@@ -671,7 +673,6 @@ fun MainTabRow(
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubSearchBar(
     navController: NavController,
@@ -696,11 +697,13 @@ fun SubSearchBar(
                 .clip(
                     RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                 ),
-            colors = TextFieldDefaults.textFieldColors(
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = containerColor,
+                unfocusedContainerColor = containerColor,
+                disabledContainerColor = containerColor,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent,
-                containerColor = containerColor
             ),
             value = searchTextValue,
             onValueChange = {
@@ -1318,7 +1321,7 @@ fun GridItem2(
     navController: NavController,
     dataItem: VideoModel,
     userName: String,
-    brush: Brush = ShimmerBrush(),
+    brush: Brush = shimmerBrush(),
 ) {
     val thumbnailPainter = rememberAsyncImagePainter(dataItem.thumbnailLink)
     Card(

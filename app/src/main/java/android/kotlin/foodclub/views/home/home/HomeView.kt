@@ -78,7 +78,6 @@ import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import okio.ByteString.Companion.encodeUtf8
 
 
@@ -286,7 +285,7 @@ fun HomeView(
 
                 )
             if(showStories){
-                SnapsView(memoriesModel = currentMemoriesModel, modifier = Modifier)
+                SnapsView(memoriesModel = currentMemoriesModel)
             }
             else{
                 var progress by remember{
@@ -354,7 +353,8 @@ fun HomeView(
                                 .layoutId(stringResource(id = R.string.memories_item_view))
                         ){
                             items(state.memories){
-                                val painter: Painter =  rememberImagePainter(data = it.stories[0].imageUrl)
+                                val painter: Painter =
+                                    rememberAsyncImagePainter(model = it.stories[0].imageUrl)
                                 MemoriesItemView(
                                     modifier = Modifier.clickable {
                                         showStories=!showStories

@@ -31,15 +31,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun LearningView(
-    navController: NavController,
-) {
+fun LearningView() {
     LearningViewUI()
 }
 
@@ -684,8 +680,8 @@ fun LearningViewUI() {
 @Composable
 fun LearningViewPreview() {
     FoodClubTheme {
-        val navController = rememberNavController()
-        LearningView(navController)
+        rememberNavController()
+        LearningView()
     }
 }
 
