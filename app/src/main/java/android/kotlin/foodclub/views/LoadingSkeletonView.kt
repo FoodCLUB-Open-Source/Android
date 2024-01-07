@@ -48,7 +48,6 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -266,7 +265,7 @@ fun ProfileViewLoadingSkeleton (
     state: ProfileState
 ) {
     val scope = rememberCoroutineScope()
-    val pagerState = rememberPagerState() { 2 }
+    val pagerState = rememberPagerState()
 
     Text(text = stringResource(id = R.string.loading))
     val tabItems = stringArrayResource(id = R.array.profile_tabs)
@@ -469,6 +468,7 @@ fun ProfileViewLoadingSkeleton (
             HorizontalPager(
                 state = pagerState,
                 beyondBoundsPageCount = 10,
+                pageCount = 2
             ) {
                 Box(
                     Modifier
@@ -487,30 +487,28 @@ fun ProfileViewLoadingSkeleton (
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(2),
                             state = lazyGridState
-                        ) {items(2){
-                            Card(modifier = Modifier
-                                .height(dimensionResource(id = R.dimen.dim_272))
-                                .width(dimensionResource(id = R.dimen.dim_178))
-                                .padding(dimensionResource(id = R.dimen.dim_10))
-                            ,shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .background(brush)
-                                    .fillMaxWidth()
-                                    .fillMaxHeight()
-                            )
-                        }
-                        }
+                            items(2) {
+                                Card(
+                                    modifier = Modifier
+                                        .height(dimensionResource(id = R.dimen.dim_272))
+                                        .width(dimensionResource(id = R.dimen.dim_178))
+                                        .padding(dimensionResource(id = R.dimen.dim_10)),
+                                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .background(brush)
+                                            .fillMaxWidth()
+                                            .fillMaxHeight()
+                                    )
+                                }
+                            }
                         }
                         CircularProgressIndicator(color = foodClubGreen,
                             strokeWidth = dimensionResource(id = R.dimen.dim_4))
                     }
-
-
                 }
-
-
             }
         }
     }

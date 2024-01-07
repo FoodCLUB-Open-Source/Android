@@ -81,9 +81,7 @@ fun SnapsView(
     val snapPagerState = rememberPagerState(
         initialPage = 0,
         initialPageOffsetFraction = 0f
-    ){
-        memoriesModel.stories.size
-    }
+    )
     val snapPagerFling = PagerDefaults.flingBehavior(
         state = snapPagerState, lowVelocityAnimationSpec = tween(
             easing = LinearEasing, durationMillis = 300
@@ -101,7 +99,9 @@ fun SnapsView(
     VerticalPager(
         state = snapPagerState,
         flingBehavior = snapPagerFling,
-        beyondBoundsPageCount = 1
+        beyondBoundsPageCount = 1,
+        pageCount = memoriesModel.stories.size
+
     ) {
 
         Box{
@@ -215,9 +215,7 @@ fun SnapBottomSheetLayout(userReactions:
     val reactions = Reactions.values().toList()
     val state = rememberPagerState(
         initialPage = 0
-    ) {
-        reactions.size
-    }
+    )
     val flingBehavior = PagerDefaults.flingBehavior(state = state, lowVelocityAnimationSpec = tween(
         easing = LinearEasing, durationMillis = 300
     ))
@@ -296,7 +294,7 @@ fun SnapBottomSheetLayout(userReactions:
         beyondBoundsPageCount = 1,
         verticalAlignment = Alignment.Top,
         flingBehavior=flingBehavior,
-
+        pageCount = reactions.size
     ) {idx->
         LazyColumn{
             val list =if(reactions[idx]!=Reactions.ALL) userReactions.filter { x->

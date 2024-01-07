@@ -42,7 +42,6 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -73,12 +72,12 @@ fun TextEditor(
     onTextDeleted: () -> Unit
 ) {
 
-    var offsetX by remember { mutableFloatStateOf(0f) }
-    var offsetY by remember { mutableFloatStateOf(0f) }
+    var offsetX by remember { mutableStateOf(0f) }
+    var offsetY by remember { mutableStateOf(0f) }
     var isPaletteColor = remember { mutableStateOf(false) }
     var selectedFont by remember { mutableStateOf("" )}
-    var fontWeight by remember { mutableFloatStateOf(400f) }
-    var textSize by remember { mutableFloatStateOf(16f) }
+    var fontWeight by remember { mutableStateOf(400f) }
+    var textSize by remember { mutableStateOf(16f) }
     var textColor by remember { mutableStateOf(Color.White) }
     var textContent by remember { mutableStateOf<String?>(null) }
     var isDeleteButtonVisible by remember { mutableStateOf(false) }

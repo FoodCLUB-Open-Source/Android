@@ -28,7 +28,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -64,7 +63,7 @@ fun EditIngredientQuantityPicker(
     listScrollCount: Int = Integer.MAX_VALUE,
     onEditIngredient: (Ingredient) -> Unit
 ) {
-    var selectedQuantityState by remember { mutableIntStateOf(quantity[0]) }
+    var selectedQuantityState by remember { mutableStateOf(quantity[0]) }
     var selectedGrammageState by remember { mutableStateOf(grammage[0]) }
     var selectedTypeState by remember { mutableStateOf(types[0]) }
 

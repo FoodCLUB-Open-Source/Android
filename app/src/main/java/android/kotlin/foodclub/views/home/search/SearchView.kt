@@ -39,7 +39,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
@@ -65,7 +65,7 @@ fun SearchView(
     val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
 
     val brush = ShimmerBrush()
-    var mainTabIndex by remember { mutableIntStateOf(0) }
+    var mainTabIndex by remember { mutableStateOf(0) }
     val mainTabItemsList = stringArrayResource(id = R.array.search_tabs)
 
     Column(

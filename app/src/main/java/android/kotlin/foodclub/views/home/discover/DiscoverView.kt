@@ -26,6 +26,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -87,8 +88,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -174,10 +173,10 @@ fun DiscoverView(
         mutableStateOf(false)
     }
     var isDialogOpen by remember { mutableStateOf(false) }
-    var alphaValue by remember { mutableFloatStateOf(1f) }
+    var alphaValue by remember { mutableStateOf(1f) }
 
     alphaValue = if (isDialogOpen) {
-        0.7f
+        0.1f
     } else {
         1f
     }
@@ -186,16 +185,14 @@ fun DiscoverView(
     val pagerState1 = rememberPagerState(
         initialPage = initialPage,
         initialPageOffsetFraction = 0f
-    ) {
-        4
-    }
+    )
 
     val fling = PagerDefaults.flingBehavior(
         state = pagerState1, lowVelocityAnimationSpec = tween(
             easing = LinearEasing, durationMillis = 300
         )
     )
-    var mainTabIndex by remember { mutableIntStateOf(0) }
+    var mainTabIndex by remember { mutableStateOf(0) }
     val mainTabItemsList = stringArrayResource(id = R.array.discover_tabs)
 
     LazyColumn(
@@ -246,7 +243,7 @@ fun DiscoverView(
 
 
         item {
-            var subTabIndex by remember { mutableIntStateOf(0) }
+            var subTabIndex by remember { mutableStateOf(0) }
             SubTabRow(
                 onTabChanged = {
                     subTabIndex = it
@@ -384,9 +381,10 @@ fun DiscoverView(
                     beyondBoundsPageCount = 1,
                     flingBehavior = fling,
                     modifier = Modifier
-                        .height(dimensionResource(id = R.dimen.dim_1000))
+                        .height(dimensionResource(id = R.dimen.dim_500))
                         .padding(top = dimensionResource(id = R.dimen.dim_0)),
-                    state = pagerState1
+                    state = pagerState1,
+                    pageCount = 4
                 ) {
                     Box(
                         Modifier
@@ -494,7 +492,14 @@ fun MainSearchBar(
                     RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                 )
                 .pointerInput(Unit) {
-                    navController.navigate(HomeOtherRoutes.MySearchView.route)
+                    detectTapGestures(
+                        onPress = { },
+                        onDoubleTap = { },
+                        onLongPress = { },
+                        onTap = {
+                            navController.navigate(HomeOtherRoutes.MySearchView.route)
+                        }
+                    )
                 },
             colors = TextFieldDefaults.textFieldColors(
                 focusedIndicatorColor = Color.Transparent,
@@ -577,7 +582,7 @@ fun MainTabRow(
     onTabChanged: (Int) -> Unit,
 
 ) {
-    var mainTabIndex by remember { mutableIntStateOf(0) }
+    var mainTabIndex by remember { mutableStateOf(0) }
     val strokeWidthDp = dimensionResource(id = R.dimen.dim_2)
     val topPaddingDp = dimensionResource(id = R.dimen.dim_4)
     val underlineHeightDp = dimensionResource(id = R.dimen.dim_2)
@@ -768,7 +773,7 @@ fun SubTabRow(
     val topPaddingDp = dimensionResource(id = R.dimen.dim_4)
     val underlineHeightDp = dimensionResource(id = R.dimen.dim_2)
     val subTabItemsList = stringArrayResource(id = R.array.discover_sub_tabs)
-    var subTabIndex by remember { mutableIntStateOf(0) }
+    var subTabIndex by remember { mutableStateOf(0) }
 
 
         LazyRow(
@@ -1177,13 +1182,16 @@ fun AddIngredientDialog(
     ingredientName: String? = ""
 ) {
     Dialog(
-        properties = DialogProperties(dismissOnClickOutside = false, dismissOnBackPress = false),
+        properties = DialogProperties(
+            dismissOnClickOutside = false,
+            dismissOnBackPress = false
+        ),
         onDismissRequest = { }) {
         Card(
             modifier = Modifier
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
                 .width(dimensionResource(id = R.dimen.dim_500))
-                .fillMaxHeight(0.2f)
+                .fillMaxHeight(0.5f)
                 .background(Color.White),
             shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16)),
             elevation = CardDefaults.cardElevation(

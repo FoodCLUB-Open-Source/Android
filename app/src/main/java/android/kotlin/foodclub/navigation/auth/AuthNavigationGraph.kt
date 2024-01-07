@@ -55,8 +55,7 @@ fun NavGraphBuilder.authNavigationGraph(
             val viewModel: TermsAndConditionsViewModel = viewModel()
 
             TermsAndConditions(
-                navController = navController,
-                viewModel = viewModel,
+                navController = navController
             )
         }
 

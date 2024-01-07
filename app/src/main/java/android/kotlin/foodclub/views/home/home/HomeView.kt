@@ -44,7 +44,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -119,8 +118,8 @@ fun HomeView(
     val storyListData = state.storyList
 
     var showFeedOnUI by remember { mutableStateOf(true) }
-    var feedTransparency by remember { mutableFloatStateOf(1f) }
-    var snapsTransparency by remember { mutableFloatStateOf(0.7f) }
+    var feedTransparency by remember { mutableStateOf(1f) }
+    var snapsTransparency by remember { mutableStateOf(0.7f) }
 
     BackHandler {
         if (showStories){
@@ -278,9 +277,7 @@ fun HomeView(
             val snapPagerState = rememberPagerState(
                 initialPage = 0,
                 initialPageOffsetFraction = 0f,
-            ) {
-                storyListData.size
-            }
+            )
 
             val snapPagerFling = PagerDefaults.flingBehavior(
                 state = snapPagerState, lowVelocityAnimationSpec = tween(
@@ -293,7 +290,7 @@ fun HomeView(
             }
             else{
                 var progress by remember{
-                    mutableFloatStateOf(0f)
+                    mutableStateOf(0f)
                 }
                 val isDragged by snapPagerState.interactionSource.collectIsDraggedAsState()
 
@@ -423,6 +420,7 @@ fun HomeView(
                                 flingBehavior = snapPagerFling,
                                 beyondBoundsPageCount = 1,
                                 modifier = Modifier,
+                                pageCount = storyListData.size
                             ) {
                                 Box {
                                     AsyncImage(

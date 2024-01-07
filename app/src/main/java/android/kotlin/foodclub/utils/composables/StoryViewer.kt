@@ -13,10 +13,10 @@ import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.gestures.AnchoredDraggableState
-import androidx.compose.foundation.gestures.DraggableAnchors
+import androidx.compose.foundation.gestures.DraggableState
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.anchoredDraggable
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +34,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -73,43 +74,47 @@ fun StoryView(
                 + scaleOut(animationSpec = tween(durationMillis = 250))
     ) {
         val density = LocalDensity.current
-        val anchors = with(density) {
-            DraggableAnchors {
-                DragValue.Start at 0f
-                DragValue.End at 400.dp.toPx()
-            }
+//        val anchors = with(density) {
+//            DraggableState {
+//                DragValue.Start at 0f
+//                DragValue.End at 400.dp.toPx()
+//            }
+//        }
+        // State to track the vertical offset
+        val verticalOffset = remember { mutableStateOf(0f) }
+
+        // Create a draggable state with a lambda to handle drag changes
+        val dragState = rememberDraggableState { delta ->
+            // Update the vertical offset based on the drag delta
+            verticalOffset.value += delta
         }
-        val swipeState = remember {
-            AnchoredDraggableState(
-                initialValue = DragValue.Start,
-                anchors = anchors,
-                animationSpec = tween(
-                    durationMillis = 300,
-                    easing = FastOutSlowInEasing
-                ),
-                positionalThreshold = { distance: Float -> distance },
-                velocityThreshold = { with(density) { 125.dp.toPx() } },
-                confirmValueChange = {
-                    if (it == DragValue.End) {
-                        callbackDisableStory()
-                    }
-                    return@AnchoredDraggableState true
-                }
-            )
-        }
+
+//        val swipeState = remember {
+//            AnchoredDraggableState(
+//                initialValue = DragValue.Start,
+//                anchors = anchors,
+//                animationSpec = tween(
+//                    durationMillis = 300,
+//                    easing = FastOutSlowInEasing
+//                ),
+//                positionalThreshold = { distance: Float -> distance },
+//                velocityThreshold = { with(density) { 125.dp.toPx() } },
+//                confirmValueChange = {
+//                    if (it == DragValue.End) {
+//                        callbackDisableStory()
+//                    }
+//                    return@AnchoredDraggableState true
+//                }
+//            )
+//        }
 
         Box(
             modifier = Modifier
-                .anchoredDraggable(
-                    state = swipeState,
-                    orientation = Orientation.Vertical,
+                .draggable(
+                    state = dragState,
+                    orientation = Orientation.Vertical
                 )
-                .offset {
-                    IntOffset(
-                        x = 0,
-                        y = (swipeState.requireOffset() * 0.2).toInt()
-                    )
-                }
+                .offset { IntOffset(x = 0, y = verticalOffset.value.toInt()) }
                 .fillMaxSize()
         ) {
             Image(
@@ -124,7 +129,10 @@ fun StoryView(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = dimensionResource(id = R.dimen.dim_20), vertical = dimensionResource(id = R.dimen.dim_60))
+                    .padding(
+                        horizontal = dimensionResource(id = R.dimen.dim_20),
+                        vertical = dimensionResource(id = R.dimen.dim_60)
+                    )
             ) {
                 StoryInfo(
                     painter = storyDetails.authorPhotoPainter,

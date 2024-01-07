@@ -106,9 +106,7 @@ fun ViewStories(
         val storyPagerState = rememberPagerState(
             initialPage = 0,
             initialPageOffsetFraction = 0f
-        ){
-            videosState.size
-        }
+        )
         val storyFling = PagerDefaults.flingBehavior(
             state = storyPagerState, lowVelocityAnimationSpec = tween(
                 easing = LinearEasing, durationMillis = 300
@@ -127,7 +125,8 @@ fun ViewStories(
             state = storyPagerState,
             flingBehavior = storyFling,
             beyondBoundsPageCount = 1,
-            modifier = Modifier.height(screenHeightMinusBottomNavItem)
+            modifier = Modifier.height(screenHeightMinusBottomNavItem),
+            pageCount = videosState.size
         ) {
             var pauseButtonVisibility by remember { mutableStateOf(false) }
             var doubleTapState by remember {

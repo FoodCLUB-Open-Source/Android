@@ -10,7 +10,7 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun CustomSlider(sliderWidth: Dp, initialValue: Float = 0f, maxValue: Float, onValueChange: (Int) -> Unit) {
-    var sliderPosition by remember { mutableFloatStateOf(initialValue) }
+    var sliderPosition by remember { mutableStateOf(initialValue) }
     Column(modifier = Modifier.width(sliderWidth)) {
         Text(
             text = sliderPosition.toInt().toString(),
