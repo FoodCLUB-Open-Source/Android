@@ -97,7 +97,7 @@ fun ProfileView(
 
     val brush = ShimmerBrush()
 
-    if (isInternetConnected == false || state.userProfile == null || state.userPosts == null) {
+    if (!isInternetConnected || state.userProfile == null) {
         ProfileViewLoadingSkeleton(
             brush,
             isInternetConnected,
@@ -134,8 +134,6 @@ fun ProfileView(
                             popUpTo(Graph.HOME) { inclusive = true }
                         }
                     }
-
-                    else -> {}
                 }
             }
         }
