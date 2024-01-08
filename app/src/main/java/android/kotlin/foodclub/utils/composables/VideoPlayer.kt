@@ -122,7 +122,7 @@ fun VideoPlayer(
         }
     }
 
-    DisposableEffect(key1 = Box(Modifier.fillMaxSize()) {
+    Box(Modifier.fillMaxSize()) {
         AndroidView(factory = {
             playerView
         }, modifier = Modifier.pointerInput(Unit) {
@@ -132,13 +132,16 @@ fun VideoPlayer(
                 onDoubleTap(exoPlayer, offset)
             })
         })
-    }, effect = {
+    }
+
+    DisposableEffect(key1 = exoPlayer) {
+
         onDispose {
             thumbnail = thumbnail.copy(second = true)
             exoPlayer.release()
             onVideoDispose()
         }
-    })
+    }
 
     AnimatedVisibility(visible = controlPoint) {
         Box {}

@@ -1,6 +1,5 @@
 package android.kotlin.foodclub.views.home.discover
 
-import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.Satoshi
@@ -133,7 +132,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun DiscoverView(

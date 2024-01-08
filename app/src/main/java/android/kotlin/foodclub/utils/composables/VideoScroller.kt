@@ -216,8 +216,7 @@ fun VideoScroller(
         val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
 
         val brush = shimmerBrush()
-        DisposableEffect(key1 =
-        if(isInternetConnected) {
+        if (isInternetConnected) {
             Box(modifier = Modifier.fillMaxSize()) {
                 AndroidView(factory = {
                     playerView
@@ -228,7 +227,8 @@ fun VideoScroller(
                         onDoubleTap(exoPlayer, offset)
                     })
                 })
-                ProgressionBar(totalDuration,
+                ProgressionBar(
+                    totalDuration,
                     modifier = Modifier.align(Alignment.BottomEnd),
                     totalDuration = { totalDuration },
                     currentTime = { currentTime },
@@ -238,17 +238,21 @@ fun VideoScroller(
                 )
             }
         } else {
-            Box(modifier = Modifier.fillMaxSize()
-                .background(brush))
-        },
-            effect = {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(brush)
+            )
+        }
+
+        DisposableEffect(exoPlayer) {
             onDispose {
                 thumbnail = thumbnail.copy(second = true)
                 exoPlayer.release()
                 onVideoDispose()
                 job.cancel()
             }
-        })
+        }
     }
 
     if (thumbnail.second) {

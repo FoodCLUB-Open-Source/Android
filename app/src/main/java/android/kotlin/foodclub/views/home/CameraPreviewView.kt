@@ -54,25 +54,26 @@ fun CameraPreviewView(
         }
     }
 
-    DisposableEffect(
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            AndroidView(
-                factory = { context ->
-                    PlayerView(context).apply {
-                        player = exoPlayer
-                        useController = false
-                        resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
-                        layoutParams = ViewGroup.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
-                        )
-                    }
-                },
-                modifier = Modifier.fillMaxSize()
-            )
-        }
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
+        AndroidView(
+            factory = { context ->
+                PlayerView(context).apply {
+                    player = exoPlayer
+                    useController = false
+                    resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                }
+            },
+            modifier = Modifier.fillMaxSize()
+        )
+    }
+
+    DisposableEffect(key1 = exoPlayer.isPlaying) {
+
         onDispose {
             exoPlayer.release()
         }
