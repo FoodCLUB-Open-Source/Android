@@ -111,11 +111,10 @@ dependencies {
     // Accompanist
     implementation 'com.google.accompanist:accompanist-systemuicontroller:0.31.2-alpha'
     implementation "com.google.accompanist:accompanist-permissions:0.23.1"
-    implementation "com.google.accompanist:accompanist-pager:0.27.1"
+    implementation "com.google.accompanist:accompanist-pager:0.28.0"
 
     // Other
     implementation "com.airbnb.android:lottie-compose:4.2.0"
-    implementation 'com.google.android.gms:play-services-cast-framework:21.3.0'
     implementation 'com.auth0.android:jwtdecode:2.0.2'
     implementation 'com.auth0:java-jwt:4.4.0'
 
