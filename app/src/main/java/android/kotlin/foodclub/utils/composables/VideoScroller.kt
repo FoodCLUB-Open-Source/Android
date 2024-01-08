@@ -244,7 +244,7 @@ fun VideoScroller(
                 thumbnail = thumbnail.copy(second = true)
                 exoPlayer.release()
                 onVideoDispose()
-                job?.cancel()
+                job.cancel()
             }
         })
     }

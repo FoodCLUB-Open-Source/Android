@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 class TermsAndConditionsViewModel : ViewModel(), TermsAndConditionsEvents {
 
 
-    private val _onBoxChecked = MutableStateFlow<Boolean>(true)
+    private val _onBoxChecked = MutableStateFlow(true)
     val onBoxChecked: StateFlow<Boolean> get() = _onBoxChecked
 
 

@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import okio.ByteString.Companion.encodeUtf8
 
 @Composable
@@ -67,7 +66,7 @@ fun MemoriesView(
                 date = ""
             )
         } else {
-            LazyRow() {
+            LazyRow {
                 items(memories) {
                     val painter: Painter = rememberAsyncImagePainter(model = it.stories[0].imageUrl)
                     MemoriesItemView(

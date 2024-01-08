@@ -105,8 +105,8 @@ fun ConfirmPhoneNumTopLayout(
 
 @Composable
 fun ConfirmPhoneNumMainLayout(
-    navController: NavHostController? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navController: NavHostController? = null
 ) {
 
     val (countryCode, onCodeUpdate) = remember {
@@ -133,9 +133,9 @@ fun ConfirmPhoneNumMainLayout(
 
     val (isError, onErrorUpdate) = rememberSaveable { mutableStateOf(false) }
 
-    Column(verticalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxHeight()) {
+    Column(verticalArrangement = Arrangement.SpaceBetween, modifier = modifier.fillMaxHeight()) {
         Column {
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding()) {
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier.padding()) {
                 Text(
                     text = stringResource(id = R.string.plus_sign),
                     fontFamily = Montserrat,
@@ -144,7 +144,7 @@ fun ConfirmPhoneNumMainLayout(
                 )
 
                 BasicTextField(
-                    modifier = Modifier
+                    modifier = modifier
                         .padding(dimensionResource(id = R.dimen.dim_0))
                         .width(dimensionResource(id = R.dimen.dim_40)),
                     value = countryCode,
@@ -171,7 +171,7 @@ fun ConfirmPhoneNumMainLayout(
                     singleLine = true,
                     onValueChange = { onPhoneUpdate(it.take(18)) },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                    modifier = Modifier
+                    modifier = modifier
                         .padding(dimensionResource(id = R.dimen.dim_0))
                         .fillMaxWidth(),
                     textStyle = LocalTextStyle.current.copy(
@@ -186,7 +186,7 @@ fun ConfirmPhoneNumMainLayout(
             val offset: Dp by animateDpAsState(if (isError) dimensionResource(id = R.dimen.dim_0) else dimensionResource(id = R.dimen.dim_130), label = "")
 
             Box(
-                modifier = Modifier
+                modifier = modifier
                     .padding(start = dimensionResource(id = R.dimen.dim_74) + offset, bottom =dimensionResource(id = R.dimen.dim_3))
                     .width(dimensionResource(id = R.dimen.dim_280) - offset)
                     .height(dimensionResource(id = R.dimen.dim_3))
@@ -195,7 +195,7 @@ fun ConfirmPhoneNumMainLayout(
                 val len: Float by animateFloatAsState(if (isError) 1f else 0.1666f, label = "")
                 val alpha: Float by animateFloatAsState(if (isError) 1f else 0f, label = "")
                 Box(
-                    Modifier
+                    modifier
                         .fillMaxWidth(len)
                         .fillMaxHeight()
                         .graphicsLayer(alpha = alpha)
@@ -205,11 +205,11 @@ fun ConfirmPhoneNumMainLayout(
 
             Divider()
 
-            Box(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
+            Box(modifier = modifier.height(dimensionResource(id = R.dimen.dim_20)))
             {
                 if (isError) {
                     Text(
-                        modifier = Modifier
+                        modifier = modifier
                             .fillMaxWidth()
                             .padding(start = dimensionResource(id = R.dimen.dim_75), top = dimensionResource(id = R.dimen.dim_2)),
                         text = stringResource(id = R.string.invalid_number),
@@ -222,7 +222,7 @@ fun ConfirmPhoneNumMainLayout(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxWidth()
             ) {
                 Text(

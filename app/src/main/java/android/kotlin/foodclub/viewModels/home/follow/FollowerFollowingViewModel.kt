@@ -26,7 +26,7 @@ class FollowerFollowingViewModel @Inject constructor(
         get() = _state
 
     override fun getFollowersList(userId: Long) {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             when (val resource = repository.retrieveProfileFollowers(userId)) {
                 is Resource.Success -> {
                     _state.update {
@@ -50,7 +50,7 @@ class FollowerFollowingViewModel @Inject constructor(
     }
 
     override fun getFollowingList(userId: Long) {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             when (val resource = repository.retrieveProfileFollowing(userId)) {
                 is Resource.Success -> {
                     _state.update {
