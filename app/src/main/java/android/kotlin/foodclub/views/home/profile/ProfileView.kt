@@ -57,6 +57,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -148,7 +149,12 @@ fun ProfileView(
         }
 
         val scope = rememberCoroutineScope()
-        val pagerState = rememberPagerState()
+        val pagerState = rememberPagerState(
+            initialPage = 0,
+            initialPageOffsetFraction = 0f
+        ) {
+            2
+        }
 
         val profile = state.userProfile
         val userPosts = state.userPosts
@@ -185,7 +191,7 @@ fun ProfileView(
             mutableStateOf(false)
         }
         var postId by remember {
-            mutableStateOf(0L)
+            mutableLongStateOf(0L)
         }
 
         var userTabItems = listOf<VideoModel>()
@@ -455,8 +461,7 @@ fun ProfileView(
 
                     HorizontalPager(
                         state = pagerState,
-                        beyondBoundsPageCount = 10,
-                        pageCount = 2
+                        beyondBoundsPageCount = 10
                     ) {
                         Box(
                             Modifier

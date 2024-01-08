@@ -11,12 +11,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -78,8 +78,8 @@ fun CreatorsViewDraggableImageText(
     val halfScreenWidth = (configuration.screenWidthDp / 2).dp
     val heightInDp = configuration.screenHeightDp.dp
 
-    var offsetX by remember { mutableStateOf(halfScreenWidth.value) }
-    var offsetY by remember { mutableStateOf(heightInDp.value) }
+    var offsetX by remember { mutableFloatStateOf(halfScreenWidth.value) }
+    var offsetY by remember { mutableFloatStateOf(heightInDp.value) }
 
     val defaultTextFieldColors = TextFieldDefaults.colors(
         disabledTextColor = Color.Transparent,

@@ -50,7 +50,9 @@ fun VideoPager(
         val pagerState = rememberPagerState(
             initialPage = initialPage ?: 0,
             initialPageOffsetFraction = 0f
-        )
+        ){
+            videoList.size
+        }
 
         val fling = PagerDefaults.flingBehavior(
             state = pagerState, lowVelocityAnimationSpec = tween(
@@ -71,8 +73,7 @@ fun VideoPager(
             state = pagerState,
             flingBehavior = fling,
             beyondBoundsPageCount = 1,
-            modifier = modifier,
-            pageCount = videoList.size
+            modifier = modifier
         ) {
             var pauseButtonVisibility by remember { mutableStateOf(false) }
             val doubleTapState by remember {

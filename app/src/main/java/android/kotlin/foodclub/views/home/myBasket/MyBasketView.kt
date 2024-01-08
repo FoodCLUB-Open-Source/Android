@@ -39,6 +39,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -261,7 +262,7 @@ fun BasketIngredient(
 ) {
     var isSelected by remember { mutableStateOf(ingredient.isSelected) }
 
-    var quantity by remember { mutableStateOf(ingredient.quantity) }
+    var quantity by remember { mutableIntStateOf(ingredient.quantity) }
     val type by remember { mutableStateOf(ingredient.type) }
     val unit by remember { mutableStateOf(ingredient.unit) }
 

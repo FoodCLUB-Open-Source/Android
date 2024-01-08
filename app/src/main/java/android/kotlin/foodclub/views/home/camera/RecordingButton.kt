@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -71,7 +72,7 @@ fun RecordingClipsButton(
 ) {
 
     val (rememberProgress, progressUpdate) = remember {
-        mutableStateOf(0f)
+        mutableFloatStateOf(0f)
     }
 
     val clipArcs = remember {

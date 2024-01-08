@@ -4,7 +4,6 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.stories.StoryModel
 import android.kotlin.foodclub.utils.helpers.TimeUtil
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
@@ -31,7 +30,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,7 +45,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.sp
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun StoryView(
     storyEnabled: Boolean,
@@ -77,12 +75,12 @@ fun StoryView(
 //            }
 //        }
         // State to track the vertical offset
-        val verticalOffset = remember { mutableStateOf(0f) }
+        val verticalOffset = remember { mutableFloatStateOf(0f) }
 
         // Create a draggable state with a lambda to handle drag changes
         val dragState = rememberDraggableState { delta ->
             // Update the vertical offset based on the drag delta
-            verticalOffset.value += delta
+            verticalOffset.floatValue += delta
         }
 
 //        val swipeState = remember {
@@ -110,7 +108,7 @@ fun StoryView(
                     state = dragState,
                     orientation = Orientation.Vertical
                 )
-                .offset { IntOffset(x = 0, y = verticalOffset.value.toInt()) }
+                .offset { IntOffset(x = 0, y = verticalOffset.floatValue.toInt()) }
                 .fillMaxSize()
         ) {
             Image(

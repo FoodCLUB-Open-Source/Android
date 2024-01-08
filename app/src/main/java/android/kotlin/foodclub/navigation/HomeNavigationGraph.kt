@@ -3,8 +3,13 @@ package android.kotlin.foodclub.navigation
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
 import android.kotlin.foodclub.viewModels.home.camera.CameraViewModel
+import android.kotlin.foodclub.viewModels.home.discover.DiscoverViewModel
+import android.kotlin.foodclub.viewModels.home.follow.FollowerFollowingViewModel
+import android.kotlin.foodclub.viewModels.home.gallery.GalleryViewModel
+import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
+import android.kotlin.foodclub.viewModels.home.myBasket.MyBasketViewModel
+import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
 import android.kotlin.foodclub.views.home.CameraPreviewView
-import android.kotlin.foodclub.views.home.CreateView
 import android.kotlin.foodclub.views.home.TakeProfilePhotoView
 import android.kotlin.foodclub.views.home.TakeSnapView
 import android.kotlin.foodclub.views.home.camera.CameraView
@@ -18,6 +23,7 @@ import android.kotlin.foodclub.views.home.profile.ProfileView
 import android.kotlin.foodclub.views.home.scan.ScanResultView
 import android.kotlin.foodclub.views.home.scan.ScanView
 import android.kotlin.foodclub.views.home.scan.TopBackBar
+import android.kotlin.foodclub.views.home.search.SearchView
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.LaunchedEffect
@@ -29,13 +35,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import android.kotlin.foodclub.viewModels.home.discover.DiscoverViewModel
-import android.kotlin.foodclub.viewModels.home.follow.FollowerFollowingViewModel
-import android.kotlin.foodclub.viewModels.home.gallery.GalleryViewModel
-import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
-import android.kotlin.foodclub.viewModels.home.myBasket.MyBasketViewModel
-import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
-import android.kotlin.foodclub.views.home.search.SearchView
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)

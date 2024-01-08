@@ -64,6 +64,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.activity.compose.BackHandler
+import androidx.compose.runtime.mutableFloatStateOf
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.TileMode
@@ -117,8 +118,8 @@ fun HomeView(
     val storyListData = state.storyList
 
     var showFeedOnUI by remember { mutableStateOf(true) }
-    var feedTransparency by remember { mutableStateOf(1f) }
-    var snapsTransparency by remember { mutableStateOf(0.7f) }
+    var feedTransparency by remember { mutableFloatStateOf(1f) }
+    var snapsTransparency by remember { mutableFloatStateOf(0.7f) }
 
     BackHandler {
         if (showStories){
@@ -276,7 +277,9 @@ fun HomeView(
             val snapPagerState = rememberPagerState(
                 initialPage = 0,
                 initialPageOffsetFraction = 0f,
-            )
+            ){
+                storyListData.size
+            }
 
             val snapPagerFling = PagerDefaults.flingBehavior(
                 state = snapPagerState, lowVelocityAnimationSpec = tween(
@@ -289,7 +292,7 @@ fun HomeView(
             }
             else{
                 var progress by remember{
-                    mutableStateOf(0f)
+                    mutableFloatStateOf(0f)
                 }
                 val isDragged by snapPagerState.interactionSource.collectIsDraggedAsState()
 
@@ -419,8 +422,7 @@ fun HomeView(
                                 state = snapPagerState,
                                 flingBehavior = snapPagerFling,
                                 beyondBoundsPageCount = 1,
-                                modifier = Modifier,
-                                pageCount = storyListData.size
+                                modifier = Modifier
                             ) {
                                 Box {
                                     AsyncImage(

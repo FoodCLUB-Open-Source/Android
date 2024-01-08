@@ -10,7 +10,6 @@ import android.kotlin.foodclub.domain.models.others.AnimatedIcon
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
@@ -81,7 +80,6 @@ import coil.compose.AsyncImage
  * and current state of the button (if the button should be shown or not)
  * @param onLikeExecution Executes when the animation finishes
  */
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun LikeButton(
     animatedIcon: AnimatedIcon,
@@ -132,7 +130,6 @@ fun LikeButton(
  *
  * @param buttonVisibility Boolean which determines if the button should be visible
  */
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun PlayPauseButton(buttonVisibility: Boolean) {
     Column(

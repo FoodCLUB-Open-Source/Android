@@ -3,7 +3,6 @@ package android.kotlin.foodclub.viewModels.authentication.termsAndConditions
 import android.kotlin.foodclub.navigation.auth.AuthScreen
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

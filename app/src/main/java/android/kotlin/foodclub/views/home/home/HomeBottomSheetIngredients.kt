@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -66,7 +67,7 @@ fun HomeBottomSheetIngredients(
         scrimColor = Color.Transparent
     ) {
         if (recipe != null) {
-            var ingredientsMultiplier by remember { mutableStateOf(recipe.servingSize.toFloat()) }
+            var ingredientsMultiplier by remember { mutableFloatStateOf(recipe.servingSize.toFloat()) }
             val ingredientsDivider = recipe.servingSize.toFloat()
 
             Column(

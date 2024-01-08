@@ -40,6 +40,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -80,7 +81,9 @@ fun SnapsView(
     val snapPagerState = rememberPagerState(
         initialPage = 0,
         initialPageOffsetFraction = 0f
-    )
+    ){
+        memoriesModel.stories.size
+    }
     val snapPagerFling = PagerDefaults.flingBehavior(
         state = snapPagerState, lowVelocityAnimationSpec = tween(
             easing = LinearEasing, durationMillis = 300
@@ -90,7 +93,7 @@ fun SnapsView(
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
     var snapUserIndex by remember {
-        mutableStateOf(0)
+        mutableIntStateOf(0)
     }
     var isDownloaded by remember {
         mutableStateOf(false)
@@ -98,9 +101,7 @@ fun SnapsView(
     VerticalPager(
         state = snapPagerState,
         flingBehavior = snapPagerFling,
-        beyondBoundsPageCount = 1,
-        pageCount = memoriesModel.stories.size
-
+        beyondBoundsPageCount = 1
     ) {
 
         Box{
@@ -214,7 +215,9 @@ fun SnapBottomSheetLayout(userReactions:
     val reactions = Reactions.values().toList()
     val state = rememberPagerState(
         initialPage = 0
-    )
+    ){
+        reactions.size
+    }
     val flingBehavior = PagerDefaults.flingBehavior(state = state, lowVelocityAnimationSpec = tween(
         easing = LinearEasing, durationMillis = 300
     ))
@@ -292,8 +295,7 @@ fun SnapBottomSheetLayout(userReactions:
         state = state,
         beyondBoundsPageCount = 1,
         verticalAlignment = Alignment.Top,
-        flingBehavior=flingBehavior,
-        pageCount = reactions.size
+        flingBehavior=flingBehavior
     ) {idx->
         LazyColumn{
             val list =if(reactions[idx]!=Reactions.ALL) userReactions.filter { x->

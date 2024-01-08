@@ -53,6 +53,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -239,7 +240,7 @@ fun HeaderSection(
     colors: List<Color>,
     onTabChanged: (Int, String) -> Unit
 ){
-    var selectedHeaderIndex by remember { mutableStateOf(0) }
+    var selectedHeaderIndex by remember { mutableIntStateOf(0) }
     val mainTabItemsList = listOf(
         TITLE,
         INSTRUCTIONS,
@@ -317,7 +318,7 @@ fun TitlesRow(
     selectedIndex: Int,
     onTabChanged: (Int, String) -> Unit
 ) {
-    var mainTabIndex by remember { mutableStateOf(selectedIndex) }
+    var mainTabIndex by remember { mutableIntStateOf(selectedIndex) }
 
     LazyRow {
         itemsIndexed(tabsList) { index, data ->

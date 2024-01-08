@@ -239,7 +239,9 @@ fun ShowProfilePosts(
         val pagerState = rememberPagerState(
             initialPage = if (currentPostIndex == -1) 0 else currentPostIndex,
             initialPageOffsetFraction = 0f
-        )
+        ){
+            posts.size
+        }
 
         if (infoDialog.value) {
             ConfirmDeleteDialog(
@@ -272,8 +274,7 @@ fun ShowProfilePosts(
                 state = pagerState,
                 flingBehavior = fling,
                 beyondBoundsPageCount = 1,
-                modifier = Modifier,
-                pageCount = posts.size
+                modifier = Modifier
             ) { vtPager ->
                 var pauseButtonVisibility by remember { mutableStateOf(false) }
                 val doubleTapState by remember {

@@ -54,6 +54,8 @@ import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
@@ -118,9 +120,9 @@ fun VideoScroller(
     }
     var isFirstFrameLoad = remember { false }
 
-    var totalDuration by remember { mutableStateOf(0L) }
-    var currentTime by remember { mutableStateOf(0L) }
-    var bufferedPercentage by remember { mutableStateOf(0) }
+    var totalDuration by remember { mutableLongStateOf(0L) }
+    var currentTime by remember { mutableLongStateOf(0L) }
+    var bufferedPercentage by remember { mutableIntStateOf(0) }
 
     val job: Job?
     val coroutineScope = rememberCoroutineScope()

@@ -52,12 +52,11 @@ import kotlinx.coroutines.launch
 fun OnBoardingView() {
     val items = OnBoardingItems.getData()
     val scope = rememberCoroutineScope()
-    val pageState = rememberPagerState()
+    val pageState = rememberPagerState { 4 }
     val modifier = Modifier
 
     Column(modifier = modifier.fillMaxSize()) {
         HorizontalPager(
-            pageCount = 4,
             state = pageState,
             modifier = modifier
                 .fillMaxHeight(0.9f)

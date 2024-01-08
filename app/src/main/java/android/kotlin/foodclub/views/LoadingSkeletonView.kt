@@ -262,7 +262,12 @@ fun ProfileViewLoadingSkeleton (
     state: ProfileState
 ) {
     val scope = rememberCoroutineScope()
-    val pagerState = rememberPagerState()
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        initialPageOffsetFraction = 0f
+    ) {
+        2
+    }
 
     Text(text = stringResource(id = R.string.loading))
     val tabItems = stringArrayResource(id = R.array.profile_tabs)
@@ -464,8 +469,7 @@ fun ProfileViewLoadingSkeleton (
 
             HorizontalPager(
                 state = pagerState,
-                beyondBoundsPageCount = 10,
-                pageCount = 2
+                beyondBoundsPageCount = 10
             ) {
                 Box(
                     Modifier

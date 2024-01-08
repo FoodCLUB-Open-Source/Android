@@ -86,7 +86,7 @@ class MyBasketViewModel @Inject constructor(
     }
 
     override fun fetchProductsDatabase(searchText: String) {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             when (val resource = productRepository.getProductsList(searchText)) {
                 is Resource.Success -> {
                     _state.update {
@@ -111,7 +111,7 @@ class MyBasketViewModel @Inject constructor(
     }
 
     override fun fetchMoreProducts(searchText: String, onLoadComplete: () -> Unit) {
-        val job = viewModelScope.launch() {
+        val job = viewModelScope.launch {
             when (
                 val resource = productRepository.getProductsList(
                     searchText = searchText,

@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,7 +48,7 @@ fun HomeIngredient(ingredient: Ingredient, quantityMultiplier: Float) {
             dimensionResource(id = R.dimen.dim_240)
     var isSmallScreen by remember { mutableStateOf(false) }
     var quantity by remember {
-        mutableStateOf((quantityMultiplier * ingredient.quantity).toInt())
+        mutableIntStateOf((quantityMultiplier * ingredient.quantity).toInt())
     }
     LaunchedEffect(key1 = quantityMultiplier) {
         Log.d("HomeIngredient", "change: $quantityMultiplier")
