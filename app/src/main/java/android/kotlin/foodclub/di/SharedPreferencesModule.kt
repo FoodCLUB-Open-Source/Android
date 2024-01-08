@@ -19,7 +19,7 @@ object SharedPreferencesModule {
     @Singleton
     @Named("sessionPreferences")
     fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
-        return context.getSharedPreferences("session_prefs", MODE_PRIVATE);
+        return context.getSharedPreferences("session_prefs", MODE_PRIVATE)
     }
 
     @Provides

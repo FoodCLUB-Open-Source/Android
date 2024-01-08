@@ -435,7 +435,7 @@ fun HomeView(
                                         modifier = Modifier
                                             .align(Alignment.BottomCenter)
                                             .padding(bottom = dimensionResource(id = R.dimen.dim_150)),
-                                        reactions = Reactions.values(),
+                                        reactions = Reactions.entries.toTypedArray(),
                                         painter = rememberAsyncImagePainter(
                                             model = storyListData[it].thumbnailLink
                                         )

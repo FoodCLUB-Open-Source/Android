@@ -212,7 +212,7 @@ fun SnapsView(
 fun SnapBottomSheetLayout(userReactions:
                           Map<SimpleUserModel, Reactions>) {
 
-    val reactions = Reactions.values().toList()
+    val reactions = Reactions.entries
     val state = rememberPagerState(
         initialPage = 0
     ){

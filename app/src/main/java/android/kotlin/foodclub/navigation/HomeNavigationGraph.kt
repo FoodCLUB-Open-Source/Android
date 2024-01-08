@@ -265,22 +265,22 @@ fun NavGraphBuilder.homeNavigationGraph(
 
 
 sealed class HomeOtherRoutes(val route: String) {
-    object SettingsView : HomeOtherRoutes(route = "SETTINGS")
-    object CameraView : HomeOtherRoutes(route = "CAMERA_VIEW/{state}")
-    object CreateRecipeView : HomeOtherRoutes(route = "CREATE_RECIPE_VIEW")
-    object CameraPreviewView : HomeOtherRoutes(route = "CAMERA_PREVIEW_VIEW/{uri}/{state}")
-    object GalleryView : HomeOtherRoutes(route = "GALLERY_VIEW/{state}")
-    object FollowerView : HomeOtherRoutes(route = "FOLLOWER_VIEW")
+    data object SettingsView : HomeOtherRoutes(route = "SETTINGS")
+    data object CameraView : HomeOtherRoutes(route = "CAMERA_VIEW/{state}")
+    data object CreateRecipeView : HomeOtherRoutes(route = "CREATE_RECIPE_VIEW")
+    data object CameraPreviewView : HomeOtherRoutes(route = "CAMERA_PREVIEW_VIEW/{uri}/{state}")
+    data object GalleryView : HomeOtherRoutes(route = "GALLERY_VIEW/{state}")
+    data object FollowerView : HomeOtherRoutes(route = "FOLLOWER_VIEW")
 
-    object FollowingView : HomeOtherRoutes(route = "FOLLOWING_VIEW")
+    data object FollowingView : HomeOtherRoutes(route = "FOLLOWING_VIEW")
 
-    object MyBasketView : HomeOtherRoutes(route = "BASKET_VIEW")
-    object MyDigitalPantryView : HomeOtherRoutes(route = "MY_DIGITAL_PANTRY_VIEW")
-    object MySearchView : HomeOtherRoutes(route = "SEARCH_VIEW")
+    data object MyBasketView : HomeOtherRoutes(route = "BASKET_VIEW")
+    data object MyDigitalPantryView : HomeOtherRoutes(route = "MY_DIGITAL_PANTRY_VIEW")
+    data object MySearchView : HomeOtherRoutes(route = "SEARCH_VIEW")
 
-    object VideoTrimmerView : HomeOtherRoutes(route = "VIDEOTRIMMER")
-    object TakeProfilePhotoView : HomeOtherRoutes(route = "TAKE_PROFILE_PHOTO_VIEW")
-    object TakeSnapPhotoView : HomeOtherRoutes(route = "TAKE_SNAP_VIEW")
+    data object VideoTrimmerView : HomeOtherRoutes(route = "VIDEOTRIMMER")
+    data object TakeProfilePhotoView : HomeOtherRoutes(route = "TAKE_PROFILE_PHOTO_VIEW")
+    data object TakeSnapPhotoView : HomeOtherRoutes(route = "TAKE_SNAP_VIEW")
 
 }
 

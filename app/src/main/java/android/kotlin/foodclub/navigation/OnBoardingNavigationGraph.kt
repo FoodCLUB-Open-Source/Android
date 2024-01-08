@@ -17,5 +17,5 @@ fun NavGraphBuilder.onBoardingNavigationGraph() {
 }
 
 sealed class OnBoardingScreen(val route: String) {
-    object Menu : OnBoardingScreen(route = "MENU")
+    data object Menu : OnBoardingScreen(route = "MENU")
 }

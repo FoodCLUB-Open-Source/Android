@@ -76,7 +76,7 @@ fun EditIngredientQuantityPicker(
     val typeListFling = rememberSnapFlingBehavior(lazyListState = typeListState)
 
     val itemHeightPixels = remember { mutableIntStateOf(0) }
-    val itemHeightDp = pixelsToDp(itemHeightPixels.value)
+    val itemHeightDp = pixelsToDp(itemHeightPixels.intValue)
     val TAG = "IngredientsNumberPicker"
 
     LaunchedEffect(quantityListState) {

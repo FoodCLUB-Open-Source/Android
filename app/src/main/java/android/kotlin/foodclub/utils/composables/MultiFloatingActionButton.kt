@@ -69,8 +69,8 @@ fun FabButtonSub(
 ): FabButtonSub = FabButtonSubImpl(iconTint, backgroundTint)
 
 sealed class FabButtonState {
-    object Collapsed : FabButtonState()
-    object Expand : FabButtonState()
+    data object Collapsed : FabButtonState()
+    data object Expand : FabButtonState()
 
     fun isExpanded() = this == Expand
 

@@ -86,14 +86,14 @@ fun NavGraphBuilder.authNavigationGraph(
 }
 
 sealed class AuthScreen(val route: String) {
-    object MainLogInAndSignUp : AuthScreen(route = "MENU")
-    object Login : AuthScreen(route = "LOGIN")
-    object SignUp : AuthScreen(route = "SIGN_UP")
-    object Forgot : AuthScreen(route = "FORGOT")
+    data object MainLogInAndSignUp : AuthScreen(route = "MENU")
+    data object Login : AuthScreen(route = "LOGIN")
+    data object SignUp : AuthScreen(route = "SIGN_UP")
+    data object Forgot : AuthScreen(route = "FORGOT")
 
-    object VerifySignup : AuthScreen(route = "VERIFY_SIGN_UP")
+    data object VerifySignup : AuthScreen(route = "VERIFY_SIGN_UP")
 
-    object TermsAndConditions : AuthScreen(route = "TERMS")
+    data object TermsAndConditions : AuthScreen(route = "TERMS")
 }
 
 enum class Auth(val title: String) {
