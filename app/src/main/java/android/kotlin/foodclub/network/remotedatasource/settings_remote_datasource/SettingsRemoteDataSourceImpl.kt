@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.network.remotedatasource.settingsremotedatasource
+package android.kotlin.foodclub.network.remotedatasource.settings_remote_datasource
 
 import android.kotlin.foodclub.network.retrofit.dtoModels.profile.UserDetailsDto
 import android.kotlin.foodclub.network.retrofit.dtoModels.settings.ChangePasswordDto

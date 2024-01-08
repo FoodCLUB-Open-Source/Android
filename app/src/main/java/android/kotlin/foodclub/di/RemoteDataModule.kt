@@ -1,7 +1,9 @@
 package android.kotlin.foodclub.di
 
-import android.kotlin.foodclub.network.remotedatasource.settingsremotedatasource.SettingsRemoteDataSource
-import android.kotlin.foodclub.network.remotedatasource.settingsremotedatasource.SettingsRemoteDataSourceImpl
+import android.kotlin.foodclub.network.remotedatasource.profile_remote_datasource.ProfileRemoteDataSource
+import android.kotlin.foodclub.network.remotedatasource.profile_remote_datasource.ProfileRemoteDataSourceImpl
+import android.kotlin.foodclub.network.remotedatasource.settings_remote_datasource.SettingsRemoteDataSource
+import android.kotlin.foodclub.network.remotedatasource.settings_remote_datasource.SettingsRemoteDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -11,8 +13,14 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 abstract class RemoteDataModule {
 
-   @Binds
+    @Binds
     abstract fun bindSettingsRemoteDataSource(
         settingsRemoteDataSourceImpl: SettingsRemoteDataSourceImpl
-   ): SettingsRemoteDataSource
+    ): SettingsRemoteDataSource
+
+    @Binds
+    abstract fun bindProfileRemoteDataSource(
+        profileRemoteDataSourceImpl: ProfileRemoteDataSourceImpl
+    ): ProfileRemoteDataSource
+
 }

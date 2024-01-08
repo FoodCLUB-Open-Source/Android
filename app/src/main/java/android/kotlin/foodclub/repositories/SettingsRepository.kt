@@ -6,10 +6,9 @@ import android.kotlin.foodclub.network.retrofit.dtoModels.settings.ChangePasswor
 import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorResponse
 import android.kotlin.foodclub.network.retrofit.responses.general.SingleMessageResponse
 import android.kotlin.foodclub.network.retrofit.responses.settings.UpdateUserDetailsResponse
-import android.kotlin.foodclub.network.retrofit.services.SettingsService
 import android.kotlin.foodclub.network.retrofit.utils.apiRequestFlow
-import android.kotlin.foodclub.localdatasource.localdatasource.userdetailslocaldatasource.UserDetailsLocalDataSource
-import android.kotlin.foodclub.network.remotedatasource.settingsremotedatasource.SettingsRemoteDataSource
+import android.kotlin.foodclub.localdatasource.localdatasource.user_details_local_datasource.UserDetailsLocalDataSource
+import android.kotlin.foodclub.network.remotedatasource.settings_remote_datasource.SettingsRemoteDataSource
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.util.Log
 import kotlinx.coroutines.flow.Flow
@@ -44,7 +43,7 @@ class SettingsRepository(
     }
 
     suspend fun retrieveUserDetails(userId: Long): Flow<Resource<UserDetailsModel, DefaultErrorResponse>> {
-        return userDetailsLocalDataSource.getProfile(userId)
+        return userDetailsLocalDataSource.getLocalUserDetails(userId)
             .map<UserDetailsModel?, Resource<UserDetailsModel, DefaultErrorResponse>> { userDetails ->
                 if (userDetails != null) {
                     Resource.Success(userDetails)
@@ -63,7 +62,7 @@ class SettingsRepository(
             val userDetailsDto = userFromService.body()?.data
             if (userDetailsDto != null) {
                 val userDetailsModel = userDetailsMapper.mapToDomainModel(userDetailsDto)
-                userDetailsLocalDataSource.insertProfile(userDetailsModel)
+                userDetailsLocalDataSource.insertLocalUserDetails(userDetailsModel)
             } else {
                 Log.i(TAG, "Response body or data is null")
             }
@@ -86,7 +85,7 @@ class SettingsRepository(
             }
         ) {
             is Resource.Success -> {
-                userDetailsLocalDataSource.insertProfile(userDetailsModel)
+                userDetailsLocalDataSource.insertLocalUserDetails(userDetailsModel)
                 Log.i(TAG, "USER UPDATE SUCCESS ${resource.data}")
                 Resource.Success(resource.data!!.body()!!)
             }
