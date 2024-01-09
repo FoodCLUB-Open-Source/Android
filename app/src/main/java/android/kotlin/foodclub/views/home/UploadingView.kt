@@ -50,7 +50,7 @@ fun UploadingViewUI(modifier: Modifier = Modifier, progress: Float) {
         Image(
             painter = painterResource(id = R.drawable.welcome_logo),
             contentDescription = null,
-            modifier = modifier
+            modifier = Modifier
                 .size(dimensionResource(id = R.dimen.dim_80))
                 .offset(y = -dimensionResource(id = R.dimen.dim_100))
 
@@ -60,12 +60,12 @@ fun UploadingViewUI(modifier: Modifier = Modifier, progress: Float) {
             text = stringResource(id = R.string.uploading),
             fontSize = dimensionResource(id = R.dimen.fon_22).value.sp,
             fontFamily = montserratFontFamily,
-            modifier = modifier.padding(top =  dimensionResource(id = R.dimen.dim_40), bottom = dimensionResource(id = R.dimen.dim_50))
+            modifier = Modifier.padding(top =  dimensionResource(id = R.dimen.dim_40), bottom = dimensionResource(id = R.dimen.dim_50))
         )
 
         LinearProgressIndicator(
             progress = progress,
-            modifier = modifier
+            modifier = Modifier
                 .offset(y = dimensionResource(id = R.dimen.dim_60))
                 .width(dimensionResource(id = R.dimen.dim_280))
                 .height(dimensionResource(id = R.dimen.dim_8))

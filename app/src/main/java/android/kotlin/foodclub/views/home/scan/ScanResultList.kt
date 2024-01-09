@@ -48,6 +48,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
@@ -83,7 +84,7 @@ fun ScanResultView(
     Box(modifier =Modifier.fillMaxSize() ) {
         if(loading) {
             LoadingProgressBar(
-                text="Uploading...",
+                text= stringResource(id = R.string.uploading),
                 route = BottomBarScreenObject.Play.route
                 , navController = navController
             )
@@ -93,7 +94,7 @@ fun ScanResultView(
                     CenterAlignedTopAppBar(
                         title = {
                             Text(
-                                text = "Scan Results List",
+                                text = stringResource(id = R.string.scan_results_list),
                                 fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
                                 fontWeight = FontWeight.Bold,
                                 lineHeight = dimensionResource(id = R.dimen.fon_48).value.sp,
@@ -121,7 +122,7 @@ fun ScanResultView(
                                 }
                             ) {
                                 Text(
-                                    text = "Next",
+                                    text = stringResource(id = R.string.next),
                                     color = foodClubGreen,
                                     fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
                                     fontWeight = FontWeight(600),
@@ -145,7 +146,7 @@ fun ScanResultView(
 
 
                         if (isShowEditScreen){
-                            topBarTitleText = "Edit Item"
+                            topBarTitleText = stringResource(id = R.string.edit_item)
                             EditIngredientView(
                                 ingredient = state.ingredientToEdit!!,
                                 onEditIngredient = { ingr ->
@@ -153,7 +154,7 @@ fun ScanResultView(
                                 }
                             )
                         }else{
-                            topBarTitleText = "All My Ingredients"
+                            topBarTitleText = stringResource(id = R.string.all_my_ingredients)
                             SearchResultIngredients(
                                 modifier = Modifier,
                                 searchTextValue = searchText,
@@ -172,7 +173,7 @@ fun ScanResultView(
                                     events.updateIngredient(item)
                                     isShowEditScreen = false
                                 },
-                                view = "DigitalPantry"
+                                view = stringResource(id = R.string.digitalPantry)
                             )
 
                             if (isDatePickerVisible) {
@@ -249,7 +250,7 @@ fun SearchResultIngredients(
             .fillMaxWidth()
             .padding(dimensionResource(id = R.dimen.dim_10))
             .clip(
-                RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
+                RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
             ),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = containerColor,
@@ -266,7 +267,7 @@ fun SearchResultIngredients(
         placeholder = {
             Text(
                 modifier = modifier.padding(top =dimensionResource(id = R.dimen.dim_3)),
-                text = "Search my ingredients",
+                text = stringResource(id = R.string.search_my_ingredients),
                 color = Color.Gray,
                 textAlign = TextAlign.Center
             )

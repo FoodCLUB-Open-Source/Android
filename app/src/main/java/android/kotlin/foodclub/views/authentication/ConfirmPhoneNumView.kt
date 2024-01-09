@@ -73,13 +73,13 @@ fun ConfirmPhoneNumTopLayout(
             Image(
                 painter = painterResource(R.drawable.back_icon),
                 contentDescription = stringResource(id = R.string.go_back),
-                modifier = modifier
+                modifier = Modifier
                     .width( dimensionResource(id = R.dimen.dim_32))
                     .height( dimensionResource(id = R.dimen.dim_32))
                     .offset(x = (-8).dp)
                     .clickable { navController?.popBackStack() }
             )
-            Box(modifier = modifier.padding(top =  dimensionResource(id = R.dimen.dim_32))) {
+            Box(modifier = Modifier.padding(top =  dimensionResource(id = R.dimen.dim_32))) {
                 Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_28))) {
                     Text(
                         text = stringResource(id = R.string.confirm_identity),

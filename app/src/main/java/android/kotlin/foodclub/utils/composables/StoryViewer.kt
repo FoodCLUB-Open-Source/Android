@@ -173,7 +173,7 @@ fun StoryInfo(
 
         Column(
             verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_5), Alignment.CenterVertically),
-            modifier = modifier.height(dimensionResource(id = R.dimen.dim_45))
+            modifier = Modifier.height(dimensionResource(id = R.dimen.dim_45))
         ) {
             Text(
                 text = name,
