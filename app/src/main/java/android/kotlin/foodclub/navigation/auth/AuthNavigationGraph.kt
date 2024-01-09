@@ -4,7 +4,6 @@ import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.viewModels.authentication.loginWithEmail.LogInWithEmailViewModel
 import android.kotlin.foodclub.viewModels.authentication.mainLogin.MainLogInAndSignUpViewModel
 import android.kotlin.foodclub.viewModels.authentication.signupVerification.SignupVerificationViewModel
-import android.kotlin.foodclub.viewModels.authentication.termsAndConditions.TermsAndConditionsViewModel
 import android.kotlin.foodclub.views.authentication.loginWithEmail.LogInWithEmail
 import android.kotlin.foodclub.views.authentication.MainLogInAndSignUp
 import android.kotlin.foodclub.views.authentication.signupVerification.SignupVerification
@@ -52,8 +51,6 @@ fun NavGraphBuilder.authNavigationGraph(
         }
 
         composable(route = AuthScreen.TermsAndConditions.route) {
-            val viewModel: TermsAndConditionsViewModel = viewModel()
-
             TermsAndConditions(
                 navController = navController
             )

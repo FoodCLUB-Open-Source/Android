@@ -26,11 +26,6 @@ interface ProfileService {
         @Query("page_size") pageSize: Int?
     ): Response<RetrieveProfileResponse>
 
-    @GET("profile/{user_id}/details")
-    suspend fun retrieveUserDetails(
-        @Path("user_id") userId: Long
-    ): Response<RetrieveUserDetailsResponse>
-
     @PUT("profile/profile_picture/{user_id}")
     @Multipart
     suspend fun updateUserProfileImage(

@@ -13,18 +13,18 @@ import kotlinx.coroutines.flow.Flow
 interface UserDetailsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertProfileData(profileModel: UserDetailsModel)
+    suspend fun insertProfileData(userDetailsModel: UserDetailsModel)
 
     @Query("SELECT * FROM user_details WHERE id=:id")
-    fun getProfileData(id: Long): Flow<UserDetailsModel>
+    fun getLocalUserDetails(id: Long): Flow<UserDetailsModel>
 
     @Update
-    suspend fun updateProfileData(profile: UserDetailsModel)
+    suspend fun updateLocalUserDetails(userDetailsModel: UserDetailsModel)
 
     @Delete
-    fun deleteProfileData(profile: UserDetailsModel)
+    fun deleteLocalUserDetails(userDetailsModel: UserDetailsModel)
 
     @Query("DELETE FROM user_details")
-    fun clearProfileData()
+    fun clearLocalUserDetailsData()
 
 }
