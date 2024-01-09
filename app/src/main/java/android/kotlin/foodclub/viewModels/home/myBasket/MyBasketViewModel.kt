@@ -49,9 +49,9 @@ class MyBasketViewModel @Inject constructor(
         basketCache.saveBasket(state.value.basket!!)
     }
 
-    override fun selectIngredient(id: String) {
+    override fun selectIngredient(ingredientId: String) {
         val basket = state.value.basket!!
-        basket.selectIngredient(id)
+        basket.selectIngredient(ingredientId)
         _state.update {
             it.copy(
                 basket = basket,
@@ -60,9 +60,9 @@ class MyBasketViewModel @Inject constructor(
         }
     }
 
-    override fun unselectIngredient(id: String) {
+    override fun unselectIngredient(ingredientId: String) {
         val basket = state.value.basket!!
-        basket.unselectIngredient(id)
+        basket.unselectIngredient(ingredientId)
         _state.update {
             it.copy(
                 basket = basket,
@@ -86,7 +86,7 @@ class MyBasketViewModel @Inject constructor(
     }
 
     override fun fetchProductsDatabase(searchText: String) {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             when (val resource = productRepository.getProductsList(searchText)) {
                 is Resource.Success -> {
                     _state.update {
@@ -110,8 +110,8 @@ class MyBasketViewModel @Inject constructor(
         }
     }
 
-    override fun fetchMoreProducts(searchText: String, onJobComplete: () -> Unit) {
-        val job = viewModelScope.launch() {
+    override fun fetchMoreProducts(searchText: String, onLoadComplete: () -> Unit) {
+        val job = viewModelScope.launch {
             when (
                 val resource = productRepository.getProductsList(
                     searchText = searchText,
@@ -142,7 +142,7 @@ class MyBasketViewModel @Inject constructor(
                 }
             }
         }
-        job.invokeOnCompletion { onJobComplete() }
+        job.invokeOnCompletion { onLoadComplete() }
     }
 
     override fun addIngredient(ingredient: Ingredient) {

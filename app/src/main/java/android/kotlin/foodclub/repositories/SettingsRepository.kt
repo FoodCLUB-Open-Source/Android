@@ -1,6 +1,8 @@
 package android.kotlin.foodclub.repositories
 
+import android.kotlin.foodclub.localdatasource.localdatasource.userdetailslocaldatasource.UserDetailsLocalDataSource
 import android.kotlin.foodclub.localdatasource.room.entity.UserDetailsModel
+import android.kotlin.foodclub.network.remotedatasource.settingsremotedatasource.SettingsRemoteDataSource
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserDetailsMapper
 import android.kotlin.foodclub.network.retrofit.dtoModels.settings.ChangePasswordDto
 import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorResponse
@@ -15,7 +17,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class SettingsRepository(
-    //private val api: SettingsService,
     private val settingsRemoteDataSource: SettingsRemoteDataSource,
     private val userDetailsMapper: UserDetailsMapper,
     private val userDetailsLocalDataSource: UserDetailsLocalDataSource

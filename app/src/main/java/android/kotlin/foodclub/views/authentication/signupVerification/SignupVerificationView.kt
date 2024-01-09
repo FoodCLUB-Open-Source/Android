@@ -28,7 +28,6 @@ import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.navigation.auth.AuthScreen
 import android.kotlin.foodclub.utils.composables.AuthLayout
 import android.kotlin.foodclub.utils.composables.ConfirmButton
-import androidx.compose.runtime.mutableLongStateOf
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 import android.kotlin.foodclub.R
@@ -73,7 +72,7 @@ fun SignupVerification(
             var enableButton by remember { mutableStateOf(false) }
             var isTimerRunning by remember { mutableStateOf(true) }
             var currentTime by remember {
-                mutableLongStateOf(TimeUnit.SECONDS.toMillis(62))
+                mutableStateOf(TimeUnit.SECONDS.toMillis(62))
             }
             var currentCode by remember { mutableStateOf("") }
 

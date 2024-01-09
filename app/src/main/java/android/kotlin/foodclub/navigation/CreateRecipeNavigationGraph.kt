@@ -38,7 +38,7 @@ fun NavGraphBuilder.createRecipeNavigationGraph(
 }
 
 sealed class CreateRecipeScreen(val route: String) {
-    object Camera : CreateRecipeScreen(route = "CREATE_RECIPE_CAMERA")
-    object VideoEditor : CreateRecipeScreen(route = "CREATE_RECIPE_TRIMMER")
-    object PostDetails : CreateRecipeScreen(route = "CREATE_RECIPE_DETAILS")
+    data object Camera : CreateRecipeScreen(route = "CREATE_RECIPE_CAMERA")
+    data object VideoEditor : CreateRecipeScreen(route = "CREATE_RECIPE_TRIMMER")
+    data object PostDetails : CreateRecipeScreen(route = "CREATE_RECIPE_DETAILS")
 }

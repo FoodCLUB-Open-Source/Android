@@ -5,7 +5,6 @@ import android.kotlin.foodclub.utils.composables.TakePhotoPreview
 import android.kotlin.foodclub.utils.helpers.takePhoto
 import android.kotlin.foodclub.utils.helpers.uriToFile
 import android.kotlin.foodclub.viewModels.home.home.HomeEvents
-import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
 import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.BackHandler

@@ -2,7 +2,6 @@ package android.kotlin.foodclub.views.home.profile
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.viewModels.home.profile.ProfileEvents
-import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width

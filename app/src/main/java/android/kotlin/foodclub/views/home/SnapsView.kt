@@ -40,6 +40,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -65,7 +66,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun SnapsView(
     memoriesModel: MemoriesModel,
-    modifier: Modifier,
 ) {
 
     val systemUiController = rememberSystemUiController()
@@ -93,7 +93,7 @@ fun SnapsView(
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
     var snapUserIndex by remember {
-        mutableStateOf(0)
+        mutableIntStateOf(0)
     }
     var isDownloaded by remember {
         mutableStateOf(false)
@@ -212,10 +212,10 @@ fun SnapsView(
 fun SnapBottomSheetLayout(userReactions:
                           Map<SimpleUserModel, Reactions>) {
 
-    val reactions = Reactions.values().toList()
+    val reactions = Reactions.entries
     val state = rememberPagerState(
         initialPage = 0
-    ) {
+    ){
         reactions.size
     }
     val flingBehavior = PagerDefaults.flingBehavior(state = state, lowVelocityAnimationSpec = tween(
@@ -295,8 +295,7 @@ fun SnapBottomSheetLayout(userReactions:
         state = state,
         beyondBoundsPageCount = 1,
         verticalAlignment = Alignment.Top,
-        flingBehavior=flingBehavior,
-
+        flingBehavior=flingBehavior
     ) {idx->
         LazyColumn{
             val list =if(reactions[idx]!=Reactions.ALL) userReactions.filter { x->

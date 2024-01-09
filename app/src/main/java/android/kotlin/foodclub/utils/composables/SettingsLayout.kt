@@ -46,7 +46,7 @@ import androidx.compose.ui.unit.sp
 fun SettingsLayout(
     label: String,
     onBackAction: () -> Unit,
-    content: @Composable() (() -> Unit)
+    content: @Composable (() -> Unit)
 ) {
     Box(
         modifier =Modifier.fillMaxWidth()

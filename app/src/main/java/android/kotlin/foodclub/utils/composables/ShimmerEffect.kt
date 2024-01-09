@@ -12,13 +12,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 @Composable
-fun ShimmerBrush(): Brush {
+fun shimmerBrush(): Brush {
 
     val shimmerColors = listOf(
         Color.LightGray,
         Color.Gray.copy(alpha = 0.4f),
         Color.LightGray)
-    val transition = rememberInfiniteTransition()
+    val transition = rememberInfiniteTransition(label = "")
     val translateAnim = transition.animateFloat(
         initialValue = 0f,
         targetValue = 1000f,
@@ -28,7 +28,7 @@ fun ShimmerBrush(): Brush {
                 easing = FastOutSlowInEasing
             ),
             repeatMode = RepeatMode.Reverse
-        )
+        ), label = ""
     )
 
     return Brush.linearGradient(

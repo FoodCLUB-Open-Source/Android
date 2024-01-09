@@ -1,18 +1,17 @@
 package android.kotlin.foodclub.viewModels.authentication.signupVerification
 
 import android.kotlin.foodclub.domain.models.session.Session
-import android.kotlin.foodclub.domain.enums.ApiCallStatus
+import android.kotlin.foodclub.navigation.Graph
+import android.kotlin.foodclub.navigation.auth.AuthScreen
+import android.kotlin.foodclub.network.retrofit.utils.SessionCache
+import android.kotlin.foodclub.network.retrofit.utils.auth.JWTManager
+import android.kotlin.foodclub.repositories.AuthRepository
+import android.kotlin.foodclub.utils.helpers.Resource
+import android.kotlin.foodclub.views.authentication.signupVerification.SignupVerificationState
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import android.kotlin.foodclub.navigation.auth.AuthScreen
-import android.kotlin.foodclub.navigation.Graph
-import android.kotlin.foodclub.repositories.AuthRepository
-import android.kotlin.foodclub.network.retrofit.utils.auth.JWTManager
-import android.kotlin.foodclub.utils.helpers.Resource
-import android.kotlin.foodclub.network.retrofit.utils.SessionCache
-import android.kotlin.foodclub.views.authentication.signupVerification.SignupVerificationState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -127,7 +126,7 @@ class SignupVerificationViewModel @Inject constructor(
             navController.navigate(AuthScreen.Login.route)
         }
 
-        viewModelScope.launch() {
+        viewModelScope.launch {
             when (val resource =
                 repository.signIn(state.value.username!!, state.value.password!!)) {
                 is Resource.Success -> {

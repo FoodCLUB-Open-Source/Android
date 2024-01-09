@@ -2,14 +2,13 @@ package android.kotlin.foodclub.views.home.myBasket
 
 import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.viewModels.home.myBasket.MyBasketEvents
-import android.kotlin.foodclub.viewModels.home.myBasket.MyBasketViewModel
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.Image
@@ -39,33 +38,33 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.delay
 
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun MyBasketView(
-    // viewModel: MyBasketViewModel,
     events: MyBasketEvents,
     navController: NavController,
     state: MyBasketState
@@ -147,7 +146,7 @@ fun MyBasketView(
                     fontFamily = Montserrat,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black,
-                    style = TextStyle(letterSpacing = -1.sp),
+                    style = TextStyle(letterSpacing = (-1).sp),
                     modifier = Modifier.weight(1f)
                 )
                 Button(
@@ -263,7 +262,7 @@ fun BasketIngredient(
 ) {
     var isSelected by remember { mutableStateOf(ingredient.isSelected) }
 
-    var quantity by remember { mutableStateOf(ingredient.quantity) }
+    var quantity by remember { mutableIntStateOf(ingredient.quantity) }
     val type by remember { mutableStateOf(ingredient.type) }
     val unit by remember { mutableStateOf(ingredient.unit) }
 

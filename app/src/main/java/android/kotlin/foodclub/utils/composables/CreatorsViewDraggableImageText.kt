@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -60,7 +59,6 @@ import kotlin.math.roundToInt
  *    )
  * */
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreatorsViewDraggableImageText(
     imageResource: Int,
@@ -83,12 +81,14 @@ fun CreatorsViewDraggableImageText(
     var offsetX by remember { mutableFloatStateOf(halfScreenWidth.value) }
     var offsetY by remember { mutableFloatStateOf(heightInDp.value) }
 
-    val defaultTextFieldColors = TextFieldDefaults.textFieldColors(
+    val defaultTextFieldColors = TextFieldDefaults.colors(
         disabledTextColor = Color.Transparent,
-        containerColor = Color.Transparent,
+        focusedContainerColor = Color.Transparent,
+        unfocusedContainerColor = Color.Transparent,
+        disabledContainerColor = Color.Transparent,
         focusedIndicatorColor = Color.Transparent,
         unfocusedIndicatorColor = Color.Transparent,
-        disabledIndicatorColor = Color.Transparent
+        disabledIndicatorColor = Color.Transparent,
     )
 
 

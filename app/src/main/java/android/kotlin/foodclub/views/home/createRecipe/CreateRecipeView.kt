@@ -70,6 +70,7 @@ import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.TextField
@@ -77,6 +78,8 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -182,11 +185,13 @@ fun BottomSheetCategories(
                     keyboardActions = KeyboardActions(
                         onDone = { /* Handle onDone event if needed */ }
                     ),
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.White,
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White,
+                        disabledContainerColor = Color.White,
                         cursorColor = Color.Black,
                         focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
+                        unfocusedIndicatorColor = Color.Transparent,
                     ),
                     modifier = Modifier
                         .weight(1f)
@@ -240,7 +245,7 @@ fun BottomSheetCategories(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CreateRecipeView(
     navController: NavController,
@@ -251,7 +256,7 @@ fun CreateRecipeView(
     var showSheet by remember { mutableStateOf(false) }
     var showCategorySheet by remember { mutableStateOf(false) }
     val codeTriggered = remember { mutableStateOf(false) }
-    var sliderPosition by remember { mutableStateOf(0f) }
+    var sliderPosition by remember { mutableFloatStateOf(0f) }
     var recipeName by remember { mutableStateOf("") }
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp - dimensionResource(id = R.dimen.dim_240)
     val rows = listOf(
@@ -395,9 +400,9 @@ fun CreateRecipeView(
                     },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                    colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color.Black,
-                        unfocusedBorderColor = Color(0xFFE8E8E8)
+                        unfocusedBorderColor = Color(0xFFE8E8E8),
                     )
                 )
                 Row(
@@ -578,7 +583,7 @@ fun Ingredient(
     onCollapse: () -> Unit,
     onDelete: () -> Unit
 ) {
-    val ingredientXOffset = remember { mutableStateOf(0f) }
+    val ingredientXOffset = remember { mutableFloatStateOf(0f) }
     var showItem by remember { mutableStateOf(true) }
 
     val transitionState = remember { MutableTransitionState(isRevealed).apply { targetState = !isRevealed }}
@@ -586,10 +591,12 @@ fun Ingredient(
     val offsetTransition by transition.animateFloat(
         label = stringResource(id = R.string.ingredient_offset_transitions),
         transitionSpec = { tween(durationMillis = 500) },
-        targetValueByState = { if (isRevealed) (-ingredientXOffset.value - 200f) else -ingredientXOffset.value }
+        targetValueByState = {
+            if (isRevealed) (-ingredientXOffset.floatValue - 200f)
+            else -ingredientXOffset.floatValue }
     )
 
-    var quantity by remember { mutableStateOf(ingredient.quantity) }
+    var quantity by remember { mutableIntStateOf(ingredient.quantity) }
     val type by remember { mutableStateOf(ingredient.type) }
     val unit by remember { mutableStateOf(ingredient.unit) }
 
@@ -628,11 +635,11 @@ fun Ingredient(
         Column {
             Box(modifier = Modifier
                 .offset {
-                    IntOffset((ingredientXOffset.value + offsetTransition).roundToInt(), 0)
+                    IntOffset((ingredientXOffset.floatValue + offsetTransition).roundToInt(), 0)
                 }
                 .pointerInput(key1 = "") {
                     detectHorizontalDragGestures { change, dragAmount ->
-                        val original = Offset(ingredientXOffset.value, 0f)
+                        val original = Offset(ingredientXOffset.floatValue, 0f)
                         val summed = original + Offset(x = dragAmount, y = 0f)
                         val newValue = Offset(summed.x.coerceIn(-200f, 0f), 0f)
                         if (newValue.x <= -20f) {
@@ -643,7 +650,7 @@ fun Ingredient(
                             return@detectHorizontalDragGestures
                         }
                         if (change.positionChange() != Offset.Zero) change.consume()
-                        ingredientXOffset.value = newValue.x
+                        ingredientXOffset.floatValue = newValue.x
                     }
                 }
                 .fillMaxWidth()

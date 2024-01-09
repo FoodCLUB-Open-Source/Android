@@ -5,8 +5,8 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
-import android.kotlin.foodclub.utils.composables.EditIngredientQuantityPicker
 import android.kotlin.foodclub.utils.composables.CustomDatePicker
+import android.kotlin.foodclub.utils.composables.EditIngredientQuantityPicker
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
 import android.kotlin.foodclub.views.home.discover.DiscoverState
@@ -40,7 +40,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.DismissValue
 import androidx.compose.material3.Divider
@@ -217,7 +216,6 @@ fun MyDigitalPantryView(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchMyIngredients(
     modifier: Modifier,
@@ -232,11 +230,13 @@ fun SearchMyIngredients(
             .clip(
                 RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
             ),
-        colors = TextFieldDefaults.textFieldColors(
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = containerColor,
+            unfocusedContainerColor = containerColor,
+            disabledContainerColor = containerColor,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
-            containerColor = containerColor
         ),
         value = searchTextValue,
         onValueChange = { onSearch(it) },

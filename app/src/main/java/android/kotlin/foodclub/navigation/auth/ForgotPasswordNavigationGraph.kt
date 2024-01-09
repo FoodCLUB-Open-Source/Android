@@ -70,7 +70,7 @@ fun NavGraphBuilder.forgotPasswordNavigationGraph(navController: NavHostControll
 }
 
 sealed class ForgotPasswordScreen(val route: String) {
-    object ForgotPasswordPage1 : ForgotPasswordScreen(route = "forgot_password_page_1")
-    object ForgotPasswordPage2 : ForgotPasswordScreen(route = "forgot_password_page_2")
-    object ForgotPasswordPage3 : ForgotPasswordScreen(route = "forgot_password_page_3")
+    data object ForgotPasswordPage1 : ForgotPasswordScreen(route = "forgot_password_page_1")
+    data object ForgotPasswordPage2 : ForgotPasswordScreen(route = "forgot_password_page_2")
+    data object ForgotPasswordPage3 : ForgotPasswordScreen(route = "forgot_password_page_3")
 }

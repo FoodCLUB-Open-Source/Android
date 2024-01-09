@@ -48,6 +48,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
@@ -80,127 +81,126 @@ fun ScanResultView(
         navController.popBackStack()
 
     }
-    Box(modifier =Modifier.fillMaxSize() )
-    {if(loading)
-    {
-        LoadingProgressBar(
-            text="Uploading...",
-            route = BottomBarScreenObject.Play.route
-            , navController = navController
-        )
-    }
-     else{Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = "Scan Results List",
-                        fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
-                        fontWeight = FontWeight.Bold,
-                        lineHeight = dimensionResource(id = R.dimen.fon_48).value.sp,
-                        fontFamily = Montserrat
-                    )
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            navController.popBackStack()
-                        }
-                    ){
-                        Icon(
-                            painterResource(id = R.drawable.back_arrow),
-                            contentDescription = "",
-                        )
-                    }
-                },
-                actions = {
-                    TextButton(
-                        onClick = {
-                            loading=!loading
-                            events.addScanListToUserIngredients(state.scanResultItemList)
-
-                        }
-                    ) {
-                        Text(
-                            text = "Next",
-                            color = foodClubGreen,
-                            fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
-                            fontWeight = FontWeight(600),
-                            fontFamily = Montserrat
-                        )
-                    }
-                },
+    Box(modifier =Modifier.fillMaxSize() ) {
+        if(loading) {
+            LoadingProgressBar(
+                text= stringResource(id = R.string.uploading),
+                route = BottomBarScreenObject.Play.route
+                , navController = navController
             )
-        },
-        content = {
-            Column(
-                modifier = modifier
-                    .padding(
-                        top = it.calculateTopPadding(),
-                        bottom = it.calculateBottomPadding()
-                    )
-                    .fillMaxSize()
-                    .background(Color.White),
-                verticalArrangement = Arrangement.Top
-            ) {
-
-
-                if (isShowEditScreen){
-                    topBarTitleText = "Edit Item"
-                    EditIngredientView(
-                        ingredient = state.ingredientToEdit!!,
-                        onEditIngredient = { ingr ->
-                            events.updateIngredient(ingr)
-                        }
-                    )
-                }else{
-                    topBarTitleText = "All My Ingredients"
-                    SearchResultIngredients(
-                        modifier = Modifier,
-                        searchTextValue = searchText,
-                        onSearch = { input->
-                            events.onSubSearchTextChange(input)
-                        }
-                    )
-                    Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_15)))
-
-                    ScanResultList(
-                        modifier = modifier,
-                        productsList = state.scanResultItemList,
-                        onAddDateClicked = { isDatePickerVisible = true },
-                        onEditClicked = {
-                                item->
-                            events.updateIngredient(item)
-                            isShowEditScreen = false
+        }else{
+            Scaffold(
+                topBar = {
+                    CenterAlignedTopAppBar(
+                        title = {
+                            Text(
+                                text = stringResource(id = R.string.scan_results_list),
+                                fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
+                                fontWeight = FontWeight.Bold,
+                                lineHeight = dimensionResource(id = R.dimen.fon_48).value.sp,
+                                fontFamily = Montserrat
+                            )
                         },
-                        view = "DigitalPantry"
-                    )
+                        navigationIcon = {
+                            IconButton(
+                                onClick = {
+                                    navController.popBackStack()
+                                }
+                            ){
+                                Icon(
+                                    painterResource(id = R.drawable.back_arrow),
+                                    contentDescription = "",
+                                )
+                            }
+                        },
+                        actions = {
+                            TextButton(
+                                onClick = {
+                                    loading=!loading
+                                    events.addScanListToUserIngredients(state.scanResultItemList)
 
-                    if (isDatePickerVisible) {
-                        Box(
-                            modifier = Modifier,
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CustomDatePicker(
-                                modifier = Modifier.shadow(dimensionResource(id = R.dimen.dim_5)),
-                                datePickerState = datePickerState,
-                                onDismiss = {
-                                    isDatePickerVisible = false
-                                    datePickerState.setSelection(null)
-                                },
-                                onSave = { date ->
-                                    if (date != null){
-                                        selectedDate = date
-                                    }
+                                }
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.next),
+                                    color = foodClubGreen,
+                                    fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
+                                    fontWeight = FontWeight(600),
+                                    fontFamily = Montserrat
+                                )
+                            }
+                        },
+                    )
+                },
+                content = {
+                    Column(
+                        modifier = modifier
+                            .padding(
+                                top = it.calculateTopPadding(),
+                                bottom = it.calculateBottomPadding()
+                            )
+                            .fillMaxSize()
+                            .background(Color.White),
+                        verticalArrangement = Arrangement.Top
+                    ) {
+
+
+                        if (isShowEditScreen){
+                            topBarTitleText = stringResource(id = R.string.edit_item)
+                            EditIngredientView(
+                                ingredient = state.ingredientToEdit!!,
+                                onEditIngredient = { ingr ->
+                                    events.updateIngredient(ingr)
                                 }
                             )
+                        }else{
+                            topBarTitleText = stringResource(id = R.string.all_my_ingredients)
+                            SearchResultIngredients(
+                                modifier = Modifier,
+                                searchTextValue = searchText,
+                                onSearch = { input->
+                                    events.onSubSearchTextChange(input)
+                                }
+                            )
+                            Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_15)))
+
+                            ScanResultList(
+                                modifier = modifier,
+                                productsList = state.scanResultItemList,
+                                onAddDateClicked = { isDatePickerVisible = true },
+                                onEditClicked = {
+                                        item->
+                                    events.updateIngredient(item)
+                                    isShowEditScreen = false
+                                },
+                                view = stringResource(id = R.string.digitalPantry)
+                            )
+
+                            if (isDatePickerVisible) {
+                                Box(
+                                    modifier = Modifier,
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CustomDatePicker(
+                                        modifier = Modifier.shadow(dimensionResource(id = R.dimen.dim_5)),
+                                        datePickerState = datePickerState,
+                                        onDismiss = {
+                                            isDatePickerVisible = false
+                                            datePickerState.setSelection(null)
+                                        },
+                                        onSave = { date ->
+                                            if (date != null){
+                                                selectedDate = date
+                                            }
+                                        }
+                                    )
+                                }
+                            }
                         }
                     }
                 }
-            }
+            )
         }
-        )
-     }
     }
 
 }
@@ -238,7 +238,6 @@ fun ScanResultList(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchResultIngredients(
     modifier: Modifier,
@@ -251,13 +250,15 @@ fun SearchResultIngredients(
             .fillMaxWidth()
             .padding(dimensionResource(id = R.dimen.dim_10))
             .clip(
-                RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
+                RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
             ),
-        colors = TextFieldDefaults.textFieldColors(
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = containerColor,
+            unfocusedContainerColor = containerColor,
+            disabledContainerColor = containerColor,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
-            containerColor = containerColor
         ),
         value = searchTextValue,
         onValueChange = {
@@ -266,7 +267,7 @@ fun SearchResultIngredients(
         placeholder = {
             Text(
                 modifier = modifier.padding(top =dimensionResource(id = R.dimen.dim_3)),
-                text = "Search my ingredients",
+                text = stringResource(id = R.string.search_my_ingredients),
                 color = Color.Gray,
                 textAlign = TextAlign.Center
             )

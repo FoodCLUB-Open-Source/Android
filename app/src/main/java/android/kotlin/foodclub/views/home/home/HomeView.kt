@@ -44,7 +44,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -65,6 +64,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.activity.compose.BackHandler
+import androidx.compose.runtime.mutableFloatStateOf
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.TileMode
@@ -79,7 +79,6 @@ import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import okio.ByteString.Companion.encodeUtf8
 
 
@@ -278,7 +277,7 @@ fun HomeView(
             val snapPagerState = rememberPagerState(
                 initialPage = 0,
                 initialPageOffsetFraction = 0f,
-            ) {
+            ){
                 storyListData.size
             }
 
@@ -289,7 +288,7 @@ fun HomeView(
 
                 )
             if(showStories){
-                SnapsView(memoriesModel = currentMemoriesModel, modifier = Modifier)
+                SnapsView(memoriesModel = currentMemoriesModel)
             }
             else{
                 var progress by remember{
@@ -357,7 +356,8 @@ fun HomeView(
                                 .layoutId(stringResource(id = R.string.memories_item_view))
                         ){
                             items(state.memories){
-                                val painter: Painter =  rememberImagePainter(data = it.stories[0].imageUrl)
+                                val painter: Painter =
+                                    rememberAsyncImagePainter(model = it.stories[0].imageUrl)
                                 MemoriesItemView(
                                     modifier = Modifier.clickable {
                                         showStories=!showStories
@@ -422,7 +422,7 @@ fun HomeView(
                                 state = snapPagerState,
                                 flingBehavior = snapPagerFling,
                                 beyondBoundsPageCount = 1,
-                                modifier = Modifier,
+                                modifier = Modifier
                             ) {
                                 Box {
                                     AsyncImage(
@@ -435,7 +435,7 @@ fun HomeView(
                                         modifier = Modifier
                                             .align(Alignment.BottomCenter)
                                             .padding(bottom = dimensionResource(id = R.dimen.dim_150)),
-                                        reactions = Reactions.values(),
+                                        reactions = Reactions.entries.toTypedArray(),
                                         painter = rememberAsyncImagePainter(
                                             model = storyListData[it].thumbnailLink
                                         )

@@ -206,7 +206,7 @@ fun HomeBottomSheetIngredients(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     LazyColumn {
-                        itemsIndexed(recipe.ingredients) { index, item ->
+                        itemsIndexed(recipe.ingredients) { _, item ->
                             HomeIngredient(
                                 ingredient = item,
                                 quantityMultiplier = (ingredientsMultiplier / ingredientsDivider)
