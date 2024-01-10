@@ -6,11 +6,14 @@ import android.content.ContentUris
 import android.content.Context
 import android.kotlin.foodclub.views.home.gallery.GalleryState
 import android.kotlin.foodclub.views.home.gallery.ItemType
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.util.Size
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -35,6 +38,17 @@ class GalleryViewModel @Inject constructor(
     init {
         _state.update { it.copy(title = "GalleryViewModel") }
         getMediaContent(context, true, 150)
+    }
+
+    private fun createImageThumbNail(context: Context,imageUri: Uri): ImageBitmap {
+        return (context).contentResolver.loadThumbnail(imageUri, Size(480, 480), null)
+            .asImageBitmap()
+    }
+
+    fun createVideoThumbNail(context: Context, uri: Uri): ImageBitmap {
+        val mediaMetadataRetriever = MediaMetadataRetriever()
+        mediaMetadataRetriever.setDataSource(context, uri)
+        return mediaMetadataRetriever.frameAtTime?.asImageBitmap() ?: ImageBitmap(480, 480)
     }
 
     private fun getMediaContent(
@@ -191,6 +205,8 @@ class GalleryViewModel @Inject constructor(
         val resourceIds = mutableListOf<Pair<Uri, String>>()
         val resourceDrawables = mutableListOf<Uri>()
         val resourceUri = mutableListOf<Uri>()
+        val imageThumbNails = mutableListOf <ImageBitmap>()
+        val videoThumbNails = mutableListOf <ImageBitmap>()
 
         for (uri in state.value.uris) {
             val type = context.contentResolver.getType(uri)
@@ -202,10 +218,12 @@ class GalleryViewModel @Inject constructor(
             when (type) {
                 ItemType.IMAGE.type -> {
                     resourceDrawables.add(name)
+                    imageThumbNails.add(createImageThumbNail(context = context, imageUri = name))
                 }
 
                 ItemType.VIDEO.type -> {
                     resourceUri.add(name)
+                    videoThumbNails.add(createVideoThumbNail(context = context, uri = name))
                 }
 
                 else -> {
@@ -218,7 +236,9 @@ class GalleryViewModel @Inject constructor(
             it.copy(
                 resourceIds = resourceIds,
                 resourceDrawables = resourceDrawables,
-                resourceUri = resourceUri
+                resourceUri = resourceUri,
+                imageThumbNails = imageThumbNails,
+                videoThumbNails = videoThumbNails
             )
         }
     }
