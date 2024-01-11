@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="gray">#808080</color>
     <color name="home_bottom_sheet_ingredients_copy_button_color">#3A7CA8</color>
+    <color name="followers_following_color">#7F938D</color>
 </resources>

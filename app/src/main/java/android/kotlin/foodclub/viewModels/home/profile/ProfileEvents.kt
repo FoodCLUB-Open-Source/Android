@@ -13,4 +13,5 @@ interface ProfileEvents {
     fun unfollowUser(sessionUserId: Long, userId: Long)
     fun followUser(sessionUserId: Long, userId: Long)
     fun addIngredientsToBasket()
+    fun onRefreshUI()
 }
