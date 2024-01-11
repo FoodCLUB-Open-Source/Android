@@ -45,7 +45,7 @@ class GalleryViewModel @Inject constructor(
             .asImageBitmap()
     }
 
-    fun createVideoThumbNail(context: Context, uri: Uri): ImageBitmap {
+    private fun createVideoThumbNail(context: Context, uri: Uri): ImageBitmap {
         val mediaMetadataRetriever = MediaMetadataRetriever()
         mediaMetadataRetriever.setDataSource(context, uri)
         return mediaMetadataRetriever.frameAtTime?.asImageBitmap() ?: ImageBitmap(480, 480)
