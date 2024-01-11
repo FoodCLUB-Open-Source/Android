@@ -16,7 +16,6 @@ import android.kotlin.foodclub.utils.helpers.uriToFile
 import android.kotlin.foodclub.viewModels.home.profile.ProfileEvents
 import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
 import android.kotlin.foodclub.views.ProfileViewLoadingSkeleton
-import android.kotlin.foodclub.views.home.ShowProfilePosts
 import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -98,7 +97,7 @@ fun ProfileView(
 
     val brush = shimmerBrush()
 
-    if (!isInternetConnected || state.userProfile == null) {
+    if (!isInternetConnected && state.userProfile == null) {
         ProfileViewLoadingSkeleton(
             brush,
             isInternetConnected,
@@ -158,7 +157,7 @@ fun ProfileView(
 
         val profile = state.userProfile
         val userPosts = state.userPosts
-        val topCreators = profile.topCreators
+        val topCreators = profile?.topCreators
         val bookmarkedPosts = state.bookmarkedPosts
         val tabItems = stringArrayResource(id = R.array.profile_tabs)
         var showBottomSheet by remember { mutableStateOf(false) }
@@ -187,7 +186,7 @@ fun ProfileView(
                 }
             }
 
-        var showDeleteRecipe by remember {
+        var showPost by remember {
             mutableStateOf(false)
         }
         var postId by remember {
@@ -202,7 +201,7 @@ fun ProfileView(
             userTabItems = bookmarkedPosts
         }
 
-        if (showDeleteRecipe) {
+        if (showPost) {
             events.getPostData(postId)
 
             ShowProfilePosts(
@@ -211,10 +210,10 @@ fun ProfileView(
                 state = state,
                 onPostDeleted = {
                     events.updatePosts(postId)
-                    showDeleteRecipe = false
+                    showPost = false
                 },
                 onBackPressed = {
-                    showDeleteRecipe = false
+                    showPost = false
                 },
                 posts = userTabItems
             )
@@ -234,9 +233,11 @@ fun ProfileView(
                         ),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Box(if (userId == 0L) Modifier.clickable {
-                        showBottomSheet = true
-                    } else Modifier) {
+                    Box(
+                        if (userId == 0L) Modifier.clickable {
+                            showBottomSheet = true
+                        } else Modifier
+                    ) {
                         AsyncImage(
                             model = imageUri ?: R.drawable.profilepicture,
                             contentDescription = stringResource(id = R.string.profile_picture),
@@ -313,7 +314,7 @@ fun ProfileView(
                 ) {
                     Text(
                         fontFamily = Montserrat,
-                        text = profile.username,
+                        text = profile?.username ?: "",
                         fontSize = dimensionResource(id = R.dimen.fon_23).value.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_5)),
@@ -343,7 +344,7 @@ fun ProfileView(
 
                                 ) {
                                 Text(
-                                    text = AnnotatedString(profile.totalUserFollowers.toString()),
+                                    text = AnnotatedString(profile?.totalUserFollowers?.toString() ?: ""),
                                     modifier = Modifier.align(Alignment.Center),
                                     style = TextStyle(
                                         color = Color.Black,
@@ -378,7 +379,7 @@ fun ProfileView(
 
                                 ) {
                                 Text(
-                                    text = AnnotatedString(profile.totalUserFollowing.toString()),
+                                    text = AnnotatedString(profile?.totalUserFollowing?.toString() ?: ""),
                                     modifier = Modifier.align(Alignment.Center),
                                     style = TextStyle(
                                         color = Color.Black,
@@ -489,7 +490,7 @@ fun ProfileView(
                                         dataItem = dataItem,
                                         triggerShowDeleteRecipe = { tabItemId ->
                                             postId = tabItemId
-                                            showDeleteRecipe = true
+                                            showPost = true
                                         })
                                 }
                             }
