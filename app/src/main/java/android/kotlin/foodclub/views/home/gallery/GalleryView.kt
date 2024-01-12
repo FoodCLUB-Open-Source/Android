@@ -242,18 +242,22 @@ fun GalleryView(
                     }
 
                     if (selectedImageOption) {
-                        GalleryImageTab(
-                            images = state.resourceDrawables,
-                            itemsPerRow = itemsPerRow,
-                            imageThumbNails = state.imageThumbNails
-                        )
-                    } else {
-                        GalleryVideoTab(
-                            videos = state.resourceUri,
+                        GalleryTab(
+                            items = state.resourceDrawables,
                             itemsPerRow = itemsPerRow,
                             navController = navController,
-                            videoThumbNails = state.videoThumbNails,
+                            itemThumbNails = state.imageThumbNails,
                             galleryState = galleryState,
+                            itemType = ItemType.IMAGE.type
+                        )
+                    } else {
+                        GalleryTab(
+                            items = state.resourceUri,
+                            itemsPerRow = itemsPerRow,
+                            navController = navController,
+                            itemThumbNails = state.videoThumbNails,
+                            galleryState = galleryState,
+                            itemType = ItemType.VIDEO.type
                         )
                     }
 
@@ -265,28 +269,27 @@ fun GalleryView(
 
 }
 
-/*
+
 @Composable
-fun <E> GalleryTab(
-    items: List<E>,
+fun GalleryTab(
+    items: List<Uri>,
     itemsPerRow: Int = 3,
-    context: Context,
+    itemThumbNails: List<ImageBitmap>,
     navController: NavController,
     itemType: String,
-    state: String
+    galleryState: String
 ) {
-    var itemRows: MutableList<MutableList<E>> = arrayListOf()
-    val itemRow: MutableList<E> = arrayListOf()
+    var itemRows: MutableList<MutableList<Pair<Uri, ImageBitmap>>> = arrayListOf()
+    val itemRow: MutableList<Pair<Uri, ImageBitmap>> = arrayListOf()
     var count: Int = 0
 
-    for (image in items) {
+    items.zip(itemThumbNails).forEach{
         count += 1
-        itemRow.add(image)
+        itemRow.add(it)
         if (count == itemsPerRow) {
             itemRows.add(itemRow.toMutableList())
             count = 0
             itemRow.clear()
-            continue
         }
     }
 
@@ -309,14 +312,12 @@ fun <E> GalleryTab(
                     for (item in itemLine) {
                         ImageItem(
                             modifier = ratioModifier,
-                            imageID = (context).contentResolver.loadThumbnail(
-                                item.toString().toUri(), Size(480, 480), null
-                            ).asImageBitmap()
+                            imageID = item.second
                         )
                     }
                 } else {
                     for (item in itemLine) {
-                        VideoItem(ratioModifier, item.toString().toUri(), navController, state)
+                        VideoItem(ratioModifier, item.first, navController, galleryState = galleryState, thumbNail = item.second)
                     }
                 }
             }
@@ -324,7 +325,7 @@ fun <E> GalleryTab(
     }
 }
 
- */
+
 
 @Composable
 fun GalleryImageTab(
