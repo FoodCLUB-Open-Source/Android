@@ -178,7 +178,7 @@ fun DiscoverView(
     var alphaValue by remember { mutableFloatStateOf(1f) }
 
     alphaValue = if (isDialogOpen) {
-        0.1f
+        0.5f
     } else {
         1f
     }
@@ -186,10 +186,9 @@ fun DiscoverView(
     val initialPage = 0
     val pagerState1 = rememberPagerState(
         initialPage = initialPage,
-        initialPageOffsetFraction = 0f
-    ){
-        4
-    }
+        initialPageOffsetFraction = 0f,
+        pageCount = { 4 }
+    )
 
     val fling = PagerDefaults.flingBehavior(
         state = pagerState1, lowVelocityAnimationSpec = tween(
@@ -1176,7 +1175,7 @@ fun AddIngredientDialog(
             modifier = Modifier
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
                 .width(dimensionResource(id = R.dimen.dim_500))
-                .fillMaxHeight(0.5f)
+                .fillMaxHeight(0.25f)
                 .background(Color.White),
             shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16)),
             elevation = CardDefaults.cardElevation(
