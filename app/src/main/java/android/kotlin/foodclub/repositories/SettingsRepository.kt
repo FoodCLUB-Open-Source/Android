@@ -9,6 +9,7 @@ import android.kotlin.foodclub.network.retrofit.responses.settings.UpdateUserDet
 import android.kotlin.foodclub.network.retrofit.utils.apiRequestFlow
 import android.kotlin.foodclub.localdatasource.localdatasource.user_details_local_datasource.UserDetailsLocalDataSource
 import android.kotlin.foodclub.network.remotedatasource.settings_remote_datasource.SettingsRemoteDataSource
+import android.kotlin.foodclub.utils.helpers.ConnectivityUtils
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.util.Log
 import kotlinx.coroutines.flow.Flow
@@ -17,7 +18,8 @@ import kotlinx.coroutines.flow.map
 class SettingsRepository(
     private val settingsRemoteDataSource: SettingsRemoteDataSource,
     private val userDetailsMapper: UserDetailsMapper,
-    private val userDetailsLocalDataSource: UserDetailsLocalDataSource
+    private val userDetailsLocalDataSource: UserDetailsLocalDataSource,
+    private val connectivityUtils: ConnectivityUtils
 ) {
     companion object {
         private val TAG = SettingsRepository::class.java.simpleName
@@ -50,7 +52,9 @@ class SettingsRepository(
                     Resource.Error("User details not found in database")
                 }
             }.also {
-                retrieveUserFromService(userId)
+                if (connectivityUtils.isNetworkAvailable()){
+                    retrieveUserFromService(userId)
+                }
             }
     }
 

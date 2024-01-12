@@ -16,7 +16,6 @@ import android.kotlin.foodclub.utils.helpers.uriToFile
 import android.kotlin.foodclub.viewModels.home.profile.ProfileEvents
 import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
 import android.kotlin.foodclub.views.ProfileViewLoadingSkeleton
-import android.kotlin.foodclub.views.home.ShowProfilePosts
 import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -102,8 +101,8 @@ fun ProfileView(
     val context = LocalContext.current
     val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
     val brush = shimmerBrush()
-
     val scope = rememberCoroutineScope()
+
     val pullRefresh = rememberPullRefreshState(
         refreshing = state.isRefreshing,
         onRefresh = {
@@ -114,13 +113,12 @@ fun ProfileView(
             }
         }
     )
-
     Box(
         modifier = Modifier
             .fillMaxSize()
             .pullRefresh(pullRefresh)
     ){
-        if (isInternetConnected == false && state.userProfile == null) {
+        if (!isInternetConnected && state.userProfile == null) {
             ProfileViewLoadingSkeleton(
                 brush,
                 isInternetConnected,
@@ -170,6 +168,7 @@ fun ProfileView(
                 )
             }
 
+            val scope = rememberCoroutineScope()
             val pagerState = rememberPagerState(
                 initialPage = 0,
                 initialPageOffsetFraction = 0f,
@@ -207,7 +206,7 @@ fun ProfileView(
                     }
                 }
 
-            var showDeleteRecipe by remember {
+            var showPost by remember {
                 mutableStateOf(false)
             }
             var postId by remember {
@@ -222,7 +221,7 @@ fun ProfileView(
                 userTabItems = bookmarkedPosts
             }
 
-            if (showDeleteRecipe) {
+            if (showPost) {
                 events.getPostData(postId)
 
                 ShowProfilePosts(
@@ -231,10 +230,10 @@ fun ProfileView(
                     state = state,
                     onPostDeleted = {
                         events.updatePosts(postId)
-                        showDeleteRecipe = false
+                        showPost = false
                     },
                     onBackPressed = {
-                        showDeleteRecipe = false
+                        showPost = false
                     },
                     posts = userTabItems
                 )
@@ -254,9 +253,11 @@ fun ProfileView(
                             ),
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        Box(if (userId == 0L) Modifier.clickable {
-                            showBottomSheet = true
-                        } else Modifier) {
+                        Box(
+                            if (userId == 0L) Modifier.clickable {
+                                showBottomSheet = true
+                            } else Modifier
+                        ) {
                             AsyncImage(
                                 model = imageUri ?: R.drawable.profilepicture,
                                 contentDescription = stringResource(id = R.string.profile_picture),
@@ -280,7 +281,12 @@ fun ProfileView(
                                     .height(dimensionResource(id = R.dimen.dim_53))
                                     .width(dimensionResource(id = R.dimen.dim_53)),
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = colorResource(id = R.color.profile_view_button_container_color)
+                                    containerColor = Color(
+                                        255,
+                                        255,
+                                        255,
+                                        255
+                                    )
                                 ),
                                 contentPadding = PaddingValues(),
                                 onClick = { navController.navigate("SETTINGS") }
@@ -297,7 +303,12 @@ fun ProfileView(
                                     .height(dimensionResource(id = R.dimen.dim_53))
                                     .width(dimensionResource(id = R.dimen.dim_53)),
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = colorResource(id = R.color.profile_view_button_container_color)
+                                    containerColor = Color(
+                                        255,
+                                        255,
+                                        255,
+                                        255
+                                    )
                                 ),
                                 contentPadding = PaddingValues(),
                                 onClick = { showUserOptionsSheet = true }
@@ -353,7 +364,7 @@ fun ProfileView(
 
                                     ) {
                                     Text(
-                                        text = AnnotatedString(profile?.totalUserFollowers.toString()),
+                                        text = AnnotatedString(profile?.totalUserFollowers?.toString() ?: ""),
                                         modifier = Modifier.align(Alignment.Center),
                                         style = TextStyle(
                                             color = Color.Black,
@@ -388,7 +399,7 @@ fun ProfileView(
 
                                     ) {
                                     Text(
-                                        text = AnnotatedString(profile?.totalUserFollowing.toString()),
+                                        text = AnnotatedString(profile?.totalUserFollowing?.toString() ?: ""),
                                         modifier = Modifier.align(Alignment.Center),
                                         style = TextStyle(
                                             color = Color.Black,
@@ -499,9 +510,8 @@ fun ProfileView(
                                             dataItem = dataItem,
                                             triggerShowDeleteRecipe = { tabItemId ->
                                                 postId = tabItemId
-                                                showDeleteRecipe = true
-                                            }
-                                        )
+                                                showPost = true
+                                            })
                                     }
                                 }
 
@@ -559,7 +569,7 @@ fun ProfileView(
                             },
                             BottomSheetItem(3, stringResource(id = R.string.hide_your_foodsnaps), null) {},
                             BottomSheetItem(4, stringResource(id = R.string.copy_profile_url), null) {},
-                            BottomSheetItem(5, stringResource(id = R.string.share_this_profile), null) {}
+                            BottomSheetItem(5, stringResource(id = R.string.share_this_profile), null)
                         ),
                         sheetTitle = "",
 //                enableDragHandle = true,
@@ -580,7 +590,6 @@ fun ProfileView(
                         onDismiss = { showBlockView = false; showUserOptionsSheet = true }
                     )
                 }
-
                 if (showReportView) {
                     android.kotlin.foodclub.utils.composables.BlockReportView(
                         containerColor = Color.Black,

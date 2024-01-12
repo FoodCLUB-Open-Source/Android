@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.views.home
+package android.kotlin.foodclub.views.home.profile
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
@@ -13,7 +13,6 @@ import android.kotlin.foodclub.utils.composables.VideoLayout
 import android.kotlin.foodclub.utils.composables.VideoScroller
 import android.kotlin.foodclub.viewModels.home.profile.ProfileEvents
 import android.kotlin.foodclub.views.home.home.HomeBottomSheetIngredients
-import android.kotlin.foodclub.views.home.profile.ProfileState
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -295,11 +294,14 @@ fun ShowProfilePosts(
                             currentVideo.currentViewerInteraction.isBookmarked
                         )
                     }
-
-                    VideoScroller(currentVideo, pagerState, vtPager, onSingleTap = {
-                        pauseButtonVisibility = it.isPlaying
-                        it.playWhenReady = !it.isPlaying
-                    },
+                    VideoScroller(
+                        currentVideo,
+                        pagerState,
+                        vtPager,
+                        onSingleTap = {
+                            pauseButtonVisibility = it.isPlaying
+                            it.playWhenReady = !it.isPlaying
+                        },
                         onDoubleTap = { exoPlayer, offset ->
                             coroutineScope.launch {
                                 doubleTapState.animate(offset)
