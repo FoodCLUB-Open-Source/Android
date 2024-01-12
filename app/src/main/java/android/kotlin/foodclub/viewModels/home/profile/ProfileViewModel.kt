@@ -51,6 +51,7 @@ class ProfileViewModel @Inject constructor(
         if (sessionCache.getActiveSession()?.sessionUser?.userId == null) {
             sendUiEvent(UiEvent.Navigate(Graph.AUTHENTICATION))
         }
+        _state.update { it.copy(dataStore = storeData) }
     }
 
     override fun updateUserProfileImage(id: Long, file: File, uri: Uri) {
@@ -80,8 +81,6 @@ class ProfileViewModel @Inject constructor(
         if (newUserId != sessionCache.getActiveSession()!!.sessionUser.userId) {
             val userId = if(newUserId == 0L) sessionCache.getActiveSession()!!.sessionUser.userId else
                 newUserId
-
-            _state.update { it.copy(dataStore = storeData) }
 
             viewModelScope.launch {
                 getProfileModel(userId)
