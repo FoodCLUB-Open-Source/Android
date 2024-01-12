@@ -9,6 +9,10 @@ import android.kotlin.foodclub.config.ui.snapsTopbar
 import android.kotlin.foodclub.utils.helpers.fadingEdge
 import android.kotlin.foodclub.viewModels.home.home.HomeEvents
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,6 +28,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -84,8 +89,6 @@ fun HomeView(
     val triggerIngredientBottomSheetModal: () -> Unit = {
         showIngredientSheet = !showIngredientSheet
     }
-
-    var showFeedOnUI by remember { mutableStateOf(true) }
     var feedTransparency by remember { mutableFloatStateOf(1f) }
     var snapsTransparency by remember { mutableFloatStateOf(0.7f) }
 
@@ -93,20 +96,13 @@ fun HomeView(
     val pagerState = rememberPagerState(
 
         initialPage = 0,
-        initialPageOffsetFraction = 0f
+        initialPageOffsetFraction = 0f,
     ) {
         2
     }
 
     BackHandler {
-        if (showStories) {
-            showStories = !showStories
-        }
-        if (!showFeedOnUI) {
-            showFeedOnUI = true
-            snapsTransparency = 0.7f
-            feedTransparency = 1f
-        }
+
     }
     SideEffect {
         systemUiController.setSystemBarsColor(
@@ -129,7 +125,7 @@ fun HomeView(
                 .fillMaxWidth()
                 .height(dimensionResource(id = R.dimen.dim_95))
                 .then(
-                    if (showFeedOnUI) {
+                    if (pagerState.currentPage==0) {
                         Modifier
                             .fadingEdge(
                                 Brush.verticalGradient(
@@ -142,7 +138,7 @@ fun HomeView(
                     } else Modifier
                 )
                 .background(
-                    color = if (showFeedOnUI) {
+                    color = if (pagerState.currentPage==0) {
                         Color.Black
                     } else {
                         snapsTopbar
@@ -180,9 +176,11 @@ fun HomeView(
                         .alpha(feedTransparency)
                         .clickable {
                             coroutineScope.launch {
-                                pagerState.animateScrollToPage(0)
+                                    pagerState.animateScrollToPage(
+                                        page = 0,
+                                        animationSpec = tween(1, easing = LinearEasing)
+                                    )
                             }
-                            showFeedOnUI = true
                             snapsTransparency = 0.7f
                             feedTransparency = 1f
                         },
@@ -191,7 +189,7 @@ fun HomeView(
                     fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
                     style = TextStyle(color = Color.White),
                     lineHeight = dimensionResource(id = R.dimen.fon_21_94).value.sp,
-                    fontWeight = if (showFeedOnUI) FontWeight.Bold else FontWeight.Medium
+                    fontWeight = if (pagerState.currentPage==0) FontWeight.Bold else FontWeight.Medium
                 )
                 Text(
                     modifier = Modifier
@@ -208,18 +206,22 @@ fun HomeView(
                         .alpha(snapsTransparency)
                         .clickable {
                             coroutineScope.launch {
-                                pagerState.animateScrollToPage(1)
+                                pagerState.animateScrollToPage(
+                                    page = 1,
+                                    animationSpec = tween(1, easing = LinearEasing)
+                                )
+
                             }
                             feedTransparency = 0.7f
                             snapsTransparency = 1f
-                            showFeedOnUI = false
+
                         },
                     text = stringResource(id = R.string.snaps),
                     fontFamily = Montserrat,
                     fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
                     style = TextStyle(color = Color.White),
                     lineHeight = dimensionResource(id = R.dimen.fon_21_94).value.sp,
-                    fontWeight = if (!showFeedOnUI) FontWeight.Bold else FontWeight.Medium
+                    fontWeight = if (pagerState.currentPage==1) FontWeight.Bold else FontWeight.Medium
                 )
             }
         }
@@ -242,7 +244,7 @@ fun HomeView(
         ) { currentPage ->
             when (currentPage) {
                 0 -> {
-                    showFeedOnUI = true
+
                     VideoPager(
                         videoList = state.videoList,
                         initialPage = initialPage,
@@ -255,11 +257,13 @@ fun HomeView(
                 }
 
                 1 -> {
-                    showFeedOnUI = false
+
                     SnapScreen(
                         state = state, onShowStoriesChanged = { newShowStoriesValue ->
                             showStories = newShowStoriesValue
                         }, showStories = showStories,
+                        pagerState = pagerState,
+                        coroutineScope = coroutineScope,
                         navController = navController
                     )
                 }
