@@ -188,14 +188,17 @@ fun MyDigitalPantryView(
                     MyDigitalPantryList(
                         modifier = modifier,
                         productsList = userIngredients,
-                        onAddDateClicked = { isDatePickerVisible = true },
+                        onAddDateClicked = { ingredient->
+                            isDatePickerVisible = true
+                            events.updateIngredient(ingredient)
+                                           },
                         onEditClicked = { item ->
                             events.updateIngredient(item)
                             isShowEditScreen = !isShowEditScreen
                         },
                         view = stringResource(id = R.string.digitalPantry),
-                        onDeleteIngredient = {
-                            events.onDeleteIngredient(it)
+                        onDeleteIngredient = {ingredient->
+                            events.onDeleteIngredient(ingredient)
                         }
                     )
 
@@ -214,6 +217,8 @@ fun MyDigitalPantryView(
                                 onSave = { date ->
                                     if (date != null) {
                                         selectedDate = date
+                                        state.ingredientToEdit!!.expirationDate = selectedDate
+                                        events.updateIngredient(state.ingredientToEdit)
                                     }
                                 }
                             )
@@ -274,7 +279,7 @@ fun SearchMyIngredients(
 fun MyDigitalPantryList(
     modifier: Modifier,
     productsList: List<Ingredient>,
-    onAddDateClicked: () -> Unit,
+    onAddDateClicked: (Ingredient) -> Unit,
     onEditClicked: (Ingredient) -> Unit,
     onDeleteIngredient: (Ingredient) -> Unit,
     view: String
@@ -298,9 +303,7 @@ fun MyDigitalPantryList(
                 productsList = productsList,
                 onEditClicked = onEditClicked,
                 onAddDateClicked = onAddDateClicked,
-                onDeleteIngredient = {
-                    onDeleteIngredient(it)
-                }
+                onDeleteIngredient = onDeleteIngredient
             )
         }
     }
@@ -370,7 +373,7 @@ fun SwipeableItemsLazyColumn(
     height: Int,
     productsList: List<Ingredient>,
     onEditClicked: (Ingredient) -> Unit,
-    onAddDateClicked: () -> Unit,
+    onAddDateClicked: (Ingredient) -> Unit,
     onDeleteIngredient: (Ingredient) -> Unit
 ) {
     LazyColumn(
@@ -458,7 +461,7 @@ fun SwipeableItemsLazyColumn(
 fun SingleIngredientItem(
     modifier: Modifier,
     item: Ingredient,
-    onAddDateClicked: () -> Unit,
+    onAddDateClicked: (Ingredient) -> Unit,
     onEditClicked: (Ingredient) -> Unit
 ) {
     val title = item.type.split(",").first().trim()
@@ -505,7 +508,11 @@ fun SingleIngredientItem(
                 horizontalArrangement = Arrangement.Start
             ) {
                 Text(
-                    modifier = modifier.padding(start =dimensionResource(id = R.dimen.dim_6)),
+                    modifier = modifier
+                        .padding(start =dimensionResource(id = R.dimen.dim_6))
+                        .clickable {
+                            onEditClicked(item)
+                        },
                     text = quantity,
                     fontWeight = FontWeight(500),
                     fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
@@ -524,7 +531,7 @@ fun SingleIngredientItem(
                 Text(
                     modifier = modifier
                         .clickable {
-                            onAddDateClicked()
+                            onAddDateClicked(item)
                         },
                     text = expirationDate,
                     fontWeight = FontWeight(500),
