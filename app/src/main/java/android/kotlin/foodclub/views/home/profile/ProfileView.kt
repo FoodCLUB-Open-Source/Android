@@ -172,10 +172,9 @@ fun ProfileView(
 
             val pagerState = rememberPagerState(
                 initialPage = 0,
-                initialPageOffsetFraction = 0f
-            ) {
-                2
-            }
+                initialPageOffsetFraction = 0f,
+                pageCount = { 2 }
+            )
 
             val profile = state.userProfile
             val userPosts = state.userPosts
@@ -281,12 +280,7 @@ fun ProfileView(
                                     .height(dimensionResource(id = R.dimen.dim_53))
                                     .width(dimensionResource(id = R.dimen.dim_53)),
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(
-                                        255,
-                                        255,
-                                        255,
-                                        255
-                                    )
+                                    containerColor = colorResource(id = R.color.profile_view_button_container_color)
                                 ),
                                 contentPadding = PaddingValues(),
                                 onClick = { navController.navigate("SETTINGS") }
@@ -303,12 +297,7 @@ fun ProfileView(
                                     .height(dimensionResource(id = R.dimen.dim_53))
                                     .width(dimensionResource(id = R.dimen.dim_53)),
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(
-                                        255,
-                                        255,
-                                        255,
-                                        255
-                                    )
+                                    containerColor = colorResource(id = R.color.profile_view_button_container_color)
                                 ),
                                 contentPadding = PaddingValues(),
                                 onClick = { showUserOptionsSheet = true }
