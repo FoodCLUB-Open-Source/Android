@@ -6,6 +6,8 @@ import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.navigation.SettingsScreen
 import android.kotlin.foodclub.utils.composables.SettingsLayout
 import android.kotlin.foodclub.viewModels.settings.SettingsEvents
+import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -24,11 +26,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -40,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 
 val colorGray = Color(android.graphics.Color.parseColor("#D0D0D0"))
 val colorRed = Color(android.graphics.Color.parseColor("#C64E0B"))
@@ -50,6 +58,18 @@ fun SettingsView(
     events: SettingsEvents,
     state: SettingsState
 ) {
+    var imageUri: Uri? by remember { mutableStateOf(null) }
+
+    LaunchedEffect(key1 = true) {
+        state.dataStore?.getImage()?.collect { image ->
+            if (image != null) {
+                imageUri = Uri.parse(image)
+            } else {
+                imageUri = null
+                Log.e("SettingView", "NULL IMG URI")
+            }
+        }
+    }
 
     SettingsLayout(
         label = stringResource(id = R.string.settings),
@@ -60,7 +80,7 @@ fun SettingsView(
         state.user?.let {
             SettingsProfile(
                 userName = it.userName,
-                userImage = painterResource(id = R.drawable.story_user)
+                userImage = imageUri
             )
         }
 
@@ -227,22 +247,33 @@ fun SettingsTopBar(
 @Composable
 fun SettingsProfile(
     userName: String,
-    userImage: Painter
+    userImage: Uri?
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Row(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Image(
-                contentDescription = stringResource(id = R.string.user_images),
-                painter = userImage,
-                modifier = Modifier
-                    .size(dimensionResource(id = R.dimen.dim_120))
-                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_100)))
-            )
+            if (userImage != null){
+                AsyncImage(
+                    contentDescription = stringResource(id = R.string.user_images),
+                    model = userImage,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_60)))
+                        .height(dimensionResource(id = R.dimen.dim_124))
+                        .width(dimensionResource(id = R.dimen.dim_124)),
+                    contentScale = ContentScale.Crop
+                )
+            }else{
+                Image(
+                    painter = painterResource(id = R.drawable.story_user),
+                    contentDescription = stringResource(id = R.string.user_images),
+                    modifier = Modifier
+                        .size(dimensionResource(id = R.dimen.dim_120))
+                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_100)))
+                )
+            }
         }
-
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_15)))
 
         Row(

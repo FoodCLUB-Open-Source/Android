@@ -40,37 +40,26 @@ fun GridItem(
         .padding(dimensionResource(id = R.dimen.dim_10))
         ,shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
     ) {
-
-    if(isInternetConnected) {
-    Box(
-        modifier = Modifier
-            .background(
-                if (thumbnailPainter.state is AsyncImagePainter.State.Loading) brush
-                else SolidColor(Color.Transparent)
-            )
-            .fillMaxWidth()
-            .fillMaxHeight()
-    )
-    {
-        Image(
-            painter = painterResource(id = R.drawable.salad_ingredient),
-            contentDescription = null,
-            contentScale = ContentScale.FillHeight,
+        Box(
             modifier = Modifier
-                .fillMaxSize()
-                .clickable {
-                    triggerShowDeleteRecipe(dataItem.videoId)
-                }
-        )
-    }
-}
-        else{Box(
-    modifier = Modifier
-        .background(brush)
-        .fillMaxWidth()
-        .fillMaxHeight()
-)
+                .background(
+                    if (thumbnailPainter.state is AsyncImagePainter.State.Loading || !isInternetConnected) brush
+                    else SolidColor(Color.Transparent)
+                )
+                .fillMaxWidth()
+                .fillMaxHeight()
+        ) {
 
+            Image(
+                painter = painterResource(id = R.drawable.salad_ingredient),
+                contentDescription = null,
+                contentScale = ContentScale.FillHeight,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable {
+                        triggerShowDeleteRecipe(dataItem.videoId)
+                    }
+            )
         }
     }
 }

@@ -17,7 +17,8 @@ data class ProfileState(
     val myUserId : Long,
     val error : String,
     val postData: VideoModel?,
-    val recipe: Recipe?
+    val recipe: Recipe?,
+    var isRefreshing: Boolean
 ) {
 
 
@@ -34,6 +35,7 @@ data class ProfileState(
             error = "",
             postData = null,
             recipe = null,
+            isRefreshing = false
         )
     }
 }

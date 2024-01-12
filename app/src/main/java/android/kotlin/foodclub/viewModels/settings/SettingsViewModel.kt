@@ -4,6 +4,7 @@ import android.kotlin.foodclub.localdatasource.room.entity.UserDetailsModel
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.repositories.SettingsRepository
 import android.kotlin.foodclub.utils.helpers.Resource
+import android.kotlin.foodclub.utils.helpers.StoreData
 import android.kotlin.foodclub.views.settings.SettingsState
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -18,7 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val repository: SettingsRepository,
-    val sessionCache: SessionCache
+    val sessionCache: SessionCache,
+    private val dataStore: StoreData
 ) : ViewModel(), SettingsEvents {
     companion object {
         private val TAG = SettingsViewModel::class.java.simpleName
@@ -30,6 +32,11 @@ class SettingsViewModel @Inject constructor(
 
     init {
         val id = sessionCache.getActiveSession()!!.sessionUser.userId
+        _state.update { state->
+            state.copy(
+                dataStore = dataStore
+            )
+        }
         getUserDetails(id)
     }
 
