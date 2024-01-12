@@ -92,12 +92,13 @@ fun MyDigitalPantryView(
     state: DiscoverState
 ) {
     val modifier = Modifier
-    val userIngredients = state.userIngredients
+    val userIngredients = if (state.searchIngredientsListText == "")
+        state.userIngredients else state.searchResults
 
     var isShowEditScreen by remember { mutableStateOf(false) }
     var topBarTitleText by remember { mutableStateOf("") }
 
-    val searchText = state.ingredientSearchText
+    val searchText = state.searchIngredientsListText
 
     var isDatePickerVisible by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
@@ -174,14 +175,14 @@ fun MyDigitalPantryView(
                         modifier = Modifier,
                         searchTextValue = searchText,
                         onSearch = { input ->
-                            events.onSubSearchTextChange(input)
+                            events.onSearchIngredientsList(input)
                         }
                     )
                     Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_15)))
 
                     MyDigitalPantryList(
                         modifier = modifier,
-                        productsList = state.userIngredients,
+                        productsList = userIngredients,
                         onAddDateClicked = { isDatePickerVisible = true },
                         onEditClicked = { item ->
                             events.updateIngredient(item)

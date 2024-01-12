@@ -8,12 +8,12 @@ interface DiscoverEvents {
     fun getPostsByWorld(worldCategory: Long)
     fun getPostsByUserId()
     fun myFridgePosts()
-    fun onSubSearchTextChange(text: String)
+    fun onAddIngredientsSearchTextChange(text: String)
     fun updateIngredient(ingredient: Ingredient)
     fun deleteIngredientFromList(ingredient: Ingredient)
     fun addToUserIngredients(ingredient: Ingredient)
     fun getPostData(postId: Long)
     fun scan(imageCapture: ImageCapture, context: Context)
     fun addScanListToUserIngredients(ingredients: List<Ingredient>)
-
+    fun onSearchIngredientsList(text: String)
 }

@@ -159,7 +159,7 @@ fun ScanResultView(
                                 modifier = Modifier,
                                 searchTextValue = searchText,
                                 onSearch = { input->
-                                    events.onSubSearchTextChange(input)
+                                    events.onAddIngredientsSearchTextChange(input)
                                 }
                             )
                             Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_15)))

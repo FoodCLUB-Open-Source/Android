@@ -60,7 +60,7 @@ class DiscoverViewModel @Inject constructor(
         observeAndFetchSearchedIngredients()
     }
 
-    override fun onSubSearchTextChange(text: String) {
+    override fun onAddIngredientsSearchTextChange(text: String) {
         _state.value = _state.value.copy(ingredientSearchText = text)
     }
 
@@ -252,6 +252,20 @@ class DiscoverViewModel @Inject constructor(
             it.copy(
                 userIngredients = updatedList,
                 ingredientSearchText = ""
+            )
+        }
+    }
+
+    override fun onSearchIngredientsList(text: String) {
+        val myIngredients = state.value.userIngredients
+        val searchedList = myIngredients.filter { ingredient ->
+            ingredient.type.contains(text, ignoreCase = true)
+        }
+
+        _state.update {
+            it.copy(
+                searchIngredientsListText = text,
+                searchResults = searchedList.toList()
             )
         }
     }

@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 
 data class DiscoverState(
     var ingredientSearchText : String,
+    var searchIngredientsListText: String,
     val userIngredients : List<Ingredient>,
     val searchResults : List<Ingredient>,
     val postList: List<VideoModel>,
@@ -26,6 +27,7 @@ data class DiscoverState(
     companion object {
         fun default() = DiscoverState(
             ingredientSearchText = "",
+            searchIngredientsListText = "",
             userIngredients = emptyList(),
             searchResults = emptyList(),
             postList = emptyList(),
