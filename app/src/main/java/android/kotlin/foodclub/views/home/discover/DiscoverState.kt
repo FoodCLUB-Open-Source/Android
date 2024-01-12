@@ -9,7 +9,6 @@ import android.kotlin.foodclub.domain.models.products.ProductsData
 import androidx.compose.ui.graphics.ImageBitmap
 
 data class DiscoverState(
-    val mainSearchText : String,
     var ingredientSearchText : String,
     val userIngredients : List<Ingredient>,
     val searchResults : List<Ingredient>,
@@ -26,7 +25,6 @@ data class DiscoverState(
 ) {
     companion object {
         fun default() = DiscoverState(
-            mainSearchText = "",
             ingredientSearchText = "",
             userIngredients = emptyList(),
             searchResults = emptyList(),

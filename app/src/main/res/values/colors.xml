@@ -11,4 +11,5 @@
     <color name="home_bottom_sheet_ingredients_copy_button_color">#3A7CA8</color>
     <color name="followers_following_color">#7F938D</color>
     <color name="profile_view_button_container_color">#ffffff</color>
+    <color name="discover_view_basket_icon_container_color">#F5F5F5</color>
 </resources>

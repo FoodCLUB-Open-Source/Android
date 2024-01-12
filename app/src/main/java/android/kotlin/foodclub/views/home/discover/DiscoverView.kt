@@ -17,6 +17,7 @@ import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
 import android.kotlin.foodclub.views.home.myDigitalPantry.TitlesSection
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -109,6 +110,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
@@ -176,7 +178,7 @@ fun DiscoverView(
     var alphaValue by remember { mutableFloatStateOf(1f) }
 
     alphaValue = if (isDialogOpen) {
-        0.1f
+        0.5f
     } else {
         1f
     }
@@ -184,10 +186,9 @@ fun DiscoverView(
     val initialPage = 0
     val pagerState1 = rememberPagerState(
         initialPage = initialPage,
-        initialPageOffsetFraction = 0f
-    ){
-        4
-    }
+        initialPageOffsetFraction = 0f,
+        pageCount = { 4 }
+    )
 
     val fling = PagerDefaults.flingBehavior(
         state = pagerState1, lowVelocityAnimationSpec = tween(
@@ -207,7 +208,6 @@ fun DiscoverView(
 
         item {
             MainSearchBar(
-                searchTextValue = state.mainSearchText,
                 navController = navController,
                 basketCache = state.myBasketCache!!
             )
@@ -469,7 +469,6 @@ fun DiscoverView(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainSearchBar(
-    searchTextValue: String,
     navController: NavController,
     basketCache: MyBasketCache
 ) {
@@ -486,54 +485,37 @@ fun MainSearchBar(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        TextField(
+        Box(
             modifier = Modifier
                 .fillMaxWidth(0.85f)
                 .clip(
                     RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                 )
-                .pointerInput(Unit) {
-                    detectTapGestures(
-                        onPress = { },
-                        onDoubleTap = { },
-                        onLongPress = { },
-                        onTap = {
-                            navController.navigate(HomeOtherRoutes.MySearchView.route)
-                        }
+                .background(containerColor)
+                .clickable {
+                    navController.navigate(HomeOtherRoutes.MySearchView.route)
+                }
+            ){
+            Row(
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { }
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.search_icon_ingredients),
+                        contentDescription = null
                     )
-                },
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = containerColor,
-                unfocusedContainerColor = containerColor,
-                disabledContainerColor = containerColor,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent,
-            ),
-            value = searchTextValue,
-            onValueChange = {
-
-            },
-            placeholder = {
+                }
                 Text(
-                    modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_3)),
+                    modifier = Modifier
+                        .padding(top = dimensionResource(id = R.dimen.dim_3)),
                     text = stringResource(id = R.string.search_for),
                     color = Color.Gray,
                     textAlign = TextAlign.Center
                 )
-            },
-            leadingIcon = {
-                IconButton(
-                    onClick = {}
-                ) {
-                    Icon(
-                        painterResource(id = R.drawable.search_icon_ingredients),
-                        contentDescription = null,
-                    )
-                }
             }
-        )
-
+        }
         Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_5)))
 
         Button(
@@ -542,12 +524,10 @@ fun MainSearchBar(
                 .height(dimensionResource(id = R.dimen.dim_56))
                 .width(dimensionResource(id = R.dimen.dim_56)),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(245, 245, 245, 255),
+                containerColor = colorResource(id = R.color.discover_view_basket_icon_container_color),
             ),
             contentPadding = PaddingValues(),
-            onClick = {
-                // TODO impl search - this can be done
-            }
+            onClick = {}
         ) {
 
             BadgedBox(
@@ -1195,7 +1175,7 @@ fun AddIngredientDialog(
             modifier = Modifier
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
                 .width(dimensionResource(id = R.dimen.dim_500))
-                .fillMaxHeight(0.5f)
+                .fillMaxHeight(0.25f)
                 .background(Color.White),
             shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16)),
             elevation = CardDefaults.cardElevation(
