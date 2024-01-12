@@ -97,9 +97,10 @@ fun HomeView(
 
         initialPage = 0,
         initialPageOffsetFraction = 0f,
-    ) {
-        2
-    }
+        pageCount={2}
+    )
+
+
 
     BackHandler {
 
