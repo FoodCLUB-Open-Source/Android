@@ -167,6 +167,11 @@ fun MyDigitalPantryView(
                         ingredient = state.ingredientToEdit!!,
                         onEditIngredient = { ingredient ->
                             events.updateIngredient(ingredient)
+                            isShowEditScreen = false
+                        },
+                        onDeleteIngredient = {ingredient->
+                            events.onDeleteIngredient(ingredient)
+                            isShowEditScreen = false
                         }
                     )
                 } else {
@@ -188,7 +193,10 @@ fun MyDigitalPantryView(
                             events.updateIngredient(item)
                             isShowEditScreen = !isShowEditScreen
                         },
-                        view = stringResource(id = R.string.digitalPantry)
+                        view = stringResource(id = R.string.digitalPantry),
+                        onDeleteIngredient = {
+                            events.onDeleteIngredient(it)
+                        }
                     )
 
                     if (isDatePickerVisible) {
@@ -268,6 +276,7 @@ fun MyDigitalPantryList(
     productsList: List<Ingredient>,
     onAddDateClicked: () -> Unit,
     onEditClicked: (Ingredient) -> Unit,
+    onDeleteIngredient: (Ingredient) -> Unit,
     view: String
 ) {
     Surface(
@@ -288,7 +297,10 @@ fun MyDigitalPantryList(
                 height = Int.MAX_VALUE,
                 productsList = productsList,
                 onEditClicked = onEditClicked,
-                onAddDateClicked = onAddDateClicked
+                onAddDateClicked = onAddDateClicked,
+                onDeleteIngredient = {
+                    onDeleteIngredient(it)
+                }
             )
         }
     }
@@ -358,7 +370,8 @@ fun SwipeableItemsLazyColumn(
     height: Int,
     productsList: List<Ingredient>,
     onEditClicked: (Ingredient) -> Unit,
-    onAddDateClicked: () -> Unit
+    onAddDateClicked: () -> Unit,
+    onDeleteIngredient: (Ingredient) -> Unit
 ) {
     LazyColumn(
         modifier = modifier
@@ -378,7 +391,7 @@ fun SwipeableItemsLazyColumn(
 
             if (dismissState.isDismissed(DismissDirection.EndToStart)) {
                 LaunchedEffect(key1 = true) {
-                    // TODO delete the ingredient
+                    onDeleteIngredient(ingredient)
                     dismissState.reset()
                 }
             } else {
@@ -546,7 +559,8 @@ fun SingleIngredientItem(
 @Composable
 fun EditIngredientView(
     ingredient: Ingredient,
-    onEditIngredient: (Ingredient) -> Unit
+    onEditIngredient: (Ingredient) -> Unit,
+    onDeleteIngredient: (Ingredient) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -624,7 +638,7 @@ fun EditIngredientView(
                         contentColor = Color.White
                     ), contentPadding = PaddingValues( dimensionResource(id = R.dimen.dim_15)),
                     onClick = {
-                        // TODO impl delete ingredient
+                        onDeleteIngredient(ingredient)
                     }
                 ) {
                     Text(

@@ -270,6 +270,17 @@ class DiscoverViewModel @Inject constructor(
         }
     }
 
+    override fun onDeleteIngredient(ingredient: Ingredient) {
+        val myIngredients = state.value.userIngredients.toMutableList()
+        val matchingIngredient = myIngredients.find { it.type == ingredient.type }
+
+        if (matchingIngredient != null) {
+            myIngredients.remove(matchingIngredient)
+            _state.update { it.copy(userIngredients = myIngredients) }
+        }
+
+    }
+
     private suspend fun fetchProductsDatabase(searchText: String) {
         Log.e(TAG, "made call $searchText")
 

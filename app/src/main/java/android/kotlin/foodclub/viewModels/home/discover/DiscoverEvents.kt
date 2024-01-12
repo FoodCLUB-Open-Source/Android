@@ -16,4 +16,5 @@ interface DiscoverEvents {
     fun scan(imageCapture: ImageCapture, context: Context)
     fun addScanListToUserIngredients(ingredients: List<Ingredient>)
     fun onSearchIngredientsList(text: String)
+    fun onDeleteIngredient(ingredient: Ingredient)
 }

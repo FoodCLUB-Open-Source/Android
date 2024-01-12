@@ -151,6 +151,9 @@ fun ScanResultView(
                                 ingredient = state.ingredientToEdit!!,
                                 onEditIngredient = { ingr ->
                                     events.updateIngredient(ingr)
+                                },
+                                onDeleteIngredient = {ingr ->
+                                    //TODO add delete ingredient functionality here if needed
                                 }
                             )
                         }else{
@@ -232,7 +235,10 @@ fun ScanResultList(
                 height = Int.MAX_VALUE,
                 productsList = productsList,
                 onEditClicked = onEditClicked,
-                onAddDateClicked = onAddDateClicked
+                onAddDateClicked = onAddDateClicked,
+                onDeleteIngredient = {
+                    //TODO impl delete functionality if needed
+                }
             )
         }
     }
