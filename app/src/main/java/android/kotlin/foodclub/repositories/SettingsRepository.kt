@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class SettingsRepository(
-    //private val api: SettingsService,
     private val settingsRemoteDataSource: SettingsRemoteDataSource,
     private val userDetailsMapper: UserDetailsMapper,
     private val userDetailsLocalDataSource: UserDetailsLocalDataSource

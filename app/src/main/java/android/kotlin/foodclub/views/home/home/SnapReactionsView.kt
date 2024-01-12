@@ -2,7 +2,6 @@ package android.kotlin.foodclub.views.home.home
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.enums.Reactions
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -30,7 +29,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SnapReactionsView(
     modifier: Modifier,

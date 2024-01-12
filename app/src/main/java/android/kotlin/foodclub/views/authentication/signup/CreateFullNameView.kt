@@ -1,23 +1,21 @@
 package android.kotlin.foodclub.views.authentication.signup
 
+import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.auth.SignUpUser
 import android.kotlin.foodclub.utils.composables.AuthLayout
 import android.kotlin.foodclub.utils.composables.ConfirmButton
 import android.kotlin.foodclub.utils.composables.CustomTextField
 import android.kotlin.foodclub.utils.helpers.FieldsValidation
-import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.runtime.State
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
-import android.kotlin.foodclub.R
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 
 @Composable
 fun CreateFullNameView(

@@ -90,8 +90,8 @@ fun NavGraphBuilder.signupNavigationGraph(navController: NavHostController) {
 }
 
 sealed class SignUpScreen(val route: String) {
-    object SignUpPage1 : SignUpScreen(route = "signup_page_1")
-    object SignUpPage2 : SignUpScreen(route = "signup_page_2")
-    object SignUpPage3 : SignUpScreen(route = "signup_page_3")
-    object SignUpPage4 : SignUpScreen(route = "signup_page_4")
+    data object SignUpPage1 : SignUpScreen(route = "signup_page_1")
+    data object SignUpPage2 : SignUpScreen(route = "signup_page_2")
+    data object SignUpPage3 : SignUpScreen(route = "signup_page_3")
+    data object SignUpPage4 : SignUpScreen(route = "signup_page_4")
 }

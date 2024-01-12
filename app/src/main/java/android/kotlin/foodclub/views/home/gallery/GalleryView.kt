@@ -87,7 +87,7 @@ fun GalleryView(
         // TODO fill or remove
     }
 
-    val (selectedImageOption, OnOptionSelected) = remember {
+    val (selectedImageOption, onOptionSelected) = remember {
         mutableStateOf(true)
     }
 
@@ -153,7 +153,7 @@ fun GalleryView(
                         Button(
                             onClick = {
                                 if (!selectedImageOption) {
-                                    OnOptionSelected(true)
+                                    onOptionSelected(true)
                                 }
                             },
                             shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)),
@@ -198,7 +198,7 @@ fun GalleryView(
                         Button(
                             onClick = {
                                 if (selectedImageOption) {
-                                    OnOptionSelected(false)
+                                    onOptionSelected(false)
                                 }
                             }, shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)),
                             modifier = Modifier
@@ -279,6 +279,7 @@ fun GalleryTab(
     itemType: String,
     galleryState: String
 ) {
+
     var itemRows: MutableList<MutableList<Pair<Uri, ImageBitmap>>> = arrayListOf()
     val itemRow: MutableList<Pair<Uri, ImageBitmap>> = arrayListOf()
     var count: Int = 0
@@ -306,7 +307,7 @@ fun GalleryTab(
         { itemLine ->
             Row(verticalAlignment = Alignment.CenterVertically)
             {
-                val ratioModifier: Modifier = Modifier.weight(1f);
+                val ratioModifier: Modifier = Modifier.weight(1f)
 
                 if (itemType == ItemType.IMAGE.type) {
                     for (item in itemLine) {
@@ -333,7 +334,7 @@ fun GalleryImageTab(
     itemsPerRow: Int = 3,
     imageThumbNails: List<ImageBitmap>
 ) {
-    var imageRows: MutableList<MutableList<ImageBitmap>> = arrayListOf()
+    val imageRows: MutableList<MutableList<ImageBitmap>> = arrayListOf()
     val imageRow: MutableList<ImageBitmap> = arrayListOf()
     var count = 0
 
@@ -363,7 +364,7 @@ fun GalleryImageTab(
         { imageLine ->
             Row(verticalAlignment = Alignment.CenterVertically)
             {
-                val ratioModifier: Modifier = Modifier.weight(1f);
+                val ratioModifier: Modifier = Modifier.weight(1f)
 
                 for (image in imageLine) {
                     ImageItem(ratioModifier, image)
@@ -449,7 +450,7 @@ fun GalleryVideoTab(
         { videoLine ->
             Row(verticalAlignment = Alignment.CenterVertically)
             {
-                val ratioModifier: Modifier = Modifier.weight(1f);
+                val ratioModifier: Modifier = Modifier.weight(1f)
 
                 for (video in videoLine) {
                     VideoItem(ratioModifier, video.first, navController, galleryState, video.second)

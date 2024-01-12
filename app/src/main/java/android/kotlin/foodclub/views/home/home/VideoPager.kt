@@ -50,7 +50,7 @@ fun VideoPager(
         val pagerState = rememberPagerState(
             initialPage = initialPage ?: 0,
             initialPageOffsetFraction = 0f
-        ) {
+        ){
             videoList.size
         }
 
@@ -102,7 +102,7 @@ fun VideoPager(
                     pauseButtonVisibility = it.isPlaying
                     it.playWhenReady = !it.isPlaying
                 },
-                    onDoubleTap = { exoPlayer, offset ->
+                    onDoubleTap = { _, offset ->
                         coroutineScope.launch {
                             doubleTapState.animate(offset)
                         }

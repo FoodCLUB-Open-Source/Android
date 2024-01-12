@@ -3,8 +3,13 @@ package android.kotlin.foodclub.navigation
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
 import android.kotlin.foodclub.viewModels.home.camera.CameraViewModel
+import android.kotlin.foodclub.viewModels.home.discover.DiscoverViewModel
+import android.kotlin.foodclub.viewModels.home.follow.FollowerFollowingViewModel
+import android.kotlin.foodclub.viewModels.home.gallery.GalleryViewModel
+import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
+import android.kotlin.foodclub.viewModels.home.myBasket.MyBasketViewModel
+import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
 import android.kotlin.foodclub.views.home.CameraPreviewView
-import android.kotlin.foodclub.views.home.CreateView
 import android.kotlin.foodclub.views.home.TakeProfilePhotoView
 import android.kotlin.foodclub.views.home.TakeSnapView
 import android.kotlin.foodclub.views.home.camera.CameraView
@@ -17,7 +22,8 @@ import android.kotlin.foodclub.views.home.myDigitalPantry.MyDigitalPantryView
 import android.kotlin.foodclub.views.home.profile.ProfileView
 import android.kotlin.foodclub.views.home.scan.ScanResultView
 import android.kotlin.foodclub.views.home.scan.ScanView
-import android.kotlin.foodclub.views.home.scan.topbackbar
+import android.kotlin.foodclub.views.home.scan.TopBackBar
+import android.kotlin.foodclub.views.home.search.SearchView
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.LaunchedEffect
@@ -29,15 +35,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import android.kotlin.foodclub.viewModels.home.discover.DiscoverViewModel
-import android.kotlin.foodclub.viewModels.home.follow.FollowerFollowingViewModel
-import android.kotlin.foodclub.viewModels.home.gallery.GalleryViewModel
-import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
-import android.kotlin.foodclub.viewModels.home.myBasket.MyBasketViewModel
-import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
-import android.kotlin.foodclub.views.home.search.SearchView
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -104,7 +101,7 @@ fun NavGraphBuilder.homeNavigationGraph(
             )
         }
         composable(route = BottomBarScreenObject.Create.route) {
-            CreateView()
+//            CreateView()
         }
 
         composable(route = BottomBarScreenObject.Play.route) {
@@ -123,7 +120,7 @@ fun NavGraphBuilder.homeNavigationGraph(
             val viewModel = it.sharedHiltViewModel<DiscoverViewModel>(navController)
             val state = viewModel.state.collectAsState()
 
-            topbackbar(navController = navController)
+            TopBackBar(navController = navController)
             {
                 ScanView(
                     navController = navController,
@@ -158,7 +155,7 @@ fun NavGraphBuilder.homeNavigationGraph(
 
         }
         composable(route = HomeOtherRoutes.VideoTrimmerView.route) {
-            CreateView()
+//            CreateView()
         }
         composable(route = HomeOtherRoutes.CameraPreviewView.route) { backStackEntry ->
             val uri = backStackEntry.arguments?.getString("uri") ?: ""
@@ -268,22 +265,22 @@ fun NavGraphBuilder.homeNavigationGraph(
 
 
 sealed class HomeOtherRoutes(val route: String) {
-    object SettingsView : HomeOtherRoutes(route = "SETTINGS")
-    object CameraView : HomeOtherRoutes(route = "CAMERA_VIEW/{state}")
-    object CreateRecipeView : HomeOtherRoutes(route = "CREATE_RECIPE_VIEW")
-    object CameraPreviewView : HomeOtherRoutes(route = "CAMERA_PREVIEW_VIEW/{uri}/{state}")
-    object GalleryView : HomeOtherRoutes(route = "GALLERY_VIEW/{state}")
-    object FollowerView : HomeOtherRoutes(route = "FOLLOWER_VIEW")
+    data object SettingsView : HomeOtherRoutes(route = "SETTINGS")
+    data object CameraView : HomeOtherRoutes(route = "CAMERA_VIEW/{state}")
+    data object CreateRecipeView : HomeOtherRoutes(route = "CREATE_RECIPE_VIEW")
+    data object CameraPreviewView : HomeOtherRoutes(route = "CAMERA_PREVIEW_VIEW/{uri}/{state}")
+    data object GalleryView : HomeOtherRoutes(route = "GALLERY_VIEW/{state}")
+    data object FollowerView : HomeOtherRoutes(route = "FOLLOWER_VIEW")
 
-    object FollowingView : HomeOtherRoutes(route = "FOLLOWING_VIEW")
+    data object FollowingView : HomeOtherRoutes(route = "FOLLOWING_VIEW")
 
-    object MyBasketView : HomeOtherRoutes(route = "BASKET_VIEW")
-    object MyDigitalPantryView : HomeOtherRoutes(route = "MY_DIGITAL_PANTRY_VIEW")
-    object MySearchView : HomeOtherRoutes(route = "SEARCH_VIEW")
+    data object MyBasketView : HomeOtherRoutes(route = "BASKET_VIEW")
+    data object MyDigitalPantryView : HomeOtherRoutes(route = "MY_DIGITAL_PANTRY_VIEW")
+    data object MySearchView : HomeOtherRoutes(route = "SEARCH_VIEW")
 
-    object VideoTrimmerView : HomeOtherRoutes(route = "VIDEOTRIMMER")
-    object TakeProfilePhotoView : HomeOtherRoutes(route = "TAKE_PROFILE_PHOTO_VIEW")
-    object TakeSnapPhotoView : HomeOtherRoutes(route = "TAKE_SNAP_VIEW")
+    data object VideoTrimmerView : HomeOtherRoutes(route = "VIDEOTRIMMER")
+    data object TakeProfilePhotoView : HomeOtherRoutes(route = "TAKE_PROFILE_PHOTO_VIEW")
+    data object TakeSnapPhotoView : HomeOtherRoutes(route = "TAKE_SNAP_VIEW")
 
 }
 

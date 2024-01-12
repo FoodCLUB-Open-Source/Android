@@ -1,10 +1,10 @@
 package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.domain.models.others.BottomSheetItem
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.disabledContainerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.domain.models.others.BottomSheetItem
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,7 +37,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 /**
@@ -284,7 +283,7 @@ fun BlockReportView(modifier: Modifier = Modifier, enableDragHandle: Boolean = f
                         contentColor = Color.White
                     )
                 ) {
-                    Text(text = "$type", fontSize = dimensionResource(id = R.dimen.fon_16).value.sp)
+                    Text(text = type, fontSize = dimensionResource(id = R.dimen.fon_16).value.sp)
                 }
             }
 

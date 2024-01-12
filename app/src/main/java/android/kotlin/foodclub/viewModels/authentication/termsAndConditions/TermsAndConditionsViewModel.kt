@@ -3,14 +3,13 @@ package android.kotlin.foodclub.viewModels.authentication.termsAndConditions
 import android.kotlin.foodclub.navigation.auth.AuthScreen
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class TermsAndConditionsViewModel : ViewModel(), TermsAndConditionsEvents {
 
 
-    private val _onBoxChecked = MutableStateFlow<Boolean>(true)
+    private val _onBoxChecked = MutableStateFlow(true)
     val onBoxChecked: StateFlow<Boolean> get() = _onBoxChecked
 
 

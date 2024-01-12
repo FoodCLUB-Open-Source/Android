@@ -7,13 +7,12 @@ import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.with
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -91,7 +90,7 @@ import kotlinx.coroutines.launch
  * @param onSave Optional function which executes when user clicks "On Save" button and provides
  * [Ingredient] object
  */
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IngredientsBottomSheet(
     onDismiss: () -> Unit,
@@ -120,7 +119,7 @@ fun IngredientsBottomSheet(
     ) {
         AnimatedContent(
             targetState = contentState, transitionSpec = {
-                fadeIn(animationSpec = tween(150, 150)) with
+                fadeIn(animationSpec = tween(150, 150)) togetherWith
                         fadeOut(animationSpec = tween(150)) using
                         SizeTransform { initialSize, targetSize ->
                             if (targetState.value == DrawerContentState.IngredientListContent) {
@@ -300,7 +299,6 @@ private fun IngredientSelectedView(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun IngredientListView(
     screenHeight: Dp,
@@ -368,11 +366,13 @@ private fun IngredientListView(
                         keyboardActions = KeyboardActions(
                             onDone = { /* Handle onDone event if needed */ }
                         ),
-                        colors = TextFieldDefaults.textFieldColors(
-                            containerColor = Color.White,
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White,
+                            disabledContainerColor = Color.White,
                             cursorColor = Color.Black,
                             focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
+                            unfocusedIndicatorColor = Color.Transparent,
                         ),
                         modifier = Modifier
                             .weight(1f)

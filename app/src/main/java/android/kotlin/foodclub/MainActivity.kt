@@ -44,8 +44,12 @@ class MainActivity : ComponentActivity() {
 
             FoodClubTheme {
                 val navController = rememberNavController()
-                MainLayout(navController = navController) { showSheet, triggerBottomSheetModal,
-                                                            triggerStory, setBottomBarVisibility ->
+                MainLayout(
+                    navController = navController
+                ) { showSheet,
+                    triggerBottomSheetModal,
+                    triggerStory,
+                    setBottomBarVisibility ->
                     RootNavigationGraph(
                         navController,
                         showSheet,

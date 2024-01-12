@@ -8,7 +8,7 @@ import android.kotlin.foodclub.domain.models.others.BottomSheetItem
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.CustomBottomSheet
-import android.kotlin.foodclub.utils.composables.ShimmerBrush
+import android.kotlin.foodclub.utils.composables.shimmerBrush
 import android.kotlin.foodclub.utils.helpers.ProfilePicturePlaceHolder
 import android.kotlin.foodclub.utils.helpers.UiEvent
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
@@ -96,9 +96,9 @@ fun ProfileView(
     val context = LocalContext.current
     val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
 
-    val brush = ShimmerBrush()
+    val brush = shimmerBrush()
 
-    if (isInternetConnected == false || state.userProfile == null || state.userPosts == null) {
+    if (!isInternetConnected || state.userProfile == null) {
         ProfileViewLoadingSkeleton(
             brush,
             isInternetConnected,
@@ -135,8 +135,6 @@ fun ProfileView(
                             popUpTo(Graph.HOME) { inclusive = true }
                         }
                     }
-
-                    else -> {}
                 }
             }
         }
@@ -151,7 +149,12 @@ fun ProfileView(
         }
 
         val scope = rememberCoroutineScope()
-        val pagerState = rememberPagerState() { 2 }
+        val pagerState = rememberPagerState(
+            initialPage = 0,
+            initialPageOffsetFraction = 0f
+        ) {
+            2
+        }
 
         val profile = state.userProfile
         val userPosts = state.userPosts
@@ -188,7 +191,7 @@ fun ProfileView(
             mutableStateOf(false)
         }
         var postId by remember {
-            mutableLongStateOf(0)
+            mutableLongStateOf(0L)
         }
 
         var userTabItems = listOf<VideoModel>()
@@ -458,7 +461,7 @@ fun ProfileView(
 
                     HorizontalPager(
                         state = pagerState,
-                        beyondBoundsPageCount = 10,
+                        beyondBoundsPageCount = 10
                     ) {
                         Box(
                             Modifier

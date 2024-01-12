@@ -54,8 +54,8 @@ import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.ui.draw.clip
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
@@ -102,7 +102,7 @@ fun extractThumbnailFromMedia(assetFileDesc: AssetFileDescriptor?, atTime: Int):
 }
 
 @SuppressLint("CoroutineCreationDuringComposition")
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class)
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
 fun VideoScroller(
@@ -120,11 +120,11 @@ fun VideoScroller(
     }
     var isFirstFrameLoad = remember { false }
 
-    var totalDuration by remember { mutableStateOf(0L) }
-    var currentTime by remember { mutableStateOf(0L) }
-    var bufferedPercentage by remember { mutableStateOf(0) }
+    var totalDuration by remember { mutableLongStateOf(0L) }
+    var currentTime by remember { mutableLongStateOf(0L) }
+    var bufferedPercentage by remember { mutableIntStateOf(0) }
 
-    var job: Job? = null
+    val job: Job?
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = true) {
@@ -213,12 +213,10 @@ fun VideoScroller(
                 )
             }
         }
-        val context = LocalContext.current
         val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
 
-        val brush = ShimmerBrush()
-        DisposableEffect(key1 =
-        if(isInternetConnected) {
+        val brush = shimmerBrush()
+        if (isInternetConnected) {
             Box(modifier = Modifier.fillMaxSize()) {
                 AndroidView(factory = {
                     playerView
@@ -229,7 +227,8 @@ fun VideoScroller(
                         onDoubleTap(exoPlayer, offset)
                     })
                 })
-                ProgressionBar(totalDuration,
+                ProgressionBar(
+                    totalDuration,
                     modifier = Modifier.align(Alignment.BottomEnd),
                     totalDuration = { totalDuration },
                     currentTime = { currentTime },
@@ -239,17 +238,21 @@ fun VideoScroller(
                 )
             }
         } else {
-            Box(modifier = Modifier.fillMaxSize()
-                .background(brush))
-        },
-            effect = {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(brush)
+            )
+        }
+
+        DisposableEffect(exoPlayer) {
             onDispose {
                 thumbnail = thumbnail.copy(second = true)
                 exoPlayer.release()
                 onVideoDispose()
-                job?.cancel()
+                job.cancel()
             }
-        })
+        }
     }
 
     if (thumbnail.second) {

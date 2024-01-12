@@ -153,7 +153,7 @@ class CreateRecipeViewModel @Inject constructor(
     }
 
     override fun fetchMoreProducts(searchText: String, onLoadCompleted: () -> Unit) {
-        val job = viewModelScope.launch() {
+        val job = viewModelScope.launch {
             when (
                 val resource = productsRepository.getProductsList(
                    searchText =  searchText,

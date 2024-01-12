@@ -6,7 +6,7 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
-import android.kotlin.foodclub.utils.composables.ShimmerBrush
+import android.kotlin.foodclub.utils.composables.shimmerBrush
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.kotlin.foodclub.views.home.discover.MainTabRow
 import androidx.compose.foundation.background
@@ -54,7 +54,6 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
@@ -64,7 +63,7 @@ fun SearchView(
 ){ val context = LocalContext.current
     val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
 
-    val brush = ShimmerBrush()
+    val brush = shimmerBrush()
     var mainTabIndex by remember { mutableIntStateOf(0) }
     val mainTabItemsList = stringArrayResource(id = R.array.search_tabs)
 
@@ -113,11 +112,13 @@ fun SearchRow(
                     RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
                 )
             ,
-            colors = TextFieldDefaults.textFieldColors(
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = containerColor,
+                unfocusedContainerColor = containerColor,
+                disabledContainerColor = containerColor,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent,
-                containerColor = containerColor
             ),
             value = searchTextValue,
             onValueChange = {
@@ -206,7 +207,7 @@ fun SearchHistory(){
         LazyColumn(
             modifier = Modifier.fillMaxWidth(),
             content = {
-                itemsIndexed(searchHistoryList) { index, data ->
+                itemsIndexed(searchHistoryList) { _, data ->
                     TextButton(
                         modifier = Modifier
                             .fillMaxWidth()

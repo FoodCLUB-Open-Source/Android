@@ -1,6 +1,5 @@
 package android.kotlin.foodclub.views.home.discover
 
-import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.Satoshi
@@ -13,7 +12,7 @@ import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.CustomDatePicker
 import android.kotlin.foodclub.utils.composables.EditIngredientQuantityPicker
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
-import android.kotlin.foodclub.utils.composables.ShimmerBrush
+import android.kotlin.foodclub.utils.composables.shimmerBrush
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
@@ -26,6 +25,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -132,7 +132,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun DiscoverView(
@@ -143,7 +142,7 @@ fun DiscoverView(
     val context = LocalContext.current
     val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
 
-    val brush = ShimmerBrush()
+    val brush = shimmerBrush()
     val screenHeight =
         LocalConfiguration.current.screenHeightDp.dp - dimensionResource(id = R.dimen.dim_240)
 
@@ -177,7 +176,7 @@ fun DiscoverView(
     var alphaValue by remember { mutableFloatStateOf(1f) }
 
     alphaValue = if (isDialogOpen) {
-        0.7f
+        0.1f
     } else {
         1f
     }
@@ -186,7 +185,7 @@ fun DiscoverView(
     val pagerState1 = rememberPagerState(
         initialPage = initialPage,
         initialPageOffsetFraction = 0f
-    ) {
+    ){
         4
     }
 
@@ -384,7 +383,7 @@ fun DiscoverView(
                     beyondBoundsPageCount = 1,
                     flingBehavior = fling,
                     modifier = Modifier
-                        .height(dimensionResource(id = R.dimen.dim_1000))
+                        .height(dimensionResource(id = R.dimen.dim_500))
                         .padding(top = dimensionResource(id = R.dimen.dim_0)),
                     state = pagerState1
                 ) {
@@ -494,13 +493,22 @@ fun MainSearchBar(
                     RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                 )
                 .pointerInput(Unit) {
-                    navController.navigate(HomeOtherRoutes.MySearchView.route)
+                    detectTapGestures(
+                        onPress = { },
+                        onDoubleTap = { },
+                        onLongPress = { },
+                        onTap = {
+                            navController.navigate(HomeOtherRoutes.MySearchView.route)
+                        }
+                    )
                 },
-            colors = TextFieldDefaults.textFieldColors(
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = containerColor,
+                unfocusedContainerColor = containerColor,
+                disabledContainerColor = containerColor,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent,
-                containerColor = containerColor
             ),
             value = searchTextValue,
             onValueChange = {
@@ -666,7 +674,6 @@ fun MainTabRow(
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubSearchBar(
     navController: NavController,
@@ -691,11 +698,13 @@ fun SubSearchBar(
                 .clip(
                     RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                 ),
-            colors = TextFieldDefaults.textFieldColors(
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = containerColor,
+                unfocusedContainerColor = containerColor,
+                disabledContainerColor = containerColor,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent,
-                containerColor = containerColor
             ),
             value = searchTextValue,
             onValueChange = {
@@ -1177,13 +1186,16 @@ fun AddIngredientDialog(
     ingredientName: String? = ""
 ) {
     Dialog(
-        properties = DialogProperties(dismissOnClickOutside = false, dismissOnBackPress = false),
+        properties = DialogProperties(
+            dismissOnClickOutside = false,
+            dismissOnBackPress = false
+        ),
         onDismissRequest = { }) {
         Card(
             modifier = Modifier
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
                 .width(dimensionResource(id = R.dimen.dim_500))
-                .fillMaxHeight(0.2f)
+                .fillMaxHeight(0.5f)
                 .background(Color.White),
             shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16)),
             elevation = CardDefaults.cardElevation(
@@ -1310,7 +1322,7 @@ fun GridItem2(
     navController: NavController,
     dataItem: VideoModel,
     userName: String,
-    brush: Brush = ShimmerBrush(),
+    brush: Brush = shimmerBrush(),
 ) {
     val thumbnailPainter = rememberAsyncImagePainter(dataItem.thumbnailLink)
     Card(

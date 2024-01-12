@@ -111,7 +111,7 @@ fun CameraView(
         )
     )
 
-    var recording: Recording? by remember { mutableStateOf<Recording?>(null) }
+    var recording: Recording? by remember { mutableStateOf(null) }
     val previewView: PreviewView = remember { PreviewView(context) }
     val videoCapture: MutableState<VideoCapture<Recorder>?> = remember { mutableStateOf(null) }
     val recordingStarted: MutableState<Boolean> = remember { mutableStateOf(false) }

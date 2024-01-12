@@ -63,9 +63,9 @@ fun NavGraphBuilder.settingsNavigationGraph(navController: NavHostController) {
 }
 
 sealed class SettingsScreen(val route: String) {
-    object Main : SettingsScreen(route = "SETTINGS_MENU")
-    object Privacy : SettingsScreen(route = "SETTINGS_PRIVACY")
-    object PrivacyPolicy : SettingsScreen(route = "SETTINGS_PRIVACY_POLICY")
-    object EditProfile : SettingsScreen(route = "SETTINGS_EDIT_PROFILE")
-    object ChangePassword : SettingsScreen(route = "SETTINGS_CHANGE_PASS")
+    data object Main : SettingsScreen(route = "SETTINGS_MENU")
+    data object Privacy : SettingsScreen(route = "SETTINGS_PRIVACY")
+    data object PrivacyPolicy : SettingsScreen(route = "SETTINGS_PRIVACY_POLICY")
+    data object EditProfile : SettingsScreen(route = "SETTINGS_EDIT_PROFILE")
+    data object ChangePassword : SettingsScreen(route = "SETTINGS_CHANGE_PASS")
 }

@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -75,9 +74,9 @@ fun TextEditor(
 
     var offsetX by remember { mutableFloatStateOf(0f) }
     var offsetY by remember { mutableFloatStateOf(0f) }
-    var isPaletteColor = remember { mutableStateOf(false) }
+    val isPaletteColor = remember { mutableStateOf(false) }
     var selectedFont by remember { mutableStateOf("" )}
-    var fontWeight by remember { mutableFloatStateOf(400f) }
+    val fontWeight by remember { mutableFloatStateOf(400f) }
     var textSize by remember { mutableFloatStateOf(16f) }
     var textColor by remember { mutableStateOf(Color.White) }
     var textContent by remember { mutableStateOf<String?>(null) }
@@ -107,7 +106,7 @@ fun TextEditor(
             ){
                 Column(Modifier.align(Alignment.CenterStart)) {
 
-                    VerticalSliderw(
+                    VerticalSliderW(
                         value = textSize,
                         onValueChange = {
                             textSize = it
@@ -392,7 +391,7 @@ fun ColorButton(
 
 }
 @Composable
-fun VerticalSliderw(
+fun VerticalSliderW(
     value: Float,
     onValueChange: (Float) -> Unit,
     modifier: Modifier = Modifier,

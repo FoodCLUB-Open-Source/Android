@@ -347,8 +347,9 @@
         <item>Can</item>
     </string-array>
     <string name="added">Added!</string>
+    <string name="scan_results_list">Scan Results List!</string>
     <string name="successfully_added_first"> Successfully added </string>
-    <string name="successfully_added_second"> ingredient in your digital pantry, now you cna start your FoodCLUB journey!</string>
+    <string name="successfully_added_second"> ingredient in your digital pantry, now you can start your FoodCLUB journey!</string>
     <string name="scanning_completed_heading">Scanning completed!</string>
     <string name="ingredients_import_notification">%1$d items were detected in your fridge
         and the results will be imported now…</string>

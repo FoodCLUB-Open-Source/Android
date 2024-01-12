@@ -1,6 +1,5 @@
 package android.kotlin.foodclub.utils.composables
 
-import android.content.ContentValues.TAG
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.defaultButtonColors
@@ -10,7 +9,6 @@ import android.kotlin.foodclub.domain.models.home.VideoStats
 import android.kotlin.foodclub.domain.models.others.AnimatedIcon
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.Spring
@@ -197,7 +195,7 @@ fun VideoLayout(
 ) {val context = LocalContext.current
     val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
 
-    val brush = ShimmerBrush()
+    val brush = shimmerBrush()
     Box(modifier.alpha(opacity)) {
         Box(
             modifier = Modifier

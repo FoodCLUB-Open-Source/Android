@@ -206,7 +206,7 @@ fun HomeBottomSheetIngredients(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     LazyColumn {
-                        itemsIndexed(recipe.ingredients) { index, item ->
+                        itemsIndexed(recipe.ingredients) { _, item ->
                             HomeIngredient(
                                 ingredient = item,
                                 quantityMultiplier = (ingredientsMultiplier / ingredientsDivider)
@@ -232,6 +232,7 @@ fun HomeBottomSheetIngredients(
                         colors = defaultButtonColors(),
                         contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_15)),
                         onClick = {
+                            recipe.ingredients.map { ingredient -> ingredient.quantity = (ingredient.quantity * ingredientsMultiplier/2).toInt() }
                             onAddToBasket()
                             onDismiss()
                         }

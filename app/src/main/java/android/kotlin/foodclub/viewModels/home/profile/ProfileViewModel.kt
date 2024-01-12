@@ -131,8 +131,8 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             when (val resource = profileRepository.retrieveProfileFollowers(userId)) {
                 is Resource.Success -> {
-                    _state.update {
-                        it.copy(
+                    _state.update {state->
+                        state.copy(
                             error = "",
                             isFollowed = resource.data!!.any {
                                 it.userId.toLong() == sessionUserId
@@ -151,9 +151,11 @@ class ProfileViewModel @Inject constructor(
     override fun getPostData(postId: Long) {
 //        val userId = sessionCache.getActiveSession()?.sessionUser?.userId ?: return
 
-        _state.update {
-            it.copy(
-                postData = it.userPosts.filter { it.videoId == postId }.getOrNull(0)
+        _state.update { state->
+            state.copy(
+                postData = state.userPosts.filter {
+                    it.videoId == postId
+                }.getOrNull(0)
             )
         }
 

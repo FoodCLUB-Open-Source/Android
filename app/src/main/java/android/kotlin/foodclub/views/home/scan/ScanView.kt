@@ -12,7 +12,6 @@ import android.kotlin.foodclub.utils.composables.FabButtonSub
 import android.kotlin.foodclub.utils.composables.MultiFloatingActionButton
 import android.kotlin.foodclub.utils.composables.engine.createImageCaptureUseCase
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
-import android.kotlin.foodclub.viewModels.home.discover.DiscoverViewModel
 import android.kotlin.foodclub.views.home.discover.AddIngredientDialog
 import android.kotlin.foodclub.views.home.discover.DiscoverState
 import android.os.Build
@@ -54,7 +53,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -116,11 +115,11 @@ fun ScanView(
     var showImage by rememberSaveable { mutableStateOf(false) }
 
     var showBottomSheet by rememberSaveable { mutableStateOf(false) }
-    var BottomSheetNextButton by rememberSaveable { mutableStateOf(false) }
+    var bottomSheetNextButton by rememberSaveable { mutableStateOf(false) }
     val bottomSheetState = rememberModalBottomSheetState(showBottomSheet)
 
-    var Button1text = ""
-    var Button2text = ""
+    var button1text = ""
+    var button2text = ""
     var onclick1: () -> Unit = {}
     var onclick2: () -> Unit = {}
     Column(
@@ -139,8 +138,8 @@ fun ScanView(
                     fontFamily = Montserrat,
                     textAlign = TextAlign.Center
                 )
-                Button1text = stringResource(id = R.string.maybe_later)
-                Button2text = stringResource(id = R.string.scan)
+                button1text = stringResource(id = R.string.maybe_later)
+                button2text = stringResource(id = R.string.scan)
                 onclick1 = { navController.navigate(BottomBarScreenObject.Play.route) }
                 onclick2 = {
                     scanState = "Scanning"
@@ -168,8 +167,8 @@ fun ScanView(
                     fontFamily = Montserrat,
                     textAlign = TextAlign.Center
                 )
-                Button1text = stringResource(id = R.string.scan_again)
-                Button2text = stringResource(id = R.string.next)
+                button1text = stringResource(id = R.string.scan_again)
+                button2text = stringResource(id = R.string.next)
                 onclick1 = {
 
                     navController.navigate("ScanView_route")
@@ -267,13 +266,13 @@ fun ScanView(
                     .padding(dimensionResource(id = R.dimen.dim_18))
             ) {
                 Buttons(
-                    text = Button1text,
+                    text = button1text,
                     onClick = onclick1,
                     containerColor = Color.Transparent,
                     textcolor = foodClubGreen
                 )
                 Buttons(
-                    text = Button2text,
+                    text = button2text,
                     onClick = onclick2,
                     containerColor = foodClubGreen,
                     textcolor = Color.White
@@ -335,7 +334,7 @@ fun ScanView(
                     val visibleItems = state.scanResultItemList.take(3)
                     Row {
                         visibleItems.forEach {
-                            horizontalBottomSheetItem(
+                            HorizontalBottomSheetItem(
                                 icon = it.imageUrl,
                                 text = it.type,
                             )
@@ -373,7 +372,7 @@ fun ScanView(
                                     tint = Color.Black,
                                     modifier = Modifier
                                         .clickable(onClick = {
-                                            BottomSheetNextButton = !BottomSheetNextButton
+                                            bottomSheetNextButton = !bottomSheetNextButton
                                             scanState = "Completed"
                                         })
                                         .clip(CircleShape)
@@ -395,7 +394,7 @@ fun ScanView(
 
         }
 
-            if(BottomSheetNextButton) {
+            if(bottomSheetNextButton) {
                 AddIngredientDialog(
                     stringResource(R.string.scanning_completed_heading),
                     stringResource(R.string.ingredients_import_notification, state.scanResultItemList.size)
@@ -403,7 +402,7 @@ fun ScanView(
 
             LaunchedEffect(key1 = true) {
                 delay(3000)
-                BottomSheetNextButton = !BottomSheetNextButton
+                bottomSheetNextButton = !bottomSheetNextButton
                 showBottomSheet = !showBottomSheet
 
             }
@@ -414,7 +413,7 @@ fun ScanView(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun topbackbar(
+fun TopBackBar(
     navController: NavController,
     screenContent: @Composable () -> Unit
 ) {
@@ -457,9 +456,8 @@ fun topbackbar(
                     )
                 },
 
-                colors = TopAppBarDefaults.smallTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.onSecondary,
-
+                colors = topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.onSecondary
                     )
             )
         },
@@ -480,7 +478,7 @@ fun topbackbar(
 
 
 @Composable
-fun horizontalBottomSheetItem(icon: Any, text: String) {
+fun HorizontalBottomSheetItem(icon: Any, text: String) {
     Column(
         modifier = Modifier
             .padding(dimensionResource(id = R.dimen.dim_8)),

@@ -85,7 +85,6 @@ fun FoodClubTheme(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun textFieldCustomColors(
     containerColor: Color = Color(0xFFDADADA).copy(alpha = 0.04F),
@@ -96,16 +95,18 @@ fun textFieldCustomColors(
     focusedLabelColor: Color = Color(0xFF000000).copy(alpha = 0.4F),
     unfocusedIndicatorColor: Color = Color.Transparent,
     disabledIndicatorColor: Color = Color.Transparent
-) = TextFieldDefaults.textFieldColors(
-    containerColor = containerColor,
-    unfocusedTextColor = textColor,
+) = TextFieldDefaults.colors(
     focusedTextColor = textColor,
+    unfocusedTextColor = textColor,
+    focusedContainerColor = containerColor,
+    unfocusedContainerColor = containerColor,
+    disabledContainerColor = containerColor,
     cursorColor = cursorColor,
-    unfocusedLabelColor = unfocusedLabelColor,
-    focusedLabelColor = focusedLabelColor,
     focusedIndicatorColor = focusedIndicatorColor,
     unfocusedIndicatorColor = unfocusedIndicatorColor,
-    disabledIndicatorColor = disabledIndicatorColor
+    disabledIndicatorColor = disabledIndicatorColor,
+    focusedLabelColor = focusedLabelColor,
+    unfocusedLabelColor = unfocusedLabelColor,
 )
 
 @Composable

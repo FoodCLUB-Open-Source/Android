@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.views.authentication.forgotPassword.forgotPasswordScreen
 
 import android.annotation.SuppressLint
+import android.kotlin.foodclub.R
 import android.kotlin.foodclub.utils.composables.AuthLayout
 import android.kotlin.foodclub.utils.composables.ConfirmButton
 import android.kotlin.foodclub.utils.composables.CustomTextField
@@ -12,12 +13,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.State
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import android.kotlin.foodclub.R
-import androidx.compose.ui.res.dimensionResource
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
