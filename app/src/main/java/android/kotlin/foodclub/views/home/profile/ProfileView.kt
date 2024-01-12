@@ -569,7 +569,7 @@ fun ProfileView(
                             },
                             BottomSheetItem(3, stringResource(id = R.string.hide_your_foodsnaps), null) {},
                             BottomSheetItem(4, stringResource(id = R.string.copy_profile_url), null) {},
-                            BottomSheetItem(5, stringResource(id = R.string.share_this_profile), null)
+                            BottomSheetItem(5, stringResource(id = R.string.share_this_profile), null) {}
                         ),
                         sheetTitle = "",
 //                enableDragHandle = true,
