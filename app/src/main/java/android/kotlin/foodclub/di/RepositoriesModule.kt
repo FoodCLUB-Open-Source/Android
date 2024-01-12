@@ -38,6 +38,7 @@ import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.OfflineProfil
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.SharedVideoMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserLocalBookmarksMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserLocalPostsMapper
+import android.kotlin.foodclub.utils.helpers.ConnectivityUtils
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -124,8 +125,18 @@ object RepositoriesModule {
 
     @Provides
     @Singleton
-    fun provideSettingsRepository(settingsRemoteDataSource: SettingsRemoteDataSource, userDetailsMapper: UserDetailsMapper, profileDataLocalSource: UserDetailsLocalDataSource): SettingsRepository {
-        return SettingsRepository(settingsRemoteDataSource, userDetailsMapper, profileDataLocalSource)
+    fun provideSettingsRepository(
+        settingsRemoteDataSource: SettingsRemoteDataSource,
+        userDetailsMapper: UserDetailsMapper,
+        profileDataLocalSource: UserDetailsLocalDataSource,
+        connectivityUtils: ConnectivityUtils
+    ): SettingsRepository {
+        return SettingsRepository(
+            settingsRemoteDataSource,
+            userDetailsMapper,
+            profileDataLocalSource,
+            connectivityUtils
+        )
     }
 
     @Provides
