@@ -60,10 +60,6 @@ class DiscoverViewModel @Inject constructor(
         observeAndFetchSearchedIngredients()
     }
 
-    fun onMainSearchTextChange(text: String) {
-        _state.update { it.copy(mainSearchText = text) }
-    }
-
     override fun onSubSearchTextChange(text: String) {
         _state.value = _state.value.copy(ingredientSearchText = text)
     }
