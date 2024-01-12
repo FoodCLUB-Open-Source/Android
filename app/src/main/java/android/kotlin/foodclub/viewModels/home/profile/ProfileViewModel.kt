@@ -219,6 +219,13 @@ class ProfileViewModel @Inject constructor(
         basketCache.saveBasket(basket)
     }
 
+    override fun onRefreshUI() {
+        _state.update {
+            it.copy(isRefreshing = false)
+        }
+        setUser(_state.value.myUserId)
+    }
+
     private suspend fun getProfileModel(userId: Long) {
         viewModelScope.launch {
             when (val resource = profileRepository.retrieveProfileData(userId)) {
@@ -238,12 +245,10 @@ class ProfileViewModel @Inject constructor(
                 is Resource.Error -> {
                     val profileData = profileRepository.getUserProfileData(userId)
                     val postVideosData = profileRepository.getUserPosts()
-                    val bookmarkedVideosData = profileRepository.getBookmarkedVideos()
                     _state.update { state->
                         state.copy(
                             userProfile = profileData,
                             userPosts = postVideosData,
-                            bookmarkedPosts = bookmarkedVideosData,
                             error = resource.message!!
                         )
                     }
@@ -280,7 +285,13 @@ class ProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-                    _state.update { it.copy(error = resource.message!!) }
+                    val bookmarkedVideosData = profileRepository.getBookmarkedVideos()
+                    _state.update {
+                        it.copy(
+                            bookmarkedPosts = bookmarkedVideosData,
+                            error = resource.message!!
+                        )
+                    }
                 }
             }
         }
