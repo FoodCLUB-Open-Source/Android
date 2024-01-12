@@ -232,6 +232,7 @@ fun HomeBottomSheetIngredients(
                         colors = defaultButtonColors(),
                         contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_15)),
                         onClick = {
+                            recipe.ingredients.map { ingredient -> ingredient.quantity = (ingredient.quantity * ingredientsMultiplier/2).toInt() }
                             onAddToBasket()
                             onDismiss()
                         }
