@@ -102,6 +102,18 @@ fun ProfileView(
     val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
     val brush = shimmerBrush()
     val scope = rememberCoroutineScope()
+    var imageUri: Uri? by remember { mutableStateOf(null) }
+
+    LaunchedEffect(key1 = true) {
+        state.dataStore?.getImage()?.collect { image ->
+            if (image != null) {
+                imageUri = Uri.parse(image)
+            } else {
+                imageUri = null
+                Log.e("ProfileView", "NULL IMG URI")
+            }
+        }
+    }
 
     val pullRefresh = rememberPullRefreshState(
         refreshing = state.isRefreshing,
@@ -128,19 +140,6 @@ fun ProfileView(
                 state
             )
         } else {
-            var imageUri: Uri? by remember { mutableStateOf(null) }
-
-            LaunchedEffect(key1 = true) {
-                state.dataStore?.getImage()?.collect { image ->
-                    if (image != null) {
-                        imageUri = Uri.parse(image)
-                    } else {
-                        imageUri = null
-                        Log.e("ProfileView", "NULL IMG URI")
-                    }
-                }
-            }
-
             LaunchedEffect(userId) {
                 if (userId != 0L && userId != state.sessionUserId) {
                     events.isFollowedByUser(state.sessionUserId, userId)
@@ -168,7 +167,6 @@ fun ProfileView(
                 )
             }
 
-            val scope = rememberCoroutineScope()
             val pagerState = rememberPagerState(
                 initialPage = 0,
                 initialPageOffsetFraction = 0f,

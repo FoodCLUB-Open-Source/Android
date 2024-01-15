@@ -60,11 +60,7 @@ class DiscoverViewModel @Inject constructor(
         observeAndFetchSearchedIngredients()
     }
 
-    fun onMainSearchTextChange(text: String) {
-        _state.update { it.copy(mainSearchText = text) }
-    }
-
-    override fun onSubSearchTextChange(text: String) {
+    override fun onAddIngredientsSearchTextChange(text: String) {
         _state.value = _state.value.copy(ingredientSearchText = text)
     }
 
@@ -258,6 +254,31 @@ class DiscoverViewModel @Inject constructor(
                 ingredientSearchText = ""
             )
         }
+    }
+
+    override fun onSearchIngredientsList(text: String) {
+        val myIngredients = state.value.userIngredients
+        val searchedList = myIngredients.filter { ingredient ->
+            ingredient.type.contains(text, ignoreCase = true)
+        }
+
+        _state.update {
+            it.copy(
+                searchIngredientsListText = text,
+                searchResults = searchedList.toList()
+            )
+        }
+    }
+
+    override fun onDeleteIngredient(ingredient: Ingredient) {
+        val myIngredients = state.value.userIngredients.toMutableList()
+        val matchingIngredient = myIngredients.find { it.type == ingredient.type }
+
+        if (matchingIngredient != null) {
+            myIngredients.remove(matchingIngredient)
+            _state.update { it.copy(userIngredients = myIngredients) }
+        }
+
     }
 
     private suspend fun fetchProductsDatabase(searchText: String) {

@@ -151,6 +151,9 @@ fun ScanResultView(
                                 ingredient = state.ingredientToEdit!!,
                                 onEditIngredient = { ingr ->
                                     events.updateIngredient(ingr)
+                                },
+                                onDeleteIngredient = {ingr ->
+                                    //TODO add delete ingredient functionality here if needed
                                 }
                             )
                         }else{
@@ -159,7 +162,7 @@ fun ScanResultView(
                                 modifier = Modifier,
                                 searchTextValue = searchText,
                                 onSearch = { input->
-                                    events.onSubSearchTextChange(input)
+                                    events.onAddIngredientsSearchTextChange(input)
                                 }
                             )
                             Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_15)))
@@ -167,7 +170,10 @@ fun ScanResultView(
                             ScanResultList(
                                 modifier = modifier,
                                 productsList = state.scanResultItemList,
-                                onAddDateClicked = { isDatePickerVisible = true },
+                                onAddDateClicked = { ingredient->
+                                    events.updateIngredient(ingredient)
+                                    isDatePickerVisible = true
+                                                   },
                                 onEditClicked = {
                                         item->
                                     events.updateIngredient(item)
@@ -210,7 +216,7 @@ fun ScanResultView(
 fun ScanResultList(
     modifier: Modifier,
     productsList: List<Ingredient>,
-    onAddDateClicked: () -> Unit,
+    onAddDateClicked: (Ingredient) -> Unit,
     onEditClicked: (Ingredient) -> Unit,
     view: String
 ) {
@@ -232,7 +238,12 @@ fun ScanResultList(
                 height = Int.MAX_VALUE,
                 productsList = productsList,
                 onEditClicked = onEditClicked,
-                onAddDateClicked = onAddDateClicked
+                onAddDateClicked = {
+                    //TODO impl add-update data functionality if needed
+                },
+                onDeleteIngredient = {
+                    //TODO impl delete functionality if needed
+                }
             )
         }
     }

@@ -92,12 +92,13 @@ fun MyDigitalPantryView(
     state: DiscoverState
 ) {
     val modifier = Modifier
-    val userIngredients = state.userIngredients
+    val userIngredients = if (state.searchIngredientsListText == "")
+        state.userIngredients else state.searchResults
 
     var isShowEditScreen by remember { mutableStateOf(false) }
     var topBarTitleText by remember { mutableStateOf("") }
 
-    val searchText = state.ingredientSearchText
+    val searchText = state.searchIngredientsListText
 
     var isDatePickerVisible by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
@@ -166,6 +167,11 @@ fun MyDigitalPantryView(
                         ingredient = state.ingredientToEdit!!,
                         onEditIngredient = { ingredient ->
                             events.updateIngredient(ingredient)
+                            isShowEditScreen = false
+                        },
+                        onDeleteIngredient = {ingredient->
+                            events.onDeleteIngredient(ingredient)
+                            isShowEditScreen = false
                         }
                     )
                 } else {
@@ -174,20 +180,26 @@ fun MyDigitalPantryView(
                         modifier = Modifier,
                         searchTextValue = searchText,
                         onSearch = { input ->
-                            events.onSubSearchTextChange(input)
+                            events.onSearchIngredientsList(input)
                         }
                     )
                     Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_15)))
 
                     MyDigitalPantryList(
                         modifier = modifier,
-                        productsList = state.userIngredients,
-                        onAddDateClicked = { isDatePickerVisible = true },
+                        productsList = userIngredients,
+                        onAddDateClicked = { ingredient->
+                            isDatePickerVisible = true
+                            events.updateIngredient(ingredient)
+                                           },
                         onEditClicked = { item ->
                             events.updateIngredient(item)
                             isShowEditScreen = !isShowEditScreen
                         },
-                        view = stringResource(id = R.string.digitalPantry)
+                        view = stringResource(id = R.string.digitalPantry),
+                        onDeleteIngredient = {ingredient->
+                            events.onDeleteIngredient(ingredient)
+                        }
                     )
 
                     if (isDatePickerVisible) {
@@ -205,6 +217,8 @@ fun MyDigitalPantryView(
                                 onSave = { date ->
                                     if (date != null) {
                                         selectedDate = date
+                                        state.ingredientToEdit!!.expirationDate = selectedDate
+                                        events.updateIngredient(state.ingredientToEdit)
                                     }
                                 }
                             )
@@ -265,8 +279,9 @@ fun SearchMyIngredients(
 fun MyDigitalPantryList(
     modifier: Modifier,
     productsList: List<Ingredient>,
-    onAddDateClicked: () -> Unit,
+    onAddDateClicked: (Ingredient) -> Unit,
     onEditClicked: (Ingredient) -> Unit,
+    onDeleteIngredient: (Ingredient) -> Unit,
     view: String
 ) {
     Surface(
@@ -287,7 +302,8 @@ fun MyDigitalPantryList(
                 height = Int.MAX_VALUE,
                 productsList = productsList,
                 onEditClicked = onEditClicked,
-                onAddDateClicked = onAddDateClicked
+                onAddDateClicked = onAddDateClicked,
+                onDeleteIngredient = onDeleteIngredient
             )
         }
     }
@@ -357,7 +373,8 @@ fun SwipeableItemsLazyColumn(
     height: Int,
     productsList: List<Ingredient>,
     onEditClicked: (Ingredient) -> Unit,
-    onAddDateClicked: () -> Unit
+    onAddDateClicked: (Ingredient) -> Unit,
+    onDeleteIngredient: (Ingredient) -> Unit
 ) {
     LazyColumn(
         modifier = modifier
@@ -377,7 +394,7 @@ fun SwipeableItemsLazyColumn(
 
             if (dismissState.isDismissed(DismissDirection.EndToStart)) {
                 LaunchedEffect(key1 = true) {
-                    // TODO delete the ingredient
+                    onDeleteIngredient(ingredient)
                     dismissState.reset()
                 }
             } else {
@@ -444,7 +461,7 @@ fun SwipeableItemsLazyColumn(
 fun SingleIngredientItem(
     modifier: Modifier,
     item: Ingredient,
-    onAddDateClicked: () -> Unit,
+    onAddDateClicked: (Ingredient) -> Unit,
     onEditClicked: (Ingredient) -> Unit
 ) {
     val title = item.type.split(",").first().trim()
@@ -491,7 +508,11 @@ fun SingleIngredientItem(
                 horizontalArrangement = Arrangement.Start
             ) {
                 Text(
-                    modifier = modifier.padding(start =dimensionResource(id = R.dimen.dim_6)),
+                    modifier = modifier
+                        .padding(start =dimensionResource(id = R.dimen.dim_6))
+                        .clickable {
+                            onEditClicked(item)
+                        },
                     text = quantity,
                     fontWeight = FontWeight(500),
                     fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
@@ -510,7 +531,7 @@ fun SingleIngredientItem(
                 Text(
                     modifier = modifier
                         .clickable {
-                            onAddDateClicked()
+                            onAddDateClicked(item)
                         },
                     text = expirationDate,
                     fontWeight = FontWeight(500),
@@ -545,7 +566,8 @@ fun SingleIngredientItem(
 @Composable
 fun EditIngredientView(
     ingredient: Ingredient,
-    onEditIngredient: (Ingredient) -> Unit
+    onEditIngredient: (Ingredient) -> Unit,
+    onDeleteIngredient: (Ingredient) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -623,7 +645,7 @@ fun EditIngredientView(
                         contentColor = Color.White
                     ), contentPadding = PaddingValues( dimensionResource(id = R.dimen.dim_15)),
                     onClick = {
-                        // TODO impl delete ingredient
+                        onDeleteIngredient(ingredient)
                     }
                 ) {
                     Text(
