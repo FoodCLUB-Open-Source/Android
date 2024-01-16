@@ -1,16 +1,11 @@
 package android.kotlin.foodclub.views.home.gallery
 
 import android.Manifest
-import android.content.Context
-import android.graphics.Bitmap
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
-import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
-import android.util.Size
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -42,9 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -65,10 +58,9 @@ import java.nio.charset.StandardCharsets
 fun GalleryView(
     navController: NavController,
     state: GalleryState,
-    stateEncoded:String,
+    stateEncoded: String,
     itemsPerRow: Int = 3
 ) {
-    val context = LocalContext.current
 
     var galleryState = ""
 
@@ -166,7 +158,11 @@ fun GalleryView(
                             shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)),
                             modifier = Modifier
                                 .width(dimensionResource(id = R.dimen.dim_170))
-                                .border(dimensionResource(id = R.dimen.dim_1), Color.White, shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
+                                .border(
+                                    dimensionResource(id = R.dimen.dim_1),
+                                    Color.White,
+                                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_20))
+                                )
                                 .then(
                                     if (selectedImageOption) {
                                         Modifier.background(
@@ -206,7 +202,11 @@ fun GalleryView(
                             }, shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)),
                             modifier = Modifier
                                 .width(dimensionResource(id = R.dimen.dim_170))
-                                .border(dimensionResource(id = R.dimen.dim_1), Color.White, shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
+                                .border(
+                                    dimensionResource(id = R.dimen.dim_1),
+                                    Color.White,
+                                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_20))
+                                )
                                 .then(
                                     if (!selectedImageOption) {
                                         Modifier.background(
@@ -241,17 +241,22 @@ fun GalleryView(
                     }
 
                     if (selectedImageOption) {
-                        GalleryImageTab(
-                            images = state.resourceDrawables,
-                            itemsPerRow = itemsPerRow,
-                            context = context
-                        )
-                    } else {
-                        GalleryVideoTab(
-                            videos = state.resourceUri,
+                        GalleryTab(
+                            items = state.resourceDrawables,
                             itemsPerRow = itemsPerRow,
                             navController = navController,
+                            itemThumbNails = state.imageThumbNails,
                             galleryState = galleryState,
+                            itemType = ItemType.IMAGE.type
+                        )
+                    } else {
+                        GalleryTab(
+                            items = state.resourceUri,
+                            itemsPerRow = itemsPerRow,
+                            navController = navController,
+                            itemThumbNails = state.videoThumbNails,
+                            galleryState = galleryState,
+                            itemType = ItemType.VIDEO.type
                         )
                     }
 
@@ -263,27 +268,28 @@ fun GalleryView(
 
 }
 
+
 @Composable
-fun <E> GalleryTab(
-    items: List<E>,
+fun GalleryTab(
+    items: List<Uri>,
     itemsPerRow: Int = 3,
-    context: Context,
+    itemThumbNails: List<ImageBitmap>,
     navController: NavController,
     itemType: String,
-    state: String
+    galleryState: String
 ) {
-    val itemRows: MutableList<MutableList<E>> = arrayListOf()
-    val itemRow: MutableList<E> = arrayListOf()
-    var count = 0
 
-    for (image in items) {
+    var itemRows: MutableList<MutableList<Pair<Uri, ImageBitmap>>> = arrayListOf()
+    val itemRow: MutableList<Pair<Uri, ImageBitmap>> = arrayListOf()
+    var count: Int = 0
+
+    items.zip(itemThumbNails).forEach{
         count += 1
-        itemRow.add(image)
+        itemRow.add(it)
         if (count == itemsPerRow) {
             itemRows.add(itemRow.toMutableList())
             count = 0
             itemRow.clear()
-            continue
         }
     }
 
@@ -306,14 +312,12 @@ fun <E> GalleryTab(
                     for (item in itemLine) {
                         ImageItem(
                             modifier = ratioModifier,
-                            imageID = (context).contentResolver.loadThumbnail(
-                                item.toString().toUri(), Size(480, 480), null
-                            ).asImageBitmap()
+                            imageID = item.second
                         )
                     }
                 } else {
                     for (item in itemLine) {
-                        VideoItem(ratioModifier, item.toString().toUri(), navController, state)
+                        VideoItem(ratioModifier, item.first, navController, galleryState = galleryState, thumbNail = item.second)
                     }
                 }
             }
@@ -321,20 +325,22 @@ fun <E> GalleryTab(
     }
 }
 
+
+
 @Composable
 fun GalleryImageTab(
     images: List<Uri>,
     itemsPerRow: Int = 3,
-    context: Context
+    imageThumbNails: List<ImageBitmap>
 ) {
     val imageRows: MutableList<MutableList<ImageBitmap>> = arrayListOf()
     val imageRow: MutableList<ImageBitmap> = arrayListOf()
     var count = 0
 
-    for (image in images) {
+    for (image in imageThumbNails) {
         count += 1
         imageRow.add(
-            (context).contentResolver.loadThumbnail(image, Size(480, 480), null).asImageBitmap()
+           image
         )
         if (count == itemsPerRow) {
             imageRows.add(imageRow.toMutableList())
@@ -372,7 +378,10 @@ fun ImageItem(modifier: Modifier, imageID: ImageBitmap) {
     Card(
         modifier = Modifier
             .aspectRatio(1f)
-            .padding(start =dimensionResource(id = R.dimen.dim_5), top =dimensionResource(id = R.dimen.dim_5))
+            .padding(
+                start = dimensionResource(id = R.dimen.dim_5),
+                top = dimensionResource(id = R.dimen.dim_5)
+            )
             .clickable {
                 // TODO add functionality
             }
@@ -396,12 +405,14 @@ fun GalleryVideoTab(
     videos: List<Uri>,
     itemsPerRow: Int = 3,
     navController: NavController,
+    videoThumbNails: List<ImageBitmap>,
     galleryState: String
 ) {
-    val videoRows: MutableList<MutableList<Uri>> = arrayListOf()
-    val videoRow: MutableList<Uri> = arrayListOf()
-    var count = 0
+    var videoRows: MutableList<MutableList<Pair<Uri, ImageBitmap>>> = arrayListOf()
+    val videoRow: MutableList<Pair<Uri, ImageBitmap>> = arrayListOf()
+    var count: Int = 0
 
+    /*
     for (image in videos) {
         count += 1
         videoRow.add(image)
@@ -412,6 +423,18 @@ fun GalleryVideoTab(
             continue
         }
     }
+     */
+
+    videos.zip(videoThumbNails).forEach {
+        count += 1
+        videoRow.add(it)
+        if (count == itemsPerRow) {
+            videoRows.add(videoRow.toMutableList())
+            count = 0
+            videoRow.clear()
+        }
+    }
+
 
     if (videoRow.isNotEmpty()) {
         videoRows.add(videoRow)
@@ -429,13 +452,14 @@ fun GalleryVideoTab(
                 val ratioModifier: Modifier = Modifier.weight(1f)
 
                 for (video in videoLine) {
-                    VideoItem(ratioModifier, video, navController, galleryState)
+                    VideoItem(ratioModifier, video.first, navController, galleryState, video.second)
                 }
             }
         }
     }
 }
 
+/*
 fun createVideoThumb(context: Context, uri: Uri): Bitmap? {
     try {
         val mediaMetadataRetriever = MediaMetadataRetriever()
@@ -449,19 +473,23 @@ fun createVideoThumb(context: Context, uri: Uri): Bitmap? {
     return null
 }
 
+ */
+
 @Composable
 fun VideoItem(
     modifier: Modifier,
     videoID: Uri = ("").toUri(),
     navController: NavController,
-    galleryState: String
+    galleryState: String,
+    thumbNail: ImageBitmap
 ) {
-    val context = LocalContext.current
-    val bitmap = createVideoThumb(context = context, videoID)?.asImageBitmap()
     Card(
         modifier = Modifier
             .aspectRatio(1f)
-            .padding(start =dimensionResource(id = R.dimen.dim_5), top =dimensionResource(id = R.dimen.dim_5))
+            .padding(
+                start = dimensionResource(id = R.dimen.dim_5),
+                top = dimensionResource(id = R.dimen.dim_5)
+            )
             .clickable {
 
                 val uriEncoded = URLEncoder.encode(
@@ -472,16 +500,15 @@ fun VideoItem(
             }
             .then(modifier)
     ) {
-        if (bitmap != null) {
-            Image(
-                bitmap = bitmap,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .aspectRatio(1f, true)
-                    .padding(dimensionResource(id = R.dimen.dim_2))
-            )
-        }
+        Image(
+            bitmap = thumbNail,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .aspectRatio(1f, true)
+                .padding(dimensionResource(id = R.dimen.dim_2))
+        )
+
     }
 }
 
