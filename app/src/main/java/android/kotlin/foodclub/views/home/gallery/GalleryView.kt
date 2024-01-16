@@ -61,7 +61,6 @@ fun GalleryView(
     stateEncoded: String,
     itemsPerRow: Int = 3
 ) {
-    //val context = LocalContext.current
 
     var galleryState = ""
 
