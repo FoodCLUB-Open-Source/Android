@@ -89,10 +89,6 @@ fun HomeView(
     val triggerIngredientBottomSheetModal: () -> Unit = {
         showIngredientSheet = !showIngredientSheet
     }
-    var feedTransparency by remember { mutableFloatStateOf(1f) }
-    var snapsTransparency by remember { mutableFloatStateOf(0.7f) }
-
-
     val pagerState = rememberPagerState(
 
         initialPage = 0,
@@ -151,13 +147,12 @@ fun HomeView(
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
         ) {
-            if (showStories) {
+            if (showStories && pagerState.currentPage==1) {
                 Image(
                     painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
                     contentDescription = null,
                     modifier = Modifier
                         .align(Alignment.BottomStart)
-                        .alpha(feedTransparency)
                         .padding(
                             start = dimensionResource(id = R.dimen.dim_22),
                             bottom = dimensionResource(id = R.dimen.dim_18)
@@ -174,7 +169,6 @@ fun HomeView(
             ) {
                 Text(
                     modifier = modifier
-                        .alpha(feedTransparency)
                         .clickable {
                             coroutineScope.launch {
                                     pagerState.animateScrollToPage(
@@ -182,13 +176,11 @@ fun HomeView(
                                         animationSpec = tween(1, easing = LinearEasing)
                                     )
                             }
-                            snapsTransparency = 0.7f
-                            feedTransparency = 1f
                         },
                     text = stringResource(id = R.string.feed),
                     fontFamily = Montserrat,
                     fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
-                    style = TextStyle(color = Color.White),
+                    style = TextStyle(color = if(pagerState.currentPage==0)Color.White else Color.LightGray),
                     lineHeight = dimensionResource(id = R.dimen.fon_21_94).value.sp,
                     fontWeight = if (pagerState.currentPage==0) FontWeight.Bold else FontWeight.Medium
                 )
@@ -204,7 +196,6 @@ fun HomeView(
                 )
                 Text(
                     modifier = modifier
-                        .alpha(snapsTransparency)
                         .clickable {
                             coroutineScope.launch {
                                 pagerState.animateScrollToPage(
@@ -213,14 +204,13 @@ fun HomeView(
                                 )
 
                             }
-                            feedTransparency = 0.7f
-                            snapsTransparency = 1f
+
 
                         },
                     text = stringResource(id = R.string.snaps),
                     fontFamily = Montserrat,
                     fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
-                    style = TextStyle(color = Color.White),
+                    style = TextStyle(color = if(pagerState.currentPage==1)Color.White else Color.LightGray),
                     lineHeight = dimensionResource(id = R.dimen.fon_21_94).value.sp,
                     fontWeight = if (pagerState.currentPage==1) FontWeight.Bold else FontWeight.Medium
                 )
@@ -245,7 +235,7 @@ fun HomeView(
         ) { currentPage ->
             when (currentPage) {
                 0 -> {
-
+                    if(showStories) { showStories = !showStories }
                     VideoPager(
                         videoList = state.videoList,
                         initialPage = initialPage,
