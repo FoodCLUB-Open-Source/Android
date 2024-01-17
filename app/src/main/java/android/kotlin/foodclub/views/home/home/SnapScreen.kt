@@ -85,7 +85,8 @@ fun SnapScreen(
         mutableStateOf(MemoriesModel(listOf(), ""))
     }
 
-    var screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.94f
+    val SCREEN_HEIGHT_PERCENTAGE_EXCLUDING_BOTTOM_NAV = 0.94f
+    var screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * SCREEN_HEIGHT_PERCENTAGE_EXCLUDING_BOTTOM_NAV
 
     val context = LocalContext.current
     val motionScene = remember {
@@ -103,11 +104,11 @@ fun SnapScreen(
     ) {
         storyListData.size
     }
-
+    val ANIMATION_DURATION_SHORT = 300
     val snapPagerFling = PagerDefaults.flingBehavior(
         state = snapPagerState,
         lowVelocityAnimationSpec = tween(
-            easing = LinearEasing, durationMillis = 300
+            easing = LinearEasing, durationMillis = ANIMATION_DURATION_SHORT
         ),
     )
 
