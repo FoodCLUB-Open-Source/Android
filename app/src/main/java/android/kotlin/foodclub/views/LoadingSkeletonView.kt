@@ -7,7 +7,6 @@ import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.utils.composables.shimmerBrush
 import android.kotlin.foodclub.utils.helpers.ProfilePicturePlaceHolder
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
-import android.kotlin.foodclub.viewModels.home.profile.ProfileEvents
 import android.kotlin.foodclub.views.home.profile.ProfileState
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.animateDpAsState
@@ -255,10 +254,8 @@ fun VideoPagerLoadingSkeleton() {
 @Composable
 fun ProfileViewLoadingSkeleton (
     brush: Brush,
-    isInternetConnected:Boolean,
     navController: NavController,
     userId: Long,
-    events: ProfileEvents,
     state: ProfileState
 ) {
     val scope = rememberCoroutineScope()
