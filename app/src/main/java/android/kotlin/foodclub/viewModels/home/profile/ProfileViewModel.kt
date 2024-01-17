@@ -17,6 +17,8 @@ import android.net.Uri
 import android.util.Log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -79,12 +81,17 @@ class ProfileViewModel @Inject constructor(
 
     override fun setUser(newUserId: Long) {
         if (newUserId != sessionCache.getActiveSession()!!.sessionUser.userId) {
-            val userId = if(newUserId == 0L) sessionCache.getActiveSession()!!.sessionUser.userId else
-                newUserId
+            val userId = if (newUserId == 0L) sessionCache.getActiveSession()!!.sessionUser.userId else newUserId
 
             viewModelScope.launch {
-                getProfileModel(userId)
-                getBookmarkedPosts(userId)
+                _state.update { it.copy(isLoading = true) }
+
+                val profileDeferred = async { getProfileModel(userId) }
+                val bookmarkedDeferred = async { getBookmarkedPosts(userId) }
+
+                awaitAll(profileDeferred, bookmarkedDeferred)
+
+                _state.update { it.copy(isLoading = false) }
             }
         }
     }
@@ -220,37 +227,35 @@ class ProfileViewModel @Inject constructor(
 
     override fun onRefreshUI() {
         _state.update {
-            it.copy(isRefreshing = false)
+            it.copy(isRefreshingUI = false)
         }
         setUser(_state.value.myUserId)
     }
 
     private suspend fun getProfileModel(userId: Long) {
-        viewModelScope.launch {
-            when (val resource = profileRepository.retrieveProfileData(userId)) {
-                is Resource.Success -> {
-                    _state.update {
-                        it.copy(
-                            error = "",
-                            userProfile = resource.data,
-                            sessionUserId = sessionCache.getActiveSession()!!.sessionUser.userId,
-                            dataStore = storeData,
-                            userPosts = resource.data!!.userPosts,
-                            myUserId = sessionCache.getActiveSession()!!.sessionUser.userId
-                        )
-                    }
+        when (val resource = profileRepository.retrieveProfileData(userId)) {
+            is Resource.Success -> {
+                _state.update {
+                    it.copy(
+                        error = "",
+                        userProfile = resource.data,
+                        sessionUserId = sessionCache.getActiveSession()!!.sessionUser.userId,
+                        dataStore = storeData,
+                        userPosts = resource.data!!.userPosts,
+                        myUserId = sessionCache.getActiveSession()!!.sessionUser.userId,
+                    )
                 }
+            }
 
-                is Resource.Error -> {
-                    val profileData = profileRepository.getUserProfileData(userId)
-                    val postVideosData = profileRepository.getUserPosts()
-                    _state.update { state->
-                        state.copy(
-                            userProfile = profileData,
-                            userPosts = postVideosData,
-                            error = resource.message!!
-                        )
-                    }
+            is Resource.Error -> {
+                val profileData = profileRepository.getUserProfileData(userId)
+                val postVideosData = profileRepository.getUserPosts()
+                _state.update { state->
+                    state.copy(
+                        userProfile = profileData,
+                        userPosts = postVideosData,
+                        error = resource.message!!,
+                    )
                 }
             }
         }
@@ -271,26 +276,24 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private fun getBookmarkedPosts(userId: Long) {
-        viewModelScope.launch {
-            when (val resource = profileRepository.retrieveBookmarkedPosts(userId)) {
-                is Resource.Success -> {
-                    _state.update {
-                        it.copy(
-                            error = "",
-                            bookmarkedPosts = resource.data!!
-                        )
-                    }
+    private suspend fun getBookmarkedPosts(userId: Long) {
+        when (val resource = profileRepository.retrieveBookmarkedPosts(userId)) {
+            is Resource.Success -> {
+                _state.update {
+                    it.copy(
+                        error = "",
+                        bookmarkedPosts = resource.data!!,
+                    )
                 }
+            }
 
-                is Resource.Error -> {
-                    val bookmarkedVideosData = profileRepository.getBookmarkedVideos()
-                    _state.update {
-                        it.copy(
-                            bookmarkedPosts = bookmarkedVideosData,
-                            error = resource.message!!
-                        )
-                    }
+            is Resource.Error -> {
+                val bookmarkedVideosData = profileRepository.getBookmarkedVideos()
+                _state.update {
+                    it.copy(
+                        bookmarkedPosts = bookmarkedVideosData,
+                        error = resource.message!!,
+                    )
                 }
             }
         }
