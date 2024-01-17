@@ -129,10 +129,8 @@ fun ProfileView(
     if (isAPICallLoading){
         ProfileViewLoadingSkeleton(
             brush,
-            isInternetConnected,
             navController,
             userId,
-            events,
             state
         )
     }else{
