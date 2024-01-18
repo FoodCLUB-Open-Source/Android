@@ -23,3 +23,5 @@ val darkGrey = Color(0xFFCACBCB)
 val transparentWhite = Color(0x55FFFFFF)
 
 val confirmScreenColor = Color(0x55FFBBBB)
+
+val snapsTopbar=Color(0xFF424242)

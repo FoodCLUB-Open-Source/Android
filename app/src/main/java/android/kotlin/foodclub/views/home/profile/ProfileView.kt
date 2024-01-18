@@ -103,6 +103,7 @@ fun ProfileView(
     val brush = shimmerBrush()
     val scope = rememberCoroutineScope()
     var imageUri: Uri? by remember { mutableStateOf(null) }
+    val isAPICallLoading = state.isLoading
 
     LaunchedEffect(key1 = true) {
         state.dataStore?.getImage()?.collect { image ->
@@ -116,30 +117,28 @@ fun ProfileView(
     }
 
     val pullRefresh = rememberPullRefreshState(
-        refreshing = state.isRefreshing,
+        refreshing = state.isRefreshingUI,
         onRefresh = {
-            state.isRefreshing = true
+            state.isRefreshingUI = true
             scope.launch {
                 delay(2000)
                 events.onRefreshUI()
             }
         }
     )
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .pullRefresh(pullRefresh)
-    ){
-        if (!isInternetConnected && state.userProfile == null) {
-            ProfileViewLoadingSkeleton(
-                brush,
-                isInternetConnected,
-                navController,
-                userId,
-                events,
-                state
-            )
-        } else {
+    if (isAPICallLoading){
+        ProfileViewLoadingSkeleton(
+            brush,
+            navController,
+            userId,
+            state
+        )
+    }else{
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .pullRefresh(pullRefresh)
+        ){
             LaunchedEffect(userId) {
                 if (userId != 0L && userId != state.sessionUserId) {
                     events.isFollowedByUser(state.sessionUserId, userId)
@@ -599,11 +598,11 @@ fun ProfileView(
                     )
                 }
             }
+            PullRefreshIndicator(
+                refreshing = state.isRefreshingUI,
+                state = pullRefresh,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
         }
-        PullRefreshIndicator(
-            refreshing = state.isRefreshing,
-            state = pullRefresh,
-            modifier = Modifier.align(Alignment.TopCenter)
-        )
     }
 }
