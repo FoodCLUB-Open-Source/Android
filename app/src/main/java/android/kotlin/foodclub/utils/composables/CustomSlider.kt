@@ -23,19 +23,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun CustomSlider(sliderWidth: Dp, initialValue: Float = 0f, maxValue: Float, onValueChange: (Int) -> Unit) {
+fun CustomSlider(
+    sliderWidth: Dp,
+    initialValue: Float = 0f,
+    maxValue: Float,
+    onValueChange: (Int) -> Unit,
+    textOnTop: Boolean = true,
+    discreteSlider : Boolean = false) {
     var sliderPosition by remember { mutableFloatStateOf(initialValue) }
     Column(modifier = Modifier.width(sliderWidth)) {
-        Text(
-            text = sliderPosition.toInt().toString(),
-            fontSize = 16.sp,
-            fontFamily = Montserrat,
-            letterSpacing = TextUnit(-0.64f, TextUnitType.Sp),
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.offset(
-                x = 5.dp + (sliderWidth - 20.dp) * (sliderPosition / maxValue)
+        val steps = maxValue.toInt() - 1
+        if(textOnTop) {
+            Text(
+                text = sliderPosition.toInt().toString(),
+                fontSize = 16.sp,
+                fontFamily = Montserrat,
+                letterSpacing = TextUnit(-0.64f, TextUnitType.Sp),
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.offset(
+                    x = 5.dp + (sliderWidth - 20.dp) * (sliderPosition / maxValue)
+                )
             )
-        )
+        }
         Slider(
             modifier = Modifier.width(sliderWidth),
             value = sliderPosition,
@@ -43,13 +52,28 @@ fun CustomSlider(sliderWidth: Dp, initialValue: Float = 0f, maxValue: Float, onV
                 sliderPosition = it
                 onValueChange(it.toInt())
             },
+            steps = if(discreteSlider) steps else 0,
             valueRange = 0f..maxValue,
             colors = SliderDefaults.colors(
                 thumbColor = foodClubGreen,
                 activeTrackColor = Color(0xFFD9D9D9),
-                inactiveTrackColor = Color(0xFFD9D9D9)
+                inactiveTrackColor = Color(0xFFD9D9D9),
+                activeTickColor = Color.Black,
+                inactiveTickColor = Color.Black
             ),
         )
+        if(!textOnTop) {
+            Text(
+                text = sliderPosition.toInt().toString(),
+                fontSize = 16.sp,
+                fontFamily = Montserrat,
+                letterSpacing = TextUnit(-0.64f, TextUnitType.Sp),
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.offset(
+                    x = 5.dp + (sliderWidth - 20.dp) * (sliderPosition / maxValue)
+                )
+            )
+        }
     }
 
 }
