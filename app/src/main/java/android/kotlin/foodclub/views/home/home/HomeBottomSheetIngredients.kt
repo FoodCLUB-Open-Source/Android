@@ -160,29 +160,16 @@ fun HomeBottomSheetIngredients(
                             fontSize = if (isSmallScreen) dimensionResource(id = R.dimen.dim_14).value.sp else dimensionResource(id = R.dimen.dim_17).value.sp
                         )
                     }
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                               start = if (isSmallScreen) dimensionResource(id = R.dimen.dim_10) else dimensionResource(id = R.dimen.dim_10
-                            ))
-                        ,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
                     Box(
                         modifier = Modifier.padding(end = if (isSmallScreen) dimensionResource(id = R.dimen.dim_10) else dimensionResource(id = R.dimen.dim_0))
                     ) {
                         CustomSlider(
-                            sliderWidth = if (isSmallScreen) dimensionResource(id = R.dimen.dim_300) else dimensionResource(id = R.dimen.dim_350),
+                            sliderWidth = if (isSmallScreen) dimensionResource(id = R.dimen.dim_150) else dimensionResource(id = R.dimen.dim_200),
                             initialValue = ingredientsDivider,
                             maxValue = 24f,
                             onValueChange = {
                                 ingredientsMultiplier = it.toFloat()
-                            },
-                            textOnTop = false,
-                            discreteSlider = true
+                            }
                         )
                     }
                 }
