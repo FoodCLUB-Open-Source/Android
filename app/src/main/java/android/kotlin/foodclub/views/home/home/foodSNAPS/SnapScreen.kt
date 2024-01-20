@@ -1,11 +1,14 @@
-package android.kotlin.foodclub.views.home.home
+package android.kotlin.foodclub.views.home.home.foodSNAPS
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.domain.enums.Reactions
 import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
 import android.kotlin.foodclub.utils.composables.MemoriesItemView
-import android.kotlin.foodclub.views.home.SnapsView
+import android.kotlin.foodclub.views.home.home.HomeState
+import android.kotlin.foodclub.views.home.home.SnapReactionsView
+import android.kotlin.foodclub.views.home.home.SnapStoryView
+import android.kotlin.foodclub.views.home.home.TapToSnapDialog
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -213,6 +216,7 @@ fun SnapScreen(
                 }
             }
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_5)))
+
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -220,6 +224,7 @@ fun SnapScreen(
                     .layoutId(stringResource(id = R.string.memories_divider))
             )
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_25)))
+
             Text(
                 text = stringResource(id = R.string.today),
                 style = TextStyle(
@@ -233,8 +238,7 @@ fun SnapScreen(
             )
 
             if (storyListData.isEmpty()) {
-                TapToSnapDialog(modifier =
-                Modifier
+                TapToSnapDialog(modifier = Modifier
                     .layoutId(stringResource(id = R.string.tap_to_snap_string))
                     .clickable {
                         navController.navigate("CAMERA_VIEW/${"story".encodeUtf8()}")
