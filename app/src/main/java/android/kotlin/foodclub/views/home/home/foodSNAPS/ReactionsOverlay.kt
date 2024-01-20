@@ -34,17 +34,18 @@ import kotlin.random.Random
 @Composable
 fun ReactionsOverlay(
     modifier: Modifier,
-    selectedReaction: Reactions,
-    visible: Boolean,
-    content : @Composable () -> Unit
+    selectedReaction: Reactions?,
+    content : @Composable () -> Unit,
+    clearSelectedReaction: () -> Unit
 ) {
     val quantity = 22
 
-    var visibility by remember { mutableStateOf(visible) }
+    var visibility by remember { mutableStateOf(selectedReaction != null ) }
 
-    LaunchedEffect(key1 = visible) {
+    LaunchedEffect(key1 = visibility) {
         delay(5000)
         visibility = false
+        clearSelectedReaction()
     }
 
     Box(modifier = modifier) {
@@ -110,7 +111,7 @@ fun ReactionsOverlay(
 
 private fun calculateParticleParams(
     quantity: Int,
-    reaction: Reactions
+    reaction: Reactions?
 ): List<ParticleModel> {
     val random = Random(System.currentTimeMillis().toInt())
     val result = mutableListOf<ParticleModel>()
@@ -144,6 +145,8 @@ private fun lerp(start: Float, stop: Float, fraction: Float) =
 
 @Composable
 private fun Particle(model: ParticleModel) {
+    if (model.reaction == null) return
+
     val transitionState = remember {
         MutableTransitionState(0.1f).apply {
             targetState = 0f
@@ -204,5 +207,5 @@ data class ParticleModel(
     val horizontalFraction: Float,
     val initialScale: Float,
     val duration: Int,
-    val reaction: Reactions
+    val reaction: Reactions?
 )

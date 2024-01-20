@@ -9,6 +9,7 @@ import android.kotlin.foodclub.views.home.home.HomeState
 import android.kotlin.foodclub.views.home.home.SnapReactionsView
 import android.kotlin.foodclub.views.home.home.SnapStoryView
 import android.kotlin.foodclub.views.home.home.TapToSnapDialog
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -98,15 +99,15 @@ fun SnapScreen(
             .readBytes()
             .decodeToString()
     }
-    val storyListData = state.storyList
+    val storyListData = state.videoList //state.storyList
 
     val scrollState = rememberScrollState(initial = 0)
     val snapPagerState = rememberPagerState(
         initialPage = 0,
         initialPageOffsetFraction = 0f,
-    ) {
-        storyListData.size
-    }
+        pageCount = { storyListData.size }
+    )
+
     val ANIMATION_DURATION_SHORT = 300
     val snapPagerFling = PagerDefaults.flingBehavior(
         state = snapPagerState,
@@ -154,6 +155,7 @@ fun SnapScreen(
                 .height(screenHeightMinusBottomNavItem)
                 .fillMaxWidth()
 
+
         ) {
 
             Box(
@@ -179,7 +181,8 @@ fun SnapScreen(
 
             )
             Spacer(
-                modifier = modifier.size(dimensionResource(id = R.dimen.dim_12))
+                modifier = modifier
+                    .size(dimensionResource(id = R.dimen.dim_12))
             )
 
 
@@ -215,7 +218,8 @@ fun SnapScreen(
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_5)))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_5))
+            )
 
             Spacer(
                 modifier = Modifier
@@ -223,7 +227,8 @@ fun SnapScreen(
                     .background(color = Color.Black)
                     .layoutId(stringResource(id = R.string.memories_divider))
             )
-            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_25)))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_25))
+            )
 
             Text(
                 text = stringResource(id = R.string.today),
@@ -238,12 +243,14 @@ fun SnapScreen(
             )
 
             if (storyListData.isEmpty()) {
-                TapToSnapDialog(modifier = Modifier
-                    .layoutId(stringResource(id = R.string.tap_to_snap_string))
-                    .clickable {
-                        navController.navigate("CAMERA_VIEW/${"story".encodeUtf8()}")
-                    }
-                    .aspectRatio(0.9f, true)
+                TapToSnapDialog(
+                    modifier = Modifier
+                        .layoutId(stringResource(id = R.string.tap_to_snap_string))
+                        .clickable {
+                            navController.navigate("CAMERA_VIEW/${"story".encodeUtf8()}")
+                        }
+                        .aspectRatio(0.9f, true)
+                        .background(color = Color.Red)
                 )
             } else {
                 SnapStoryView(
@@ -280,7 +287,7 @@ fun SnapScreen(
                                 modifier = Modifier
                                     .align(Alignment.BottomCenter)
                                     .padding(bottom = dimensionResource(id = R.dimen.dim_150)),
-                                reactions = Reactions.values(),
+                                reactions = Reactions.entries.toTypedArray(),
                                 painter = rememberAsyncImagePainter(
                                     model = storyListData[it].thumbnailLink
                                 )
