@@ -13,10 +13,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -29,7 +28,6 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
@@ -37,68 +35,73 @@ import kotlin.random.Random
 fun ReactionsOverlay(
     modifier: Modifier,
     selectedReaction: Reactions,
-    visible: Boolean
+    visible: Boolean,
+    content : @Composable () -> Unit
 ) {
     val quantity = 22
 
-    var visibility  by remember { mutableStateOf(visible)}
+    var visibility by remember { mutableStateOf(visible) }
 
     LaunchedEffect(key1 = visible) {
         delay(5000)
         visibility = false
     }
 
+    Box(modifier = modifier) {
+        content()
 
-    AnimatedVisibility(
-        visible = visibility,
-        enter = slideInVertically(
-            initialOffsetY = { it },
-            animationSpec = tween(
-                durationMillis = MAX_ANIMATION_DURATION.toInt() - 300,
-                easing = LinearEasing,
-                delayMillis = 300
-            )
-        ),
-        exit = ExitTransition.None
-    ) {
-        val particles = remember {
-            calculateParticleParams(
-                quantity = quantity,
-                reaction = selectedReaction
-            ) }
-
-        val transitionState = remember {
-            MutableTransitionState(MIN_HEIGHT).apply {
-                targetState = MAX_HEIGHT
-            }
-        }
-        val transition = updateTransition(transitionState, label = "height transition")
-        val height by transition.animateInt(
-            transitionSpec = {
-                tween(
-                    durationMillis = MAX_ANIMATION_DURATION.toInt(),
-                    easing = LinearOutSlowInEasing
+        AnimatedVisibility(
+            visible = visibility,
+            enter = slideInVertically(
+                initialOffsetY = { it },
+                animationSpec = tween(
+                    durationMillis = MAX_ANIMATION_DURATION.toInt() - 300,
+                    easing = LinearEasing,
+                    delayMillis = 300
                 )
-            },
-            label = "height animation of particles"
-        ) { it }
+            ),
+            exit = ExitTransition.None
+        ) {
+            val particles = remember {
+                calculateParticleParams(
+                    quantity = quantity,
+                    reaction = selectedReaction
+                )
+            }
 
-        Layout(
-            modifier = modifier.padding(bottom = 50.dp),
-            content = {
-                for (i in 0 until quantity) {
-                    Particle(particles[i])
+            val transitionState = remember {
+                MutableTransitionState(MIN_HEIGHT).apply {
+                    targetState = MAX_HEIGHT
                 }
             }
-        ) { measurables, constraints ->
-            val placeables = measurables.map { it.measure(constraints) }
-            layout(constraints.maxWidth, height) {
-                placeables.forEachIndexed { index, placeable ->
-                    val params = particles[index]
-                    placeable.placeRelative(
-                        x = (params.horizontalFraction * constraints.maxWidth).toInt() - constraints.maxWidth / 2,
-                        y = (params.verticalFraction * height).toInt() - height / 2
+            val transition = updateTransition(transitionState, label = "height transition")
+            val height by transition.animateInt(
+                transitionSpec = {
+                    tween(
+                        durationMillis = MAX_ANIMATION_DURATION.toInt(),
+                        easing = LinearOutSlowInEasing
                     )
+                },
+                label = "height animation of particles"
+            ) { it }
+
+            Layout(
+                modifier = modifier.padding(bottom = 50.dp),
+                content = {
+                    for (i in 0 until quantity) {
+                        Particle(particles[i])
+                    }
+                }
+            ) { measurables, constraints ->
+                val placeables = measurables.map { it.measure(constraints) }
+                layout(constraints.maxWidth, height) {
+                    placeables.forEachIndexed { index, placeable ->
+                        val params = particles[index]
+                        placeable.placeRelative(
+                            x = (params.horizontalFraction * constraints.maxWidth).toInt() - constraints.maxWidth / 2,
+                            y = (params.verticalFraction * height).toInt() - height / 2
+                        )
+                    }
                 }
             }
         }
