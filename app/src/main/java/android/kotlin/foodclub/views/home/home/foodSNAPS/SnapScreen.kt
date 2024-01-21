@@ -99,7 +99,7 @@ fun SnapScreen(
             .readBytes()
             .decodeToString()
     }
-    val storyListData = state.storyList
+    val storyListData = state.storyList // use state.videoList to test
 
     val scrollState = rememberScrollState(initial = 0)
     val snapPagerState = rememberPagerState(
