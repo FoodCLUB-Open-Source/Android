@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.utils.composables
 
+import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -36,12 +39,13 @@ fun CustomSlider(
         if(textOnTop) {
             Text(
                 text = sliderPosition.toInt().toString(),
-                fontSize = 16.sp,
+                fontSize = dimensionResource(id = R.dimen.dim_16).value.sp,
                 fontFamily = Montserrat,
                 letterSpacing = TextUnit(-0.64f, TextUnitType.Sp),
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.offset(
-                    x = 5.dp + (sliderWidth - 20.dp) * (sliderPosition / maxValue)
+                    x = dimensionResource(id = R.dimen.dim_5) +
+                            (sliderWidth - dimensionResource(id = R.dimen.dim_20)) * (sliderPosition / maxValue)
                 )
             )
         }
@@ -56,8 +60,8 @@ fun CustomSlider(
             valueRange = 0f..maxValue,
             colors = SliderDefaults.colors(
                 thumbColor = foodClubGreen,
-                activeTrackColor = Color(0xFFD9D9D9),
-                inactiveTrackColor = Color(0xFFD9D9D9),
+                activeTrackColor = colorResource(R.color.custom_slider_track_color),
+                inactiveTrackColor = colorResource(R.color.custom_slider_track_color),
                 activeTickColor = Color.Black,
                 inactiveTickColor = Color.Black
             ),
@@ -65,12 +69,13 @@ fun CustomSlider(
         if(!textOnTop) {
             Text(
                 text = sliderPosition.toInt().toString(),
-                fontSize = 16.sp,
+                fontSize = dimensionResource(id = R.dimen.dim_16).value.sp,
                 fontFamily = Montserrat,
                 letterSpacing = TextUnit(-0.64f, TextUnitType.Sp),
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.offset(
-                    x = 5.dp + (sliderWidth - 20.dp) * (sliderPosition / maxValue)
+                    x = dimensionResource(id = R.dimen.dim_5) +
+                            (sliderWidth - dimensionResource(id = R.dimen.dim_20)) * (sliderPosition / maxValue)
                 )
             )
         }

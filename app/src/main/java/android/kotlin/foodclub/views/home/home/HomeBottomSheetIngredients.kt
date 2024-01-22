@@ -48,6 +48,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -131,16 +132,14 @@ fun HomeBottomSheetIngredients(
                         LabelText(
                             text = category
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_8)))
                     }
                 }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(
-                            if (isSmallScreen) dimensionResource(id = R.dimen.dim_0) else dimensionResource(
-                                id = R.dimen.dim_16
-                            )
+                            if (isSmallScreen) dimensionResource(id = R.dimen.dim_0) else dimensionResource(id = R.dimen.dim_16)
                         ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -191,26 +190,32 @@ fun HomeBottomSheetIngredients(
 //                            onClick = { selectedSection = section }
 //                        ) {
 //                            val isSelected = section == selectedSection
+//                            val textColor = colorResource(R.color.bottom_sheet_nav_bar_selected_color)
+//                            val smallScreenFontSize = dimensionResource(id = R.dimen.dim_14).value.sp
+//                            val fontSize = dimensionResource(id = R.dimen.dim_17).value.sp
+//                            val underlinePadding = dimensionResource(id = R.dimen.dim_10)
+//                            val strokeWidthPx = with(LocalDensity.current) { dimensionResource(id = R.dimen.dim_1).toPx() }
+//                            val underlineOffsetPx =
+//                                if(isSmallScreen) with(LocalDensity.current) { dimensionResource(id = R.dimen.dim_2).toPx() +smallScreenFontSize.toPx() + underlinePadding.toPx()}
+//                                else with(LocalDensity.current) { dimensionResource(id = R.dimen.dim_2).toPx() + fontSize.toPx() + underlinePadding.toPx()}
 //                            Text(
 //                                text = section,
 //                                fontFamily = Montserrat,
-//                                fontSize = if (isSmallScreen) dimensionResource(id = R.dimen.dim_14).value.sp else dimensionResource(id = R.dimen.dim_17).value.sp,
+//                                fontSize = if (isSmallScreen) smallScreenFontSize else fontSize,
 //                                maxLines = 1,
 //                                overflow = TextOverflow.Ellipsis,
 //                                modifier = Modifier
-//                                    .padding(horizontal = 5.dp)
+//                                    .padding(horizontal = dimensionResource(id = R.dimen.dim_5))
 //                                    .drawBehind {
 //                                        if (isSelected){
-//                                            val strokeWidthPx = 1.dp.toPx()
-//                                            val verticalOffset = size.height - 2.sp.toPx()
 //                                            drawLine(
-//                                                color = Color(0xFF7EC60B),
+//                                                color = textColor,
 //                                                strokeWidth = strokeWidthPx,
-//                                                start = Offset(0f, verticalOffset),
-//                                                end = Offset(size.width, verticalOffset)
+//                                                start = Offset(0f, underlineOffsetPx),
+//                                                end = Offset(size.width, underlineOffsetPx)
 //
 //                                    )}},
-//                                color = if (isSelected) Color(0xFF7EC60B) else Color.Black,
+//                                color = if (isSelected) colorResource(R.color.bottom_sheet_nav_bar_selected_color) else Color.Black,
 //                            )
 //                        }
 //                    }
@@ -276,13 +281,16 @@ fun LabelText(
         modifier = Modifier
             .clip(RoundedCornerShape(50))
             .background(backgroundColor)
-            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .padding(horizontal = dimensionResource(id = R.dimen.dim_8), vertical = dimensionResource(id = R.dimen.dim_4))
     ) {
         Text(
             text = text,
             color = textColor,
+            fontSize = dimensionResource(id = R.dimen.dim_16).value.sp,
+            fontWeight = FontWeight.Normal,
             fontFamily = Montserrat,
-            modifier = Modifier.padding(2.dp)
+            lineHeight = dimensionResource(id = R.dimen.dim_14).value.sp,
+            modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_2))
         )
     }
 }
@@ -329,7 +337,7 @@ fun IngredientsSection(isSmallScreen: Boolean, recipe: Recipe?, ingredientsMulti
         Spacer(modifier = Modifier.width(if (isSmallScreen) dimensionResource(id = R.dimen.dim_10) else dimensionResource(id = R.dimen.dim_16)))
         Box(modifier = Modifier.padding(end = if (isSmallScreen) dimensionResource(id = R.dimen.dim_10) else dimensionResource(id = R.dimen.dim_16))) {
             Text(
-                stringResource(id = R.string.clear), color = Color(0xFF7EC60B),
+                stringResource(id = R.string.clear), color = colorResource(R.color.bottom_sheet_nav_bar_selected_color),
                 fontFamily = Montserrat,
                 fontSize = if (isSmallScreen) dimensionResource(id = R.dimen.dim_13).value.sp else dimensionResource(id = R.dimen.dim_16).value.sp,
                 fontWeight = FontWeight.Bold
