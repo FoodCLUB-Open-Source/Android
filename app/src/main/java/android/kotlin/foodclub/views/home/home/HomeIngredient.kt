@@ -42,7 +42,10 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 
 @Composable
-fun HomeIngredient(ingredient: Ingredient, quantityMultiplier: Float) {
+fun HomeIngredient(
+    ingredient: Ingredient,
+    quantityMultiplier: Float
+) {
     var isSelected by remember { mutableStateOf(ingredient.isSelected) }
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp -
             dimensionResource(id = R.dimen.dim_240)

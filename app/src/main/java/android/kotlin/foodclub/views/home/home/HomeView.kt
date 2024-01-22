@@ -8,10 +8,9 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.snapsTopbar
 import android.kotlin.foodclub.utils.helpers.fadingEdge
 import android.kotlin.foodclub.viewModels.home.home.HomeEvents
+import android.kotlin.foodclub.views.home.home.foodSNAPS.SnapScreen
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -28,10 +27,8 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -93,7 +90,7 @@ fun HomeView(
 
         initialPage = 0,
         initialPageOffsetFraction = 0f,
-        pageCount={2}
+        pageCount = { 2 }
     )
 
 
@@ -122,7 +119,7 @@ fun HomeView(
                 .fillMaxWidth()
                 .height(dimensionResource(id = R.dimen.dim_95))
                 .then(
-                    if (pagerState.currentPage==0) {
+                    if (pagerState.currentPage == 0) {
                         Modifier
                             .fadingEdge(
                                 Brush.verticalGradient(
@@ -135,7 +132,7 @@ fun HomeView(
                     } else Modifier
                 )
                 .background(
-                    color = if (pagerState.currentPage==0) {
+                    color = if (pagerState.currentPage == 0) {
                         Color.Black
                     } else {
                         snapsTopbar
@@ -147,7 +144,7 @@ fun HomeView(
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
         ) {
-            if (showStories && pagerState.currentPage==1) {
+            if (showStories && pagerState.currentPage == 1) {
                 Image(
                     painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
                     contentDescription = null,
@@ -171,18 +168,18 @@ fun HomeView(
                     modifier = modifier
                         .clickable {
                             coroutineScope.launch {
-                                    pagerState.animateScrollToPage(
-                                        page = 0,
-                                        animationSpec = tween(1, easing = LinearEasing)
-                                    )
+                                pagerState.animateScrollToPage(
+                                    page = 0,
+                                    animationSpec = tween(1, easing = LinearEasing)
+                                )
                             }
                         },
                     text = stringResource(id = R.string.feed),
                     fontFamily = Montserrat,
                     fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
-                    style = TextStyle(color = if(pagerState.currentPage==0)Color.White else Color.LightGray),
+                    style = TextStyle(color = if (pagerState.currentPage == 0) Color.White else Color.LightGray),
                     lineHeight = dimensionResource(id = R.dimen.fon_21_94).value.sp,
-                    fontWeight = if (pagerState.currentPage==0) FontWeight.Bold else FontWeight.Medium
+                    fontWeight = if (pagerState.currentPage == 0) FontWeight.Bold else FontWeight.Medium
                 )
                 Text(
                     modifier = Modifier
@@ -210,9 +207,9 @@ fun HomeView(
                     text = stringResource(id = R.string.snaps),
                     fontFamily = Montserrat,
                     fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
-                    style = TextStyle(color = if(pagerState.currentPage==1)Color.White else Color.LightGray),
+                    style = TextStyle(color = if (pagerState.currentPage == 1) Color.White else Color.LightGray),
                     lineHeight = dimensionResource(id = R.dimen.fon_21_94).value.sp,
-                    fontWeight = if (pagerState.currentPage==1) FontWeight.Bold else FontWeight.Medium
+                    fontWeight = if (pagerState.currentPage == 1) FontWeight.Bold else FontWeight.Medium
                 )
             }
         }
@@ -235,7 +232,9 @@ fun HomeView(
         ) { currentPage ->
             when (currentPage) {
                 0 -> {
-                    if(showStories) { showStories = !showStories }
+                    if (showStories) {
+                        showStories = !showStories
+                    }
                     VideoPager(
                         videoList = state.videoList,
                         initialPage = initialPage,
@@ -248,11 +247,12 @@ fun HomeView(
                 }
 
                 1 -> {
-
                     SnapScreen(
-                        state = state, onShowStoriesChanged = { newShowStoriesValue ->
+                        state = state,
+                        onShowStoriesChanged = { newShowStoriesValue ->
                             showStories = newShowStoriesValue
-                        }, showStories = showStories,
+                        },
+                        showStories = showStories,
                         pagerState = pagerState,
                         coroutineScope = coroutineScope,
                         navController = navController
