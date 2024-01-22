@@ -5,6 +5,8 @@ import android.net.Uri
 import android.view.ViewGroup
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
@@ -60,8 +62,7 @@ fun TestVideoPlayer(
             }
         }
 
-        // Use LaunchedEffect to set up and prepare the ExoPlayer
-        LaunchedEffect(key1 = video) {
+        LaunchedEffect(key1 = video.videoId) {
             exoPlayer.apply {
                 videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT
                 repeatMode = Player.REPEAT_MODE_ONE
@@ -84,7 +85,7 @@ fun TestVideoPlayer(
         AndroidView(
             factory = { playerView },
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .background(Color.Black)
         )
     }
