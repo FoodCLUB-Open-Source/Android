@@ -8,7 +8,7 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.snapsTopbar
 import android.kotlin.foodclub.utils.helpers.fadingEdge
 import android.kotlin.foodclub.viewModels.home.home.HomeEvents
-import android.kotlin.foodclub.views.home.home.foodSNAPS.SnapScreen
+import android.kotlin.foodclub.views.home.home.foodSNAPS.FoodSNAPSView
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -247,7 +247,7 @@ fun HomeView(
                 }
 
                 1 -> {
-                    SnapScreen(
+                    FoodSNAPSView(
                         state = state,
                         onShowStoriesChanged = { newShowStoriesValue ->
                             showStories = newShowStoriesValue
