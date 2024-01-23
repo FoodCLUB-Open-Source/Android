@@ -242,7 +242,7 @@ fun HomeView(
             when (currentPage) {
                 0 -> {
                     if(showStories) { showStories = !showStories }
-                    TestPager(
+                    VideoPager(
                         exoPlayer = exoPlayer,
                         videoList = state.videoList,
                         initialPage = initialPage,
