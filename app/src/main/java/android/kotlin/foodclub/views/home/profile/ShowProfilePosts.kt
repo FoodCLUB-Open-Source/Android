@@ -57,9 +57,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.airbnb.lottie.compose.LottieAnimation
@@ -124,6 +126,8 @@ fun ConfirmDeleteDialog(
                             style = MaterialTheme.typography.headlineSmall,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             fontFamily = Montserrat,
+                            maxLines = integerResource(id=R.integer.int_1),
+                            overflow = TextOverflow.Ellipsis
                         )
                         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_8)))
 
@@ -141,6 +145,8 @@ fun ConfirmDeleteDialog(
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             fontFamily = Montserrat,
+                            maxLines = integerResource(id=R.integer.int_250),
+                            overflow = TextOverflow.Ellipsis
                         )
                         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_24)))
 

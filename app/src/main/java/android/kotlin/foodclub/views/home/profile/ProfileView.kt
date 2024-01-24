@@ -81,6 +81,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -331,11 +332,15 @@ fun ProfileView(
                     ) {
                         Text(
                             fontFamily = Montserrat,
-                            text = profile?.username ?: "",
+                            text = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",//profile?.username ?: "",
                             fontSize = dimensionResource(id = R.dimen.fon_23).value.sp,
                             fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_5)),
-                            letterSpacing = -dimensionResource(id = R.dimen.fon_1).value.sp
+                            modifier = Modifier
+                                .padding(top = dimensionResource(id = R.dimen.dim_5))
+                                .fillMaxWidth(0.8f),
+                            letterSpacing = -dimensionResource(id = R.dimen.fon_1).value.sp,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 2
                         )
                         Row(
                             modifier = Modifier
@@ -369,7 +374,8 @@ fun ProfileView(
                                             fontWeight = FontWeight.SemiBold,
                                             fontSize = dimensionResource(id = R.dimen.fon_17).value.sp
                                         ),
-                                        textAlign = TextAlign.Center
+                                        textAlign = TextAlign.Center,
+                                        overflow = TextOverflow.Ellipsis
                                     )
                                 }
                                 Text(
@@ -377,7 +383,8 @@ fun ProfileView(
                                     text = stringResource(id = R.string.followers),
                                     fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
                                     color = colorResource(id = R.color.followers_following_color),
-                                    fontWeight = FontWeight.Light
+                                    fontWeight = FontWeight.Light,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
 
@@ -404,7 +411,8 @@ fun ProfileView(
                                             fontWeight = FontWeight.SemiBold,
                                             fontSize = dimensionResource(id = R.dimen.fon_17).value.sp
                                         ),
-                                        textAlign = TextAlign.Center
+                                        textAlign = TextAlign.Center,
+                                        overflow = TextOverflow.Ellipsis
                                     )
 
                                 }
@@ -413,7 +421,8 @@ fun ProfileView(
                                     text = stringResource(id = R.string.following),
                                     fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
                                     color = colorResource(id = R.color.followers_following_color),
-                                    fontWeight = FontWeight.Light
+                                    fontWeight = FontWeight.Light,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
 
@@ -471,6 +480,7 @@ fun ProfileView(
                                                 color = Color.Black,
                                                 fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                                             )
+                                            , overflow = TextOverflow.Ellipsis
                                         )
                                     }
                                 )
