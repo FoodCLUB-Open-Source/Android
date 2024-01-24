@@ -252,7 +252,7 @@ fun HomeView(
                         onShowStoriesChanged = { newShowStoriesValue ->
                             showStories = newShowStoriesValue
                         },
-                        showStories = showStories,
+                        showMemories = showStories,
                         pagerState = pagerState,
                         coroutineScope = coroutineScope,
                         navController = navController
