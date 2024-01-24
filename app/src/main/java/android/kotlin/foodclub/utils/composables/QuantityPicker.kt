@@ -45,6 +45,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -74,8 +75,8 @@ fun QuantityPicker(
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val alpha1 = 0.1f
-    val alpha2=0.2f
-    val weight1= 0.4f
+    val alpha2 = 0.2f
+    val weight1 = 0.4f
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -84,7 +85,7 @@ fun QuantityPicker(
     ) {
 
         Text(
-            text = "Quantity",
+            text = stringResource(id = R.string.quantity),
             fontWeight = FontWeight.Bold,
             fontSize = dimensionResource(id = R.dimen.fon_22).value.sp,
 
@@ -93,7 +94,7 @@ fun QuantityPicker(
         )
 
         Text(
-            text = "Type your custom units or choose from the wheel picker",
+            text = stringResource(id = R.string.quantity_picker_discription),
             color = Color.Gray,
             fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
             fontFamily = Montserrat,
@@ -122,11 +123,11 @@ fun QuantityPicker(
                 }
             ),
             placeholder = {
-                Text("Quantity", color = Color.Gray)
+                Text(stringResource(id = R.string.quantity), color = Color.Gray)
             },
             colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = Color.LightGray.copy(alpha =alpha2),
-                focusedContainerColor=Color.LightGray.copy(alpha =alpha2),
+                unfocusedContainerColor = Color.LightGray.copy(alpha = alpha2),
+                focusedContainerColor = Color.LightGray.copy(alpha = alpha2),
                 cursorColor = foodClubGreen,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
@@ -137,7 +138,7 @@ fun QuantityPicker(
                 .padding(bottom = dimensionResource(id = R.dimen.dim_16)),
             trailingIcon = {
                 Icon(
-                    painter = painterResource(id =R.drawable.outline_note_alt_24 ),
+                    painter = painterResource(id = R.drawable.outline_note_alt_24),
                     contentDescription = null,
                     modifier = Modifier
                         .clickable {
@@ -148,7 +149,11 @@ fun QuantityPicker(
             }
         )
 
-        onQuantityUnitSelected(if (quantity=="0"||quantity=="") 1 else quantity.toInt(), selectedUnit, selectedType)
+        onQuantityUnitSelected(
+            if (quantity == "0" || quantity == "") 1 else quantity.toInt(),
+            selectedUnit,
+            selectedType
+        )
 
         LazyColumn(
             modifier = Modifier
@@ -199,7 +204,8 @@ fun QuantityPicker(
             contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_15)),
             onClick = {
 
-                val updatedQuantity:Int = if (quantity=="0"||quantity=="") 1 else quantity.toInt()
+                val updatedQuantity: Int =
+                    if (quantity == "0" || quantity == "") 1 else quantity.toInt()
                 val updatedIngredient = Ingredient(
                     quantity = updatedQuantity,
                     unit = selectedUnit,
@@ -210,7 +216,7 @@ fun QuantityPicker(
             }
         ) {
             Text(
-                text = "Save",
+                text = stringResource(id = R.string.save),
                 color = Color.White,
                 fontFamily = Montserrat,
                 fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
@@ -220,8 +226,6 @@ fun QuantityPicker(
 
     }
 }
-
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -263,14 +267,14 @@ fun EditIngredientBottomModal(
                 units = units,
                 types = types,
                 onQuantityUnitSelected = { quantity, unit, type ->
-                     ingredient.quantity = quantity
+                    ingredient.quantity = quantity
                 },
                 onIngredientUpdated = {
                     onEdit(updatedIngredient)
                     onDismissRequest(false)
                 },
 
-            )
+                )
         }
     }
 }
