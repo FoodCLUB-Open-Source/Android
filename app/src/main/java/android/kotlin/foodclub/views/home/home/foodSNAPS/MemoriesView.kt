@@ -72,12 +72,10 @@ import coil.compose.rememberAsyncImagePainter
 import okio.ByteString.Companion.encodeUtf8
 
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMotionApi::class)
 @Composable
 fun MemoriesView(
     modifier: Modifier,
     state : HomeState,
-    navController: NavController,
     onShowMemoriesChanged: (Boolean) -> Unit,
     updateCurrentMemoriesModel: (MemoriesModel) -> Unit
 ) {
@@ -103,15 +101,13 @@ fun MemoriesView(
         if (state.memories.isEmpty()) {
             MemoriesItemView(
                 modifier = Modifier
-                    .clickable { onShowMemoriesChanged(true) }
-                    .layoutId(stringResource(id = R.string.memories_item_view)),
+                    .clickable { onShowMemoriesChanged(true) },
                 painter = painterResource(id = R.drawable.nosnapsfortheday),
-                date = "")
-
+                date = ""
+            )
         } else {
             LazyRow(
                 modifier = Modifier
-                    .layoutId(stringResource(id = R.string.memories_item_view))
             ) {
                 items(state.memories) {
                     val painter: Painter =
@@ -125,7 +121,6 @@ fun MemoriesView(
                         date = it.dateTime
                     )
                     Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_12)))
-
                 }
             }
         }

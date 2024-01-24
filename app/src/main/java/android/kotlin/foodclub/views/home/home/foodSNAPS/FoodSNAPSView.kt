@@ -150,16 +150,9 @@ fun FoodSNAPSView(
                 .background(Color.White)
         ) {
             AnimatedVisibility(visible = visible) {
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .fillMaxHeight(0.4f)
-//                        .background(color = Color.Red)
-//                )
                 MemoriesView(
                     modifier = Modifier.fillMaxWidth().wrapContentHeight(),
                     state = state,
-                    navController = navController,
                     onShowMemoriesChanged = { showMemories ->
                         onShowMemoriesChanged(showMemories)},
                     updateCurrentMemoriesModel = { currentMemoriesModel = it }
