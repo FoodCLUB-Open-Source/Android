@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
@@ -52,7 +53,7 @@ import kotlinx.coroutines.launch
 fun FoodSNAPSView(
     state: HomeState,
     modifier: Modifier = Modifier,
-    onShowStoriesChanged: (Boolean) -> Unit,
+    onShowMemoriesChanged: (Boolean) -> Unit,
     showMemories: Boolean,
     pagerState: PagerState,
     coroutineScope: CoroutineScope,
@@ -61,6 +62,7 @@ fun FoodSNAPSView(
     var currentMemoriesModel by remember {
         mutableStateOf(MemoriesModel(listOf(), ""))
     }
+    // TODO can showMemories live inside FoodSNAPS rather than HomeView?
 
     val SCREEN_HEIGHT_PERCENTAGE_EXCLUDING_BOTTOM_NAV = 0.94f
     var screenHeightMinusBottomNavItem =
@@ -128,7 +130,7 @@ fun FoodSNAPSView(
 
     BackHandler {
         if (showMemories) {
-            onShowStoriesChanged(!showMemories)
+            onShowMemoriesChanged(!showMemories)
         } else {
             coroutineScope.launch {
                 pagerState.animateScrollToPage(
@@ -148,12 +150,20 @@ fun FoodSNAPSView(
                 .background(Color.White)
         ) {
             AnimatedVisibility(visible = visible) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.4f)
-                        .background(color = Color.Red)
-                )
+//                Box(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .fillMaxHeight(0.4f)
+//                        .background(color = Color.Red)
+//                )
+                MemoriesView(
+                    modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                    state = state,
+                    navController = navController,
+                    onShowMemoriesChanged = { showMemories ->
+                        onShowMemoriesChanged(showMemories)},
+                    updateCurrentMemoriesModel = { currentMemoriesModel = it }
+                    )
             }
 
                 VerticalPager(

@@ -77,9 +77,7 @@ fun HomeView(
     if (screenHeightMinusBottomNavItem <= dimensionResource(id = R.dimen.dim_650)) {
         screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.96f
     }
-    var showStories by remember {
-        mutableStateOf(false)
-    }
+    var showMemories by remember { mutableStateOf(false) }
 
     val systemUiController = rememberSystemUiController()
 
@@ -144,7 +142,7 @@ fun HomeView(
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
         ) {
-            if (showStories && pagerState.currentPage == 1) {
+            if (showMemories && pagerState.currentPage == 1) {
                 Image(
                     painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
                     contentDescription = null,
@@ -154,7 +152,7 @@ fun HomeView(
                             start = dimensionResource(id = R.dimen.dim_22),
                             bottom = dimensionResource(id = R.dimen.dim_18)
                         )
-                        .clickable { showStories = !showStories }
+                        .clickable { showMemories = !showMemories }
                 )
             }
             Row(
@@ -232,8 +230,8 @@ fun HomeView(
         ) { currentPage ->
             when (currentPage) {
                 0 -> {
-                    if (showStories) {
-                        showStories = !showStories
+                    if (showMemories) {
+                        showMemories = !showMemories
                     }
                     VideoPager(
                         videoList = state.videoList,
@@ -249,10 +247,10 @@ fun HomeView(
                 1 -> {
                     FoodSNAPSView(
                         state = state,
-                        onShowStoriesChanged = { newShowStoriesValue ->
-                            showStories = newShowStoriesValue
+                        onShowMemoriesChanged = { newShowMemoriesValue ->
+                            showMemories = newShowMemoriesValue
                         },
-                        showMemories = showStories,
+                        showMemories = showMemories,
                         pagerState = pagerState,
                         coroutineScope = coroutineScope,
                         navController = navController
