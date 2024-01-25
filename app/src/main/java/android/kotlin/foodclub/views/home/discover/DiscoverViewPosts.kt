@@ -96,14 +96,14 @@ fun DiscoverViewPosts(
         }
 
         if (initialVideo != null) {
-            val fling = PagerDefaults.flingBehavior(
+            val pagerFlingBehaviour = PagerDefaults.flingBehavior(
                 state = pagerState, lowVelocityAnimationSpec = tween(
                     easing = LinearEasing, durationMillis = 300
                 )
             )
             VerticalPager(
                 state = pagerState,
-                flingBehavior = fling,
+                flingBehavior = pagerFlingBehaviour,
                 beyondBoundsPageCount = 1,
                 modifier = Modifier
             ) { vtPager ->
