@@ -170,6 +170,14 @@ class HomeViewModel @Inject constructor(
         updateBookmarkStatus(postId, isBookmarked)
     }
 
+    override fun toggleShowMemories(show: Boolean) {
+        _state.update { it.copy(showMemories = show) }
+    }
+
+    override fun toggleShowMemoriesReel(show: Boolean) {
+        _state.update { it.copy(showMemoriesReel = show) }
+    }
+
     private fun getMemoriesListData() {
         val list = mutableListOf(
             MemoriesModel(
