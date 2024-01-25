@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -72,7 +73,7 @@ fun HomeView(
 
     val coroutineScope = rememberCoroutineScope()
 
-    var screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.94f
+    var screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 1f
 
     if (screenHeightMinusBottomNavItem <= dimensionResource(id = R.dimen.dim_650)) {
         screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.96f

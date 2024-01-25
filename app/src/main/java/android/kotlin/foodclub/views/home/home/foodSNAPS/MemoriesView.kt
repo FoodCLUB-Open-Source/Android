@@ -2,6 +2,7 @@ package android.kotlin.foodclub.views.home.home.foodSNAPS
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.snapsTopbar
 import android.kotlin.foodclub.domain.enums.Reactions
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
@@ -38,6 +39,7 @@ import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -75,6 +77,7 @@ import okio.ByteString.Companion.encodeUtf8
 @Composable
 fun MemoriesView(
     modifier: Modifier,
+    storyListEmpty: Boolean,
     state : HomeState,
     onShowMemoriesChanged: (Boolean) -> Unit,
     updateCurrentMemoriesModel: (MemoriesModel) -> Unit
@@ -123,6 +126,17 @@ fun MemoriesView(
                     Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_12)))
                 }
             }
+        }
+
+        if (storyListEmpty){
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_15)))
+        } else {
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = dimensionResource(id = R.dimen.dim_15)),
+                color = snapsTopbar
+            )
         }
     }
 
