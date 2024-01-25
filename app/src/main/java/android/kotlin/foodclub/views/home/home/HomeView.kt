@@ -10,7 +10,6 @@ import android.kotlin.foodclub.utils.helpers.fadingEdge
 import android.kotlin.foodclub.viewModels.home.home.HomeEvents
 import android.kotlin.foodclub.views.home.home.foodSNAPS.FoodSNAPSView
 import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
-import android.kotlin.foodclub.views.home.home.foodSNAPS.SnapScreen
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -22,7 +21,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -84,7 +82,6 @@ fun HomeView(
     if (screenHeightMinusBottomNavItem <= dimensionResource(id = R.dimen.dim_650)) {
         screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.96f
     }
-   // var showMemories by remember { mutableStateOf(false) }
 
     val systemUiController = rememberSystemUiController()
 
