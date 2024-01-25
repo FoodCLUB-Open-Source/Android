@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.views.home
+package android.kotlin.foodclub.views.home.home.foodSNAPS
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
@@ -207,12 +207,13 @@ fun SnapsView(
 
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalStdlibApi::class)
 @Composable
-fun SnapBottomSheetLayout(userReactions:
-                          Map<SimpleUserModel, Reactions>) {
+fun SnapBottomSheetLayout(
+    userReactions: Map<SimpleUserModel, Reactions>
+) {
 
-    val reactions = Reactions.entries
+    val reactions = Reactions.values()
     val state = rememberPagerState(
         initialPage = 0
     ){
@@ -296,10 +297,10 @@ fun SnapBottomSheetLayout(userReactions:
         beyondBoundsPageCount = 1,
         verticalAlignment = Alignment.Top,
         flingBehavior=flingBehavior
-    ) {idx->
+    ) {index->
         LazyColumn{
-            val list =if(reactions[idx]!=Reactions.ALL) userReactions.filter { x->
-                x.value == reactions[idx]
+            val list =if(reactions[index]!=Reactions.ALL) userReactions.filter { x->
+                x.value == reactions[index]
             }.keys.toList()
             else userReactions.keys.toList()
             items(list.size){
