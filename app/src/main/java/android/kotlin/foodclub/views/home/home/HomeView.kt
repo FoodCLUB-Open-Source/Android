@@ -8,6 +8,8 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.snapsTopbar
 import android.kotlin.foodclub.utils.helpers.fadingEdge
 import android.kotlin.foodclub.viewModels.home.home.HomeEvents
+import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
+import android.kotlin.foodclub.views.home.home.foodSNAPS.SnapScreen
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
