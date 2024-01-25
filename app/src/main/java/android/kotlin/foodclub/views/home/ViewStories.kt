@@ -140,7 +140,9 @@ fun ViewStories(
                 )
             }
             Box(modifier = Modifier.fillMaxSize()) {
-                VideoScroller(videosState[it], storyPagerState, it, onSingleTap = {
+                VideoScroller(
+                    viewModel.exoPlayer,
+                    videosState[it], storyPagerState, it, onSingleTap = {
                     pauseButtonVisibility = it.isPlaying
                     it.playWhenReady = !it.isPlaying
                 },

@@ -141,6 +141,9 @@ fun DiscoverView(
     val context = LocalContext.current
     val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
 
+    var isShowPost by remember { mutableStateOf(false) }
+    var postId: Long? by remember { mutableStateOf(null) }
+
     val brush = shimmerBrush()
     val screenHeight =
         LocalConfiguration.current.screenHeightDp.dp - dimensionResource(id = R.dimen.dim_240)
@@ -298,7 +301,20 @@ fun DiscoverView(
                 }
             }
         }
-
+        if (isShowPost && postId != null){
+            item {
+                DiscoverViewPosts(
+                    postId = postId!!,
+                    posts = state.postList,
+                    events = events,
+                    state = state,
+                    onBackPressed = {
+                        postId = null
+                        isShowPost = !isShowPost
+                    }
+                )
+            }
+        }
 
         item {
             if (mainTabIndex == 0) {
@@ -401,12 +417,28 @@ fun DiscoverView(
                                 if (homePosts != null) {
                                     items(homePosts!!) { dataItem ->
                                         events.getPostData(dataItem.videoId)
-                                        GridItem2(navController, dataItem, userName)
+                                        GridItem2(
+                                            navController,
+                                            dataItem,
+                                            userName,
+                                            isShowPost = {
+                                                postId = it
+                                                isShowPost = !isShowPost
+                                            }
+                                        )
                                     }
                                 } else if (worldPosts != null) {
                                     items(worldPosts.value) { dataItem ->
                                         events.getPostData(dataItem.videoId)
-                                        GridItem2(navController, dataItem, userName)
+                                        GridItem2(
+                                            navController,
+                                            dataItem,
+                                            userName,
+                                            isShowPost = {
+                                                postId = it
+                                                isShowPost = !isShowPost
+                                            }
+                                        )
                                     }
                                 }
                             }
@@ -1300,6 +1332,7 @@ fun GridItem2(
     dataItem: VideoModel,
     userName: String,
     brush: Brush = shimmerBrush(),
+    isShowPost: (Long) -> Unit
 ) {
     val thumbnailPainter = rememberAsyncImagePainter(dataItem.thumbnailLink)
     Card(
@@ -1331,7 +1364,7 @@ fun GridItem2(
                 modifier = Modifier
                     .fillMaxSize()
                     .clickable {
-                        navController.navigate("DELETE_RECIPE/${dataItem.videoId}")
+                        isShowPost(dataItem.videoId)
                     },
                 contentScale = ContentScale.FillHeight
             )
