@@ -32,12 +32,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
+import androidx.media3.exoplayer.ExoPlayer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
 fun VideoPager(
+    exoPlayer: ExoPlayer,
     videoList: List<VideoModel>,
     initialPage: Int?,
     events: HomeEvents,
@@ -74,7 +76,7 @@ fun VideoPager(
             flingBehavior = fling,
             beyondBoundsPageCount = 1,
             modifier = modifier
-        ) {
+        ) { index->
             var pauseButtonVisibility by remember { mutableStateOf(false) }
             val doubleTapState by remember {
                 mutableStateOf(
@@ -83,7 +85,7 @@ fun VideoPager(
             }
 
             Box(modifier = Modifier.fillMaxSize()) {
-                val currentVideo = videoList[it]
+                val currentVideo = videoList[index]
                 val authorDetails = SimpleUserModel(
                     userId = 1,
                     username = currentVideo.authorDetails,
@@ -98,10 +100,15 @@ fun VideoPager(
                     )
                 }
 
-                VideoScroller(currentVideo, pagerState, it, onSingleTap = {
-                    pauseButtonVisibility = it.isPlaying
-                    it.playWhenReady = !it.isPlaying
-                },
+                VideoScroller(
+                    exoPlayer = exoPlayer,
+                    currentVideo,
+                    pagerState,
+                    index,
+                    onSingleTap = {
+                        pauseButtonVisibility = it.isPlaying
+                        it.playWhenReady = !it.isPlaying
+                    },
                     onDoubleTap = { _, offset ->
                         coroutineScope.launch {
                             doubleTapState.animate(offset)
