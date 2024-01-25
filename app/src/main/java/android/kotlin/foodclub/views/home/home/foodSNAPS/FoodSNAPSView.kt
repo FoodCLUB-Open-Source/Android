@@ -32,10 +32,7 @@ import androidx.navigation.NavHostController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@OptIn(
-    ExperimentalFoundationApi::class, ExperimentalMotionApi::class,
-    ExperimentalMaterialApi::class
-)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FoodSNAPSView(
     state: HomeState,
@@ -50,29 +47,7 @@ fun FoodSNAPSView(
         mutableStateOf(MemoriesModel(listOf(), ""))
     }
     // TODO can showMemories live inside FoodSNAPS rather than HomeView?
-
-    val SCREEN_HEIGHT_PERCENTAGE_EXCLUDING_BOTTOM_NAV = 0.94f
-    var screenHeightMinusBottomNavItem =
-        LocalConfiguration.current.screenHeightDp.dp * SCREEN_HEIGHT_PERCENTAGE_EXCLUDING_BOTTOM_NAV
-
-    val storyListData = state.videoList // use state.videoList to test
-
-    val scrollState = rememberScrollState(initial = 0)
-    val snapPagerState = rememberPagerState(
-        initialPage = 0,
-        initialPageOffsetFraction = 0f,
-        pageCount = { 8 }
-    )
-    val swipableState = rememberSwipeableState(initialValue = SwipeDirection.NEUTRAL)
-
-    val ANIMATION_DURATION_SHORT = 300
-    val snapPagerFling = PagerDefaults.flingBehavior(
-        state = snapPagerState,
-        lowVelocityAnimationSpec = tween(
-            easing = LinearEasing,
-            durationMillis = ANIMATION_DURATION_SHORT
-        ),
-    )
+    val storyListData = state.storyList // use state.videoList to test
 
     var showMemoriesReel by remember { mutableStateOf(true) }
 
@@ -105,55 +80,19 @@ fun FoodSNAPSView(
                     storyListEmpty = storyListData.isEmpty(),
                     state = state,
                     onShowMemoriesChanged = { showMemories ->
-                        onShowMemoriesChanged(showMemories)},
+                        onShowMemoriesChanged(showMemories)
+                    },
                     updateCurrentMemoriesModel = { currentMemoriesModel = it }
-                    )
+                )
             }
 
             FoodSNAPSPager(
-                storyListData = storyListData ,
+                storyListData = storyListData,
                 navController = navController,
                 showMemoriesReel = showMemoriesReel,
                 changeMemoriesReelVisibility = { showMemoriesReel = it },
             )
-
-//                VerticalPager(
-//                    state = snapPagerState,
-//                    flingBehavior = snapPagerFling,
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .background(color = Color.Blue)
-//                ) {
-//                    Box(
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .fillMaxHeight()
-//                            .background(color = Color.Green)
-//                            .then(
-//                                if (it == 0) {
-//                                    Modifier.swipeable(
-//                                        state = swipableState,
-//                                        anchors = mapOf(
-//                                            0f to SwipeDirection.NEUTRAL,
-//                                            -1f to SwipeDirection.UP,
-//                                            1f to SwipeDirection.DOWN
-//                                        ),
-//                                        thresholds = { _, _ -> FractionalThreshold(0.3f) },
-//                                        orientation = Orientation.Vertical,
-//                                    )
-//                                } else {
-//                                    Modifier
-//                                }
-//                            )
-//                    ) {
-//                        Text(text = "Page $it", modifier = Modifier.align(Alignment.Center))
-//                    }
-//                }
         }
     }
-}
-
-enum class SwipeDirection {
-    UP, DOWN, NEUTRAL
 }
 
