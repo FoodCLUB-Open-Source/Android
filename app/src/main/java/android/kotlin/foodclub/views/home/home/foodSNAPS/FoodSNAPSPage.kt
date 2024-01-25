@@ -47,6 +47,8 @@ fun FoodSNAPSPage(
     showMemoriesReel: Boolean
 ) {
 
+    val reactionsVerticalOffset = -260
+
     Box{
         AsyncImage(
             model = storyListData[index].thumbnailLink,
@@ -61,7 +63,7 @@ fun FoodSNAPSPage(
                     .layout{  measurable, constraints ->
                         val placeable = measurable.measure(constraints)
                         layout(placeable.width, placeable.height) {
-                            placeable.place(IntOffset(0, -260))
+                            placeable.place(IntOffset(0, reactionsVerticalOffset))
                         }
                     },
                 reactions = Reactions.entries.toTypedArray(),

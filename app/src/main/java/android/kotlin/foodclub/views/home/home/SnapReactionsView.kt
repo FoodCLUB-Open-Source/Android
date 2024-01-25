@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
@@ -43,18 +44,18 @@ fun SnapReactionsView(
     Box(
         modifier = modifier
             .fillMaxWidth(0.9f)
-            .height(84.dp)
+            .height(dimensionResource(id = R.dimen.snap_reactions_height))
             .alpha(1f)
 
     ) {
         Image(painter = painter, contentDescription =null,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(64.dp)
+                .height(dimensionResource(id = R.dimen.snap_reactions_inner_height))
                 .blur(
-                    radiusX = 5.dp,
-                    radiusY = 5.dp,
-                    edgeTreatment = BlurredEdgeTreatment(RoundedCornerShape(32.dp))
+                    radiusX = dimensionResource(id = R.dimen.snap_reactions_blur_radius),
+                    radiusY = dimensionResource(id = R.dimen.snap_reactions_blur_radius),
+                    edgeTreatment = BlurredEdgeTreatment(RoundedCornerShape(dimensionResource(id = R.dimen.snap_reactions_blur_edge_radius)))
                 )
                 .align(Alignment.BottomCenter)
             ,
@@ -71,10 +72,10 @@ fun SnapReactionsView(
                     if(clickedItem!=reaction){
                         Image(
                             painter = painterResource(id =reaction.drawable), contentDescription = null, contentScale = ContentScale.FillHeight, modifier = Modifier
-                                .height(58.dp)
-                                .padding(5.dp)
+                                .height(dimensionResource(id = R.dimen.snap_reactions_reaction_height))
+                                .padding(dimensionResource(id = R.dimen.dim_5))
                                 .clickable {
-                                   clickedItem = reaction
+                                    clickedItem = reaction
                                 }
                         )
                     }
@@ -84,7 +85,7 @@ fun SnapReactionsView(
                             horizontalAlignment = Alignment.CenterHorizontally) {
                             Image(
                                 painter = painterResource(id =reaction.drawable), contentDescription = null, contentScale = ContentScale.FillHeight, modifier = Modifier
-                                    .height(58.dp)
+                                    .height(dimensionResource(id = R.dimen.snap_reactions_reaction_height))
                                     .clickable {
                                         //TODO add reaction overlay
                                         clickedItem = Reactions.ALL

@@ -77,7 +77,7 @@ fun HomeView(
 
     val coroutineScope = rememberCoroutineScope()
 
-    var screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 1f
+    var screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.94f
 
     if (screenHeightMinusBottomNavItem <= dimensionResource(id = R.dimen.dim_650)) {
         screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.96f
@@ -97,10 +97,10 @@ fun HomeView(
     val exoPlayer = remember(context) { viewModel.exoPlayer }
 
 
-
     BackHandler {
 
     }
+
     SideEffect {
         systemUiController.setSystemBarsColor(
             color = Color.Transparent,
