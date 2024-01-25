@@ -73,12 +73,11 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import okio.ByteString.Companion.encodeUtf8
 
-
 @Composable
 fun MemoriesView(
     modifier: Modifier,
     storyListEmpty: Boolean,
-    state : HomeState,
+    state: HomeState,
     onShowMemoriesChanged: (Boolean) -> Unit,
     updateCurrentMemoriesModel: (MemoriesModel) -> Unit
 ) {
@@ -87,7 +86,7 @@ fun MemoriesView(
         modifier = modifier,
         verticalArrangement = Arrangement.Center,
     ) {
-        Spacer(modifier = Modifier.height(90.dp))
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_90)))
 
         Text(
             text = stringResource(id = R.string.memories),
@@ -128,7 +127,7 @@ fun MemoriesView(
             }
         }
 
-        if (storyListEmpty){
+        if (storyListEmpty) {
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_15)))
         } else {
             Divider(
@@ -139,169 +138,4 @@ fun MemoriesView(
             )
         }
     }
-
-//    MotionLayout(
-//        motionScene = MotionScene(
-//            content = motionScene
-//        ),
-//        progress = if (!snapPagerState.canScrollBackward && snapPagerState.canScrollForward && isDragged) {
-//            LaunchedEffect(progress) {
-//                progress = 0f
-//                scrollState.scrollTo(0)
-//            }
-//            progress
-//        } else (scrollState.value / 100).toFloat(),
-//        modifier = Modifier
-//            .height(screenHeightMinusBottomNavItem)
-//            .fillMaxWidth()
-//
-//
-//    ) {
-//
-//        Box(
-//            modifier = Modifier
-//                .layoutId(stringResource(id = R.string.parent))
-//                .fillMaxSize()
-//        )
-//
-//        Spacer(
-//            modifier = modifier
-//                .size(dimensionResource(id = R.dimen.dim_90))
-//                .layoutId(stringResource(id = R.string.spacer))
-//        )
-
-//
-//        )
-//        Spacer(
-//            modifier = modifier
-//                .size(dimensionResource(id = R.dimen.dim_12))
-//        )
-//
-//
-//
-//
-//        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_5)))
-//
-//        Spacer(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .background(color = Color.Black)
-//                .layoutId(stringResource(id = R.string.memories_divider))
-//        )
-//        Spacer(
-//            modifier = Modifier.height(dimensionResource(id = R.dimen.dim_25))
-//        )
-//
-//        Text(
-//            text = stringResource(id = R.string.today),
-//            style = TextStyle(
-//                fontWeight = FontWeight.Bold,
-//                fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
-//                fontFamily = Montserrat,
-//                color = Color.Black
-//            ),
-//            modifier = Modifier
-//                .layoutId(stringResource(id = R.string.today_text))
-//        )
-//
-//        if (storyListData.isEmpty()) {
-//            TapToSnapDialog(
-//                modifier = Modifier
-//                    .layoutId(stringResource(id = R.string.tap_to_snap_string))
-//                    .clickable {
-//                        navController.navigate("CAMERA_VIEW/${"story".encodeUtf8()}")
-//                    }
-//                    .aspectRatio(0.9f, true)
-//                    .background(color = Color.Red)
-//            )
-//        } else {
-//            SnapStoryView(
-//                storyListData = storyListData,
-//                modifier = Modifier
-//                    .scrollable(
-//                        state = scrollState,
-//                        reverseDirection = true,
-//                        orientation = Orientation.Vertical,
-//                    )
-//                    .layoutId(stringResource(id = R.string.snap_story_view))
-//            )
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxSize()
-//                    .layoutId(stringResource(id = R.string.stories_view))
-//
-//            )
-//            {
-//                VerticalPager(
-//                    state = snapPagerState,
-//                    flingBehavior = snapPagerFling,
-//                    beyondBoundsPageCount = 1,
-//                    modifier = Modifier,
-//                ) {
-//                    Box {
-//                        AsyncImage(
-//                            model = storyListData[it].thumbnailLink,
-//                            contentDescription = "",
-//                            contentScale = ContentScale.Crop,
-//                            modifier = Modifier.fillMaxSize()
-//                        )
-//                        SnapReactionsView(
-//                            modifier = Modifier
-//                                .align(Alignment.BottomCenter)
-//                                .padding(bottom = dimensionResource(id = R.dimen.dim_150)),
-//                            reactions = Reactions.entries.toTypedArray(),
-//                            painter = rememberAsyncImagePainter(
-//                                model = storyListData[it].thumbnailLink
-//                            )
-//                        )
-//                        Box(
-//                            modifier = Modifier
-//                                .align(Alignment.BottomStart)
-//                                .padding(dimensionResource(id = R.dimen.dim_15))
-//                        ) {
-//
-//                            Column(
-//                                modifier = Modifier.fillMaxWidth()
-//                            ) {
-//                                Row(
-//                                    verticalAlignment = Alignment.CenterVertically,
-//                                    modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_15))
-//                                ) {
-//                                    Image(
-//                                        painter = painterResource(id = R.drawable.story_user),
-//                                        contentDescription = stringResource(id = R.string.profile_image),
-//                                        modifier = Modifier
-//                                            .size(dimensionResource(id = R.dimen.dim_35))
-//                                            .clip(CircleShape)
-//                                            .alpha(0.7f)
-//                                    )
-//                                    Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_10)))
-//                                    Text(
-//                                        storyListData[it].authorDetails,
-//                                        color = Color.Black,
-//                                        fontFamily = Montserrat,
-//                                        fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
-//                                        modifier = Modifier
-//                                            .padding(dimensionResource(id = R.dimen.dim_2))
-//                                            .alpha(0.7f)
-//                                    )
-//                                }
-//
-//                                Text(
-//                                    storyListData[it].createdAt,
-//                                    color = Color.Black,
-//                                    fontFamily = Montserrat,
-//                                    fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
-//                                    fontWeight = FontWeight.SemiBold,
-//                                    modifier = Modifier
-//                                        .padding(dimensionResource(id = R.dimen.dim_2))
-//                                        .alpha(0.7f)
-//                                )
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
 }
