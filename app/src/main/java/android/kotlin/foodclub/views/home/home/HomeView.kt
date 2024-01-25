@@ -78,7 +78,7 @@ fun HomeView(
     if (screenHeightMinusBottomNavItem <= dimensionResource(id = R.dimen.dim_650)) {
         screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.96f
     }
-    var showMemories by remember { mutableStateOf(false) }
+   // var showMemories by remember { mutableStateOf(false) }
 
     val systemUiController = rememberSystemUiController()
 
@@ -118,7 +118,7 @@ fun HomeView(
                 .fillMaxWidth()
                 .height(dimensionResource(id = R.dimen.dim_95))
                 .then(
-                    if (pagerState.currentPage == 0) {
+                    if (pagerState.currentPage == 0 || (pagerState.currentPage == 1 && !state.showMemoriesReel)) {
                         Modifier
                             .fadingEdge(
                                 Brush.verticalGradient(
@@ -131,7 +131,7 @@ fun HomeView(
                     } else Modifier
                 )
                 .background(
-                    color = if (pagerState.currentPage == 0) {
+                    color = if (pagerState.currentPage == 0 || (pagerState.currentPage == 1 && !state.showMemoriesReel)) {
                         Color.Black
                     } else {
                         snapsTopbar
@@ -143,7 +143,7 @@ fun HomeView(
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
         ) {
-            if (showMemories && pagerState.currentPage == 1) {
+            if (state.showMemories && pagerState.currentPage == 1) {
                 Image(
                     painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
                     contentDescription = null,
@@ -153,7 +153,7 @@ fun HomeView(
                             start = dimensionResource(id = R.dimen.dim_22),
                             bottom = dimensionResource(id = R.dimen.dim_18)
                         )
-                        .clickable { showMemories = !showMemories }
+                        .clickable { events.toggleShowMemories(show = false) }
                 )
             }
             Row(
@@ -231,8 +231,8 @@ fun HomeView(
         ) { currentPage ->
             when (currentPage) {
                 0 -> {
-                    if (showMemories) {
-                        showMemories = !showMemories
+                    if (state.showMemories) {
+                        events.toggleShowMemories(show = false)
                     }
                     VideoPager(
                         videoList = state.videoList,
@@ -249,9 +249,10 @@ fun HomeView(
                     FoodSNAPSView(
                         state = state,
                         onShowMemoriesChanged = { newShowMemoriesValue ->
-                            showMemories = newShowMemoriesValue
+                           events.toggleShowMemories(show = newShowMemoriesValue)
                         },
-                        showMemories = showMemories,
+                        toggleShowMemoriesReel = events::toggleShowMemoriesReel,
+                        showMemories = state.showMemories,
                         pagerState = pagerState,
                         coroutineScope = coroutineScope,
                         navController = navController

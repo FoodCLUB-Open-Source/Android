@@ -38,6 +38,7 @@ fun FoodSNAPSView(
     state: HomeState,
     modifier: Modifier = Modifier,
     onShowMemoriesChanged: (Boolean) -> Unit,
+    toggleShowMemoriesReel: (Boolean) -> Unit,
     showMemories: Boolean,
     pagerState: PagerState,
     coroutineScope: CoroutineScope,
@@ -46,16 +47,13 @@ fun FoodSNAPSView(
     var currentMemoriesModel by remember {
         mutableStateOf(MemoriesModel(listOf(), ""))
     }
-    // TODO can showMemories live inside FoodSNAPS rather than HomeView?
     val storyListData = state.storyList // use state.videoList to test
 
-    var showMemoriesReel by remember { mutableStateOf(true) }
-
     BackHandler {
-        if (showMemories) {
-            onShowMemoriesChanged(!showMemories)
+        if (state.showMemories) {
+            onShowMemoriesChanged(false)
         } else {
-            coroutineScope.launch {
+            coroutineScope.launch {// TODO do we want to scroll to the top of the snaps and display memories reel on back press too? Or do we want to save the users position on swiping through snaps, we could save position and put memories reel back up?
                 pagerState.animateScrollToPage(
                     page = 0,
                     animationSpec = tween(1, easing = LinearEasing)
@@ -72,15 +70,15 @@ fun FoodSNAPSView(
                 .fillMaxSize()
                 .background(Color.White)
         ) {
-            AnimatedVisibility(visible = showMemoriesReel) {
+            AnimatedVisibility(visible = state.showMemoriesReel) {
                 MemoriesView(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight(),
                     storyListEmpty = storyListData.isEmpty(),
                     state = state,
-                    onShowMemoriesChanged = { showMemories ->
-                        onShowMemoriesChanged(showMemories)
+                    onShowMemoriesChanged = { _ ->
+                        onShowMemoriesChanged(true)
                     },
                     updateCurrentMemoriesModel = { currentMemoriesModel = it }
                 )
@@ -89,8 +87,8 @@ fun FoodSNAPSView(
             FoodSNAPSPager(
                 storyListData = storyListData,
                 navController = navController,
-                showMemoriesReel = showMemoriesReel,
-                changeMemoriesReelVisibility = { showMemoriesReel = it },
+                showMemoriesReel = state.showMemoriesReel,
+                changeMemoriesReelVisibility = { toggleShowMemoriesReel(it) },
             )
         }
     }
