@@ -15,6 +15,7 @@ import android.kotlin.foodclub.utils.helpers.UiEvent
 import android.kotlin.foodclub.views.home.profile.ProfileState
 import android.net.Uri
 import android.util.Log
+import androidx.media3.exoplayer.ExoPlayer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -35,7 +36,8 @@ class ProfileViewModel @Inject constructor(
     val sessionCache: SessionCache,
     private val storeData: StoreData,
     private val recipeRepository: RecipeRepository,
-    private val basketCache: MyBasketCache
+    private val basketCache: MyBasketCache,
+    val exoPlayer: ExoPlayer
 ) : ViewModel(), ProfileEvents {
 
     companion object {
@@ -50,6 +52,7 @@ class ProfileViewModel @Inject constructor(
     val uiEvent = _uiEvent.asSharedFlow()
 
     init {
+        exoPlayer.prepare()
         if (sessionCache.getActiveSession()?.sessionUser?.userId == null) {
             sendUiEvent(UiEvent.Navigate(Graph.AUTHENTICATION))
         }
@@ -336,5 +339,10 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             _uiEvent.emit(event)
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        exoPlayer.release()
     }
 }

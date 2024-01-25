@@ -18,6 +18,7 @@ import android.kotlin.foodclub.utils.helpers.Resource
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.media3.exoplayer.ExoPlayer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,6 +37,7 @@ class HomeViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository,
     private val sessionCache: SessionCache,
     private val basketCache: MyBasketCache,
+    val exoPlayer: ExoPlayer
 ) : ViewModel(), HomeEvents {
 
     companion object {
@@ -47,6 +49,7 @@ class HomeViewModel @Inject constructor(
         get() = _state
 
     init {
+        exoPlayer.prepare()
         getPostListData()
         getUserFollowerStories()
         getMemoriesListData()
@@ -780,5 +783,10 @@ class HomeViewModel @Inject constructor(
 
     val videosList = arrayListOf<VideoModel>().apply {
         addAll(RecipesVideos.recipesVideosList)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        exoPlayer.release()
     }
 }
