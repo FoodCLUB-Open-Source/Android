@@ -24,14 +24,12 @@ class PostRepository(
             }
         ) {
             is Resource.Success -> {
-                Log.d("PostRepository", "getPost")
                 Resource.Success(
                     postToVideoMapper.mapToDomainModel(resource.data!!.body()!!.data[0])
                 )
             }
 
             is Resource.Error -> {
-                Log.d("PostRepository", "getPostError")
                 Resource.Error(resource.message!!)
             }
         }
