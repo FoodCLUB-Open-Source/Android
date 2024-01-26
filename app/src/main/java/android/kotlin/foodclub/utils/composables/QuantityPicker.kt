@@ -93,7 +93,7 @@ fun QuantityPicker(
     startIndex: Int = 7,
     listScrollCount: Int = Integer.MAX_VALUE,
 ) {
-    var quantity by remember { mutableStateOf(ingredient.quantity.toString()) }
+    var quantity by remember { mutableStateOf(if(ingredient.quantity== 0)"" else ingredient.quantity.toString()) }
     var selectedUnit by remember { mutableStateOf(ingredient.unit) }
     var selectedType by remember { mutableStateOf(types[0]) }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -215,7 +215,7 @@ fun QuantityPicker(
                 val currentItemIndex = (validIndex - 1 + types.size) % types.size
                 val currentItem = types[currentItemIndex]
                 val isSelected = currentItem == selectedTypeState
-               
+
                 PickerRow(
 
                     currentItem = currentItem,
@@ -309,7 +309,9 @@ fun EditIngredientBottomModal(
     onDismissRequest: (Boolean) -> Unit,
     onEdit: (Ingredient) -> Unit
 ) {
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
     var updatedIngredient by remember { mutableStateOf(ingredient) }
     val types = stringArrayResource(id = R.array.quantity_list).toList()
 
