@@ -35,7 +35,8 @@ import androidx.compose.ui.unit.dp
 fun SnapReactionsView(
     modifier: Modifier,
     reactions: Array<Reactions>,
-    painter: Painter
+    painter: Painter,
+    selectReaction: (Reactions) -> Unit
 ) {
 
     var clickedItem by remember {
@@ -76,6 +77,7 @@ fun SnapReactionsView(
                                 .padding(dimensionResource(id = R.dimen.dim_5))
                                 .clickable {
                                     clickedItem = reaction
+                                    selectReaction(reaction)
                                 }
                         )
                     }

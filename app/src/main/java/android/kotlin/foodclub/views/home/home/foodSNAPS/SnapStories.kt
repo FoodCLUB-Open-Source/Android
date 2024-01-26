@@ -109,7 +109,8 @@ fun SnapStories(
                         reactions = Reactions.entries.toTypedArray(),
                         painter = rememberAsyncImagePainter(
                             model = storyListData[it].thumbnailLink
-                        )
+                        ),
+                        selectReaction = {}
                     )
                     Box(
                         modifier = Modifier

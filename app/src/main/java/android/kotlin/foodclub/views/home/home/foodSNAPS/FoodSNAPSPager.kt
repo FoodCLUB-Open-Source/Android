@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.views.home.home.foodSNAPS
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.domain.enums.Reactions
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.views.home.home.TapToSnapDialog
 import androidx.compose.animation.core.LinearEasing
@@ -33,7 +34,10 @@ fun FoodSNAPSPager(
     storyListData: List<VideoModel>,
     navController: NavHostController,
     showMemoriesReel: Boolean,
-    changeMemoriesReelVisibility: (Boolean) -> Unit
+    changeMemoriesReelVisibility: (Boolean) -> Unit,
+    selectedReaction: Reactions,
+    clearSelectedReactions: () -> Unit,
+    selectReaction: (Reactions) -> Unit
 ) {
     val snapPagerState = rememberPagerState(
         initialPage = 0,
@@ -93,7 +97,7 @@ fun FoodSNAPSPager(
             beyondBoundsPageCount = 1,
             modifier = Modifier,
         ) {
-            Box(
+            ReactionsOverlay(
                 modifier = Modifier
                     .then(
                         if (it == 0) {
@@ -110,12 +114,15 @@ fun FoodSNAPSPager(
                         } else {
                             Modifier
                         }
-                    )
+                    ),
+                selectedReaction = selectedReaction,
+                clearSelectedReaction = clearSelectedReactions
             ) {
                 FoodSNAPSPage(
                     index = it,
                     storyListData = storyListData,
-                    showMemoriesReel = showMemoriesReel
+                    showMemoriesReel = showMemoriesReel,
+                    selectReaction = selectReaction
                 )
             }
         }

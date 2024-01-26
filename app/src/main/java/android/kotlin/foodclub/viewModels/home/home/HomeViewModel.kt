@@ -178,6 +178,11 @@ class HomeViewModel @Inject constructor(
         _state.update { it.copy(showMemoriesReel = show) }
     }
 
+    override fun selectReaction(reaction: Reactions) {
+        _state.update { it.copy(selectedReaction = reaction) }
+        Log.d(TAG, "selected reaction: ${state.value.selectedReaction}")
+    }
+
     private fun getMemoriesListData() {
         val list = mutableListOf(
             MemoriesModel(

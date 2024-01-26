@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.views.home.home.foodSNAPS
 
+import android.kotlin.foodclub.domain.enums.Reactions
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.home.VideoStats
 import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
@@ -44,7 +45,9 @@ fun FoodSNAPSView(
     showMemories: Boolean,
     pagerState: PagerState,
     coroutineScope: CoroutineScope,
-    navController: NavHostController
+    navController: NavHostController,
+    selectReaction: (Reactions) -> Unit,
+    clearSelectedReaction: () -> Unit,
 ) {
     var currentMemoriesModel by remember {
         mutableStateOf(MemoriesModel(listOf(), ""))
@@ -134,6 +137,9 @@ fun FoodSNAPSView(
                 navController = navController,
                 showMemoriesReel = state.showMemoriesReel,
                 changeMemoriesReelVisibility = { toggleShowMemoriesReel(it) },
+                selectedReaction = state.selectedReaction,
+                selectReaction = selectReaction,
+                clearSelectedReactions = clearSelectedReaction,
             )
         }
     }

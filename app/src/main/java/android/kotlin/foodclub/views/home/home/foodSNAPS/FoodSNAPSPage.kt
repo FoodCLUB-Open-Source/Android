@@ -44,7 +44,8 @@ import coil.compose.rememberAsyncImagePainter
 fun FoodSNAPSPage(
     index: Int,
     storyListData: List<VideoModel>,
-    showMemoriesReel: Boolean
+    showMemoriesReel: Boolean,
+    selectReaction: (Reactions) -> Unit
 ) {
 
     val reactionsVerticalOffset = -260
@@ -69,7 +70,8 @@ fun FoodSNAPSPage(
                 reactions = Reactions.entries.toTypedArray(),
                 painter = rememberAsyncImagePainter(
                     model = storyListData[index].thumbnailLink
-                )
+                ),
+                selectReaction = selectReaction
             )
         }
         Box(
