@@ -425,6 +425,10 @@
     <string name="stories_view">stories_view</string>
     <string name="memories_text">memories_text</string>
     <string name="pipe_symbol">|</string>
+    <string name="height_animation">height animation of particles</string>
+    <string name="height_transition">height transition</string>
+    <string name="alpha_animation">alpha animation</string>
+    <string name="scale_animation">scale animation</string>
     - Gallery
     <string name="gallery">Gallery</string>
     <string name="story">story</string>
