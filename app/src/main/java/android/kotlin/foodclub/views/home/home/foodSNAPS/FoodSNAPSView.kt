@@ -53,7 +53,7 @@ fun FoodSNAPSView(
         mutableStateOf(MemoriesModel(listOf(), ""))
     }
 
-    val dummyLstData = listOf(
+    val dummyListData = listOf(
         VideoModel(
             videoId = 4L,
             authorDetails = "Steve",
@@ -78,7 +78,7 @@ fun FoodSNAPSView(
             ),
             videoLink = "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/3a/b0/ca/3ab0caac-7a5b-0ad8-efcf-81f6cc0bcb5b/3e79acef-0c61-4489-b8db-86bdb33a739c_Screenshot4iPhone.jpg/750x750bb.jpeg",
             thumbnailLink = "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/3a/b0/ca/3ab0caac-7a5b-0ad8-efcf-81f6cc0bcb5b/3e79acef-0c61-4489-b8db-86bdb33a739c_Screenshot4iPhone.jpg/750x750bb.jpeg",
-            description = "This is dummy video 1",
+            description = "This is dummy video 2",
         ),
         VideoModel(
             videoId = 5L,
@@ -91,10 +91,10 @@ fun FoodSNAPSView(
             ),
             videoLink = "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/e4/5a/a3/e45aa3df-a7d9-cd0f-91cd-532b8e77fe8d/4987efe6-41d1-4750-b4fd-84d15ad4b781_Screenshot1iPhone.jpg/750x750bb.jpeg",
             thumbnailLink = "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/e4/5a/a3/e45aa3df-a7d9-cd0f-91cd-532b8e77fe8d/4987efe6-41d1-4750-b4fd-84d15ad4b781_Screenshot1iPhone.jpg/750x750bb.jpeg",
-            description = "This is dummy video 1",
+            description = "This is dummy video 3",
         ),
         )
-    val storyListData =  dummyLstData// actual value is state.storyList
+    val storyListData = state.storyList // test with dummyListData or state.videoList
 
 
     BackHandler {
