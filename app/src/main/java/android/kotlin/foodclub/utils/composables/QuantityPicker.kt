@@ -5,19 +5,26 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.enums.QuantityUnit
 import android.kotlin.foodclub.domain.models.products.Ingredient
+import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -32,15 +39,21 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -49,7 +62,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 
 /**
  * Custom QuantityPicker composable for selecting quantity, unit, and type.
@@ -60,23 +78,51 @@ import androidx.compose.ui.unit.sp
  * @param onQuantityUnitSelected Callback when quantity, unit, or type is selected.
  * @param onIngredientUpdated Callback when the ingredient is updated.
  */
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+
+@OptIn(
+    ExperimentalComposeUiApi::class,
+    ExperimentalFoundationApi::class
+)
 @Composable
 fun QuantityPicker(
     ingredient: Ingredient,
     units: List<QuantityUnit>,
     types: List<String>,
     onQuantityUnitSelected: (quantity: Int, unit: QuantityUnit, type: String) -> Unit,
-    onIngredientUpdated: (Ingredient) -> Unit
+    onIngredientUpdated: (Ingredient) -> Unit,
+    startIndex: Int = 7,
+    listScrollCount: Int = Integer.MAX_VALUE,
 ) {
     var quantity by remember { mutableStateOf(ingredient.quantity.toString()) }
     var selectedUnit by remember { mutableStateOf(ingredient.unit) }
     var selectedType by remember { mutableStateOf(types[0]) }
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    val alpha1 = 0.1f
-    val alpha2 = 0.2f
-    val weight1 = 0.4f
+    val lightGrayAlpha = 0.2f
+
+    var selectedTypeState by remember { mutableStateOf(types[0]) }
+
+    val typeListState = rememberLazyListState(initialFirstVisibleItemIndex = startIndex)
+
+    val typeListFling = rememberSnapFlingBehavior(lazyListState = typeListState)
+
+    val itemHeightPixels = remember { mutableIntStateOf(0) }
+    val itemHeightDp = pixelsToDp(itemHeightPixels.intValue)
+    val TAG = "IngredientsNumberPicker"
+
+    LaunchedEffect(typeListState) {
+        snapshotFlow { typeListState.firstVisibleItemIndex }
+            .map { index ->
+                val validIndex = index % types.size
+                types.getOrNull(validIndex)
+            }
+            .filterNotNull()
+            .distinctUntilChanged()
+            .collect {
+                Log.i(TAG, "SELECTED type $it")
+                selectedTypeState = it
+            }
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -126,8 +172,8 @@ fun QuantityPicker(
                 Text(stringResource(id = R.string.quantity), color = Color.Gray)
             },
             colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = Color.LightGray.copy(alpha = alpha2),
-                focusedContainerColor = Color.LightGray.copy(alpha = alpha2),
+                unfocusedContainerColor = Color.LightGray.copy(alpha = lightGrayAlpha),
+                focusedContainerColor = Color.LightGray.copy(alpha = lightGrayAlpha),
                 cursorColor = foodClubGreen,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
@@ -156,38 +202,26 @@ fun QuantityPicker(
         )
 
         LazyColumn(
+            state = typeListState,
+            flingBehavior = typeListFling,
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f)
-        ) {
-            items(types.size) { type ->
-                val isSelected = types[type] == selectedType
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
-                        .background(if (isSelected) foodClubGreen.copy(alpha = alpha1) else Color.White)
-                        .padding(dimensionResource(id = R.dimen.dim_8))
+                .height(itemHeightDp * 3)
 
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = rememberRipple(color = foodClubGreen)
-                        ) {
-                            selectedType = types[type]
-                        }
-                ) {
-                    Text(
-                        text = types[type],
-                        color = if (isSelected) Color.DarkGray else Color.LightGray,
-                        fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
-                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                        fontFamily = Montserrat,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-            }
-            item {
-                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_16)))
+        ) {
+            items(listScrollCount) { index ->
+                val validIndex = index % types.size
+                val currentItemIndex = (validIndex - 1 + types.size) % types.size
+                val currentItem = types[currentItemIndex]
+                val isSelected = currentItem == selectedTypeState
+               
+                PickerRow(
+
+                    currentItem = currentItem,
+                    isSelected = isSelected,
+                    itemHeightPixels = itemHeightPixels,
+                )
             }
         }
 
@@ -195,8 +229,8 @@ fun QuantityPicker(
             shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(dimensionResource(id = R.dimen.dim_50))
-                .weight(weight1),
+                .wrapContentHeight(),
+
             colors = ButtonDefaults.buttonColors(
                 containerColor = foodClubGreen,
                 contentColor = Color.White
@@ -227,6 +261,46 @@ fun QuantityPicker(
     }
 }
 
+@Composable
+private fun PickerRow(
+
+    currentItem: String,
+    isSelected: Boolean,
+    itemHeightPixels: MutableState<Int>,
+
+    ) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .onSizeChanged { size -> itemHeightPixels.value = size.height }
+            .then(
+                Modifier
+                    .padding(dimensionResource(id = R.dimen.dim_8))
+            ),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
+                .background(if (isSelected) foodClubGreen.copy(alpha = 0.1f) else Color.White)
+                .padding(dimensionResource(id = R.dimen.dim_8))
+        ) {
+            Text(
+                text = currentItem,
+                maxLines = 1,
+                color = if (isSelected) Color.DarkGray else Color.LightGray,
+                fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
+                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                fontFamily = Montserrat,
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
+    }
+}
+
+@Composable
+private fun pixelsToDp(pixels: Int) = with(LocalDensity.current) { pixels.toDp() }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -236,7 +310,6 @@ fun EditIngredientBottomModal(
     onEdit: (Ingredient) -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState()
-    val capturedIngredient = remember { mutableStateOf(ingredient) }
     var updatedIngredient by remember { mutableStateOf(ingredient) }
     val types = stringArrayResource(id = R.array.quantity_list).toList()
 
@@ -245,7 +318,7 @@ fun EditIngredientBottomModal(
         onDismissRequest = {
             onDismissRequest(false)
         },
-        modifier = Modifier.height(dimensionResource(id = R.dimen.dim_400)),
+        modifier = Modifier.height(dimensionResource(id = R.dimen.dim_450)),
         containerColor = Color.White
     ) {
         val units = listOf(
@@ -256,7 +329,7 @@ fun EditIngredientBottomModal(
         )
         Column(
             modifier = Modifier
-                .heightIn(max = dimensionResource(id = R.dimen.dim_350))
+                .wrapContentHeight()
                 .padding(
                     start = dimensionResource(id = R.dimen.dim_10),
                     end = dimensionResource(id = R.dimen.dim_10)
