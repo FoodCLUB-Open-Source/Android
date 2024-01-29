@@ -1,9 +1,12 @@
 package android.kotlin.foodclub.navigation
 
 import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
+import android.kotlin.foodclub.viewModels.home.create.TrimmerViewModel
 import android.kotlin.foodclub.viewModels.home.createRecipe.CreateRecipeViewModel
+import android.kotlin.foodclub.views.home.TrimmerView
 import android.kotlin.foodclub.views.home.createRecipe.CreateRecipeView
 import androidx.compose.runtime.collectAsState
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -21,7 +24,9 @@ fun NavGraphBuilder.createRecipeNavigationGraph(
             val viewModel = entry.sharedHiltViewModel<CreateRecipeViewModel>(navController)
         }
         composable(CreateRecipeScreen.VideoEditor.route) { entry ->
-            val viewModel = entry.sharedHiltViewModel<CreateRecipeViewModel>(navController)
+            val viewModel: TrimmerViewModel = hiltViewModel()
+            setBottomBarVisibility(false)
+            TrimmerView(viewModel)
         }
         composable(CreateRecipeScreen.PostDetails.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<CreateRecipeViewModel>(navController)
