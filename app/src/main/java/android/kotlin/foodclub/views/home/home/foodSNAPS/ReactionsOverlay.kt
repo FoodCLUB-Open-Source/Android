@@ -219,11 +219,11 @@ private const val MAX_ANIMATION_DURATION = 1500f
 private const val PARTICLE_SIZE = 20
 private const val MIN_HEIGHT = 800 // larger than max as its displacement from top of screen
 private const val MAX_HEIGHT = 300
-private const val PARTICLE_QUANTITY = 25
-private const val PARTICLE_X_OFFSET = 50
+private const val PARTICLE_QUANTITY = 10
+private const val PARTICLE_X_OFFSET = 100
 private const val PARTICLE_X_MULTIPLIER = 10
 private const val PARTICLE_Y_MULTIPLIER = 10
-private const val DELAY_MILLIS = 300
+private const val DELAY_MILLIS = 100
 
 data class ParticleModel(
     val verticalFraction: Float,
