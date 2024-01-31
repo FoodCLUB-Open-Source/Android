@@ -94,7 +94,7 @@ fun FoodSNAPSView(
             description = "This is dummy video 3",
         ),
         )
-    val storyListData = state.storyList // test with dummyListData or state.videoList
+    val storyListData = dummyListData // test with dummyListData or state.videoList
 
 
     BackHandler {

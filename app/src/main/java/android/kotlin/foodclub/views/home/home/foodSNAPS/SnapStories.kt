@@ -4,9 +4,6 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.domain.enums.Reactions
 import android.kotlin.foodclub.domain.models.home.VideoModel
-import android.kotlin.foodclub.views.home.home.SnapReactionsView
-import android.kotlin.foodclub.views.home.home.SnapStoryView
-import android.kotlin.foodclub.views.home.home.TapToSnapDialog
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image

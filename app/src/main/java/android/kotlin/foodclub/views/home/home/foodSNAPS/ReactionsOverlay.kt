@@ -6,9 +6,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateInt
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
@@ -72,27 +71,13 @@ fun ReactionsOverlay(
         ) {
             val particles = remember { calculateParticleParams(reaction = selectedReaction) }
 
-            val transitionState = remember {
-                MutableTransitionState(MIN_HEIGHT).apply {
-                    targetState = MAX_HEIGHT
-                }
-            }
-
-            val transition = updateTransition(
-                transitionState = transitionState,
-                label = stringResource(id = R.string.height_transition)
+            val height by animateIntAsState(
+                targetValue = MIN_HEIGHT,
+                animationSpec = tween(
+                    durationMillis = MAX_ANIMATION_DURATION.toInt(),
+                    easing = LinearOutSlowInEasing
+                ), label = stringResource(id = R.string.height_transition)
             )
-
-            val height by transition.animateInt(
-                transitionSpec = {
-                    tween(
-                        durationMillis = MAX_ANIMATION_DURATION.toInt(),
-                        easing = LinearOutSlowInEasing
-                    )
-                },
-                label = stringResource(id = R.string.height_animation)
-            ) { it }
-
 
             Layout(
                 modifier = modifier.padding(bottom = dimensionResource(id = R.dimen.reactions_overlay_bottom_padding)),
@@ -165,15 +150,10 @@ private fun particleYPosition(
 private fun Particle(model: ParticleModel) {
     if (model.reaction == Reactions.ALL) return
 
-    val transitionState = remember {
-        MutableTransitionState(0.1f).apply {
-            targetState = 0f
-        }
-    }
-
-    val targetScale = remember { model.initialScale * TARGET_PARTICLE_SCALE_MULTIPLIER }
-
-    val transition = updateTransition(transitionState, label = "particle transition")
+    val transition = updateTransition(
+        targetState = 1f,
+        label = stringResource(id = R.string.particle_transition)
+    )
 
     val alpha by transition.animateFloat(
         transitionSpec = {
@@ -184,10 +164,10 @@ private fun Particle(model: ParticleModel) {
                 1f at (model.duration * 0.8f).toInt()
                 0f at model.duration
             }
-        },
-        label = stringResource(id = R.string.alpha_animation)
+        }, label = ""
     ) { it }
 
+    val targetScale = model.initialScale * TARGET_PARTICLE_SCALE_MULTIPLIER
     val scale by transition.animateFloat(
         transitionSpec = {
             keyframes {
@@ -196,8 +176,7 @@ private fun Particle(model: ParticleModel) {
                 model.initialScale at (model.duration * 0.7f).toInt()
                 targetScale at model.duration
             }
-        },
-        label = stringResource(id = R.string.scale_animation)
+        }, label = ""
     ) { it }
 
     Image(
@@ -216,14 +195,14 @@ private const val MIN_PARTICLE_SIZE = 1f
 private const val MAX_PARTICLE_SIZE = 2.6f
 private const val MIN_ANIMATION_DURATION = 1200f
 private const val MAX_ANIMATION_DURATION = 1500f
-private const val PARTICLE_SIZE = 20
+private const val PARTICLE_SIZE = 30
 private const val MIN_HEIGHT = 800 // larger than max as its displacement from top of screen
 private const val MAX_HEIGHT = 300
 private const val PARTICLE_QUANTITY = 10
-private const val PARTICLE_X_OFFSET = 100
+private const val PARTICLE_X_OFFSET = 50
 private const val PARTICLE_X_MULTIPLIER = 10
 private const val PARTICLE_Y_MULTIPLIER = 10
-private const val DELAY_MILLIS = 100
+private const val DELAY_MILLIS = 0
 
 data class ParticleModel(
     val verticalFraction: Float,

@@ -427,6 +427,7 @@
     <string name="pipe_symbol">|</string>
     <string name="height_animation">height animation of particles</string>
     <string name="height_transition">height transition</string>
+    <string name="particle_transition">particle transition</string>
     <string name="alpha_animation">alpha animation</string>
     <string name="scale_animation">scale animation</string>
     - Gallery

@@ -11,7 +11,7 @@ import android.kotlin.foodclub.viewModels.home.myBasket.MyBasketViewModel
 import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
 import android.kotlin.foodclub.views.home.CameraPreviewView
 import android.kotlin.foodclub.views.home.TakeProfilePhotoView
-import android.kotlin.foodclub.views.home.TakeSnapView
+import android.kotlin.foodclub.views.home.home.foodSNAPS.TakeSnapView
 import android.kotlin.foodclub.views.home.camera.CameraView
 import android.kotlin.foodclub.views.home.discover.DiscoverView
 import android.kotlin.foodclub.views.home.followerFollowing.FollowerView
