@@ -126,7 +126,7 @@ fun ConfirmDeleteDialog(
                             style = MaterialTheme.typography.headlineSmall,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             fontFamily = Montserrat,
-                            maxLines = integerResource(id=R.integer.int_1),
+                            maxLines = integerResource(id=R.integer.int_2),
                             overflow = TextOverflow.Ellipsis
                         )
                         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_8)))

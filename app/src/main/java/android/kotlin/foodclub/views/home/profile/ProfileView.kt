@@ -74,6 +74,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -271,6 +272,7 @@ fun ProfileView(
                         }
 
 
+                        var settingNavigated by remember { mutableStateOf(false)};
                         Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_40)))
                         if (userId == 0L) {
                             Button(shape = CircleShape,
@@ -287,7 +289,13 @@ fun ProfileView(
                                     )
                                 ),
                                 contentPadding = PaddingValues(),
-                                onClick = { navController.navigate("SETTINGS") }
+                                onClick = {
+                                    if(!settingNavigated)
+                                    {
+                                        navController.navigate("SETTINGS")
+                                        settingNavigated = true;
+                                    }
+                                }
                             ) {
                                 Image(
                                     painter = painterResource(id = R.drawable.vector_1_),
@@ -332,15 +340,15 @@ fun ProfileView(
                     ) {
                         Text(
                             fontFamily = Montserrat,
-                            text = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",//profile?.username ?: "",
+                            text = profile?.username ?: "",
                             fontSize = dimensionResource(id = R.dimen.fon_23).value.sp,
                             fontWeight = FontWeight.SemiBold,
                             modifier = Modifier
                                 .padding(top = dimensionResource(id = R.dimen.dim_5))
-                                .fillMaxWidth(0.8f),
+                                .padding(horizontal = dimensionResource(id = R.dimen.dim_20)),
                             letterSpacing = -dimensionResource(id = R.dimen.fon_1).value.sp,
                             overflow = TextOverflow.Ellipsis,
-                            maxLines = 2
+                            maxLines = integerResource(R.integer.int_2)
                         )
                         Row(
                             modifier = Modifier
@@ -375,7 +383,8 @@ fun ProfileView(
                                             fontSize = dimensionResource(id = R.dimen.fon_17).value.sp
                                         ),
                                         textAlign = TextAlign.Center,
-                                        overflow = TextOverflow.Ellipsis
+                                        overflow = TextOverflow.Ellipsis,
+                                        maxLines = integerResource(id = R.integer.int_1)
                                     )
                                 }
                                 Text(
@@ -384,7 +393,8 @@ fun ProfileView(
                                     fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
                                     color = colorResource(id = R.color.followers_following_color),
                                     fontWeight = FontWeight.Light,
-                                    overflow = TextOverflow.Ellipsis
+                                    overflow = TextOverflow.Ellipsis,
+                                    maxLines = integerResource(id = R.integer.int_1)
                                 )
                             }
 
