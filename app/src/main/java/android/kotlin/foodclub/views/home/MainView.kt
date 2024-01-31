@@ -27,12 +27,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -106,13 +104,8 @@ fun BottomBar(navController: NavHostController, triggerBottomSheetModal: () -> U
     val currentDestination = navBackStackEntry?.destination
 
     val bottomBarDestination = screens.any { currentDestination?.route?.startsWith(it.route) == true }
-    var screenHeight = LocalConfiguration.current.screenHeightDp.dp * 0.12f
-
-    if (screenHeight < dimensionResource(id = R.dimen.dim_90)) {
-        screenHeight = dimensionResource(id = R.dimen.dim_110)
-    }
     if (bottomBarDestination) {
-        NavigationBar (containerColor = Color.White, modifier = Modifier.height(screenHeight)) {
+        NavigationBar (containerColor = Color.White) {
             screens.forEach { screen ->
                 AddItem(
                     screen = screen,
