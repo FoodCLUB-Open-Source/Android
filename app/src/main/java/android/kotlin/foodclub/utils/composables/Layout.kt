@@ -1,6 +1,5 @@
 package android.kotlin.foodclub.utils.composables
 
-import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Black
 import android.kotlin.foodclub.config.ui.Montserrat
@@ -38,7 +37,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainLayout(
     navController: NavHostController,
@@ -77,11 +75,20 @@ fun MainLayout(
                 BottomBar(navController = navController, triggerBottomSheetModal)
             }
         }
-    ) {
+    ) { padding->
         if (showBottomBar && !showStory && showSheet) {
             BottomSheet(triggerBottomSheetModal, navController)
         }
-        rootNavigationGraph(showSheet, triggerBottomSheetModal, triggerStory) { showBottomBar = it }
+        Box(
+            modifier = Modifier
+                .padding(bottom = padding.calculateBottomPadding())
+        ){
+            rootNavigationGraph(
+                showSheet,
+                triggerBottomSheetModal,
+                triggerStory
+            ) { showBottomBar = it }
+        }
     }
 
 }
