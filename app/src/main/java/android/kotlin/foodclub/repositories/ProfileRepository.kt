@@ -18,6 +18,7 @@ import android.kotlin.foodclub.network.retrofit.responses.profile.UpdateUserProf
 import android.kotlin.foodclub.network.retrofit.utils.apiRequestFlow
 import android.kotlin.foodclub.localdatasource.localdatasource.profile_posts_local_datasource.ProfilePostsLocalDataSource
 import android.kotlin.foodclub.localdatasource.localdatasource.profile_local_datasource.ProfileLocalDataSource
+import android.kotlin.foodclub.localdatasource.room.entity.OfflineProfileModel
 import android.kotlin.foodclub.network.remotedatasource.profile_remote_datasource.ProfileRemoteDataSource
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.LocalDataMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.OfflineProfileDataMapper
@@ -57,7 +58,7 @@ class ProfileRepository(
             is Resource.Success -> {
                 val mappedProfileData = localDataMapper.mapToDomainModel(resource.data!!.body()!!.data)
                 mappedProfileData.userId = userId
-                profileLocalDataSource.insertProfileLocalData(mappedProfileData)
+                saveLocalProfileDetails(mappedProfileData)
 
                 val userPosts = resource.data.body()!!.data.userPosts.take(10)
                 val mappedPosts = localVideosMapper.mapToDomainModel(userPosts)
@@ -238,5 +239,9 @@ class ProfileRepository(
                 Resource.Error(resource.message!!)
             }
         }
+    }
+
+    suspend fun saveLocalProfileDetails(offlineProfileModel: OfflineProfileModel){
+        profileLocalDataSource.insertProfileLocalData(offlineProfileModel)
     }
 }

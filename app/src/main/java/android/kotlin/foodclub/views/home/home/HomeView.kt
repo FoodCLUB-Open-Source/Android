@@ -8,7 +8,8 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.snapsTopbar
 import android.kotlin.foodclub.utils.helpers.fadingEdge
 import android.kotlin.foodclub.viewModels.home.home.HomeEvents
-import android.kotlin.foodclub.views.home.home.foodSNAPS.SnapScreen
+import android.kotlin.foodclub.views.home.home.foodSNAPS.FoodSNAPSView
+import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -40,6 +41,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -49,6 +51,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavHostController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -65,8 +68,10 @@ fun HomeView(
     initialPage: Int? = 0,
     navController: NavHostController,
     triggerStoryView: () -> Unit,
-    state: HomeState
+    state: HomeState,
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     var showIngredientSheet by remember { mutableStateOf(false) }
     val localDensity = LocalDensity.current
 
@@ -76,9 +81,6 @@ fun HomeView(
 
     if (screenHeightMinusBottomNavItem <= dimensionResource(id = R.dimen.dim_650)) {
         screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.96f
-    }
-    var showStories by remember {
-        mutableStateOf(false)
     }
 
     val systemUiController = rememberSystemUiController()
@@ -92,12 +94,13 @@ fun HomeView(
         initialPageOffsetFraction = 0f,
         pageCount = { 2 }
     )
-
+    val exoPlayer = remember(context) { viewModel.exoPlayer }
 
 
     BackHandler {
 
     }
+
     SideEffect {
         systemUiController.setSystemBarsColor(
             color = Color.Transparent,
@@ -119,7 +122,7 @@ fun HomeView(
                 .fillMaxWidth()
                 .height(dimensionResource(id = R.dimen.dim_95))
                 .then(
-                    if (pagerState.currentPage == 0) {
+                    if (pagerState.currentPage == 0 || (pagerState.currentPage == 1 && !state.showMemoriesReel)) {
                         Modifier
                             .fadingEdge(
                                 Brush.verticalGradient(
@@ -132,7 +135,7 @@ fun HomeView(
                     } else Modifier
                 )
                 .background(
-                    color = if (pagerState.currentPage == 0) {
+                    color = if (pagerState.currentPage == 0 || (pagerState.currentPage == 1 && !state.showMemoriesReel)) {
                         Color.Black
                     } else {
                         snapsTopbar
@@ -144,7 +147,7 @@ fun HomeView(
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
         ) {
-            if (showStories && pagerState.currentPage == 1) {
+            if (state.showMemories && pagerState.currentPage == 1) {
                 Image(
                     painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
                     contentDescription = null,
@@ -154,7 +157,7 @@ fun HomeView(
                             start = dimensionResource(id = R.dimen.dim_22),
                             bottom = dimensionResource(id = R.dimen.dim_18)
                         )
-                        .clickable { showStories = !showStories }
+                        .clickable { events.toggleShowMemories(show = false) }
                 )
             }
             Row(
@@ -232,10 +235,11 @@ fun HomeView(
         ) { currentPage ->
             when (currentPage) {
                 0 -> {
-                    if (showStories) {
-                        showStories = !showStories
+                    if (state.showMemories) {
+                        events.toggleShowMemories(show = false)
                     }
                     VideoPager(
+                        exoPlayer = exoPlayer,
                         videoList = state.videoList,
                         initialPage = initialPage,
                         events = events,
@@ -247,20 +251,19 @@ fun HomeView(
                 }
 
                 1 -> {
-                    SnapScreen(
+                    FoodSNAPSView(
                         state = state,
-                        onShowStoriesChanged = { newShowStoriesValue ->
-                            showStories = newShowStoriesValue
+                        onShowMemoriesChanged = { newShowMemoriesValue ->
+                           events.toggleShowMemories(show = newShowMemoriesValue)
                         },
-                        showStories = showStories,
+                        toggleShowMemoriesReel = events::toggleShowMemoriesReel,
+                        showMemories = state.showMemories,
                         pagerState = pagerState,
                         coroutineScope = coroutineScope,
                         navController = navController
                     )
                 }
-
             }
-
         }
     }
 }

@@ -5,13 +5,16 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.Satoshi
 import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.domain.enums.QuantityUnit
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.MyBasketCache
 import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.CustomDatePicker
+import android.kotlin.foodclub.utils.composables.EditIngredientBottomModal
 import android.kotlin.foodclub.utils.composables.EditIngredientQuantityPicker
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
+import android.kotlin.foodclub.utils.composables.QuantityPicker
 import android.kotlin.foodclub.utils.composables.shimmerBrush
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
@@ -140,6 +143,9 @@ fun DiscoverView(
 ) {
     val context = LocalContext.current
     val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
+
+    var isShowPost by remember { mutableStateOf(false) }
+    var postId: Long? by remember { mutableStateOf(null) }
 
     val brush = shimmerBrush()
     val screenHeight =
@@ -298,7 +304,20 @@ fun DiscoverView(
                 }
             }
         }
-
+        if (isShowPost && postId != null){
+            item {
+                DiscoverViewPosts(
+                    postId = postId!!,
+                    posts = state.postList,
+                    events = events,
+                    state = state,
+                    onBackPressed = {
+                        postId = null
+                        isShowPost = !isShowPost
+                    }
+                )
+            }
+        }
 
         item {
             if (mainTabIndex == 0) {
@@ -401,12 +420,28 @@ fun DiscoverView(
                                 if (homePosts != null) {
                                     items(homePosts!!) { dataItem ->
                                         events.getPostData(dataItem.videoId)
-                                        GridItem2(navController, dataItem, userName)
+                                        GridItem2(
+                                            navController,
+                                            dataItem,
+                                            userName,
+                                            isShowPost = {
+                                                postId = it
+                                                isShowPost = !isShowPost
+                                            }
+                                        )
                                     }
                                 } else if (worldPosts != null) {
                                     items(worldPosts.value) { dataItem ->
                                         events.getPostData(dataItem.videoId)
-                                        GridItem2(navController, dataItem, userName)
+                                        GridItem2(
+                                            navController,
+                                            dataItem,
+                                            userName,
+                                            isShowPost = {
+                                                postId = it
+                                                isShowPost = !isShowPost
+                                            }
+                                        )
                                     }
                                 }
                             }
@@ -1106,54 +1141,58 @@ fun SingleSearchIngredientItem(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun EditIngredientBottomModal(
-    ingredient: Ingredient,
-    onDismissRequest: (Boolean) -> Unit,
-    onEdit: (Ingredient) -> Unit
-) {
-    val sheetState = rememberModalBottomSheetState()
-    ModalBottomSheet(
-        sheetState = sheetState,
-        onDismissRequest = {
-            onDismissRequest(false)
-        },
-        containerColor = Color.White
-    ) {
-        val pickerValues = remember {
-            mutableStateOf((1..10).map {
-                Pair(
-                    it,
-                    (it * 100).toString() + ValueParser.quantityUnitToString(ingredient.unit)
-                )
-            })
-        }
-
-        val quantity = pickerValues.value.map { it.first }
-        val grammage = pickerValues.value.map { it.second }
-        val types = stringArrayResource(id = R.array.quantity_list).toList()
-        Column(
-            modifier = Modifier
-                .heightIn(max = dimensionResource(id = R.dimen.dim_350))
-                .padding(
-                    start = dimensionResource(id = R.dimen.dim_10),
-                    end = dimensionResource(id = R.dimen.dim_10)
-                )
-        ) {
-            EditIngredientQuantityPicker(
-                ingredient = ingredient,
-                quantity = quantity,
-                grammage = grammage,
-                types = types,
-                onEditIngredient = {
-                    onEdit(it)
-                    onDismissRequest(false)
-                }
-            )
-        }
-    }
-}
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//fun EditIngredientBottomModal(
+//    ingredient: Ingredient,
+//    onDismissRequest: (Boolean) -> Unit,
+//    onEdit: (Ingredient) -> Unit
+//) {
+//    val sheetState = rememberModalBottomSheetState()
+//    ModalBottomSheet(
+//        sheetState = sheetState,
+//        onDismissRequest = {
+//            onDismissRequest(false)
+//        },
+//        modifier = Modifier.height(400.dp),
+//        containerColor = Color.White
+//    ) {
+//        val pickerValues = remember {
+//            mutableStateOf((1..10).map {
+//                Pair(
+//                    it,
+//                    (it * 100).toString() + ValueParser.quantityUnitToString(ingredient.unit)
+//                )
+//            })
+//        }
+//        val units = listOf(QuantityUnit.GRAMS, QuantityUnit.KILOGRAMS, QuantityUnit.LITERS, QuantityUnit.MILLILITERS,)
+//
+//
+//        val quantity = pickerValues.value.map { it.first }
+//        val grammage = pickerValues.value.map { it.second }
+//        val types = stringArrayResource(id = R.array.quantity_list).toList()
+//        Column(
+//            modifier = Modifier
+//                .heightIn(max = dimensionResource(id = R.dimen.dim_350))
+//                .padding(
+//                    start = dimensionResource(id = R.dimen.dim_10),
+//                    end = dimensionResource(id = R.dimen.dim_10)
+//                )
+//        ) {
+//
+//            EditIngredientQuantityPicker(
+//                ingredient = ingredient,
+//                quantity = quantity,
+//                grammage = grammage,
+//                types = types,
+//                onEditIngredient = {
+//                    onEdit(it)
+//                    onDismissRequest(false)
+//                }
+//            )
+//        }
+//    }
+//}
 
 @Composable
 fun AddIngredientDialog(
@@ -1300,6 +1339,7 @@ fun GridItem2(
     dataItem: VideoModel,
     userName: String,
     brush: Brush = shimmerBrush(),
+    isShowPost: (Long) -> Unit
 ) {
     val thumbnailPainter = rememberAsyncImagePainter(dataItem.thumbnailLink)
     Card(
@@ -1331,7 +1371,7 @@ fun GridItem2(
                 modifier = Modifier
                     .fillMaxSize()
                     .clickable {
-                        navController.navigate("DELETE_RECIPE/${dataItem.videoId}")
+                        isShowPost(dataItem.videoId)
                     },
                 contentScale = ContentScale.FillHeight
             )

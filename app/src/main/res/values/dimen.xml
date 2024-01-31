@@ -1065,4 +1065,10 @@
     <dimen name="fon_59">59sp</dimen>
     <dimen name="fon_60">60sp</dimen>
 
+    <dimen name="snap_reactions_height">84dp</dimen>
+    <dimen name="snap_reactions_blur_radius">5dp</dimen>
+    <dimen name="snap_reactions_blur_edge_radius">32dp</dimen>
+    <dimen name="snap_reactions_inner_height">64dp</dimen>
+    <dimen name="snap_reactions_reaction_height">58dp</dimen>
+
 </resources>

@@ -10,5 +10,7 @@ interface HomeEvents {
     fun postSnap(file: File)
     suspend fun userViewsStory(storyId: Long)
     fun addIngredientsToBasket()
+    fun toggleShowMemories(show: Boolean)
+    fun toggleShowMemoriesReel(show: Boolean)
 
 }

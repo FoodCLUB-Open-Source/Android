@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.media3.exoplayer.ExoPlayer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
@@ -39,7 +40,8 @@ class DiscoverViewModel @Inject constructor(
     private val profileRepo: ProfileRepository,
     private val productsRepo: ProductRepository,
     private val sessionCache: SessionCache,
-    private val myBasketCache: MyBasketCache
+    private val myBasketCache: MyBasketCache,
+    val exoPlayer: ExoPlayer
 ) : ViewModel(), DiscoverEvents {
 
     companion object {
@@ -53,7 +55,13 @@ class DiscoverViewModel @Inject constructor(
     // TODO add real data for scanResultItemList
 
     init {
-        _state.update { it.copy(myBasketCache = myBasketCache) }
+        exoPlayer.prepare()
+        _state.update {state->
+            state.copy(
+                userId = sessionCache.getActiveSession()?.sessionUser?.userId!!,
+                myBasketCache = myBasketCache
+            )
+        }
         getPostsByWorld(197)
         getPostsByUserId()
         myFridgePosts()
@@ -299,6 +307,11 @@ class DiscoverViewModel @Inject constructor(
                 _state.update { it.copy(error = resource.message!!) }
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        exoPlayer.release()
     }
 }
 

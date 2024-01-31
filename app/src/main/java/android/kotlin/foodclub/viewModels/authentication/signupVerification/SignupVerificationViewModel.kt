@@ -1,11 +1,13 @@
 package android.kotlin.foodclub.viewModels.authentication.signupVerification
 
 import android.kotlin.foodclub.domain.models.session.Session
+import android.kotlin.foodclub.localdatasource.room.entity.OfflineProfileModel
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.navigation.auth.AuthScreen
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.network.retrofit.utils.auth.JWTManager
 import android.kotlin.foodclub.repositories.AuthRepository
+import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.views.authentication.signupVerification.SignupVerificationState
 import android.util.Log
@@ -22,7 +24,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SignupVerificationViewModel @Inject constructor(
     val repository: AuthRepository,
-    private val sessionCache: SessionCache
+    private val sessionCache: SessionCache,
+    private val profileRepository: ProfileRepository
 ) : ViewModel(), SignupVerificationEvents {
 
     companion object {
@@ -93,6 +96,11 @@ class SignupVerificationViewModel @Inject constructor(
                             message = ""
                         )
                     }
+                    profileRepository.saveLocalProfileDetails(
+                        OfflineProfileModel(
+                            userName = state.value.username!!
+                        )
+                    )
                     logInUser(navController = navController)
                 }
 

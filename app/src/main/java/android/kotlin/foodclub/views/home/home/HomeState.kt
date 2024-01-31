@@ -9,7 +9,9 @@ data class HomeState(
     val memories : List<MemoriesModel>,
     val storyList : List<VideoModel>,
     val recipe: Recipe?,
-    val error : String
+    val error : String,
+    val showMemories: Boolean,
+    val showMemoriesReel: Boolean,
 ) {
     companion object {
         fun default() = HomeState(
@@ -17,7 +19,9 @@ data class HomeState(
             memories = emptyList(),
             storyList = emptyList(),
             recipe = null,
-            error = ""
+            error = "",
+            showMemories = false,
+            showMemoriesReel = true
         )
     }
 }

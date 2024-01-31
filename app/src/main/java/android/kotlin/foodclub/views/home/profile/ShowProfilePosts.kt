@@ -12,6 +12,7 @@ import android.kotlin.foodclub.utils.composables.PlayPauseButton
 import android.kotlin.foodclub.utils.composables.VideoLayout
 import android.kotlin.foodclub.utils.composables.VideoScroller
 import android.kotlin.foodclub.viewModels.home.profile.ProfileEvents
+import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
 import android.kotlin.foodclub.views.home.home.HomeBottomSheetIngredients
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.LinearEasing
@@ -64,6 +65,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
@@ -195,6 +197,7 @@ fun ConfirmDeleteDialog(
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
 fun ShowProfilePosts(
+    viewModel: ProfileViewModel = hiltViewModel(),
     postId: Long,
     posts: List<VideoModel>,
     events: ProfileEvents,
@@ -301,6 +304,7 @@ fun ShowProfilePosts(
                         )
                     }
                     VideoScroller(
+                        viewModel.exoPlayer,
                         currentVideo,
                         pagerState,
                         vtPager,
