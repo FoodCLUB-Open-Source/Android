@@ -19,6 +19,10 @@ import androidx.compose.material.SwipeableState
 import androidx.compose.material.swipeable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.navigation.NavHostController
@@ -37,6 +41,8 @@ fun FoodSNAPSPager(
     snapPagerState: PagerState,
     swipeableState: SwipeableState<SwipeDirection>
 ) {
+    var isReactionsClickable by remember { mutableStateOf(selectedReaction != Reactions.ALL) }
+
     val ANIMATION_DURATION_SHORT = 300
     val snapPagerFling = PagerDefaults.flingBehavior(
         state = snapPagerState,
@@ -107,13 +113,17 @@ fun FoodSNAPSPager(
                         }
                     ),
                 selectedReaction = selectedReaction,
-                clearSelectedReaction = clearSelectedReactions
+                clearSelectedReaction = clearSelectedReactions,
+                isReactionsClickable = { isClickable->
+                    isReactionsClickable = isClickable
+                }
             ) {
                 FoodSNAPSPage(
                     index = it,
                     storyListData = storyListData,
                     showMemoriesReel = showMemoriesReel,
-                    selectReaction = selectReaction
+                    selectReaction = selectReaction,
+                    reactionsClickable = isReactionsClickable
                 )
             }
         }

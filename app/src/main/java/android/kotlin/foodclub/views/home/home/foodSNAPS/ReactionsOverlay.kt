@@ -38,15 +38,21 @@ fun ReactionsOverlay(
     modifier: Modifier,
     selectedReaction: Reactions,
     clearSelectedReaction: () -> Unit,
+    isReactionsClickable: (Boolean) -> Unit,
     content: @Composable () -> Unit,
 ) {
     var visibility by remember { mutableStateOf(selectedReaction != Reactions.ALL) }
 
     LaunchedEffect(key1 = visibility) {
-        if (!visibility) return@LaunchedEffect
+        if (!visibility) {
+            isReactionsClickable(true) // Notify when visibility becomes false
+            return@LaunchedEffect
+        }
+        isReactionsClickable(false) // Set isReactionsClickable to false when animation starts
         delay(MAX_ANIMATION_DURATION.toLong() + DELAY_MILLIS)
         visibility = false
         clearSelectedReaction()
+        isReactionsClickable(true) // Set isReactionsClickable to true when animation finishes
     }
 
     LaunchedEffect(key1 = selectedReaction) {

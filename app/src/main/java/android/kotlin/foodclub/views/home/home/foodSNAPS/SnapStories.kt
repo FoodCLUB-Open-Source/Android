@@ -107,7 +107,8 @@ fun SnapStories(
                         painter = rememberAsyncImagePainter(
                             model = storyListData[it].thumbnailLink
                         ),
-                        selectReaction = {}
+                        selectReaction = {},
+                        reactionsClickable = false
                     )
                     Box(
                         modifier = Modifier

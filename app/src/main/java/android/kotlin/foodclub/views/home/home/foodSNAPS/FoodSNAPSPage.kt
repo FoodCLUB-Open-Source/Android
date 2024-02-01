@@ -38,7 +38,8 @@ fun FoodSNAPSPage(
     index: Int,
     storyListData: List<VideoModel>,
     showMemoriesReel: Boolean,
-    selectReaction: (Reactions) -> Unit
+    selectReaction: (Reactions) -> Unit,
+    reactionsClickable: Boolean
 ) {
 
     val reactionsVerticalOffset = -260
@@ -64,7 +65,8 @@ fun FoodSNAPSPage(
                 painter = rememberAsyncImagePainter(
                     model = storyListData[index].thumbnailLink
                 ),
-                selectReaction = selectReaction
+                selectReaction = selectReaction,
+                reactionsClickable = reactionsClickable
             )
         }
         Box(
