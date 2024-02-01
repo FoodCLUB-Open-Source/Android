@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.views.home.home
+package android.kotlin.foodclub.views.home.home.foodSNAPS
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat

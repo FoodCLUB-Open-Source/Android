@@ -10,13 +10,13 @@ import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
 import android.kotlin.foodclub.viewModels.home.myBasket.MyBasketViewModel
 import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
 import android.kotlin.foodclub.views.home.CameraPreviewView
-import android.kotlin.foodclub.views.home.TakeProfilePhotoView
-import android.kotlin.foodclub.views.home.TakeSnapView
+import android.kotlin.foodclub.views.home.profile.TakeProfilePhotoView
+import android.kotlin.foodclub.views.home.home.foodSNAPS.TakeSnapView
 import android.kotlin.foodclub.views.home.camera.CameraView
 import android.kotlin.foodclub.views.home.discover.DiscoverView
 import android.kotlin.foodclub.views.home.followerFollowing.FollowerView
 import android.kotlin.foodclub.views.home.gallery.GalleryView
-import android.kotlin.foodclub.views.home.home.HomeView
+import android.kotlin.foodclub.views.home.home.feed.HomeView
 import android.kotlin.foodclub.views.home.myBasket.MyBasketView
 import android.kotlin.foodclub.views.home.myDigitalPantry.MyDigitalPantryView
 import android.kotlin.foodclub.views.home.profile.ProfileView

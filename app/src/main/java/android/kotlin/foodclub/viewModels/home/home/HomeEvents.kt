@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.viewModels.home.home
 
+import android.kotlin.foodclub.domain.enums.Reactions
 import java.io.File
 
 interface HomeEvents {
@@ -12,5 +13,6 @@ interface HomeEvents {
     fun addIngredientsToBasket()
     fun toggleShowMemories(show: Boolean)
     fun toggleShowMemoriesReel(show: Boolean)
+    fun selectReaction(reaction: Reactions)
 
 }

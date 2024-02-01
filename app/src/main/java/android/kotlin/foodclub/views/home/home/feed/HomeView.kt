@@ -1,10 +1,11 @@
 @file:JvmName("HomeViewKt")
 
-package android.kotlin.foodclub.views.home.home
+package android.kotlin.foodclub.views.home.home.feed
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.snapsTopbar
+import android.kotlin.foodclub.domain.enums.Reactions
 import android.kotlin.foodclub.utils.helpers.fadingEdge
 import android.kotlin.foodclub.viewModels.home.home.HomeEvents
 import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
@@ -226,6 +227,9 @@ fun HomeView(
                     if (state.showMemories) {
                         events.toggleShowMemories(show = false)
                     }
+                    if (state.showMemoriesReel){
+                        events.toggleShowMemoriesReel(show = true)
+                    }
                     VideoPager(
                         exoPlayer = exoPlayer,
                         videoList = state.videoList,
@@ -245,10 +249,11 @@ fun HomeView(
                            events.toggleShowMemories(show = newShowMemoriesValue)
                         },
                         toggleShowMemoriesReel = events::toggleShowMemoriesReel,
-                        showMemories = state.showMemories,
                         pagerState = pagerState,
                         coroutineScope = coroutineScope,
-                        navController = navController
+                        navController = navController,
+                        selectReaction = { events. selectReaction(it)},
+                        clearSelectedReaction = {events.selectReaction(Reactions.ALL)}
                     )
                 }
             }

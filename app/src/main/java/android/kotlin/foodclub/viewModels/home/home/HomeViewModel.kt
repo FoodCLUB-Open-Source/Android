@@ -13,7 +13,7 @@ import android.kotlin.foodclub.repositories.LikesRepository
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.repositories.RecipeRepository
 import android.kotlin.foodclub.repositories.StoryRepository
-import android.kotlin.foodclub.views.home.home.HomeState
+import android.kotlin.foodclub.views.home.home.feed.HomeState
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -176,6 +176,11 @@ class HomeViewModel @Inject constructor(
 
     override fun toggleShowMemoriesReel(show: Boolean) {
         _state.update { it.copy(showMemoriesReel = show) }
+    }
+
+    override fun selectReaction(reaction: Reactions) {
+        _state.update { it.copy(selectedReaction = reaction) }
+        Log.d(TAG, "selected reaction: ${state.value.selectedReaction}")
     }
 
     private fun getMemoriesListData() {

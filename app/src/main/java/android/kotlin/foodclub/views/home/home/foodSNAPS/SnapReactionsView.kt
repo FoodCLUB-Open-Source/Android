@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.views.home.home
+package android.kotlin.foodclub.views.home.home.foodSNAPS
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.enums.Reactions
@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,7 +34,9 @@ import androidx.compose.ui.unit.dp
 fun SnapReactionsView(
     modifier: Modifier,
     reactions: Array<Reactions>,
-    painter: Painter
+    painter: Painter,
+    selectReaction: (Reactions) -> Unit,
+    reactionsClickable: Boolean
 ) {
 
     var clickedItem by remember {
@@ -75,7 +76,10 @@ fun SnapReactionsView(
                                 .height(dimensionResource(id = R.dimen.snap_reactions_reaction_height))
                                 .padding(dimensionResource(id = R.dimen.dim_5))
                                 .clickable {
-                                    clickedItem = reaction
+                                    if (reactionsClickable){
+                                        clickedItem = reaction
+                                        selectReaction(reaction)
+                                    }
                                 }
                         )
                     }
@@ -87,8 +91,9 @@ fun SnapReactionsView(
                                 painter = painterResource(id =reaction.drawable), contentDescription = null, contentScale = ContentScale.FillHeight, modifier = Modifier
                                     .height(dimensionResource(id = R.dimen.snap_reactions_reaction_height))
                                     .clickable {
-                                        //TODO add reaction overlay
-                                        clickedItem = Reactions.ALL
+                                        if (reactionsClickable){
+                                            clickedItem = Reactions.ALL
+                                        }
                                     }
                             )
                             Image(painter = painterResource(id = R.drawable.baseline_circle_24), contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.size(8.dp))
