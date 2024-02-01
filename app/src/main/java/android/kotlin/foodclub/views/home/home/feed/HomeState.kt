@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.views.home.home
+package android.kotlin.foodclub.views.home.home.feed
 
 import android.kotlin.foodclub.domain.enums.Reactions
 import android.kotlin.foodclub.domain.models.home.VideoModel
@@ -11,7 +11,7 @@ data class HomeState(
     val storyList : List<VideoModel>,
     val recipe: Recipe?,
     val error : String,
-    val showMemories: Boolean,
+    var showMemories: Boolean,
     val showMemoriesReel: Boolean,
     val selectedReaction: Reactions
 ) {

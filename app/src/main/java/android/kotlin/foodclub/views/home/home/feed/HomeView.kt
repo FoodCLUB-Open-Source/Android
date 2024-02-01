@@ -1,6 +1,6 @@
 @file:JvmName("HomeViewKt")
 
-package android.kotlin.foodclub.views.home.home
+package android.kotlin.foodclub.views.home.home.feed
 
 import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
@@ -239,6 +239,9 @@ fun HomeView(
                     if (state.showMemories) {
                         events.toggleShowMemories(show = false)
                     }
+                    if (state.showMemoriesReel){
+                        events.toggleShowMemoriesReel(show = true)
+                    }
                     VideoPager(
                         exoPlayer = exoPlayer,
                         videoList = state.videoList,
@@ -258,7 +261,6 @@ fun HomeView(
                            events.toggleShowMemories(show = newShowMemoriesValue)
                         },
                         toggleShowMemoriesReel = events::toggleShowMemoriesReel,
-                        showMemories = state.showMemories,
                         pagerState = pagerState,
                         coroutineScope = coroutineScope,
                         navController = navController,

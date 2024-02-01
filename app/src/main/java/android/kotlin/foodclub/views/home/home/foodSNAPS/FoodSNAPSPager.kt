@@ -11,11 +11,11 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.PagerDefaults
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
-import androidx.compose.material.rememberSwipeableState
+import androidx.compose.material.SwipeableState
 import androidx.compose.material.swipeable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,22 +33,17 @@ fun FoodSNAPSPager(
     changeMemoriesReelVisibility: (Boolean) -> Unit,
     selectedReaction: Reactions,
     clearSelectedReactions: () -> Unit,
-    selectReaction: (Reactions) -> Unit
+    selectReaction: (Reactions) -> Unit,
+    snapPagerState: PagerState,
+    swipeableState: SwipeableState<SwipeDirection>
 ) {
-    val snapPagerState = rememberPagerState(
-        initialPage = 0,
-        initialPageOffsetFraction = 0f,
-        pageCount = { storyListData.size }
-    )
-    val swipeableState = rememberSwipeableState(initialValue = SwipeDirection.NEUTRAL)
-
     val ANIMATION_DURATION_SHORT = 300
     val snapPagerFling = PagerDefaults.flingBehavior(
         state = snapPagerState,
         lowVelocityAnimationSpec = tween(
             easing = LinearEasing,
             durationMillis = ANIMATION_DURATION_SHORT
-        ),
+        )
     )
 
     LaunchedEffect(key1 = swipeableState.currentValue) {

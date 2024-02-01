@@ -1,11 +1,10 @@
-package android.kotlin.foodclub.views.home
+package android.kotlin.foodclub.views.home.profile
 
 import android.kotlin.foodclub.utils.composables.PhotoTakenPreview
 import android.kotlin.foodclub.utils.composables.TakePhotoPreview
 import android.kotlin.foodclub.utils.helpers.takePhoto
 import android.kotlin.foodclub.utils.helpers.uriToFile
 import android.kotlin.foodclub.viewModels.home.profile.ProfileEvents
-import android.kotlin.foodclub.views.home.profile.ProfileState
 import android.net.Uri
 import android.util.Log
 import androidx.camera.view.CameraController

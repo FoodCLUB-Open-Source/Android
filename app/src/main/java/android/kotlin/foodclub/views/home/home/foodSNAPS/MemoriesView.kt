@@ -5,7 +5,7 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.snapsTopbar
 import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
 import android.kotlin.foodclub.utils.composables.MemoriesItemView
-import android.kotlin.foodclub.views.home.home.HomeState
+import android.kotlin.foodclub.views.home.home.feed.HomeState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
