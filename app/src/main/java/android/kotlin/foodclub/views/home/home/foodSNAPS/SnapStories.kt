@@ -55,8 +55,6 @@ fun SnapStories(
     snapPagerFling: SnapFlingBehavior
 ) {
     if (storyListData.isEmpty()) {
-        Log.d("TAG", "SnapScreen: storyListData is empty")
-
         TapToSnapDialog(
             modifier = Modifier
                 .layoutId(stringResource(id = R.string.tap_to_snap_string))
@@ -67,8 +65,6 @@ fun SnapStories(
                 .background(color = Color.Red)
         )
     } else {
-        Log.d("TAG", "SnapScreen: storyListData is not empty")
-
         SnapStoryView(
             storyListData = storyListData,
             modifier = Modifier

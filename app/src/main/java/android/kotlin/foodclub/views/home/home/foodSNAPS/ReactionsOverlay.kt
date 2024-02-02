@@ -45,14 +45,14 @@ fun ReactionsOverlay(
 
     LaunchedEffect(key1 = visibility) {
         if (!visibility) {
-            isReactionsClickable(true) // Notify when visibility becomes false
+            isReactionsClickable(true)
             return@LaunchedEffect
         }
-        isReactionsClickable(false) // Set isReactionsClickable to false when animation starts
+        isReactionsClickable(false)
         delay(MAX_ANIMATION_DURATION.toLong() + DELAY_MILLIS)
         visibility = false
         clearSelectedReaction()
-        isReactionsClickable(true) // Set isReactionsClickable to true when animation finishes
+        isReactionsClickable(true)
     }
 
     LaunchedEffect(key1 = selectedReaction) {

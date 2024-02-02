@@ -52,8 +52,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -115,7 +117,7 @@ fun SnapsView(
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
-                    .padding( dimensionResource(id = R.dimen.dim_15))
+                    .padding(dimensionResource(id = R.dimen.dim_15))
             ) {
                 Column(
                     modifier=Modifier.fillMaxWidth()
@@ -126,9 +128,9 @@ fun SnapsView(
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.story_user),
-                            contentDescription = "Profile Image",
+                            contentDescription = stringResource(id = R.string.profile_image),
                             modifier = Modifier
-                                .size( dimensionResource(id = R.dimen.dim_35))
+                                .size(dimensionResource(id = R.dimen.dim_35))
                                 .clip(CircleShape)
                                 .alpha(0.7f)
                         )
@@ -178,14 +180,20 @@ fun SnapsView(
                             .size(dimensionResource(id = R.dimen.dim_44))
                             .alpha(0.4f)
                             .background(
-                                color = Color(0xFF6D4E2E),
+                                color = colorResource(id = R.color.snaps_view_brown),
                                 shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_22))
                             )
                             .clickable {
                                 isDownloaded = !isDownloaded
                             }
                     ){
-                        Image(painter = painterResource(id = if(isDownloaded)R.drawable.download_green else R.drawable.download_svg), contentDescription = "download", modifier = Modifier.align(Alignment.Center))
+                        Image(
+                            painter = painterResource(
+                                id = if(isDownloaded) R.drawable.download_green else
+                                    R.drawable.download_svg),
+                            contentDescription = stringResource(id = R.string.downloading),
+                            modifier = Modifier.align(Alignment.Center)
+                        )
                     }
                 }
             }
@@ -207,13 +215,13 @@ fun SnapsView(
 
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalStdlibApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SnapBottomSheetLayout(
     userReactions: Map<SimpleUserModel, Reactions>
 ) {
 
-    val reactions = Reactions.values()
+    val reactions = Reactions.entries.toTypedArray()
     val state = rememberPagerState(
         initialPage = 0
     ){
@@ -246,7 +254,9 @@ fun SnapBottomSheetLayout(
                                         fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
                                         fontFamily = Montserrat,
                                         fontWeight = FontWeight.SemiBold,
-                                        color = if(state.currentPage != reaction.ordinal) Color(0xFF949494) else foodClubGreen
+                                        color = if(state.currentPage != reaction.ordinal) colorResource(
+                                            id = R.color.snaps_view_gray
+                                        ) else foodClubGreen
                                     )
                                 )
                             }
@@ -266,11 +276,11 @@ fun SnapBottomSheetLayout(
                             Text(
                                 text = "ALL ${userReactions.count()}",
                                 style = TextStyle(
-                                    color = if(state.currentPage != 0) Color(0xFF949494) else foodClubGreen,
+                                    color = if(state.currentPage != 0) colorResource(id = R.color.snaps_view_gray) else foodClubGreen,
                                     fontWeight = FontWeight.SemiBold,
                                     fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
                                 ),
-                                modifier = Modifier.height(19.88.dp)
+                                modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20))
                             )
                             Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.dim_10)))
                             if(state.currentPage == 0){
@@ -321,7 +331,9 @@ fun BottomSheetItemView(
         Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.dim_10)))
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start){
             Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.dim_20)))
-            AsyncImage(model = snapUserModel.profilePictureUrl, contentDescription = "dp", contentScale = ContentScale.Crop, modifier = Modifier
+            AsyncImage(model = snapUserModel.profilePictureUrl, contentDescription = stringResource(
+                id = R.string.profile_image
+            ), contentScale = ContentScale.Crop, modifier = Modifier
                 .size(dimensionResource(id = R.dimen.dim_45))
                 .clip(
                     RoundedCornerShape(100)

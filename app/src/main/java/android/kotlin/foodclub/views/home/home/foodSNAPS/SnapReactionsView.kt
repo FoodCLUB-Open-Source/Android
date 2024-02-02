@@ -72,7 +72,10 @@ fun SnapReactionsView(
                 if(reaction != Reactions.ALL){
                     if(clickedItem!=reaction){
                         Image(
-                            painter = painterResource(id =reaction.drawable), contentDescription = null, contentScale = ContentScale.FillHeight, modifier = Modifier
+                            painter = painterResource(id =reaction.drawable),
+                            contentDescription = null,
+                            contentScale = ContentScale.FillHeight,
+                            modifier = Modifier
                                 .height(dimensionResource(id = R.dimen.snap_reactions_reaction_height))
                                 .padding(dimensionResource(id = R.dimen.dim_5))
                                 .clickable {
