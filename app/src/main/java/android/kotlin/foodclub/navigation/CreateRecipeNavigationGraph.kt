@@ -26,6 +26,9 @@ fun NavGraphBuilder.createRecipeNavigationGraph(
         composable(CreateRecipeScreen.VideoEditor.route) { entry ->
             val viewModel: TrimmerViewModel = hiltViewModel()
             val state = viewModel.state.collectAsState()
+            viewModel.setOnVideoCreateFunction {
+                navController.navigate(CreateRecipeScreen.PostDetails.route)
+            }
             setBottomBarVisibility(false)
 
             TrimmerView(state = state.value, events = viewModel)

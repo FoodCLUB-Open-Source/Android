@@ -5,7 +5,6 @@ import android.kotlin.foodclub.domain.models.others.TrimmedVideo
 import android.kotlin.foodclub.utils.helpers.ffmpeg.VideoMerger
 import android.kotlin.foodclub.views.home.createRecipe.TrimmerState
 import android.net.Uri
-import android.util.Log
 import androidx.annotation.OptIn
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -27,6 +26,7 @@ class TrimmerViewModel @Inject constructor(
     private val player: ExoPlayer
 ): ViewModel(), TrimmerEvents {
     private val videoUris = savedStateHandle.getStateFlow("videoUris", emptyMap<Int, Uri>())
+    private var onVideoCreate = {}
 
     private val _state = MutableStateFlow(TrimmerState.default(player))
     val state: StateFlow<TrimmerState>
@@ -47,6 +47,9 @@ class TrimmerViewModel @Inject constructor(
         addVideoUri(Uri.parse("https://kretu.sts3.pl/test/IMG_6107.MP4"))
     }
 
+    fun setOnVideoCreateFunction(onVideoCreate: () -> Unit = {}) {
+        this.onVideoCreate = onVideoCreate
+    }
 
     private fun updateVideosStartTimes() {
         if(_state.value.videoObjects.any { !it.durationSet }) return
@@ -68,6 +71,8 @@ class TrimmerViewModel @Inject constructor(
 
     @OptIn(UnstableApi::class)
     override fun createVideo(context: Context) {
+        _state.update { it.copy(isLoading = true) }
+        player.pause()
         _state.value.videoObjects.forEach { it.saveVideo(context) { onVideoSaveListener(context) } }
     }
 
@@ -78,6 +83,8 @@ class TrimmerViewModel @Inject constructor(
         val url = VideoMerger().mergeVideos(
             context, _state.value.videoObjects.map { it.savedFilePath!! }
         )
+        onVideoCreate()
+        _state.update { it.copy(isLoading = false) }
     }
 
     override fun navigate(time: Long) {
@@ -101,7 +108,6 @@ class TrimmerViewModel @Inject constructor(
         val newObjectList = _state.value.videoObjects.toMutableList()
         newObjectList.add(videoObject.id, videoObject)
         _state.update { it.copy(videoObjects = newObjectList) }
-        Log.d("TrimmerViewModel", _state.value.videoObjects.toString())
     }
 
     override fun togglePlay() {

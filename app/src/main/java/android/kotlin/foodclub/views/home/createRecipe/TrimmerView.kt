@@ -192,6 +192,18 @@ fun TrimmerView(state: TrimmerState, events: TrimmerEvents) {
             }
         }
 
+        if(state.isLoading) {
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+            ) {
+                Text(
+                    text = "There will be loading screen",
+                    fontSize = dimensionResource(R.dimen.fon_16).value.sp,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+        }
     }
 }
 
