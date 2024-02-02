@@ -161,7 +161,7 @@ fun SnapsView(
                             .size(dimensionResource(id = R.dimen.dim_44))
                             .alpha(0.4f)
                             .background(
-                                color = Color(0xFF735029),
+                                color = colorResource(id = R.color.snaps_view_brown),
                                 shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_22))
                             )
                             .clickable {
