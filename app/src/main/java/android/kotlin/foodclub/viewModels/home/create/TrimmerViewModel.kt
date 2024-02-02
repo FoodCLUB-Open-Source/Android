@@ -3,7 +3,10 @@ package android.kotlin.foodclub.viewModels.home.create
 import android.content.Context
 import android.kotlin.foodclub.domain.models.others.TrimmedVideo
 import android.kotlin.foodclub.utils.helpers.ffmpeg.VideoMerger
+import android.kotlin.foodclub.views.home.createRecipe.TrimmerState
+import android.kotlin.foodclub.views.home.home.HomeState
 import android.net.Uri
+import android.util.Log
 import androidx.annotation.OptIn
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -22,12 +25,13 @@ import javax.inject.Inject
 @HiltViewModel
 class TrimmerViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    val player: ExoPlayer
-): ViewModel() {
+    private val player: ExoPlayer
+): ViewModel(), TrimmerEvents {
     private val videoUris = savedStateHandle.getStateFlow("videoUris", emptyMap<Int, Uri>())
 
-    private val _videoObjects = MutableStateFlow(listOf<TrimmedVideo>())
-    val videoObjects: StateFlow<List<TrimmedVideo>> get() = _videoObjects
+    private val _state = MutableStateFlow(TrimmerState.default(player))
+    val state: StateFlow<TrimmerState>
+        get() = _state
 
     init {
         player.addListener(
@@ -46,7 +50,7 @@ class TrimmerViewModel @Inject constructor(
 
 
     private fun updateVideosStartTimes() {
-        if(_videoObjects.value.any { !it.durationSet }) return
+        if(_state.value.videoObjects.any { !it.durationSet }) return
 
         viewModelScope.launch {
             var startTime = 0L
@@ -54,7 +58,7 @@ class TrimmerViewModel @Inject constructor(
                 val currentDuration = player.currentTimeline.getWindow(
                     id, Timeline.Window()
                 ).durationMs
-                val videoObject = _videoObjects.value.getOrNull(id + 1)
+                val videoObject = _state.value.videoObjects.getOrNull(id + 1)
 
                 startTime += currentDuration
                 videoObject?.startTime = startTime
@@ -64,17 +68,21 @@ class TrimmerViewModel @Inject constructor(
     }
 
     @OptIn(UnstableApi::class)
-    fun createVideo(context: Context) {
-        _videoObjects.value.forEach { it.saveVideo(context) { onVideoSaveListener(context) } }
+    override fun createVideo(context: Context) {
+        _state.value.videoObjects.forEach { it.saveVideo(context) { onVideoSaveListener(context) } }
     }
 
     private fun onVideoSaveListener(context: Context) {
-        if (_videoObjects.value.any { it.savedFilePath == null }) return
-        VideoMerger().mergeVideos(context, _videoObjects.value.map { it.savedFilePath!! })
+        if (_state.value.videoObjects.any { it.savedFilePath == null }) return
+
+        // String containing url of saved video. We will be using it when creating the post.
+        val url = VideoMerger().mergeVideos(
+            context, _state.value.videoObjects.map { it.savedFilePath!! }
+        )
     }
 
-    fun navigate(time: Long) {
-        val map = _videoObjects.value.filter {
+    override fun navigate(time: Long) {
+        val map = _state.value.videoObjects.filter {
             it.startTime <= time && it.startTime + it.duration > time
         }
         val index = if(map.isNotEmpty()) map[0].id else player.mediaItemCount - 1
@@ -91,12 +99,13 @@ class TrimmerViewModel @Inject constructor(
     }
 
     private fun addToList(videoObject: TrimmedVideo) {
-        val newObjectList = _videoObjects.value.toMutableList()
+        val newObjectList = _state.value.videoObjects.toMutableList()
         newObjectList.add(videoObject.id, videoObject)
-        _videoObjects.update { newObjectList }
+        _state.update { it.copy(videoObjects = newObjectList) }
+        Log.d("TrimmerViewModel", _state.value.videoObjects.toString())
     }
 
-    fun togglePlay() {
+    override fun togglePlay() {
         if(player.isPlaying) {
             player.pause()
         } else {

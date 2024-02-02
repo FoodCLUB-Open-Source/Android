@@ -5,7 +5,9 @@ import android.kotlin.foodclub.config.ui.Raleway
 import android.kotlin.foodclub.config.ui.trimmerFilmSelectEdge
 import android.kotlin.foodclub.config.ui.trimmerTimelineText
 import android.kotlin.foodclub.domain.models.others.TrimmedVideo
+import android.kotlin.foodclub.viewModels.home.create.TrimmerEvents
 import android.kotlin.foodclub.viewModels.home.create.TrimmerViewModel
+import android.util.Log
 import android.view.ViewGroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -77,8 +79,7 @@ import kotlin.math.ceil
 
 @Composable
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
-fun TrimmerView(viewModel: TrimmerViewModel) {
-    val videoItems2 = viewModel.videoObjects.collectAsState()
+fun TrimmerView(state: TrimmerState, events: TrimmerEvents) {
     val currentTime = remember { mutableLongStateOf(0L) }
     var isPlaying by remember { mutableStateOf(false) }
     val localContext = LocalContext.current
@@ -112,7 +113,7 @@ fun TrimmerView(viewModel: TrimmerViewModel) {
     AndroidView(
         factory = { context ->
             PlayerView(context).also {
-                it.player = viewModel.player
+                it.player = state.player
                 it.useController = false
                 it.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
                 it.layoutParams = ViewGroup.LayoutParams(
@@ -136,21 +137,21 @@ fun TrimmerView(viewModel: TrimmerViewModel) {
             .fillMaxSize()
             .pointerInput(Unit) {
                 detectTapGestures {
-                    viewModel.togglePlay()
+                    events.togglePlay()
                     isPlaying = !isPlaying
                 }
             }
     )
 
-    DisposableEffect(viewModel.player) {
+    DisposableEffect(state) {
         val coroutineScope = CoroutineScope(Dispatchers.Main)
 
         // Start the coroutine to update progress
         val job = coroutineScope.launch {
             while (true) {
-                val timeElapsed = videoItems2.value.filter {
-                    it.id < viewModel.player.currentMediaItemIndex }.sumOf { it.duration }
-                currentTime.longValue = viewModel.player.currentPosition + timeElapsed
+                val timeElapsed = state.videoObjects.filter {
+                    it.id < state.player.currentMediaItemIndex }.sumOf { it.duration }
+                currentTime.longValue = state.player.currentPosition + timeElapsed
                 delay(500) // Update every second (adjust as needed)
             }
         }
@@ -167,7 +168,7 @@ fun TrimmerView(viewModel: TrimmerViewModel) {
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.dim_16))
             ) {
                 Button(
-                    onClick = { viewModel.createVideo(localContext) },
+                    onClick = { events.createVideo(localContext) },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.White,
                         contentColor = Color.Black
@@ -188,10 +189,10 @@ fun TrimmerView(viewModel: TrimmerViewModel) {
                 }
                 BottomTrimmerControl(
                     timeSeconds = 120,
-                    videoList = videoItems2.value,
+                    videoList = state.videoObjects,
                     currentTime = currentTime,
-                    onSeek = { viewModel.navigate(it) },
-                    Modifier.height(dimensionResource(R.dimen.dim_150))
+                    onSeek = { events.navigate(it) },
+                    modifier = Modifier.height(dimensionResource(R.dimen.dim_150))
                 )
             }
         }
