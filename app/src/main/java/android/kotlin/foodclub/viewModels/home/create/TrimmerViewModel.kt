@@ -4,7 +4,6 @@ import android.content.Context
 import android.kotlin.foodclub.domain.models.others.TrimmedVideo
 import android.kotlin.foodclub.utils.helpers.ffmpeg.VideoMerger
 import android.kotlin.foodclub.views.home.createRecipe.TrimmerState
-import android.kotlin.foodclub.views.home.home.HomeState
 import android.net.Uri
 import android.util.Log
 import androidx.annotation.OptIn

@@ -30,19 +30,19 @@ class VideoMerger {
         return null
     }
 
-    private fun getTextFile(context: Context, filePaths: List<String>): File {
-        val fileName = System.currentTimeMillis().toString() + "inputFiles"
-        File.createTempFile(fileName, ".txt", context.cacheDir)
-        val textFile = File(context.cacheDir, "$fileName.txt")
-        val writer = textFile.printWriter()
-
-        val builder = StringBuilder()
-        filePaths.forEach {
-            builder.append("file \'").append(it).append("\'\n")
-        }
-        builder.deleteCharAt(builder.length - 1)
-
-        writer.use { out -> out.print(builder.toString()) }
-        return textFile
-    }
+//    private fun getTextFile(context: Context, filePaths: List<String>): File {
+//        val fileName = System.currentTimeMillis().toString() + "inputFiles"
+//        File.createTempFile(fileName, ".txt", context.cacheDir)
+//        val textFile = File(context.cacheDir, "$fileName.txt")
+//        val writer = textFile.printWriter()
+//
+//        val builder = StringBuilder()
+//        filePaths.forEach {
+//            builder.append("file \'").append(it).append("\'\n")
+//        }
+//        builder.deleteCharAt(builder.length - 1)
+//
+//        writer.use { out -> out.print(builder.toString()) }
+//        return textFile
+//    }
 }
