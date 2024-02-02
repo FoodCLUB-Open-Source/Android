@@ -112,6 +112,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -704,6 +705,7 @@ fun SubSearchBar(
             onValueChange = {
                 onSearch(it)
             },
+            singleLine = true,
             placeholder = {
                 Text(
                     modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_3)),
@@ -1045,7 +1047,9 @@ fun SingleSearchIngredientItem(
                     fontWeight = FontWeight(500),
                     lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
                     fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
-                    color = Color.Black
+                    color = Color.Black,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 3
                 )
             }
         }
@@ -1067,7 +1071,9 @@ fun SingleSearchIngredientItem(
                         lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
                         fontFamily = Montserrat,
                         color = Color.Gray,
-                        style = quantityTextStyle(quantity)
+                        style = quantityTextStyle(quantity),
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
                     )
 
                 }else{
@@ -1096,7 +1102,9 @@ fun SingleSearchIngredientItem(
                         lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
                         fontFamily = Montserrat,
                         color = Color.Gray,
-                        style = expirationDateTextStyle(expirationDate)
+                        style = expirationDateTextStyle(expirationDate),
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
                     )
                 }else{
                     Box(modifier = Modifier.weight(1f, fill = false))
@@ -1403,4 +1411,3 @@ fun expirationDateTextStyle(expirationDate: String): TextStyle {
         textDecoration = TextDecoration.None
     )
 }
-
