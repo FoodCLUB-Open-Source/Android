@@ -74,6 +74,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -81,6 +82,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -270,6 +272,7 @@ fun ProfileView(
                         }
 
 
+                        var settingNavigated by remember { mutableStateOf(false)};
                         Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_40)))
                         if (userId == 0L) {
                             Button(shape = CircleShape,
@@ -286,7 +289,13 @@ fun ProfileView(
                                     )
                                 ),
                                 contentPadding = PaddingValues(),
-                                onClick = { navController.navigate("SETTINGS") }
+                                onClick = {
+                                    if(!settingNavigated)
+                                    {
+                                        navController.navigate("SETTINGS")
+                                        settingNavigated = true;
+                                    }
+                                }
                             ) {
                                 Image(
                                     painter = painterResource(id = R.drawable.vector_1_),
@@ -334,8 +343,12 @@ fun ProfileView(
                             text = profile?.username ?: "",
                             fontSize = dimensionResource(id = R.dimen.fon_23).value.sp,
                             fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_5)),
-                            letterSpacing = -dimensionResource(id = R.dimen.fon_1).value.sp
+                            modifier = Modifier
+                                .padding(top = dimensionResource(id = R.dimen.dim_5))
+                                .padding(horizontal = dimensionResource(id = R.dimen.dim_20)),
+                            letterSpacing = -dimensionResource(id = R.dimen.fon_1).value.sp,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = integerResource(R.integer.int_2)
                         )
                         Row(
                             modifier = Modifier
@@ -369,7 +382,9 @@ fun ProfileView(
                                             fontWeight = FontWeight.SemiBold,
                                             fontSize = dimensionResource(id = R.dimen.fon_17).value.sp
                                         ),
-                                        textAlign = TextAlign.Center
+                                        textAlign = TextAlign.Center,
+                                        overflow = TextOverflow.Ellipsis,
+                                        maxLines = integerResource(id = R.integer.int_1)
                                     )
                                 }
                                 Text(
@@ -377,7 +392,9 @@ fun ProfileView(
                                     text = stringResource(id = R.string.followers),
                                     fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
                                     color = colorResource(id = R.color.followers_following_color),
-                                    fontWeight = FontWeight.Light
+                                    fontWeight = FontWeight.Light,
+                                    overflow = TextOverflow.Ellipsis,
+                                    maxLines = integerResource(id = R.integer.int_1)
                                 )
                             }
 
@@ -404,7 +421,8 @@ fun ProfileView(
                                             fontWeight = FontWeight.SemiBold,
                                             fontSize = dimensionResource(id = R.dimen.fon_17).value.sp
                                         ),
-                                        textAlign = TextAlign.Center
+                                        textAlign = TextAlign.Center,
+                                        overflow = TextOverflow.Ellipsis
                                     )
 
                                 }
@@ -413,7 +431,8 @@ fun ProfileView(
                                     text = stringResource(id = R.string.following),
                                     fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
                                     color = colorResource(id = R.color.followers_following_color),
-                                    fontWeight = FontWeight.Light
+                                    fontWeight = FontWeight.Light,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
 
@@ -471,6 +490,7 @@ fun ProfileView(
                                                 color = Color.Black,
                                                 fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                                             )
+                                            , overflow = TextOverflow.Ellipsis
                                         )
                                     }
                                 )

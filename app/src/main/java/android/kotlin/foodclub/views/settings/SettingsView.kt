@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,10 +39,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -91,7 +94,7 @@ fun SettingsView(
             iconId = R.drawable.editprofile,
             fontC = Color.Black,
             size = 16,
-            lineHeight = 19.5.sp,
+            lineHeight = dimensionResource(id = R.dimen.fon_19_5).value.sp,
             borderSize = 1,
             borderColor = colorGray,
             destination = SettingsScreen.EditProfile.route,
@@ -103,7 +106,7 @@ fun SettingsView(
             iconId = R.drawable.privacysettings,
             fontC = Color.Black,
             size = 16,
-            lineHeight = 19.5.sp,
+            lineHeight = dimensionResource(id = R.dimen.fon_19_5).value.sp,
             borderSize = 1,
             borderColor = colorGray,
             destination = SettingsScreen.Privacy.route,
@@ -124,7 +127,7 @@ fun SettingsView(
                 iconId = R.drawable.helpandsupport,
                 fontC = Color.Black,
                 size = 16,
-                lineHeight = 20.sp,
+                lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
                 borderSize = 0,
                 borderColor = Color.Transparent,
                 destination = "SETTINGS_PRIVACY",
@@ -136,7 +139,7 @@ fun SettingsView(
                 iconId = R.drawable.contactus,
                 fontC = Color.Black,
                 size = 16,
-                lineHeight = 20.sp,
+                lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
                 borderSize = 0,
                 borderColor = Color.Transparent,
                 destination = "SETTINGS_PRIVACY",
@@ -148,7 +151,7 @@ fun SettingsView(
                 iconId = R.drawable.privacypolicy,
                 fontC = Color.Black,
                 size = 16,
-                lineHeight = 20.sp,
+                lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
                 borderSize = 0,
                 borderColor = Color.Transparent,
                 destination = SettingsScreen.PrivacyPolicy.route,
@@ -163,7 +166,7 @@ fun SettingsView(
             iconId = R.drawable.logout,
             fontC = colorRed,
             size = 16,
-            lineHeight = 19.5.sp,
+            lineHeight = dimensionResource(id = R.dimen.fon_19_5).value.sp,
             borderSize = 1,
             borderColor = colorGray,
             destination = Graph.AUTHENTICATION,
@@ -192,7 +195,8 @@ fun SettingsText(
     weight: FontWeight,
     fontC: Color = Color.Black,
     textAlign: TextAlign = TextAlign.Center,
-    lineHeight: TextUnit? = null
+    lineHeight: TextUnit? = null,
+    modifier: Modifier = Modifier
 ) {
     Text(
         text = text,
@@ -201,7 +205,10 @@ fun SettingsText(
         fontFamily = Montserrat,
         fontWeight = weight,
         textAlign = textAlign,
-        lineHeight = lineHeight ?: TextUnit.Unspecified
+        lineHeight = lineHeight ?: TextUnit.Unspecified,
+        maxLines = integerResource(id = R.integer.int_2),
+        overflow = TextOverflow.Ellipsis,
+        modifier = modifier
     )
 }
 
@@ -284,7 +291,8 @@ fun SettingsProfile(
                 text = userName,
                 size = 24,
                 weight = FontWeight.W600,
-                lineHeight = 40.sp
+                lineHeight = dimensionResource(id = R.dimen.fon_40).value.sp,
+                modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.dim_20))
             )
         }
     }
