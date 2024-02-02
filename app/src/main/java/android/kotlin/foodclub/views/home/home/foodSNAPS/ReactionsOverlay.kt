@@ -1,13 +1,13 @@
 package android.kotlin.foodclub.views.home.home.foodSNAPS
 
+import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.enums.Reactions
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateInt
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
@@ -26,7 +26,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlin.random.Random
@@ -34,18 +36,28 @@ import kotlin.random.Random
 @Composable
 fun ReactionsOverlay(
     modifier: Modifier,
-    selectedReaction: Reactions?,
-    content : @Composable () -> Unit,
-    clearSelectedReaction: () -> Unit
+    selectedReaction: Reactions,
+    clearSelectedReaction: () -> Unit,
+    isReactionsClickable: (Boolean) -> Unit,
+    content: @Composable () -> Unit,
 ) {
-    val quantity = 22
-
-    var visibility by remember { mutableStateOf(selectedReaction != null ) }
+    var visibility by remember { mutableStateOf(selectedReaction != Reactions.ALL) }
 
     LaunchedEffect(key1 = visibility) {
-        delay(5000)
+        if (!visibility) {
+            isReactionsClickable(true) // Notify when visibility becomes false
+            return@LaunchedEffect
+        }
+        isReactionsClickable(false) // Set isReactionsClickable to false when animation starts
+        delay(MAX_ANIMATION_DURATION.toLong() + DELAY_MILLIS)
         visibility = false
         clearSelectedReaction()
+        isReactionsClickable(true) // Set isReactionsClickable to true when animation finishes
+    }
+
+    LaunchedEffect(key1 = selectedReaction) {
+        if (selectedReaction == Reactions.ALL) return@LaunchedEffect
+        visibility = true
     }
 
     Box(modifier = modifier) {
@@ -56,40 +68,27 @@ fun ReactionsOverlay(
             enter = slideInVertically(
                 initialOffsetY = { it },
                 animationSpec = tween(
-                    durationMillis = MAX_ANIMATION_DURATION.toInt() - 300,
+                    durationMillis = MAX_ANIMATION_DURATION.toInt() - DELAY_MILLIS,
                     easing = LinearEasing,
-                    delayMillis = 300
+                    delayMillis = DELAY_MILLIS
                 )
             ),
             exit = ExitTransition.None
         ) {
-            val particles = remember {
-                calculateParticleParams(
-                    quantity = quantity,
-                    reaction = selectedReaction
-                )
-            }
+            val particles = remember { calculateParticleParams(reaction = selectedReaction) }
 
-            val transitionState = remember {
-                MutableTransitionState(MIN_HEIGHT).apply {
-                    targetState = MAX_HEIGHT
-                }
-            }
-            val transition = updateTransition(transitionState, label = "height transition")
-            val height by transition.animateInt(
-                transitionSpec = {
-                    tween(
-                        durationMillis = MAX_ANIMATION_DURATION.toInt(),
-                        easing = LinearOutSlowInEasing
-                    )
-                },
-                label = "height animation of particles"
-            ) { it }
+            val height by animateIntAsState(
+                targetValue = MIN_HEIGHT,
+                animationSpec = tween(
+                    durationMillis = MAX_ANIMATION_DURATION.toInt(),
+                    easing = LinearOutSlowInEasing
+                ), label = stringResource(id = R.string.height_transition)
+            )
 
             Layout(
-                modifier = modifier.padding(bottom = 50.dp),
+                modifier = modifier.padding(bottom = dimensionResource(id = R.dimen.reactions_overlay_bottom_padding)),
                 content = {
-                    for (i in 0 until quantity) {
+                    for (i in 0 until PARTICLE_QUANTITY) {
                         Particle(particles[i])
                     }
                 }
@@ -99,8 +98,8 @@ fun ReactionsOverlay(
                     placeables.forEachIndexed { index, placeable ->
                         val params = particles[index]
                         placeable.placeRelative(
-                            x = (params.horizontalFraction * constraints.maxWidth).toInt() - constraints.maxWidth / 2,
-                            y = (params.verticalFraction * height).toInt() - height / 2
+                            x = particleXPosition(params.horizontalFraction, constraints.maxWidth),
+                            y = particleYPosition(params.verticalFraction, height)
                         )
                     }
                 }
@@ -110,12 +109,11 @@ fun ReactionsOverlay(
 }
 
 private fun calculateParticleParams(
-    quantity: Int,
-    reaction: Reactions?
+    reaction: Reactions
 ): List<ParticleModel> {
     val random = Random(System.currentTimeMillis().toInt())
     val result = mutableListOf<ParticleModel>()
-    for (i in 0 until quantity) {
+    for (i in 0 until PARTICLE_QUANTITY) {
         val verticalFraction = random.nextDouble(from = 0.0, until = 1.0).toFloat()
         val horizontalFraction = random.nextDouble(from = 0.0, until = 1.0).toFloat()
 
@@ -135,27 +133,33 @@ private fun calculateParticleParams(
             model
         )
     }
-
     return result
-
 }
 
 private fun lerp(start: Float, stop: Float, fraction: Float) =
     (start * (1 - fraction) + stop * fraction)
 
+private fun particleXPosition(
+    horizontalFraction: Float,
+    maxWidth: Int
+) = ((horizontalFraction * maxWidth).toInt() - (maxWidth / PARTICLE_X_MULTIPLIER)).coerceIn(
+    minimumValue = PARTICLE_X_OFFSET,
+    maximumValue = maxWidth - PARTICLE_X_OFFSET
+)
+
+private fun particleYPosition(
+    verticalFraction: Float,
+    height: Int
+) = ((verticalFraction * height).toInt() + height / PARTICLE_Y_MULTIPLIER)
+
 @Composable
 private fun Particle(model: ParticleModel) {
-    if (model.reaction == null) return
+    if (model.reaction == Reactions.ALL) return
 
-    val transitionState = remember {
-        MutableTransitionState(0.1f).apply {
-            targetState = 0f
-        }
-    }
-
-    val targetScale = remember { model.initialScale * TARGET_PARTICLE_SCALE_MULTIPLIER }
-
-    val transition = updateTransition(transitionState, label = "particle transition")
+    val transition = updateTransition(
+        targetState = 1f,
+        label = stringResource(id = R.string.particle_transition)
+    )
 
     val alpha by transition.animateFloat(
         transitionSpec = {
@@ -166,10 +170,10 @@ private fun Particle(model: ParticleModel) {
                 1f at (model.duration * 0.8f).toInt()
                 0f at model.duration
             }
-        },
-        label = "alpha animation of particle"
+        }, label = ""
     ) { it }
 
+    val targetScale = model.initialScale * TARGET_PARTICLE_SCALE_MULTIPLIER
     val scale by transition.animateFloat(
         transitionSpec = {
             keyframes {
@@ -178,8 +182,7 @@ private fun Particle(model: ParticleModel) {
                 model.initialScale at (model.duration * 0.7f).toInt()
                 targetScale at model.duration
             }
-        },
-        label = "scale animation of particle"
+        }, label = ""
     ) { it }
 
     Image(
@@ -198,14 +201,19 @@ private const val MIN_PARTICLE_SIZE = 1f
 private const val MAX_PARTICLE_SIZE = 2.6f
 private const val MIN_ANIMATION_DURATION = 1200f
 private const val MAX_ANIMATION_DURATION = 1500f
-private const val PARTICLE_SIZE = 20
-private const val MIN_HEIGHT = 300
-private const val MAX_HEIGHT = 800
+private const val PARTICLE_SIZE = 30
+private const val MIN_HEIGHT = 800 // larger than max as its displacement from top of screen
+private const val MAX_HEIGHT = 300
+private const val PARTICLE_QUANTITY = 10
+private const val PARTICLE_X_OFFSET = 50
+private const val PARTICLE_X_MULTIPLIER = 10
+private const val PARTICLE_Y_MULTIPLIER = 10
+private const val DELAY_MILLIS = 0
 
 data class ParticleModel(
     val verticalFraction: Float,
     val horizontalFraction: Float,
     val initialScale: Float,
     val duration: Int,
-    val reaction: Reactions?
+    val reaction: Reactions
 )

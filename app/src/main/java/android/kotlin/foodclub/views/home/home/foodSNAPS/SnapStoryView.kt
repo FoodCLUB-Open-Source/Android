@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.views.home.home
+package android.kotlin.foodclub.views.home.home.foodSNAPS
 
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import androidx.compose.foundation.Image

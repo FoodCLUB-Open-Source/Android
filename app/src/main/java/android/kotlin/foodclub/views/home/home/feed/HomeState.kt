@@ -1,5 +1,6 @@
-package android.kotlin.foodclub.views.home.home
+package android.kotlin.foodclub.views.home.home.feed
 
+import android.kotlin.foodclub.domain.enums.Reactions
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.recipes.Recipe
 import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
@@ -10,8 +11,9 @@ data class HomeState(
     val storyList : List<VideoModel>,
     val recipe: Recipe?,
     val error : String,
-    val showMemories: Boolean,
+    var showMemories: Boolean,
     val showMemoriesReel: Boolean,
+    val selectedReaction: Reactions
 ) {
     companion object {
         fun default() = HomeState(
@@ -21,7 +23,8 @@ data class HomeState(
             recipe = null,
             error = "",
             showMemories = false,
-            showMemoriesReel = true
+            showMemoriesReel = true,
+            selectedReaction = Reactions.ALL
         )
     }
 }

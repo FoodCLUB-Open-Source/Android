@@ -1,9 +1,11 @@
 package android.kotlin.foodclub.views.home.home.foodSNAPS
 
+import android.kotlin.foodclub.domain.enums.Reactions
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.home.VideoStats
 import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
-import android.kotlin.foodclub.views.home.home.HomeState
+import android.kotlin.foodclub.views.home.home.feed.HomeState
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
@@ -14,10 +16,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.rememberSwipeableState
 import androidx.compose.runtime.Composable
@@ -27,30 +27,28 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun FoodSNAPSView(
     state: HomeState,
     modifier: Modifier = Modifier,
     onShowMemoriesChanged: (Boolean) -> Unit,
     toggleShowMemoriesReel: (Boolean) -> Unit,
-    showMemories: Boolean,
     pagerState: PagerState,
     coroutineScope: CoroutineScope,
-    navController: NavHostController
+    navController: NavHostController,
+    selectReaction: (Reactions) -> Unit,
+    clearSelectedReaction: () -> Unit,
 ) {
     var currentMemoriesModel by remember {
         mutableStateOf(MemoriesModel(listOf(), ""))
     }
 
-    val dummyLstData = listOf(
+    val dummyListData = listOf(
         VideoModel(
             videoId = 4L,
             authorDetails = "Steve",
@@ -75,7 +73,7 @@ fun FoodSNAPSView(
             ),
             videoLink = "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/3a/b0/ca/3ab0caac-7a5b-0ad8-efcf-81f6cc0bcb5b/3e79acef-0c61-4489-b8db-86bdb33a739c_Screenshot4iPhone.jpg/750x750bb.jpeg",
             thumbnailLink = "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/3a/b0/ca/3ab0caac-7a5b-0ad8-efcf-81f6cc0bcb5b/3e79acef-0c61-4489-b8db-86bdb33a739c_Screenshot4iPhone.jpg/750x750bb.jpeg",
-            description = "This is dummy video 1",
+            description = "This is dummy video 2",
         ),
         VideoModel(
             videoId = 5L,
@@ -88,26 +86,37 @@ fun FoodSNAPSView(
             ),
             videoLink = "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/e4/5a/a3/e45aa3df-a7d9-cd0f-91cd-532b8e77fe8d/4987efe6-41d1-4750-b4fd-84d15ad4b781_Screenshot1iPhone.jpg/750x750bb.jpeg",
             thumbnailLink = "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/e4/5a/a3/e45aa3df-a7d9-cd0f-91cd-532b8e77fe8d/4987efe6-41d1-4750-b4fd-84d15ad4b781_Screenshot1iPhone.jpg/750x750bb.jpeg",
-            description = "This is dummy video 1",
+            description = "This is dummy video 3",
         ),
         )
-    val storyListData =  dummyLstData// actual value is state.storyList
+    val storyListData = dummyListData // test with dummyListData or state.videoList
+
+    val snapPagerState = rememberPagerState(
+        initialPage = 0,
+        initialPageOffsetFraction = 0f,
+        pageCount = { storyListData.size }
+    )
+    val swipeableState = rememberSwipeableState(initialValue = SwipeDirection.NEUTRAL)
 
 
     BackHandler {
-        if (state.showMemories) {
+        if (state.showMemories){
             onShowMemoriesChanged(false)
-        } else {
-            coroutineScope.launch {// TODO do we want to scroll to the top of the snaps and display memories reel on back press too? Or do we want to save the users position on swiping through snaps, we could save position and put memories reel back up?
+        }else if (snapPagerState.currentPage != 0){
+            coroutineScope.launch {
+                snapPagerState.scrollToPage(0)
+            }
+        }else{
+            coroutineScope.launch {
                 pagerState.animateScrollToPage(
-                    page = 0,
+                    0,
                     animationSpec = tween(1, easing = LinearEasing)
                 )
             }
         }
     }
 
-    if (showMemories) {
+    if (state.showMemories) {
         SnapsView(memoriesModel = currentMemoriesModel)
     } else {
         Column(
@@ -134,6 +143,11 @@ fun FoodSNAPSView(
                 navController = navController,
                 showMemoriesReel = state.showMemoriesReel,
                 changeMemoriesReelVisibility = { toggleShowMemoriesReel(it) },
+                selectedReaction = state.selectedReaction,
+                selectReaction = selectReaction,
+                clearSelectedReactions = clearSelectedReaction,
+                snapPagerState = snapPagerState,
+                swipeableState = swipeableState
             )
         }
     }

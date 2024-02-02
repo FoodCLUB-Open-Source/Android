@@ -1,27 +1,28 @@
 package android.kotlin.foodclub.views.home.home.foodSNAPS
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.domain.enums.Reactions
 import android.kotlin.foodclub.domain.models.home.VideoModel
-import android.kotlin.foodclub.views.home.home.TapToSnapDialog
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
-import androidx.compose.material.rememberSwipeableState
+import androidx.compose.material.SwipeableState
 import androidx.compose.material.swipeable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.navigation.NavHostController
@@ -33,14 +34,14 @@ fun FoodSNAPSPager(
     storyListData: List<VideoModel>,
     navController: NavHostController,
     showMemoriesReel: Boolean,
-    changeMemoriesReelVisibility: (Boolean) -> Unit
+    changeMemoriesReelVisibility: (Boolean) -> Unit,
+    selectedReaction: Reactions,
+    clearSelectedReactions: () -> Unit,
+    selectReaction: (Reactions) -> Unit,
+    snapPagerState: PagerState,
+    swipeableState: SwipeableState<SwipeDirection>
 ) {
-    val snapPagerState = rememberPagerState(
-        initialPage = 0,
-        initialPageOffsetFraction = 0f,
-        pageCount = { storyListData.size }
-    )
-    val swipeableState = rememberSwipeableState(initialValue = SwipeDirection.NEUTRAL)
+    var isReactionsClickable by remember { mutableStateOf(selectedReaction != Reactions.ALL) }
 
     val ANIMATION_DURATION_SHORT = 300
     val snapPagerFling = PagerDefaults.flingBehavior(
@@ -48,7 +49,7 @@ fun FoodSNAPSPager(
         lowVelocityAnimationSpec = tween(
             easing = LinearEasing,
             durationMillis = ANIMATION_DURATION_SHORT
-        ),
+        )
     )
 
     LaunchedEffect(key1 = swipeableState.currentValue) {
@@ -93,7 +94,7 @@ fun FoodSNAPSPager(
             beyondBoundsPageCount = 1,
             modifier = Modifier,
         ) {
-            Box(
+            ReactionsOverlay(
                 modifier = Modifier
                     .then(
                         if (it == 0) {
@@ -110,12 +111,19 @@ fun FoodSNAPSPager(
                         } else {
                             Modifier
                         }
-                    )
+                    ),
+                selectedReaction = selectedReaction,
+                clearSelectedReaction = clearSelectedReactions,
+                isReactionsClickable = { isClickable->
+                    isReactionsClickable = isClickable
+                }
             ) {
                 FoodSNAPSPage(
                     index = it,
                     storyListData = storyListData,
-                    showMemoriesReel = showMemoriesReel
+                    showMemoriesReel = showMemoriesReel,
+                    selectReaction = selectReaction,
+                    reactionsClickable = isReactionsClickable
                 )
             }
         }

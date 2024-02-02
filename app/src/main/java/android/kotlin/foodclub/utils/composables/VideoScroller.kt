@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
-import android.kotlin.foodclub.views.home.VideoProgressBar
 import android.net.Uri
 import android.view.ViewGroup
 import androidx.compose.foundation.ExperimentalFoundationApi

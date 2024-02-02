@@ -1,15 +1,15 @@
 @file:JvmName("HomeViewKt")
 
-package android.kotlin.foodclub.views.home.home
+package android.kotlin.foodclub.views.home.home.feed
 
-import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.snapsTopbar
+import android.kotlin.foodclub.domain.enums.Reactions
 import android.kotlin.foodclub.utils.helpers.fadingEdge
 import android.kotlin.foodclub.viewModels.home.home.HomeEvents
-import android.kotlin.foodclub.views.home.home.foodSNAPS.FoodSNAPSView
 import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
+import android.kotlin.foodclub.views.home.home.foodSNAPS.FoodSNAPSView
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -40,7 +41,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
@@ -48,19 +48,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavHostController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalFoundationApi::class)
-@SuppressLint("StateFlowValueCalledInComposition")
-@androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 fun HomeView(
     modifier: Modifier = Modifier,
@@ -76,13 +72,6 @@ fun HomeView(
     val localDensity = LocalDensity.current
 
     val coroutineScope = rememberCoroutineScope()
-
-    var screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.94f
-
-    if (screenHeightMinusBottomNavItem <= dimensionResource(id = R.dimen.dim_650)) {
-        screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.96f
-    }
-
     val systemUiController = rememberSystemUiController()
 
     val triggerIngredientBottomSheetModal: () -> Unit = {
@@ -219,7 +208,7 @@ fun HomeView(
     }
 
     Column(
-        modifier = Modifier.height(screenHeightMinusBottomNavItem)
+        modifier = Modifier.fillMaxSize()
     ) {
 
         if (showIngredientSheet) {
@@ -237,6 +226,9 @@ fun HomeView(
                 0 -> {
                     if (state.showMemories) {
                         events.toggleShowMemories(show = false)
+                    }
+                    if (state.showMemoriesReel){
+                        events.toggleShowMemoriesReel(show = true)
                     }
                     VideoPager(
                         exoPlayer = exoPlayer,
@@ -257,10 +249,11 @@ fun HomeView(
                            events.toggleShowMemories(show = newShowMemoriesValue)
                         },
                         toggleShowMemoriesReel = events::toggleShowMemoriesReel,
-                        showMemories = state.showMemories,
                         pagerState = pagerState,
                         coroutineScope = coroutineScope,
-                        navController = navController
+                        navController = navController,
+                        selectReaction = { events. selectReaction(it)},
+                        clearSelectedReaction = {events.selectReaction(Reactions.ALL)}
                     )
                 }
             }

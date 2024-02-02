@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.views.home.home
+package android.kotlin.foodclub.views.home.home.feed
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight

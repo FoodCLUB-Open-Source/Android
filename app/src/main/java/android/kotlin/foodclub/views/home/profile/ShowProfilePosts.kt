@@ -13,7 +13,7 @@ import android.kotlin.foodclub.utils.composables.VideoLayout
 import android.kotlin.foodclub.utils.composables.VideoScroller
 import android.kotlin.foodclub.viewModels.home.profile.ProfileEvents
 import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
-import android.kotlin.foodclub.views.home.home.HomeBottomSheetIngredients
+import android.kotlin.foodclub.views.home.home.feed.HomeBottomSheetIngredients
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
