@@ -54,6 +54,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -335,7 +336,9 @@ fun BasketIngredient(
                             lineHeight = dimensionResource(id = R.dimen.fon_18).value.sp,
                             modifier = Modifier.align(Alignment.TopStart),
                             fontWeight = FontWeight.Normal,
-                            fontFamily = Montserrat
+                            fontFamily = Montserrat,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 3
                         )
                     }
                     Box(modifier = Modifier.align(Alignment.BottomEnd)) {
@@ -357,7 +360,9 @@ fun BasketIngredient(
                                 quantity.toString() + ValueParser.quantityUnitToString(unit),
                                 color = Color.Black,
                                 fontFamily = Montserrat,
-                                fontSize = dimensionResource(id = R.dimen.fon_14).value.sp
+                                fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1
                             )
                             Image(
                                 painter = painterResource(id = R.drawable.baseline_arrow_right_24),
