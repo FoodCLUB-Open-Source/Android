@@ -6,7 +6,6 @@ import android.kotlin.foodclub.utils.helpers.FramesRetriever
 import android.net.Uri
 import android.util.Log
 import androidx.media3.common.MediaItem
-import androidx.media3.common.MimeTypes
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
 import androidx.media3.common.util.UnstableApi
@@ -90,13 +89,11 @@ class TrimmedVideo(
         val newStartMs = newClipping.startPositionMs
 
         durationSet = false
-        Log.d("TrimmedVideo", "Trimming: start $startMs, end $endMs, newStart $newStartMs, newEnd ${newClipping.endPositionMs}")
         player.replaceMediaItem(id, oldItem.buildUpon().setClippingConfiguration(newClipping).build())
 
-        Log.d("TrimmedVideo", player.getMediaItemAt(id).clippingConfiguration.startPositionMs.toString())
         if(oldStartMs == newStartMs && endMs != null) player.seekTo(id, endMs) else
             player.seekTo(id, 0)
-//        player.play()
+        player.play()
     }
 
     fun startTrimming(startOffset: Float, endOffset: Float) {
@@ -133,9 +130,9 @@ class TrimmedVideo(
                 }
             }
 
-        val item = player.getMediaItemAt(0)
+        val item = player.getMediaItemAt(id)
         val transformer = Transformer.Builder(context)
-            .setVideoMimeType(MimeTypes.VIDEO_H264)
+//            .setVideoMimeType(MimeTypes.VIDEO_H264)
             .addListener(transformerListener)
             .build()
         transformer.start(item, filePath)

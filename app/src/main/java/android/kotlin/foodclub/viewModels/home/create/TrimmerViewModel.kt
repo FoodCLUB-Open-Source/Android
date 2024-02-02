@@ -2,7 +2,7 @@ package android.kotlin.foodclub.viewModels.home.create
 
 import android.content.Context
 import android.kotlin.foodclub.domain.models.others.TrimmedVideo
-import android.kotlin.foodclub.utils.helpers.VideoMerger
+import android.kotlin.foodclub.utils.helpers.ffmpeg.VideoMerger
 import android.net.Uri
 import androidx.annotation.OptIn
 import androidx.lifecycle.SavedStateHandle
@@ -39,9 +39,9 @@ class TrimmerViewModel @Inject constructor(
         )
         player.prepare()
 
-        addVideoUri(Uri.parse("https://kretu.sts3.pl/foodclub_videos/trimmer.mp4"))
-        addVideoUri(Uri.parse("https://kretu.sts3.pl/foodclub_videos/onboarding.mp4"))
-//        addVideoUri(Uri.parse("https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4"))
+        addVideoUri(Uri.parse("https://kretu.sts3.pl/test/IMG_6105.MP4"))
+        addVideoUri(Uri.parse("https://kretu.sts3.pl/test/IMG_6106.MP4"))
+        addVideoUri(Uri.parse("https://kretu.sts3.pl/test/IMG_6107.MP4"))
     }
 
 
@@ -51,7 +51,9 @@ class TrimmerViewModel @Inject constructor(
         viewModelScope.launch {
             var startTime = 0L
             for(id in 0..(player.mediaItemCount-2)) {
-                val currentDuration = player.currentTimeline.getWindow(id, Timeline.Window()).durationMs
+                val currentDuration = player.currentTimeline.getWindow(
+                    id, Timeline.Window()
+                ).durationMs
                 val videoObject = _videoObjects.value.getOrNull(id + 1)
 
                 startTime += currentDuration
@@ -72,7 +74,9 @@ class TrimmerViewModel @Inject constructor(
     }
 
     fun navigate(time: Long) {
-        val map = _videoObjects.value.filter { it.startTime <= time && it.startTime + it.duration > time }
+        val map = _videoObjects.value.filter {
+            it.startTime <= time && it.startTime + it.duration > time
+        }
         val index = if(map.isNotEmpty()) map[0].id else player.mediaItemCount - 1
         player.seekTo(index, time - (map.getOrNull(0)?.startTime ?: 0))
     }

@@ -1,7 +1,9 @@
-package android.kotlin.foodclub.views.home
+package android.kotlin.foodclub.views.home.createRecipe
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Raleway
+import android.kotlin.foodclub.config.ui.trimmerFilmSelectEdge
+import android.kotlin.foodclub.config.ui.trimmerTimelineText
 import android.kotlin.foodclub.domain.models.others.TrimmedVideo
 import android.kotlin.foodclub.viewModels.home.create.TrimmerViewModel
 import android.view.ViewGroup
@@ -22,19 +24,23 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +55,8 @@ import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.fontResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -60,6 +68,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -73,6 +82,7 @@ fun TrimmerView(viewModel: TrimmerViewModel) {
     val currentTime = remember { mutableLongStateOf(0L) }
     var isPlaying by remember { mutableStateOf(false) }
     val localContext = LocalContext.current
+    val systemUiController = rememberSystemUiController()
 
     var lifecycle by remember {
         mutableStateOf(Lifecycle.Event.ON_CREATE)
@@ -87,6 +97,16 @@ fun TrimmerView(viewModel: TrimmerViewModel) {
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
+    }
+
+    SideEffect {
+        systemUiController.setSystemBarsColor(
+            color = Color.Transparent,
+            darkIcons = false
+        )
+        systemUiController.setNavigationBarColor(
+            color = Color.Transparent
+        )
     }
 
     AndroidView(
@@ -141,21 +161,37 @@ fun TrimmerView(viewModel: TrimmerViewModel) {
         }
     }
 
-    Box(Modifier.fillMaxSize().padding(bottom = 20.dp)){
+    Box(Modifier.fillMaxSize()){
         Box(Modifier.align(Alignment.BottomCenter)) {
-            Column {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.dim_16))
+            ) {
                 Button(
                     onClick = { viewModel.createVideo(localContext) },
-                    modifier = Modifier.align(Alignment.End)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.White,
+                        contentColor = Color.Black
+                    ),
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(end = dimensionResource(R.dimen.dim_28))
+                        .width(dimensionResource(R.dimen.dim_92))
+                        .height(dimensionResource(R.dimen.dim_54))
+                        .clip(RoundedCornerShape(dimensionResource(R.dimen.dim_10)))
+                        .background(Color.White)
                 ) {
-                    Text(text = "Save")
+                    Icon(
+                        painter = painterResource(id = R.drawable.right_arrow),
+                        contentDescription = null,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
                 }
                 BottomTrimmerControl(
                     timeSeconds = 120,
                     videoList = videoItems2.value,
                     currentTime = currentTime,
                     onSeek = { viewModel.navigate(it) },
-                    Modifier.height(150.dp)
+                    Modifier.height(dimensionResource(R.dimen.dim_150))
                 )
             }
         }
@@ -175,20 +211,26 @@ fun BottomTrimmerControl(
     val dpPerSecond = (totalWidth.value - 26) / timeSeconds
     Box(modifier = modifier
         .background(Color.White)
-        .padding(top = 24.dp)
+        .padding(top = dimensionResource(R.dimen.dim_24))
         .width(totalWidth)
         .horizontalScroll(rememberScrollState())) {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.dim_8))) {
             Timeline(totalWidth, timeSeconds)
             TrimmedVideos(totalWidth, dpPerSecond, videoList)
         }
 
         Box(modifier = Modifier
-            .padding(start = 13.dp, top = 24.dp, end = 13.dp)
+            .padding(
+                start = dimensionResource(R.dimen.dim_13),
+                top = dimensionResource(R.dimen.dim_24),
+                end = dimensionResource(R.dimen.dim_13)
+            )
             .width(totalWidth)
         ) {
             ProgressBar(currentTime, dpPerSecond)
-            Box(modifier = Modifier.height(12.dp).fillMaxWidth()
+            Box(modifier = Modifier
+                .height(dimensionResource(R.dimen.dim_12))
+                .fillMaxWidth()
                 .pointerInput(Unit) {
                     detectTapGestures { offset ->
                         onSeek(((offset.x.toDp() / dpPerSecond).value * 1000).toLong())
@@ -196,22 +238,17 @@ fun BottomTrimmerControl(
                 })
         }
     }
-
-
-
-
-
 }
 
 @Composable
 fun TrimmedVideos(totalWidth: Dp, dpPerSecond: Float, videoList: List<TrimmedVideo>) {
-    var selectedVideo by remember { mutableStateOf(-1) }
+    var selectedVideo by remember { mutableIntStateOf(-1) }
     LazyRow(
-        contentPadding = PaddingValues(start = 8.dp),
+        contentPadding = PaddingValues(start = dimensionResource(R.dimen.dim_8)),
         userScrollEnabled = false,
         modifier = Modifier
-            .padding(start = 8.dp)
-            .height(64.dp)
+            .padding(start = dimensionResource(R.dimen.dim_8))
+            .height(dimensionResource(R.dimen.dim_64))
             .width(totalWidth)
     ) {
         items(
@@ -246,8 +283,8 @@ fun TrimmedVideo(dpPerSecond: Float, video: TrimmedVideo, isSelected: Boolean,
         Modifier
             .fillMaxHeight()
             .width(elementWidth + endOffset)
-            .padding(horizontal = 4.dp)
-            .clip(RoundedCornerShape(8.dp))
+            .padding(horizontal = dimensionResource(R.dimen.dim_4))
+            .clip(RoundedCornerShape(dimensionResource(R.dimen.dim_8)))
             .clickable { onClick(video.id) }
     ) {
         Row(Modifier.fillMaxSize()) {
@@ -278,8 +315,8 @@ fun TrimmedVideo(dpPerSecond: Float, video: TrimmedVideo, isSelected: Boolean,
         if (isSelected) {
             Box(modifier = Modifier
                 .fillMaxHeight()
-                .width(12.dp)
-                .background(Color(0xFF191A18))
+                .width(dimensionResource(R.dimen.dim_12))
+                .background(trimmerFilmSelectEdge)
                 .align(Alignment.CenterStart)
                 .pointerInput(Unit) {
                     detectDragGesturesAfterLongPress(
@@ -314,8 +351,8 @@ fun TrimmedVideo(dpPerSecond: Float, video: TrimmedVideo, isSelected: Boolean,
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(12.dp)
-                    .background(Color(0xFF191A18))
+                    .width(dimensionResource(R.dimen.dim_12))
+                    .background(trimmerFilmSelectEdge)
                     .align(Alignment.CenterEnd)
                     .pointerInput(Unit) {
                         detectDragGesturesAfterLongPress(
@@ -358,8 +395,8 @@ fun ProgressBar(currentTime: State<Long>, dpPerSecond: Float) {
         Box(
             modifier = Modifier
                 .offset(x = currentOffset.dp)
-                .width(2.dp)
-                .height(84.dp)
+                .width(dimensionResource(R.dimen.dim_2))
+                .height(dimensionResource(R.dimen.dim_84))
                 .background(Color.Black)
 
         )
@@ -372,10 +409,10 @@ fun Timeline(totalWidth: Dp, timeSeconds: Long) {
     val numberOfUnits = numberOfLines / 13
     val scale = timeSeconds / numberOfUnits
     Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.dim_8)),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.dim_12))) {
             var i = 0
             var currentTime = 0L
             repeat(numberOfLines - 3 * numberOfUnits) {
@@ -384,25 +421,25 @@ fun Timeline(totalWidth: Dp, timeSeconds: Long) {
                     val seconds = currentTime % 60
                     Text(
                         text = "$minutes:${if (seconds < 10) "0$seconds" else seconds}",
-                        modifier = Modifier.width(27.dp),
+                        modifier = Modifier.width(dimensionResource(R.dimen.dim_27)),
                         fontFamily = Raleway,
                         fontWeight = FontWeight.Medium,
-                        fontSize = 12.sp,
-                        color = Color(0xFF8A8C86),
+                        fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
+                        color = trimmerTimelineText,
                         textAlign = TextAlign.Center,
                         softWrap = false
                     )
                     currentTime += scale
                 } else {
-                    Box(Modifier.width(1.dp))
+                    Box(Modifier.width(dimensionResource(R.dimen.dim_1)))
                 }
                 i++
             }
 
         }
         Row(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.padding(horizontal = 13.dp)
+            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.dim_12)),
+            modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.dim_13))
         ) {
             var i = 0
             repeat(numberOfLines) {

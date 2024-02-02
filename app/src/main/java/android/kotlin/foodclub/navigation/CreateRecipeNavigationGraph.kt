@@ -3,7 +3,7 @@ package android.kotlin.foodclub.navigation
 import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
 import android.kotlin.foodclub.viewModels.home.create.TrimmerViewModel
 import android.kotlin.foodclub.viewModels.home.createRecipe.CreateRecipeViewModel
-import android.kotlin.foodclub.views.home.TrimmerView
+import android.kotlin.foodclub.views.home.createRecipe.TrimmerView
 import android.kotlin.foodclub.views.home.createRecipe.CreateRecipeView
 import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
