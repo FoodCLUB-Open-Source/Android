@@ -5,6 +5,7 @@ import android.kotlin.foodclub.domain.models.others.TrimmedVideo
 import android.kotlin.foodclub.utils.helpers.ffmpeg.VideoMerger
 import android.kotlin.foodclub.views.home.createRecipe.TrimmerState
 import android.net.Uri
+import android.util.Log
 import androidx.annotation.OptIn
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -23,11 +24,12 @@ import javax.inject.Inject
 @HiltViewModel
 class TrimmerViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val player: ExoPlayer
+    private val player: ExoPlayer,
+    private val videoMerger: VideoMerger
 ): ViewModel(), TrimmerEvents {
     private val videoUris = savedStateHandle.getStateFlow("videoUris", emptyMap<Int, Uri>())
     private var onVideoCreate = {}
-
+    val TAG = TrimmerViewModel::class.java.simpleName
     private val _state = MutableStateFlow(TrimmerState.default(player))
     val state: StateFlow<TrimmerState>
         get() = _state
@@ -73,18 +75,31 @@ class TrimmerViewModel @Inject constructor(
     override fun createVideo(context: Context) {
         _state.update { it.copy(isLoading = true) }
         player.pause()
-        _state.value.videoObjects.forEach { it.saveVideo(context) { onVideoSaveListener(context) } }
+        try {
+            _state.value.videoObjects.forEach { videoObject ->
+                videoObject.saveVideo(context) { onVideoSaveListener() }
+            }
+        } catch (e: Exception) {
+            // Handle exceptions related to video saving
+            Log.e(TAG, "Exception during video saving", e)
+            _state.update { it.copy(isLoading = false) }
+            return
+        }
     }
 
-    private fun onVideoSaveListener(context: Context) {
-        if (_state.value.videoObjects.any { it.savedFilePath == null }) return
-
-        // String containing url of saved video. We will be using it when creating the post.
-        val url = VideoMerger().mergeVideos(
-            context, _state.value.videoObjects.map { it.savedFilePath!! }
-        )
+    private fun onVideoSaveListener() {
+        try {
+            if (_state.value.videoObjects.any { it.savedFilePath == null }) return
+            val url = videoMerger.mergeVideos(state.value.videoObjects.map { it.savedFilePath!! }
+            )
+        } catch (e: Exception) {
+            // Handle exceptions related to video merging
+            Log.e(TAG, "Exception during video merging", e)
+        } finally {
+            // Ensure that isLoading is set to false regardless of success or failure
+            _state.update { it.copy(isLoading = false) }
+        }
         onVideoCreate()
-        _state.update { it.copy(isLoading = false) }
     }
 
     override fun navigate(time: Long) {
