@@ -25,3 +25,6 @@ val transparentWhite = Color(0x55FFFFFF)
 val confirmScreenColor = Color(0x55FFBBBB)
 
 val snapsTopbar=Color(0xFF424242)
+
+val trimmerFilmSelectEdge = Color(0xFF191A18)
+val trimmerTimelineText = Color(0xFF8A8C86)
