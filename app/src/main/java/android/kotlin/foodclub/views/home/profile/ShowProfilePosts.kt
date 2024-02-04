@@ -70,7 +70,6 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -209,7 +208,6 @@ fun ShowProfilePosts(
     val coroutineScope = rememberCoroutineScope()
     val localDensity = LocalDensity.current
     val infoDialog = remember { mutableStateOf(false) }
-    val systemUiController = rememberSystemUiController()
 
     val controlPoint = remember { mutableStateOf(true) }
     val hasVideoLoaded = remember { mutableStateOf(false) }
@@ -222,16 +220,6 @@ fun ShowProfilePosts(
 
     if (screenHeightMinusBottomNavItem <= dimensionResource(id = R.dimen.dim_650)) {
         screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.96f
-    }
-
-    SideEffect {
-        systemUiController.setSystemBarsColor(
-            color = Color.Transparent,
-            darkIcons = false
-        )
-        systemUiController.setNavigationBarColor(
-            color = Color.Black
-        )
     }
 
     BackHandler {

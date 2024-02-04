@@ -40,7 +40,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -59,8 +58,6 @@ fun DiscoverViewPosts(
     if (screenHeightMinusBottomNavItem <= dimensionResource(id = R.dimen.dim_650)) {
         screenHeightMinusBottomNavItem = LocalConfiguration.current.screenHeightDp.dp * 0.96f
     }
-    val systemUiController = rememberSystemUiController()
-
     var showIngredientSheet by remember { mutableStateOf(false) }
     val triggerIngredientBottomSheetModal: () -> Unit = {
         showIngredientSheet = !showIngredientSheet
@@ -69,15 +66,6 @@ fun DiscoverViewPosts(
     val initialVideo = posts.filter { it.videoId == postId }.getOrNull(0)
     val hasVideoLoaded = remember { mutableStateOf(false) }
 
-    SideEffect {
-        systemUiController.setSystemBarsColor(
-            color = Color.Transparent,
-            darkIcons = false
-        )
-        systemUiController.setNavigationBarColor(
-            color = Color.Black
-        )
-    }
     BackHandler {
         onBackPressed()
     }

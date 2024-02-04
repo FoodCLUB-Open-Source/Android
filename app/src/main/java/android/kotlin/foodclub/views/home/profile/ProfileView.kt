@@ -88,7 +88,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -159,15 +158,6 @@ fun ProfileView(
                         }
                     }
                 }
-            }
-
-            val systemUiController = rememberSystemUiController()
-
-            SideEffect {
-                systemUiController.setSystemBarsColor(
-                    color = Color.White,
-                    darkIcons = true
-                )
             }
 
             val pagerState = rememberPagerState(

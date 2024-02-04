@@ -73,7 +73,6 @@ import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionsRequired
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.delay
 import okio.ByteString.Companion.encodeUtf8
 import java.io.File
@@ -115,7 +114,6 @@ fun CameraView(
     val previewView: PreviewView = remember { PreviewView(context) }
     val videoCapture: MutableState<VideoCapture<Recorder>?> = remember { mutableStateOf(null) }
     val recordingStarted: MutableState<Boolean> = remember { mutableStateOf(false) }
-    val systemUiController = rememberSystemUiController()
 
     val audioEnabled: MutableState<Boolean> = remember { mutableStateOf(false) }
     val cameraSelector: MutableState<CameraSelector> = remember {
@@ -167,12 +165,6 @@ fun CameraView(
     LaunchedEffect(Unit) {
         events.onEvent(StopWatchEvent.onReset)
         permissionState.launchMultiplePermissionRequest()
-    }
-
-    SideEffect {
-        systemUiController.setNavigationBarColor(
-            color = Color.Black
-        )
     }
 
     LaunchedEffect(previewView) {
