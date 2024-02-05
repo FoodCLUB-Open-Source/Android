@@ -157,7 +157,6 @@ fun HomeView(
                         events.toggleShowMemoriesReel(show = true)
                     }
                     
-                    exoPlayer.play()
                     if (!exoPlayer.isPlaying){
                         exoPlayer.playWhenReady
                     }
@@ -175,7 +174,7 @@ fun HomeView(
                 }
 
                 1 -> {
-                    exoPlayer.pause()
+
                     if (exoPlayer.isPlaying){
                         exoPlayer.pause()
                     }
