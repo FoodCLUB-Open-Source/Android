@@ -34,8 +34,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,11 +56,9 @@ fun HomeIngredient(
         mutableIntStateOf((quantityMultiplier * ingredient.quantity).toInt())
     }
     LaunchedEffect(key1 = quantityMultiplier) {
-        Log.d("HomeIngredient", "change: $quantityMultiplier")
         quantity = (quantityMultiplier * ingredient.quantity).toInt()
     }
 
-    Log.d("ScreenHeightLog", "Screen bottom sheet: $screenHeight")
     if (screenHeight <= dimensionResource(id = R.dimen.dim_440)) {
         isSmallScreen = true
     }
@@ -71,7 +71,8 @@ fun HomeIngredient(
                     dimensionResource(id = R.dimen.dim_130)
             )
             .border(
-                1.dp, Color(0xFFE8E8E8),
+                dimensionResource(id = R.dimen.dim_1),
+                colorResource(id = R.color.home_ingredient_box_border_color),
                 RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
             )
             .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
@@ -100,7 +101,7 @@ fun HomeIngredient(
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_30)))
                 .background(
                     if (isSelected) foodClubGreen
-                    else Color(0xFFECECEC)
+                    else colorResource(id = R.color.home_ingredient_button_white_color)
                 )
                 .clickable {
                     isSelected = !isSelected
@@ -128,7 +129,7 @@ fun HomeIngredient(
                 .padding(start = dimensionResource(id = R.dimen.dim_10))) {
                 Text(
                     text = ingredient.type,
-                    lineHeight = 18.sp,
+                    lineHeight = dimensionResource(id = R.dimen.fon_18).value.sp,
                     modifier = Modifier
                         .align(Alignment.TopStart),
                     fontWeight = FontWeight.Normal,
@@ -139,7 +140,7 @@ fun HomeIngredient(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Image(
                         painter = painterResource(id = R.drawable.baseline_arrow_left_24),
-                        contentDescription = "Profile Image",
+                        contentDescription = stringResource(id = R.string.profile_image),
                         modifier = Modifier
                             .size(dimensionResource(id = R.dimen.dim_50))
                             .padding(end = dimensionResource(id = R.dimen.dim_15))
@@ -153,7 +154,7 @@ fun HomeIngredient(
                         quantity.toString() + ValueParser.quantityUnitToString(ingredient.unit),
                         color = Color.Black,
                         fontFamily = Montserrat,
-                        fontSize = 14.sp
+                        fontSize = dimensionResource(id = R.dimen.fon_14).value.sp
                     )
                     Image(
                         painter = painterResource(id = R.drawable.baseline_arrow_right_24),
@@ -171,5 +172,7 @@ fun HomeIngredient(
             }
         }
     }
-    Spacer(modifier = Modifier.height(if (isSmallScreen) 10.dp else 20.dp))
+    Spacer(modifier = Modifier.height(
+        if (isSmallScreen) dimensionResource(id = R.dimen.dim_10)
+        else dimensionResource(id = R.dimen.dim_20)))
 }
