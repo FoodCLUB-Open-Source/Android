@@ -160,10 +160,12 @@ fun VideoPager(
         }
     }
     else{
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Gray)
-        )
-        { VideoPagerLoadingSkeleton() }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Gray)
+        ) {
+            VideoPagerLoadingSkeleton()
+        }
     }
 }

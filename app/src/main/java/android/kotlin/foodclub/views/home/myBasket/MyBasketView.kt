@@ -59,7 +59,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.delay
 
 
@@ -70,7 +69,6 @@ fun MyBasketView(
     navController: NavController,
     state: MyBasketState
 ) {
-    val systemUiController = rememberSystemUiController()
     var showSheet by remember { mutableStateOf(false) }
     val productsList = state.productsList
     val selectedProductsIds = state.selectedProductsList
@@ -86,16 +84,6 @@ fun MyBasketView(
 //        //viewModel.updateSelectedIngredients(emptyList())
 
         showSheet = !showSheet
-        systemUiController.setStatusBarColor(color = Color(0x00ACACAC), darkIcons = true)
-        systemUiController.setNavigationBarColor(color = Color.Black, darkIcons = true)
-    }
-    SideEffect {
-        if (!showSheet) {
-            systemUiController.setSystemBarsColor(
-                color = Color.White,
-                darkIcons = true
-            )
-        }
     }
 
     if (showSheet) {

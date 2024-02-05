@@ -1,4 +1,5 @@
 @file:JvmName("HomeViewKt")
+@file:OptIn(ExperimentalFoundationApi::class)
 
 package android.kotlin.foodclub.views.home.home.feed
 
@@ -26,10 +27,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,7 +53,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 
@@ -72,7 +73,6 @@ fun HomeView(
     val localDensity = LocalDensity.current
 
     val coroutineScope = rememberCoroutineScope()
-    val systemUiController = rememberSystemUiController()
 
     val triggerIngredientBottomSheetModal: () -> Unit = {
         showIngredientSheet = !showIngredientSheet
@@ -85,19 +85,8 @@ fun HomeView(
     )
     val exoPlayer = remember(context) { viewModel.exoPlayer }
 
-
     BackHandler {
 
-    }
-
-    SideEffect {
-        systemUiController.setSystemBarsColor(
-            color = Color.Transparent,
-            darkIcons = false
-        )
-        systemUiController.setNavigationBarColor(
-            color = Color.White
-        )
     }
 
     Box(
@@ -106,30 +95,9 @@ fun HomeView(
             .zIndex(1f),
         contentAlignment = Alignment.BottomCenter
     ) {
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .height(dimensionResource(id = R.dimen.dim_95))
-                .then(
-                    if (pagerState.currentPage == 0 || (pagerState.currentPage == 1 && !state.showMemoriesReel)) {
-                        Modifier
-                            .fadingEdge(
-                                Brush.verticalGradient(
-                                    0.5f to Color.Black,
-                                    1f to Color.Transparent,
-                                    tileMode = TileMode.Mirror
-                                )
-                            )
-                            .alpha(0.4f)
-                    } else Modifier
-                )
-                .background(
-                    color = if (pagerState.currentPage == 0 || (pagerState.currentPage == 1 && !state.showMemoriesReel)) {
-                        Color.Black
-                    } else {
-                        snapsTopbar
-                    }
-                )
+        HomeHeaderBackground(
+            pagerState = pagerState,
+            state = state
         )
         Box(
             modifier = Modifier
@@ -156,52 +124,10 @@ fun HomeView(
                     .align(Alignment.BottomCenter)
                     .padding(bottom = dimensionResource(id = R.dimen.dim_10))
             ) {
-                Text(
-                    modifier = modifier
-                        .clickable {
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(
-                                    page = 0,
-                                    animationSpec = tween(1, easing = LinearEasing)
-                                )
-                            }
-                        },
-                    text = stringResource(id = R.string.feed),
-                    fontFamily = Montserrat,
-                    fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
-                    style = TextStyle(color = if (pagerState.currentPage == 0) Color.White else Color.LightGray),
-                    lineHeight = dimensionResource(id = R.dimen.fon_21_94).value.sp,
-                    fontWeight = if (pagerState.currentPage == 0) FontWeight.Bold else FontWeight.Medium
-                )
-                Text(
-                    modifier = Modifier
-                        .padding(dimensionResource(id = R.dimen.dim_8))
-                        .alpha(0.7f),
-                    text = stringResource(id = R.string.pipe_symbol),
-                    fontFamily = Montserrat,
-                    fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
-                    style = TextStyle(color = Color.LightGray),
-                    lineHeight = dimensionResource(id = R.dimen.fon_21_94).value.sp
-                )
-                Text(
-                    modifier = modifier
-                        .clickable {
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(
-                                    page = 1,
-                                    animationSpec = tween(1, easing = LinearEasing)
-                                )
-
-                            }
-
-
-                        },
-                    text = stringResource(id = R.string.snaps),
-                    fontFamily = Montserrat,
-                    fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
-                    style = TextStyle(color = if (pagerState.currentPage == 1) Color.White else Color.LightGray),
-                    lineHeight = dimensionResource(id = R.dimen.fon_21_94).value.sp,
-                    fontWeight = if (pagerState.currentPage == 1) FontWeight.Bold else FontWeight.Medium
+                HeaderContent(
+                    modifier = modifier,
+                    coroutineScope = coroutineScope,
+                    pagerState = pagerState
                 )
             }
         }
@@ -230,7 +156,12 @@ fun HomeView(
                     if (state.showMemoriesReel){
                         events.toggleShowMemoriesReel(show = true)
                     }
+                    
                     exoPlayer.play()
+                    if (!exoPlayer.isPlaying){
+                        exoPlayer.playWhenReady
+                    }
+                    
                     VideoPager(
                         exoPlayer = exoPlayer,
                         videoList = state.videoList,
@@ -245,6 +176,10 @@ fun HomeView(
 
                 1 -> {
                     exoPlayer.pause()
+                    if (exoPlayer.isPlaying){
+                        exoPlayer.pause()
+                    }
+                    
                     FoodSNAPSView(
                         state = state,
                         onShowMemoriesChanged = { newShowMemoriesValue ->
@@ -261,4 +196,90 @@ fun HomeView(
             }
         }
     }
+}
+
+@Composable
+fun HomeHeaderBackground(
+    pagerState: PagerState,
+    state: HomeState
+){
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .height(dimensionResource(id = R.dimen.dim_95))
+            .then(
+                if (pagerState.currentPage == 0 || (pagerState.currentPage == 1 && !state.showMemoriesReel)) {
+                    Modifier
+                        .fadingEdge(
+                            Brush.verticalGradient(
+                                0.5f to Color.Black, 1f to Color.Transparent,
+                                tileMode = TileMode.Mirror
+                            )
+                        )
+                        .alpha(0.4f)
+                } else Modifier
+            )
+            .background(
+                color = if (pagerState.currentPage == 0 || (pagerState.currentPage == 1 && !state.showMemoriesReel)) {
+                    Color.Black
+                } else {
+                    snapsTopbar
+                }
+            )
+    )
+}
+
+@Composable
+fun HeaderContent(
+    modifier: Modifier,
+    coroutineScope: CoroutineScope,
+    pagerState: PagerState
+) {
+    Text(
+        modifier = modifier
+            .clickable {
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(
+                        page = 0,
+                        animationSpec = tween(1, easing = LinearEasing)
+                    )
+                }
+            },
+        text = stringResource(id = R.string.feed),
+        fontFamily = Montserrat,
+        fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
+        style = TextStyle(color = if (pagerState.currentPage == 0) Color.White else Color.LightGray),
+        lineHeight = dimensionResource(id = R.dimen.fon_21_94).value.sp,
+        fontWeight = if (pagerState.currentPage == 0) FontWeight.Bold else FontWeight.Medium
+    )
+    Text(
+        modifier = Modifier
+            .padding(dimensionResource(id = R.dimen.dim_8))
+            .alpha(0.7f),
+        text = stringResource(id = R.string.pipe_symbol),
+        fontFamily = Montserrat,
+        fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
+        style = TextStyle(color = Color.LightGray),
+        lineHeight = dimensionResource(id = R.dimen.fon_21_94).value.sp
+    )
+    Text(
+        modifier = modifier
+            .clickable {
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(
+                        page = 1,
+                        animationSpec = tween(1, easing = LinearEasing)
+                    )
+
+                }
+
+
+            },
+        text = stringResource(id = R.string.snaps),
+        fontFamily = Montserrat,
+        fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
+        style = TextStyle(color = if (pagerState.currentPage == 1) Color.White else Color.LightGray),
+        lineHeight = dimensionResource(id = R.dimen.fon_21_94).value.sp,
+        fontWeight = if (pagerState.currentPage == 1) FontWeight.Bold else FontWeight.Medium
+    )
 }

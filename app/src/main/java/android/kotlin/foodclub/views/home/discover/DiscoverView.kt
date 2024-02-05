@@ -79,7 +79,6 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -112,6 +111,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -120,7 +120,6 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -139,13 +138,6 @@ fun DiscoverView(
     var postId: Long? by remember { mutableStateOf(null) }
 
     val brush = shimmerBrush()
-    val systemUiController = rememberSystemUiController()
-
-    SideEffect {
-        systemUiController.setSystemBarsColor(
-            color = Color.White, darkIcons = true
-        )
-    }
 
     var searchText by remember { mutableStateOf("") }
 
@@ -457,19 +449,6 @@ fun DiscoverView(
 
     val triggerBottomSheetModal: () -> Unit = {
         showSheet = !showSheet
-        systemUiController.setStatusBarColor(
-            color = Color(0xFFACACAC), darkIcons = true
-        )
-        systemUiController.setNavigationBarColor(
-            color = Color.Black, darkIcons = true
-        )
-    }
-    SideEffect {
-        if (!showSheet) {
-            systemUiController.setSystemBarsColor(
-                color = Color.White, darkIcons = true
-            )
-        }
     }
     if (showSheet) {
         IngredientsBottomSheet(
@@ -704,6 +683,7 @@ fun SubSearchBar(
             onValueChange = {
                 onSearch(it)
             },
+            singleLine = true,
             placeholder = {
                 Text(
                     modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_3)),
@@ -1045,7 +1025,9 @@ fun SingleSearchIngredientItem(
                     fontWeight = FontWeight(500),
                     lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
                     fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
-                    color = Color.Black
+                    color = Color.Black,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 3
                 )
             }
         }
@@ -1067,7 +1049,9 @@ fun SingleSearchIngredientItem(
                         lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
                         fontFamily = Montserrat,
                         color = Color.Gray,
-                        style = quantityTextStyle(quantity)
+                        style = quantityTextStyle(quantity),
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
                     )
 
                 }else{
@@ -1096,7 +1080,9 @@ fun SingleSearchIngredientItem(
                         lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
                         fontFamily = Montserrat,
                         color = Color.Gray,
-                        style = expirationDateTextStyle(expirationDate)
+                        style = expirationDateTextStyle(expirationDate),
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
                     )
                 }else{
                     Box(modifier = Modifier.weight(1f, fill = false))
@@ -1403,4 +1389,3 @@ fun expirationDateTextStyle(expirationDate: String): TextStyle {
         textDecoration = TextDecoration.None
     )
 }
-

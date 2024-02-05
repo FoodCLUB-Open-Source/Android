@@ -17,4 +17,6 @@
     <color name="bottom_sheet_nav_bar_selected_color">#7EC60B</color>
     <color name="snaps_view_brown">#6D4E2E</color>
     <color name="snaps_view_gray">#949494</color>
+    <color name="home_ingredient_button_white_color">#ECECEC</color>
+    <color name="home_ingredient_box_border_color">#E8E8E8</color>
 </resources>

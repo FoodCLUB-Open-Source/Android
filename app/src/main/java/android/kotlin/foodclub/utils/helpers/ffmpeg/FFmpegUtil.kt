@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.utils.helpers
+package android.kotlin.foodclub.utils.helpers.ffmpeg
 
 import android.content.Context
 import android.graphics.Bitmap
