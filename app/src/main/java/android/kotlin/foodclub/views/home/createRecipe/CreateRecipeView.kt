@@ -61,7 +61,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -252,7 +251,6 @@ fun CreateRecipeView(
     events: CreateRecipeEvents,
     state: CreateRecipeState
 ) {
-    val systemUiController = rememberSystemUiController()
     var showSheet by remember { mutableStateOf(false) }
     var showCategorySheet by remember { mutableStateOf(false) }
     val codeTriggered = remember { mutableStateOf(false) }
@@ -270,10 +268,6 @@ fun CreateRecipeView(
         isSmallScreen = true
     }
     LaunchedEffect(key1 = codeTriggered.value) {
-        systemUiController.setSystemBarsColor(
-                color = Color.White,
-                darkIcons = true
-        )
         if (!codeTriggered.value) {
             codeTriggered.value = true
         }
@@ -281,21 +275,9 @@ fun CreateRecipeView(
 
     val triggerCategoryBottomSheetModal: () -> Unit = {
         showCategorySheet = !showCategorySheet
-        systemUiController.setNavigationBarColor(
-            color = if (showSheet) Color.Black else Color.White,
-            darkIcons = true
-        )
     }
     val triggerBottomSheetModal: () -> Unit = {
         showSheet = !showSheet
-        systemUiController.setStatusBarColor(
-            color = if (showSheet) Color(android.graphics.Color.parseColor("#ACACAC")) else Color.White,
-            darkIcons = true
-        )
-        systemUiController.setNavigationBarColor(
-            color = if (showSheet) Color.Black else Color.White,
-            darkIcons = true
-        )
     }
 
     Box(

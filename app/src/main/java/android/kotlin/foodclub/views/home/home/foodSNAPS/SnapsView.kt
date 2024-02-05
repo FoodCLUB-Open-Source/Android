@@ -59,7 +59,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -67,17 +66,6 @@ import kotlinx.coroutines.launch
 fun SnapsView(
     memoriesModel: MemoriesModel,
 ) {
-
-    val systemUiController = rememberSystemUiController()
-    SideEffect {
-        systemUiController.setSystemBarsColor(
-            color = Color.Transparent,
-            darkIcons = false
-        )
-        systemUiController.setNavigationBarColor(
-            color = Color.White
-        )
-    }
     val snapPagerState = rememberPagerState(
         initialPage = 0,
         initialPageOffsetFraction = 0f

@@ -52,7 +52,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 
 
@@ -72,7 +71,6 @@ fun HomeView(
     val localDensity = LocalDensity.current
 
     val coroutineScope = rememberCoroutineScope()
-    val systemUiController = rememberSystemUiController()
 
     val triggerIngredientBottomSheetModal: () -> Unit = {
         showIngredientSheet = !showIngredientSheet
@@ -88,16 +86,6 @@ fun HomeView(
 
     BackHandler {
 
-    }
-
-    SideEffect {
-        systemUiController.setSystemBarsColor(
-            color = Color.Transparent,
-            darkIcons = false
-        )
-        systemUiController.setNavigationBarColor(
-            color = Color.White
-        )
     }
 
     Box(

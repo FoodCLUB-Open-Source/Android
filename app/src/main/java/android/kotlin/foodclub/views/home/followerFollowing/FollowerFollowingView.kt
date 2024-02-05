@@ -49,8 +49,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
-
 
 @Composable
 fun FollowerView(
@@ -64,14 +62,6 @@ fun FollowerView(
     val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
 
     val brush = shimmerBrush()
-    val systemUiController = rememberSystemUiController()
-
-    SideEffect {
-        systemUiController.setSystemBarsColor(
-            color = Color.White,
-            darkIcons = true
-        )
-    }
 
     LaunchedEffect(Unit) {
         if(viewType == FollowViewType.FOLLOWERS.type) events.getFollowersList(userId)
