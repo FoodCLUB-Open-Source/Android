@@ -6,6 +6,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.keyframes
@@ -156,8 +157,14 @@ private fun particleYPosition(
 private fun Particle(model: ParticleModel) {
     if (model.reaction == Reactions.ALL) return
 
+    val transitionState = remember {
+        MutableTransitionState(0.1f).apply {
+            targetState = 0f
+        }
+    }
+
     val transition = updateTransition(
-        targetState = 1f,
+        transitionState,
         label = stringResource(id = R.string.particle_transition)
     )
 
@@ -201,7 +208,7 @@ private const val MIN_PARTICLE_SIZE = 1f
 private const val MAX_PARTICLE_SIZE = 2.6f
 private const val MIN_ANIMATION_DURATION = 1200f
 private const val MAX_ANIMATION_DURATION = 1500f
-private const val PARTICLE_SIZE = 30
+private const val PARTICLE_SIZE = 20
 private const val MIN_HEIGHT = 800 // larger than max as its displacement from top of screen
 private const val MAX_HEIGHT = 300
 private const val PARTICLE_QUANTITY = 10
