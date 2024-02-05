@@ -156,9 +156,12 @@ fun HomeView(
                     if (state.showMemoriesReel){
                         events.toggleShowMemoriesReel(show = true)
                     }
+                    
+                    exoPlayer.play()
                     if (!exoPlayer.isPlaying){
                         exoPlayer.playWhenReady
                     }
+                    
                     VideoPager(
                         exoPlayer = exoPlayer,
                         videoList = state.videoList,
@@ -172,9 +175,11 @@ fun HomeView(
                 }
 
                 1 -> {
+                    exoPlayer.pause()
                     if (exoPlayer.isPlaying){
                         exoPlayer.pause()
                     }
+                    
                     FoodSNAPSView(
                         state = state,
                         onShowMemoriesChanged = { newShowMemoriesValue ->

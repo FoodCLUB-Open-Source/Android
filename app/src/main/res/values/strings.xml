@@ -432,6 +432,7 @@
     <string name="particle_transition">particle transition</string>
     <string name="alpha_animation">alpha animation</string>
     <string name="scale_animation">scale animation</string>
+    <string name="downloading">Downloading</string>
     - Gallery
     <string name="gallery">Gallery</string>
     <string name="story">story</string>

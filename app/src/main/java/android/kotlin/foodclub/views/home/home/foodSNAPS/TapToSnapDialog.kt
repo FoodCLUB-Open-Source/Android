@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -33,9 +34,13 @@ fun TapToSnapDialog(
     Box(modifier = Modifier.fillMaxSize()) {
         Box(
             modifier = modifier
-                .clip(RoundedCornerShape(18.dp))
+                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_18)))
                 .align(Alignment.Center)
-                .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(18.dp))
+                .border(
+                    width = dimensionResource(id = R.dimen.dim_1),
+                    color = Color.Black,
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_18))
+                )
         ) {
             Image(
                 painter = painterResource(id = R.drawable.taptosnapbg),
@@ -44,8 +49,8 @@ fun TapToSnapDialog(
                 colorFilter = ColorFilter.tint(Color.Black, BlendMode.Overlay),
                 modifier = Modifier
                     .blur(
-                        radiusX = 50.dp,
-                        radiusY = 50.dp,
+                        radiusX = dimensionResource(id = R.dimen.dim_50),
+                        radiusY = dimensionResource(id = R.dimen.dim_50),
                         edgeTreatment = BlurredEdgeTreatment.Unbounded
                     )
             )
@@ -58,23 +63,23 @@ fun TapToSnapDialog(
             Text(
                 text = stringResource(id = R.string.tap_to_snap_subheading),
                 style = TextStyle(
-                    fontSize = 20.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
                     fontFamily = Montserrat,
                     fontWeight = FontWeight.Normal,
-                    lineHeight = 26.sp
+                    lineHeight = dimensionResource(id = R.dimen.fon_26).value.sp
                 ),
-                modifier = Modifier.padding(28.dp)
+                modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_28))
             )
             Text(
                 text = stringResource(id = R.string.tap_to_snap),
                 style = TextStyle(
-                    fontSize = 20.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
                     fontFamily = Montserrat,
                     fontWeight = FontWeight.Normal,
-                    lineHeight = 24.sp
+                    lineHeight = dimensionResource(id = R.dimen.fon_24).value.sp
                 ),
                 modifier = Modifier
-                    .padding(32.dp)
+                    .padding(dimensionResource(id = R.dimen.dim_32))
                     .align(Alignment.BottomEnd)
             )
         }

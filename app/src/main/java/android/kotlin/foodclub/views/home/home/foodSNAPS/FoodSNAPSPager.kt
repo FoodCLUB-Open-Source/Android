@@ -58,7 +58,13 @@ fun FoodSNAPSPager(
                 if (showMemoriesReel) {
                     changeMemoriesReelVisibility(false)
                 } else {
-                    snapPagerState.scrollToPage(1)
+                    snapPagerState.animateScrollToPage(
+                        1,
+                        animationSpec = tween(
+                            easing = LinearEasing,
+                            durationMillis = ANIMATION_DURATION_SHORT
+                        )
+                    )
                 }
 
                 swipeableState.snapTo(SwipeDirection.NEUTRAL)
@@ -68,7 +74,13 @@ fun FoodSNAPSPager(
                 if (!showMemoriesReel) {
                     changeMemoriesReelVisibility(true)
                 } else {
-                    snapPagerState.scrollToPage(0)
+                    snapPagerState.animateScrollToPage(
+                        page = 0,
+                        animationSpec = tween(
+                            easing = LinearEasing,
+                            durationMillis = ANIMATION_DURATION_SHORT
+                        )
+                    )
                 }
 
                 swipeableState.snapTo(SwipeDirection.NEUTRAL)

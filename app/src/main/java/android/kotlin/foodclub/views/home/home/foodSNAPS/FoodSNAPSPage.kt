@@ -74,45 +74,55 @@ fun FoodSNAPSPage(
                 .align(Alignment.BottomStart)
                 .padding(dimensionResource(id = R.dimen.dim_15))
         ) {
-
-            Column(
-                modifier = Modifier.wrapContentSize()
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_15))
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.story_user),
-                        contentDescription = stringResource(id = R.string.profile_image),
-                        modifier = Modifier
-                            .size(dimensionResource(id = R.dimen.dim_35))
-                            .clip(shape = CircleShape)
-                            .alpha(0.7f)
-                    )
-                    Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_10)))
-                    Text(
-                        storyListData[index].authorDetails,
-                        color = Color.Black,
-                        fontFamily = Montserrat,
-                        fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
-                        modifier = Modifier
-                            .padding(dimensionResource(id = R.dimen.dim_2))
-                            .alpha(0.7f)
-                    )
-                }
-
-                Text(
-                    text = storyListData[index].createdAt,
-                    color = Color.Black,
-                    fontFamily = Montserrat,
-                    fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier
-                        .padding(dimensionResource(id = R.dimen.dim_2))
-                        .alpha(0.7f)
-                )
-            }
+            AuthorDetailsView(
+                storyListData,
+                index
+            )
         }
+    }
+}
+
+@Composable
+fun AuthorDetailsView(
+    storyListData: List<VideoModel>,
+    index: Int
+){
+    Column(
+        modifier = Modifier.wrapContentSize()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_15))
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.story_user),
+                contentDescription = stringResource(id = R.string.profile_image),
+                modifier = Modifier
+                    .size(dimensionResource(id = R.dimen.dim_35))
+                    .clip(shape = CircleShape)
+                    .alpha(0.7f)
+            )
+            Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_10)))
+            Text(
+                storyListData[index].authorDetails,
+                color = Color.Black,
+                fontFamily = Montserrat,
+                fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
+                modifier = Modifier
+                    .padding(dimensionResource(id = R.dimen.dim_2))
+                    .alpha(0.7f)
+            )
+        }
+
+        Text(
+            text = storyListData[index].createdAt,
+            color = Color.Black,
+            fontFamily = Montserrat,
+            fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier
+                .padding(dimensionResource(id = R.dimen.dim_2))
+                .alpha(0.7f)
+        )
     }
 }
