@@ -380,18 +380,6 @@ fun EditIngredientBottomModal(
     }
 }
 
-// Quantity input constrain and validate
-fun quantityValidate(text: String): String {
-    val newText = text.trim()
-
-    return if (newText.isNotEmpty()) {
-        newText
-    } else {
-        ""
-    }
-}
-
-
 
 
 
