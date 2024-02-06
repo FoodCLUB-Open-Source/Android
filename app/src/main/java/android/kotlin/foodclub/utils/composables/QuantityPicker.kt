@@ -33,6 +33,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -96,6 +97,11 @@ fun QuantityPicker(
     var quantity by remember { mutableStateOf(if(ingredient.quantity== 0)"" else ingredient.quantity.toString()) }
     var selectedUnit by remember { mutableStateOf(ingredient.unit) }
     var selectedType by remember { mutableStateOf(types[0]) }
+
+    // error checking
+    var isError by remember {
+        mutableStateOf(false)
+    }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val lightGrayAlpha = 0.2f
@@ -151,10 +157,30 @@ fun QuantityPicker(
             value = quantity,
             onValueChange = {
                 val newText = it.trim()
+
                 if (newText.isNotEmpty()) {
-                    quantity = newText
+                    if (newText.toIntOrNull() != null &&
+                        newText.toInt() < Int.MAX_VALUE) {
+
+                        quantity = newText
+                        isError = false
+
+                    } else {
+                        isError = true
+                    }
+
                 } else {
                     quantity = ""
+                }
+            },
+            isError = isError,
+            supportingText = {
+                if (isError) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = "error ${quantity.length}",
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
             },
             keyboardOptions = KeyboardOptions(
@@ -351,6 +377,17 @@ fun EditIngredientBottomModal(
 
                 )
         }
+    }
+}
+
+// Quantity input constrain and validate
+fun quantityValidate(text: String): String {
+    val newText = text.trim()
+
+    return if (newText.isNotEmpty()) {
+        newText
+    } else {
+        ""
     }
 }
 
