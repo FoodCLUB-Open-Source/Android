@@ -178,7 +178,7 @@ fun QuantityPicker(
                 if (isError) {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
-                        text = "error ${quantity.length}",
+                        text = stringResource(id = R.string.quantity_overflow_error_message),
                         color = MaterialTheme.colorScheme.error
                     )
                 }
