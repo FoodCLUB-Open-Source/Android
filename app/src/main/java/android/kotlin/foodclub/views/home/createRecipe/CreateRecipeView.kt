@@ -6,12 +6,10 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.borderBlue
 import android.kotlin.foodclub.config.ui.categorySelectedBlue
 import android.kotlin.foodclub.config.ui.containerColor
-import android.kotlin.foodclub.config.ui.disabledContainerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.domain.enums.Category
 import android.kotlin.foodclub.domain.models.products.Ingredient
-import android.kotlin.foodclub.domain.models.recipes.Category
-import android.kotlin.foodclub.domain.models.recipes.allCategories
-import android.kotlin.foodclub.utils.composables.CustomSlider
+import android.kotlin.foodclub.utils.composables.CustomSliderDiscrete
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
 import android.kotlin.foodclub.utils.composables.SearchBar
 import android.kotlin.foodclub.utils.helpers.ValueParser
@@ -23,7 +21,6 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.shrinkOut
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -48,10 +45,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,22 +57,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.TextField
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -87,19 +74,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.capitalize
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.TextUnit
@@ -111,155 +94,153 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
-@Composable
-fun BottomSheetCategories(
-    onDismiss: () -> Unit,
-    events: CreateRecipeEvents,
-    state: CreateRecipeState
-) {
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp - dimensionResource(id = R.dimen.dim_150)
-    var searchText by remember { mutableStateOf("") }
-    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val categories = state.categories
-    var displayedCategories by remember { mutableStateOf(categories) }
-    val selectedCategories = state.chosenCategories
+//@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+//@Composable
+//fun BottomSheetCategories(
+//    onDismiss: () -> Unit,
+//    events: CreateRecipeEvents,
+//    state: CreateRecipeState
+//) {
+//    val screenHeight = LocalConfiguration.current.screenHeightDp.dp - dimensionResource(id = R.dimen.dim_150)
+//    var searchText by remember { mutableStateOf("") }
+//    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+//    val categories = state.categories
+//    var displayedCategories by remember { mutableStateOf(categories) }
+//
+//    LaunchedEffect(searchText) {
+//        if (searchText.isEmpty()) {
+//            displayedCategories = categories
+//            return@LaunchedEffect
+//        }
+//        displayedCategories = categories.filter {
+//            it.name.lowercase().contains(searchText.lowercase())
+//        }
+//    }
+//
+//    ModalBottomSheet(
+//        containerColor = Color.Black,
+//        onDismissRequest = { onDismiss() },
+//        sheetState = bottomSheetState,
+//        dragHandle = { BottomSheetDefaults.DragHandle() },
+//    ) {
+//        Column(
+//            Modifier
+//                .fillMaxWidth()
+//                .height(screenHeight)
+//        ) {
+//            Box(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(
+//                        start = dimensionResource(id = R.dimen.dim_30),
+//                        end = dimensionResource(id = R.dimen.dim_17)
+//                    ),
+//                contentAlignment = Alignment.CenterStart
+//            ) {
+//                Row(
+//                    verticalAlignment = Alignment.CenterVertically,
+//                    horizontalArrangement = Arrangement.Start
+//                ) {
+//                    Image(
+//                        painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
+//                        contentDescription = "Left Arrow",
+//                        modifier = Modifier.size(dimensionResource(id = R.dimen.dim_24))
+//                    )
+//
+//                    Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_8)))
+//
+//                    Text(
+//                        text = "Categories",
+//                        color = Color.White,
+//                        fontFamily = Montserrat
+//                    )
+//                }
+//            }
+//            Row(
+//                verticalAlignment = Alignment.CenterVertically,
+//                horizontalArrangement = Arrangement.SpaceBetween,
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(dimensionResource(id = R.dimen.dim_20))
+//            ) {
+//                TextField(
+//                    value = searchText,
+//                    onValueChange = { searchText = it },
+//                    placeholder = {
+//                        Text(
+//                            text = "Search here",
+//                            fontSize = dimensionResource(id = R.dimen.fon_15).value.sp
+//                        )
+//                    },
+//                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)),
+//                    singleLine = true,
+//                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+//                    keyboardActions = KeyboardActions(
+//                        onDone = { /* Handle onDone event if needed */ }
+//                    ),
+//                    colors = TextFieldDefaults.colors(
+//                        focusedContainerColor = Color.White,
+//                        unfocusedContainerColor = Color.White,
+//                        disabledContainerColor = Color.White,
+//                        cursorColor = Color.Black,
+//                        focusedIndicatorColor = Color.Transparent,
+//                        unfocusedIndicatorColor = Color.Transparent,
+//                    ),
+//                    modifier = Modifier
+//                        .weight(1f)
+//                        .height(dimensionResource(id = R.dimen.dim_51))
+//                )
+//                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_20)))
+//                Text(
+//                    text = "Clear",
+//                    color = Color.White,
+//                    modifier = Modifier
+//                        .alpha(0.4f)
+//                        .clickable { searchText = "" }
+//                )
+//                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_20)))
+//            }
+//            FlowRow {
+//                displayedCategories.forEachIndexed { _, category ->
+//                    val isSelected = selectedCategories.contains(category)
+//
+//                    Card(
+//                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16)),
+//                        modifier = Modifier
+//                            .padding(
+//                                vertical = dimensionResource(id = R.dimen.dim_12),
+//                                horizontal = dimensionResource(id = R.dimen.dim_12)
+//                            )
+//                            .height(dimensionResource(id = R.dimen.dim_46)),
+//                        colors = if (isSelected)
+//                            CardDefaults.cardColors(foodClubGreen)
+//                        else
+//                            CardDefaults.cardColors(Color.Transparent),
+//                        onClick = {
+//                            if (isSelected) events.unselectCategory(category)
+//                            else events.selectCategory(category)
+//                        },
+//                        border = BorderStroke(dimensionResource(id = R.dimen.dim_1), containerColor)
+//                    ) {
+//                        Text(
+//                            text = category.name,
+//                            fontFamily = Montserrat,
+//                            fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
+//                            color = Color.White,
+//                            letterSpacing = TextUnit(-0.64f, TextUnitType.Sp),
+//                            modifier = Modifier.padding(
+//                                vertical = dimensionResource(id = R.dimen.dim_12),
+//                                horizontal = dimensionResource(id = R.dimen.dim_24)
+//                            ),
+//                            maxLines = 1
+//                        )
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
 
-    LaunchedEffect(searchText) {
-        if (searchText.isEmpty()) {
-            displayedCategories = categories
-            return@LaunchedEffect
-        }
-        displayedCategories = categories.filter {
-            it.name.lowercase().contains(searchText.lowercase())
-        }
-    }
-
-    ModalBottomSheet(
-        containerColor = Color.Black,
-        onDismissRequest = { onDismiss() },
-        sheetState = bottomSheetState,
-        dragHandle = { BottomSheetDefaults.DragHandle() },
-    ) {
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .height(screenHeight)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = dimensionResource(id = R.dimen.dim_30),
-                        end = dimensionResource(id = R.dimen.dim_17)
-                    ),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
-                        contentDescription = "Left Arrow",
-                        modifier = Modifier.size(dimensionResource(id = R.dimen.dim_24))
-                    )
-
-                    Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_8)))
-
-                    Text(
-                        text = "Categories",
-                        color = Color.White,
-                        fontFamily = Montserrat
-                    )
-                }
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(dimensionResource(id = R.dimen.dim_20))
-            ) {
-                TextField(
-                    value = searchText,
-                    onValueChange = { searchText = it },
-                    placeholder = {
-                        Text(
-                            text = "Search here",
-                            fontSize = dimensionResource(id = R.dimen.fon_15).value.sp
-                        )
-                    },
-                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(
-                        onDone = { /* Handle onDone event if needed */ }
-                    ),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White,
-                        disabledContainerColor = Color.White,
-                        cursorColor = Color.Black,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                    ),
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(dimensionResource(id = R.dimen.dim_51))
-                )
-                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_20)))
-                Text(
-                    text = "Clear",
-                    color = Color.White,
-                    modifier = Modifier
-                        .alpha(0.4f)
-                        .clickable { searchText = "" }
-                )
-                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_20)))
-            }
-            FlowRow {
-                displayedCategories.forEachIndexed { _, category ->
-                    val isSelected = selectedCategories.contains(category)
-
-                    Card(
-                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16)),
-                        modifier = Modifier
-                            .padding(
-                                vertical = dimensionResource(id = R.dimen.dim_12),
-                                horizontal = dimensionResource(id = R.dimen.dim_12)
-                            )
-                            .height(dimensionResource(id = R.dimen.dim_46)),
-                        colors = if (isSelected)
-                            CardDefaults.cardColors(foodClubGreen)
-                        else
-                            CardDefaults.cardColors(Color.Transparent),
-                        onClick = {
-                            if (isSelected) events.unselectCategory(category)
-                            else events.selectCategory(category)
-                        },
-                        border = BorderStroke(dimensionResource(id = R.dimen.dim_1), containerColor)
-                    ) {
-                        Text(
-                            text = category.name,
-                            fontFamily = Montserrat,
-                            fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
-                            color = Color.White,
-                            letterSpacing = TextUnit(-0.64f, TextUnitType.Sp),
-                            modifier = Modifier.padding(
-                                vertical = dimensionResource(id = R.dimen.dim_12),
-                                horizontal = dimensionResource(id = R.dimen.dim_24)
-                            ),
-                            maxLines = 1
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CreateRecipeView(
     navController: NavController,
@@ -267,30 +248,16 @@ fun CreateRecipeView(
     state: CreateRecipeState
 ) {
     var showSheet by remember { mutableStateOf(false) }
-    var showCategorySheet by remember { mutableStateOf(false) }
     val codeTriggered = remember { mutableStateOf(false) }
     var servingSize by remember { mutableIntStateOf(0) }
     var recipeName by remember { mutableStateOf("") }
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp - dimensionResource(id = R.dimen.dim_240)
-    val rows = listOf(
-        stringArrayResource(id = R.array.quantity_list).toList(),
-        stringArrayResource(id = R.array.discover_sub_tabs).toList(),
-    ) // TODO remove placeholder data
 
-    var isSmallScreen by remember { mutableStateOf(false) }
-
-    if (screenHeight <= dimensionResource(id = R.dimen.dim_440)) {
-        isSmallScreen = true
-    }
     LaunchedEffect(key1 = codeTriggered.value) {
         if (!codeTriggered.value) {
             codeTriggered.value = true
         }
     }
 
-    val triggerCategoryBottomSheetModal: () -> Unit = {
-        showCategorySheet = !showCategorySheet
-    }
     val triggerBottomSheetModal: () -> Unit = {
         showSheet = !showSheet
     }
@@ -303,7 +270,7 @@ fun CreateRecipeView(
                 start = dimensionResource(id = R.dimen.dim_15),
                 top = dimensionResource(id = R.dimen.dim_0),
                 end = dimensionResource(id = R.dimen.dim_15),
-                bottom = dimensionResource(id = R.dimen.dim_70)
+                bottom = dimensionResource(id = R.dimen.dim_15)
             )
     ) {
         if (showSheet) {
@@ -317,14 +284,6 @@ fun CreateRecipeView(
                 onSave = { events.addIngredient(it) }
             )
         }
-        if (showCategorySheet) {
-            BottomSheetCategories(
-                onDismiss = triggerCategoryBottomSheetModal,
-                events = events,
-                state = state
-            )
-        }
-
 
         LazyColumn(
             modifier = Modifier
@@ -410,11 +369,15 @@ fun CreateRecipeView(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color.Black,
+                            focusedBorderColor = borderBlue,
                             unfocusedBorderColor = borderBlue
                         )
                     )
-                    Column {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(
+                            dimensionResource(id = R.dimen.dim_16)
+                        )
+                    ) {
                         Text(
                             text = stringResource(id = R.string.serving_size),
                             fontFamily = Montserrat,
@@ -422,17 +385,17 @@ fun CreateRecipeView(
                             letterSpacing = TextUnit(-0.72f, TextUnitType.Sp),
                             fontSize = dimensionResource(id = R.dimen.fon_18).value.sp
                         )
-                        CustomSlider(
+                        CustomSliderDiscrete(
                             maxValue = 16f,
-                            onValueChange = { servingSize = it },
-                            tickMarksEnabled = true
+                            onValueChange = { servingSize = it }
                         )
                     }
 
                     CategoriesSection(
-                        categories = categories,
+                        categories = state.categories,
                         onCategoryRemove = { events.unselectCategory(it) },
-                        onCategoryAdd = { events.selectCategory(it) }
+                        onCategoryAdd = { events.selectCategory(it) },
+                        onCategoriesClear = { events.clearCategories() }
                     )
                     Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_2)))
 
@@ -449,7 +412,7 @@ fun CreateRecipeView(
                         )
                         ClickableText(
                             text = AnnotatedString(stringResource(id = R.string.clear_all)),
-                            onClick = {},
+                            onClick = { events.clearIngredients() },
                             style = TextStyle(
                                 color = foodClubGreen,
                                 fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
@@ -682,7 +645,8 @@ fun Ingredient(
 fun CategoriesSection(
     categories: List<Category>,
     onCategoryRemove: (Category) -> Unit,
-    onCategoryAdd: (Category) -> Unit
+    onCategoryAdd: (Category) -> Unit,
+    onCategoriesClear: () -> Unit
 ) {
     var searchText by remember { mutableStateOf("") }
     Column {
@@ -699,7 +663,7 @@ fun CategoriesSection(
             )
             ClickableText(
                 text = AnnotatedString(stringResource(id = R.string.clear_all)),
-                onClick = {},
+                onClick = { onCategoriesClear() },
                 style = TextStyle(
                     color = foodClubGreen,
                     fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
@@ -717,8 +681,9 @@ fun CategoriesSection(
     }
     FlowRow {
         if (searchText.isNotEmpty() && categories.size < 3) {
-            allCategories.filter {
-                it.name.startsWith(searchText.uppercase()) && !categories.contains(it)
+            Category.entries.filter {
+                it.displayName.startsWith(searchText.replaceFirstChar(Char::titlecase))
+                        && !categories.contains(it)
             }.forEachIndexed { _, content ->
                 Card(
                     shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_30)),
@@ -734,7 +699,7 @@ fun CategoriesSection(
                         )
                     ) {
                         Text(
-                            text = content.name,
+                            text = content.displayName,
                             fontFamily = Montserrat,
                             fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
                             color = Color.White,
@@ -788,7 +753,7 @@ fun CategoriesSection(
                         )
                     ) {
                         Text(
-                            text = content.name,
+                            text = content.displayName,
                             fontFamily = Montserrat,
                             fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
                             color = Color.White,
