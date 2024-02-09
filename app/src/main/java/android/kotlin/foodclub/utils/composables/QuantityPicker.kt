@@ -98,7 +98,6 @@ fun QuantityPicker(
     var selectedUnit by remember { mutableStateOf(ingredient.unit) }
     var selectedType by remember { mutableStateOf(types[0]) }
 
-    // error checking
     var isError by remember {
         mutableStateOf(false)
     }
