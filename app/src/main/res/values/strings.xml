@@ -372,6 +372,7 @@
     <string name="hide_your_foodsnaps">Hide your FoodSNAPS</string>
     <string name="copy_profile_url">Copy profile URL</string>
     <string name="share_this_profile">Share this Profile</string>
+    <string name="quantity_overflow_error_message">Reach quantity limitation</string>
     <string-array name="profile_tabs">
         <item>My Recipes</item>
         <item>Bookmarked</item>
