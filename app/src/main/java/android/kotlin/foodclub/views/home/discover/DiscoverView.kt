@@ -56,6 +56,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -67,6 +68,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -77,6 +79,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberDismissState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -101,6 +104,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
@@ -113,6 +117,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -145,6 +150,12 @@ fun DiscoverView(
         systemUiController.setSystemBarsColor(
             color = Color.White, darkIcons = true
         )
+    }
+
+    var showIngredientSheet by remember { mutableStateOf(false) }
+
+    val triggerIngredientBottomSheetModal: () -> Unit = {
+        showIngredientSheet = !showIngredientSheet
     }
 
     var searchText by remember { mutableStateOf("") }
@@ -182,6 +193,8 @@ fun DiscoverView(
     )
     var mainTabIndex by remember { mutableIntStateOf(0) }
     val mainTabItemsList = stringArrayResource(id = R.array.discover_tabs)
+
+
 
     LazyColumn(
         modifier = Modifier
@@ -306,6 +319,7 @@ fun DiscoverView(
                 homePosts = state.postList
 
                 if (isInternetConnected) {
+
                     if (searchText.isBlank()) {
                         IngredientsList(
                             Modifier,
@@ -359,7 +373,7 @@ fun DiscoverView(
                     if (isInternetConnected) {
 
                         Button(
-                            onClick = { /*TODO*/ },
+                            onClick = { triggerIngredientBottomSheetModal() },
                             shape = RoundedCornerShape(
                                 dimensionResource(
                                     id = R.dimen.dim_15
@@ -499,6 +513,11 @@ fun DiscoverView(
             onDismiss = triggerBottomSheetModal,
             productsData = state.productsData
         )
+    }
+
+
+    if (showIngredientSheet) {
+        AddIngredientsBottomSheet(onDismiss = triggerIngredientBottomSheetModal, isInternetConnected, events=events, state=state, navController = navController)
     }
 
 }
@@ -1427,5 +1446,185 @@ fun expirationDateTextStyle(expirationDate: String): TextStyle {
     return if (expirationDate == stringResource(id = R.string.edit)) TextStyle(textDecoration = TextDecoration.Underline) else TextStyle(
         textDecoration = TextDecoration.None
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddIngredientsBottomSheet(onDismiss: () -> Unit, isInternetConnected: Boolean, state: DiscoverState, events: DiscoverEvents, navController: NavController) {
+    val screenHeight =
+        LocalConfiguration.current.screenHeightDp.dp - dimensionResource(id = R.dimen.dim_160)
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var isSmallScreen by remember { mutableStateOf(false) }
+
+    val categories = listOf("Protein", "Breakfast")
+
+    var searchText by remember { mutableStateOf("") }
+    val brush = shimmerBrush()
+
+    val mainTabItemsList = stringArrayResource(id = R.array.discover_tabs)
+
+    var isDatePickerVisible by remember { mutableStateOf(false) }
+    val datePickerState = rememberDatePickerState()
+    var selectedDate by remember { mutableStateOf("") }
+
+    var isSheetOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var isDialogOpen by remember { mutableStateOf(false) }
+    var alphaValue by remember { mutableFloatStateOf(1f) }
+
+
+    var topTabIndex by remember { mutableIntStateOf(0) }
+
+    if (screenHeight <= dimensionResource(id = R.dimen.dim_440)) {
+        isSmallScreen = true
+    }
+
+    ModalBottomSheet(
+        containerColor = Color.White,
+        onDismissRequest = { onDismiss() },
+        sheetState = bottomSheetState,
+        dragHandle = { BottomSheetDefaults.DragHandle() },
+        scrimColor = Color.Transparent
+    ) {
+        Column(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.8f))
+        {
+            Row(
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            )
+            {
+                IconButton(onClick = { onDismiss() }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_arrow_left),
+                        contentDescription = "Exit"
+                    )
+                }
+
+                Text(
+                    text = stringResource(id = R.string.add_ingredients),
+                    fontSize = dimensionResource(
+                        id = R.dimen.fon_25
+                    ).value.sp,
+                    fontFamily = Montserrat,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Button(
+                    onClick = { /*TODO*/ },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.save),
+                        fontFamily = Montserrat,
+                        fontSize = dimensionResource(
+                            id = R.dimen.dim_20
+                        ).value.sp,
+                        color = foodClubGreen
+                    )
+                }
+            }
+
+
+
+            /*
+            MainTabRow(
+                isInternetConnected,
+                brush,
+                tabsList = mainTabItemsList,
+                horizontalArrangement = Arrangement.SpaceBetween,
+
+                ) {
+                topTabIndex = it
+            }
+
+             */
+
+
+            if (isInternetConnected) {
+
+                if (topTabIndex == 0) {
+                    SubSearchBar(
+                        navController = navController,
+                        searchTextValue = state.ingredientSearchText,
+                        onSearch = { input ->
+                            searchText = input
+                            events.onAddIngredientsSearchTextChange(input)
+                        }
+                    )
+                } else {
+                    // TODO figure out what do show here
+                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_30)))
+                }
+
+            }
+
+
+            var subTabIndex by remember { mutableIntStateOf(0) }
+            SubTabRow(
+                onTabChanged = {
+                    subTabIndex = it
+                },
+                isInternetConnected,
+                brush
+            )
+
+
+            var homePosts: List<VideoModel>? = state.postList
+
+            if (isInternetConnected) {
+
+                if (searchText.isBlank()) {
+                    /*
+                    IngredientsList(
+                        Modifier,
+                        events = events,
+                        productsList = state.userIngredients,
+                        userIngredientsList = state.userIngredients,
+                        onEditQuantityClicked = {
+                            isSheetOpen = true
+                            events.updateIngredient(it)
+                        },
+                        onDateClicked = {
+                            events.updateIngredient(it)
+                            isDatePickerVisible = true
+                            events.updateIngredient(it)
+                        },
+                        onIngredientAdd = {},
+                        onDeleteIngredient = {
+                            events.deleteIngredientFromList(it)
+                        }
+                    )
+
+                     */
+                } else {
+                    IngredientsList(
+                        Modifier,
+                        events = events,
+                        productsList = state.productsData.productsList,
+                        userIngredientsList = state.userIngredients,
+                        onEditQuantityClicked = {
+                            events.updateIngredient(it)
+                        },
+                        onDateClicked = {
+                            isDatePickerVisible = true
+                            events.updateIngredient(it)
+                        },
+                        onIngredientAdd = {
+                            events.addToUserIngredients(it)
+                            searchText = ""
+                            isDialogOpen = true
+                        },
+                        onDeleteIngredient = {
+                            events.deleteIngredientFromList(it)
+                        }
+                    )
+                }
+            }
+
+
+        }
+    }
 }
 
