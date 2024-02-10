@@ -387,7 +387,7 @@
     <string name="search_my_ingredients">Search my ingredients</string>
     <string name="name">Name</string>
     <string name="quantity">Quantity</string>
-    <string name="quantity_picker_discription">Type your custom units or choose from the wheel picker</string>
+    <string name="quantity_picker_discription">Type quantity and choose unit from the wheel picker</string>
     <string name="unit">Unit</string>
     <string name="expiration_date">Expiration Date</string>
     <string name="remove">Remove</string>
