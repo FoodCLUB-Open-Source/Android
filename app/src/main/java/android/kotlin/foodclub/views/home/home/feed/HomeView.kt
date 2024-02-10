@@ -7,6 +7,7 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.snapsTopbar
 import android.kotlin.foodclub.domain.enums.Reactions
+import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.helpers.fadingEdge
 import android.kotlin.foodclub.viewModels.home.home.HomeEvents
 import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
@@ -142,6 +143,9 @@ fun HomeView(
                         modifier = Modifier
                             .size(dimensionResource(id = R.dimen.dim_24))
                             .align(Alignment.CenterEnd)
+                            .clickable {
+                                navController.navigate(HomeOtherRoutes.MessagingView.route)
+                            }
                     )
                 }
             }

@@ -7,6 +7,7 @@ import android.kotlin.foodclub.viewModels.home.discover.DiscoverViewModel
 import android.kotlin.foodclub.viewModels.home.follow.FollowerFollowingViewModel
 import android.kotlin.foodclub.viewModels.home.gallery.GalleryViewModel
 import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
+import android.kotlin.foodclub.viewModels.home.messaging.MessagingViewModel
 import android.kotlin.foodclub.viewModels.home.myBasket.MyBasketViewModel
 import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
 import android.kotlin.foodclub.views.home.CameraPreviewView
@@ -17,6 +18,7 @@ import android.kotlin.foodclub.views.home.discover.DiscoverView
 import android.kotlin.foodclub.views.home.followerFollowing.FollowerView
 import android.kotlin.foodclub.views.home.gallery.GalleryView
 import android.kotlin.foodclub.views.home.home.feed.HomeView
+import android.kotlin.foodclub.views.home.messagingView.MessagingView
 import android.kotlin.foodclub.views.home.myBasket.MyBasketView
 import android.kotlin.foodclub.views.home.myDigitalPantry.MyDigitalPantryView
 import android.kotlin.foodclub.views.home.profile.ProfileView
@@ -260,12 +262,21 @@ fun NavGraphBuilder.homeNavigationGraph(
             )
         }
 
+        composable(route = HomeOtherRoutes.MessagingView.route){
+            val viewModel : MessagingViewModel = hiltViewModel()
+
+            MessagingView(
+                navController = navController
+            )
+        }
+
     }
 }
 
 
 sealed class HomeOtherRoutes(val route: String) {
     data object SettingsView : HomeOtherRoutes(route = "SETTINGS")
+    data object MessagingView: HomeOtherRoutes(route = "MESSAGING_VIEW")
     data object CameraView : HomeOtherRoutes(route = "CAMERA_VIEW/{state}")
     data object CreateRecipeView : HomeOtherRoutes(route = "CREATE_RECIPE_VIEW")
     data object CameraPreviewView : HomeOtherRoutes(route = "CAMERA_PREVIEW_VIEW/{uri}/{state}")
