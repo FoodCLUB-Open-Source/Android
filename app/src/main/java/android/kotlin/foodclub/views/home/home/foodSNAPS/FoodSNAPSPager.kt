@@ -3,6 +3,7 @@ package android.kotlin.foodclub.views.home.home.foodSNAPS
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.enums.Reactions
 import android.kotlin.foodclub.domain.models.home.VideoModel
+import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -22,10 +23,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.launch
 import okio.ByteString.Companion.encodeUtf8
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
@@ -109,7 +112,7 @@ fun FoodSNAPSPager(
             ReactionsOverlay(
                 modifier = Modifier
                     .then(
-                        if (it == 0) {
+                        if (it == 0 && showMemoriesReel) {
                             Modifier.swipeable(
                                 state = swipeableState,
                                 anchors = mapOf(
