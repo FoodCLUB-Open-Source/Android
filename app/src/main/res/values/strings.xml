@@ -286,6 +286,10 @@
     <string name="additional_regulatory_info">In some countries, the law requires us to provide additional regulatory information and/or contact points within the country, even though we may not be physically present there.\n\n</string>
 
    Home Screens
+    -Messaging
+    <string name="messages">Messages</string>
+    <string name="search_contacts">Search contacts</string>
+
     - View Stories
     <string name="profile_image">Profile Image</string>
     - Uploading
