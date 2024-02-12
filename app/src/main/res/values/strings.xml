@@ -289,6 +289,8 @@
     -Messaging
     <string name="messages">Messages</string>
     <string name="search_contacts">Search contacts</string>
+    <string name="messaging_general_text">Start your group with</string>
+    <string name="messaging_general_text2">friends and families</string>
 
     - View Stories
     <string name="profile_image">Profile Image</string>
