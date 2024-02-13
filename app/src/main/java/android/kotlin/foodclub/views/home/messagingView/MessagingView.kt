@@ -2,11 +2,13 @@ package android.kotlin.foodclub.views.home.messagingView
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,9 +18,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -37,20 +44,44 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun MessagingView() {
+fun MessagingView(
+    state: MessagingViewState
+) {
     var searchText by remember { mutableStateOf("") }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.Black),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        MessagingHeaderSection(searchText) { searchText = it }
-    }
+    Scaffold(
+        content= {
+            it.calculateBottomPadding()
+            it.calculateTopPadding()
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color.Black)
+                    .padding(dimensionResource(id = R.dimen.dim_20)),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                MessagingHeaderSection(searchText) { text -> searchText = text }
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
+                MessagesSection(state)
+            }
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                contentColor = foodClubGreen,
+                backgroundColor = foodClubGreen,
+                onClick = { /*TODO impl start new chat*/ }
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.start_new_chat),
+                    contentDescription = null,
+                    modifier = Modifier.size(dimensionResource(id = R.dimen.dim_32)),
+                    tint = Color.Black
+                )
+            }
+        }
+    )
 }
 
 @Composable
@@ -61,7 +92,6 @@ fun MessagingHeaderSection(
     Column(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Center,
-        modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_20))
     ) {
         Text(
             modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_15)),
@@ -72,7 +102,7 @@ fun MessagingHeaderSection(
             color = Color.White
         )
         MessagingSearchBar(searchTextValue = searchTextValue, onSearch = onSearch)
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
         StartNewGroupSection()
     }
 }
@@ -208,3 +238,100 @@ fun StartNewGroupSection() {
     }
 }
 
+@Composable
+fun MessagesSection(state: MessagingViewState) {
+    LazyColumn(
+        modifier = Modifier.fillMaxWidth()
+    ){
+        itemsIndexed(state.userMessages) { _, messageObj ->
+            SingleUserRow(messageObj)
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
+        }
+    }
+}
+
+@Composable
+fun SingleUserRow(messagingSingleUser: MessagingSingleUser) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ){
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.Start
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.profilepicture),
+                    contentDescription = null,
+                    modifier = Modifier.size(dimensionResource(id = R.dimen.dim_50))
+                )
+                Spacer(modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dim_10)))
+                Column {
+                    Text(
+                        text = messagingSingleUser.name,
+                        fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
+                        fontFamily = Montserrat,
+                        fontWeight = FontWeight(500),
+                        lineHeight = dimensionResource(id = R.dimen.fon_21).value.sp,
+                        color = Color.White
+                    )
+                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+                    Text(
+                        text = messagingSingleUser.lastMessage,
+                        fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
+                        fontFamily = Montserrat,
+                        fontWeight = if (messagingSingleUser.isMessageSeen) FontWeight(500) else FontWeight(400), // varies based on isMessageSeen
+                        lineHeight = dimensionResource(id = R.dimen.fon_18).value.sp,
+                        color = if (messagingSingleUser.isMessageSeen) Color.White else Color.Gray
+                    )
+                }
+            }
+        }
+        Column(
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = messagingSingleUser.lastMessageTime,
+                fontSize = dimensionResource(id = R.dimen.fon_11).value.sp,
+                fontFamily = Montserrat,
+                color = Color.White,
+                lineHeight = dimensionResource(id = R.dimen.fon_13).value.sp,
+                fontWeight = FontWeight(400)
+            )
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+            if (messagingSingleUser.unSeenMessageCount.toInt() != 0){
+                Box(
+                    modifier = Modifier
+                        .size(dimensionResource(id = R.dimen.dim_20))
+                        .background(color = foodClubGreen, shape = CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        modifier = Modifier.align(Alignment.Center),
+                        text = messagingSingleUser.unSeenMessageCount.toString(),
+                        fontSize = dimensionResource(id = R.dimen.fon_11).value.sp,
+                        fontFamily = Montserrat,
+                        color = Color.Black,
+                        lineHeight = dimensionResource(id = R.dimen.fon_13).value.sp,
+                        fontWeight = FontWeight(500)
+                    )
+                }
+            }
+        }
+    }
+}
+
+data class MessagingSingleUser(
+    val id: Int = 1,
+    val name: String = "",
+    val lastMessage: String = "",
+    val lastMessageTime: String = "",
+    val isMessageSeen: Boolean = false,
+    val unSeenMessageCount: Long,
+    val profileImage: String = ""
+)
