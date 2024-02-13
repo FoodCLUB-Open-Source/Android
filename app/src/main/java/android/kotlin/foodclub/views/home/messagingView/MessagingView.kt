@@ -7,6 +7,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,37 +53,50 @@ fun MessagingView(
     state: MessagingViewState
 ) {
     var searchText by remember { mutableStateOf("") }
-    Scaffold(
-        content= {
-            it.calculateBottomPadding()
-            it.calculateTopPadding()
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color.Black)
-                    .padding(dimensionResource(id = R.dimen.dim_20)),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                MessagingHeaderSection(searchText) { text -> searchText = text }
-                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
-                MessagesSection(state)
+    var showChatView by remember { mutableStateOf(false) }
+
+    if (showChatView) {
+        ChatView(
+            onBackPressed = { showChatView = !showChatView }
+        )
+    }else{
+        Scaffold(
+            content= {
+                it.calculateBottomPadding()
+                it.calculateTopPadding()
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(color = Color.Black)
+                        .padding(dimensionResource(id = R.dimen.dim_20)),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    MessagingHeaderSection(searchText) { text -> searchText = text }
+                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
+                    MessagesSection(
+                        state,
+                        onShowChatView = {
+                            showChatView = !showChatView
+                        }
+                    )
+                }
+            },
+            floatingActionButton = {
+                FloatingActionButton(
+                    contentColor = foodClubGreen,
+                    backgroundColor = foodClubGreen,
+                    onClick = { /*TODO impl start new chat*/ }
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.start_new_chat),
+                        contentDescription = null,
+                        modifier = Modifier.size(dimensionResource(id = R.dimen.dim_32)),
+                        tint = Color.Black
+                    )
+                }
             }
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                contentColor = foodClubGreen,
-                backgroundColor = foodClubGreen,
-                onClick = { /*TODO impl start new chat*/ }
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.start_new_chat),
-                    contentDescription = null,
-                    modifier = Modifier.size(dimensionResource(id = R.dimen.dim_32)),
-                    tint = Color.Black
-                )
-            }
-        }
-    )
+        )
+    }
 }
 
 @Composable
@@ -241,21 +255,27 @@ fun StartNewGroupSection() {
 }
 
 @Composable
-fun MessagesSection(state: MessagingViewState) {
+fun MessagesSection(
+    state: MessagingViewState,
+    onShowChatView: () -> Unit
+    ) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth()
     ){
         itemsIndexed(state.userMessages) { _, messageObj ->
-            SingleUserRow(messageObj)
+            SingleUserRow(messageObj, onShowChatView)
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
         }
     }
 }
 
 @Composable
-fun SingleUserRow(messagingSingleUser: MessagingSingleUser) {
+fun SingleUserRow(
+    messagingSingleUser: MessagingSingleUser,
+    onShowChatView: () -> Unit
+) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().clickable { onShowChatView() },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ){

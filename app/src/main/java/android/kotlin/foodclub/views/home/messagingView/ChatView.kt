@@ -3,6 +3,7 @@ package android.kotlin.foodclub.views.home.messagingView
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -38,14 +39,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun ChatView(){
+fun ChatView(
+    onBackPressed: () -> Unit
+){
     var sendingText by remember {
         mutableStateOf("")
     }
 
+    BackHandler {
+        onBackPressed()
+    }
+
     Scaffold(
         topBar = {
-            ChatViewTopBar()
+            ChatViewTopBar(onBackPressed)
         },
         content = {
             it.calculateBottomPadding()
@@ -70,7 +77,7 @@ fun ChatView(){
 }
 
 @Composable
-fun ChatViewTopBar(){
+fun ChatViewTopBar(onBackPressed: () -> Unit) {
     Row(
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
@@ -84,7 +91,7 @@ fun ChatViewTopBar(){
             )
     ) {
         IconButton(
-            onClick = { /*TODO*/ }
+            onClick = { onBackPressed() }
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.back_arrow),
