@@ -141,6 +141,7 @@ fun MessagingSearchBar(
             singleLine = true,
             placeholder = {
                 Text(
+                    modifier = Modifier.align(Alignment.CenterVertically),
                     text = stringResource(id = R.string.search_contacts),
                     color = colorResource(id = R.color.messaging_view_search_contacts_color),
                     textAlign = TextAlign.Center,

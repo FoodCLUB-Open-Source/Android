@@ -293,6 +293,7 @@
     <string name="messaging_general_text2">friends and families</string>
     <string name="chef">Chef</string>
     <string name="ai">Ai</string>
+    <string name="message_input_label">Write a message…</string>
 
     - View Stories
     <string name="profile_image">Profile Image</string>
