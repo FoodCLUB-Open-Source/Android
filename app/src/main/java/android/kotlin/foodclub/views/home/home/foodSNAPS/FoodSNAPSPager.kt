@@ -9,14 +9,20 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.SwipeableState
+import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material.swipeable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,10 +32,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.dimensionResource
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
 import okio.ByteString.Companion.encodeUtf8
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
@@ -46,6 +54,10 @@ fun FoodSNAPSPager(
 ) {
     var isReactionsClickable by remember { mutableStateOf(selectedReaction != Reactions.ALL) }
 
+    var check by remember{
+        mutableStateOf(true)
+    }
+
     val ANIMATION_DURATION_SHORT = 300
     val snapPagerFling = PagerDefaults.flingBehavior(
         state = snapPagerState,
@@ -60,32 +72,14 @@ fun FoodSNAPSPager(
             SwipeDirection.UP -> {
                 if (showMemoriesReel) {
                     changeMemoriesReelVisibility(false)
-                } else {
-                    snapPagerState.animateScrollToPage(
-                        1,
-                        animationSpec = tween(
-                            easing = LinearEasing,
-                            durationMillis = ANIMATION_DURATION_SHORT
-                        )
-                    )
                 }
-
                 swipeableState.snapTo(SwipeDirection.NEUTRAL)
             }
 
             SwipeDirection.DOWN -> {
                 if (!showMemoriesReel) {
                     changeMemoriesReelVisibility(true)
-                } else {
-                    snapPagerState.animateScrollToPage(
-                        page = 0,
-                        animationSpec = tween(
-                            easing = LinearEasing,
-                            durationMillis = ANIMATION_DURATION_SHORT
-                        )
-                    )
                 }
-
                 swipeableState.snapTo(SwipeDirection.NEUTRAL)
             }
 
@@ -103,16 +97,16 @@ fun FoodSNAPSPager(
                 .aspectRatio(0.9f, true)
         )
     } else {
-        VerticalPager(
+        HorizontalPager(
             state = snapPagerState,
             flingBehavior = snapPagerFling,
             beyondBoundsPageCount = 1,
-            modifier = Modifier,
+            modifier = Modifier
         ) {
             ReactionsOverlay(
                 modifier = Modifier
                     .then(
-                        if (it == 0 && showMemoriesReel) {
+//                        if (it == 0) {
                             Modifier.swipeable(
                                 state = swipeableState,
                                 anchors = mapOf(
@@ -123,13 +117,31 @@ fun FoodSNAPSPager(
                                 thresholds = { _, _ -> FractionalThreshold(0.3f) },
                                 orientation = Orientation.Vertical,
                             )
-                        } else {
-                            Modifier
-                        }
+//                            if (showMemoriesReel){
+//                                Modifier.swipeable(
+//                                    state = swipeableState,
+//                                    anchors = mapOf(
+//                                        0f to SwipeDirection.NEUTRAL,
+//                                        -1f to SwipeDirection.UP
+//                                    ),
+//                                    thresholds = { _, _ -> FractionalThreshold(0.3f) },
+//                                    orientation = Orientation.Vertical,
+//                                )
+//                            } else {
+//                                Modifier
+//                                    .pointerInput(Unit) {
+//                                        detectVerticalDragGestures { _, dragAmount ->
+//                                            Log.i("111111", dragAmount.toString())
+//                                        }
+//                                    }
+//                            }
+//                        } else {
+//                            Modifier
+//                        }
                     ),
                 selectedReaction = selectedReaction,
                 clearSelectedReaction = clearSelectedReactions,
-                isReactionsClickable = { isClickable->
+                isReactionsClickable = { isClickable ->
                     isReactionsClickable = isClickable
                 }
             ) {
