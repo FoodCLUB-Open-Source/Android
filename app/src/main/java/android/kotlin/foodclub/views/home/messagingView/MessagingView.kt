@@ -258,7 +258,7 @@ fun StartNewGroupSection() {
 fun MessagesSection(
     state: MessagingViewState,
     onShowChatView: () -> Unit
-    ) {
+) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth()
     ){

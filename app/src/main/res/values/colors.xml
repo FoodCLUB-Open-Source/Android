@@ -26,4 +26,5 @@
     <color name="chat_view_top_bar_background">#191919</color>
     <color name="chat_view_text_label_color">#949494</color>
     <color name="chat_view_text_field_container_color">#252525</color>
+    <color name="chat_view_sent_message_box_container_color">#162400</color>
 </resources>
