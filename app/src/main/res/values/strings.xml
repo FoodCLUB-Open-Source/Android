@@ -291,6 +291,8 @@
     <string name="search_contacts">Search contacts</string>
     <string name="messaging_general_text">Start your group with</string>
     <string name="messaging_general_text2">friends and families</string>
+    <string name="chef">Chef</string>
+    <string name="ai">Ai</string>
 
     - View Stories
     <string name="profile_image">Profile Image</string>

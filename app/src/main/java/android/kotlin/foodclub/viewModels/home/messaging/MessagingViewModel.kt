@@ -29,21 +29,20 @@ class MessagingViewModel @Inject constructor(
     private fun createDummyDataList(): List<MessagingSingleUser> {
         val dummyDataList = mutableListOf<MessagingSingleUser>()
 
-        for (i in 1..20) {
+        for (i in 0 until 20) {
             val isMessageSeen = i % 2 == 0
             val unSeenMessageCount = if (!isMessageSeen) 0L else i.toLong()
 
             val dummyData = MessagingSingleUser(
-                id = i + 1,
-                name = "User $i",
-                lastMessage = "Last message $i",
+                id = i,
+                name = if (i == 0) "ChefAi" else "User $i",
+                lastMessage = if (i == 0) "Yum, I'm sold on the to?..." else "Last message $i",
                 isMessageSeen = isMessageSeen,
                 lastMessageTime = "13:01",
                 unSeenMessageCount = unSeenMessageCount
             )
             dummyDataList.add(dummyData)
         }
-
 
         return dummyDataList
     }

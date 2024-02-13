@@ -271,14 +271,18 @@ fun SingleUserRow(messagingSingleUser: MessagingSingleUser) {
                 )
                 Spacer(modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dim_10)))
                 Column {
-                    Text(
-                        text = messagingSingleUser.name,
-                        fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
-                        fontFamily = Montserrat,
-                        fontWeight = FontWeight(500),
-                        lineHeight = dimensionResource(id = R.dimen.fon_21).value.sp,
-                        color = Color.White
-                    )
+                    if (messagingSingleUser.id == 0){
+                        ChefAiNameBox()
+                    }else{
+                        Text(
+                            text = messagingSingleUser.name,
+                            fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
+                            fontFamily = Montserrat,
+                            fontWeight = FontWeight(500),
+                            lineHeight = dimensionResource(id = R.dimen.fon_21).value.sp,
+                            color = Color.White
+                        )
+                    }
                     Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
                     Text(
                         text = messagingSingleUser.lastMessage,
@@ -322,6 +326,41 @@ fun SingleUserRow(messagingSingleUser: MessagingSingleUser) {
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun ChefAiNameBox(){
+    Row(
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = stringResource(id = R.string.chef),
+            fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
+            fontFamily = Montserrat,
+            fontWeight = FontWeight(500),
+            lineHeight = dimensionResource(id = R.dimen.fon_21).value.sp,
+            color = Color.White
+        )
+        Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_3)))
+        Box(
+            modifier = Modifier
+                .background(
+                    foodClubGreen,
+                    RoundedCornerShape(dimensionResource(id = R.dimen.dim_4))
+                )
+                .padding(horizontal = dimensionResource(id = R.dimen.dim_4))
+        ) {
+            Text(
+                text = stringResource(id = R.string.ai),
+                color = Color.Black,
+                fontFamily = Montserrat,
+                fontWeight = FontWeight(600),
+                fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
+                lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp
+            )
         }
     }
 }
