@@ -44,6 +44,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 
 @Composable
@@ -290,7 +291,9 @@ fun SingleUserRow(messagingSingleUser: MessagingSingleUser) {
                         fontFamily = Montserrat,
                         fontWeight = if (messagingSingleUser.isMessageSeen) FontWeight(500) else FontWeight(400), // varies based on isMessageSeen
                         lineHeight = dimensionResource(id = R.dimen.fon_18).value.sp,
-                        color = if (messagingSingleUser.isMessageSeen) Color.White else Color.Gray
+                        color = if (messagingSingleUser.isMessageSeen) Color.White else Color.Gray,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
                     )
                 }
             }
