@@ -265,7 +265,7 @@ fun NavGraphBuilder.homeNavigationGraph(
         composable(route = HomeOtherRoutes.MessagingView.route){
             val viewModel : MessagingViewModel = hiltViewModel()
             val state = viewModel.state.collectAsState()
-            MessagingView(state.value)
+            MessagingView(state.value, navController, viewModel)
         }
 
     }

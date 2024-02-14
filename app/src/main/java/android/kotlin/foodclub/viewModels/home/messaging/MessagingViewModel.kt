@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.viewModels.home.messaging
 
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
-import android.kotlin.foodclub.views.home.messagingView.MessagingSingleUser
+import android.kotlin.foodclub.views.home.messagingView.MessagingViewData
 import android.kotlin.foodclub.views.home.messagingView.MessagingViewState
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,7 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MessagingViewModel @Inject constructor(
     private val sessionCache: SessionCache
-): ViewModel() {
+): ViewModel(), MessagingViewEvents {
 
     private val _state = MutableStateFlow(MessagingViewState.default())
     val state: StateFlow<MessagingViewState>
@@ -22,21 +22,21 @@ class MessagingViewModel @Inject constructor(
     init {
         _state.update { it.copy(
             userId = sessionCache.getActiveSession()?.sessionUser?.userId!!,
-            userMessages = createDummyDataList()
+            userMessagesHistory = createDummyDataList()
         ) }
     }
 
-    private fun createDummyDataList(): List<MessagingSingleUser> {
-        val dummyDataList = mutableListOf<MessagingSingleUser>()
+    private fun createDummyDataList(): List<MessagingViewData> {
+        val dummyDataList = mutableListOf<MessagingViewData>()
 
         for (i in 0 until 20) {
             val isMessageSeen = i % 2 == 0
             val unSeenMessageCount = if (!isMessageSeen) 0L else i.toLong()
 
-            val dummyData = MessagingSingleUser(
+            val dummyData = MessagingViewData(
                 id = i,
                 name = if (i == 0) "ChefAi" else "User $i",
-                lastMessage = if (i == 0) "Yum, I'm sold on the to?..." else "Last message $i",
+                lastMessage = if (i == 0) "Yum, I'm sold on to it?..." else "Last message $i",
                 isMessageSeen = isMessageSeen,
                 lastMessageTime = "13:01",
                 unSeenMessageCount = unSeenMessageCount
@@ -45,5 +45,24 @@ class MessagingViewModel @Inject constructor(
         }
 
         return dummyDataList
+    }
+
+    override fun setSearchText(searchText: String) {
+        _state.update { it.copy(messagingViewSearchText = searchText) }
+        filterMessages(searchText)
+    }
+
+    override fun filterMessages(searchText: String) {
+        val messages = state.value.userMessagesHistory
+        val searchedList = messages.filter { people ->
+            people.name.contains(searchText, ignoreCase = true)
+        }
+
+        _state.update {
+            it.copy(
+                messagingViewSearchText = searchText,
+                userSearchResult = searchedList.toList()
+            )
+        }
     }
 }

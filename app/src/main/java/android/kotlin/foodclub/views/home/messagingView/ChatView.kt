@@ -31,6 +31,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -51,10 +52,22 @@ import androidx.constraintlayout.compose.Dimension
 fun ChatView(
     onBackPressed: () -> Unit
 ){
-    var sendingText by remember {
-        mutableStateOf("")
+    var sendingText by remember { mutableStateOf("") }
+
+    val user1 = User(userId = 1, userName = "User1")
+    val user2 = User(userId = 2, userName = "User2")
+
+    var currentUserId by remember { mutableIntStateOf(user1.userId) }
+
+    var conversation by remember {
+        mutableStateOf(
+            Conversation(
+                messages = emptyList(),
+                user1 = user1,
+                user2 = user2
+            )
+        )
     }
-    var messages by remember { mutableStateOf(listOf<String>()) }
 
     BackHandler {
         onBackPressed()
@@ -64,9 +77,9 @@ fun ChatView(
         topBar = {
             ChatViewTopBar(onBackPressed)
         },
-        content = { scaffoldPadding->
-            MessageHistory(messages, scaffoldPadding)
-                  },
+        content = { scaffoldPadding ->
+            MessageHistory(conversation.messages, scaffoldPadding)
+        },
         bottomBar = {
             ChatViewBottomBar(
                 text = sendingText,
@@ -74,14 +87,20 @@ fun ChatView(
                     sendingText = it
                 },
                 onMessageSent = {
-                    messages = messages + it
+                    conversation = conversation.copy(
+                        messages = conversation.messages + Message(
+                            senderId = currentUserId,
+                            content = it,
+                            timestamp = ""
+                        )
+                    )
                     sendingText = ""
+                    currentUserId = if (currentUserId == user1.userId) user2.userId else user1.userId
                 }
             )
         }
     )
 }
-
 @Composable
 fun ChatViewTopBar(onBackPressed: () -> Unit) {
     Row(
@@ -129,7 +148,9 @@ fun ChatViewBottomBar(
             .background(colorResource(id = R.color.chat_view_text_field_container_color)),
     ) {
         TextField(
-            modifier = Modifier.align(Alignment.CenterStart),
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .fillMaxWidth(0.9f),
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = colorResource(id = R.color.chat_view_text_field_container_color),
                 unfocusedContainerColor = colorResource(id = R.color.chat_view_text_field_container_color),
@@ -137,7 +158,8 @@ fun ChatViewBottomBar(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent,
-                focusedTextColor = Color.White
+                focusedTextColor = Color.White,
+                cursorColor = foodClubGreen
             ),
             value = text,
             onValueChange = {
@@ -173,16 +195,17 @@ fun ChatViewBottomBar(
 
 @Composable
 fun MessageHistory(
-    sentMessages: List<String>,
+    messages: List<Message>,
     paddingValues: PaddingValues
-){
+) {
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-        val (messages, chatBox) = createRefs()
+        val (messagesRef, chatBox) = createRefs()
 
         val listState = rememberLazyListState()
-        LaunchedEffect(sentMessages.size) {
-            listState.animateScrollToItem(sentMessages.size)
+        LaunchedEffect(messages.size) {
+            listState.animateScrollToItem(messages.size)
         }
+
         LazyColumn(
             state = listState,
             modifier = Modifier
@@ -190,46 +213,107 @@ fun MessageHistory(
                 .background(Color.Black)
                 .padding(paddingValues)
                 .padding(dimensionResource(id = R.dimen.dim_15))
-                .constrainAs(messages) {
+                .constrainAs(messagesRef) {
                     top.linkTo(parent.top)
                     bottom.linkTo(chatBox.top)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     height = Dimension.fillToConstraints
-                },
-            ) {
-            items(sentMessages.size) { index ->
-                val message = sentMessages[index]
-                SentMessageBox(message = message)
+                }
+        ) {
+            items(messages.size) { index ->
+                val message = messages[index]
+                MessageBox(message = message)
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
             }
         }
-
     }
 }
 
 @Composable
-fun SentMessageBox(message: String) {
+fun MessageBox(message: Message) {
+    val isSentByUser1 = message.senderId == 1
     Column(
-        Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Box(
-            modifier = Modifier
-                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_6)))
-                .background(colorResource(id = R.color.chat_view_sent_message_box_container_color))
-                .padding(dimensionResource(id = R.dimen.dim_10))
-                .align(Alignment.End)
-            ,
-            contentAlignment = Alignment.CenterEnd
-        ) {
-            Text(
-                text = message,
-                color = Color.White,
-                fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
-                fontFamily = Montserrat,
-                lineHeight = dimensionResource(id = R.dimen.fon_18).value.sp,
-                fontWeight = FontWeight(400)
-            )
+        if (isSentByUser1) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = dimensionResource(id = R.dimen.dim_30)),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_6)))
+                        .background(
+                            colorResource(id = R.color.chat_view_sent_message_box_container_color)
+                        )
+                        .padding(dimensionResource(id = R.dimen.dim_10)),
+                    contentAlignment = Alignment.CenterEnd
+                ) {
+                    Text(
+                        text = message.content,
+                        color = Color.White,
+                        fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
+                        fontFamily = Montserrat,
+                        lineHeight = dimensionResource(id = R.dimen.fon_18).value.sp,
+                        fontWeight = FontWeight(400)
+                    )
+                }
+            }
+        } else {
+            Row(
+                modifier = Modifier.fillMaxWidth(0.8f),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.profilepicture),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(top = dimensionResource(id = R.dimen.dim_15))
+                        .size(dimensionResource(id = R.dimen.dim_25))
+                )
+                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_5)))
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_6)))
+                        .background(
+                            colorResource(id = R.color.chat_view_received_message_box_container_color)
+                        )
+                        .padding(dimensionResource(id = R.dimen.dim_10)),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    Text(
+                        text = message.content,
+                        color = colorResource(id = R.color.chat_view_received_message_text_color),
+                        fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
+                        fontFamily = Montserrat,
+                        lineHeight = dimensionResource(id = R.dimen.fon_18).value.sp,
+                        fontWeight = FontWeight(400)
+                    )
+                }
+            }
         }
     }
 }
+
+
+data class Conversation(
+    val messages: List<Message>,
+    val user1: User,
+    val user2: User
+)
+
+data class Message(
+    val senderId: Int,
+    val content: String,
+    val timestamp: String
+)
+
+data class User(
+    val userId: Int,
+    val userName: String
+)

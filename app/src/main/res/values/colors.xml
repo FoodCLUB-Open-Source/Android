@@ -27,4 +27,6 @@
     <color name="chat_view_text_label_color">#949494</color>
     <color name="chat_view_text_field_container_color">#252525</color>
     <color name="chat_view_sent_message_box_container_color">#162400</color>
+    <color name="chat_view_received_message_box_container_color">#1d1d1d</color>
+    <color name="chat_view_received_message_text_color">#cacaca</color>
 </resources>

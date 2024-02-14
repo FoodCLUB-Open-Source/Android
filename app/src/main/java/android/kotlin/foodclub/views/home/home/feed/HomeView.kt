@@ -141,6 +141,7 @@ fun HomeView(
                         contentDescription = null,
                         tint = Color.White,
                         modifier = Modifier
+                            .padding(end = dimensionResource(id = R.dimen.dim_10))
                             .size(dimensionResource(id = R.dimen.dim_24))
                             .align(Alignment.CenterEnd)
                             .clickable {

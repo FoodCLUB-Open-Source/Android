@@ -2,12 +2,17 @@ package android.kotlin.foodclub.views.home.messagingView
 
 data class MessagingViewState(
     val userId: Long,
-    val userMessages: List<MessagingSingleUser>
+    val userMessagesHistory: List<MessagingViewData>,
+    val messagingViewSearchText: String = "",
+    val userSearchResult: List<MessagingViewData>
 ){
+
     companion object {
         fun default() = MessagingViewState(
             userId = 0,
-            userMessages = emptyList()
+            userMessagesHistory = emptyList(),
+            messagingViewSearchText = "",
+            emptyList()
         )
     }
 }

@@ -1,8 +1,10 @@
 package android.kotlin.foodclub.views.home.messagingView
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.viewModels.home.messaging.MessagingViewEvents
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -47,13 +49,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 @Composable
 fun MessagingView(
-    state: MessagingViewState
+    state: MessagingViewState,
+    navController: NavController,
+    events: MessagingViewEvents
 ) {
-    var searchText by remember { mutableStateOf("") }
     var showChatView by remember { mutableStateOf(false) }
+    val messagesHistory = if (state.messagingViewSearchText == "")
+        state.userMessagesHistory else state.userSearchResult
 
     if (showChatView) {
         ChatView(
@@ -61,20 +67,29 @@ fun MessagingView(
         )
     }else{
         Scaffold(
+            topBar = {
+                MessagingTopAppBar(
+                    onBackPressed = {
+                        navController.navigate(BottomBarScreenObject.Home.route)
+                    }
+                )
+            },
             content= {
-                it.calculateBottomPadding()
-                it.calculateTopPadding()
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(color = Color.Black)
+                        .padding(it)
                         .padding(dimensionResource(id = R.dimen.dim_20)),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    MessagingHeaderSection(searchText) { text -> searchText = text }
+                    MessagingHeaderSection(state.messagingViewSearchText) { text ->
+                        events.setSearchText(text)
+                        events.filterMessages(text)
+                    }
                     Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
                     MessagesSection(
-                        state,
+                        messagesHistory,
                         onShowChatView = {
                             showChatView = !showChatView
                         }
@@ -100,6 +115,37 @@ fun MessagingView(
 }
 
 @Composable
+fun MessagingTopAppBar(
+    onBackPressed: () -> Unit
+){
+    Row(
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.Black)
+    ) {
+        IconButton(
+            onClick = { onBackPressed() }
+        ) {
+            Icon(
+                modifier = Modifier.clickable { onBackPressed() },
+                painter = painterResource(id = R.drawable.back_arrow),
+                contentDescription = null,
+                tint = Color.White
+            )
+        }
+        Text(
+            text = stringResource(id = R.string.messages),
+            fontWeight = FontWeight(600),
+            fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
+            fontFamily = Montserrat,
+            color = Color.White
+        )
+    }
+}
+
+@Composable
 fun MessagingHeaderSection(
     searchTextValue: String,
     onSearch: (String) -> Unit
@@ -108,14 +154,6 @@ fun MessagingHeaderSection(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text(
-            modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_15)),
-            text = stringResource(id = R.string.messages),
-            fontWeight = FontWeight(600),
-            fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
-            fontFamily = Montserrat,
-            color = Color.White
-        )
         MessagingSearchBar(searchTextValue = searchTextValue, onSearch = onSearch)
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
         StartNewGroupSection()
@@ -256,13 +294,13 @@ fun StartNewGroupSection() {
 
 @Composable
 fun MessagesSection(
-    state: MessagingViewState,
+    messagingHistory: List<MessagingViewData>,
     onShowChatView: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth()
     ){
-        itemsIndexed(state.userMessages) { _, messageObj ->
+        itemsIndexed(messagingHistory) { _, messageObj ->
             SingleUserRow(messageObj, onShowChatView)
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
         }
@@ -271,11 +309,13 @@ fun MessagesSection(
 
 @Composable
 fun SingleUserRow(
-    messagingSingleUser: MessagingSingleUser,
+    messagingSingleUser: MessagingViewData,
     onShowChatView: () -> Unit
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().clickable { onShowChatView() },
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onShowChatView() },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ){
@@ -389,7 +429,7 @@ fun ChefAiNameBox(){
     }
 }
 
-data class MessagingSingleUser(
+data class MessagingViewData(
     val id: Int = 1,
     val name: String = "",
     val lastMessage: String = "",
