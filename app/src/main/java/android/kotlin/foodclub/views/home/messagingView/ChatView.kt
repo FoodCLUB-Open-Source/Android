@@ -165,7 +165,7 @@ fun ChatViewBottomBar(
             onValueChange = {
                 onInputTextChanged(it)
             },
-            label = {
+            placeholder = {
                 Text(
                     stringResource(id = R.string.message_input_label),
                     fontWeight = FontWeight(400),
