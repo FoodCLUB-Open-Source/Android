@@ -1521,6 +1521,7 @@ fun AddIngredientsBottomSheet(onDismiss: () -> Unit, isInternetConnected: Boolea
                     fontWeight = FontWeight.Bold
                 )
 
+                /*
                 Button(
                     onClick = { /*TODO*/ },
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
@@ -1534,6 +1535,8 @@ fun AddIngredientsBottomSheet(onDismiss: () -> Unit, isInternetConnected: Boolea
                         color = foodClubGreen
                     )
                 }
+
+                 */
             }
 
 
