@@ -16,6 +16,7 @@ import android.kotlin.foodclub.utils.composables.shimmerBrush
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
 import android.kotlin.foodclub.views.home.myDigitalPantry.TitlesSection
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -108,6 +109,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -116,6 +118,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -318,8 +321,10 @@ fun DiscoverView(
             if (mainTabIndex == 0) {
                 homePosts = state.postList
 
+                //Ingredients list causes excess space
                 if (isInternetConnected) {
 
+                    Log.d("Search Text", searchText.toString())
                     if (searchText.isBlank()) {
                         IngredientsList(
                             Modifier,
@@ -355,7 +360,7 @@ fun DiscoverView(
                             },
                             onIngredientAdd = {
                                 events.addToUserIngredients(it)
-                                searchText = ""
+                                //searchText = ""
                                 isDialogOpen = true
                             },
                             onDeleteIngredient = {
@@ -364,6 +369,7 @@ fun DiscoverView(
                         )
                     }
                 }
+
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
                 Row(
@@ -391,7 +397,7 @@ fun DiscoverView(
                             )
                         }
 
-                        /*
+                        // TO BE REMOVED
                         Text(
                             modifier = Modifier.clickable {
                                 navController.navigate(route = HomeOtherRoutes.MyDigitalPantryView.route)
@@ -406,7 +412,7 @@ fun DiscoverView(
                             textAlign = TextAlign.Center
                         )
 
-                         */
+
                     } else {
                         CircularProgressIndicator(
                             color = foodClubGreen,
@@ -1091,7 +1097,9 @@ fun SingleSearchIngredientItem(
                     fontWeight = FontWeight(500),
                     lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
                     fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
-                    color = Color.Black
+                    color = Color.Black,
+                    maxLines = integerResource(id = R.integer.int_2),
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
         }
@@ -1458,7 +1466,7 @@ fun AddIngredientsBottomSheet(onDismiss: () -> Unit, isInternetConnected: Boolea
 
     val categories = listOf("Protein", "Breakfast")
 
-    var searchText by remember { mutableStateOf("") }
+    var inputText by remember { mutableStateOf("") }
     val brush = shimmerBrush()
 
     val mainTabItemsList = stringArrayResource(id = R.array.discover_tabs)
@@ -1487,7 +1495,9 @@ fun AddIngredientsBottomSheet(onDismiss: () -> Unit, isInternetConnected: Boolea
         dragHandle = { BottomSheetDefaults.DragHandle() },
         scrimColor = Color.Transparent
     ) {
-        Column(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.8f))
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.8f))
         {
             Row(
                 horizontalArrangement = Arrangement.SpaceAround,
@@ -1549,7 +1559,7 @@ fun AddIngredientsBottomSheet(onDismiss: () -> Unit, isInternetConnected: Boolea
                         navController = navController,
                         searchTextValue = state.ingredientSearchText,
                         onSearch = { input ->
-                            searchText = input
+                            inputText = input
                             events.onAddIngredientsSearchTextChange(input)
                         }
                     )
@@ -1561,6 +1571,7 @@ fun AddIngredientsBottomSheet(onDismiss: () -> Unit, isInternetConnected: Boolea
             }
 
 
+            /*
             var subTabIndex by remember { mutableIntStateOf(0) }
             SubTabRow(
                 onTabChanged = {
@@ -1570,12 +1581,14 @@ fun AddIngredientsBottomSheet(onDismiss: () -> Unit, isInternetConnected: Boolea
                 brush
             )
 
+             */
+
 
             var homePosts: List<VideoModel>? = state.postList
 
             if (isInternetConnected) {
 
-                if (searchText.isBlank()) {
+                if (inputText.isBlank()) {
                     /*
                     IngredientsList(
                         Modifier,
@@ -1613,8 +1626,7 @@ fun AddIngredientsBottomSheet(onDismiss: () -> Unit, isInternetConnected: Boolea
                         },
                         onIngredientAdd = {
                             events.addToUserIngredients(it)
-                            searchText = ""
-                            isDialogOpen = true
+                            isDialogOpen = false
                         },
                         onDeleteIngredient = {
                             events.deleteIngredientFromList(it)
