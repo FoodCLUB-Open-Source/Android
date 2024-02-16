@@ -231,10 +231,11 @@ fun DiscoverView(
                 if (mainTabIndex == 0) {
                     SubSearchBar(
                         navController = navController,
-                        searchTextValue = state.ingredientSearchText,
+                        searchTextValue = searchText,//state.ingredientSearchText,
                         onSearch = { input ->
                             searchText = input
-                            events.onAddIngredientsSearchTextChange(input)
+                            //events.onAddIngredientsSearchTextChange(input)
+                            events.onSearchIngredientsList(input)
                         }
                     )
                 } else {
@@ -325,6 +326,26 @@ fun DiscoverView(
                 if (isInternetConnected) {
 
                     Log.d("Search Text", searchText.toString())
+                    IngredientsList(
+                        Modifier,
+                        events = events,
+                        productsList = if (state.searchIngredientsListText == "") state.userIngredients else state.searchResults,
+                        userIngredientsList = if (state.searchIngredientsListText == "") state.userIngredients else state.searchResults,
+                        onEditQuantityClicked = {
+                            isSheetOpen = true
+                            events.updateIngredient(it)
+                        },
+                        onDateClicked = {
+                            events.updateIngredient(it)
+                            isDatePickerVisible = true
+                            events.updateIngredient(it)
+                        },
+                        onIngredientAdd = {},
+                        onDeleteIngredient = {
+                            events.deleteIngredientFromList(it)
+                        }
+                    )
+                    /*
                     if (searchText.isBlank()) {
                         IngredientsList(
                             Modifier,
@@ -345,7 +366,9 @@ fun DiscoverView(
                                 events.deleteIngredientFromList(it)
                             }
                         )
-                    } else {
+                    }
+                    else
+                    {
                         IngredientsList(
                             Modifier,
                             events = events,
@@ -368,6 +391,8 @@ fun DiscoverView(
                             }
                         )
                     }
+
+                     */
                 }
 
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
