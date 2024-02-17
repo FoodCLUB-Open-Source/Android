@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.repositories
 
+import android.graphics.Bitmap
 import android.kotlin.foodclub.network.retrofit.services.FcmService
 import android.kotlin.foodclub.utils.helpers.firebase.NotificationService
 import android.util.Log
@@ -55,8 +56,8 @@ class FirebaseRepository @Inject constructor(
         // Implement the logic to listen for incoming chat messages from the backend
     }
 
-    fun sendNotification(message: RemoteMessage.Notification){
-        notificationService.sendNotification(message)
+    fun sendNotification(message: RemoteMessage.Notification, bitmap: Bitmap?){
+        notificationService.sendNotification(message, bitmap)
     }
 
 }

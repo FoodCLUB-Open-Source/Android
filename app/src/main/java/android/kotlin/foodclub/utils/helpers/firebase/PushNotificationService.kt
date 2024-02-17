@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP
+import android.graphics.Bitmap
 import android.kotlin.foodclub.MainActivity
 import android.kotlin.foodclub.R
 import android.util.Log
@@ -15,7 +16,11 @@ import kotlin.random.Random
 
 class PushNotificationService : FirebaseMessagingService(), NotificationService {
 
-    val TAG = PushNotificationService::class.java.name
+    companion object {
+        val TAG: String = PushNotificationService::class.java.name
+        const val channelId = "channel_0"
+        const val testChannel = "TEST_CHANNEL"
+    }
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
@@ -36,7 +41,7 @@ class PushNotificationService : FirebaseMessagingService(), NotificationService 
         }
     }
 
-    override fun sendNotification(message: RemoteMessage.Notification) {
+    override fun sendNotification(message: RemoteMessage.Notification, bitmap: Bitmap?) {
         val intent = Intent(this, MainActivity::class.java).apply {
             addFlags(FLAG_ACTIVITY_CLEAR_TOP)
         }
@@ -45,7 +50,8 @@ class PushNotificationService : FirebaseMessagingService(), NotificationService 
             this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        val channelId = "channel_0"
+        createNotificationChannel(channelId)
+
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setContentTitle(message.title)
             .setContentText(message.body)
@@ -54,15 +60,22 @@ class PushNotificationService : FirebaseMessagingService(), NotificationService 
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
 
-        val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        bitmap?.let {
+            notificationBuilder.setLargeIcon(it)
+        }
 
+        val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        manager.notify(Random.nextInt(), notificationBuilder.build())
+    }
+
+    private fun createNotificationChannel(channelId: String) {
+        val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         val channel = NotificationChannel(
             channelId,
-            "TEST_CHANNEL",
+            testChannel,
             NotificationManager.IMPORTANCE_HIGH
         )
         manager.createNotificationChannel(channel)
-
-        manager.notify(Random.nextInt(), notificationBuilder.build())
     }
+
 }
