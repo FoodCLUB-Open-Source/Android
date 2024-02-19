@@ -1,5 +1,8 @@
 package android.kotlin.foodclub.views.home.profile
 
+import android.Manifest
+import android.kotlin.foodclub.R
+import android.kotlin.foodclub.utils.composables.CameraPermissionErrorBox
 import android.kotlin.foodclub.utils.composables.PhotoTakenPreview
 import android.kotlin.foodclub.utils.composables.TakePhotoPreview
 import android.kotlin.foodclub.utils.helpers.takePhoto
@@ -19,6 +22,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 
@@ -28,7 +32,7 @@ fun TakeProfilePhotoView(
     events: ProfileEvents,
     state: ProfileState,
     navController: NavController
-){
+) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val TAG = "TakeProfilePhotoView"
@@ -43,16 +47,24 @@ fun TakeProfilePhotoView(
         }
     }
 
+    CameraPermissionErrorBox(
+        permission = Manifest.permission.CAMERA,
+        title = stringResource(id = R.string.Camera_permission_require_message_title),
+        rational = stringResource(id = R.string.Camera_permission_require_rational),
+        navController = navController,
+        context = context
+    )
+
     Box(
         modifier = modifier
             .fillMaxSize()
     ) {
-        if (photoUri != null){
+        if (photoUri != null) {
             PhotoTakenPreview(
                 image = photoUri!!,
                 onSaveClick = {
                     val file = uriToFile(photoUri!!, context)
-                    if (file != null){
+                    if (file != null) {
                         events.updateUserProfileImage(
                             state.myUserId,
                             file,
@@ -64,23 +76,22 @@ fun TakeProfilePhotoView(
                         }
 
                         navController.popBackStack()
-                    }
-                    else {
-                        Log.i(TAG,"EMPTY FILE")
+                    } else {
+                        Log.i(TAG, "EMPTY FILE")
                     }
                 },
                 onCancelClick = {
                     photoUri = null
                 }
             )
-        }else{
+        } else {
             TakePhotoPreview(
                 controller = controller,
                 navController = navController,
                 onTakePhoto = {
                     takePhoto(
                         controller,
-                        { photoUri = it},
+                        { photoUri = it },
                         context
                     )
                 }
