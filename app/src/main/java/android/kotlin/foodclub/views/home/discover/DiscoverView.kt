@@ -236,7 +236,9 @@ fun DiscoverView(
                             searchText = input
                             //events.onAddIngredientsSearchTextChange(input)
                             events.onSearchIngredientsList(input)
-                        }
+                        },
+                        enableCamera = false,
+                        enableMike = false
                     )
                 } else {
                     // TODO figure out what do show here
@@ -749,7 +751,9 @@ fun MainTabRow(
 fun SubSearchBar(
     navController: NavController,
     searchTextValue: String,
-    onSearch: (String) -> Unit
+    onSearch: (String) -> Unit,
+    enableCamera: Boolean = true,
+    enableMike: Boolean = true
 ) {
     Row(
         modifier = Modifier
@@ -765,7 +769,7 @@ fun SubSearchBar(
     ) {
         TextField(
             modifier = Modifier
-                .fillMaxWidth(0.68f)
+                .fillMaxWidth( if (enableCamera && enableMike) 0.68f else 1.0f)
                 .clip(
                     RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                 ),
@@ -803,38 +807,42 @@ fun SubSearchBar(
             }
         )
 
-        Button(
-            shape = RoundedCornerShape(corner = CornerSize(dimensionResource(id = R.dimen.dim_25))),
-            modifier = Modifier
-                .height(dimensionResource(id = R.dimen.dim_56))
-                .width(dimensionResource(id = R.dimen.dim_56)),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = foodClubGreen,
-            ),
-            contentPadding = PaddingValues(),
-            onClick = {
-                navController.navigate("ScanView_route")
+        if (enableCamera) {
+            Button(
+                shape = RoundedCornerShape(corner = CornerSize(dimensionResource(id = R.dimen.dim_25))),
+                modifier = Modifier
+                    .height(dimensionResource(id = R.dimen.dim_56))
+                    .width(dimensionResource(id = R.dimen.dim_56)),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = foodClubGreen,
+                ),
+                contentPadding = PaddingValues(),
+                onClick = {
+                    navController.navigate("ScanView_route")
+                }
+            ) {
+                Icon(painterResource(id = R.drawable.camera_icon), contentDescription = "")
             }
-        ) {
-            Icon(painterResource(id = R.drawable.camera_icon), contentDescription = "")
-        }
-        Button(
-            shape = RoundedCornerShape(corner = CornerSize(dimensionResource(id = R.dimen.dim_25))),
-            modifier = Modifier
-                .height(dimensionResource(id = R.dimen.dim_56))
-                .width(dimensionResource(id = R.dimen.dim_56)),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = foodClubGreen,
-            ),
-            contentPadding = PaddingValues(),
-            onClick = {
-
-                // TODO impl microphone
-            }
-        ) {
-            Icon(painterResource(id = R.drawable.mic_icon), contentDescription = "")
         }
 
+        if (enableMike) {
+            Button(
+                shape = RoundedCornerShape(corner = CornerSize(dimensionResource(id = R.dimen.dim_25))),
+                modifier = Modifier
+                    .height(dimensionResource(id = R.dimen.dim_56))
+                    .width(dimensionResource(id = R.dimen.dim_56)),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = foodClubGreen,
+                ),
+                contentPadding = PaddingValues(),
+                onClick = {
+
+                    // TODO impl microphone
+                }
+            ) {
+                Icon(painterResource(id = R.drawable.mic_icon), contentDescription = "")
+            }
+        }
     }
 }
 
@@ -949,7 +957,7 @@ fun IngredientsList(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.57f)
+            //.fillMaxHeight(0.57f)
             .background(
                 color = Color.White
             )
@@ -958,6 +966,7 @@ fun IngredientsList(
             modifier = modifier,
             view = stringResource(id = R.string.discover_view)
         )
+
 
         IngredientsListColumn(
             events = events,
