@@ -3,7 +3,6 @@ package android.kotlin.foodclub.repositories
 import android.graphics.Bitmap
 import android.kotlin.foodclub.network.retrofit.services.FcmService
 import android.kotlin.foodclub.utils.helpers.firebase.NotificationService
-import android.util.Log
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.scopes.ViewModelScoped
@@ -20,40 +19,21 @@ class FirebaseRepository @Inject constructor(
         private val TAG = FirebaseRepository::class.java.simpleName
     }
 
-    fun subscribeToTopic(topic: String, onCompleteListener: (Boolean) -> Unit) {
-        firebaseMessaging.subscribeToTopic(topic)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.d(TAG, "Subscribed to $topic")
-                    onCompleteListener.invoke(true)
-                } else {
-                    Log.w(TAG, "Subscribe failed", task.exception)
-                    onCompleteListener.invoke(false)
-                }
-            }
-    }
+    suspend fun subscribeToTopic(topic: String, onCompleteListener: (Boolean) -> Unit) {
+        fcmService.subscribeToTopic(topic) }
 
-    fun unsubscribeFromTopic(topic: String, onCompleteListener: (Boolean) -> Unit) {
-        firebaseMessaging.unsubscribeFromTopic(topic)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.d(TAG, "Unsubscribed from $topic")
-                    onCompleteListener.invoke(true)
-                } else {
-                    Log.w(TAG, "Unsubscribe failed", task.exception)
-                    onCompleteListener.invoke(false)
-                }
-            }
+    suspend fun unsubscribeFromTopic(topic: String, onCompleteListener: (Boolean) -> Unit) {
+        fcmService.unsubscribeFromTopic(topic)
     }
 
     // New method for sending a chat message
-    fun sendChatMessage(userId: String, message: String, onCompleteListener: (Boolean) -> Unit) {
-        // Implement the logic to send a chat message to the backend
+    suspend fun sendChatMessage(userId: String, message: String, onCompleteListener: (Boolean) -> Unit) {
+        fcmService.sendChatMessage(userId, message)
     }
 
     // New method for receiving chat messages
-    fun receiveChatMessages(userId: String, onMessageReceived: (String) -> Unit) {
-        // Implement the logic to listen for incoming chat messages from the backend
+    suspend fun receiveChatMessages(userId: String, onMessageReceived: (String) -> Unit) {
+        fcmService.receiveChatMessages(userId)
     }
 
     fun sendNotification(message: RemoteMessage.Notification, bitmap: Bitmap?){
