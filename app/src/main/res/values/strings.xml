@@ -59,6 +59,7 @@
     <string name="confirm_identity">Confirm Your Identity</string>
     <string name="confirm_identity_subheading">Please confirm your country code and enter in your phone number</string>
     <string name="go_back">Go Back</string>
+    <string name="go_to_setting">Go to Setting</string>
     <string name="plus_sign">+</string>
     <string name="vertical_line">|</string>
     <string name="invalid_number">Invalid Number</string>
@@ -790,4 +791,8 @@ In some countries, the law requires us to provide additional regulatory informat
     <string name="Confirm">Confirm</string>
     <string name="Cancel">Cancel</string>
 
+    <string name="Camera_permission_require_message_title">"FoodCLUB" would like to use your <b>Camera</b></string>
+    <string name="Video_permission_require_message_title">"FoodCLUB" would like to use your <b>Camera</b> and <b>Microphone</b></string>
+    <string name="Camera_permission_require_rational">This allows FoddCLUB to take photo for your profile account</string>
+    <string name="Video_permission_require_rational">This allows FoddCLUB to take photo for your post</string>
 </resources>
