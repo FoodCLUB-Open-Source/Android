@@ -26,12 +26,10 @@ class FirebaseRepository @Inject constructor(
         fcmService.unsubscribeFromTopic(topic)
     }
 
-    // New method for sending a chat message
     suspend fun sendChatMessage(userId: String, message: String, onCompleteListener: (Boolean) -> Unit) {
         fcmService.sendChatMessage(userId, message)
     }
 
-    // New method for receiving chat messages
     suspend fun receiveChatMessages(userId: String, onMessageReceived: (String) -> Unit) {
         fcmService.receiveChatMessages(userId)
     }
