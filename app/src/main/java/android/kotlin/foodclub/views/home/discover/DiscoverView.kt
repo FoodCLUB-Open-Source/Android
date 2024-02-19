@@ -962,12 +962,14 @@ fun IngredientsList(
                 color = Color.White
             )
     ) {
+
         TitlesSection(
             modifier = modifier,
             view = stringResource(id = R.string.discover_view)
         )
 
 
+        // Unecessary white space attepting to rectify it
         IngredientsListColumn(
             events = events,
             productsList = productsList,
@@ -991,6 +993,7 @@ fun IngredientsListColumn(
     onDeleteIngredient: (Ingredient) -> Unit,
     userIngredientsList: List<Ingredient>
 ) {
+    //Manipulate height do note, it must have a constraint (non infinite)
     LazyColumn(
         modifier = Modifier
             .padding(
@@ -998,7 +1001,8 @@ fun IngredientsListColumn(
                 end = dimensionResource(id = R.dimen.dim_15)
             )
             .background(Color.White)
-            .height(dimensionResource(id = R.dimen.dim_275)),
+            .height(dimensionResource(id = R.dimen.dim_65).value.dp * if (productsList.size > 5) 5 else productsList.size)
+        ,
         content = {
             itemsIndexed(productsList) { _, item ->
                 var notSwiped by remember { mutableStateOf(false) }
