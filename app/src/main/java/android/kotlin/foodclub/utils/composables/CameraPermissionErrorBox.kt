@@ -1,15 +1,13 @@
 package android.kotlin.foodclub.utils.composables
 
 
-import android.Manifest
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.kotlin.foodclub.R
-import android.net.Uri
-import android.provider.Settings
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -30,53 +28,87 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
-import androidx.navigation.NavController
 
 
 @Composable
 fun CameraPermissionErrorBox(
-    permission: String,
+    permissions: Array<String>,
     title: String,
     rational: String,
-    navController: NavController,
-    context: Context
+    onDismissRequest: () -> Unit,
+    onConfirmRequest: () -> Unit,
+    context: Context,
 ) {
 
-//    val audioPermission by remember {
-//        mutableStateOf(
-//            PackageManager.PERMISSION_GRANTED ==
-//                    ContextCompat.checkSelfPermission(
-//                        context,
-//                        Manifest.permission.RECORD_AUDIO
-//                    )
-//        )
-//    }
-
     var showDialog by remember {
-        mutableStateOf(true)
+        mutableStateOf(false)
     }
 
     val launcher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        showDialog = !isGranted
-    }
-
-    LaunchedEffect(PackageManager.PERMISSION_GRANTED){
-        when (PackageManager.PERMISSION_GRANTED) {
-            ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.CAMERA
-            ) -> {
-                showDialog = false
-            }
-            else -> {
-                launcher.launch(Manifest.permission.CAMERA)
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { isGrantedList: Map<String, @JvmSuppressWildcards Boolean> ->
+        Log.i("experience permission", "List: $isGrantedList - ")
+        showDialog = false
+        for (isGranted in isGrantedList) {
+            Log.i("experience permission", "Detail: $isGranted - ")
+            if (!isGranted.value) {
+                showDialog = true
+                break
             }
         }
     }
 
-    if (showDialog) {
+    for (permission in permissions) {
+        Log.i("experience permission", "$permission - $showDialog - ")
+        when (PackageManager.PERMISSION_GRANTED) {
+            ContextCompat.checkSelfPermission(
+                context,
+                permission
+            ) -> {
+                showDialog = false
+            }
+
+            //            ActivityCompat.shouldShowRequestPermissionRationale(
+            //                Activity, //need Activity, this launch alert dialog
+            //                permission
+            //            ) -> {
+            //                showDialog = true
+            //            }
+            else -> {
+                // this launch system permission request
+                showDialog = true
+                break
+            }
+        }
+    }
+
+    LaunchedEffect(showDialog) {
+        when{
+            showDialog -> {
+                launcher.launch(permissions)
+            }
+        }
+    }
+
+    PermissionRequestDialog(
+        visibleState = showDialog,
+        title = title,
+        text = rational,
+        onDismissRequest = { onDismissRequest() },
+        onConfirmRequest = { onConfirmRequest() }
+    )
+}
+
+
+@Composable
+fun PermissionRequestDialog(
+    visibleState: Boolean,
+    title: String,
+    text: String,
+    onDismissRequest: () -> Unit,
+    onConfirmRequest: () -> Unit,
+) {
+    AnimatedVisibility(visible = visibleState) {
         AlertDialog(
             icon = {
                 Icon(
@@ -84,24 +116,13 @@ fun CameraPermissionErrorBox(
                     contentDescription = ""
                 )
             },
-            title = {
-                Text(text = title)
-            },
-            text = {
-                Text(text = rational)
-            },
-            onDismissRequest = {
-                navController.popBackStack()
-            },
+            title = { Text(text = title) },
+            text = { Text(text = text) },
+            onDismissRequest = { onDismissRequest() },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        val i = Intent(
-                            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                            Uri.fromParts("package", context.packageName, null)
-                        )
-                        context.startActivity(i)
-                        navController.popBackStack()
+                        onConfirmRequest()
                     },
                     modifier = Modifier
                         .background(
@@ -119,7 +140,7 @@ fun CameraPermissionErrorBox(
             dismissButton = {
                 TextButton(
                     onClick = {
-                        navController.popBackStack()
+                        onDismissRequest()
                     },
                     modifier = Modifier
                         .background(
