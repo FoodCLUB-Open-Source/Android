@@ -209,7 +209,6 @@ fun MyBasketView(
                     .padding(
                         end = dimensionResource(id = R.dimen.dim_20),
                         start = dimensionResource(id = R.dimen.dim_20),
-                        bottom = dimensionResource(id = R.dimen.dim_110)
                     )
             )
             {
