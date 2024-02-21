@@ -1,13 +1,11 @@
 package android.kotlin.foodclub.utils.composables
 
-import android.annotation.SuppressLint
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.net.Uri
 import android.view.ViewGroup
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -27,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -40,16 +39,12 @@ import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
-import coil.compose.AsyncImage
-import kotlinx.coroutines.Dispatchers
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.net.HttpURLConnection
-import java.net.URL
 
-@SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalFoundationApi::class)
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
@@ -72,11 +67,21 @@ fun VideoScroller(
     val coroutineScope = rememberCoroutineScope()
 
     var thumbnail by remember {
-        mutableStateOf<Pair<Bitmap?, Boolean>>(Pair(null, true))
+        mutableStateOf<Pair<Painter?, Boolean>>(Pair(null, true))
     }
-    LaunchedEffect(true){
-        val image = fetchImage(video.thumbnailLink)
-        thumbnail = thumbnail.copy(first = image, second = true)
+
+    val painter = rememberAsyncImagePainter(
+        model = ImageRequest.Builder(context)
+            .data(video.thumbnailLink)
+            .crossfade(true)
+            .build()
+    )
+    LaunchedEffect(true) {
+        thumbnail = try {
+            thumbnail.copy(first = painter, second = true)
+        } catch (e: Exception) {
+            thumbnail.copy(second = false)
+        }
     }
 
     if (pagerState.settledPage == pageIndex){
@@ -118,12 +123,14 @@ fun VideoScroller(
         }
 
         LaunchedEffect(key1 = video.videoId) {
+            val mediaItem = MediaItem.fromUri(Uri.parse(video.videoLink))
+            exoPlayer.setMediaItem(mediaItem)
+            exoPlayer.prepare()
+
             exoPlayer.apply {
                 videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT
                 repeatMode = Player.REPEAT_MODE_ONE
-                setMediaItem(MediaItem.fromUri(Uri.parse(video.videoLink)))
                 playWhenReady = true
-                prepare()
             }
         }
 
@@ -195,8 +202,8 @@ fun VideoScroller(
 
     if (thumbnail.second) {
         if (thumbnail.first != null) {
-            AsyncImage(
-                model = thumbnail.first,
+            Image(
+                painter = thumbnail.first!!,
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
@@ -205,19 +212,8 @@ fun VideoScroller(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Gray)
+                    .background(brush)
             )
         }
-    }
-}
-
-suspend fun fetchImage(url: String): Bitmap? = withContext(Dispatchers.IO) {
-    try {
-        val connection = URL(url).openConnection() as HttpURLConnection
-        val inputStream = connection.inputStream
-        val bitmap = BitmapFactory.decodeStream(inputStream)
-        bitmap
-    } catch (e: Exception) {
-        null
     }
 }
