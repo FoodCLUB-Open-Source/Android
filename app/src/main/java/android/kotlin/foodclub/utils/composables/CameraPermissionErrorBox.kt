@@ -4,7 +4,6 @@ package android.kotlin.foodclub.utils.composables
 import android.content.Context
 import android.content.pm.PackageManager
 import android.kotlin.foodclub.R
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -38,6 +37,7 @@ fun CameraPermissionErrorBox(
     onDismissRequest: () -> Unit,
     onConfirmRequest: () -> Unit,
     context: Context,
+    content: @Composable () -> Unit
 ) {
 
     var showDialog by remember {
@@ -47,10 +47,8 @@ fun CameraPermissionErrorBox(
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { isGrantedList: Map<String, @JvmSuppressWildcards Boolean> ->
-        Log.i("experience permission", "List: $isGrantedList - ")
         showDialog = false
         for (isGranted in isGrantedList) {
-            Log.i("experience permission", "Detail: $isGranted - ")
             if (!isGranted.value) {
                 showDialog = true
                 break
@@ -59,7 +57,6 @@ fun CameraPermissionErrorBox(
     }
 
     for (permission in permissions) {
-        Log.i("experience permission", "$permission - $showDialog - ")
         when (PackageManager.PERMISSION_GRANTED) {
             ContextCompat.checkSelfPermission(
                 context,
@@ -68,14 +65,7 @@ fun CameraPermissionErrorBox(
                 showDialog = false
             }
 
-            //            ActivityCompat.shouldShowRequestPermissionRationale(
-            //                Activity, //need Activity, this launch alert dialog
-            //                permission
-            //            ) -> {
-            //                showDialog = true
-            //            }
             else -> {
-                // this launch system permission request
                 showDialog = true
                 break
             }
@@ -83,7 +73,7 @@ fun CameraPermissionErrorBox(
     }
 
     LaunchedEffect(showDialog) {
-        when{
+        when {
             showDialog -> {
                 launcher.launch(permissions)
             }
@@ -97,6 +87,10 @@ fun CameraPermissionErrorBox(
         onDismissRequest = { onDismissRequest() },
         onConfirmRequest = { onConfirmRequest() }
     )
+
+    if (!showDialog) {
+        content()
+    }
 }
 
 
@@ -108,7 +102,7 @@ fun PermissionRequestDialog(
     onDismissRequest: () -> Unit,
     onConfirmRequest: () -> Unit,
 ) {
-    AnimatedVisibility(visible = visibleState) {
+    if (visibleState) {
         AlertDialog(
             icon = {
                 Icon(
