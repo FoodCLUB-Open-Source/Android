@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.kotlin.foodclub.R
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
