@@ -406,7 +406,10 @@ fun DiscoverView(
                     if (isInternetConnected) {
 
                         Button(
-                            onClick = { triggerIngredientBottomSheetModal() },
+                            onClick = {
+                                //triggerIngredientBottomSheetModal()
+                                      navController.navigate("ADD_INGREDIENTS")
+                                      },
                             shape = RoundedCornerShape(
                                 dimensionResource(
                                     id = R.dimen.dim_15

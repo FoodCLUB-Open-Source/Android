@@ -10,16 +10,17 @@ import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
 import android.kotlin.foodclub.viewModels.home.myBasket.MyBasketViewModel
 import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
 import android.kotlin.foodclub.views.home.CameraPreviewView
-import android.kotlin.foodclub.views.home.profile.TakeProfilePhotoView
-import android.kotlin.foodclub.views.home.home.foodSNAPS.TakeSnapView
+import android.kotlin.foodclub.views.home.addIngredients.AddIngredientsView
 import android.kotlin.foodclub.views.home.camera.CameraView
 import android.kotlin.foodclub.views.home.discover.DiscoverView
 import android.kotlin.foodclub.views.home.followerFollowing.FollowerView
 import android.kotlin.foodclub.views.home.gallery.GalleryView
 import android.kotlin.foodclub.views.home.home.feed.HomeView
+import android.kotlin.foodclub.views.home.home.foodSNAPS.TakeSnapView
 import android.kotlin.foodclub.views.home.myBasket.MyBasketView
 import android.kotlin.foodclub.views.home.myDigitalPantry.MyDigitalPantryView
 import android.kotlin.foodclub.views.home.profile.ProfileView
+import android.kotlin.foodclub.views.home.profile.TakeProfilePhotoView
 import android.kotlin.foodclub.views.home.scan.ScanResultView
 import android.kotlin.foodclub.views.home.scan.ScanView
 import android.kotlin.foodclub.views.home.scan.TopBackBar
@@ -231,6 +232,7 @@ fun NavGraphBuilder.homeNavigationGraph(
         composable(route = HomeOtherRoutes.MySearchView.route) {
             SearchView(navController = navController)
         }
+
         composable(route = HomeOtherRoutes.MyDigitalPantryView.route) {
             val viewModel = it.sharedHiltViewModel<DiscoverViewModel>(navController)
             val state = viewModel.state.collectAsState()
@@ -241,6 +243,14 @@ fun NavGraphBuilder.homeNavigationGraph(
                 state = state.value
             )
         }
+
+        composable(route = HomeOtherRoutes.AddIngredientsView.route){
+            val viewModel = it.sharedHiltViewModel<DiscoverViewModel>(navController)
+            val state = viewModel.state.collectAsState()
+
+            AddIngredientsView(state = state.value, events = viewModel, navController = navController)
+        }
+
         composable(route = HomeOtherRoutes.TakeProfilePhotoView.route) {
             val viewModel = it.sharedHiltViewModel<ProfileViewModel>(navController = navController)
             val state = viewModel.state.collectAsState()
@@ -276,6 +286,7 @@ sealed class HomeOtherRoutes(val route: String) {
 
     data object MyBasketView : HomeOtherRoutes(route = "BASKET_VIEW")
     data object MyDigitalPantryView : HomeOtherRoutes(route = "MY_DIGITAL_PANTRY_VIEW")
+    data object AddIngredientsView : HomeOtherRoutes(route = "ADD_INGREDIENTS")
     data object MySearchView : HomeOtherRoutes(route = "SEARCH_VIEW")
 
     data object VideoTrimmerView : HomeOtherRoutes(route = "VIDEOTRIMMER")
