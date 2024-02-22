@@ -49,50 +49,6 @@ fun TakeProfilePhotoView(
         }
     }
 
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-    ) {
-        if (photoUri != null) {
-            PhotoTakenPreview(
-                image = photoUri!!,
-                onSaveClick = {
-                    val file = uriToFile(photoUri!!, context)
-                    if (file != null) {
-                        events.updateUserProfileImage(
-                            state.myUserId,
-                            file,
-                            photoUri!!
-                        )
-
-                        scope.launch {
-                            state.dataStore?.storeImage(photoUri!!.toString())
-                        }
-
-                        navController.popBackStack()
-                    } else {
-                        Log.i(TAG, "EMPTY FILE")
-                    }
-                },
-                onCancelClick = {
-                    photoUri = null
-                }
-            )
-        } else {
-            TakePhotoPreview(
-                controller = controller,
-                navController = navController,
-                onTakePhoto = {
-                    takePhoto(
-                        controller,
-                        { photoUri = it },
-                        context
-                    )
-                }
-            )
-        }
-    }
-
     CameraPermissionErrorBox(
         permissions = arrayOf(Manifest.permission.CAMERA),
         title = stringResource(id = R.string.Camera_permission_require_message_title),
@@ -107,5 +63,49 @@ fun TakeProfilePhotoView(
             navController.popBackStack()
         },
         context = context
-    )
+    ) {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+        ) {
+            if (photoUri != null) {
+                PhotoTakenPreview(
+                    image = photoUri!!,
+                    onSaveClick = {
+                        val file = uriToFile(photoUri!!, context)
+                        if (file != null) {
+                            events.updateUserProfileImage(
+                                state.myUserId,
+                                file,
+                                photoUri!!
+                            )
+
+                            scope.launch {
+                                state.dataStore?.storeImage(photoUri!!.toString())
+                            }
+
+                            navController.popBackStack()
+                        } else {
+                            Log.i(TAG, "EMPTY FILE")
+                        }
+                    },
+                    onCancelClick = {
+                        photoUri = null
+                    }
+                )
+            } else {
+                TakePhotoPreview(
+                    controller = controller,
+                    navController = navController,
+                    onTakePhoto = {
+                        takePhoto(
+                            controller,
+                            { photoUri = it },
+                            context
+                        )
+                    }
+                )
+            }
+        }
+    }
 }
