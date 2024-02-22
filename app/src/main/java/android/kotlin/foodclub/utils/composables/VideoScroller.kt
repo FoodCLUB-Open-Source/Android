@@ -67,7 +67,7 @@ fun VideoScroller(
     val coroutineScope = rememberCoroutineScope()
 
     var thumbnail by remember {
-        mutableStateOf<Pair<Painter?, Boolean>>(Pair(null, true))
+        mutableStateOf(ThumbnailState(null, true))
     }
 
     val painter = rememberAsyncImagePainter(
@@ -78,9 +78,9 @@ fun VideoScroller(
     )
     LaunchedEffect(true) {
         thumbnail = try {
-            thumbnail.copy(first = painter, second = true)
+            thumbnail.copy(painter = painter, isLoading= true)
         } catch (e: Exception) {
-            thumbnail.copy(second = false)
+            thumbnail.copy(isLoading = false)
         }
     }
 
@@ -108,7 +108,7 @@ fun VideoScroller(
             val firstFrameListener = object : Player.Listener {
                 override fun onRenderedFirstFrame() {
                     super.onRenderedFirstFrame()
-                    thumbnail = thumbnail.copy(second = false)
+                    thumbnail = thumbnail.copy(isLoading = false)
                 }
             }
 
@@ -200,10 +200,10 @@ fun VideoScroller(
         }
     }
 
-    if (thumbnail.second) {
-        if (thumbnail.first != null) {
+    if (thumbnail.isLoading) {
+        if (thumbnail.painter != null) {
             Image(
-                painter = thumbnail.first!!,
+                painter = thumbnail.painter!!,
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
@@ -217,3 +217,8 @@ fun VideoScroller(
         }
     }
 }
+
+data class ThumbnailState(
+    val painter: Painter?,
+    val isLoading: Boolean
+)

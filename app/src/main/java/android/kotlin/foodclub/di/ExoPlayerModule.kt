@@ -20,7 +20,7 @@ object ExoPlayerModule {
     private const val MIN_BUFFER_MS = 2000
     private const val MAX_BUFFER_MS = 5000
     private const val BUFFER_FOR_PLAYBACK_MS = 1500
-    private const val BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS = 2000
+    private const val BUFFER_DURATION_AFTER_REBUFFER_MS = 2000
 
     @OptIn(UnstableApi::class) @Provides
     @ViewModelScoped
@@ -31,7 +31,7 @@ object ExoPlayerModule {
                 MIN_BUFFER_MS,
                 MAX_BUFFER_MS,
                 BUFFER_FOR_PLAYBACK_MS,
-                BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS
+                BUFFER_DURATION_AFTER_REBUFFER_MS
             )
             .setPrioritizeTimeOverSizeThresholds(true)
             .build()
