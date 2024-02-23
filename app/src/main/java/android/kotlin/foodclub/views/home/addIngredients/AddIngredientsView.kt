@@ -232,9 +232,10 @@ fun AddIngredientsView(state: DiscoverState, events: DiscoverEvents, navControll
                     IngredientsList(
                         Modifier,
                         events = events,
-                        productsList = if (state.searchIngredientsListText == "") state.userIngredients else state.searchResults,
-                        userIngredientsList = if (state.searchIngredientsListText == "") state.userIngredients else state.searchResults,
+                        productsList = state.userIngredients,
+                        userIngredientsList = state.userIngredients,
                         onEditQuantityClicked = {
+                            events.updateIngredient(it)
                             isSheetOpen = true
                             events.updateIngredient(it)
                         },
@@ -257,6 +258,8 @@ fun AddIngredientsView(state: DiscoverState, events: DiscoverEvents, navControll
                         productsList = state.productsData.productsList,
                         userIngredientsList = state.userIngredients,
                         onEditQuantityClicked = {
+                            events.updateIngredient(it)
+                            isSheetOpen = true
                             events.updateIngredient(it)
                         },
                         onDateClicked = {
