@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.views.home.search
 
+import android.accounts.Account
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.containerColor
@@ -9,6 +10,7 @@ import android.kotlin.foodclub.utils.composables.shimmerBrush
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
 import android.kotlin.foodclub.views.home.discover.MainTabRow
+import android.kotlin.foodclub.views.home.messagingView.User
 import android.kotlin.foodclub.views.home.profile.GridItem
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -56,30 +58,42 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
 
 @Composable
 fun NewSearchView(
     navController: NavController
-){ val context = LocalContext.current
+){
+    val context = LocalContext.current
     val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
-
     val brush = shimmerBrush()
     var mainTabIndex by remember { mutableIntStateOf(0) }
-    val tabItems = listOf("All", "Accounts", "Recipes").toTypedArray()
+    val tabItems = listOf(stringResource(id = R.string.All),
+        stringResource(id = R.string.Accounts), stringResource(id = R.string.Recipes)).toTypedArray()
+
+    var accountTabItems = listOf<User>()
+    var recipeTabItems = listOf<VideoModel>()
+
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -101,13 +115,26 @@ fun NewSearchView(
         when (mainTabIndex) {
             0 ->
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    SearchBodyBoth()
+                    SearchBodyBoth(
+                        accountTabItems = accountTabItems,
+                        recipeTabItems=recipeTabItems,
+                        brush = brush,
+                        isInternetConnected = isInternetConnected)
                 }
 
             1 -> Column(modifier = Modifier.fillMaxWidth()) {
-                SearchBodyAccounts()
+                SearchBodyAccounts(
+                    accountTabItems = accountTabItems,
+                    brush = brush,
+                    isInternetConnected = isInternetConnected)
                     }
-            2 -> Column(modifier = Modifier.fillMaxWidth()) {SearchBodyRecipes()}
+            2 -> Column(modifier = Modifier.fillMaxWidth()) {
+                SearchBodyRecipes(
+                    recipeTabItems=recipeTabItems,
+                    brush = brush,
+                    isInternetConnected = isInternetConnected
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_25)))
@@ -118,7 +145,7 @@ fun NewSearchView(
 @Composable
 fun NewSearchRow(
     searchTextValue: String,
-    navController: NavController
+    navController: NavController,
 ){
     Row(
         modifier = Modifier
@@ -202,9 +229,13 @@ fun NewSearchRow(
 }
 
 @Composable
-fun SearchBodyBoth(modifier: Modifier = Modifier) {
-    val accountTabItems = listOf(1, 2, 3)
-    val recipeTabItems = listOf(1, 2, 3, 4, 5, 6, 7)
+fun SearchBodyBoth(
+    modifier: Modifier = Modifier,
+    accountTabItems : List<User>,
+    recipeTabItems : List<VideoModel>,
+    brush:Brush,
+    isInternetConnected :Boolean
+) {
 
     Column(
         modifier = modifier
@@ -212,7 +243,7 @@ fun SearchBodyBoth(modifier: Modifier = Modifier) {
             .padding(start = dimensionResource(id = R.dimen.dim_20), top = dimensionResource(id = R.dimen.dim_20))
     ) {
         Text(
-            text = "Accounts",
+            text = stringResource(id = R.string.Accounts),
             color = Color.LightGray,
             fontWeight = FontWeight.Normal,
             fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
@@ -228,7 +259,7 @@ fun SearchBodyBoth(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_16)))
 
         Text(
-            text = "Recipes",
+            text = stringResource(id = R.string.Recipes),
             color = Color.LightGray,
             fontWeight = FontWeight.Normal,
             fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
@@ -237,14 +268,18 @@ fun SearchBodyBoth(modifier: Modifier = Modifier) {
             fontFamily = Montserrat
         )
 
-        // Create rows of two items for recipes
         recipeTabItems.chunked(2).forEach { rowItems ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                rowItems.forEach { _ ->
-                    SearchRecipeGridItem(modifier = Modifier.weight(1f))
+                rowItems.forEach { dataItem ->
+                    SearchRecipeGridItem(
+                        modifier = Modifier.weight(1f),
+                        brush = brush,
+                        isInternetConnected = isInternetConnected,
+                        dataItem = dataItem
+                        )
                 }
 
                 if (rowItems.size < 2) {
@@ -257,11 +292,17 @@ fun SearchBodyBoth(modifier: Modifier = Modifier) {
 
 
 @Composable
-fun SearchBodyAccounts(modifier: Modifier = Modifier) {
-
-    var accountTabItems = listOf(1,2,3,4,5,6,7)
-
-    Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.dim_20), top = dimensionResource(id = R.dimen.dim_20))) {
+fun SearchBodyAccounts(
+    modifier: Modifier = Modifier,
+    accountTabItems : List<User>,
+    brush:Brush,
+    isInternetConnected :Boolean
+) {
+    Column(modifier = modifier
+            .padding(
+                start = dimensionResource(id = R.dimen.dim_20),
+                top = dimensionResource(id = R.dimen.dim_20))
+        ) {
         Row(modifier = Modifier.fillMaxWidth()) {
             val lazyListState = rememberLazyListState()
             LazyColumn(
@@ -278,11 +319,17 @@ fun SearchBodyAccounts(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun SearchBodyRecipes(modifier: Modifier = Modifier) {
-    var recipeTabItems = listOf(1,2,3,4,5,6,7)
-
+fun SearchBodyRecipes(
+    modifier: Modifier = Modifier,
+    recipeTabItems : List<VideoModel>,
+    brush:Brush,
+    isInternetConnected :Boolean
+) {
     Column(modifier = modifier
-        .padding(start = dimensionResource(id = R.dimen.dim_20), top = dimensionResource(id = R.dimen.dim_20))) {
+            .padding(
+                start = dimensionResource(id = R.dimen.dim_20),
+                top = dimensionResource(id = R.dimen.dim_20)))
+    {
         Row (modifier= Modifier.fillMaxWidth()){
             val lazyGridState = rememberLazyGridState()
             LazyVerticalGrid(
@@ -290,8 +337,11 @@ fun SearchBodyRecipes(modifier: Modifier = Modifier) {
                 state = lazyGridState,
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(items = recipeTabItems, key = { it }) { _ ->
-                    SearchRecipeGridItem()
+                items(items = recipeTabItems, key = { it }) { dataItem ->
+                    SearchRecipeGridItem(
+                        brush = brush,
+                        isInternetConnected = isInternetConnected,
+                        dataItem = dataItem)
                 }
             }
         }
@@ -299,27 +349,51 @@ fun SearchBodyRecipes(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun SearchRecipeGridItem(modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier
-            .height(dimensionResource(id = R.dimen.dim_272))
-            .padding(dimensionResource(id = R.dimen.dim_10)),
-        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
+fun SearchRecipeGridItem(
+    modifier: Modifier = Modifier,
+    brush: Brush,
+    isInternetConnected:Boolean,
+    dataItem: VideoModel,
+){
+    val thumbnailPainter = rememberAsyncImagePainter(dataItem.thumbnailLink)
+
+    Card(modifier = Modifier
+        .height(dimensionResource(id = R.dimen.dim_272))
+        .width(dimensionResource(id = R.dimen.dim_178))
+        .padding(dimensionResource(id = R.dimen.dim_10))
+        ,shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
     ) {
         Box(
             modifier = Modifier
-                .background(Color.LightGray)
-                .fillMaxSize()
-        )
+                .background(
+                    if (thumbnailPainter.state is AsyncImagePainter.State.Loading || !isInternetConnected) brush
+                    else SolidColor(Color.Transparent)
+                )
+                .fillMaxWidth()
+                .fillMaxHeight()
+        ) {
+
+            Image(
+                painter = painterResource(id = R.drawable.salad_ingredient),
+                contentDescription = null,
+                contentScale = ContentScale.FillHeight,
+                modifier = Modifier
+                    .fillMaxSize()
+            )
+        }
     }
 }
 
 @Composable
 fun SearchAccountGridItem(){
+    val username by remember { mutableStateOf("Username") }
+    val name by remember { mutableStateOf("Name") }
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_8)).fillMaxWidth()
     ) {
+
         Box(
             modifier = Modifier
                 .size(dimensionResource(id = R.dimen.dim_50))
@@ -331,13 +405,13 @@ fun SearchAccountGridItem(){
 
         Column (){
             Text(
-                text = "username",
+                text = username,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = dimensionResource(id = R.dimen.fon_17).value.sp,
                 fontFamily = Montserrat,
                 modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_4))
             )
-            Text(text = "name",
+            Text(text = name,
                 fontWeight = FontWeight.Normal,
                 fontFamily = Montserrat,
                 fontSize = dimensionResource(id = R.dimen.fon_15).value.sp)
