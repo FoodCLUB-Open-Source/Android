@@ -163,6 +163,10 @@ fun AddIngredientsView(state: DiscoverState, events: DiscoverEvents, navControll
                     onDismissRequest = { isSheetOpen = it },
                     onEdit = {
                         events.updateIngredient(it)
+                        if (it !in state.userIngredients)
+                        {
+                            events.addToUserIngredients(it)
+                        }
                     }
                 )
             }
@@ -183,6 +187,10 @@ fun AddIngredientsView(state: DiscoverState, events: DiscoverEvents, navControll
                             if (date != null) {
                                 selectedDate = date
                                 state.ingredientToEdit!!.expirationDate = selectedDate
+                                if (state.ingredientToEdit !in state.userIngredients)
+                                {
+                                    events.addToUserIngredients(state.ingredientToEdit)
+                                }
                                 events.updateIngredient(state.ingredientToEdit)
                             }
                         }
@@ -235,9 +243,9 @@ fun AddIngredientsView(state: DiscoverState, events: DiscoverEvents, navControll
                         productsList = state.userIngredients,
                         userIngredientsList = state.userIngredients,
                         onEditQuantityClicked = {
-                            events.updateIngredient(it)
+                            //events.updateIngredient(it)
                             isSheetOpen = true
-                            events.updateIngredient(it)
+                            //events.updateIngredient(it)
                         },
                         onDateClicked = {
                             events.updateIngredient(it)
@@ -258,9 +266,9 @@ fun AddIngredientsView(state: DiscoverState, events: DiscoverEvents, navControll
                         productsList = state.productsData.productsList,
                         userIngredientsList = state.userIngredients,
                         onEditQuantityClicked = {
-                            events.updateIngredient(it)
+                            //events.updateIngredient(it)
                             isSheetOpen = true
-                            events.updateIngredient(it)
+                            //events.updateIngredient(it)
                         },
                         onDateClicked = {
                             isDatePickerVisible = true

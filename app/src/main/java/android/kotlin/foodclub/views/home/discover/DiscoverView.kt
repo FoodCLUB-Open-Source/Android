@@ -1149,7 +1149,8 @@ fun SingleSearchIngredientItem(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start
             ) {
-                if (isItemAdded) {
+                if (true)//isItemAdded)
+                {
                     Text(
                         modifier = modifier
                             .padding(start = dimensionResource(id = R.dimen.dim_6))
@@ -1177,7 +1178,8 @@ fun SingleSearchIngredientItem(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                if (isItemAdded) {
+                if (true)//isItemAdded)
+                {
                     Text(
                         modifier = modifier
                             .padding(start = dimensionResource(id = R.dimen.dim_20))
@@ -1193,7 +1195,9 @@ fun SingleSearchIngredientItem(
                         color = Color.Gray,
                         style = expirationDateTextStyle(expirationDate)
                     )
-                } else {
+                }
+
+                if (!isItemAdded){
                     Box(modifier = Modifier.weight(1f, fill = false))
                     Spacer(modifier = Modifier.weight(1f, fill = true))
                     Box(
