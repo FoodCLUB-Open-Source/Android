@@ -83,7 +83,6 @@ import androidx.compose.material3.rememberDismissState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -128,7 +127,6 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -147,13 +145,6 @@ fun DiscoverView(
     var postId: Long? by remember { mutableStateOf(null) }
 
     val brush = shimmerBrush()
-    val systemUiController = rememberSystemUiController()
-
-    SideEffect {
-        systemUiController.setSystemBarsColor(
-            color = Color.White, darkIcons = true
-        )
-    }
 
     var showIngredientSheet by remember { mutableStateOf(false) }
 
@@ -530,19 +521,6 @@ fun DiscoverView(
 
     val triggerBottomSheetModal: () -> Unit = {
         showSheet = !showSheet
-        systemUiController.setStatusBarColor(
-            color = Color(0xFFACACAC), darkIcons = true
-        )
-        systemUiController.setNavigationBarColor(
-            color = Color.Black, darkIcons = true
-        )
-    }
-    SideEffect {
-        if (!showSheet) {
-            systemUiController.setSystemBarsColor(
-                color = Color.White, darkIcons = true
-            )
-        }
     }
     if (showSheet) {
         IngredientsBottomSheet(
@@ -788,6 +766,7 @@ fun SubSearchBar(
             onValueChange = {
                 onSearch(it)
             },
+            singleLine = true,
             placeholder = {
                 Text(
                     modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_3)),
@@ -1163,7 +1142,9 @@ fun SingleSearchIngredientItem(
                         lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
                         fontFamily = Montserrat,
                         color = Color.Gray,
-                        style = quantityTextStyle(quantity)
+                        style = quantityTextStyle(quantity),
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
                     )
 
                 } else {
@@ -1193,7 +1174,9 @@ fun SingleSearchIngredientItem(
                         lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
                         fontFamily = Montserrat,
                         color = Color.Gray,
-                        style = expirationDateTextStyle(expirationDate)
+                        style = expirationDateTextStyle(expirationDate),
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
                     )
                 }
 
@@ -1501,6 +1484,7 @@ fun expirationDateTextStyle(expirationDate: String): TextStyle {
     )
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddIngredientsBottomSheet(onDismiss: () -> Unit, isInternetConnected: Boolean, state: DiscoverState, events: DiscoverEvents, navController: NavController) {
@@ -1687,4 +1671,3 @@ fun AddIngredientsBottomSheet(onDismiss: () -> Unit, isInternetConnected: Boolea
         }
     }
 }
-

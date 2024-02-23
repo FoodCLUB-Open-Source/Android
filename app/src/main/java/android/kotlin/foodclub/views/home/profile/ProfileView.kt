@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -83,10 +84,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -157,15 +158,6 @@ fun ProfileView(
                         }
                     }
                 }
-            }
-
-            val systemUiController = rememberSystemUiController()
-
-            SideEffect {
-                systemUiController.setSystemBarsColor(
-                    color = Color.White,
-                    darkIcons = true
-                )
             }
 
             val pagerState = rememberPagerState(
@@ -508,15 +500,15 @@ fun ProfileView(
                                     .padding(
                                         top = dimensionResource(id = R.dimen.dim_5),
                                         start = dimensionResource(id = R.dimen.dim_15),
-                                        end = dimensionResource(id = R.dimen.dim_15),
-                                        bottom = dimensionResource(id = R.dimen.dim_110)
+                                        end = dimensionResource(id = R.dimen.dim_15)
                                     )
                             ) {
                                 val lazyGridState = rememberLazyGridState()
 
                                 LazyVerticalGrid(
                                     columns = GridCells.Fixed(2),
-                                    state = lazyGridState
+                                    state = lazyGridState,
+                                    modifier = Modifier.fillMaxSize()
                                 ) {
                                     items(items = userTabItems,
                                         key = { it.videoId }

@@ -28,7 +28,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 
 @Composable
 fun SnapReactionsView(
@@ -72,11 +71,14 @@ fun SnapReactionsView(
                 if(reaction != Reactions.ALL){
                     if(clickedItem!=reaction){
                         Image(
-                            painter = painterResource(id =reaction.drawable), contentDescription = null, contentScale = ContentScale.FillHeight, modifier = Modifier
+                            painter = painterResource(id =reaction.drawable),
+                            contentDescription = null,
+                            contentScale = ContentScale.FillHeight,
+                            modifier = Modifier
                                 .height(dimensionResource(id = R.dimen.snap_reactions_reaction_height))
                                 .padding(dimensionResource(id = R.dimen.dim_5))
                                 .clickable {
-                                    if (reactionsClickable){
+                                    if (reactionsClickable) {
                                         clickedItem = reaction
                                         selectReaction(reaction)
                                     }
@@ -88,15 +90,24 @@ fun SnapReactionsView(
                             modifier= Modifier.fillMaxHeight(),
                             horizontalAlignment = Alignment.CenterHorizontally) {
                             Image(
-                                painter = painterResource(id =reaction.drawable), contentDescription = null, contentScale = ContentScale.FillHeight, modifier = Modifier
+                                painter = painterResource(id =reaction.drawable),
+                                contentDescription = null,
+                                contentScale = ContentScale.FillHeight,
+                                modifier = Modifier
                                     .height(dimensionResource(id = R.dimen.snap_reactions_reaction_height))
                                     .clickable {
-                                        if (reactionsClickable){
+                                        if (reactionsClickable) {
                                             clickedItem = Reactions.ALL
                                         }
                                     }
                             )
-                            Image(painter = painterResource(id = R.drawable.baseline_circle_24), contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.size(8.dp))
+                            Image(
+                                painter = painterResource(id = R.drawable.baseline_circle_24),
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.size(dimensionResource(id = R.dimen.dim_8)
+                                )
+                            )
                         }
                     }
                 }

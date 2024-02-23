@@ -286,6 +286,15 @@
     <string name="additional_regulatory_info">In some countries, the law requires us to provide additional regulatory information and/or contact points within the country, even though we may not be physically present there.\n\n</string>
 
    Home Screens
+    -Messaging
+    <string name="messages">Messages</string>
+    <string name="search_contacts">Search contacts</string>
+    <string name="messaging_general_text">Start your group with</string>
+    <string name="messaging_general_text2">friends and families</string>
+    <string name="chef">Chef</string>
+    <string name="ai">Ai</string>
+    <string name="message_input_label">Write a message…</string>
+
     - View Stories
     <string name="profile_image">Profile Image</string>
     - Uploading
@@ -372,6 +381,7 @@
     <string name="hide_your_foodsnaps">Hide your FoodSNAPS</string>
     <string name="copy_profile_url">Copy profile URL</string>
     <string name="share_this_profile">Share this Profile</string>
+    <string name="quantity_overflow_error_message">Reach quantity limitation</string>
     <string-array name="profile_tabs">
         <item>My Recipes</item>
         <item>Bookmarked</item>
@@ -432,6 +442,7 @@
     <string name="particle_transition">particle transition</string>
     <string name="alpha_animation">alpha animation</string>
     <string name="scale_animation">scale animation</string>
+    <string name="downloading">Downloading</string>
     - Gallery
     <string name="gallery">Gallery</string>
     <string name="story">story</string>
