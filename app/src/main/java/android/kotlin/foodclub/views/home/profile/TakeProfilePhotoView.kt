@@ -1,16 +1,14 @@
 package android.kotlin.foodclub.views.home.profile
 
 import android.Manifest
-import android.content.Intent
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.utils.composables.CameraPermissionErrorBox
+import android.kotlin.foodclub.utils.composables.PermissionErrorBox
 import android.kotlin.foodclub.utils.composables.PhotoTakenPreview
 import android.kotlin.foodclub.utils.composables.TakePhotoPreview
 import android.kotlin.foodclub.utils.helpers.takePhoto
 import android.kotlin.foodclub.utils.helpers.uriToFile
 import android.kotlin.foodclub.viewModels.home.profile.ProfileEvents
 import android.net.Uri
-import android.provider.Settings
 import android.util.Log
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
@@ -49,19 +47,11 @@ fun TakeProfilePhotoView(
         }
     }
 
-    CameraPermissionErrorBox(
+    PermissionErrorBox(
         permissions = arrayOf(Manifest.permission.CAMERA),
         title = stringResource(id = R.string.Camera_permission_require_message_title),
         rational = stringResource(id = R.string.Camera_permission_require_rational),
-        onDismissRequest = { navController.popBackStack() },
-        onConfirmRequest = {
-            val i = Intent(
-                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                Uri.fromParts("package", context.packageName, null)
-            )
-            context.startActivity(i)
-            navController.popBackStack()
-        },
+        navController = navController,
         context = context
     ) {
         Box(
