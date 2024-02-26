@@ -4,17 +4,15 @@ import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.borderBlue
-import android.kotlin.foodclub.config.ui.categorySelectedBlue
 import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
-import android.kotlin.foodclub.domain.enums.Category
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.utils.composables.CustomSliderDiscrete
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
-import android.kotlin.foodclub.utils.composables.SearchBar
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.viewModels.home.createRecipe.CreateRecipeEvents
 import android.kotlin.foodclub.viewModels.home.createRecipe.CreateRecipeViewModel
+import android.kotlin.foodclub.views.home.createRecipe.components.CategoriesSection
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateFloat
@@ -29,8 +27,6 @@ import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -53,18 +49,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -72,13 +63,10 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
-import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.AnnotatedString
@@ -93,153 +81,6 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
-
-//@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
-//@Composable
-//fun BottomSheetCategories(
-//    onDismiss: () -> Unit,
-//    events: CreateRecipeEvents,
-//    state: CreateRecipeState
-//) {
-//    val screenHeight = LocalConfiguration.current.screenHeightDp.dp - dimensionResource(id = R.dimen.dim_150)
-//    var searchText by remember { mutableStateOf("") }
-//    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-//    val categories = state.categories
-//    var displayedCategories by remember { mutableStateOf(categories) }
-//
-//    LaunchedEffect(searchText) {
-//        if (searchText.isEmpty()) {
-//            displayedCategories = categories
-//            return@LaunchedEffect
-//        }
-//        displayedCategories = categories.filter {
-//            it.name.lowercase().contains(searchText.lowercase())
-//        }
-//    }
-//
-//    ModalBottomSheet(
-//        containerColor = Color.Black,
-//        onDismissRequest = { onDismiss() },
-//        sheetState = bottomSheetState,
-//        dragHandle = { BottomSheetDefaults.DragHandle() },
-//    ) {
-//        Column(
-//            Modifier
-//                .fillMaxWidth()
-//                .height(screenHeight)
-//        ) {
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(
-//                        start = dimensionResource(id = R.dimen.dim_30),
-//                        end = dimensionResource(id = R.dimen.dim_17)
-//                    ),
-//                contentAlignment = Alignment.CenterStart
-//            ) {
-//                Row(
-//                    verticalAlignment = Alignment.CenterVertically,
-//                    horizontalArrangement = Arrangement.Start
-//                ) {
-//                    Image(
-//                        painter = painterResource(id = R.drawable.baseline_arrow_back_ios_new_24),
-//                        contentDescription = "Left Arrow",
-//                        modifier = Modifier.size(dimensionResource(id = R.dimen.dim_24))
-//                    )
-//
-//                    Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_8)))
-//
-//                    Text(
-//                        text = "Categories",
-//                        color = Color.White,
-//                        fontFamily = Montserrat
-//                    )
-//                }
-//            }
-//            Row(
-//                verticalAlignment = Alignment.CenterVertically,
-//                horizontalArrangement = Arrangement.SpaceBetween,
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(dimensionResource(id = R.dimen.dim_20))
-//            ) {
-//                TextField(
-//                    value = searchText,
-//                    onValueChange = { searchText = it },
-//                    placeholder = {
-//                        Text(
-//                            text = "Search here",
-//                            fontSize = dimensionResource(id = R.dimen.fon_15).value.sp
-//                        )
-//                    },
-//                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)),
-//                    singleLine = true,
-//                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-//                    keyboardActions = KeyboardActions(
-//                        onDone = { /* Handle onDone event if needed */ }
-//                    ),
-//                    colors = TextFieldDefaults.colors(
-//                        focusedContainerColor = Color.White,
-//                        unfocusedContainerColor = Color.White,
-//                        disabledContainerColor = Color.White,
-//                        cursorColor = Color.Black,
-//                        focusedIndicatorColor = Color.Transparent,
-//                        unfocusedIndicatorColor = Color.Transparent,
-//                    ),
-//                    modifier = Modifier
-//                        .weight(1f)
-//                        .height(dimensionResource(id = R.dimen.dim_51))
-//                )
-//                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_20)))
-//                Text(
-//                    text = "Clear",
-//                    color = Color.White,
-//                    modifier = Modifier
-//                        .alpha(0.4f)
-//                        .clickable { searchText = "" }
-//                )
-//                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_20)))
-//            }
-//            FlowRow {
-//                displayedCategories.forEachIndexed { _, category ->
-//                    val isSelected = selectedCategories.contains(category)
-//
-//                    Card(
-//                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16)),
-//                        modifier = Modifier
-//                            .padding(
-//                                vertical = dimensionResource(id = R.dimen.dim_12),
-//                                horizontal = dimensionResource(id = R.dimen.dim_12)
-//                            )
-//                            .height(dimensionResource(id = R.dimen.dim_46)),
-//                        colors = if (isSelected)
-//                            CardDefaults.cardColors(foodClubGreen)
-//                        else
-//                            CardDefaults.cardColors(Color.Transparent),
-//                        onClick = {
-//                            if (isSelected) events.unselectCategory(category)
-//                            else events.selectCategory(category)
-//                        },
-//                        border = BorderStroke(dimensionResource(id = R.dimen.dim_1), containerColor)
-//                    ) {
-//                        Text(
-//                            text = category.name,
-//                            fontFamily = Montserrat,
-//                            fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
-//                            color = Color.White,
-//                            letterSpacing = TextUnit(-0.64f, TextUnitType.Sp),
-//                            modifier = Modifier.padding(
-//                                vertical = dimensionResource(id = R.dimen.dim_12),
-//                                horizontal = dimensionResource(id = R.dimen.dim_24)
-//                            ),
-//                            maxLines = 1
-//                        )
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
 
 @Composable
 fun CreateRecipeView(
@@ -298,63 +139,8 @@ fun CreateRecipeView(
                 Column(verticalArrangement = Arrangement.spacedBy(
                     dimensionResource(id = R.dimen.dim_16)
                 )) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                top = dimensionResource(id = R.dimen.dim_55),
-                                bottom = dimensionResource(id = R.dimen.dim_20)
-                            )
-                            .height(dimensionResource(id = R.dimen.dim_50)),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .padding(end = dimensionResource(id = R.dimen.dim_10))
-                                .background(Color.Transparent),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Button(
-                                shape = RectangleShape,
-                                modifier = Modifier
-                                    .clip(
-                                        RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
-                                    )
-                                    .align(Alignment.BottomCenter)
-                                    .width(dimensionResource(id = R.dimen.dim_40))
-                                    .height(dimensionResource(id = R.dimen.dim_40)),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(0xFFB8B8B8),
-                                    contentColor = Color.White
-                                ),
-                                contentPadding = PaddingValues(
-                                    dimensionResource(id = R.dimen.dim_5)
-                                ),
-                                onClick = { navController.navigateUp() }
-                            ) {
-                                Image(
-                                    painter = painterResource(
-                                        id = R.drawable.baseline_arrow_back_ios_new_24
-                                    ),
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier
-                                        .width(dimensionResource(id = R.dimen.dim_20))
-                                        .height(dimensionResource(id = R.dimen.dim_20))
-                                )
-                            }
-                        }
-                        Text(
-                            text = stringResource(id = R.string.my_new_recipe),
-                            modifier = Modifier.padding(
-                                start = dimensionResource(id = R.dimen.dim_8)
-                            ),
-                            fontFamily = Montserrat,
-                            fontWeight = FontWeight.SemiBold,
-                            letterSpacing = TextUnit(-1.12f, TextUnitType.Sp),
-                            fontSize = dimensionResource(id = R.dimen.fon_28).value.sp
-                        )
-                    }
+                    Header { navController.navigateUp() }
+
                     OutlinedTextField(
                         value = recipeName,
                         onValueChange = { recipeName = it },
@@ -373,23 +159,8 @@ fun CreateRecipeView(
                             unfocusedBorderColor = borderBlue
                         )
                     )
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(
-                            dimensionResource(id = R.dimen.dim_16)
-                        )
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.serving_size),
-                            fontFamily = Montserrat,
-                            fontWeight = FontWeight.SemiBold,
-                            letterSpacing = TextUnit(-0.72f, TextUnitType.Sp),
-                            fontSize = dimensionResource(id = R.dimen.fon_18).value.sp
-                        )
-                        CustomSliderDiscrete(
-                            maxValue = 16f,
-                            onValueChange = { servingSize = it }
-                        )
-                    }
+
+                    ServingSizeSection { servingSize = it }
 
                     CategoriesSection(
                         categories = state.categories,
@@ -465,6 +236,7 @@ fun CreateRecipeView(
     }
 }
 
+//Ingredient is gonna be changed (new design on Figma)
 @SuppressLint("UnusedTransitionTargetStateParameter")
 @Composable
 fun Ingredient(
@@ -640,266 +412,86 @@ fun Ingredient(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun CategoriesSection(
-    categories: List<Category>,
-    onCategoryRemove: (Category) -> Unit,
-    onCategoryAdd: (Category) -> Unit,
-    onCategoriesClear: () -> Unit
-) {
-    var searchText by remember { mutableStateOf("") }
-    Column {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = stringResource(id = R.string.categories),
-                fontFamily = Montserrat,
-                fontWeight = FontWeight.SemiBold,
-                letterSpacing = TextUnit(-0.72f, TextUnitType.Sp),
-                fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
-            )
-            ClickableText(
-                text = AnnotatedString(stringResource(id = R.string.clear_all)),
-                onClick = { onCategoriesClear() },
-                style = TextStyle(
-                    color = foodClubGreen,
-                    fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
-                    letterSpacing = TextUnit(-0.48f, TextUnitType.Sp),
-                    fontFamily = Montserrat,
-                    fontWeight = FontWeight.SemiBold
-                )
-            )
-        }
-        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_32)))
-        SearchBar(
-            onTextChange = { searchText = it },
-            placeholder = stringResource(id = R.string.categories_search_placeholder)
-        )
-    }
-    FlowRow {
-        if (searchText.isNotEmpty() && categories.size < 3) {
-            Category.entries.filter {
-                it.displayName.startsWith(searchText.replaceFirstChar(Char::titlecase))
-                        && !categories.contains(it)
-            }.forEachIndexed { _, content ->
-                Card(
-                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_30)),
-                    modifier = Modifier
-                        .padding(dimensionResource(id = R.dimen.dim_5))
-                        .height(dimensionResource(id = R.dimen.dim_32)),
-                    colors = CardDefaults.cardColors(foodClubGreen),
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(
-                            horizontal = dimensionResource(id = R.dimen.dim_8)
-                        )
-                    ) {
-                        Text(
-                            text = content.displayName,
-                            fontFamily = Montserrat,
-                            fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
-                            color = Color.White,
-                            modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_8)),
-                            maxLines = 1
-                        )
-                        Button(
-                            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_22)),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.Transparent,
-                                contentColor = Color.White
-                            ),
-                            contentPadding = PaddingValues(
-                                dimensionResource(id = R.dimen.dim_0)
-                            ),
-                            shape = CircleShape,
-                            onClick = { onCategoryAdd(content) }
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.baseline_clear_24),
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .size(dimensionResource(id = R.dimen.dim_15))
-                                    .clip(
-                                        RoundedCornerShape(
-                                            dimensionResource(
-                                                id = R.dimen.dim_12
-                                            )
-                                        )
-                                    )
-                                    .rotate(45f)
-                            )
-                        }
-                    }
-                }
-            }
-        } else {
-            categories.forEachIndexed { _, content ->
-                Card(
-                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_30)),
-                    modifier = Modifier
-                        .padding(dimensionResource(id = R.dimen.dim_5))
-                        .height(dimensionResource(id = R.dimen.dim_32)),
-                    colors = CardDefaults.cardColors(categorySelectedBlue),
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(
-                            horizontal = dimensionResource(id = R.dimen.dim_8)
-                        )
-                    ) {
-                        Text(
-                            text = content.displayName,
-                            fontFamily = Montserrat,
-                            fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
-                            color = Color.White,
-                            modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_8)),
-                            maxLines = 1
-                        )
-                        Button(
-                            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_22)),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.Transparent,
-                                contentColor = Color.White
-                            ),
-                            contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_0)),
-                            shape = CircleShape,
-                            onClick = { onCategoryRemove(content) }
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.baseline_clear_24),
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .size(dimensionResource(id = R.dimen.dim_15))
-                                    .clip(
-                                        RoundedCornerShape(dimensionResource(id = R.dimen.dim_12))
-                                    )
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun SectionItem(
-    title: String,
-    action: String,
-    icon: ImageVector?,
-    actionColor: Color = Color.Black,
-    onClick: () -> Unit
-) {
+fun Header(onBackClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(
+                top = dimensionResource(id = R.dimen.dim_55),
+                bottom = dimensionResource(id = R.dimen.dim_20)
+            )
             .height(dimensionResource(id = R.dimen.dim_50)),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = title,
-            fontFamily = Montserrat,
-            fontSize = dimensionResource(id = R.dimen.fon_14).value.sp
-        )
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        Button(
-            shape = RectangleShape,
+        Box(
             modifier = Modifier
-                .border(
-                    dimensionResource(id = R.dimen.dim_1),
-                    Color(126, 198, 11, 255),
-                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_20))
-                )
-                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
-                .width(dimensionResource(id = R.dimen.dim_120)),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.White,
-                contentColor = Color(126, 198, 11, 255)
-            ),
-            contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_15)),
-            onClick = {
-                onClick()
-            }
+                .padding(end = dimensionResource(id = R.dimen.dim_10))
+                .background(Color.Transparent),
+            contentAlignment = Alignment.Center,
         ) {
-            Text(
-                text = stringResource(id = R.string.add_items_plus),
-                color = Color(126, 198, 11, 255),
-                fontFamily = Montserrat,
-                fontSize = dimensionResource(id = R.dimen.fon_14).value.sp
-            )
+            Button(
+                shape = RectangleShape,
+                modifier = Modifier
+                    .clip(
+                        RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
+                    )
+                    .align(Alignment.BottomCenter)
+                    .width(dimensionResource(id = R.dimen.dim_40))
+                    .height(dimensionResource(id = R.dimen.dim_40)),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFB8B8B8),
+                    contentColor = Color.White
+                ),
+                contentPadding = PaddingValues(
+                    dimensionResource(id = R.dimen.dim_5)
+                ),
+                onClick = { onBackClick() }
+            ) {
+                Image(
+                    painter = painterResource(
+                        id = R.drawable.baseline_arrow_back_ios_new_24
+                    ),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .width(dimensionResource(id = R.dimen.dim_20))
+                        .height(dimensionResource(id = R.dimen.dim_20))
+                )
+            }
         }
+        Text(
+            text = stringResource(id = R.string.my_new_recipe),
+            modifier = Modifier.padding(
+                start = dimensionResource(id = R.dimen.dim_8)
+            ),
+            fontFamily = Montserrat,
+            fontWeight = FontWeight.SemiBold,
+            letterSpacing = TextUnit(-1.12f, TextUnitType.Sp),
+            fontSize = dimensionResource(id = R.dimen.fon_28).value.sp
+        )
     }
 }
 
 @Composable
-fun CreateRecipe(viewModel: CreateRecipeViewModel) {
-    var recipeTitle by remember { mutableStateOf("") }
-    val recipeDescription by remember { mutableStateOf("") }
-    val preparationTime by remember { mutableStateOf("") }
-    val servingSize by remember { mutableStateOf("") }
-    val category by remember { mutableStateOf("") }
-
-    val coroutineScope = rememberCoroutineScope()
-
+fun ServingSizeSection(onSliderValueChange: (Int) -> Unit) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(dimensionResource(id = R.dimen.dim_16))
-    ) {
-        TextField(
-            value = recipeTitle,
-            onValueChange = { newValue -> recipeTitle = newValue },
+        verticalArrangement = Arrangement.spacedBy(
+            dimensionResource(id = R.dimen.dim_16)
         )
-
-
-        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_16)))
-
-        Button(
-            onClick = {
-//                val recipe = Recipe(
-//                    title = recipeTitle,
-//                    description = recipeDescription,
-//                    preparationTime = preparationTime.toIntOrNull() ?: 0,
-//                    servingSize = servingSize.toIntOrNull() ?: 0,
-//                    category = category
-//                )
-//
-//                coroutineScope.launch {
-//                    val success = viewModel.createRecipe(recipe, "user_id_here")
-//
-//                }
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = stringResource(id = R.string.create_a_recipe))
-        }
+    ) {
+        Text(
+            text = stringResource(id = R.string.serving_size),
+            fontFamily = Montserrat,
+            fontWeight = FontWeight.SemiBold,
+            letterSpacing = TextUnit(-0.72f, TextUnitType.Sp),
+            fontSize = dimensionResource(id = R.dimen.fon_18).value.sp
+        )
+        CustomSliderDiscrete(
+            maxValue = 16f,
+            onValueChange = { onSliderValueChange(it) }
+        )
     }
-}
-
-fun onRecipeSubmit(
-    recipeTitle: String,
-    recipeDescription: String,
-    preparationTime: String,
-    servingSize: String,
-    category: String
-) {
-
-//    val newRecipe = Recipe(
-//        title = recipeTitle,
-//        description = recipeDescription,
-//        preparationTime = preparationTime.toIntOrNull() ?: 0,
-//        servingSize = servingSize.toIntOrNull() ?: 0,
-//        category = category,
-//
-//        )
 }
 
 @Composable
