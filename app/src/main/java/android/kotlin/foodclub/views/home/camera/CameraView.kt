@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.confirmScreenColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.utils.composables.PermissionErrorBox
 import android.kotlin.foodclub.utils.composables.engine.createVideoCaptureUseCase
 import android.kotlin.foodclub.utils.composables.engine.startRecordingVideo
 import android.kotlin.foodclub.viewModels.home.camera.CameraEvents
@@ -52,8 +53,15 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -71,8 +79,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionsRequired
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import kotlinx.coroutines.delay
 import okio.ByteString.Companion.encodeUtf8
 import java.io.File
@@ -101,14 +107,19 @@ fun CameraView(
         stateString = GalleryType.RECIPE.state
     }
 
-    val permissionState = rememberMultiplePermissionsState(
-        permissions = listOf(
-            Manifest.permission.CAMERA,
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.READ_MEDIA_IMAGES,
-            Manifest.permission.READ_MEDIA_VIDEO
-        )
-    )
+//    val permissionState = rememberMultiplePermissionsState(
+//        permissions = listOf(
+//            Manifest.permission.CAMERA,
+//            Manifest.permission.RECORD_AUDIO,
+//            Manifest.permission.READ_MEDIA_IMAGES,
+//            Manifest.permission.READ_MEDIA_VIDEO
+//        )
+//    )
+    val permissions = arrayOf(
+        Manifest.permission.CAMERA,
+        Manifest.permission.RECORD_AUDIO,
+        Manifest.permission.READ_MEDIA_IMAGES,
+        Manifest.permission.READ_MEDIA_VIDEO)
 
     var recording: Recording? by remember { mutableStateOf(null) }
     val previewView: PreviewView = remember { PreviewView(context) }
@@ -162,10 +173,10 @@ fun CameraView(
         mutableStateOf(false)
     }
 
-    LaunchedEffect(Unit) {
-        events.onEvent(StopWatchEvent.onReset)
-        permissionState.launchMultiplePermissionRequest()
-    }
+//    LaunchedEffect(Unit) {
+//        events.onEvent(StopWatchEvent.onReset)
+//        permissionState.launchMultiplePermissionRequest()
+//    }
 
     LaunchedEffect(previewView) {
         videoCapture.value = context.createVideoCaptureUseCase(
@@ -187,10 +198,12 @@ fun CameraView(
         canAdd = true
     }
 
-    PermissionsRequired(
-        multiplePermissionsState = permissionState,
-        permissionsNotGrantedContent = { /* ... */ },
-        permissionsNotAvailableContent = { /* ... */ }
+    PermissionErrorBox(
+        permissions = permissions,
+        title = stringResource(id = R.string.Video_permission_require_message_title),
+        rational = stringResource(id = R.string.Video_permission_require_rational),
+        navController = navController,
+        context = context
     ) {
         Box(
             modifier = Modifier

@@ -59,6 +59,7 @@
     <string name="confirm_identity">Confirm Your Identity</string>
     <string name="confirm_identity_subheading">Please confirm your country code and enter in your phone number</string>
     <string name="go_back">Go Back</string>
+    <string name="go_to_setting">Go to Setting</string>
     <string name="plus_sign">+</string>
     <string name="vertical_line">|</string>
     <string name="invalid_number">Invalid Number</string>
@@ -286,6 +287,15 @@
     <string name="additional_regulatory_info">In some countries, the law requires us to provide additional regulatory information and/or contact points within the country, even though we may not be physically present there.\n\n</string>
 
    Home Screens
+    -Messaging
+    <string name="messages">Messages</string>
+    <string name="search_contacts">Search contacts</string>
+    <string name="messaging_general_text">Start your group with</string>
+    <string name="messaging_general_text2">friends and families</string>
+    <string name="chef">Chef</string>
+    <string name="ai">Ai</string>
+    <string name="message_input_label">Write a message…</string>
+
     - View Stories
     <string name="profile_image">Profile Image</string>
     - Uploading
@@ -781,4 +791,8 @@ In some countries, the law requires us to provide additional regulatory informat
     <string name="Confirm">Confirm</string>
     <string name="Cancel">Cancel</string>
 
+    <string name="Camera_permission_require_message_title">"FoodCLUB" would like to use your <b>Camera</b></string>
+    <string name="Video_permission_require_message_title">"FoodCLUB" would like to use your <b>Camera</b> and <b>Microphone</b></string>
+    <string name="Camera_permission_require_rational">This allows FoddCLUB to take photo for your profile account</string>
+    <string name="Video_permission_require_rational">This allows FoddCLUB to take photo for your post</string>
 </resources>

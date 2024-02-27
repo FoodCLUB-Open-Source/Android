@@ -103,4 +103,13 @@ object ServicesModule {
             .create(BookmarksService::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun provideFcmService(
+        @Named("defaultRetrofit") defaultRetrofit: Builder
+    ): FcmService {
+        return defaultRetrofit
+            .build()
+            .create(FcmService::class.java)
+    }
 }

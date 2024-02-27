@@ -16,16 +16,20 @@ import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.SwipeableState
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.swipeable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.launch
 import okio.ByteString.Companion.encodeUtf8
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
@@ -43,6 +47,22 @@ fun FoodSNAPSPager(
 ) {
     var isReactionsClickable by remember { mutableStateOf(selectedReaction != Reactions.ALL) }
 
+
+    val refreshScope = rememberCoroutineScope()
+    var refreshing by remember { mutableStateOf(false) }
+
+    fun refresh() = refreshScope.launch {
+        refreshing = true
+        changeMemoriesReelVisibility(true)
+        refreshing = false
+    }
+
+    val inSnapView = rememberPullRefreshState(
+        refreshing = refreshing,
+        onRefresh = ::refresh
+    )
+
+
     val ANIMATION_DURATION_SHORT = 300
     val snapPagerFling = PagerDefaults.flingBehavior(
         state = snapPagerState,
@@ -57,34 +77,11 @@ fun FoodSNAPSPager(
             SwipeDirection.UP -> {
                 if (showMemoriesReel) {
                     changeMemoriesReelVisibility(false)
-                } else {
-                    snapPagerState.animateScrollToPage(
-                        1,
-                        animationSpec = tween(
-                            easing = LinearEasing,
-                            durationMillis = ANIMATION_DURATION_SHORT
-                        )
-                    )
                 }
-
                 swipeableState.snapTo(SwipeDirection.NEUTRAL)
             }
 
-            SwipeDirection.DOWN -> {
-                if (!showMemoriesReel) {
-                    changeMemoriesReelVisibility(true)
-                } else {
-                    snapPagerState.animateScrollToPage(
-                        page = 0,
-                        animationSpec = tween(
-                            easing = LinearEasing,
-                            durationMillis = ANIMATION_DURATION_SHORT
-                        )
-                    )
-                }
-
-                swipeableState.snapTo(SwipeDirection.NEUTRAL)
-            }
+            SwipeDirection.DOWN -> {}
 
             SwipeDirection.NEUTRAL -> {}
         }
@@ -104,18 +101,17 @@ fun FoodSNAPSPager(
             state = snapPagerState,
             flingBehavior = snapPagerFling,
             beyondBoundsPageCount = 1,
-            modifier = Modifier,
+            modifier = Modifier.pullRefresh(inSnapView)
         ) {
             ReactionsOverlay(
                 modifier = Modifier
                     .then(
-                        if (it == 0) {
+                        if (it == 0 && showMemoriesReel) {
                             Modifier.swipeable(
                                 state = swipeableState,
                                 anchors = mapOf(
                                     0f to SwipeDirection.NEUTRAL,
-                                    -1f to SwipeDirection.UP,
-                                    1f to SwipeDirection.DOWN
+                                    -1f to SwipeDirection.UP
                                 ),
                                 thresholds = { _, _ -> FractionalThreshold(0.3f) },
                                 orientation = Orientation.Vertical,
@@ -126,7 +122,7 @@ fun FoodSNAPSPager(
                     ),
                 selectedReaction = selectedReaction,
                 clearSelectedReaction = clearSelectedReactions,
-                isReactionsClickable = { isClickable->
+                isReactionsClickable = { isClickable ->
                     isReactionsClickable = isClickable
                 }
             ) {

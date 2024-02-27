@@ -7,13 +7,16 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.snapsTopbar
 import android.kotlin.foodclub.domain.enums.Reactions
+import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.helpers.fadingEdge
 import android.kotlin.foodclub.viewModels.home.home.HomeEvents
 import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
 import android.kotlin.foodclub.views.home.home.foodSNAPS.FoodSNAPSView
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,11 +29,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerDefaults
+import androidx.compose.foundation.pager.PagerSnapDistance
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,6 +62,7 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -78,12 +87,24 @@ fun HomeView(
         showIngredientSheet = !showIngredientSheet
     }
     val pagerState = rememberPagerState(
-
         initialPage = 0,
         initialPageOffsetFraction = 0f,
         pageCount = { 2 }
     )
+
+    val flingBehavior = PagerDefaults.flingBehavior(
+        state = pagerState,
+        pagerSnapDistance = PagerSnapDistance.atMost(1),
+        lowVelocityAnimationSpec = tween(
+            easing = FastOutLinearInEasing,
+            durationMillis = 500
+        ),
+        highVelocityAnimationSpec = rememberSplineBasedDecay()
+    )
+
     val exoPlayer = remember(context) { viewModel.exoPlayer }
+
+    var initialPageFlag : Boolean = false;
 
     BackHandler {
 
@@ -123,12 +144,29 @@ fun HomeView(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(bottom = dimensionResource(id = R.dimen.dim_10))
+                    .fillMaxWidth()
             ) {
-                HeaderContent(
-                    modifier = modifier,
-                    coroutineScope = coroutineScope,
-                    pagerState = pagerState
-                )
+                Box(
+                    modifier = Modifier.fillMaxWidth()
+                ){
+                    HeaderContent(
+                        modifier = modifier.align(Alignment.Center),
+                        coroutineScope = coroutineScope,
+                        pagerState = pagerState
+                    )
+                    Icon(
+                        painter = painterResource(id = R.drawable.messaging_icon),
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier
+                            .padding(end = dimensionResource(id = R.dimen.dim_10))
+                            .size(dimensionResource(id = R.dimen.dim_24))
+                            .align(Alignment.CenterEnd)
+                            .clickable {
+                                navController.navigate(HomeOtherRoutes.MessagingView.route)
+                            }
+                    )
+                }
             }
         }
     }
@@ -147,20 +185,30 @@ fun HomeView(
         }
         HorizontalPager(
             state = pagerState,
+            flingBehavior = flingBehavior
         ) { currentPage ->
             when (currentPage) {
                 0 -> {
+                    initialPageFlag = true;
                     if (state.showMemories) {
                         events.toggleShowMemories(show = false)
                     }
                     if (state.showMemoriesReel){
                         events.toggleShowMemoriesReel(show = true)
                     }
-                    
-                    if (!exoPlayer.isPlaying){
-                        exoPlayer.playWhenReady
+
+                    if(initialPageFlag) {
+                        LaunchedEffect(key1 = Unit) {
+                            delay(500)
+
+                        }
                     }
-                    
+                    else{
+                        if (!exoPlayer.isPlaying) {
+                            exoPlayer.playWhenReady = true
+                        }
+                    }
+
                     VideoPager(
                         exoPlayer = exoPlayer,
                         videoList = state.videoList,
@@ -178,11 +226,11 @@ fun HomeView(
                     if (exoPlayer.isPlaying){
                         exoPlayer.pause()
                     }
-                    
+
                     FoodSNAPSView(
                         state = state,
                         onShowMemoriesChanged = { newShowMemoriesValue ->
-                           events.toggleShowMemories(show = newShowMemoriesValue)
+                            events.toggleShowMemories(show = newShowMemoriesValue)
                         },
                         toggleShowMemoriesReel = events::toggleShowMemoriesReel,
                         pagerState = pagerState,
@@ -234,51 +282,54 @@ fun HeaderContent(
     coroutineScope: CoroutineScope,
     pagerState: PagerState
 ) {
-    Text(
-        modifier = modifier
-            .clickable {
-                coroutineScope.launch {
-                    pagerState.animateScrollToPage(
-                        page = 0,
-                        animationSpec = tween(1, easing = LinearEasing)
-                    )
-                }
-            },
-        text = stringResource(id = R.string.feed),
-        fontFamily = Montserrat,
-        fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
-        style = TextStyle(color = if (pagerState.currentPage == 0) Color.White else Color.LightGray),
-        lineHeight = dimensionResource(id = R.dimen.fon_21_94).value.sp,
-        fontWeight = if (pagerState.currentPage == 0) FontWeight.Bold else FontWeight.Medium
-    )
-    Text(
-        modifier = Modifier
-            .padding(dimensionResource(id = R.dimen.dim_8))
-            .alpha(0.7f),
-        text = stringResource(id = R.string.pipe_symbol),
-        fontFamily = Montserrat,
-        fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
-        style = TextStyle(color = Color.LightGray),
-        lineHeight = dimensionResource(id = R.dimen.fon_21_94).value.sp
-    )
-    Text(
-        modifier = modifier
-            .clickable {
-                coroutineScope.launch {
-                    pagerState.animateScrollToPage(
-                        page = 1,
-                        animationSpec = tween(1, easing = LinearEasing)
-                    )
-
-                }
-
-
-            },
-        text = stringResource(id = R.string.snaps),
-        fontFamily = Montserrat,
-        fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
-        style = TextStyle(color = if (pagerState.currentPage == 1) Color.White else Color.LightGray),
-        lineHeight = dimensionResource(id = R.dimen.fon_21_94).value.sp,
-        fontWeight = if (pagerState.currentPage == 1) FontWeight.Bold else FontWeight.Medium
-    )
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            modifier = modifier
+                .clickable {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(
+                            page = 0,
+                            animationSpec = tween(1, easing = LinearEasing)
+                        )
+                    }
+                },
+            text = stringResource(id = R.string.feed),
+            fontFamily = Montserrat,
+            fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
+            style = TextStyle(color = if (pagerState.currentPage == 0) Color.White else Color.LightGray),
+            lineHeight = dimensionResource(id = R.dimen.fon_21_94).value.sp,
+            fontWeight = if (pagerState.currentPage == 0) FontWeight.Bold else FontWeight.Medium
+        )
+        Text(
+            modifier = Modifier
+                .padding(dimensionResource(id = R.dimen.dim_8))
+                .alpha(0.7f),
+            text = stringResource(id = R.string.pipe_symbol),
+            fontFamily = Montserrat,
+            fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
+            style = TextStyle(color = Color.LightGray),
+            lineHeight = dimensionResource(id = R.dimen.fon_21_94).value.sp
+        )
+        Text(
+            modifier = modifier
+                .clickable {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(
+                            page = 1,
+                            animationSpec = tween(1, easing = LinearEasing)
+                        )
+                    }
+                },
+            text = stringResource(id = R.string.snaps),
+            fontFamily = Montserrat,
+            fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
+            style = TextStyle(color = if (pagerState.currentPage == 1) Color.White else Color.LightGray),
+            lineHeight = dimensionResource(id = R.dimen.fon_21_94).value.sp,
+            fontWeight = if (pagerState.currentPage == 1) FontWeight.Bold else FontWeight.Medium
+        )
+    }
 }
+
