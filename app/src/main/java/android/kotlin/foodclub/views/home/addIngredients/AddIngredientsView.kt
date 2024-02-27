@@ -161,12 +161,13 @@ fun AddIngredientsView(state: DiscoverState, events: DiscoverEvents, navControll
                 EditIngredientBottomModal(
                     ingredient = state.ingredientToEdit!!,
                     onDismissRequest = { isSheetOpen = it },
-                    onEdit = {
-                        events.updateIngredient(it)
-                        if (it !in state.userIngredients)
+                    onEdit = {item ->
+                        events.updateIngredient(item)
+                        if (state.userIngredients.filter { it.id == item.id }.isEmpty())
                         {
-                            events.addToUserIngredients(it)
+                            events.addToUserIngredients(item)
                         }
+
                     }
                 )
             }
@@ -187,7 +188,8 @@ fun AddIngredientsView(state: DiscoverState, events: DiscoverEvents, navControll
                             if (date != null) {
                                 selectedDate = date
                                 state.ingredientToEdit!!.expirationDate = selectedDate
-                                if (state.ingredientToEdit !in state.userIngredients)
+                                if (state.userIngredients.filter { it.id == state.ingredientToEdit.id }
+                                        .isEmpty())
                                 {
                                     events.addToUserIngredients(state.ingredientToEdit)
                                 }
@@ -248,9 +250,9 @@ fun AddIngredientsView(state: DiscoverState, events: DiscoverEvents, navControll
                             //events.updateIngredient(it)
                         },
                         onDateClicked = {
-                            events.updateIngredient(it)
+                            //events.updateIngredient(it)
                             isDatePickerVisible = true
-                            events.updateIngredient(it)
+                            //events.updateIngredient(it)
                         },
                         onIngredientAdd = {},
                         onDeleteIngredient = {
@@ -272,7 +274,7 @@ fun AddIngredientsView(state: DiscoverState, events: DiscoverEvents, navControll
                         },
                         onDateClicked = {
                             isDatePickerVisible = true
-                            events.updateIngredient(it)
+                            //events.updateIngredient(it)
                         },
                         onIngredientAdd = {
                             events.addToUserIngredients(it)

@@ -154,6 +154,8 @@ class DiscoverViewModel @Inject constructor(
                 is Resource.Error -> {
                     // TODO deal with error
                 }
+
+                else -> {}
             }
         }
     }
@@ -176,6 +178,8 @@ class DiscoverViewModel @Inject constructor(
                 is Resource.Error -> {
                     // TODO deal with error
                 }
+
+                else -> {}
             }
         }
 
@@ -200,6 +204,8 @@ class DiscoverViewModel @Inject constructor(
                 is Resource.Error -> {
                     // TODO deal with error
                 }
+
+                else -> {}
             }
         }
 
@@ -225,6 +231,8 @@ class DiscoverViewModel @Inject constructor(
                 is Resource.Error -> {
                     // TODO deal with error
                 }
+
+                else -> {}
             }
         }
     }
@@ -308,6 +316,8 @@ class DiscoverViewModel @Inject constructor(
             is Resource.Error -> {
                 _state.update { it.copy(error = resource.message!!) }
             }
+
+            else -> {}
         }
     }
 

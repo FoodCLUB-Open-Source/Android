@@ -1043,7 +1043,7 @@ fun IngredientsListColumn(
                     dismissContent = {
                         SingleSearchIngredientItem(
                             modifier = Modifier,
-                            item = item,
+                            item = item, //Item is different when editing need to make sure to check based on ID
                             userIngredientsList = userIngredientsList,
                             onEditQuantityClicked = {
                                 events.updateIngredient(it)
@@ -1054,7 +1054,7 @@ fun IngredientsListColumn(
                                 onDateClicked(item)
                             },
                             onAddItemClicked = {
-                                events.updateIngredient(it)
+                                //events.updateIngredient(it)
                                 onIngredientAdd(item)
                             }
                         )
@@ -1086,7 +1086,7 @@ fun SingleSearchIngredientItem(
     val unit = stringResource(id = R.string.gram_unit) // TODO make this dynamic
     val quantity = itemQuantity(item, unit)
     val expirationDate = itemExpirationDate(item)
-    val isItemAdded = item in userIngredientsList
+    val isItemAdded = userIngredientsList.filter { item.id == it.id }.size == 1
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -1180,6 +1180,7 @@ fun SingleSearchIngredientItem(
                     )
                 }
 
+                //Item may have a different ID when it is being edited so it isn't in the list will have to check that
                 if (!isItemAdded){
                     Box(modifier = Modifier.weight(1f, fill = false))
                     Spacer(modifier = Modifier.weight(1f, fill = true))
