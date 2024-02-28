@@ -48,6 +48,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
@@ -178,6 +179,11 @@ fun DiscoverView(
         initialPage = initialPage,
         initialPageOffsetFraction = 0f,
         pageCount = { 4 }
+    )
+    val pagerState2 = rememberPagerState (
+        initialPage = 0,
+        initialPageOffsetFraction = 0f,
+        pageCount = {2}
     )
 
     val fling = PagerDefaults.flingBehavior(
@@ -314,6 +320,10 @@ fun DiscoverView(
         item {
             if (mainTabIndex == 0) {
                 homePosts = state.postList
+                
+                VerticalPager(state = pagerState2) {
+
+                }
 
                 //Ingredients list causes excess space
                 if (isInternetConnected) {
@@ -750,7 +760,7 @@ fun SubSearchBar(
     ) {
         TextField(
             modifier = Modifier
-                .fillMaxWidth( if (enableCamera && enableMike) 0.68f else 1.0f)
+                .fillMaxWidth(if (enableCamera && enableMike) 0.68f else 1.0f)
                 .clip(
                     RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                 ),
