@@ -1,7 +1,10 @@
 package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.Pink40
+import android.kotlin.foodclub.config.ui.darkGrey
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.config.ui.transparentWhite
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -61,6 +64,7 @@ fun AnimatedProgressBar(
     LinearProgressIndicator(
         progress = animatedProgress.value,
         modifier = modifier,
-        color = foodClubGreen
+        color = foodClubGreen,
+        trackColor = transparentWhite
     )
 }
