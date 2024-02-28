@@ -28,7 +28,7 @@ class TrimmerViewModel @Inject constructor(
     private val videoMerger: VideoMerger
 ): ViewModel(), TrimmerEvents {
     private val videoUris = savedStateHandle.getStateFlow("videoUris", emptyMap<Int, Uri>())
-    private var onVideoCreate = {}
+    private var onVideoCreate: (String?) -> Unit = {}
     val TAG = TrimmerViewModel::class.java.simpleName
     private val _state = MutableStateFlow(TrimmerState.default(player))
     val state: StateFlow<TrimmerState>
@@ -49,7 +49,7 @@ class TrimmerViewModel @Inject constructor(
         addVideoUri(Uri.parse("https://kretu.sts3.pl/test/IMG_6107.MP4"))
     }
 
-    fun setOnVideoCreateFunction(onVideoCreate: () -> Unit = {}) {
+    fun setOnVideoCreateFunction(onVideoCreate: (String?) -> Unit = {}) {
         this.onVideoCreate = onVideoCreate
     }
 
@@ -81,17 +81,17 @@ class TrimmerViewModel @Inject constructor(
             }
         } catch (e: Exception) {
             // Handle exceptions related to video saving
-            Log.e(TAG, "Exception during video saving", e)
+            Log.e(TAG, "Exception during clip trimming", e)
             _state.update { it.copy(isLoading = false) }
             return
         }
     }
 
     private fun onVideoSaveListener() {
+        if (_state.value.videoObjects.any { it.savedFilePath == null }) return
+        var url: String? = null
         try {
-            if (_state.value.videoObjects.any { it.savedFilePath == null }) return
-            val url = videoMerger.mergeVideos(state.value.videoObjects.map { it.savedFilePath!! }
-            )
+            url = videoMerger.mergeVideos(state.value.videoObjects.map { it.savedFilePath!! })
         } catch (e: Exception) {
             // Handle exceptions related to video merging
             Log.e(TAG, "Exception during video merging", e)
@@ -99,7 +99,7 @@ class TrimmerViewModel @Inject constructor(
             // Ensure that isLoading is set to false regardless of success or failure
             _state.update { it.copy(isLoading = false) }
         }
-        onVideoCreate()
+        onVideoCreate(url)
     }
 
     override fun navigate(time: Long) {

@@ -75,7 +75,6 @@ import kotlinx.coroutines.flow.map
  *
  * @param ingredient The Ingredient object containing initial values.
  * @param units List of available QuantityUnit options.
- * @param types List of types to choose from.
  * @param onQuantityUnitSelected Callback when quantity, unit, or type is selected.
  * @param onIngredientUpdated Callback when the ingredient is updated.
  */
@@ -88,15 +87,10 @@ import kotlinx.coroutines.flow.map
 fun QuantityPicker(
     ingredient: Ingredient,
     units: List<QuantityUnit>,
-    types: List<String>,
-    onQuantityUnitSelected: (quantity: Int, unit: QuantityUnit, type: String) -> Unit,
-    onIngredientUpdated: (Ingredient) -> Unit,
-    startIndex: Int = 7,
-    listScrollCount: Int = Integer.MAX_VALUE,
+    onQuantityUnitSelected: (quantity: Int, unit: QuantityUnit) -> Unit,
+    onIngredientUpdated: (Ingredient) -> Unit
 ) {
     var quantity by remember { mutableStateOf(if(ingredient.quantity== 0)"" else ingredient.quantity.toString()) }
-    var selectedUnit by remember { mutableStateOf(ingredient.unit) }
-    var selectedType by remember { mutableStateOf(types[0]) }
 
     var isError by remember {
         mutableStateOf(false)
@@ -105,9 +99,13 @@ fun QuantityPicker(
 
     val lightGrayAlpha = 0.2f
 
-    var selectedTypeState by remember { mutableStateOf(types[0]) }
+    var selectedUnit by remember { mutableStateOf(units[0]) }
+    val lazyListContents = units.map { it.longName }.toMutableList().apply {
+        add(0, "")
+        add("")
+    }
 
-    val typeListState = rememberLazyListState(initialFirstVisibleItemIndex = startIndex)
+    val typeListState = rememberLazyListState()
 
     val typeListFling = rememberSnapFlingBehavior(lazyListState = typeListState)
 
@@ -117,21 +115,17 @@ fun QuantityPicker(
 
     LaunchedEffect(typeListState) {
         snapshotFlow { typeListState.firstVisibleItemIndex }
-            .map { index ->
-                val validIndex = index % types.size
-                types.getOrNull(validIndex)
-            }
+            .map { index -> units[index] }
             .filterNotNull()
             .distinctUntilChanged()
             .collect {
                 Log.i(TAG, "SELECTED type $it")
-                selectedTypeState = it
+                selectedUnit = it
             }
     }
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
+            .fillMaxSize()
             .padding(dimensionResource(id = R.dimen.dim_6))
     ) {
 
@@ -173,8 +167,8 @@ fun QuantityPicker(
                 }
             },
             isError = isError,
-            supportingText = {
-                if (isError) {
+            supportingText = if (!isError) null else {
+                {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         text = stringResource(id = R.string.quantity_overflow_error_message),
@@ -188,9 +182,7 @@ fun QuantityPicker(
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
-                    if (keyboardController != null) {
-                        keyboardController.hide()
-                    }
+                    keyboardController?.hide()
                 }
             ),
             placeholder = {
@@ -222,8 +214,7 @@ fun QuantityPicker(
 
         onQuantityUnitSelected(
             if (quantity == "0" || quantity == "") 1 else quantity.toInt(),
-            selectedUnit,
-            selectedType
+            selectedUnit
         )
 
         LazyColumn(
@@ -235,14 +226,11 @@ fun QuantityPicker(
                 .height(itemHeightDp * 3)
 
         ) {
-            items(listScrollCount) { index ->
-                val validIndex = index % types.size
-                val currentItemIndex = (validIndex - 1 + types.size) % types.size
-                val currentItem = types[currentItemIndex]
-                val isSelected = currentItem == selectedTypeState
+            items(lazyListContents.size) { index ->
+                val currentItem = lazyListContents[index]
+                val isSelected = currentItem == selectedUnit.longName
 
                 PickerRow(
-
                     currentItem = currentItem,
                     isSelected = isSelected,
                     itemHeightPixels = itemHeightPixels,
@@ -265,13 +253,9 @@ fun QuantityPicker(
 
                 val updatedQuantity: Int =
                     if (quantity == "0" || quantity == "") 1 else quantity.toInt()
-                val updatedIngredient = Ingredient(
-                    quantity = updatedQuantity,
-                    unit = selectedUnit,
-                    type = selectedType,
-                    id = ingredient.id
-                )
-                onIngredientUpdated(updatedIngredient)
+                ingredient.quantity = updatedQuantity
+                ingredient.unit = selectedUnit
+                onIngredientUpdated(ingredient)
             }
         ) {
             Text(
@@ -337,8 +321,6 @@ fun EditIngredientBottomModal(
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
-    var updatedIngredient by remember { mutableStateOf(ingredient) }
-    val types = stringArrayResource(id = R.array.quantity_list).toList()
 
     ModalBottomSheet(
         sheetState = sheetState,
@@ -365,13 +347,12 @@ fun EditIngredientBottomModal(
             QuantityPicker(
                 ingredient,
                 units = units,
-                types = types,
-                onQuantityUnitSelected = { quantity, unit, type ->
+                onQuantityUnitSelected = { quantity, unit ->
                     ingredient.quantity = quantity
                 },
                 onIngredientUpdated = {
-                    onEdit(updatedIngredient)
-                    onDismissRequest(false)
+                    onEdit(it)
+                    onDismissRequest(true)
                 },
 
                 )

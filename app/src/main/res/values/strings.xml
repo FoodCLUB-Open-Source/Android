@@ -316,6 +316,7 @@
     <string name="app_updates">App updates</string>
     <string name="payment_request">Payment request</string>
     - Search
+    <string name="clear_all">Clear All</string>
     <string name="recent_searches">Recent Searches</string>
     <string-array name="dummy_search_history">
         <item>Pizza</item>
@@ -396,7 +397,7 @@
     <string name="search_my_ingredients">Search my ingredients</string>
     <string name="name">Name</string>
     <string name="quantity">Quantity</string>
-    <string name="quantity_picker_discription">Type your custom units or choose from the wheel picker</string>
+    <string name="quantity_picker_discription">Type quantity and choose unit from the wheel picker</string>
     <string name="unit">Unit</string>
     <string name="expiration_date">Expiration Date</string>
     <string name="remove">Remove</string>
@@ -457,13 +458,12 @@
     <string name="camera">Camera</string>
     <string name="date_format">yyyy-MM-dd-HH-mm-ss-SSS</string>
      - Create a Recipe
-    <string name="recipe_title">Recipe title</string>
     <string name="ingredient_offset_transitions">Ingredient Offset Transitions</string>
     <string name="share_recipe">Share Recipe</string>
     <string name="categories">Categories</string>
-    <string name="vegan">Vegan</string>
+    <string name="categories_search_placeholder">Search and add your categories</string>
     <string name="serving_size_colon">Serving Size: %d</string>
-    <string name="add_my_recipes_name">Add my recipes name</string>
+    <string name="add_recipe_name">Add recipe\'s name</string>
     <string name="my_new_recipe">My New Recipe</string>
      - Delete Recipe
     <string name="delete_recipe">Delete Recipe</string>
