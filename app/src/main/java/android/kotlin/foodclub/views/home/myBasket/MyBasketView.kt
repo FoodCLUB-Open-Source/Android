@@ -32,12 +32,9 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -49,10 +46,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -73,15 +70,8 @@ fun MyBasketView(
     val productsList = state.productsList
     val selectedProductsIds = state.selectedProductsList
     var deleteSelected by remember { mutableStateOf(false) }
-    //val selectedIngredients = viewModel.selectedIngredients.collectAsState()
 
     val triggerBottomSheetModal: () -> Unit = {
-        // GETTING SELECTED INGREDIENT FROM HOME VIEW MODEL
-//        val selectedIngredients = viewModel.selectedIngredients.value
-//
-//        // PASSING SELECTED INGREDIENT TO MY BASKET VIEW
-//        viewModel.addIngredientsToBasket(selectedIngredients)
-//        //viewModel.updateSelectedIngredients(emptyList())
 
         showSheet = !showSheet
     }
@@ -119,24 +109,25 @@ fun MyBasketView(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                IconButton(
-                    onClick = { navController.navigateUp() },
-                    modifier = Modifier
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.back_icon),
-                        contentDescription = "Back",
-                        tint = Color.Black
-                    )
-                }
+                // this below commented code block will be used in the future
+//                IconButton(
+//                    onClick = { navController.navigateUp() },
+//                    modifier = Modifier
+//                ) {
+//                    Icon(
+//                        painter = painterResource(id = R.drawable.back_icon),
+//                        contentDescription = "Back",
+//                        tint = Color.Black
+//                    )
+//                }
                 Text(
-                    text = stringResource(id = R.string.my_basket),
-                    fontSize = dimensionResource(id = R.dimen.fon_25).value.sp,
+                    text = stringResource(id = R.string.shopping_list),
+                    fontSize = dimensionResource(id = R.dimen.fon_28).value.sp,
                     fontFamily = Montserrat,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight(600),
                     color = Color.Black,
-                    style = TextStyle(letterSpacing = (-1).sp),
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    lineHeight = dimensionResource(id = R.dimen.dim_48).value.sp
                 )
                 Button(
                     shape = RectangleShape,
@@ -166,41 +157,44 @@ fun MyBasketView(
                     )
                 }
             }
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
                         end = dimensionResource(id = R.dimen.dim_20),
                         start = dimensionResource(id = R.dimen.dim_20),
-                        bottom = dimensionResource(id = R.dimen.dim_5)
+                        bottom = dimensionResource(id = R.dimen.dim_10)
                     )
                     .height(dimensionResource(id = R.dimen.dim_80)),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start
             ) {
-                Spacer(modifier = Modifier.weight(1f))
-
                 Button(
                     shape = RectangleShape,
                     modifier = Modifier
                         .border(
-                            dimensionResource(id = R.dimen.dim_1),
-                            Color(126, 198, 11),
-                            RoundedCornerShape(dimensionResource(id = R.dimen.dim_20))
+                            width = dimensionResource(id = R.dimen.dim_1),
+                            color = colorResource(id = R.color.shopping_list_add_items_green),
+                            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16))
                         )
-                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
-                        .width(dimensionResource(id = R.dimen.dim_125)),
+                        .clip(
+                            RoundedCornerShape(dimensionResource(id = R.dimen.dim_16))
+                        ),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.White,
-                        contentColor = Color(126, 198, 11)
+                        colorResource(id = R.color.shopping_list_add_items_green),
                     ),
                     contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_15)),
                     onClick = { triggerBottomSheetModal() }
                 ) {
                     Text(
                         text = stringResource(id = R.string.add_items_plus),
-                        fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
+                        fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                         fontFamily = Montserrat,
-                        color = Color(126, 198, 11),
+                        fontWeight = FontWeight(500),
+                        lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
+                        color  = colorResource(id = R.color.shopping_list_add_items_green)
                     )
                 }
             }
