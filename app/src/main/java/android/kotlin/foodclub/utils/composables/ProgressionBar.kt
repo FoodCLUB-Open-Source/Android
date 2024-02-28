@@ -1,8 +1,6 @@
 package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.config.ui.Pink40
-import android.kotlin.foodclub.config.ui.darkGrey
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.config.ui.transparentWhite
 import androidx.compose.animation.core.Animatable
