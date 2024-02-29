@@ -2,6 +2,7 @@ package android.kotlin.foodclub.localdatasource.room.dao
 
 import android.kotlin.foodclub.localdatasource.room.entity.OfflineUserPostsModel
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -23,4 +24,6 @@ interface UserProfilePostsDao {
     @Query("SELECT * FROM user_posts")
     fun getAllProfileVideosData(): Flow<List<OfflineUserPostsModel>>
 
+    @Query("DELETE FROM user_posts")
+    fun clearAll()
 }

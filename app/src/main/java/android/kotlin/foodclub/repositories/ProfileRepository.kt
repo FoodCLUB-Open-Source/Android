@@ -26,6 +26,7 @@ import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.SharedVideoMa
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserLocalBookmarksMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserLocalPostsMapper
 import android.kotlin.foodclub.utils.helpers.Resource
+import androidx.paging.Pager
 import kotlinx.coroutines.flow.firstOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody

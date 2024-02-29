@@ -5,7 +5,8 @@ import androidx.room.PrimaryKey
 
 @Entity("user_bookmarks")
 data class OfflineUserBookmarksModel(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
     val videoId: Long,
     val title: String? = null,
     val description: String?,

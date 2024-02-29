@@ -12,6 +12,8 @@ import android.kotlin.foodclub.localdatasource.room.entity.OfflineUserPostsModel
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(
     entities = [
@@ -20,8 +22,7 @@ import androidx.room.TypeConverters
         OfflineProfileModel::class,
         OfflineUserBookmarksModel::class
     ],
-    version = 1,
-    exportSchema = false
+    version = 2
 )
 @TypeConverters(Converters::class)
 abstract class FoodCLUBDatabase : RoomDatabase() {
@@ -29,4 +30,55 @@ abstract class FoodCLUBDatabase : RoomDatabase() {
     abstract fun getUserProfilePostsDao(): UserProfilePostsDao
     abstract fun getProfileDao(): ProfileDataDao
     abstract fun getUserProfileBookmarksDao(): UserProfileBookmarksDao
+
+    companion object {
+        val migration1To2 = object: Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("CREATE TABLE `new_user_posts`(" +
+                        "`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                        "`videoId` INTEGER NOT NULL, " +
+                        "`title` TEXT, " +
+                        "`description` TEXT, " +
+                        "`createdAt` TEXT, " +
+                        "`videoLink` TEXT, " +
+                        "`thumbnailLink` TEXT, " +
+                        "`totalLikes` INTEGER, " +
+                        "`totalViews` INTEGER)")
+
+                db.execSQL("INSERT INTO new_user_posts" +
+                        "(videoId, title, description, createdAt, videoLink, " +
+                        "thumbnailLink, totalLikes, totalViews) " +
+                        "SELECT videoId, title, description, createdAt, videoLink, " +
+                        "thumbnailLink, totalLikes, totalViews FROM user_posts")
+
+                db.execSQL("DROP TABLE user_posts")
+
+                db.execSQL("ALTER TABLE new_user_posts RENAME TO user_posts")
+
+
+                db.execSQL("CREATE TABLE `new_user_bookmarks`(" +
+                        "`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                        "`videoId` INTEGER NOT NULL, " +
+                        "`title` TEXT, " +
+                        "`description` TEXT, " +
+                        "`createdAt` TEXT, " +
+                        "`videoLink` TEXT, " +
+                        "`thumbnailLink` TEXT, " +
+                        "`totalLikes` INTEGER, " +
+                        "`totalViews` INTEGER)")
+
+                db.execSQL("INSERT INTO new_user_bookmarks" +
+                        "(videoId, title, description, createdAt, videoLink, " +
+                        "thumbnailLink, totalLikes, totalViews) " +
+                        "SELECT videoId, title, description, createdAt, videoLink, " +
+                        "thumbnailLink, totalLikes, totalViews FROM user_posts")
+
+                db.execSQL("DROP TABLE user_bookmarks")
+
+                db.execSQL("ALTER TABLE new_user_bookmarks RENAME TO user_bookmarks")
+            }
+
+        }
+    }
+
 }
