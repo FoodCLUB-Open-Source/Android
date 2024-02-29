@@ -1,9 +1,9 @@
 package android.kotlin.foodclub.viewModels.home.createRecipe
 
+import android.kotlin.foodclub.domain.enums.Category
 import android.kotlin.foodclub.domain.enums.QuantityUnit
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.ProductsData
-import android.kotlin.foodclub.domain.models.recipes.Category
 import android.kotlin.foodclub.domain.models.recipes.Recipe
 import android.kotlin.foodclub.repositories.RecipeRepository
 import android.kotlin.foodclub.repositories.ProductRepository
@@ -30,6 +30,8 @@ class CreateRecipeViewModel @Inject constructor(
     companion object {
         private val TAG = CreateRecipeViewModel::class.java.simpleName
     }
+
+    private var videoPath: String = ""
 
     private val _state = MutableStateFlow(CreateRecipeState.default())
     val state: StateFlow<CreateRecipeState>
@@ -78,23 +80,16 @@ class CreateRecipeViewModel @Inject constructor(
         _state.update {
             it.copy(
                 categories = listOf(
-                    Category(1, "Meat"),
-                    Category(2, "Keto"),
-                    Category(3, "High-protein"),
-                    Category(4, "Vegan"),
-                    Category(5, "Low-fat"),
-                    Category(6, "Fat-reduction"),
-                    Category(7, "Italian"),
-                    Category(8, "Chinese"),
-                    Category(9, "Vegetarian")
-                ),
-                chosenCategories = listOf(
-                    Category(1, "Meat"),
-                    Category(6, "Fat-reduction"),
-                    Category(7, "Italian")
+                    Category.MEAT,
+                    Category.FAT_REDUCTION,
+                    Category.ITALIAN
                 )
             )
         }
+    }
+
+    fun setVideoPath(path: String) {
+        videoPath = path
     }
 
      override fun fetchProductsDatabase(searchText: String) {
@@ -140,16 +135,24 @@ class CreateRecipeViewModel @Inject constructor(
         _state.update { it.copy(ingredients = newIngredients) }
     }
 
+    override fun clearIngredients() {
+        _state.update { it.copy(ingredients = listOf()) }
+    }
+
     override fun unselectCategory(category: Category) {
-        val newCategories = state.value.chosenCategories.toMutableList()
+        val newCategories = state.value.categories.toMutableList()
         newCategories.remove(category)
-        _state.update { it.copy(chosenCategories = newCategories)}
+        _state.update { it.copy(categories = newCategories)}
     }
 
     override fun selectCategory(category: Category) {
-        val newCategories = state.value.chosenCategories.toMutableList()
+        val newCategories = state.value.categories.toMutableList()
         newCategories.add(category)
-        _state.update { it.copy(chosenCategories = newCategories)}
+        _state.update { it.copy(categories = newCategories)}
+    }
+
+    override fun clearCategories() {
+        _state.update { it.copy(categories = listOf())}
     }
 
     override fun fetchMoreProducts(searchText: String, onLoadCompleted: () -> Unit) {

@@ -81,8 +81,7 @@ import kotlinx.coroutines.launch
  *
  * @param onDismiss Executes when the user clicks outside of the bottom sheet or when user clicks
  * back button
- * @param productsDataFlow [ProductsData] StateFlow which contains list of the products currently
- * loaded using the API
+ * @param productsData Contains list of the products currently loaded using the API
  * @param loadMoreObjects Optional function which executes loading further list of products based on
  * text put in "search" field and passes callback function which should be called when the list is
  * loaded
@@ -161,13 +160,14 @@ fun IngredientsBottomSheet(
 
                 DrawerContentState.IngredientAmountSelection -> {
                     if (editedIngredient != null) {
-                        IngredientSelectedView(
-                            screenHeight = screenHeight,
-                            selectedIngredient = editedIngredient!!,
-                            onDismiss = {
-                                contentState.value = DrawerContentState.IngredientListContent
+                        EditIngredientBottomModal(
+                            ingredient = editedIngredient!!,
+                            onDismissRequest = {
+                                if(!it) {
+                                    contentState.value = DrawerContentState.IngredientListContent
+                                }
                             },
-                            onSave = {
+                            onEdit = {
                                 onSave(it)
                                 coroutineScope.launch {
                                     bottomSheetState.hide()
@@ -175,6 +175,20 @@ fun IngredientsBottomSheet(
                                 }
                             }
                         )
+//                        IngredientSelectedView(
+//                            screenHeight = screenHeight,
+//                            selectedIngredient = editedIngredient!!,
+//                            onDismiss = {
+//                                contentState.value = DrawerContentState.IngredientListContent
+//                            },
+//                            onSave = {
+//                                onSave(it)
+//                                coroutineScope.launch {
+//                                    bottomSheetState.hide()
+//                                    onDismiss()
+//                                }
+//                            }
+//                        )
                     }
 
                 }
@@ -309,7 +323,6 @@ private fun IngredientListView(
     loadMoreObjects: (searchText: String, onLoadCompleted: () -> Unit) -> Unit,
     onIngredientSelect: (ingredient: Ingredient, searchText: String) -> Unit
 ) {
-    //val productsData = productsDataFlow.collectAsState()
     var searchText by remember { mutableStateOf(savedSearchText) }
     val lazyListState = rememberLazyListState()
 

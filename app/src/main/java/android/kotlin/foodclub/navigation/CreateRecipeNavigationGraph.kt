@@ -9,7 +9,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
 
 fun NavGraphBuilder.createRecipeNavigationGraph(
@@ -27,15 +29,27 @@ fun NavGraphBuilder.createRecipeNavigationGraph(
             val viewModel: TrimmerViewModel = hiltViewModel()
             val state = viewModel.state.collectAsState()
             viewModel.setOnVideoCreateFunction {
-                navController.navigate(CreateRecipeScreen.PostDetails.route)
+                navController.navigate(CreateRecipeScreen.PostDetails.route + "?videoPath=$it")
             }
             setBottomBarVisibility(false)
 
             TrimmerView(state = state.value, events = viewModel)
         }
-        composable(CreateRecipeScreen.PostDetails.route) { entry ->
+        composable(
+            route = CreateRecipeScreen.PostDetails.route + "?videoPath={videoPath}",
+            arguments = listOf(navArgument("videoPath") {
+                nullable = true
+                type = NavType.StringType
+            })
+        ) { entry ->
+            val path = entry.arguments?.getString("videoPath")
+            if (path == null) {
+                navController.popBackStack()
+                return@composable
+            }
             val viewModel = entry.sharedHiltViewModel<CreateRecipeViewModel>(navController)
             val state = viewModel.state.collectAsState()
+            viewModel.setVideoPath(path)
 
             setBottomBarVisibility(false)
 

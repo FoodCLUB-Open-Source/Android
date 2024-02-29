@@ -7,7 +7,6 @@ import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
-import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.viewModels.home.myBasket.MyBasketEvents
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.shrinkOut
@@ -69,17 +68,11 @@ fun MyBasketView(
 ) {
     var showSheet by remember { mutableStateOf(false) }
     val productsList = state.productsList
-    val selectedProductsIds = state.selectedProductsList
     var deleteSelected by remember { mutableStateOf(false) }
-
-    val triggerBottomSheetModal: () -> Unit = {
-
-        showSheet = !showSheet
-    }
 
     if (showSheet) {
         IngredientsBottomSheet(
-            onDismiss = triggerBottomSheetModal,
+            onDismiss = { showSheet = !showSheet },
             productsData = state.productsDatabase,
             loadMoreObjects = { searchText, onLoadCompleted ->
                 events.fetchMoreProducts(searchText, onLoadCompleted)
@@ -187,7 +180,7 @@ fun MyBasketView(
                         colorResource(id = R.color.shopping_list_add_items_green),
                     ),
                     contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_15)),
-                    onClick = { triggerBottomSheetModal() }
+                    onClick = { showSheet = !showSheet }
                 ) {
                     Text(
                         text = stringResource(id = R.string.add_items_plus),
@@ -203,7 +196,7 @@ fun MyBasketView(
                 modifier = Modifier
                     .padding(
                         end = dimensionResource(id = R.dimen.dim_20),
-                        start = dimensionResource(id = R.dimen.dim_20),
+                        start = dimensionResource(id = R.dimen.dim_20)
                     )
             )
             {
@@ -213,7 +206,8 @@ fun MyBasketView(
                 ) { _, ingredient ->
                     BasketIngredient(
                         ingredient = ingredient,
-                        isShown = !state.selectedProductsList.contains(ingredient.id) || !deleteSelected,
+                        isShown = !state.selectedProductsList.contains(ingredient.id)
+                                || !deleteSelected,
                         onSelectionChange = { bool ->
                             if (bool) events.selectIngredient(ingredient.id)
                             else events.unselectIngredient(ingredient.id)
@@ -339,7 +333,7 @@ fun BasketIngredient(
                                     }
                             )
                             Text(
-                                quantity.toString() + ValueParser.quantityUnitToString(unit),
+                                quantity.toString() + unit.short,
                                 color = Color.Black,
                                 fontFamily = Montserrat,
                                 fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
