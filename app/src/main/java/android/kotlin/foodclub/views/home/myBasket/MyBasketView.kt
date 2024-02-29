@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -92,7 +93,7 @@ fun MyBasketView(
         modifier = Modifier
             .background(color = Color.White)
             .fillMaxSize()
-            .padding(top = 60.dp),
+            .padding(top = dimensionResource(id = R.dimen.dim_60)),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(
@@ -124,7 +125,7 @@ fun MyBasketView(
                     text = stringResource(id = R.string.shopping_list),
                     fontSize = dimensionResource(id = R.dimen.fon_28).value.sp,
                     fontFamily = Montserrat,
-                    fontWeight = FontWeight(600),
+                    fontWeight = FontWeight(integerResource(id = R.integer.int_600)),
                     color = Color.Black,
                     modifier = Modifier.weight(1f),
                     lineHeight = dimensionResource(id = R.dimen.dim_48).value.sp
@@ -192,7 +193,7 @@ fun MyBasketView(
                         text = stringResource(id = R.string.add_items_plus),
                         fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                         fontFamily = Montserrat,
-                        fontWeight = FontWeight(500),
+                        fontWeight = FontWeight(integerResource(id = R.integer.int_500)),
                         lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
                         color  = colorResource(id = R.color.shopping_list_add_items_green)
                     )
@@ -265,7 +266,7 @@ fun BasketIngredient(
                     .height(dimensionResource(id = R.dimen.dim_140))
                     .border(
                         dimensionResource(id = R.dimen.dim_1),
-                        Color(0xFFE8E8E8),
+                        colorResource(id = R.color.shopping_list_ingredient_whitish_color),
                         RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                     )
                     .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
@@ -288,7 +289,7 @@ fun BasketIngredient(
                         .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_30)))
                         .background(
                             if (isSelected) foodClubGreen
-                            else Color(0xFFECECEC)
+                            else colorResource(id = R.color.shopping_list_whitish_color)
                         )
                         .clickable {
                             isSelected = !isSelected
@@ -319,7 +320,7 @@ fun BasketIngredient(
                             fontWeight = FontWeight.Normal,
                             fontFamily = Montserrat,
                             overflow = TextOverflow.Ellipsis,
-                            maxLines = 3
+                            maxLines = integerResource(id = R.integer.int_3)
                         )
                     }
                     Box(modifier = Modifier.align(Alignment.BottomEnd)) {
@@ -343,7 +344,7 @@ fun BasketIngredient(
                                 fontFamily = Montserrat,
                                 fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
                                 overflow = TextOverflow.Ellipsis,
-                                maxLines = 1
+                                maxLines = integerResource(id = R.integer.int_1)
                             )
                             Image(
                                 painter = painterResource(id = R.drawable.baseline_arrow_right_24),

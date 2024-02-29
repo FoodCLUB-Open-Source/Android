@@ -30,4 +30,6 @@
     <color name="chat_view_received_message_box_container_color">#1d1d1d</color>
     <color name="chat_view_received_message_text_color">#cacaca</color>
     <color name="shopping_list_add_items_green">#7EC60B</color>
+    <color name="shopping_list_whitish_color">#ECECEC</color>
+    <color name="shopping_list_ingredient_whitish_color">#E8E8E8</color>
 </resources>
