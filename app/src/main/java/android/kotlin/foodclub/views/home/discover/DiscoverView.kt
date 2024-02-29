@@ -17,6 +17,7 @@ import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
 import android.kotlin.foodclub.views.home.myDigitalPantry.TitlesSection
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -180,10 +181,10 @@ fun DiscoverView(
         initialPageOffsetFraction = 0f,
         pageCount = { 4 }
     )
-    val pagerState2 = rememberPagerState (
+    val pagerState2 = rememberPagerState(
         initialPage = 0,
         initialPageOffsetFraction = 0f,
-        pageCount = {2}
+        pageCount = { 2 }
     )
 
     val fling = PagerDefaults.flingBehavior(
@@ -195,7 +196,285 @@ fun DiscoverView(
     val mainTabItemsList = stringArrayResource(id = R.array.discover_tabs)
 
 
+    //New column to fit the pager
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .alpha(alphaValue),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        MainSearchBar(
+            navController = navController,
+            basketCache = state.myBasketCache!!
+        )
+        MainTabRow(
+            isInternetConnected,
+            brush,
+            tabsList = mainTabItemsList,
+            horizontalArrangement = Arrangement.SpaceBetween,
 
+            ) {
+            mainTabIndex = it
+        }
+
+        if (isInternetConnected) {
+            if (mainTabIndex == 0) {
+                SubSearchBar(
+                    navController = navController,
+                    searchTextValue = searchText,//state.ingredientSearchText,
+                    onSearch = { input ->
+                        searchText = input
+                        //events.onAddIngredientsSearchTextChange(input)
+                        events.onSearchIngredientsList(input)
+                    },
+                    enableCamera = false,
+                    enableMike = false
+                )
+            } else {
+                // TODO figure out what do show here
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_30)))
+            }
+        }
+
+        var subTabIndex by remember { mutableIntStateOf(0) }
+        SubTabRow(
+            onTabChanged = {
+                subTabIndex = it
+            },
+            isInternetConnected,
+            brush
+        )
+
+        if (isSheetOpen) {
+            EditIngredientBottomModal(
+                ingredient = state.ingredientToEdit!!,
+                onDismissRequest = { isSheetOpen = it },
+                onEdit = {
+                    events.updateIngredient(it)
+                }
+            )
+        }
+
+        if (isDatePickerVisible) {
+            Box(
+                modifier = Modifier,
+                contentAlignment = Alignment.Center
+            ) {
+                CustomDatePicker(
+                    modifier = Modifier.shadow(dimensionResource(id = R.dimen.dim_5)),
+                    datePickerState = datePickerState,
+                    onDismiss = {
+                        isDatePickerVisible = false
+                        datePickerState.setSelection(null)
+                    },
+                    onSave = { date ->
+                        if (date != null) {
+                            selectedDate = date
+                            state.ingredientToEdit!!.expirationDate = selectedDate
+                            events.updateIngredient(state.ingredientToEdit)
+                        }
+                    }
+                )
+            }
+        }
+        if (isDialogOpen) {
+            AddIngredientDialog(
+                stringResource(R.string.added),
+                stringResource(R.string.successfully_added_first),
+                stringResource(R.string.successfully_added_second),
+                state.ingredientToEdit!!.type
+            )
+            LaunchedEffect(key1 = true) {
+                delay(3000)
+                isDialogOpen = false
+            }
+        }
+
+        if (isShowPost && postId != null) {
+            DiscoverViewPosts(
+                postId = postId!!,
+                posts = state.postList,
+                events = events,
+                state = state,
+                onBackPressed = {
+                    postId = null
+                    isShowPost = !isShowPost
+                }
+            )
+        }
+
+        if (mainTabIndex == 0) {
+            homePosts = state.postList
+
+            VerticalPager(state = pagerState2) { page ->
+                if (page == 0) {
+                    //Ingredients list causes excess space
+                    if (isInternetConnected) {
+
+                        Log.d("Search Text", searchText.toString())
+                        IngredientsList(
+                            Modifier,
+                            events = events,
+                            productsList = if (state.searchIngredientsListText == "") state.userIngredients else state.searchResults,
+                            userIngredientsList = if (state.searchIngredientsListText == "") state.userIngredients else state.searchResults,
+                            onEditQuantityClicked = {
+                                isSheetOpen = true
+                                events.updateIngredient(it)
+                            },
+                            onDateClicked = {
+                                events.updateIngredient(it)
+                                isDatePickerVisible = true
+                                events.updateIngredient(it)
+                            },
+                            onIngredientAdd = {},
+                            onDeleteIngredient = {
+                                events.deleteIngredientFromList(it)
+                            }
+                        )
+
+                    }
+
+                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (isInternetConnected) {
+
+                            Button(
+                                onClick = {
+                                    //triggerIngredientBottomSheetModal()
+                                    navController.navigate("ADD_INGREDIENTS")
+                                },
+                                shape = RoundedCornerShape(
+                                    dimensionResource(
+                                        id = R.dimen.dim_15
+                                    )
+                                ),
+                                colors = ButtonDefaults.buttonColors(foodClubGreen),
+                                //contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_5))
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.add_ingredients),
+                                    fontSize = dimensionResource(
+                                        id = R.dimen.fon_20
+                                    ).value.sp,
+                                    fontFamily = Montserrat
+                                )
+                            }
+
+                            // TO BE REMOVED
+                            Text(
+                                modifier = Modifier.clickable {
+                                    navController.navigate(route = HomeOtherRoutes.MyDigitalPantryView.route)
+                                },
+                                text = stringResource(id = R.string.see_all_ingredients),
+                                color = foodClubGreen,
+                                fontWeight = FontWeight.Bold,
+                                style = TextStyle(
+                                    textDecoration = TextDecoration.Underline
+                                ),
+                                fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
+                                textAlign = TextAlign.Center
+                            )
+
+
+                        } else {
+                            CircularProgressIndicator(
+                                color = foodClubGreen,
+                                strokeWidth = dimensionResource(id = R.dimen.dim_4)
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+                if (page == 1) {
+
+                    AnimatedVisibility(visible = page == 1) {
+                        Text(text= stringResource(id = R.string.Recommendations), fontFamily = Montserrat, fontSize = dimensionResource(id = R.dimen.fon_25).value.sp)
+                    }
+
+                    HorizontalPager(
+                        beyondBoundsPageCount = 1,
+                        flingBehavior = fling,
+                        modifier = Modifier
+                            .height(dimensionResource(id = R.dimen.dim_500))
+                            .padding(top = dimensionResource(id = R.dimen.dim_0)),
+                        state = pagerState1
+                    ) {
+                        Box(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    top = dimensionResource(id = R.dimen.dim_5),
+                                    start = dimensionResource(id = R.dimen.dim_15),
+                                    end = dimensionResource(id = R.dimen.dim_15),
+                                    bottom = dimensionResource(id = R.dimen.dim_100)
+                                )
+                        ) {
+                            LazyVerticalGrid(columns = GridCells.Fixed(2)) {
+                                val userName = state.sessionUserUsername
+
+                                if (isInternetConnected) {
+                                    if (homePosts != null) {
+                                        items(homePosts!!) { dataItem ->
+                                            events.getPostData(dataItem.videoId)
+                                            GridItem2(
+                                                navController,
+                                                dataItem,
+                                                userName,
+                                                isShowPost = {
+                                                    postId = it
+                                                    isShowPost = !isShowPost
+                                                }
+                                            )
+                                        }
+                                    } else if (worldPosts != null) {
+                                        items(worldPosts.value) { dataItem ->
+                                            events.getPostData(dataItem.videoId)
+                                            GridItem2(
+                                                navController,
+                                                dataItem,
+                                                userName,
+                                                isShowPost = {
+                                                    postId = it
+                                                    isShowPost = !isShowPost
+                                                }
+                                            )
+                                        }
+                                    }
+                                } else {
+                                    items(8) {
+                                        Card(
+                                            modifier = Modifier
+                                                .height(dimensionResource(id = R.dimen.dim_272))
+                                                .width(dimensionResource(id = R.dimen.dim_178))
+                                                .padding(dimensionResource(id = R.dimen.dim_10)),
+                                            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
+                                        ) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .fillMaxHeight()
+                                                    .background(brush)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+
+    /*
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -320,8 +599,8 @@ fun DiscoverView(
         item {
             if (mainTabIndex == 0) {
                 homePosts = state.postList
-                
-                VerticalPager(state = pagerState2) {
+
+                VerticalPager(state = pagerState2) { page ->
 
                 }
 
@@ -409,8 +688,8 @@ fun DiscoverView(
                         Button(
                             onClick = {
                                 //triggerIngredientBottomSheetModal()
-                                      navController.navigate("ADD_INGREDIENTS")
-                                      },
+                                navController.navigate("ADD_INGREDIENTS")
+                            },
                             shape = RoundedCornerShape(
                                 dimensionResource(
                                     id = R.dimen.dim_15
@@ -527,6 +806,8 @@ fun DiscoverView(
             }
         }
     }
+
+     */
     var showSheet by remember { mutableStateOf(false) }
 
     val triggerBottomSheetModal: () -> Unit = {
@@ -541,7 +822,13 @@ fun DiscoverView(
 
 
     if (showIngredientSheet) {
-        AddIngredientsBottomSheet(onDismiss = triggerIngredientBottomSheetModal, isInternetConnected, events=events, state=state, navController = navController)
+        AddIngredientsBottomSheet(
+            onDismiss = triggerIngredientBottomSheetModal,
+            isInternetConnected,
+            events = events,
+            state = state,
+            navController = navController
+        )
     }
 
 }
@@ -993,8 +1280,7 @@ fun IngredientsListColumn(
                 end = dimensionResource(id = R.dimen.dim_15)
             )
             .background(Color.White)
-            .height(dimensionResource(id = R.dimen.dim_65).value.dp * if (productsList.size > 5) 5 else productsList.size)
-        ,
+            .height(dimensionResource(id = R.dimen.dim_65).value.dp * if (productsList.size > 5) 5 else productsList.size),
         content = {
             itemsIndexed(productsList) { _, item ->
                 var notSwiped by remember { mutableStateOf(false) }
@@ -1191,7 +1477,7 @@ fun SingleSearchIngredientItem(
                 }
 
                 //Item may have a different ID when it is being edited so it isn't in the list will have to check that
-                if (!isItemAdded){
+                if (!isItemAdded) {
                     Box(modifier = Modifier.weight(1f, fill = false))
                     Spacer(modifier = Modifier.weight(1f, fill = true))
                     Box(
@@ -1498,7 +1784,13 @@ fun expirationDateTextStyle(expirationDate: String): TextStyle {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddIngredientsBottomSheet(onDismiss: () -> Unit, isInternetConnected: Boolean, state: DiscoverState, events: DiscoverEvents, navController: NavController) {
+fun AddIngredientsBottomSheet(
+    onDismiss: () -> Unit,
+    isInternetConnected: Boolean,
+    state: DiscoverState,
+    events: DiscoverEvents,
+    navController: NavController
+) {
     val screenHeight =
         LocalConfiguration.current.screenHeightDp.dp - dimensionResource(id = R.dimen.dim_160)
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -1535,9 +1827,11 @@ fun AddIngredientsBottomSheet(onDismiss: () -> Unit, isInternetConnected: Boolea
         dragHandle = { BottomSheetDefaults.DragHandle() },
         scrimColor = Color.Transparent
     ) {
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.8f))
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.8f)
+        )
         {
             Row(
                 horizontalArrangement = Arrangement.SpaceAround,
@@ -1578,7 +1872,6 @@ fun AddIngredientsBottomSheet(onDismiss: () -> Unit, isInternetConnected: Boolea
 
                  */
             }
-
 
 
             /*
