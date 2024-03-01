@@ -5,7 +5,6 @@ import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.home.VideoStats
 import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
 import android.kotlin.foodclub.views.home.home.feed.HomeState
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
@@ -18,20 +17,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.rememberSwipeableState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FoodSNAPSView(
     state: HomeState,
@@ -39,11 +36,11 @@ fun FoodSNAPSView(
     onShowMemoriesChanged: (Boolean) -> Unit,
     toggleShowMemoriesReel: (Boolean) -> Unit,
     pagerState: PagerState,
-    coroutineScope: CoroutineScope,
     navController: NavHostController,
     selectReaction: (Reactions) -> Unit,
     clearSelectedReaction: () -> Unit,
 ) {
+    val scope = rememberCoroutineScope()
     var currentMemoriesModel by remember {
         mutableStateOf(MemoriesModel(listOf(), ""))
     }
@@ -96,18 +93,17 @@ fun FoodSNAPSView(
         initialPageOffsetFraction = 0f,
         pageCount = { storyListData.size }
     )
-    val swipeableState = rememberSwipeableState(initialValue = SwipeDirection.NEUTRAL)
 
 
     BackHandler {
         if (state.showMemories){
             onShowMemoriesChanged(false)
         }else if (snapPagerState.currentPage != 0){
-            coroutineScope.launch {
+            scope.launch {
                 snapPagerState.scrollToPage(0)
             }
         }else{
-            coroutineScope.launch {
+            scope.launch {
                 pagerState.animateScrollToPage(
                     0,
                     animationSpec = tween(1, easing = LinearEasing)
@@ -147,7 +143,6 @@ fun FoodSNAPSView(
                 selectReaction = selectReaction,
                 clearSelectedReactions = clearSelectedReaction,
                 snapPagerState = snapPagerState,
-                swipeableState = swipeableState
             )
         }
     }
