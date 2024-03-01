@@ -1,9 +1,7 @@
 package android.kotlin.foodclub.views.home.messagingView
 
-import android.content.res.Configuration
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
-import android.kotlin.foodclub.config.ui.FoodClubTheme
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.viewModels.home.messaging.MessagingViewEvents
@@ -35,11 +33,11 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,11 +53,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun MessagingView(
@@ -128,6 +124,14 @@ fun MessagingView(
 fun MessagingTopAppBar(
     onBackPressed: () -> Unit
 ) {
+    val systemUiController = rememberSystemUiController()
+
+    SideEffect {
+        systemUiController.setSystemBarsColor(
+            color = Color.Transparent,
+        )
+    }
+
     TopAppBar(
         modifier = Modifier
             .windowInsetsPadding(WindowInsets.statusBars)
@@ -155,25 +159,6 @@ fun MessagingTopAppBar(
     }
 }
 
-@Preview(name = "Dark mode", uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true, showSystemUi = true, device = Devices.PHONE)
-@Preview(name = "Light mode", uiMode = Configuration.UI_MODE_NIGHT_NO, showBackground = true, showSystemUi = true, device = Devices.PHONE)
-@Composable
-private fun MessagingViewPreview() {
-    class DummyMessagingViewEvents : MessagingViewEvents {
-        override fun filterMessages(searchText: String) {}
-        override fun setSearchText(searchText: String) {}
-    }
-    FoodClubTheme {
-        Surface {
-
-            MessagingView(
-                state = MessagingViewState.default(),
-                navController = rememberNavController(),
-                events = DummyMessagingViewEvents(),
-            )
-        }
-    }
-}
 
 @Composable
 fun MessagingHeaderSection(
@@ -382,7 +367,7 @@ fun SingleUserRow(
                         fontFamily = Montserrat,
                         fontWeight = if (messagingSingleUser.isMessageSeen) FontWeight(500) else FontWeight(
                             400
-                        ), // varies based on isMessageSeen
+                        ),
                         lineHeight = dimensionResource(id = R.dimen.fon_18).value.sp,
                         color = if (messagingSingleUser.isMessageSeen) Color.White else Color.Gray,
                         overflow = TextOverflow.Ellipsis,
