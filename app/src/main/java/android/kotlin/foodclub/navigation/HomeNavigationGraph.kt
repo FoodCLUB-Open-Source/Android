@@ -25,7 +25,7 @@ import android.kotlin.foodclub.views.home.profile.ProfileView
 import android.kotlin.foodclub.views.home.scan.ScanResultView
 import android.kotlin.foodclub.views.home.scan.ScanView
 import android.kotlin.foodclub.views.home.scan.TopBackBar
-import android.kotlin.foodclub.views.home.search.SearchView
+import android.kotlin.foodclub.views.home.search.NewSearchView
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.LaunchedEffect
@@ -231,7 +231,7 @@ fun NavGraphBuilder.homeNavigationGraph(
         }
 
         composable(route = HomeOtherRoutes.MySearchView.route) {
-            SearchView(navController = navController)
+            NewSearchView(navController = navController)
         }
         composable(route = HomeOtherRoutes.MyDigitalPantryView.route) {
             val viewModel = it.sharedHiltViewModel<DiscoverViewModel>(navController)
