@@ -94,6 +94,8 @@ fun NewSearchView(
     var accountTabItems = listOf<User>()
     var recipeTabItems = listOf<VideoModel>()
 
+    var searchText by remember { mutableStateOf("") }
+
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -101,7 +103,8 @@ fun NewSearchView(
         horizontalAlignment = Alignment.Start,
     ) {
         NewSearchRow(
-            searchTextValue = "Search Here",
+            searchTextValue = searchText,
+            onSearchTextChanged = { newText -> searchText = newText },
             navController = navController
         )
         MainTabRow(
@@ -145,6 +148,7 @@ fun NewSearchView(
 @Composable
 fun NewSearchRow(
     searchTextValue: String,
+    onSearchTextChanged: (String) -> Unit,
     navController: NavController,
 ){
     Row(
@@ -167,7 +171,7 @@ fun NewSearchRow(
                 Icon(
                     painterResource(id = R.drawable.back_arrow),
                     contentDescription = null,
-                    tint = Color.Gray
+                    tint = Color.Black
                 )
             }
         Box(
@@ -198,12 +202,12 @@ fun NewSearchRow(
             ),
             value = searchTextValue,
             onValueChange = {
-                // TODO implementation
+                    newText -> onSearchTextChanged(newText)
             },
             placeholder = {
                 Text(
                     modifier = Modifier.padding(top =dimensionResource(id = R.dimen.dim_3)),
-                    text = "",
+                    text = "Search Here",
                     color = Color.Gray,
                     textAlign = TextAlign.Center
                 )
