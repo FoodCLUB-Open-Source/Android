@@ -295,6 +295,7 @@
     <string name="chef">Chef</string>
     <string name="ai">Ai</string>
     <string name="message_input_label">Write a message…</string>
+    <string name="Messaging_View_Navigate_Back_CD">Navigate back.</string>
 
     - View Stories
     <string name="profile_image">Profile Image</string>
