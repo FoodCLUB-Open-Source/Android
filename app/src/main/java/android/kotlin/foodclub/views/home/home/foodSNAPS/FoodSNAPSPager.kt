@@ -61,11 +61,12 @@ fun FoodSNAPSPager(
         refreshing = refreshing,
         onRefresh = ::refresh
     )
+
     val snapPagerFling = PagerDefaults.flingBehavior(
         state = snapPagerState,
         lowVelocityAnimationSpec = tween(
             easing = LinearEasing,
-            durationMillis = 200
+            durationMillis = ANIMATION_DURATION_SHORT
         )
     )
 
@@ -139,3 +140,4 @@ fun FoodSNAPSPager(
 enum class SwipeDirection {
     UP, DOWN, NEUTRAL
 }
+private const val ANIMATION_DURATION_SHORT = 300
