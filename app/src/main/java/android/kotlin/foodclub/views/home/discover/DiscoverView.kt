@@ -7,7 +7,6 @@ import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.products.Ingredient
-import android.kotlin.foodclub.domain.models.products.MyBasketCache
 import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.CustomDatePicker
 import android.kotlin.foodclub.utils.composables.EditIngredientBottomModal
@@ -34,7 +33,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -54,8 +52,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -107,12 +103,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -184,10 +184,12 @@ fun DiscoverView(
     ) {
 
         item {
-            MainSearchBar(
+            // header
+            DiscoverViewHeader(
                 navController = navController,
-                basketCache = state.myBasketCache!!
+                userName = state.sessionUserUsername
             )
+
         }
 
         item {
@@ -197,12 +199,12 @@ fun DiscoverView(
                 tabsList = mainTabItemsList,
                 horizontalArrangement = Arrangement.SpaceBetween,
 
-            ) {
+                ) {
                 mainTabIndex = it
             }
         }
 
-        if(isInternetConnected) {
+        if (isInternetConnected) {
             item {
                 if (mainTabIndex == 0) {
                     SubSearchBar(
@@ -254,7 +256,7 @@ fun DiscoverView(
                         onDismiss = {
                             isDatePickerVisible = false
                             datePickerState.setSelection(null)
-                                    },
+                        },
                         onSave = { date ->
                             if (date != null) {
                                 selectedDate = date
@@ -278,7 +280,7 @@ fun DiscoverView(
                 }
             }
         }
-        if (isShowPost && postId != null){
+        if (isShowPost && postId != null) {
             item {
                 DiscoverViewPosts(
                     postId = postId!!,
@@ -297,7 +299,7 @@ fun DiscoverView(
             if (mainTabIndex == 0) {
                 homePosts = state.postList
 
-                if(isInternetConnected){
+                if (isInternetConnected) {
                     if (searchText.isBlank()) {
                         IngredientsList(
                             Modifier,
@@ -318,8 +320,7 @@ fun DiscoverView(
                                 events.deleteIngredientFromList(it)
                             }
                         )
-                    }
-                    else {
+                    } else {
                         IngredientsList(
                             Modifier,
                             events = events,
@@ -345,11 +346,11 @@ fun DiscoverView(
                 }
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        if(isInternetConnected){
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (isInternetConnected) {
                         Text(
                             modifier = Modifier.clickable {
                                 navController.navigate(route = HomeOtherRoutes.MyDigitalPantryView.route)
@@ -363,10 +364,12 @@ fun DiscoverView(
                             fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                             textAlign = TextAlign.Center
                         )
+                    } else {
+                        CircularProgressIndicator(
+                            color = foodClubGreen,
+                            strokeWidth = dimensionResource(id = R.dimen.dim_4)
+                        )
                     }
-                        else{
-                            CircularProgressIndicator(color = foodClubGreen,
-                                strokeWidth = dimensionResource(id = R.dimen.dim_4))}
                 }
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
                 HorizontalPager(
@@ -418,8 +421,7 @@ fun DiscoverView(
                                         )
                                     }
                                 }
-                            }
-                            else {
+                            } else {
                                 items(8) {
                                     Card(
                                         modifier = Modifier
@@ -459,13 +461,11 @@ fun DiscoverView(
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainSearchBar(
+fun DiscoverViewHeader(
     navController: NavController,
-    basketCache: MyBasketCache
+    userName: String
 ) {
-    val basketCount = basketCache.getBasket().getIngredientCount()
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -476,71 +476,71 @@ fun MainSearchBar(
                 bottom = dimensionResource(id = R.dimen.dim_10)
             ),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.Top
     ) {
-        Box(
+        Text(
             modifier = Modifier
-                .fillMaxWidth(0.85f)
-                .clip(
-                    RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
-                )
-                .background(containerColor)
-                .clickable {
-                    navController.navigate(HomeOtherRoutes.MySearchView.route)
-                }
-            ){
-            Row(
-                horizontalArrangement = Arrangement.SpaceAround,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = { }
+                .align(Alignment.Bottom),
+            fontFamily = Montserrat,
+            color = Color.Black,
+            fontSize = 24.sp,
+            fontWeight = FontWeight(500),
+            letterSpacing = (-0.04).em,
+            text = buildAnnotatedString {
+                withStyle(
+                    style = SpanStyle(
+                        fontWeight = FontWeight(700)
+                    )
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.search_icon_ingredients),
-                        contentDescription = null
-                    )
+                    append(stringResource(id = R.string.hi))
+                    append("$userName,")
                 }
-                Text(
-                    modifier = Modifier
-                        .padding(top = dimensionResource(id = R.dimen.dim_3)),
-                    text = stringResource(id = R.string.search_for),
-                    color = Color.Gray,
-                    textAlign = TextAlign.Center
-                )
+                append("\n\n")
+                append(stringResource(id = R.string.discover_view_header))
             }
-        }
-        Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_5)))
+        )
 
-        Button(
-            shape = RoundedCornerShape(corner = CornerSize(dimensionResource(id = R.dimen.dim_25))),
-            modifier = Modifier
-                .height(dimensionResource(id = R.dimen.dim_56))
-                .width(dimensionResource(id = R.dimen.dim_56)),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(id = R.color.discover_view_basket_icon_container_color),
-            ),
-            contentPadding = PaddingValues(),
-            onClick = {}
+        Row(
+            horizontalArrangement = Arrangement.End
         ) {
-
-            BadgedBox(
-                modifier = Modifier.clickable {
-                    navController.navigate(HomeOtherRoutes.MyBasketView.route)
-                },
-                badge = {
-                    Badge(
-                        modifier = Modifier.offset(
-                            x = -dimensionResource(id = R.dimen.dim_5),
-                            y = dimensionResource(id = R.dimen.dim_5)
-                        ),
-                        containerColor = foodClubGreen
-                    )
-                    { Text(text = (basketCount).toString(), color = Color.Black) }
+            Button(
+                shape = RoundedCornerShape(corner = CornerSize(dimensionResource(id = R.dimen.dim_25))),
+                modifier = Modifier
+                    .height(dimensionResource(id = R.dimen.dim_56))
+                    .width(dimensionResource(id = R.dimen.dim_56)),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorResource(id = R.color.discover_view_basket_icon_container_color),
+                ),
+                contentPadding = PaddingValues(),
+                onClick = {
+                    navController.navigate(HomeOtherRoutes.MySearchView.route)
                 }
             ) {
                 Icon(
-                    painterResource(id = R.drawable.vector__1_),
-                    contentDescription = stringResource(id = R.string.add_to_basket),
+                    painterResource(id = R.drawable.search_icon_transparent_background),
+                    contentDescription = stringResource(id = R.string.search_my_ingredients),
+                    tint = Color.Black
+                )
+            }
+
+            Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_10)))
+
+            Button(
+                shape = RoundedCornerShape(corner = CornerSize(dimensionResource(id = R.dimen.dim_25))),
+                modifier = Modifier
+                    .height(dimensionResource(id = R.dimen.dim_56))
+                    .width(dimensionResource(id = R.dimen.dim_56)),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorResource(id = R.color.discover_view_basket_icon_container_color),
+                ),
+                contentPadding = PaddingValues(),
+                onClick = {
+                    navController.navigate("ScanView_route")
+                }
+            ) {
+                Icon(
+                    painterResource(id = R.drawable.camera_icon),
+                    contentDescription = stringResource(id = R.string.scan_my_fridge),
                     tint = Color.Black
                 )
             }
@@ -557,7 +557,7 @@ fun MainTabRow(
     horizontalArrangement: Arrangement.Horizontal,
     onTabChanged: (Int) -> Unit,
 
-) {
+    ) {
     var mainTabIndex by remember { mutableIntStateOf(0) }
     val strokeWidthDp = dimensionResource(id = R.dimen.dim_2)
     val topPaddingDp = dimensionResource(id = R.dimen.dim_4)
@@ -572,77 +572,81 @@ fun MainTabRow(
                 bottom = dimensionResource(id = R.dimen.dim_10)
             ),
         horizontalArrangement = horizontalArrangement
-    ) {if(isInternetConnected) {
-        tabsList.forEachIndexed { index, data ->
-            val isSelected = index == mainTabIndex
+    ) {
+        if (isInternetConnected) {
+            tabsList.forEachIndexed { index, data ->
+                val isSelected = index == mainTabIndex
 
-            Text(
-                text = data,
-                modifier = Modifier
-                    .clickable {
-                        onTabChanged(index)
-                        mainTabIndex = index
-                    }
-                    .drawBehind {
-                        if (isSelected) {
-                            val strokeWidthPx = strokeWidthDp.toPx()
-                            val topPaddingPx = topPaddingDp.toPx()
-                            val underlineHeight = underlineHeightDp.toPx()
-                            val verticalOffset = size.height - (underlineHeight / 2) + topPaddingPx
-                            drawLine(
-                                color = Color.Black,
-                                strokeWidth = strokeWidthPx,
-                                start = Offset(0f, verticalOffset),
-                                end = Offset(size.width, verticalOffset)
-                            )
+                Text(
+                    text = data,
+                    modifier = Modifier
+                        .clickable {
+                            onTabChanged(index)
+                            mainTabIndex = index
                         }
-                    },
+                        .drawBehind {
+                            if (isSelected) {
+                                val strokeWidthPx = strokeWidthDp.toPx()
+                                val topPaddingPx = topPaddingDp.toPx()
+                                val underlineHeight = underlineHeightDp.toPx()
+                                val verticalOffset =
+                                    size.height - (underlineHeight / 2) + topPaddingPx
+                                drawLine(
+                                    color = Color.Black,
+                                    strokeWidth = strokeWidthPx,
+                                    start = Offset(0f, verticalOffset),
+                                    end = Offset(size.width, verticalOffset)
+                                )
+                            }
+                        },
 
-                fontWeight = if (isSelected) FontWeight(500) else FontWeight.Normal,
-                color = if (isSelected) Color.Black else Color(0xFFC2C2C2),
-                fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
-                lineHeight = dimensionResource(id = R.dimen.fon_24).value.sp,
-                textAlign = TextAlign.Start,
-                fontFamily = Montserrat
-            )
-            if (tabsList[0] != stringResource(id = R.string.my_kitchen)) {
-                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_50)))
+                    fontWeight = if (isSelected) FontWeight(500) else FontWeight.Normal,
+                    color = if (isSelected) Color.Black else Color(0xFFC2C2C2),
+                    fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
+                    lineHeight = dimensionResource(id = R.dimen.fon_24).value.sp,
+                    textAlign = TextAlign.Start,
+                    fontFamily = Montserrat
+                )
+                if (tabsList[0] != stringResource(id = R.string.my_kitchen)) {
+                    Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_50)))
+                }
+            }
+        } else {
+            tabsList.forEachIndexed { index, data ->
+                val isSelected = index == mainTabIndex
+
+                Text(
+                    text = data,
+                    modifier = Modifier
+                        .background(brush)
+                        .clickable {
+                        }
+                        .drawBehind {
+                            if (isSelected) {
+                                val strokeWidthPx = strokeWidthDp.toPx()
+                                val topPaddingPx = topPaddingDp.toPx()
+                                val underlineHeight = underlineHeightDp.toPx()
+                                val verticalOffset =
+                                    size.height - (underlineHeight / 2) + topPaddingPx
+                                drawLine(
+                                    color = Color.Black,
+                                    strokeWidth = strokeWidthPx,
+                                    start = Offset(0f, verticalOffset),
+                                    end = Offset(size.width, verticalOffset)
+                                )
+                            }
+                        },
+                    color = Color.Transparent,
+                    fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
+                    lineHeight = dimensionResource(id = R.dimen.fon_24).value.sp,
+                    textAlign = TextAlign.Start,
+                    fontFamily = Montserrat
+                )
+                if (tabsList[0] != stringResource(id = R.string.my_kitchen)) {
+                    Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_50)))
+                }
             }
         }
-    }
-        else{tabsList.forEachIndexed { index, data ->
-        val isSelected = index == mainTabIndex
-
-        Text(
-            text = data,
-            modifier = Modifier
-                .background(brush)
-                .clickable {
-                }
-                .drawBehind {
-                    if (isSelected) {
-                        val strokeWidthPx = strokeWidthDp.toPx()
-                        val topPaddingPx = topPaddingDp.toPx()
-                        val underlineHeight = underlineHeightDp.toPx()
-                        val verticalOffset = size.height - (underlineHeight / 2) + topPaddingPx
-                        drawLine(
-                            color = Color.Black,
-                            strokeWidth = strokeWidthPx,
-                            start = Offset(0f, verticalOffset),
-                            end = Offset(size.width, verticalOffset)
-                        )
-                    }
-                },
-            color = Color.Transparent,
-            fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
-            lineHeight =dimensionResource(id = R.dimen.fon_24).value.sp,
-            textAlign = TextAlign.Start,
-            fontFamily = Montserrat
-        )
-        if (tabsList[0] != stringResource(id = R.string.my_kitchen)) {
-            Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_50)))
-        }
-    }}
     }
 }
 
@@ -744,8 +748,8 @@ fun SubSearchBar(
 @Composable
 fun SubTabRow(
     onTabChanged: (Int) -> Unit,
-    isInternetConnected:Boolean,
-    brush:Brush
+    isInternetConnected: Boolean,
+    brush: Brush
 ) {
     val strokeWidthDp = dimensionResource(id = R.dimen.dim_2)
     val topPaddingDp = dimensionResource(id = R.dimen.dim_4)
@@ -754,17 +758,16 @@ fun SubTabRow(
     var subTabIndex by remember { mutableIntStateOf(0) }
 
 
-        LazyRow(
-            modifier = Modifier.padding(
-                start = dimensionResource(id = R.dimen.dim_20),
-                end = dimensionResource(id = R.dimen.dim_20),
-                bottom = dimensionResource(id = R.dimen.dim_5),
-                top = dimensionResource(id = R.dimen.dim_10)
-            ),
+    LazyRow(
+        modifier = Modifier.padding(
+            start = dimensionResource(id = R.dimen.dim_20),
+            end = dimensionResource(id = R.dimen.dim_20),
+            bottom = dimensionResource(id = R.dimen.dim_5),
+            top = dimensionResource(id = R.dimen.dim_10)
+        ),
 
-            content = {
-                if(isInternetConnected)
-                {
+        content = {
+            if (isInternetConnected) {
                 itemsIndexed(subTabItemsList) { index, data ->
                     val selected = subTabIndex == index
 
@@ -799,8 +802,8 @@ fun SubTabRow(
                     )
                     Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_50)))
                 }
-            }
-                else{itemsIndexed(subTabItemsList) { index, data ->
+            } else {
+                itemsIndexed(subTabItemsList) { index, data ->
                     val selected = subTabIndex == index
 
                     Text(
@@ -833,7 +836,8 @@ fun SubTabRow(
                     )
                     Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_50)))
                 }
-        }})
+            }
+        })
 
 
 }
@@ -1036,7 +1040,7 @@ fun SingleSearchIngredientItem(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start
             ) {
-                if (isItemAdded){
+                if (isItemAdded) {
                     Text(
                         modifier = modifier
                             .padding(start = dimensionResource(id = R.dimen.dim_6))
@@ -1054,7 +1058,7 @@ fun SingleSearchIngredientItem(
                         maxLines = 1
                     )
 
-                }else{
+                } else {
                     Box(modifier = Modifier.weight(1f, fill = false))
                     Spacer(modifier = Modifier.weight(1f, fill = true))
                 }
@@ -1066,7 +1070,7 @@ fun SingleSearchIngredientItem(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                if (isItemAdded){
+                if (isItemAdded) {
                     Text(
                         modifier = modifier
                             .padding(start = dimensionResource(id = R.dimen.dim_20))
@@ -1084,7 +1088,7 @@ fun SingleSearchIngredientItem(
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )
-                }else{
+                } else {
                     Box(modifier = Modifier.weight(1f, fill = false))
                     Spacer(modifier = Modifier.weight(1f, fill = true))
                     Box(
@@ -1330,7 +1334,7 @@ fun GridItem2(
             val thumbnailPainterOrDefault = if (thumbnailPainter != null) {
                 thumbnailPainter
             } else {
-                painterResource(id=R.color.gray)
+                painterResource(id = R.color.gray)
             }
 
             Image(
@@ -1360,8 +1364,6 @@ fun GridItem2(
         }
     }
 }
-
-
 
 
 @Composable
