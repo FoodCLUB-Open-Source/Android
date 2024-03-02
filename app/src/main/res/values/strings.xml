@@ -337,8 +337,8 @@
     <string name="discover_view_header">Let\'s Get Cooking!</string>
     <string-array name="discover_tabs">
         <item>My Kitchen</item>
-        <item>World</item>
         <item>Categories</item>
+        <item>World</item>
     </string-array>
 
     <string name="see_all_ingredients">See all ingredients</string>
