@@ -295,7 +295,7 @@ fun ProfileViewLoadingSkeleton (
 
                     )
                 if (userId == 0L) {
-                    ProfilePicturePlaceHolder()
+                    ProfilePicturePlaceHolder {}
                 }
             }
             Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_40)))
