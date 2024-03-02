@@ -564,7 +564,7 @@ fun MainTabRow(
     val underlineHeightDp = dimensionResource(id = R.dimen.dim_2)
     Row(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth(0.9f)
             .padding(
                 start = dimensionResource(id = R.dimen.dim_20),
                 end = dimensionResource(id = R.dimen.dim_20),
@@ -605,7 +605,8 @@ fun MainTabRow(
                     fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
                     lineHeight = dimensionResource(id = R.dimen.fon_24).value.sp,
                     textAlign = TextAlign.Start,
-                    fontFamily = Montserrat
+                    fontFamily = Montserrat,
+                    letterSpacing = (-0.04).em
                 )
                 if (tabsList[0] != stringResource(id = R.string.my_kitchen)) {
                     Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_50)))
@@ -640,7 +641,8 @@ fun MainTabRow(
                     fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
                     lineHeight = dimensionResource(id = R.dimen.fon_24).value.sp,
                     textAlign = TextAlign.Start,
-                    fontFamily = Montserrat
+                    fontFamily = Montserrat,
+                    letterSpacing = (-0.04).em
                 )
                 if (tabsList[0] != stringResource(id = R.string.my_kitchen)) {
                     Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_50)))
