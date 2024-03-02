@@ -50,7 +50,7 @@ fun ReactionsOverlay(
     val scope = rememberCoroutineScope()
     var particlesList by remember { mutableStateOf(listOf<Particle>()) }
 
-    LaunchedEffect(selectedReaction){
+    LaunchedEffect(key1 = selectedReaction){
         if (selectedReaction == Reactions.ALL) return@LaunchedEffect
 
         if (particlesList.isNotEmpty()){
@@ -76,16 +76,15 @@ fun ReactionsOverlay(
             return@LaunchedEffect
         }
         isReactionsClickable(false)
-        delay(DELAY_BETWEEN_PARTICLES.toLong()+500)
-        visibility = false
+        delay(CLICKABLE_DELAY.toLong())
         clearSelectedReaction()
         isReactionsClickable(true)
     }
 
     LaunchedEffect(key1 = selectedReaction) {
-        if (selectedReaction == Reactions.ALL) return@LaunchedEffect
-        visibility = true
+        visibility = selectedReaction != Reactions.ALL
     }
+
     Box(modifier = modifier) {
         content()
 
@@ -180,6 +179,7 @@ private const val OPACITY = 500
 private const val OPACITY_SPEED = 2000
 private const val OFFSET_ABOVE_HEIGHT = 500
 private const val DELAY_BETWEEN_PARTICLES = 100
+private const val CLICKABLE_DELAY = 6000
 
 data class Particle(
     val id: Int,
