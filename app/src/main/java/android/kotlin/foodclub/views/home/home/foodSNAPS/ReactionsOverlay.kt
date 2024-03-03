@@ -76,8 +76,8 @@ fun ReactionsOverlay(
             return@LaunchedEffect
         }
         isReactionsClickable(false)
-        delay(CLICKABLE_DELAY.toLong())
         clearSelectedReaction()
+        delay(CLICKABLE_DELAY.toLong())
         isReactionsClickable(true)
     }
 
