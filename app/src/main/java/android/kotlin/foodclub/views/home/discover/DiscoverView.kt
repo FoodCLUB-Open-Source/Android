@@ -22,6 +22,8 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -47,6 +49,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
@@ -218,34 +221,6 @@ fun DiscoverView(
             mainTabIndex = it
         }
 
-        if (isInternetConnected) {
-            if (mainTabIndex == 0) {
-                SubSearchBar(
-                    navController = navController,
-                    searchTextValue = searchText,//state.ingredientSearchText,
-                    onSearch = { input ->
-                        searchText = input
-                        //events.onAddIngredientsSearchTextChange(input)
-                        events.onSearchIngredientsList(input)
-                    },
-                    enableCamera = false,
-                    enableMike = false
-                )
-            } else {
-                // TODO figure out what do show here
-                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_30)))
-            }
-        }
-
-        var subTabIndex by remember { mutableIntStateOf(0) }
-        SubTabRow(
-            onTabChanged = {
-                subTabIndex = it
-            },
-            isInternetConnected,
-            brush
-        )
-
         if (isSheetOpen) {
             EditIngredientBottomModal(
                 ingredient = state.ingredientToEdit!!,
@@ -307,8 +282,37 @@ fun DiscoverView(
         if (mainTabIndex == 0) {
             homePosts = state.postList
 
-            VerticalPager(state = pagerState2) { page ->
+            VerticalPager(state = pagerState2, pageSize = PageSize.Fill) { page ->
                 if (page == 0) {
+
+                    if (isInternetConnected) {
+                        if (mainTabIndex == 0) {
+                            SubSearchBar(
+                                navController = navController,
+                                searchTextValue = searchText,//state.ingredientSearchText,
+                                onSearch = { input ->
+                                    searchText = input
+                                    //events.onAddIngredientsSearchTextChange(input)
+                                    events.onSearchIngredientsList(input)
+                                },
+                                enableCamera = false,
+                                enableMike = false
+                            )
+                        } else {
+                            // TODO figure out what do show here
+                            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_30)))
+                        }
+                    }
+
+                    var subTabIndex by remember { mutableIntStateOf(0) }
+                    SubTabRow(
+                        onTabChanged = {
+                            subTabIndex = it
+                        },
+                        isInternetConnected,
+                        brush
+                    )
+
                     //Ingredients list causes excess space
                     if (isInternetConnected) {
 
@@ -390,11 +394,33 @@ fun DiscoverView(
                     }
                 }
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
-                if (page == 1) {
+                if (true) {
 
-                    AnimatedVisibility(visible = page == 1) {
+                    AnimatedVisibility(
+                        visible = pagerState2.currentPage == 1,
+                        enter = slideInHorizontally(animationSpec = tween(durationMillis = 200)) { fullWidth ->
+                            // Offsets the content by 1/3 of its width to the left, and slide towards right
+                            // Overwrites the default animation with tween for this slide animation.
+                            -fullWidth / 3
+                        } + fadeIn(
+                            // Overwrites the default animation with tween
+                            animationSpec = tween(durationMillis = 200)
+                        ),
+                        /*exit = slideOutHorizontally(animationSpec = spring(stiffness = Spring.StiffnessHigh)) {
+                            // Overwrites the ending position of the slide-out to 200 (pixels) to the right
+                            200
+                        } + fadeOut()*/
+                    ) {
+
                         Text(text= stringResource(id = R.string.Recommendations), fontFamily = Montserrat, fontSize = dimensionResource(id = R.dimen.fon_25).value.sp)
                     }
+
+                    /*
+                    Box(modifier = Modifier.fillMaxSize().background(color = Color.Red)) {
+
+                    }
+
+                     */
 
                     HorizontalPager(
                         beyondBoundsPageCount = 1,
