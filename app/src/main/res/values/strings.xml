@@ -557,6 +557,10 @@
     <string name="bookmark">Bookmark</string>
     - CreatorsViewDraggableImageText
     <string name="textfield_placeholder">WRITE YOUR RECIPE NAME HERE</string>
+    - Loading Screen
+    <string name="loading_indicator_cd">Loading indicator.</string>
+    <string name="loading_indicator_rotation_label">Loading indicator rotation</string>
+    <string name="loading_indicator_label">Loading indicator</string>
     - Scan
     <string name="scan_my_fridge">Scan My Fridge</string>
     <string name="scan">Scan</string>
