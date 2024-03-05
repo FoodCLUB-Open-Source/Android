@@ -535,7 +535,7 @@ fun DiscoverViewHeader(
                 ),
                 contentPadding = PaddingValues(),
                 onClick = {
-                    navController.navigate("ScanView_route")
+                    //navController.navigate("ScanView_route")
                 }
             ) {
                 Icon(
