@@ -21,7 +21,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun PopUpDialog(
     dialogText: String,
-    delay: Long,
+    delay: PopUpDialogDuration,
     dismissDialog: () -> Unit
 ) {
     Box(
@@ -41,7 +41,13 @@ fun PopUpDialog(
     }
 
     LaunchedEffect(Unit) {
-        delay(delay)
+        delay(delay.value)
         dismissDialog()
     }
+}
+
+enum class PopUpDialogDuration(val value: Long) {
+    SHORT_DURATION(1000),
+    MEDIUM_DURATION(3000),
+    LONG_DURATION(5000)
 }

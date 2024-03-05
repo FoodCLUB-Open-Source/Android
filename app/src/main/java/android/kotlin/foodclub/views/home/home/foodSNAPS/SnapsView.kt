@@ -7,6 +7,7 @@ import android.kotlin.foodclub.domain.enums.Reactions
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
 import android.kotlin.foodclub.utils.composables.PopUpDialog
+import android.kotlin.foodclub.utils.composables.PopUpDialogDuration
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -208,7 +209,10 @@ fun SnapsView(
                                 bottom = dimensionResource(id = R.dimen.dim_5)
                             )
                     ){
-                        PopUpDialog(dialogText = stringResource(id = R.string.snap_saved), delay = 3000L) {
+                        PopUpDialog(
+                            dialogText = stringResource(id = R.string.snap_saved),
+                            delay = PopUpDialogDuration.MEDIUM_DURATION
+                        ) {
                             isShowPopUpDialog = false
                         }
                     }
