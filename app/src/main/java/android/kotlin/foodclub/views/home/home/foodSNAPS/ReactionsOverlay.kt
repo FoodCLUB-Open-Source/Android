@@ -40,7 +40,7 @@ fun ReactionsOverlay(
     isReactionsClickable: (Boolean) -> Unit,
     content: @Composable () -> Unit,
 ) {
-    var visibility by remember { mutableStateOf(selectedReaction != Reactions.ALL) }
+    var isReactionSelected by remember { mutableStateOf(selectedReaction != Reactions.ALL) }
     val configuration = LocalConfiguration.current
     val targets = IntOffset(
         x = Random.nextInt(0 , configuration.screenWidthDp),
@@ -70,11 +70,7 @@ fun ReactionsOverlay(
         }
     }
 
-    LaunchedEffect(key1 = visibility) {
-        if (!visibility) {
-            isReactionsClickable(true)
-            return@LaunchedEffect
-        }
+    LaunchedEffect(key1 = isReactionSelected) {
         isReactionsClickable(false)
         clearSelectedReaction()
         delay(CLICKABLE_DELAY.toLong())
@@ -82,7 +78,10 @@ fun ReactionsOverlay(
     }
 
     LaunchedEffect(key1 = selectedReaction) {
-        visibility = selectedReaction != Reactions.ALL
+        isReactionSelected = selectedReaction != Reactions.ALL
+        if (!isReactionSelected){
+            isReactionsClickable(true)
+        }
     }
 
     Box(modifier = modifier) {
