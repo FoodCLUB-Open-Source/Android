@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.views
+package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
 import androidx.compose.animation.core.LinearEasing
