@@ -6,6 +6,7 @@ import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.enums.Reactions
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
+import android.kotlin.foodclub.utils.composables.PopUpDialog
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -38,7 +39,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -88,18 +88,24 @@ fun SnapsView(
     var isDownloaded by remember {
         mutableStateOf(false)
     }
+    var isShowPopUpDialog by remember {
+        mutableStateOf(false)
+    }
+
     VerticalPager(
         state = snapPagerState,
         flingBehavior = snapPagerFling,
         beyondBoundsPageCount = 1
     ) {
 
-        Box{
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
             AsyncImage(
                 model = memoriesModel.stories[it].imageUrl,
                 contentDescription = "",
-                contentScale= ContentScale.Crop,
-                modifier=Modifier.fillMaxSize()
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
             )
 
             Box(
@@ -108,11 +114,13 @@ fun SnapsView(
                     .padding(dimensionResource(id = R.dimen.dim_15))
             ) {
                 Column(
-                    modifier=Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_15))
+                        modifier = Modifier.padding(
+                            bottom = dimensionResource(id = R.dimen.dim_15)
+                        )
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.story_user),
@@ -124,16 +132,20 @@ fun SnapsView(
                         )
                         Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_10)))
                         Text(
-                            memoriesModel.stories[it].snapAuthor.username, color = Color.White,
-                            fontFamily = Montserrat, fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
+                            memoriesModel.stories[it].snapAuthor.username,
+                            color = Color.White,
+                            fontFamily = Montserrat,
+                            fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
                             modifier = Modifier
                                 .padding(dimensionResource(id = R.dimen.dim_2))
                                 .alpha(0.7f)
                         )
                     }
                     Text(
-                        memoriesModel.stories[it].dateTime, color = Color.White,
-                        fontFamily = Montserrat, fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
+                        memoriesModel.stories[it].dateTime,
+                        color = Color.White,
+                        fontFamily = Montserrat,
+                        fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier
                             .padding(dimensionResource(id = R.dimen.dim_2))
@@ -142,10 +154,10 @@ fun SnapsView(
                 }
 
                 Row(
-                    modifier=Modifier.align(Alignment.CenterEnd)
+                    modifier = Modifier.align(Alignment.CenterEnd)
                 ) {
-                    Box (
-                        modifier= Modifier
+                    Box(
+                        modifier = Modifier
                             .size(dimensionResource(id = R.dimen.dim_44))
                             .alpha(0.4f)
                             .background(
@@ -158,13 +170,16 @@ fun SnapsView(
                                     snapUserIndex = it
                                 }
                             }
-                    ){
-                        Image(painter = painterResource(id = R.drawable.handwave), contentDescription = "download", modifier = Modifier.align(Alignment.Center))
-
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.handwave),
+                            contentDescription = "download",
+                            modifier = Modifier.align(Alignment.Center)
+                        )
                     }
-                    Spacer(modifier = Modifier.size( dimensionResource(id = R.dimen.dim_16)))
-                    Box (
-                        modifier= Modifier
+                    Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.dim_16)))
+                    Box(
+                        modifier = Modifier
                             .size(dimensionResource(id = R.dimen.dim_44))
                             .alpha(0.4f)
                             .background(
@@ -173,20 +188,32 @@ fun SnapsView(
                             )
                             .clickable {
                                 isDownloaded = !isDownloaded
+                                isShowPopUpDialog = !isShowPopUpDialog
                             }
-                    ){
+                    ) {
                         Image(
                             painter = painterResource(
-                                id = if(isDownloaded) R.drawable.download_green else
-                                    R.drawable.download_svg),
+                                id = if (isDownloaded) R.drawable.download_green
+                                else R.drawable.download_svg),
                             contentDescription = stringResource(id = R.string.downloading),
                             modifier = Modifier.align(Alignment.Center)
                         )
                     }
                 }
+                if (isShowPopUpDialog){
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(
+                                bottom = dimensionResource(id = R.dimen.dim_5)
+                            )
+                    ){
+                        PopUpDialog(dialogText = stringResource(id = R.string.snap_saved), delay = 3000L) {
+                            isShowPopUpDialog = false
+                        }
+                    }
+                }
             }
-
-
         }
         val userReactions = memoriesModel.stories[snapUserIndex].userReactions
 
@@ -297,7 +324,7 @@ fun SnapBottomSheetLayout(
         flingBehavior=flingBehavior
     ) {index->
         LazyColumn{
-            val list =if(reactions[index]!=Reactions.ALL) userReactions.filter { x->
+            val list = if (reactions[index] != Reactions.ALL) userReactions.filter { x->
                 x.value == reactions[index]
             }.keys.toList()
             else userReactions.keys.toList()
