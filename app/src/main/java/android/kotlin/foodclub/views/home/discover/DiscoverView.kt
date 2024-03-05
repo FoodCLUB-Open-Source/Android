@@ -23,7 +23,9 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -108,6 +110,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -396,8 +399,12 @@ fun DiscoverView(
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
                 if (true) {
 
+                    val pageOffset = pagerState2.currentPageOffsetFraction
+
+
+
                     AnimatedVisibility(
-                        visible = pagerState2.currentPage == 1,
+                        visible = pagerState2.currentPage == 1 && pageOffset >= 0,
                         enter = slideInHorizontally(animationSpec = tween(durationMillis = 200)) { fullWidth ->
                             // Offsets the content by 1/3 of its width to the left, and slide towards right
                             // Overwrites the default animation with tween for this slide animation.
@@ -406,21 +413,38 @@ fun DiscoverView(
                             // Overwrites the default animation with tween
                             animationSpec = tween(durationMillis = 200)
                         ),
-                        /*exit = slideOutHorizontally(animationSpec = spring(stiffness = Spring.StiffnessHigh)) {
+                        exit = slideOutHorizontally(animationSpec = tween(durationMillis = 200)) { fullWidth ->
+                            // Offsets the content by 1/3 of its width to the left, and slide towards right
+                            // Overwrites the default animation with tween for this slide animation.
+                            fullWidth / 3
+                            /*spring(stiffness = Spring.StiffnessHigh)) {
                             // Overwrites the ending position of the slide-out to 200 (pixels) to the right
                             200
-                        } + fadeOut()*/
+                            */
+                        } + fadeOut()
                     ) {
 
                         Text(text= stringResource(id = R.string.Recommendations), fontFamily = Montserrat, fontSize = dimensionResource(id = R.dimen.fon_25).value.sp)
                     }
 
-                    /*
+                    Box()
+                    {
+                        if (true)
+                        {
+                            Box(modifier = Modifier.graphicsLayer {  })
+                            {
+                                Text(text= stringResource(id = R.string.Recommendations), fontFamily = Montserrat, fontSize = dimensionResource(id = R.dimen.fon_25).value.sp)
+                            }
+                        }
+
+                    }
+
+
                     Box(modifier = Modifier.fillMaxSize().background(color = Color.Red)) {
 
                     }
 
-                     */
+
 
                     HorizontalPager(
                         beyondBoundsPageCount = 1,
