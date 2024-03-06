@@ -372,7 +372,7 @@ fun DiscoverView(
                                 )
                             }
 
-                            // TO BE REMOVED
+                            /*
                             Text(
                                 modifier = Modifier.clickable {
                                     navController.navigate(route = HomeOtherRoutes.MyDigitalPantryView.route)
@@ -387,6 +387,8 @@ fun DiscoverView(
                                 textAlign = TextAlign.Center
                             )
 
+                             */
+
 
                         } else {
                             CircularProgressIndicator(
@@ -397,11 +399,11 @@ fun DiscoverView(
                     }
                 }
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
-                if (true) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
                     val pageOffset = pagerState2.currentPageOffsetFraction
-                    val maxDelay = 200
-                    val minDelay = 50
+                    val maxDelay = integerResource(id = R.integer.int_200)
+                    val minDelay = integerResource(id = R.integer.int_50)
                     val delay = (maxDelay - minDelay) * ( 1 - (pageOffset.absoluteValue * 2)) + minDelay
 
                     AnimatedVisibility(
