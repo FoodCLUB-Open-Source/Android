@@ -4,6 +4,7 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Black
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.PlusJakartaSans
+import android.kotlin.foodclub.config.ui.borderBlue
 import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.config.ui.textFieldCustomColors
@@ -14,9 +15,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -37,9 +40,11 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -60,8 +65,53 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchBar(onTextChange: (String) -> Unit, placeholder: String) {
+    var text by remember { mutableStateOf("") }
+    TextField(
+        value = text,
+        onValueChange = { text = it; onTextChange(it) },
+        placeholder = {
+            Text(
+                text = placeholder,
+                color = Color.Black.copy(alpha = 0.4f),
+                letterSpacing = TextUnit(-0.64f, TextUnitType.Sp),
+                fontFamily = Montserrat,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        },
+        leadingIcon = {
+            Icon(
+                painter = painterResource(id = R.drawable.search_icon_ingredients),
+                contentDescription = null
+            )
+        },
+        colors = TextFieldDefaults.textFieldColors(
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            containerColor = Color.White,
+            cursorColor = foodClubGreen,
+            focusedTextColor = Color.Black.copy(alpha = 0.4f),
+            unfocusedTextColor = Color.Black.copy(alpha = 0.4f)
+        ),
+        modifier = Modifier
+            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_16)))
+            .border(1.dp, borderBlue, RoundedCornerShape(dimensionResource(id = R.dimen.dim_16)))
+            .padding(
+                horizontal = dimensionResource(id = R.dimen.dim_4),
+                vertical = dimensionResource(id = R.dimen.dim_2)
+            )
+            .fillMaxWidth()
+    )
+}
+
 
 /**
  * Custom code verification text field
@@ -75,6 +125,8 @@ fun CustomCodeTextField(
     onFillCallback: (Boolean, String) -> Unit
 ) {
     var text by remember { mutableStateOf("") }
+
+    var maxWidthTextField by remember { mutableFloatStateOf(1f) }
     BasicTextField(modifier = Modifier.fillMaxWidth(),
         value = text,
         singleLine = true,
@@ -88,34 +140,39 @@ fun CustomCodeTextField(
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
         keyboardActions = KeyboardActions(),
         decorationBox = {
-            Row(
-                modifier = Modifier.size(dimensionResource(id = R.dimen.dim_352), dimensionResource(id = R.dimen.dim_72)),
-                horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_8)),
+            BoxWithConstraints(
+
             ) {
-                repeat(6) { index ->
-                    Box(
-                        modifier = Modifier
-                            .size(
-                                dimensionResource(id = R.dimen.dim_52),
-                                dimensionResource(id = R.dimen.dim_72)
+                maxWidthTextField = maxWidth.value
+                Row(
+                    modifier = Modifier
+                        .height(dimensionResource(id = R.dimen.dim_72))
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    repeat(6) { index ->
+                        Box(
+                            modifier = Modifier
+                                .width((maxWidthTextField / 6.5).dp)
+                                .fillMaxHeight()
+                                .border(
+                                    dimensionResource(id = R.dimen.dim_1),
+                                    color = if (text.length == index) foodClubGreen
+                                    else Black.copy(alpha = 0.3f),
+                                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16))
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = text.getOrNull(index)?.toString() ?: "",
+                                textAlign = TextAlign.Center,
+                                style = TextStyle(
+                                    fontFamily = PlusJakartaSans,
+                                    fontSize = dimensionResource(id = R.dimen.fon_32).value.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
                             )
-                            .border(
-                                dimensionResource(id = R.dimen.dim_1),
-                                color = if (text.length == index) foodClubGreen
-                                else Black.copy(alpha = 0.3f),
-                                shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16))
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = text.getOrNull(index)?.toString() ?: "",
-                            textAlign = TextAlign.Center,
-                            style = TextStyle(
-                                fontFamily = PlusJakartaSans,
-                                fontSize = dimensionResource(id = R.dimen.fon_32).value.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        )
+                        }
                     }
                 }
             }
@@ -172,7 +229,7 @@ fun CustomTextField(
     Column {
         TextField(
             value = text,
-            label  = composableLabel,
+            label = composableLabel,
             onValueChange = {
                 var textValidCurrent = true
                 val currentVal = if (allowSpace) it else it.trim()
@@ -338,8 +395,10 @@ fun CustomPasswordTextField(
  * @param onBackButtonClick Executes when the button is clicked.
  */
 @Composable
-fun BackButton(onBackButtonClick: () -> Unit, backgroundTransparent: Boolean = false,
-               buttonColor: Color = Color.Black) {
+fun BackButton(
+    onBackButtonClick: () -> Unit, backgroundTransparent: Boolean = false,
+    buttonColor: Color = Color.Black
+) {
     Button(
         shape = RectangleShape,
         modifier = Modifier
@@ -348,8 +407,8 @@ fun BackButton(onBackButtonClick: () -> Unit, backgroundTransparent: Boolean = f
             .height(dimensionResource(id = R.dimen.dim_36))
             .offset(x = (-8).dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = if(backgroundTransparent) Color.Transparent else Color.White,
-            contentColor = if(backgroundTransparent) Color.Transparent else Color.White
+            containerColor = if (backgroundTransparent) Color.Transparent else Color.White,
+            contentColor = if (backgroundTransparent) Color.Transparent else Color.White
         ),
         contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_0)),
         onClick = { onBackButtonClick() }

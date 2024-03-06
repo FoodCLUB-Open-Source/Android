@@ -59,6 +59,7 @@
     <string name="confirm_identity">Confirm Your Identity</string>
     <string name="confirm_identity_subheading">Please confirm your country code and enter in your phone number</string>
     <string name="go_back">Go Back</string>
+    <string name="go_to_setting">Go to Setting</string>
     <string name="plus_sign">+</string>
     <string name="vertical_line">|</string>
     <string name="invalid_number">Invalid Number</string>
@@ -119,7 +120,7 @@
     <string name="verify">Verify</string>
     <string name="wait_time">Wait %d seconds to </string>
     <string name="resend">Resend</string>
-    <string name ="no_code">I didn\'t receive a code </string>
+    <string name="no_code">I didn\'t receive a code </string>
     - Terms and Conditions
     <string name="accept_terms">Accept terms and conditions</string>
     <string name="please_accept_terms">Please accept the terms and conditions</string>
@@ -285,7 +286,7 @@
     <string name="contact_information">You can contact us here: tech@foodclub.live\n\n</string>
     <string name="additional_regulatory_info">In some countries, the law requires us to provide additional regulatory information and/or contact points within the country, even though we may not be physically present there.\n\n</string>
 
-   Home Screens
+    Home Screens
     -Messaging
     <string name="messages">Messages</string>
     <string name="search_contacts">Search contacts</string>
@@ -294,6 +295,7 @@
     <string name="chef">Chef</string>
     <string name="ai">Ai</string>
     <string name="message_input_label">Write a message…</string>
+    <string name="Messaging_View_Navigate_Back_CD">Navigate back.</string>
 
     - View Stories
     <string name="profile_image">Profile Image</string>
@@ -315,6 +317,7 @@
     <string name="app_updates">App updates</string>
     <string name="payment_request">Payment request</string>
     - Search
+    <string name="clear_all">Clear All</string>
     <string name="recent_searches">Recent Searches</string>
     <string-array name="dummy_search_history">
         <item>Pizza</item>
@@ -395,13 +398,13 @@
     <string name="search_my_ingredients">Search my ingredients</string>
     <string name="name">Name</string>
     <string name="quantity">Quantity</string>
-    <string name="quantity_picker_discription">Type your custom units or choose from the wheel picker</string>
+    <string name="quantity_picker_discription">Type quantity and choose unit from the wheel picker</string>
     <string name="unit">Unit</string>
     <string name="expiration_date">Expiration Date</string>
     <string name="remove">Remove</string>
     <string name="quantity_colon">Quantity:</string>
     - My Basket
-    <string name="my_basket">My Basket</string>
+    <string name="shopping_list">Shopping List</string>
     <string name="add_items_plus">Add items +</string>
     - Main
     <string name="home">Home</string>
@@ -455,16 +458,15 @@
     - Camera
     <string name="camera">Camera</string>
     <string name="date_format">yyyy-MM-dd-HH-mm-ss-SSS</string>
-     - Create a Recipe
-    <string name="recipe_title">Recipe title</string>
+    - Create a Recipe
     <string name="ingredient_offset_transitions">Ingredient Offset Transitions</string>
     <string name="share_recipe">Share Recipe</string>
     <string name="categories">Categories</string>
-    <string name="vegan">Vegan</string>
+    <string name="categories_search_placeholder">Search and add your categories</string>
     <string name="serving_size_colon">Serving Size: %d</string>
-    <string name="add_my_recipes_name">Add my recipes name</string>
+    <string name="add_recipe_name">Add recipe\'s name</string>
     <string name="my_new_recipe">My New Recipe</string>
-     - Delete Recipe
+    - Delete Recipe
     <string name="delete_recipe">Delete Recipe</string>
     <string name="no">No</string>
     <string name="yes">Yes</string>
@@ -539,22 +541,27 @@
     - Input Composables
     <string name="terms_and_conditions">Terms and Conditions</string>
     <string name="by_using">By using FoodCLUB you agree to our </string>
-     - Ingredients Bottomsheet
+    - Ingredients Bottomsheet
     <string name="left_arrow">Left Arrow</string>
     <string name="right_arrow">Right Arrow</string>
     <string name="add_items">Add items</string>
     <string name="cancel">Cancel</string>
     <string name="select_expiration_date">Select Expiration Date</string>
-     - Story Viewer
+    - Story Viewer
     <string name="foodsnaps">foodsnaps</string>
+    <string name="snap_saved">Snap saved to profile</string>
     <string name="close_story">Close Story</string>
     <string name="author_photo">Author Photo</string>
     <string name="time_ago">%d ago</string>
-     - Video Layout
+    - Video Layout
     <string name="info">Info</string>
     <string name="bookmark">Bookmark</string>
     - CreatorsViewDraggableImageText
     <string name="textfield_placeholder">WRITE YOUR RECIPE NAME HERE</string>
+    - Loading Screen
+    <string name="loading_indicator_cd">Loading indicator.</string>
+    <string name="loading_indicator_rotation_label">Loading indicator rotation</string>
+    <string name="loading_indicator_label">Loading indicator</string>
     - Scan
     <string name="scan_my_fridge">Scan My Fridge</string>
     <string name="scan">Scan</string>
@@ -791,5 +798,12 @@ In some countries, the law requires us to provide additional regulatory informat
     <string name="Cancel">Cancel</string>
     <string name="add_ingredients">Add ingredients</string>
     <string name="Recommendations">Recommendations</string>
+    <string name="All">All</string>
+    <string name="Accounts">Accounts</string>
+    <string name="Recipes">Recipes</string>
 
+    <string name="Camera_permission_require_message_title">"FoodCLUB" would like to use your <b>Camera</b></string>
+    <string name="Video_permission_require_message_title">"FoodCLUB" would like to use your <b>Camera</b> and <b>Microphone</b></string>
+    <string name="Camera_permission_require_rational">This allows FoodCLUB to take photo for your profile account</string>
+    <string name="Video_permission_require_rational">This allows FoodCLUB to take photo for your post</string>
 </resources>

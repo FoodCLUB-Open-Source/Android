@@ -15,17 +15,21 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.TopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -33,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,6 +55,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun MessagingView(
@@ -65,7 +71,7 @@ fun MessagingView(
         ChatView(
             onBackPressed = { showChatView = !showChatView }
         )
-    }else{
+    } else {
         Scaffold(
             topBar = {
                 MessagingTopAppBar(
@@ -74,7 +80,7 @@ fun MessagingView(
                     }
                 )
             },
-            content= {
+            content = {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -117,13 +123,20 @@ fun MessagingView(
 @Composable
 fun MessagingTopAppBar(
     onBackPressed: () -> Unit
-){
-    Row(
-        horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.CenterVertically,
+) {
+    val systemUiController = rememberSystemUiController()
+
+    SideEffect {
+        systemUiController.setSystemBarsColor(
+            color = Color.Transparent,
+        )
+    }
+
+    TopAppBar(
         modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.Black)
+            .windowInsetsPadding(WindowInsets.statusBars)
+            .fillMaxWidth(),
+        backgroundColor = Color.Black,
     ) {
         IconButton(
             onClick = { onBackPressed() }
@@ -131,7 +144,7 @@ fun MessagingTopAppBar(
             Icon(
                 modifier = Modifier.clickable { onBackPressed() },
                 painter = painterResource(id = R.drawable.back_arrow),
-                contentDescription = null,
+                contentDescription = stringResource(R.string.Messaging_View_Navigate_Back_CD),
                 tint = Color.White
             )
         }
@@ -142,8 +155,10 @@ fun MessagingTopAppBar(
             fontFamily = Montserrat,
             color = Color.White
         )
+
     }
 }
+
 
 @Composable
 fun MessagingHeaderSection(
@@ -164,7 +179,7 @@ fun MessagingHeaderSection(
 fun MessagingSearchBar(
     searchTextValue: String,
     onSearch: (String) -> Unit
-){
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -278,7 +293,7 @@ fun StartNewGroupSection() {
         Column(
             modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_10)),
             verticalArrangement = Arrangement.Center
-            ) {
+        ) {
             IconButton(
                 onClick = { /*TODO impl starting new group chat*/ }
             ) {
@@ -299,7 +314,7 @@ fun MessagesSection(
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth()
-    ){
+    ) {
         itemsIndexed(messagingHistory) { _, messageObj ->
             SingleUserRow(messageObj, onShowChatView)
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
@@ -318,7 +333,7 @@ fun SingleUserRow(
             .clickable { onShowChatView() },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
-    ){
+    ) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start
@@ -333,9 +348,9 @@ fun SingleUserRow(
                 )
                 Spacer(modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dim_10)))
                 Column {
-                    if (messagingSingleUser.id == 0){
+                    if (messagingSingleUser.id == 0) {
                         ChefAiNameBox()
-                    }else{
+                    } else {
                         Text(
                             text = messagingSingleUser.name,
                             fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
@@ -350,7 +365,9 @@ fun SingleUserRow(
                         text = messagingSingleUser.lastMessage,
                         fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
                         fontFamily = Montserrat,
-                        fontWeight = if (messagingSingleUser.isMessageSeen) FontWeight(500) else FontWeight(400), // varies based on isMessageSeen
+                        fontWeight = if (messagingSingleUser.isMessageSeen) FontWeight(500) else FontWeight(
+                            400
+                        ),
                         lineHeight = dimensionResource(id = R.dimen.fon_18).value.sp,
                         color = if (messagingSingleUser.isMessageSeen) Color.White else Color.Gray,
                         overflow = TextOverflow.Ellipsis,
@@ -372,7 +389,7 @@ fun SingleUserRow(
                 fontWeight = FontWeight(400)
             )
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
-            if (messagingSingleUser.unSeenMessageCount.toInt() != 0){
+            if (messagingSingleUser.unSeenMessageCount.toInt() != 0) {
                 Box(
                     modifier = Modifier
                         .size(dimensionResource(id = R.dimen.dim_20))
@@ -395,7 +412,7 @@ fun SingleUserRow(
 }
 
 @Composable
-fun ChefAiNameBox(){
+fun ChefAiNameBox() {
     Row(
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
