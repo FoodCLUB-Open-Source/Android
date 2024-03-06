@@ -110,7 +110,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -138,6 +137,7 @@ import coil.compose.rememberAsyncImagePainter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -400,20 +400,21 @@ fun DiscoverView(
                 if (true) {
 
                     val pageOffset = pagerState2.currentPageOffsetFraction
-
-
+                    val maxDelay = 200
+                    val minDelay = 50
+                    val delay = (maxDelay - minDelay) * ( 1 - (pageOffset.absoluteValue * 2)) + minDelay
 
                     AnimatedVisibility(
-                        visible = pagerState2.currentPage == 1 && pageOffset >= 0,
-                        enter = slideInHorizontally(animationSpec = tween(durationMillis = 200)) { fullWidth ->
+                        visible = pagerState2.currentPage == 1 && pageOffset == 0.00f,
+                        enter = slideInHorizontally(animationSpec = tween(durationMillis = delay.toInt())) { fullWidth ->
                             // Offsets the content by 1/3 of its width to the left, and slide towards right
                             // Overwrites the default animation with tween for this slide animation.
                             -fullWidth / 3
                         } + fadeIn(
                             // Overwrites the default animation with tween
-                            animationSpec = tween(durationMillis = 200)
+                            animationSpec = tween(durationMillis = delay.toInt())
                         ),
-                        exit = slideOutHorizontally(animationSpec = tween(durationMillis = 200)) { fullWidth ->
+                        exit = slideOutHorizontally(animationSpec = tween(durationMillis = delay.toInt())) { fullWidth ->
                             // Offsets the content by 1/3 of its width to the left, and slide towards right
                             // Overwrites the default animation with tween for this slide animation.
                             fullWidth / 3
@@ -421,17 +422,24 @@ fun DiscoverView(
                             // Overwrites the ending position of the slide-out to 200 (pixels) to the right
                             200
                             */
-                        } + fadeOut()
+                        } + fadeOut(animationSpec = tween(durationMillis = delay.toInt()))
                     ) {
 
                         Text(text= stringResource(id = R.string.Recommendations), fontFamily = Montserrat, fontSize = dimensionResource(id = R.dimen.fon_25).value.sp)
                     }
 
-                    Box()
+
+
+                    /*
+                    Box(modifier = Modifier.fillMaxWidth())
                     {
-                        if (true)
+                        if (pagerState2.currentPage != 0)
                         {
-                            Box(modifier = Modifier.graphicsLayer {  })
+                            Box(modifier = Modifier.graphicsLayer {
+                                //translationX = pageOffset * size.width
+                                alpha = if (pageOffset == 0.00f) page.toFloat() else if (pagerState2.currentPage == 1) (1 + pageOffset).toFloat() else (pageOffset).toFloat()
+
+                            })
                             {
                                 Text(text= stringResource(id = R.string.Recommendations), fontFamily = Montserrat, fontSize = dimensionResource(id = R.dimen.fon_25).value.sp)
                             }
@@ -439,10 +447,8 @@ fun DiscoverView(
 
                     }
 
+                     */
 
-                    Box(modifier = Modifier.fillMaxSize().background(color = Color.Red)) {
-
-                    }
 
 
 
