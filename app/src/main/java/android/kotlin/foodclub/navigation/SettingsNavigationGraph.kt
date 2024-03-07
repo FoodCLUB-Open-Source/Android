@@ -3,6 +3,7 @@ package android.kotlin.foodclub.navigation
 import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
 import android.kotlin.foodclub.viewModels.settings.SettingsEvents
 import android.kotlin.foodclub.viewModels.settings.SettingsViewModel
+import android.kotlin.foodclub.views.home.profile.HelpAndSupportView
 import android.kotlin.foodclub.views.settings.ChangePasswordSettings
 import android.kotlin.foodclub.views.settings.EditProfileSetting
 import android.kotlin.foodclub.views.settings.PrivacyPolicyView
@@ -59,6 +60,9 @@ fun NavGraphBuilder.settingsNavigationGraph(navController: NavHostController) {
 
             PrivacyPolicyView(navController = navController)
         }
+        composable(SettingsScreen.HelpAndSupport.route) { entry ->
+            HelpAndSupportView(navController = navController)
+        }
     }
 }
 
@@ -68,4 +72,5 @@ sealed class SettingsScreen(val route: String) {
     data object PrivacyPolicy : SettingsScreen(route = "SETTINGS_PRIVACY_POLICY")
     data object EditProfile : SettingsScreen(route = "SETTINGS_EDIT_PROFILE")
     data object ChangePassword : SettingsScreen(route = "SETTINGS_CHANGE_PASS")
+    data object HelpAndSupport: SettingsScreen(route = "SETTINGS_HELP_AND_SUPPORT")
 }

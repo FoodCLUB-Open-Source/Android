@@ -130,7 +130,7 @@ fun SettingsView(
                 lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
                 borderSize = 0,
                 borderColor = Color.Transparent,
-                destination = "SETTINGS_PRIVACY",
+                destination = SettingsScreen.HelpAndSupport.route,
                 navController = navController
             )
 
