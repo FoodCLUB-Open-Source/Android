@@ -90,15 +90,6 @@ class DiscoverViewModel @Inject constructor(
         _state.update {
             it.copy(
                 userIngredients = updatedList,
-                //ingredientSearchText = "",
-                /*
-                productsData = ProductsData(
-                    searchText = "",
-                    nextUrl = "",
-                    productsList = emptyList(),
-                )
-
-                 */
             )
         }
     }

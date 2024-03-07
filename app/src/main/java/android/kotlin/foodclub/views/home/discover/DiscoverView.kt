@@ -64,7 +64,6 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -76,7 +75,6 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -87,7 +85,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberDismissState
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -111,7 +108,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
@@ -153,13 +149,6 @@ fun DiscoverView(
     var postId: Long? by remember { mutableStateOf(null) }
 
     val brush = shimmerBrush()
-
-    var showIngredientSheet by remember { mutableStateOf(false) }
-
-    val triggerIngredientBottomSheetModal: () -> Unit = {
-        showIngredientSheet = !showIngredientSheet
-    }
-
     var searchText by remember { mutableStateOf("") }
 
     var homePosts: List<VideoModel>?
@@ -295,7 +284,6 @@ fun DiscoverView(
                                 searchTextValue = searchText,//state.ingredientSearchText,
                                 onSearch = { input ->
                                     searchText = input
-                                    //events.onAddIngredientsSearchTextChange(input)
                                     events.onSearchIngredientsList(input)
                                 },
                                 enableCamera = false,
@@ -352,7 +340,6 @@ fun DiscoverView(
 
                             Button(
                                 onClick = {
-                                    //triggerIngredientBottomSheetModal()
                                     navController.navigate("ADD_INGREDIENTS")
                                 },
                                 shape = RoundedCornerShape(
@@ -361,7 +348,6 @@ fun DiscoverView(
                                     )
                                 ),
                                 colors = ButtonDefaults.buttonColors(foodClubGreen),
-                                //contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_5))
                             ) {
                                 Text(
                                     text = stringResource(id = R.string.add_ingredients),
@@ -371,24 +357,6 @@ fun DiscoverView(
                                     fontFamily = Montserrat
                                 )
                             }
-
-                            /*
-                            Text(
-                                modifier = Modifier.clickable {
-                                    navController.navigate(route = HomeOtherRoutes.MyDigitalPantryView.route)
-                                },
-                                text = stringResource(id = R.string.see_all_ingredients),
-                                color = foodClubGreen,
-                                fontWeight = FontWeight.Bold,
-                                style = TextStyle(
-                                    textDecoration = TextDecoration.Underline
-                                ),
-                                fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
-                                textAlign = TextAlign.Center
-                            )
-
-                             */
-
 
                         } else {
                             CircularProgressIndicator(
@@ -420,39 +388,11 @@ fun DiscoverView(
                             // Offsets the content by 1/3 of its width to the left, and slide towards right
                             // Overwrites the default animation with tween for this slide animation.
                             fullWidth / 3
-                            /*spring(stiffness = Spring.StiffnessHigh)) {
-                            // Overwrites the ending position of the slide-out to 200 (pixels) to the right
-                            200
-                            */
                         } + fadeOut(animationSpec = tween(durationMillis = delay.toInt()))
                     ) {
 
                         Text(text= stringResource(id = R.string.Recommendations), fontFamily = Montserrat, fontSize = dimensionResource(id = R.dimen.fon_25).value.sp)
                     }
-
-
-
-                    /*
-                    Box(modifier = Modifier.fillMaxWidth())
-                    {
-                        if (pagerState2.currentPage != 0)
-                        {
-                            Box(modifier = Modifier.graphicsLayer {
-                                //translationX = pageOffset * size.width
-                                alpha = if (pageOffset == 0.00f) page.toFloat() else if (pagerState2.currentPage == 1) (1 + pageOffset).toFloat() else (pageOffset).toFloat()
-
-                            })
-                            {
-                                Text(text= stringResource(id = R.string.Recommendations), fontFamily = Montserrat, fontSize = dimensionResource(id = R.dimen.fon_25).value.sp)
-                            }
-                        }
-
-                    }
-
-                     */
-
-
-
 
                     HorizontalPager(
                         beyondBoundsPageCount = 1,
@@ -531,341 +471,6 @@ fun DiscoverView(
 
     }
 
-
-    /*
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .alpha(alphaValue),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-
-        item {
-            MainSearchBar(
-                navController = navController,
-                basketCache = state.myBasketCache!!
-            )
-        }
-
-        item {
-            MainTabRow(
-                isInternetConnected,
-                brush,
-                tabsList = mainTabItemsList,
-                horizontalArrangement = Arrangement.SpaceBetween,
-
-                ) {
-                mainTabIndex = it
-            }
-        }
-
-        if (isInternetConnected) {
-            item {
-                if (mainTabIndex == 0) {
-                    SubSearchBar(
-                        navController = navController,
-                        searchTextValue = searchText,//state.ingredientSearchText,
-                        onSearch = { input ->
-                            searchText = input
-                            //events.onAddIngredientsSearchTextChange(input)
-                            events.onSearchIngredientsList(input)
-                        },
-                        enableCamera = false,
-                        enableMike = false
-                    )
-                } else {
-                    // TODO figure out what do show here
-                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_30)))
-                }
-            }
-        }
-
-
-        item {
-            var subTabIndex by remember { mutableIntStateOf(0) }
-            SubTabRow(
-                onTabChanged = {
-                    subTabIndex = it
-                },
-                isInternetConnected,
-                brush
-            )
-        }
-
-        item {
-            if (isSheetOpen) {
-                EditIngredientBottomModal(
-                    ingredient = state.ingredientToEdit!!,
-                    onDismissRequest = { isSheetOpen = it },
-                    onEdit = {
-                        events.updateIngredient(it)
-                    }
-                )
-            }
-
-            if (isDatePickerVisible) {
-                Box(
-                    modifier = Modifier,
-                    contentAlignment = Alignment.Center
-                ) {
-                    CustomDatePicker(
-                        modifier = Modifier.shadow(dimensionResource(id = R.dimen.dim_5)),
-                        datePickerState = datePickerState,
-                        onDismiss = {
-                            isDatePickerVisible = false
-                            datePickerState.setSelection(null)
-                        },
-                        onSave = { date ->
-                            if (date != null) {
-                                selectedDate = date
-                                state.ingredientToEdit!!.expirationDate = selectedDate
-                                events.updateIngredient(state.ingredientToEdit)
-                            }
-                        }
-                    )
-                }
-            }
-            if (isDialogOpen) {
-                AddIngredientDialog(
-                    stringResource(R.string.added),
-                    stringResource(R.string.successfully_added_first),
-                    stringResource(R.string.successfully_added_second),
-                    state.ingredientToEdit!!.type
-                )
-                LaunchedEffect(key1 = true) {
-                    delay(3000)
-                    isDialogOpen = false
-                }
-            }
-        }
-        if (isShowPost && postId != null) {
-            item {
-                DiscoverViewPosts(
-                    postId = postId!!,
-                    posts = state.postList,
-                    events = events,
-                    state = state,
-                    onBackPressed = {
-                        postId = null
-                        isShowPost = !isShowPost
-                    }
-                )
-            }
-        }
-
-        item {
-            if (mainTabIndex == 0) {
-                homePosts = state.postList
-
-                VerticalPager(state = pagerState2) { page ->
-
-                }
-
-                //Ingredients list causes excess space
-                if (isInternetConnected) {
-
-                    Log.d("Search Text", searchText.toString())
-                    IngredientsList(
-                        Modifier,
-                        events = events,
-                        productsList = if (state.searchIngredientsListText == "") state.userIngredients else state.searchResults,
-                        userIngredientsList = if (state.searchIngredientsListText == "") state.userIngredients else state.searchResults,
-                        onEditQuantityClicked = {
-                            isSheetOpen = true
-                            events.updateIngredient(it)
-                        },
-                        onDateClicked = {
-                            events.updateIngredient(it)
-                            isDatePickerVisible = true
-                            events.updateIngredient(it)
-                        },
-                        onIngredientAdd = {},
-                        onDeleteIngredient = {
-                            events.deleteIngredientFromList(it)
-                        }
-                    )
-                    /*
-                    if (searchText.isBlank()) {
-                        IngredientsList(
-                            Modifier,
-                            events = events,
-                            productsList = state.userIngredients,
-                            userIngredientsList = state.userIngredients,
-                            onEditQuantityClicked = {
-                                isSheetOpen = true
-                                events.updateIngredient(it)
-                            },
-                            onDateClicked = {
-                                events.updateIngredient(it)
-                                isDatePickerVisible = true
-                                events.updateIngredient(it)
-                            },
-                            onIngredientAdd = {},
-                            onDeleteIngredient = {
-                                events.deleteIngredientFromList(it)
-                            }
-                        )
-                    }
-                    else
-                    {
-                        IngredientsList(
-                            Modifier,
-                            events = events,
-                            productsList = state.productsData.productsList,
-                            userIngredientsList = state.userIngredients,
-                            onEditQuantityClicked = {
-                                events.updateIngredient(it)
-                            },
-                            onDateClicked = {
-                                isDatePickerVisible = true
-                                events.updateIngredient(it)
-                            },
-                            onIngredientAdd = {
-                                events.addToUserIngredients(it)
-                                //searchText = ""
-                                isDialogOpen = true
-                            },
-                            onDeleteIngredient = {
-                                events.deleteIngredientFromList(it)
-                            }
-                        )
-                    }
-
-                     */
-                }
-
-                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
-
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    if (isInternetConnected) {
-
-                        Button(
-                            onClick = {
-                                //triggerIngredientBottomSheetModal()
-                                navController.navigate("ADD_INGREDIENTS")
-                            },
-                            shape = RoundedCornerShape(
-                                dimensionResource(
-                                    id = R.dimen.dim_15
-                                )
-                            ),
-                            colors = ButtonDefaults.buttonColors(foodClubGreen),
-                            //contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_5))
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.add_ingredients),
-                                fontSize = dimensionResource(
-                                    id = R.dimen.fon_20
-                                ).value.sp,
-                                fontFamily = Montserrat
-                            )
-                        }
-
-                        // TO BE REMOVED
-                        Text(
-                            modifier = Modifier.clickable {
-                                navController.navigate(route = HomeOtherRoutes.MyDigitalPantryView.route)
-                            },
-                            text = stringResource(id = R.string.see_all_ingredients),
-                            color = foodClubGreen,
-                            fontWeight = FontWeight.Bold,
-                            style = TextStyle(
-                                textDecoration = TextDecoration.Underline
-                            ),
-                            fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
-                            textAlign = TextAlign.Center
-                        )
-
-
-                    } else {
-                        CircularProgressIndicator(
-                            color = foodClubGreen,
-                            strokeWidth = dimensionResource(id = R.dimen.dim_4)
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
-                HorizontalPager(
-                    beyondBoundsPageCount = 1,
-                    flingBehavior = fling,
-                    modifier = Modifier
-                        .height(dimensionResource(id = R.dimen.dim_500))
-                        .padding(top = dimensionResource(id = R.dimen.dim_0)),
-                    state = pagerState1
-                ) {
-                    Box(
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                top = dimensionResource(id = R.dimen.dim_5),
-                                start = dimensionResource(id = R.dimen.dim_15),
-                                end = dimensionResource(id = R.dimen.dim_15),
-                                bottom = dimensionResource(id = R.dimen.dim_100)
-                            )
-                    ) {
-                        LazyVerticalGrid(columns = GridCells.Fixed(2)) {
-                            val userName = state.sessionUserUsername
-
-                            if (isInternetConnected) {
-                                if (homePosts != null) {
-                                    items(homePosts!!) { dataItem ->
-                                        events.getPostData(dataItem.videoId)
-                                        GridItem2(
-                                            navController,
-                                            dataItem,
-                                            userName,
-                                            isShowPost = {
-                                                postId = it
-                                                isShowPost = !isShowPost
-                                            }
-                                        )
-                                    }
-                                } else if (worldPosts != null) {
-                                    items(worldPosts.value) { dataItem ->
-                                        events.getPostData(dataItem.videoId)
-                                        GridItem2(
-                                            navController,
-                                            dataItem,
-                                            userName,
-                                            isShowPost = {
-                                                postId = it
-                                                isShowPost = !isShowPost
-                                            }
-                                        )
-                                    }
-                                }
-                            } else {
-                                items(8) {
-                                    Card(
-                                        modifier = Modifier
-                                            .height(dimensionResource(id = R.dimen.dim_272))
-                                            .width(dimensionResource(id = R.dimen.dim_178))
-                                            .padding(dimensionResource(id = R.dimen.dim_10)),
-                                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
-                                    ) {
-                                        Box(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .fillMaxHeight()
-                                                .background(brush)
-                                        )
-                                    }
-                                }
-                            }
-                        }
-
-                    }
-                }
-
-            }
-        }
-    }
-
-     */
     var showSheet by remember { mutableStateOf(false) }
 
     val triggerBottomSheetModal: () -> Unit = {
@@ -875,17 +480,6 @@ fun DiscoverView(
         IngredientsBottomSheet(
             onDismiss = triggerBottomSheetModal,
             productsData = state.productsData
-        )
-    }
-
-
-    if (showIngredientSheet) {
-        AddIngredientsBottomSheet(
-            onDismiss = triggerIngredientBottomSheetModal,
-            isInternetConnected,
-            events = events,
-            state = state,
-            navController = navController
         )
     }
 
@@ -1408,7 +1002,6 @@ fun IngredientsListColumn(
                                 onDateClicked(item)
                             },
                             onAddItemClicked = {
-                                //events.updateIngredient(it)
                                 onIngredientAdd(item)
                             }
                         )
@@ -1560,58 +1153,6 @@ fun SingleSearchIngredientItem(
     }
 }
 
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun EditIngredientBottomModal(
-//    ingredient: Ingredient,
-//    onDismissRequest: (Boolean) -> Unit,
-//    onEdit: (Ingredient) -> Unit
-//) {
-//    val sheetState = rememberModalBottomSheetState()
-//    ModalBottomSheet(
-//        sheetState = sheetState,
-//        onDismissRequest = {
-//            onDismissRequest(false)
-//        },
-//        modifier = Modifier.height(400.dp),
-//        containerColor = Color.White
-//    ) {
-//        val pickerValues = remember {
-//            mutableStateOf((1..10).map {
-//                Pair(
-//                    it,
-//                    (it * 100).toString() + ValueParser.quantityUnitToString(ingredient.unit)
-//                )
-//            })
-//        }
-//        val units = listOf(QuantityUnit.GRAMS, QuantityUnit.KILOGRAMS, QuantityUnit.LITERS, QuantityUnit.MILLILITERS,)
-//
-//
-//        val quantity = pickerValues.value.map { it.first }
-//        val grammage = pickerValues.value.map { it.second }
-//        val types = stringArrayResource(id = R.array.quantity_list).toList()
-//        Column(
-//            modifier = Modifier
-//                .heightIn(max = dimensionResource(id = R.dimen.dim_350))
-//                .padding(
-//                    start = dimensionResource(id = R.dimen.dim_10),
-//                    end = dimensionResource(id = R.dimen.dim_10)
-//                )
-//        ) {
-//
-//            EditIngredientQuantityPicker(
-//                ingredient = ingredient,
-//                quantity = quantity,
-//                grammage = grammage,
-//                types = types,
-//                onEditIngredient = {
-//                    onEdit(it)
-//                    onDismissRequest(false)
-//                }
-//            )
-//        }
-//    }
-//}
 
 @Composable
 fun AddIngredientDialog(
@@ -1837,199 +1378,4 @@ fun expirationDateTextStyle(expirationDate: String): TextStyle {
     return if (expirationDate == stringResource(id = R.string.edit)) TextStyle(textDecoration = TextDecoration.Underline) else TextStyle(
         textDecoration = TextDecoration.None
     )
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun AddIngredientsBottomSheet(
-    onDismiss: () -> Unit,
-    isInternetConnected: Boolean,
-    state: DiscoverState,
-    events: DiscoverEvents,
-    navController: NavController
-) {
-    val screenHeight =
-        LocalConfiguration.current.screenHeightDp.dp - dimensionResource(id = R.dimen.dim_160)
-    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var isSmallScreen by remember { mutableStateOf(false) }
-
-    val categories = listOf("Protein", "Breakfast")
-
-    var inputText by remember { mutableStateOf("") }
-    val brush = shimmerBrush()
-
-    val mainTabItemsList = stringArrayResource(id = R.array.discover_tabs)
-
-    var isDatePickerVisible by remember { mutableStateOf(false) }
-    val datePickerState = rememberDatePickerState()
-    var selectedDate by remember { mutableStateOf("") }
-
-    var isSheetOpen by rememberSaveable {
-        mutableStateOf(false)
-    }
-    var isDialogOpen by remember { mutableStateOf(false) }
-    var alphaValue by remember { mutableFloatStateOf(1f) }
-
-
-    var topTabIndex by remember { mutableIntStateOf(0) }
-
-    if (screenHeight <= dimensionResource(id = R.dimen.dim_440)) {
-        isSmallScreen = true
-    }
-
-    ModalBottomSheet(
-        containerColor = Color.White,
-        onDismissRequest = { onDismiss() },
-        sheetState = bottomSheetState,
-        dragHandle = { BottomSheetDefaults.DragHandle() },
-        scrimColor = Color.Transparent
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.8f)
-        )
-        {
-            Row(
-                horizontalArrangement = Arrangement.SpaceAround,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            )
-            {
-                IconButton(onClick = { onDismiss() }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.baseline_arrow_left),
-                        contentDescription = "Exit"
-                    )
-                }
-
-                Text(
-                    text = stringResource(id = R.string.add_ingredients),
-                    fontSize = dimensionResource(
-                        id = R.dimen.fon_25
-                    ).value.sp,
-                    fontFamily = Montserrat,
-                    fontWeight = FontWeight.Bold
-                )
-
-                /*
-                Button(
-                    onClick = { /*TODO*/ },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.save),
-                        fontFamily = Montserrat,
-                        fontSize = dimensionResource(
-                            id = R.dimen.dim_20
-                        ).value.sp,
-                        color = foodClubGreen
-                    )
-                }
-
-                 */
-            }
-
-
-            /*
-            MainTabRow(
-                isInternetConnected,
-                brush,
-                tabsList = mainTabItemsList,
-                horizontalArrangement = Arrangement.SpaceBetween,
-
-                ) {
-                topTabIndex = it
-            }
-
-             */
-
-
-            if (isInternetConnected) {
-
-                if (topTabIndex == 0) {
-                    SubSearchBar(
-                        navController = navController,
-                        searchTextValue = state.ingredientSearchText,
-                        onSearch = { input ->
-                            inputText = input
-                            events.onAddIngredientsSearchTextChange(input)
-                        }
-                    )
-                } else {
-                    // TODO figure out what do show here
-                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_30)))
-                }
-
-            }
-
-
-            /*
-            var subTabIndex by remember { mutableIntStateOf(0) }
-            SubTabRow(
-                onTabChanged = {
-                    subTabIndex = it
-                },
-                isInternetConnected,
-                brush
-            )
-
-             */
-
-
-            var homePosts: List<VideoModel>? = state.postList
-
-            if (isInternetConnected) {
-
-                if (inputText.isBlank()) {
-                    /*
-                    IngredientsList(
-                        Modifier,
-                        events = events,
-                        productsList = state.userIngredients,
-                        userIngredientsList = state.userIngredients,
-                        onEditQuantityClicked = {
-                            isSheetOpen = true
-                            events.updateIngredient(it)
-                        },
-                        onDateClicked = {
-                            events.updateIngredient(it)
-                            isDatePickerVisible = true
-                            events.updateIngredient(it)
-                        },
-                        onIngredientAdd = {},
-                        onDeleteIngredient = {
-                            events.deleteIngredientFromList(it)
-                        }
-                    )
-
-                     */
-                } else {
-                    IngredientsList(
-                        Modifier,
-                        events = events,
-                        productsList = state.productsData.productsList,
-                        userIngredientsList = state.userIngredients,
-                        onEditQuantityClicked = {
-                            events.updateIngredient(it)
-                        },
-                        onDateClicked = {
-                            isDatePickerVisible = true
-                            events.updateIngredient(it)
-                        },
-                        onIngredientAdd = {
-                            events.addToUserIngredients(it)
-                            isDialogOpen = false
-                        },
-                        onDeleteIngredient = {
-                            events.deleteIngredientFromList(it)
-                        }
-                    )
-                }
-            }
-
-
-        }
-    }
 }
