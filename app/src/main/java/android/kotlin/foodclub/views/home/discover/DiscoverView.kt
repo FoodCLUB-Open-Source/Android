@@ -217,7 +217,7 @@ fun DiscoverView(
                     )
                 } else {
                     // TODO figure out what do show here
-                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_30)))
+//                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_30)))
                 }
             }
         }
@@ -561,13 +561,14 @@ fun MainTabRow(
     var mainTabIndex by remember { mutableIntStateOf(0) }
     val strokeWidthDp = dimensionResource(id = R.dimen.dim_2)
     val topPaddingDp = dimensionResource(id = R.dimen.dim_4)
-    val underlineHeightDp = dimensionResource(id = R.dimen.dim_2)
+    val underlineHeightDp = dimensionResource(id = R.dimen.dim_5)
+
     Row(
         modifier = Modifier
             .fillMaxWidth(0.9f)
             .padding(
-                start = dimensionResource(id = R.dimen.dim_20),
-                end = dimensionResource(id = R.dimen.dim_20),
+                start = dimensionResource(id = R.dimen.dim_25),
+                end = dimensionResource(id = R.dimen.dim_15),
                 top = dimensionResource(id = R.dimen.dim_10),
                 bottom = dimensionResource(id = R.dimen.dim_10)
             ),
@@ -587,10 +588,10 @@ fun MainTabRow(
                         .drawBehind {
                             if (isSelected) {
                                 val strokeWidthPx = strokeWidthDp.toPx()
-                                val topPaddingPx = topPaddingDp.toPx()
+//                                val topPaddingPx = topPaddingDp.toPx()
                                 val underlineHeight = underlineHeightDp.toPx()
                                 val verticalOffset =
-                                    size.height - (underlineHeight / 2) + topPaddingPx
+                                    size.height + underlineHeight//(underlineHeight / 2) + topPaddingPx
                                 drawLine(
                                     color = Color.Black,
                                     strokeWidth = strokeWidthPx,
@@ -599,18 +600,14 @@ fun MainTabRow(
                                 )
                             }
                         },
-
                     fontWeight = if (isSelected) FontWeight(500) else FontWeight.Normal,
                     color = if (isSelected) Color.Black else Color(0xFFC2C2C2),
                     fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
                     lineHeight = dimensionResource(id = R.dimen.fon_24).value.sp,
-                    textAlign = TextAlign.Start,
+                    textAlign = TextAlign.Center,
                     fontFamily = Montserrat,
                     letterSpacing = (-0.04).em
                 )
-                if (tabsList[0] != stringResource(id = R.string.my_kitchen)) {
-                    Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_50)))
-                }
             }
         } else {
             tabsList.forEachIndexed { index, data ->
@@ -620,8 +617,7 @@ fun MainTabRow(
                     text = data,
                     modifier = Modifier
                         .background(brush)
-                        .clickable {
-                        }
+                        .clickable {}
                         .drawBehind {
                             if (isSelected) {
                                 val strokeWidthPx = strokeWidthDp.toPx()
@@ -644,11 +640,10 @@ fun MainTabRow(
                     fontFamily = Montserrat,
                     letterSpacing = (-0.04).em
                 )
-                if (tabsList[0] != stringResource(id = R.string.my_kitchen)) {
-                    Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_50)))
-                }
             }
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_50)))
         }
+
     }
 }
 
@@ -765,9 +760,9 @@ fun SubTabRow(
             start = dimensionResource(id = R.dimen.dim_20),
             end = dimensionResource(id = R.dimen.dim_20),
             bottom = dimensionResource(id = R.dimen.dim_5),
-            top = dimensionResource(id = R.dimen.dim_10)
+            top = dimensionResource(id = R.dimen.dim_0)
         ),
-
+        verticalAlignment = Alignment.Top,
         content = {
             if (isInternetConnected) {
                 itemsIndexed(subTabItemsList) { index, data ->
@@ -775,21 +770,6 @@ fun SubTabRow(
 
                     Text(
                         modifier = Modifier
-                            .drawBehind {
-                                if (selected) {
-                                    val strokeWidthPx = strokeWidthDp.toPx()
-                                    val topPaddingPx = topPaddingDp.toPx()
-                                    val underlineHeight = underlineHeightDp.toPx()
-                                    val verticalOffset =
-                                        size.height - (underlineHeight / 2) + topPaddingPx
-                                    drawLine(
-                                        color = Color.Black,
-                                        strokeWidth = strokeWidthPx,
-                                        start = Offset(0f, verticalOffset),
-                                        end = Offset(size.width, verticalOffset)
-                                    )
-                                }
-                            }
                             .clickable {
                                 subTabIndex = index
                                 onTabChanged(index)
@@ -799,8 +779,9 @@ fun SubTabRow(
                         color = if (selected) Color.Black else Color(0xFFC2C2C2),
                         fontSize = dimensionResource(id = R.dimen.fon_17).value.sp,
                         lineHeight = dimensionResource(id = R.dimen.fon_21).value.sp,
-                        textAlign = TextAlign.Start,
-                        fontFamily = Montserrat
+                        textAlign = TextAlign.Center,
+                        fontFamily = Montserrat,
+                        letterSpacing = (-0.04).em
                     )
                     Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_50)))
                 }
@@ -811,30 +792,14 @@ fun SubTabRow(
                     Text(
                         modifier = Modifier
                             .background(brush)
-                            .drawBehind {
-                                if (selected) {
-                                    val strokeWidthPx = strokeWidthDp.toPx()
-                                    val topPaddingPx =
-                                        topPaddingDp.toPx()
-                                    val underlineHeight =
-                                        underlineHeightDp.toPx()
-                                    val verticalOffset =
-                                        size.height - (underlineHeight / 2) + topPaddingPx
-                                    drawLine(
-                                        color = Color.Black,
-                                        strokeWidth = strokeWidthPx,
-                                        start = Offset(0f, verticalOffset),
-                                        end = Offset(size.width, verticalOffset)
-                                    )
-                                }
-                            }
                             .clickable {},
                         text = data,
                         color = Color.Transparent,
                         fontSize = dimensionResource(id = R.dimen.fon_17).value.sp,
                         lineHeight = dimensionResource(id = R.dimen.fon_21).value.sp,
                         textAlign = TextAlign.Start,
-                        fontFamily = Montserrat
+                        fontFamily = Montserrat,
+                        letterSpacing = (-0.04).em
                     )
                     Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_50)))
                 }
