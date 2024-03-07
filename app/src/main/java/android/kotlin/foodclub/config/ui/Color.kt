@@ -30,5 +30,3 @@ val snapsTopbar=Color(0xFF424242)
 
 val trimmerFilmSelectEdge = Color(0xFF191A18)
 val trimmerTimelineText = Color(0xFF8A8C86)
-
-val loginTextColor = Color(0xFF6AA60A)

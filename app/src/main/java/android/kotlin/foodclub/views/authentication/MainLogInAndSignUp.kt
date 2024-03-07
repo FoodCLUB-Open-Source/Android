@@ -2,7 +2,6 @@ package android.kotlin.foodclub.views.authentication
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
-import android.kotlin.foodclub.config.ui.loginTextColor
 import android.kotlin.foodclub.navigation.auth.AuthScreen
 import android.kotlin.foodclub.utils.composables.TermsAndConditionsInfoFooter
 import android.kotlin.foodclub.viewModels.authentication.mainLogin.MainLogInAndSignUpViewModel
@@ -35,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -150,7 +150,7 @@ fun MainLogInAndSignUp(
                             navController.navigate(route = AuthScreen.Login.route)
                         },
                         style = TextStyle(
-                            color = loginTextColor,
+                            color = colorResource(id = R.color.login_text_color),
                             fontFamily = Montserrat,
                             fontSize = dimensionResource(id = R.dimen.fon_14).value.sp
                         )
