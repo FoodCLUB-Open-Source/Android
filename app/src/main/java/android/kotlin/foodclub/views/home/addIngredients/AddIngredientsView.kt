@@ -4,10 +4,10 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.utils.composables.CustomDatePicker
 import android.kotlin.foodclub.utils.composables.EditIngredientBottomModal
+import android.kotlin.foodclub.utils.composables.IngredientsList
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
 import android.kotlin.foodclub.views.home.discover.DiscoverState
-import android.kotlin.foodclub.views.home.discover.IngredientsList
 import android.kotlin.foodclub.views.home.discover.SubSearchBar
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

@@ -6,21 +6,18 @@ import android.kotlin.foodclub.config.ui.Satoshi
 import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.home.VideoModel
-import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.MyBasketCache
 import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.CustomDatePicker
 import android.kotlin.foodclub.utils.composables.EditIngredientBottomModal
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
+import android.kotlin.foodclub.utils.composables.IngredientsList
 import android.kotlin.foodclub.utils.composables.shimmerBrush
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
-import android.kotlin.foodclub.views.home.myDigitalPantry.TitlesSection
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -44,7 +41,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -61,7 +57,6 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
@@ -69,13 +64,9 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DismissDirection
-import androidx.compose.material3.DismissValue
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
@@ -84,7 +75,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -101,7 +91,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -119,15 +108,11 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import kotlinx.coroutines.CoroutineScope
@@ -369,30 +354,7 @@ fun DiscoverView(
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-                    val pageOffset = pagerState2.currentPageOffsetFraction
-                    val maxDelay = integerResource(id = R.integer.int_200)
-                    val minDelay = integerResource(id = R.integer.int_50)
-                    val delay = (maxDelay - minDelay) * ( 1 - (pageOffset.absoluteValue * 2)) + minDelay
-
-                    AnimatedVisibility(
-                        visible = pagerState2.currentPage == 1 && pageOffset == 0.00f,
-                        enter = slideInHorizontally(animationSpec = tween(durationMillis = delay.toInt())) { fullWidth ->
-                            // Offsets the content by 1/3 of its width to the left, and slide towards right
-                            // Overwrites the default animation with tween for this slide animation.
-                            -fullWidth / 3
-                        } + fadeIn(
-                            // Overwrites the default animation with tween
-                            animationSpec = tween(durationMillis = delay.toInt())
-                        ),
-                        exit = slideOutHorizontally(animationSpec = tween(durationMillis = delay.toInt())) { fullWidth ->
-                            // Offsets the content by 1/3 of its width to the left, and slide towards right
-                            // Overwrites the default animation with tween for this slide animation.
-                            fullWidth / 3
-                        } + fadeOut(animationSpec = tween(durationMillis = delay.toInt()))
-                    ) {
-
-                        Text(text= stringResource(id = R.string.Recommendations), fontFamily = Montserrat, fontSize = dimensionResource(id = R.dimen.fon_25).value.sp)
-                    }
+                    SlideInTitle(pagerState2 = pagerState2)
 
                     HorizontalPager(
                         beyondBoundsPageCount = 1,
@@ -484,6 +446,39 @@ fun DiscoverView(
     }
 
 }
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun SlideInTitle(pagerState2: PagerState)
+{
+    val pageOffset = pagerState2.currentPageOffsetFraction
+    val maxDelay = integerResource(id = R.integer.int_200)
+    val minDelay = integerResource(id = R.integer.int_50)
+    val delay = (maxDelay - minDelay) * ( 1 - (pageOffset.absoluteValue * 2)) + minDelay
+
+    AnimatedVisibility(
+        visible = pagerState2.currentPage == 1 && pageOffset == 0.00f,
+        enter = slideInHorizontally(animationSpec = tween(durationMillis = delay.toInt())) { fullWidth ->
+            // Offsets the content by 1/3 of its width to the left, and slide towards right
+            // Overwrites the default animation with tween for this slide animation.
+            -fullWidth / 3
+        } + fadeIn(
+            // Overwrites the default animation with tween
+            animationSpec = tween(durationMillis = delay.toInt())
+        ),
+        exit = slideOutHorizontally(animationSpec = tween(durationMillis = delay.toInt())) { fullWidth ->
+            // Offsets the content by 1/3 of its width to the left, and slide towards right
+            // Overwrites the default animation with tween for this slide animation.
+            fullWidth / 3
+        } + fadeOut(animationSpec = tween(durationMillis = delay.toInt()))
+    ) {
+
+        Text(text= stringResource(id = R.string.Recommendations), fontFamily = Montserrat, fontSize = dimensionResource(id = R.dimen.fon_25).value.sp)
+    }
+}
+
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -874,285 +869,6 @@ fun SubTabRow(
 
 }
 
-@Composable
-fun IngredientsList(
-    modifier: Modifier,
-    events: DiscoverEvents,
-    productsList: List<Ingredient>,
-    onEditQuantityClicked: (Ingredient) -> Unit,
-    onDateClicked: (Ingredient) -> Unit,
-    onIngredientAdd: (Ingredient) -> Unit,
-    onDeleteIngredient: (Ingredient) -> Unit,
-    userIngredientsList: List<Ingredient>
-) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            //.fillMaxHeight(0.57f)
-            .background(
-                color = Color.White
-            )
-    ) {
-
-        TitlesSection(
-            modifier = modifier,
-            view = stringResource(id = R.string.discover_view)
-        )
-
-
-        // Unecessary white space attepting to rectify it
-        IngredientsListColumn(
-            events = events,
-            productsList = productsList,
-            userIngredientsList = userIngredientsList,
-            onEditQuantityClicked = { onEditQuantityClicked(it) },
-            onDateClicked = { onDateClicked(it) },
-            onIngredientAdd = { onIngredientAdd(it) },
-            onDeleteIngredient = { onDeleteIngredient(it) }
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun IngredientsListColumn(
-    events: DiscoverEvents,
-    productsList: List<Ingredient>,
-    onEditQuantityClicked: (Ingredient) -> Unit,
-    onDateClicked: (Ingredient) -> Unit,
-    onIngredientAdd: (Ingredient) -> Unit,
-    onDeleteIngredient: (Ingredient) -> Unit,
-    userIngredientsList: List<Ingredient>
-) {
-    //Manipulate height do note, it must have a constraint (non infinite)
-    LazyColumn(
-        modifier = Modifier
-            .padding(
-                start = dimensionResource(id = R.dimen.dim_15),
-                end = dimensionResource(id = R.dimen.dim_15)
-            )
-            .background(Color.White)
-            .height(dimensionResource(id = R.dimen.dim_65).value.dp * if (productsList.size > 5) 5 else productsList.size),
-        content = {
-            itemsIndexed(productsList) { _, item ->
-                var notSwiped by remember { mutableStateOf(false) }
-                val dismissState = rememberDismissState(
-                    confirmValueChange = { dismiss ->
-                        if (dismiss == DismissValue.DismissedToEnd) notSwiped =
-                            !notSwiped
-                        dismiss != DismissValue.DismissedToEnd
-                    }
-                )
-
-                if (dismissState.isDismissed(DismissDirection.EndToStart)) {
-                    LaunchedEffect(key1 = true) {
-                        onDeleteIngredient(item)
-                        dismissState.reset()
-                    }
-                } else {
-                    LaunchedEffect(key1 = true) {
-                        dismissState.reset()
-                    }
-                }
-                SwipeToDismiss(
-                    state = dismissState,
-                    directions = setOf(DismissDirection.EndToStart),
-                    background = {
-                        val color by animateColorAsState(
-                            when (dismissState.targetValue) {
-                                DismissValue.Default -> Color.White
-                                DismissValue.DismissedToEnd -> Color.White
-                                DismissValue.DismissedToStart -> Color.Red
-                            }, label = ""
-                        )
-                        val alignment = Alignment.CenterEnd
-                        val icon = Icons.Default.Delete
-
-                        val scale by animateFloatAsState(
-                            if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f,
-                            label = ""
-                        )
-
-                        Box(
-                            Modifier
-                                .fillMaxSize()
-                                .background(color)
-                                .padding(horizontal = dimensionResource(id = R.dimen.dim_20)),
-                            contentAlignment = alignment
-                        ) {
-                            Icon(
-                                icon,
-                                contentDescription = null,
-                                modifier = Modifier.scale(scale),
-                                tint = Color.White
-                            )
-                        }
-                    },
-                    dismissContent = {
-                        SingleSearchIngredientItem(
-                            modifier = Modifier,
-                            item = item, //Item is different when editing need to make sure to check based on ID
-                            userIngredientsList = userIngredientsList,
-                            onEditQuantityClicked = {
-                                events.updateIngredient(it)
-                                onEditQuantityClicked(item)
-                            },
-                            onDateClicked = {
-                                events.updateIngredient(it)
-                                onDateClicked(item)
-                            },
-                            onAddItemClicked = {
-                                onIngredientAdd(item)
-                            }
-                        )
-                    }
-                )
-
-                Spacer(Modifier.height(dimensionResource(id = R.dimen.dim_8)))
-                Divider(
-                    thickness = dimensionResource(id = R.dimen.dim_1),
-                    modifier = Modifier.alpha(0.5f),
-                    color = Color.LightGray
-                )
-                Spacer(Modifier.height(dimensionResource(id = R.dimen.dim_8)))
-
-            }
-        }
-    )
-}
-
-@Composable
-fun SingleSearchIngredientItem(
-    modifier: Modifier,
-    item: Ingredient,
-    onEditQuantityClicked: (Ingredient) -> Unit,
-    onDateClicked: (Ingredient) -> Unit,
-    onAddItemClicked: (Ingredient) -> Unit,
-    userIngredientsList: List<Ingredient>
-) {
-    val unit = stringResource(id = R.string.gram_unit) // TODO make this dynamic
-    val quantity = itemQuantity(item, unit)
-    val expirationDate = itemExpirationDate(item)
-    val isItemAdded = userIngredientsList.filter { item.id == it.id }.size == 1
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .background(Color.White)
-    ) {
-        Column(
-            modifier = modifier.weight(1f)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                AsyncImage(
-                    model = item.imageUrl,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = modifier
-                        .height(dimensionResource(id = R.dimen.dim_48))
-                        .width(dimensionResource(id = R.dimen.dim_48))
-                        .clip(CircleShape)
-                )
-                Text(
-                    modifier = modifier.padding(start = dimensionResource(id = R.dimen.dim_6)),
-                    text = item.type,
-                    fontWeight = FontWeight(500),
-                    lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
-                    fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
-                    color = Color.Black,
-                    maxLines = integerResource(id = R.integer.int_2),
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-        }
-        Column(modifier = modifier.weight(1f)) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start
-            ) {
-                if (true)//isItemAdded)
-                {
-                    Text(
-                        modifier = modifier
-                            .padding(start = dimensionResource(id = R.dimen.dim_6))
-                            .clickable {
-                                onEditQuantityClicked(item)
-                            },
-                        text = quantity,
-                        fontWeight = FontWeight(500),
-                        fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
-                        lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
-                        fontFamily = Montserrat,
-                        color = Color.Gray,
-                        style = quantityTextStyle(quantity),
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1
-                    )
-
-                } else {
-                    Box(modifier = Modifier.weight(1f, fill = false))
-                    Spacer(modifier = Modifier.weight(1f, fill = true))
-                }
-            }
-        }
-        Column(modifier = modifier.weight(1f)) {
-            Row(
-                modifier = modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                if (true)//isItemAdded)
-                {
-                    Text(
-                        modifier = modifier
-                            .padding(start = dimensionResource(id = R.dimen.dim_20))
-                            .clickable {
-                                onDateClicked(item)
-                            },
-                        text = expirationDate,
-                        fontWeight = FontWeight(500),
-                        textAlign = TextAlign.Start,
-                        fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
-                        lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
-                        fontFamily = Montserrat,
-                        color = Color.Gray,
-                        style = expirationDateTextStyle(expirationDate),
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1
-                    )
-                }
-
-                //Item may have a different ID when it is being edited so it isn't in the list will have to check that
-                if (!isItemAdded) {
-                    Box(modifier = Modifier.weight(1f, fill = false))
-                    Spacer(modifier = Modifier.weight(1f, fill = true))
-                    Box(
-                        modifier = Modifier
-                            .size(dimensionResource(id = R.dimen.dim_24))
-                            .clip(CircleShape)
-                            .background(foodClubGreen)
-                            .clickable {
-                                onAddItemClicked(item)
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.add),
-                            contentDescription = null,
-                            tint = Color.White
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
 
 @Composable
 fun AddIngredientDialog(
@@ -1351,31 +1067,4 @@ fun GridItem2(
             }
         }
     }
-}
-
-
-@Composable
-fun itemQuantity(item: Ingredient, unit: String): String {
-    return if (item.quantity != 0) item.quantity.toString() + unit else stringResource(id = R.string.edit)
-}
-
-@Composable
-fun itemExpirationDate(item: Ingredient): String {
-    return if (item.expirationDate != "") {
-        item.expirationDate.split(" ").take(2).joinToString(" ")
-    } else stringResource(id = R.string.edit)
-}
-
-@Composable
-fun quantityTextStyle(quantity: String): TextStyle {
-    return if (quantity == stringResource(id = R.string.edit)) TextStyle(textDecoration = TextDecoration.Underline) else TextStyle(
-        textDecoration = TextDecoration.None
-    )
-}
-
-@Composable
-fun expirationDateTextStyle(expirationDate: String): TextStyle {
-    return if (expirationDate == stringResource(id = R.string.edit)) TextStyle(textDecoration = TextDecoration.Underline) else TextStyle(
-        textDecoration = TextDecoration.None
-    )
 }
