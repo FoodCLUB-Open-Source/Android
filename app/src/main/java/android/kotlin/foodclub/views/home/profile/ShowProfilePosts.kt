@@ -248,7 +248,7 @@ fun ShowProfilePosts(
                 },
                 onConfirm = {
                     infoDialog.value = false
-                    events.deleteCurrentPost(posts[pagerState.currentPage].videoId)
+                    events.deletePost(posts[pagerState.currentPage].videoId)
                     onPostDeleted()
                 }
             )

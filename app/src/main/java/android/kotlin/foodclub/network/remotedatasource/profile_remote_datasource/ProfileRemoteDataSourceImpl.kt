@@ -15,11 +15,10 @@ class ProfileRemoteDataSourceImpl @Inject constructor(
     private val api: ProfileService
 ): ProfileRemoteDataSource {
     override suspend fun retrieveProfileData(
-        userId: Long,
         pageNo: Int?,
         pageSize: Int?
     ): Response<RetrieveProfileResponse> {
-        return api.retrieveProfileData(userId, pageNo, pageSize)
+        return api.retrieveProfileData(pageNo, pageSize)
     }
 
     override suspend fun updateUserProfileImage(

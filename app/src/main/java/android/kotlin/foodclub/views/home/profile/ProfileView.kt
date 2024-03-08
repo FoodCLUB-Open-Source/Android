@@ -3,12 +3,15 @@ package android.kotlin.foodclub.views.home.profile
 import android.content.Intent
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.others.BottomSheetItem
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.CustomBottomSheet
 import android.kotlin.foodclub.utils.composables.shimmerBrush
+import android.kotlin.foodclub.utils.composables.videoPager.VideoPager
+import android.kotlin.foodclub.utils.composables.videoPager.VideoPagerState
 import android.kotlin.foodclub.utils.helpers.ProfilePicturePlaceHolder
 import android.kotlin.foodclub.utils.helpers.UiEvent
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
@@ -39,7 +42,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -51,6 +53,7 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
@@ -58,9 +61,8 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -72,6 +74,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.integerResource
@@ -85,6 +88,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -96,10 +101,14 @@ fun ProfileView(
     navController: NavController,
     userId: Long,
     viewModel: ProfileViewModel,
+    profilePosts: LazyPagingItems<VideoModel>,
+    bookmarkedPosts: LazyPagingItems<VideoModel>,
     events: ProfileEvents,
     state: ProfileState
 ) {
     val context = LocalContext.current
+    val localDensity = LocalDensity.current
+    val coroutineScope = rememberCoroutineScope()
     val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
     val brush = shimmerBrush()
     val scope = rememberCoroutineScope()
@@ -126,23 +135,24 @@ fun ProfileView(
             state.isRefreshingUI = true
             scope.launch {
                 delay(2000)
-                events.onRefreshUI()
+                profilePosts.refresh()
+//                events.onRefreshUI()
             }
         }
     )
-    if (isAPICallLoading){
+    if (/*isAPICallLoading*/profilePosts.loadState.refresh is LoadState.Loading){
         ProfileViewLoadingSkeleton(
             brush,
             navController,
             userId,
             state
         )
-    }else{
+    } else {
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .pullRefresh(pullRefresh)
-        ){
+        ) {
             LaunchedEffect(userId) {
                 if (userId != 0L && userId != state.sessionUserId) {
                     events.isFollowedByUser(state.sessionUserId, userId)
@@ -167,16 +177,10 @@ fun ProfileView(
                 pageCount = { 2 }
             )
 
-            val profile = state.userProfile
-            val userPosts = state.userPosts
-            val topCreators = profile?.topCreators
-            val bookmarkedPosts = state.bookmarkedPosts
+//            val userPosts = state.userPosts
+//            val bookmarkedPosts = state.bookmarkedPosts
             val tabItems = stringArrayResource(id = R.array.profile_tabs)
             var showBottomSheet by remember { mutableStateOf(false) }
-            var showUserOptionsSheet by remember { mutableStateOf(false) }
-
-            var showBlockView by remember { mutableStateOf(false) }
-            var showReportView by remember { mutableStateOf(false) }
 
             val galleryLauncher =
                 rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocument()) {
@@ -197,17 +201,12 @@ fun ProfileView(
                     }
                 }
 
-            var showPost by remember {
-                mutableStateOf(false)
-            }
-            var postId by remember {
-                mutableLongStateOf(0L)
-            }
+            var showPost by remember { mutableStateOf(false) }
+            var showPostIndex by remember { mutableIntStateOf(0) }
 
-            var userTabItems = listOf<VideoModel>()
-
+            var userTabItems: LazyPagingItems<VideoModel> = profilePosts
             if (pagerState.currentPage == 0) {
-                userTabItems = userPosts
+                userTabItems = profilePosts
             } else if (pagerState.currentPage == 1) {
                 userTabItems = bookmarkedPosts
             }
@@ -217,21 +216,30 @@ fun ProfileView(
                 }
             }
             if (showPost) {
-                events.getPostData(postId)
-
-                ShowProfilePosts(
-                    postId = postId,
+                VideoPager(
+                    exoPlayer = viewModel.exoPlayer,
+                    videoList = userTabItems,
+                    initialPage = showPostIndex,
                     events = events,
-                    state = state,
-                    onPostDeleted = {
-                        events.updatePosts(postId)
-                        showPost = false
-                    },
-                    onBackPressed = {
-                        showPost = false
-                    },
-                    posts = userTabItems
+                    state = VideoPagerState.default(),
+                    modifier = Modifier,
+                    localDensity = localDensity,
+                    coroutineScope = coroutineScope
                 )
+
+//                ShowProfilePosts(
+//                    postId = postIndex,
+//                    events = events,
+//                    state = state,
+//                    onPostDeleted = {
+//                        events.updatePosts(postIndex)
+//                        showPost = false
+//                    },
+//                    onBackPressed = {
+//                        showPost = false
+//                    },
+//                    posts = userTabItems
+//                )
             } else {
                 Column(
                     modifier = Modifier
@@ -377,86 +385,86 @@ fun ProfileView(
                                             )
                                         }),
 
-                                    ) {
-                                    Text(
-                                        text = AnnotatedString(profile?.totalUserFollowers?.toString() ?: ""),
-                                        modifier = Modifier.align(Alignment.Center),
-                                        style = TextStyle(
-                                            color = Color.Black,
-                                            fontFamily = Montserrat,
-                                            fontWeight = FontWeight.SemiBold,
-                                            fontSize = dimensionResource(id = R.dimen.fon_17).value.sp
-                                        ),
-                                        textAlign = TextAlign.Center,
-                                        overflow = TextOverflow.Ellipsis,
-                                        maxLines = integerResource(id = R.integer.int_1)
-                                    )
-                                }
-                                Text(
-                                    fontFamily = Montserrat,
-                                    text = stringResource(id = R.string.followers),
-                                    fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
-                                    color = colorResource(id = R.color.followers_following_color),
-                                    fontWeight = FontWeight.Light,
-                                    overflow = TextOverflow.Ellipsis,
-                                    maxLines = integerResource(id = R.integer.int_1)
-                                )
-                            }
+                ) {
+                Text(
+                    text = AnnotatedString(state.userProfile?.totalUserFollowers?.toString() ?: ""),
+                    modifier = Modifier.align(Alignment.Center),
+                    style = TextStyle(
+                        color = Color.Black,
+                        fontFamily = Montserrat,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = dimensionResource(id = R.dimen.fon_17).value.sp
+                    ),
+                    textAlign = TextAlign.Center,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = integerResource(id = R.integer.int_1)
+                )
+            }
+            Text(
+                fontFamily = Montserrat,
+                text = stringResource(id = R.string.followers),
+                fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
+                color = colorResource(id = R.color.followers_following_color),
+                fontWeight = FontWeight.Light,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = integerResource(id = R.integer.int_1)
+            )
+        }
 
-                            Column {
-                                Box(
-                                    modifier = Modifier
-                                        .width(dimensionResource(id = R.dimen.dim_60))
-                                        .wrapContentHeight()
-                                        .clickable(onClick = {
-                                            navController.navigate(
-                                                "FOLLOWING_VIEW/${
-                                                    if (userId != 0L) userId else state.sessionUserId
-                                                }"
-                                            )
-                                        }),
+        Column {
+            Box(
+                modifier = Modifier
+                    .width(dimensionResource(id = R.dimen.dim_60))
+                    .wrapContentHeight()
+                    .clickable(onClick = {
+                        onNavigate(
+                            "FOLLOWING_VIEW/${
+                                if (state.myUserId != 0L) state.myUserId else state.sessionUserId
+                            }"
+                        )
+                    }),
 
-                                    ) {
-                                    Text(
-                                        text = AnnotatedString(profile?.totalUserFollowing?.toString() ?: ""),
-                                        modifier = Modifier.align(Alignment.Center),
-                                        style = TextStyle(
-                                            color = Color.Black,
-                                            fontFamily = Montserrat,
-                                            fontWeight = FontWeight.SemiBold,
-                                            fontSize = dimensionResource(id = R.dimen.fon_17).value.sp
-                                        ),
-                                        textAlign = TextAlign.Center,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
+                ) {
+                Text(
+                    text = AnnotatedString(state.userProfile?.totalUserFollowing?.toString() ?: ""),
+                    modifier = Modifier.align(Alignment.Center),
+                    style = TextStyle(
+                        color = Color.Black,
+                        fontFamily = Montserrat,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = dimensionResource(id = R.dimen.fon_17).value.sp
+                    ),
+                    textAlign = TextAlign.Center,
+                    overflow = TextOverflow.Ellipsis
+                )
 
-                                }
-                                Text(
-                                    fontFamily = Montserrat,
-                                    text = stringResource(id = R.string.following),
-                                    fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
-                                    color = colorResource(id = R.color.followers_following_color),
-                                    fontWeight = FontWeight.Light,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
-
-
-                        }
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(Color.White),
-                            horizontalArrangement = Arrangement.spacedBy(
-                                dimensionResource(id = R.dimen.dim_30),
-                                Alignment.CenterHorizontally
-                            )
-                        ) {
+            }
+            Text(
+                fontFamily = Montserrat,
+                text = stringResource(id = R.string.following),
+                fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
+                color = colorResource(id = R.color.followers_following_color),
+                fontWeight = FontWeight.Light,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
 
 
-                        }
-                        if (userId != 0L && userId != state.sessionUserId) {
-                            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+    }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White),
+        horizontalArrangement = Arrangement.spacedBy(
+            dimensionResource(id = R.dimen.dim_30),
+            Alignment.CenterHorizontally
+        )
+    ) {
+
+
+    }
+    if (state.myUserId != 0L && state.myUserId != state.sessionUserId) {
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
                             FollowButton(
                                 isFollowed = state.isFollowed,

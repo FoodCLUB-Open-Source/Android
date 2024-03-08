@@ -2,12 +2,15 @@ package android.kotlin.foodclub.viewModels.home.profile
 
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.products.MyBasketCache
+import android.kotlin.foodclub.localdatasource.room.entity.OfflineUserPostsModel
 import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import android.kotlin.foodclub.navigation.Graph
+import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.SharedVideoMapper
+import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserLocalPostsMapper
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.repositories.RecipeRepository
 import android.kotlin.foodclub.utils.helpers.StoreData
@@ -16,6 +19,9 @@ import android.kotlin.foodclub.views.home.profile.ProfileState
 import android.net.Uri
 import android.util.Log
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.paging.Pager
+import androidx.paging.cachedIn
+import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -24,6 +30,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
@@ -34,6 +42,8 @@ class ProfileViewModel @Inject constructor(
     private val postRepository: PostRepository,
     private val profileRepository: ProfileRepository,
     val sessionCache: SessionCache,
+    pager: Pager<Int, OfflineUserPostsModel>,
+    private val sharedVideoMapper: SharedVideoMapper,
     private val storeData: StoreData,
     private val recipeRepository: RecipeRepository,
     private val basketCache: MyBasketCache,
@@ -43,6 +53,11 @@ class ProfileViewModel @Inject constructor(
     companion object {
         private val TAG = ProfileViewModel::class.java.simpleName
     }
+
+    val userPostsPagingFlow = pager
+        .flow
+        .map { pagingData -> pagingData.map { sharedVideoMapper.mapToDomainModel(it) } }
+        .cachedIn(viewModelScope)
 
     private val _state = MutableStateFlow(ProfileState.default())
     val state: StateFlow<ProfileState>
@@ -187,7 +202,7 @@ class ProfileViewModel @Inject constructor(
 //        }
     }
 
-    override fun deleteCurrentPost(postId: Long) {
+    override fun deletePost(postId: Long) {
         Log.i(TAG, "DELETED POST ID: $postId")
         viewModelScope.launch {
             when (val resource = postRepository.deletePost(postId)) {
@@ -235,36 +250,44 @@ class ProfileViewModel @Inject constructor(
         setUser(_state.value.myUserId)
     }
 
-    private suspend fun getProfileModel(userId: Long) {
-        when (val resource = profileRepository.retrieveProfileData(userId)) {
-            is Resource.Success -> {
-                _state.update {
-                    it.copy(
-                        error = "",
-                        userProfile = resource.data,
-                        sessionUserId = sessionCache.getActiveSession()!!.sessionUser.userId,
-                        dataStore = storeData,
-                        userPosts = resource.data!!.userPosts,
-                        myUserId = userId,
-                    )
-                }
-            }
+    override suspend fun userViewsPost(postId: Long) {
+        TODO("Not yet implemented")
+    }
 
-            is Resource.Error -> {
+    override suspend fun updatePostLikeStatus(postId: Long, isLiked: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    private suspend fun getProfileModel(userId: Long) {
+//        when (val resource = profileRepository.retrieveProfileData(userId)) {
+//            is Resource.Success -> {
+//                _state.update {
+//                    it.copy(
+//                        error = "",
+//                        userProfile = resource.data,
+//                        sessionUserId = sessionCache.getActiveSession()!!.sessionUser.userId,
+//                        dataStore = storeData,
+//                        userPosts = resource.data!!.userPosts,
+//                        myUserId = userId,
+//                    )
+//                }
+//            }
+//
+//            is Resource.Error -> {
                 val profileData = profileRepository.getUserProfileData(userId)
                 val postVideosData = profileRepository.getUserPosts()
                 _state.update { state->
                     state.copy(
                         userProfile = profileData,
                         userPosts = postVideosData,
-                        error = resource.message!!,
+//                        error = resource.message!!,
                     )
                 }
-            }
-        }
+//            }
+//        }
     }
 
-    fun getRecipe(postId: Long) {
+    override fun getRecipe(postId: Long) {
         viewModelScope.launch {
             when(val resource = recipeRepository.getRecipe(postId)) {
                 is Resource.Success -> {
@@ -277,6 +300,10 @@ class ProfileViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    override fun updatePostBookmarkStatus(postId: Long, isBookmarked: Boolean) {
+        TODO("Not yet implemented")
     }
 
     private suspend fun getBookmarkedPosts(userId: Long) {

@@ -11,7 +11,6 @@ import retrofit2.Response
 
 interface ProfileRemoteDataSource {
     suspend fun retrieveProfileData(
-        userId: Long,
         pageNo: Int? = null,
         pageSize: Int? = null
     ): Response<RetrieveProfileResponse>

@@ -2,6 +2,7 @@ package android.kotlin.foodclub.localdatasource.localdatasource.profile_posts_lo
 
 import android.kotlin.foodclub.localdatasource.room.dao.UserProfilePostsDao
 import android.kotlin.foodclub.localdatasource.room.entity.OfflineUserPostsModel
+import androidx.paging.PagingSource
 import kotlinx.coroutines.flow.Flow
 
 class ProfileVideosLocalDataSourceImpl(
@@ -13,6 +14,10 @@ class ProfileVideosLocalDataSourceImpl(
 
     override fun getProfileVideosData(id: Long): Flow<OfflineUserPostsModel> {
         return userProfilePostsDao.getProfileVideosData(id)
+    }
+
+    override fun pagingSource(): PagingSource<Int, OfflineUserPostsModel> {
+        return userProfilePostsDao.pagingSource()
     }
 
     override suspend fun updateProfileVideosData(videosModel: OfflineUserPostsModel) {

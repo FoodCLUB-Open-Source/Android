@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.localdatasource.room.dao
 
 import android.kotlin.foodclub.localdatasource.room.entity.OfflineUserPostsModel
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -17,6 +18,9 @@ interface UserProfilePostsDao {
 
     @Query("SELECT * FROM user_posts where videoId=:id")
     fun getProfileVideosData(id: Long): Flow<OfflineUserPostsModel>
+
+    @Query("SELECT * FROM user_posts")
+    fun pagingSource(): PagingSource<Int, OfflineUserPostsModel>
 
     @Update
     suspend fun updateProfileVideosData(videosModel: OfflineUserPostsModel)

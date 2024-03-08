@@ -1,8 +1,10 @@
 package android.kotlin.foodclub.network.retrofit.dtoMappers.profile
 
+import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.domain.models.profile.UserProfile
 import android.kotlin.foodclub.network.retrofit.dtoMappers.posts.PostToVideoMapper
+import android.kotlin.foodclub.network.retrofit.dtoModels.posts.PostModelDto
 import android.kotlin.foodclub.network.retrofit.dtoModels.profile.TopCreatorsDto
 import android.kotlin.foodclub.network.retrofit.dtoModels.profile.UserProfileDto
 import android.kotlin.foodclub.network.retrofit.utils.DomainMapper

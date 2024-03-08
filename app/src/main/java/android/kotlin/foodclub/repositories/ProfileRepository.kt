@@ -25,6 +25,7 @@ import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.OfflineProfil
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.SharedVideoMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserLocalBookmarksMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserLocalPostsMapper
+import android.kotlin.foodclub.network.retrofit.dtoModels.profile.UserProfileDto
 import android.kotlin.foodclub.utils.helpers.Resource
 import androidx.paging.Pager
 import kotlinx.coroutines.flow.firstOrNull
@@ -49,11 +50,11 @@ class ProfileRepository(
 ) {
 
     suspend fun retrieveProfileData(
-        userId: Long, pageNo: Int? = null, pageSize: Int? = null
-    ): Resource<UserProfile, DefaultErrorResponse> {
+        userId: Long = 1, pageNo: Int? = null, pageSize: Int? = null
+    ): Resource<UserProfileDto, DefaultErrorResponse> {
         return when(
             val resource = apiRequestFlow<RetrieveProfileResponse, DefaultErrorResponse> {
-                profileRemoteDataSource.retrieveProfileData(userId, pageNo, pageSize )
+                profileRemoteDataSource.retrieveProfileData(pageNo, pageSize )
             }
         ) {
             is Resource.Success -> {
@@ -61,12 +62,13 @@ class ProfileRepository(
                 mappedProfileData.userId = userId
                 saveLocalProfileDetails(mappedProfileData)
 
-                val userPosts = resource.data.body()!!.data.userPosts.take(10)
-                val mappedPosts = localVideosMapper.mapToDomainModel(userPosts)
-                profilePostsLocalDataSource.insertProfileVideosData(mappedPosts)
+//                val userPosts = resource.data.body()!!.data.userPosts.take(10)
+//                val mappedPosts = localVideosMapper.mapToDomainModel(userPosts)
+//                profilePostsLocalDataSource.insertProfileVideosData(mappedPosts)
 
                 Resource.Success(
-                    profileMapper.mapToDomainModel(resource.data.body()!!.data)
+//                    profileMapper.mapToDomainModel(resource.data.body()!!.data)
+                    resource.data.body()!!.data
                 )
             }
 
