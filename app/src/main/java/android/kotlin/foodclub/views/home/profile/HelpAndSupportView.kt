@@ -1,45 +1,27 @@
 package android.kotlin.foodclub.views.home.profile
 
-import android.content.Context
 import android.content.res.Configuration
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.FoodClubTheme
 import android.kotlin.foodclub.config.ui.Montserrat
-import android.kotlin.foodclub.config.ui.foodClubGreen
-import android.kotlin.foodclub.views.settings.SettingsIcons
-import android.net.Uri
-import androidx.browser.customtabs.CustomTabsIntent
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
@@ -52,7 +34,6 @@ fun HelpAndSupportView(
     navController: NavController
 ) {
     val scrollState = rememberScrollState()
-    val context = LocalContext.current
     Scaffold(
         topBar = {
             HelpAndSupportTopBar(navController = navController)
@@ -79,77 +60,9 @@ fun HelpAndSupportView(
                     .verticalScroll(scrollState),
                 lineHeight = dimensionResource(id = R.dimen.fon_18).value.sp
             )
-            Column(
-                modifier = Modifier
-                    .weight(0.2f),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Divider(
-                    thickness = dimensionResource(id = R.dimen.dim_1),
-                    color = Color(0xFFEBEBEB),
-                    modifier = Modifier.padding(
-                        horizontal = dimensionResource(id = R.dimen.dim_8)
-                    )
-                )
-                OutlinedButton(
-                    modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_16)),
-                    onClick = {
-                        openUrlInCustomTabs(context)
-                    },
-                    shape = CircleShape.copy(
-                        all = CornerSize(dimensionResource(id = R.dimen.dim_8))
-                    ),
-                    border = BorderStroke(
-                        dimensionResource(id = R.dimen.dim_1), color = foodClubGreen,
-                    ),
-                ) {
-                    Text(
-                        modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_12)),
-                        text = stringResource(id = R.string.contact_us),
-                        textDecoration = TextDecoration.Underline,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
-                        color = foodClubGreen
-                    )
-                }
-                Text(
-                    text = stringResource(R.string.help_and_support_fill_out_form),
-                    textAlign = TextAlign.Center,
-                    lineHeight = 16.sp,
-                    fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
-                    color = Color(0xFF989898)
-                )
-            }
+           ContactUsFooter(modifier = Modifier.weight(0.2f))
         }
     }
-}
-
-private fun openUrlInCustomTabs(context: Context) {
-    val intent = CustomTabsIntent.Builder()
-        .build()
-    intent.launchUrl(context, Uri.parse("https://tally.so/r/w4rZZo"))
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun HelpAndSupportTopBar(
-    navController: NavController
-) {
-    CenterAlignedTopAppBar(
-        title = {
-            Text(
-                text = stringResource(id = R.string.help_and_support),
-                fontWeight = FontWeight.Bold,
-                fontFamily = Montserrat
-            )
-        },
-        navigationIcon = {
-            IconButton(onClick = { navController.navigateUp() }) {
-                SettingsIcons(size = 30, icon = R.drawable.back_icon)
-            }
-        },
-    )
 }
 
 @Composable

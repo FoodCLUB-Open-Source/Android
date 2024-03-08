@@ -856,4 +856,5 @@ In some countries, the law requires us to provide additional regulatory informat
     <string name="user_engagement_and_rewards_question_2">\t • How does the app foster a sense of \n\t\tcommunity among users?\n</string>
     <string name="user_engagement_and_rewards_answer_2">The app fosters a sense of community among users through various features, including recipe sharing, comments, likes, and events. You can connect with like-minded individuals, share your passion for food, and build meaningful relationships within the community.\n</string>
     <string name="faq">FaQ</string>
+    <string name="help_and_support_page_url">https://tally.so/r/w4rZZo</string>
 </resources>
