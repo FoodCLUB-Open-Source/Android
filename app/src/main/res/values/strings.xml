@@ -311,6 +311,8 @@
     <string name="take_photo">Take Photo</string>
     <string name="switch_camera">Switch Camera</string>
     <string name="close_camera">Close Camera</string>
+    <string name="camera_flash">camera_flash</string>
+
     -Settings Notifications
     <string name="general_notifications">General notifications</string>
     <string name="system_and_service">System &amp; Service update</string>
