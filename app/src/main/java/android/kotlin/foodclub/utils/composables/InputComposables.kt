@@ -538,16 +538,3 @@ fun ConfirmButton(
         )
     }
 }
-
-@Preview
-@Composable
-fun Test_footer()
-{
-    Box(modifier = Modifier
-        .background(Color.White)
-        .fillMaxSize())
-    {
-        TermsAndConditionsInfoFooter()
-    }
-
-}
