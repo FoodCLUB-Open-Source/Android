@@ -312,6 +312,8 @@
     <string name="switch_camera">Switch Camera</string>
     <string name="close_camera">Close Camera</string>
     <string name="camera_flash">camera_flash</string>
+    <string name="camera_redo">Redo</string>
+    <string name="camera_done">Done</string>
 
     -Settings Notifications
     <string name="general_notifications">General notifications</string>

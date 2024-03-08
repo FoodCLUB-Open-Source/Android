@@ -61,6 +61,7 @@ fun TakeProfilePhotoView(
             if (photoUri != null) {
                 PhotoTakenPreview(
                     image = photoUri!!,
+                    navController = navController,
                     onSaveClick = {
                         val file = uriToFile(photoUri!!, context)
                         if (file != null) {
