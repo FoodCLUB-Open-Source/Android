@@ -2,13 +2,14 @@ package android.kotlin.foodclub.views.home.addIngredients
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.utils.composables.ActionType
 import android.kotlin.foodclub.utils.composables.CustomDatePicker
 import android.kotlin.foodclub.utils.composables.EditIngredientBottomModal
 import android.kotlin.foodclub.utils.composables.IngredientsList
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
 import android.kotlin.foodclub.views.home.discover.DiscoverState
-import android.kotlin.foodclub.views.home.discover.SubSearchBar
+import android.kotlin.foodclub.views.home.discover.MyIngredientsSearchBar
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -160,13 +161,14 @@ fun AddIngredientsView(state: DiscoverState, events: DiscoverEvents, navControll
             if (isInternetConnected) {
 
                 if (topTabIndex == 0) {
-                    SubSearchBar(
+                    MyIngredientsSearchBar(
                         navController = navController,
                         searchTextValue = state.ingredientSearchText,
                         onSearch = { input ->
                             inputText = input
                             events.onAddIngredientsSearchTextChange(input)
-                        }
+                        },
+                        actionType = ActionType.ADD_INGREDIENTS_VIEW
                     )
                 } else {
                     // TODO figure out what do show here
@@ -193,7 +195,8 @@ fun AddIngredientsView(state: DiscoverState, events: DiscoverEvents, navControll
                         onIngredientAdd = {},
                         onDeleteIngredient = {
                             events.deleteIngredientFromList(it)
-                        }
+                        },
+                        actionType = ActionType.ADD_INGREDIENTS_VIEW
                     )
 
 
@@ -215,7 +218,8 @@ fun AddIngredientsView(state: DiscoverState, events: DiscoverEvents, navControll
                         },
                         onDeleteIngredient = {
                             events.deleteIngredientFromList(it)
-                        }
+                        },
+                        actionType = ActionType.ADD_INGREDIENTS_VIEW
                     )
                 }
             }

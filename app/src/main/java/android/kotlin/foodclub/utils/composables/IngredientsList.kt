@@ -60,6 +60,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import kotlin.math.min
 
 
 @Composable
@@ -71,12 +72,12 @@ fun IngredientsList(
     onDateClicked: (Ingredient) -> Unit,
     onIngredientAdd: (Ingredient) -> Unit,
     onDeleteIngredient: (Ingredient) -> Unit,
-    userIngredientsList: List<Ingredient>
+    userIngredientsList: List<Ingredient>,
+    actionType: ActionType
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            //.fillMaxHeight(0.57f)
             .background(
                 color = Color.White
             )
@@ -94,7 +95,8 @@ fun IngredientsList(
             onEditQuantityClicked = { onEditQuantityClicked(it) },
             onDateClicked = { onDateClicked(it) },
             onIngredientAdd = { onIngredientAdd(it) },
-            onDeleteIngredient = { onDeleteIngredient(it) }
+            onDeleteIngredient = { onDeleteIngredient(it) },
+            actionType = actionType
         )
     }
 }
@@ -108,9 +110,17 @@ fun IngredientsListColumn(
     onDateClicked: (Ingredient) -> Unit,
     onIngredientAdd: (Ingredient) -> Unit,
     onDeleteIngredient: (Ingredient) -> Unit,
-    userIngredientsList: List<Ingredient>
+    userIngredientsList: List<Ingredient>,
+    actionType: ActionType
 ) {
-    //Manipulate height do note, it must have a constraint (non infinite)
+    var height by remember {
+        mutableStateOf(0.dp)
+    }
+
+    height = when (actionType) {
+        ActionType.DISCOVER_VIEW -> (min(productsList.size, 5) * dimensionResource(id = R.dimen.dim_65).value).dp
+        ActionType.ADD_INGREDIENTS_VIEW -> (productsList.size * dimensionResource(id = R.dimen.dim_65).value).dp
+    }
     LazyColumn(
         modifier = Modifier
             .padding(
@@ -118,7 +128,7 @@ fun IngredientsListColumn(
                 end = dimensionResource(id = R.dimen.dim_15)
             )
             .background(Color.White)
-            .height(dimensionResource(id = R.dimen.dim_65).value.dp * if (productsList.size > 5) 5 else productsList.size),
+            .height(height),
         content = {
             itemsIndexed(productsList) { _, item ->
                 var notSwiped by remember { mutableStateOf(false) }
@@ -217,7 +227,7 @@ fun SingleSearchIngredientItem(
     onAddItemClicked: (Ingredient) -> Unit,
     userIngredientsList: List<Ingredient>
 ) {
-    val unit = stringResource(id = R.string.gram_unit) // TODO make this dynamic
+    val unit = stringResource(id = R.string.gram_unit)
     val quantity = itemQuantity(item, unit)
     val expirationDate = itemExpirationDate(item)
     val isItemAdded = userIngredientsList.filter { item.id == it.id }.size == 1
@@ -366,3 +376,7 @@ fun expirationDateTextStyle(expirationDate: String): TextStyle {
     )
 }
 
+enum class ActionType {
+    DISCOVER_VIEW,
+    ADD_INGREDIENTS_VIEW
+}

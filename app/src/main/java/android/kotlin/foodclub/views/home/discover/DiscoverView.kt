@@ -8,6 +8,7 @@ import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.products.MyBasketCache
 import android.kotlin.foodclub.navigation.HomeOtherRoutes
+import android.kotlin.foodclub.utils.composables.ActionType
 import android.kotlin.foodclub.utils.composables.CustomDatePicker
 import android.kotlin.foodclub.utils.composables.EditIngredientBottomModal
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
@@ -15,7 +16,6 @@ import android.kotlin.foodclub.utils.composables.IngredientsList
 import android.kotlin.foodclub.utils.composables.shimmerBrush
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -41,11 +41,9 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.PagerDefaults
@@ -76,10 +74,8 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -88,7 +84,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
@@ -116,7 +111,6 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
@@ -146,14 +140,14 @@ fun DiscoverView(
     var isSheetOpen by rememberSaveable {
         mutableStateOf(false)
     }
-    var isDialogOpen by remember { mutableStateOf(false) }
-    var alphaValue by remember { mutableFloatStateOf(1f) }
+//    var isDialogOpen by remember { mutableStateOf(false) }
+//    var alphaValue by remember { mutableFloatStateOf(1f) }
 
-    alphaValue = if (isDialogOpen) {
-        0.5f
-    } else {
-        1f
-    }
+//    alphaValue = if (isDialogOpen) {
+//        0.5f
+//    } else {
+//        1f
+//    }
 
     val initialPage = 0
     val pagerState1 = rememberPagerState(
@@ -172,16 +166,15 @@ fun DiscoverView(
             easing = LinearEasing, durationMillis = 300
         )
     )
-    var mainTabIndex by remember { mutableIntStateOf(0) }
+    var tabIndex by remember { mutableIntStateOf(0) }
     val mainTabItemsList = stringArrayResource(id = R.array.discover_tabs)
 
 
-    //New column to fit the pager
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
-            .alpha(alphaValue),
+            .background(Color.White),
+//            .alpha(alphaValue),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         MainSearchBar(
@@ -195,7 +188,7 @@ fun DiscoverView(
             horizontalArrangement = Arrangement.SpaceBetween,
 
             ) {
-            mainTabIndex = it
+            tabIndex = it
         }
 
         if (isSheetOpen) {
@@ -230,18 +223,18 @@ fun DiscoverView(
                 )
             }
         }
-        if (isDialogOpen) {
-            AddIngredientDialog(
-                stringResource(R.string.added),
-                stringResource(R.string.successfully_added_first),
-                stringResource(R.string.successfully_added_second),
-                state.ingredientToEdit!!.type
-            )
-            LaunchedEffect(key1 = true) {
-                delay(3000)
-                isDialogOpen = false
-            }
-        }
+//        if (isDialogOpen) {
+//            AddIngredientDialog(
+//                stringResource(R.string.added),
+//                stringResource(R.string.successfully_added_first),
+//                stringResource(R.string.successfully_added_second),
+//                state.ingredientToEdit!!.type
+//            )
+//            LaunchedEffect(key1 = true) {
+//                delay(3000)
+//                isDialogOpen = false
+//            }
+//        }
 
         if (isShowPost && postId != null) {
             DiscoverViewPosts(
@@ -256,43 +249,32 @@ fun DiscoverView(
             )
         }
 
-        if (mainTabIndex == 0) {
+        if (tabIndex == 0) {
             homePosts = state.postList
 
-            VerticalPager(state = pagerState2, pageSize = PageSize.Fill) { page ->
-                if (page == 0) {
-
+            VerticalPager(
+                state = pagerState2,
+                pageSize = PageSize.Fill
+            ) { pageIndex ->
+                if (pageIndex == 0) {
                     if (isInternetConnected) {
-                        if (mainTabIndex == 0) {
-                            SubSearchBar(
+                        if (tabIndex == 0) {
+                            MyIngredientsSearchBar(
                                 navController = navController,
-                                searchTextValue = searchText,//state.ingredientSearchText,
+                                searchTextValue = searchText,
                                 onSearch = { input ->
                                     searchText = input
                                     events.onSearchIngredientsList(input)
                                 },
                                 enableCamera = false,
-                                enableMike = false
+                                enableMike = false,
+                                actionType = ActionType.DISCOVER_VIEW
                             )
-                        } else {
-                            // TODO figure out what do show here
-                            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_30)))
                         }
                     }
 
-                    var subTabIndex by remember { mutableIntStateOf(0) }
-                    SubTabRow(
-                        onTabChanged = {
-                            subTabIndex = it
-                        },
-                        isInternetConnected,
-                        brush
-                    )
-
                     //Ingredients list causes excess space
                     if (isInternetConnected) {
-
-                        Log.d("Search Text", searchText.toString())
                         IngredientsList(
                             Modifier,
                             events = events,
@@ -310,7 +292,8 @@ fun DiscoverView(
                             onIngredientAdd = {},
                             onDeleteIngredient = {
                                 events.deleteIngredientFromList(it)
-                            }
+                            },
+                            actionType = ActionType.DISCOVER_VIEW
                         )
 
                     }
@@ -354,7 +337,7 @@ fun DiscoverView(
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-                    SlideInTitle(pagerState2 = pagerState2)
+//                    SlideInTitle(pagerState2 = pagerState2)
 
                     HorizontalPager(
                         beyondBoundsPageCount = 1,
@@ -673,13 +656,19 @@ fun MainTabRow(
 
 
 @Composable
-fun SubSearchBar(
+fun MyIngredientsSearchBar(
     navController: NavController,
     searchTextValue: String,
     onSearch: (String) -> Unit,
     enableCamera: Boolean = true,
-    enableMike: Boolean = true
+    enableMike: Boolean = true,
+    actionType: ActionType
 ) {
+    val placeholderText = if (actionType == ActionType.DISCOVER_VIEW){
+        stringResource(id = R.string.search_from_my_basket)
+    }else{
+        stringResource(id = R.string.search_ingredients)
+    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -714,7 +703,7 @@ fun SubSearchBar(
             placeholder = {
                 Text(
                     modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_3)),
-                    text = stringResource(id = R.string.search_to),
+                    text = placeholderText,
                     color = Color.Gray,
                     textAlign = TextAlign.Center
                 )
@@ -772,102 +761,6 @@ fun SubSearchBar(
     }
 }
 
-@Composable
-fun SubTabRow(
-    onTabChanged: (Int) -> Unit,
-    isInternetConnected: Boolean,
-    brush: Brush
-) {
-    val strokeWidthDp = dimensionResource(id = R.dimen.dim_2)
-    val topPaddingDp = dimensionResource(id = R.dimen.dim_4)
-    val underlineHeightDp = dimensionResource(id = R.dimen.dim_2)
-    val subTabItemsList = stringArrayResource(id = R.array.discover_sub_tabs)
-    var subTabIndex by remember { mutableIntStateOf(0) }
-
-
-    LazyRow(
-        modifier = Modifier.padding(
-            start = dimensionResource(id = R.dimen.dim_20),
-            end = dimensionResource(id = R.dimen.dim_20),
-            bottom = dimensionResource(id = R.dimen.dim_5),
-            top = dimensionResource(id = R.dimen.dim_10)
-        ),
-
-        content = {
-            if (isInternetConnected) {
-                itemsIndexed(subTabItemsList) { index, data ->
-                    val selected = subTabIndex == index
-
-                    Text(
-                        modifier = Modifier
-                            .drawBehind {
-                                if (selected) {
-                                    val strokeWidthPx = strokeWidthDp.toPx()
-                                    val topPaddingPx = topPaddingDp.toPx()
-                                    val underlineHeight = underlineHeightDp.toPx()
-                                    val verticalOffset =
-                                        size.height - (underlineHeight / 2) + topPaddingPx
-                                    drawLine(
-                                        color = Color.Black,
-                                        strokeWidth = strokeWidthPx,
-                                        start = Offset(0f, verticalOffset),
-                                        end = Offset(size.width, verticalOffset)
-                                    )
-                                }
-                            }
-                            .clickable {
-                                subTabIndex = index
-                                onTabChanged(index)
-                            },
-                        text = data,
-                        fontWeight = if (selected) FontWeight(500) else FontWeight.Normal,
-                        color = if (selected) Color.Black else Color(0xFFC2C2C2),
-                        fontSize = dimensionResource(id = R.dimen.fon_17).value.sp,
-                        lineHeight = dimensionResource(id = R.dimen.fon_21).value.sp,
-                        textAlign = TextAlign.Start,
-                        fontFamily = Montserrat
-                    )
-                    Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_50)))
-                }
-            } else {
-                itemsIndexed(subTabItemsList) { index, data ->
-                    val selected = subTabIndex == index
-
-                    Text(
-                        modifier = Modifier
-                            .background(brush)
-                            .drawBehind {
-                                if (selected) {
-                                    val strokeWidthPx = strokeWidthDp.toPx()
-                                    val topPaddingPx =
-                                        topPaddingDp.toPx()
-                                    val underlineHeight =
-                                        underlineHeightDp.toPx()
-                                    val verticalOffset =
-                                        size.height - (underlineHeight / 2) + topPaddingPx
-                                    drawLine(
-                                        color = Color.Black,
-                                        strokeWidth = strokeWidthPx,
-                                        start = Offset(0f, verticalOffset),
-                                        end = Offset(size.width, verticalOffset)
-                                    )
-                                }
-                            }
-                            .clickable {},
-                        text = data,
-                        color = Color.Transparent,
-                        fontSize = dimensionResource(id = R.dimen.fon_17).value.sp,
-                        lineHeight = dimensionResource(id = R.dimen.fon_21).value.sp,
-                        textAlign = TextAlign.Start,
-                        fontFamily = Montserrat
-                    )
-                    Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_50)))
-                }
-            }
-        })
-
-
-}
 
 
 @Composable

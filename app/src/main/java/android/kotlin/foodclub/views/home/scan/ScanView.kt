@@ -340,9 +340,9 @@ fun ScanView(
                             )
                         }
 
-                            if(state.scanResultItemList.size>visibleItems.size)
-                            {
-                                Column(modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_8)),
+                        if (state.scanResultItemList.size > visibleItems.size) {
+                            Column(
+                                modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_8)),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             )
                             {
@@ -354,36 +354,38 @@ fun ScanView(
                                         .clickable(onClick = {})
                                         .size(dimensionResource(id = R.dimen.dim_35))
 
-                                        // Handle click on the additional icon
-                                    )
-                                    Text(
-                                        text = " ${state.scanResultItemList.size-visibleItems.size} " +
-                                                "More",
-                                        fontFamily = Montserrat,
-                                    )
-                                }
-                            }
-                            Column(modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_8)),
-                                horizontalAlignment = Alignment.CenterHorizontally) {
-
-                                Icon(
-                                    imageVector = Icons.Default.KeyboardArrowRight,
-                                    contentDescription = null,
-                                    tint = Color.Black,
-                                    modifier = Modifier
-                                        .clickable(onClick = {
-                                            bottomSheetNextButton = !bottomSheetNextButton
-                                            scanState = "Completed"
-                                        })
-                                        .clip(CircleShape)
-                                        .background(foodClubGreen)
-                                        .size(dimensionResource(id = R.dimen.dim_35))
+                                    // Handle click on the additional icon
                                 )
                                 Text(
-                                    text = stringResource(id = R.string.next),
+                                    text = " ${state.scanResultItemList.size - visibleItems.size} " +
+                                            "More",
                                     fontFamily = Montserrat,
-                                    )
+                                )
                             }
+                        }
+                        Column(
+                            modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_8)),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+
+                            Icon(
+                                imageVector = Icons.Default.KeyboardArrowRight,
+                                contentDescription = null,
+                                tint = Color.Black,
+                                modifier = Modifier
+                                    .clickable(onClick = {
+                                        bottomSheetNextButton = !bottomSheetNextButton
+                                        scanState = "Completed"
+                                    })
+                                    .clip(CircleShape)
+                                    .background(foodClubGreen)
+                                    .size(dimensionResource(id = R.dimen.dim_35))
+                            )
+                            Text(
+                                text = stringResource(id = R.string.next),
+                                fontFamily = Montserrat,
+                            )
+                        }
 
                     }
 
