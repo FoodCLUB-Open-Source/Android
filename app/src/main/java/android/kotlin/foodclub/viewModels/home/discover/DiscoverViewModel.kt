@@ -4,12 +4,11 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.MyBasketCache
-import android.kotlin.foodclub.domain.models.products.ProductsData
+import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.repositories.ProductRepository
 import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.helpers.Resource
-import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.views.home.discover.DiscoverState
 import android.util.Log
 import androidx.camera.core.ImageCapture
@@ -91,12 +90,6 @@ class DiscoverViewModel @Inject constructor(
         _state.update {
             it.copy(
                 userIngredients = updatedList,
-                ingredientSearchText = "",
-                productsData = ProductsData(
-                    searchText = "",
-                    nextUrl = "",
-                    productsList = emptyList(),
-                )
             )
         }
     }
@@ -152,6 +145,8 @@ class DiscoverViewModel @Inject constructor(
                 is Resource.Error -> {
                     // TODO deal with error
                 }
+
+                else -> {}
             }
         }
     }
@@ -174,6 +169,8 @@ class DiscoverViewModel @Inject constructor(
                 is Resource.Error -> {
                     // TODO deal with error
                 }
+
+                else -> {}
             }
         }
 
@@ -198,6 +195,8 @@ class DiscoverViewModel @Inject constructor(
                 is Resource.Error -> {
                     // TODO deal with error
                 }
+
+                else -> {}
             }
         }
 
@@ -223,6 +222,8 @@ class DiscoverViewModel @Inject constructor(
                 is Resource.Error -> {
                     // TODO deal with error
                 }
+
+                else -> {}
             }
         }
     }
@@ -306,6 +307,8 @@ class DiscoverViewModel @Inject constructor(
             is Resource.Error -> {
                 _state.update { it.copy(error = resource.message!!) }
             }
+
+            else -> {}
         }
     }
 
