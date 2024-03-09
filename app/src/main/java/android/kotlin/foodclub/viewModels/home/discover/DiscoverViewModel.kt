@@ -58,7 +58,7 @@ class DiscoverViewModel @Inject constructor(
         exoPlayer.prepare()
         _state.update {state->
             state.copy(
-                userId = sessionCache.getActiveSession()?.sessionUser?.userId!!,
+                username = sessionCache.getActiveSession()?.sessionUser?.username ?: "",
                 myBasketCache = myBasketCache
             )
         }
@@ -135,12 +135,8 @@ class DiscoverViewModel @Inject constructor(
     }
 
     override fun getPostData(postId: Long) {
-        val userId = sessionCache.getActiveSession()?.sessionUser?.userId ?: return
         viewModelScope.launch {
-            when (val resource = postRepository.getPost(
-                id = postId,
-                userId = userId
-            )) {
+            when (val resource = postRepository.getPost(id = postId)) {
                 is Resource.Success -> {
                     _state.update {
                         it.copy(
@@ -159,7 +155,6 @@ class DiscoverViewModel @Inject constructor(
     override fun getPostsByUserId() {
         viewModelScope.launch {
             when (val resource = postRepository.getHomepagePosts(
-                userId = state.value.sessionUserId.toLong(),
                 pageSize = 10,
                 pageNo = 1
             )) {
@@ -183,7 +178,7 @@ class DiscoverViewModel @Inject constructor(
         viewModelScope.launch {
             when (val resource =
                 profileRepo.retrieveProfileData(
-                    userId = state.value.sessionUserId.toLong(),
+                    userId = state.value.sessionUsername.toLong(),
                     pageNo = 10,
                     pageSize = 1
                 )) {
@@ -206,7 +201,7 @@ class DiscoverViewModel @Inject constructor(
     override fun getPostsByWorld(worldCategory: Long) {
         _state.update {
             it.copy(
-                sessionUserId = sessionCache.getActiveSession()!!.sessionUser.userId.toString(),
+                sessionUsername = sessionCache.getActiveSession()!!.sessionUser.username,
             )
         }
 

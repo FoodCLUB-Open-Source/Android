@@ -8,16 +8,14 @@ import retrofit2.http.Path
 
 interface BookmarksService {
 
-    @POST("bookmarks/post/{user_id}/bookmark/{post_id}")
+    @POST("bookmarks/post/bookmark/{post_id}")
     suspend fun updatePostBookmark(
-        @Path("user_id") userId: Long,
-        @Path("post_id") postId: Long,
+        @Path("post_id") postId: Long
     ): Response<BookmarksStatusResponse>
 
-    @DELETE("bookmarks/profile/{user_id}/bookmark/{post_id}")
+    @DELETE("bookmarks/profile/bookmark/{post_id}")
     suspend fun deletePostBookmark(
-        @Path("user_id") userId: Long,
-        @Path("post_id") postId: Long,
+        @Path("post_id") postId: Long
     ): Response<BookmarksStatusResponse>
 
 }

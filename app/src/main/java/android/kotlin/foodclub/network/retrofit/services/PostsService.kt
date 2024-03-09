@@ -12,22 +12,20 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface PostsService {
-    @GET("posts/{postId}/{userId}")
+    @GET("posts/{postId}")
     suspend fun getPost(
-        @Path("postId") postId: Long,
-        @Path("userId") userId: Long
+        @Path("postId") postId: Long
     ): Response<GetPostResponse>
 
-    @GET("posts/homepage/user/{userId}")
+    @GET("posts/homepage/user")
     suspend fun getHomepagePosts(
-        @Path("userId") userId: Long,
         @Query("page_size") pageSize: Int?,
         @Query("page_number") pageNo: Int?
     ):Response<GetHomepagePostsResponse>
 
-    @GET("posts/category/{userId}")
+    @GET("posts/category/{categoryId}")
     suspend fun getPostByWorldCategory(
-        @Path("userId") categoryId: Long,
+        @Path("categoryId") categoryId: String,
         @Query("page_size") pageSize: Int?,
         @Query("page_number") pageNo: Int?
     ):Response<GetHomepagePostsResponse>
@@ -37,10 +35,9 @@ interface PostsService {
         @Path("postId") postId: Long
     ): Response<DeletePostResponse>
 
-    @POST("likes_views/post/{postId}/view/{userId}")
+    @POST("likes_views/post/{postId}/view")
     suspend fun viewsPost(
-        @Path("postId") postId: Long,
-        @Path("userId") userId: Long
+        @Path("postId") postId: Long
     ): Response<ViewsPostResponse>
 
 }

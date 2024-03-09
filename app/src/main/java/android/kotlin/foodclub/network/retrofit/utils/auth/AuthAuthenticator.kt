@@ -19,14 +19,14 @@ class AuthAuthenticator @Inject constructor(
 ) : Authenticator {
 
     override fun authenticate(route: Route?, response: Response): Request? {
-        val token = runBlocking {
-            refreshTokenManager.getActiveToken()?.token
+        if (response.request.header("Authorisation") != null) {
+            return null // Give up, we've already attempted to authenticate.
         }
-        val username = runBlocking {
-            refreshTokenManager.getActiveToken()?.username
-        }
+        val refreshToken = runBlocking { refreshTokenManager.getActiveToken() }
+
         return runBlocking {
-            val newToken = getNewToken(token, username)
+            val newToken = getNewToken(refreshToken?.token, refreshToken?.username)
+            val userId = sessionCache.getActiveSession()?.sessionUser?.userId ?: 0
 
             if (!newToken.isSuccessful || newToken.body() == null) { //Couldn't refresh the token, so restart the login process
                 sessionCache.clearSession()
@@ -34,7 +34,7 @@ class AuthAuthenticator @Inject constructor(
             }
 
             newToken.body()?.let {
-                sessionCache.saveSession(Session(it.accessToken, it.idToken))
+                sessionCache.saveSession(Session(it.accessToken, it.idToken, userId))
                 response.request.newBuilder()
                     .header("Authorisation", "Bearer ${it.accessToken} ${it.idToken}")
                     .build()

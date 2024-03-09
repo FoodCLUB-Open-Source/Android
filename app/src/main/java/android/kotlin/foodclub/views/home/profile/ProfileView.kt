@@ -187,7 +187,6 @@ fun ProfileView(
                         }
                         val file = uriToFile(uri, context)
                         events.updateUserProfileImage(
-                            id = state.myUserId,
                             file = file!!,
                             uri = uri
                         )
@@ -261,7 +260,7 @@ fun ProfileView(
                         }
 
 
-                        var settingNavigated by remember { mutableStateOf(false)};
+                        var settingNavigated by remember { mutableStateOf(false)}
                         Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_40)))
                         if (userId == 0L) {
                             Button(shape = CircleShape,
@@ -282,7 +281,7 @@ fun ProfileView(
                                     if(!settingNavigated)
                                     {
                                         navController.navigate("SETTINGS")
-                                        settingNavigated = true;
+                                        settingNavigated = true
                                     }
                                 }
                             ) {
@@ -446,7 +445,6 @@ fun ProfileView(
                                 isFollowed = state.isFollowed,
                                 events = events,
                                 sessionUserId = state.sessionUserId,
-                                userId = userId
                             )
                         }
                         TabRow(selectedTabIndex = pagerState.currentPage,

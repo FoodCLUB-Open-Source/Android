@@ -25,7 +25,6 @@ import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -139,7 +138,7 @@ fun DiscoverViewPosts(
                     LikeButton(doubleTapState) {}
 
                     val simpleUserModel = SimpleUserModel(
-                        userId = state.userId.toInt(),
+                        userId = state.username.toInt(),
                         username = currentVideo.authorDetails,
                         profilePictureUrl = null
                     )

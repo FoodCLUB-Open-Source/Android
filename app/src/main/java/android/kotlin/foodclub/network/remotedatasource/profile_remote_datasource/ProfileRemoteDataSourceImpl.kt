@@ -23,10 +23,9 @@ class ProfileRemoteDataSourceImpl @Inject constructor(
     }
 
     override suspend fun updateUserProfileImage(
-        userId: Long,
         imagePart: MultipartBody.Part
     ): Response<UpdateUserProfileImageResponse> {
-        return api.updateUserProfileImage(userId, imagePart)
+        return api.updateUserProfileImage(imagePart)
     }
 
     override suspend fun getBookmarkedPosts(
@@ -54,17 +53,15 @@ class ProfileRemoteDataSourceImpl @Inject constructor(
     }
 
     override suspend fun followUser(
-        followerId: Long,
         userId: Long
     ): Response<FollowUnfollowResponse> {
-        return api.followUser(followerId, userId)
+        return api.followUser(userId)
     }
 
     override suspend fun unfollowUser(
-        followerId: Long,
         userId: Long
     ): Response<FollowUnfollowResponse> {
-        return api.unfollowUser(followerId, userId)
+        return api.unfollowUser(userId)
     }
 
 }

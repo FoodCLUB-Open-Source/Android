@@ -53,13 +53,13 @@ class SettingsRepository(
                 }
             }.also {
                 if (connectivityUtils.isNetworkAvailable()){
-                    retrieveUserFromService(userId)
+                    retrieveUserFromService()
                 }
             }
     }
 
-    private suspend fun retrieveUserFromService(userId: Long) {
-        val userFromService = settingsRemoteDataSource.retrieveUserDetails(userId)
+    private suspend fun retrieveUserFromService() {
+        val userFromService = settingsRemoteDataSource.retrieveUserDetails()
 
         if (userFromService.isSuccessful) {
             val userDetailsDto = userFromService.body()?.data
@@ -82,7 +82,6 @@ class SettingsRepository(
         return when (
             val resource = apiRequestFlow<UpdateUserDetailsResponse, DefaultErrorResponse> {
                 settingsRemoteDataSource.updateUserDetails(
-                    userId,
                     userDetailsMapper.mapFromDomainModel(userDetailsModel)
                 )
             }

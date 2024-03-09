@@ -61,11 +61,11 @@ class AuthRepository(
     }
 
     suspend fun verifyAccount(
-        username: String, code: String
-    ): Resource<SingleMessageResponse, DefaultErrorResponse> {
+        username: String, password: String, code: String
+    ): Resource<LoginResponse, DefaultErrorResponse> {
         return when(
-            val resource = apiRequestFlow<SingleMessageResponse, DefaultErrorResponse> {
-                api.verifyUserAccount(VerificationCodeDto(username, code))
+            val resource = apiRequestFlow<LoginResponse, DefaultErrorResponse> {
+                api.verifyUserAccount(VerificationCodeDto(username, password, code))
             }
         ) {
             is Resource.Success -> {

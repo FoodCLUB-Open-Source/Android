@@ -29,7 +29,7 @@ data class ProfileState(
             offlineProfileModel = null,
             bookmarkedPosts = emptyList(),
             userPosts = emptyList(),
-            sessionUserId = 0,
+            sessionUserId = 0L,
             dataStore = null,
             isFollowed = false,
             myUserId = 0,

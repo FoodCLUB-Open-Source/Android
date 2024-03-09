@@ -22,7 +22,7 @@ interface AuthenticationService {
     @POST("login/confirm_verification")
     suspend fun verifyUserAccount(
         @Body verificationCodeRequestData: VerificationCodeDto
-    ): Response<SingleMessageResponse>
+    ): Response<LoginResponse>
 
     @POST("login/signin")
     suspend fun loginUser(

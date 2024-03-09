@@ -35,7 +35,6 @@ class HomeViewModel @Inject constructor(
     private val likesRepository: LikesRepository,
     private val bookmarkRepository: BookmarkRepository,
     private val recipeRepository: RecipeRepository,
-    private val sessionCache: SessionCache,
     private val basketCache: MyBasketCache,
     val exoPlayer: ExoPlayer
 ) : ViewModel(), HomeEvents {
@@ -56,9 +55,8 @@ class HomeViewModel @Inject constructor(
     }
 
     override fun postSnap(file: File) {
-        val user = sessionCache.getActiveSession()?.sessionUser
         viewModelScope.launch {
-            when (val resource = storyRepository.postImageStory(user!!.userId, file)) {
+            when (val resource = storyRepository.postImageStory(file)) {
                 is Resource.Success -> {
                     Log.i(TAG, "POST STORY ${resource.data}")
                 }
@@ -71,9 +69,8 @@ class HomeViewModel @Inject constructor(
     }
 
     override suspend fun userViewsStory(storyId: Long) {
-        val user = sessionCache.getActiveSession()?.sessionUser ?: return
         viewModelScope.launch {
-            when (val resource = storyRepository.userViewsStory(storyId, user.userId)) {
+            when (val resource = storyRepository.userViewsStory(storyId)) {
                 is Resource.Success -> {
                     Log.i(TAG, "User Viewed the Story Successfully")
                 }
@@ -86,9 +83,8 @@ class HomeViewModel @Inject constructor(
     }
 
     override suspend fun userViewsPost(postId: Long) {
-        val user = sessionCache.getActiveSession()?.sessionUser ?: return
         viewModelScope.launch {
-            when (val resource = postRepository.userViewsPost(postId, user.userId)) {
+            when (val resource = postRepository.userViewsPost(postId)) {
                 is Resource.Success -> {
                     Log.i(TAG, "Viewed Post Successfully")
                 }
@@ -101,12 +97,10 @@ class HomeViewModel @Inject constructor(
     }
 
     override suspend fun updatePostLikeStatus(postId: Long, isLiked: Boolean) {
-        val userId = sessionCache.getActiveSession()?.sessionUser?.userId
         viewModelScope.launch {
             when (
                 val resource = likesRepository.updatePostLikeStatus(
                     postId = postId,
-                    userId = userId!!,
                     isLiked
                 )
             ) {
@@ -149,12 +143,10 @@ class HomeViewModel @Inject constructor(
         basketCache.saveBasket(basket)
     }
     override fun updatePostBookmarkStatus(postId: Long, isBookmarked: Boolean) {
-        val userId = sessionCache.getActiveSession()?.sessionUser?.userId
         viewModelScope.launch {
             when (
                 val resource = bookmarkRepository.updateBookmarkStatus(
                     postId = postId,
-                    userId = userId!!,
                     isBookmarked
                 )
             ) {
@@ -586,9 +578,8 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun getPostListData() {
-        val user = sessionCache.getActiveSession()?.sessionUser ?: return
         viewModelScope.launch {
-            when (val resource = postRepository.getHomepagePosts(user.userId)) {
+            when (val resource = postRepository.getHomepagePosts()) {
                 is Resource.Success -> {
                     _state.update {
                         it.copy(
@@ -620,10 +611,9 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun getUserFollowerStories() {
-        if (sessionCache.getActiveSession()?.sessionUser == null) return
         viewModelScope.launch {
             when (val resource =
-                storyRepository.getUserFriendsStories(sessionCache.getActiveSession()!!.sessionUser.userId)) {
+                storyRepository.getUserFriendsStories()) {
                 is Resource.Success -> {
                     val originalList = resource.data
                     if (originalList?.size == 1) {

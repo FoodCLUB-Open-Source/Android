@@ -39,11 +39,11 @@ class LogInWithEmailViewModel @Inject constructor(
     get() = _state
 
     private fun setSession(
-        accessToken: String, idToken: String, refreshToken: String, username: String
+        accessToken: String, idToken: String, refreshToken: String, username: String, userId: Long
     ) {
         if(sessionCache.getActiveSession() != null) sessionCache.clearSession()
         if(refreshTokenManager.getActiveToken() != null) refreshTokenManager.clearToken()
-        sessionCache.saveSession(Session(accessToken, idToken))
+        sessionCache.saveSession(Session(accessToken, idToken, userId))
         refreshTokenManager.saveToken(RefreshToken(refreshToken, username))
         Log.d("LoginWithEmailViewModel", "Logged in user: $username")
     }
@@ -58,7 +58,10 @@ class LogInWithEmailViewModel @Inject constructor(
             when (val resource = repository.signIn(userEmail, userPassword)) {
                 is Resource.Success -> {
                     val data = resource.data!!
-                    setSession(data.accessToken, data.idToken, data.refreshToken, data.username)
+                    setSession(
+                        data.accessToken, data.idToken, data.refreshToken, data.username,
+                        data.id.toLong()
+                    )
                     navController.navigate(Graph.HOME) {
                         popUpTo(Graph.AUTHENTICATION) { inclusive = true }
                     }

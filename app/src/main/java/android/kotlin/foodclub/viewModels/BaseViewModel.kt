@@ -16,7 +16,8 @@ class BaseViewModel @Inject constructor(
     val currentSession: StateFlow<Session?> get() = sessionCache.session
 
     fun checkSession(navController: NavController) {
-        if(currentSession.value?.sessionUser == null || currentSession.value!!.sessionUser.userId == 0L) {
+        if(currentSession.value?.sessionUser == null
+            || currentSession.value!!.sessionUser.username == "") {
             navController.navigate(Graph.AUTHENTICATION) { popUpTo(Graph.HOME) {
                 inclusive = true
             }}

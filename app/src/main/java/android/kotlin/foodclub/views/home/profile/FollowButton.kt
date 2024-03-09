@@ -20,8 +20,7 @@ import androidx.compose.ui.unit.dp
 fun FollowButton(
     isFollowed: Boolean,
     events: ProfileEvents,
-    sessionUserId: Long,
-    userId: Long
+    sessionUserId: Long
 ) {
     val colors = if(isFollowed)
         ButtonDefaults.buttonColors(
@@ -46,8 +45,8 @@ fun FollowButton(
         .height(40.dp)
 
     Button(
-        onClick = { if(isFollowed) events.unfollowUser(sessionUserId, userId)
-        else events.followUser(sessionUserId, userId) },
+        onClick = { if(isFollowed) events.unfollowUser(sessionUserId)
+        else events.followUser(sessionUserId) },
         shape = RoundedCornerShape(40.dp),
         modifier = modifier,
         colors = colors
