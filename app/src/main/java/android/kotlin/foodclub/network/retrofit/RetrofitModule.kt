@@ -39,7 +39,7 @@ object RetrofitModule {
     @Named("defaultRetrofit")
     fun provideDefaultRetrofitBuilder(): Retrofit.Builder {
         return Retrofit.Builder()
-            .baseUrl("http://ec2-35-177-0-50.eu-west-2.compute.amazonaws.com:3000/api/v1/")
+            .baseUrl("https://foodclub.sts3.pl/api/v1/")
             .addConverterFactory(GsonConverterFactory.create())
     }
 

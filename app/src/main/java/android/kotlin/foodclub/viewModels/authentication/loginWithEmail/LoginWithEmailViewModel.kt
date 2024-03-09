@@ -1,9 +1,10 @@
 package android.kotlin.foodclub.viewModels.authentication.loginWithEmail
 
+import android.kotlin.foodclub.domain.models.session.RefreshToken
 import android.kotlin.foodclub.domain.models.session.Session
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
-import android.kotlin.foodclub.network.retrofit.utils.auth.JWTManager
+import android.kotlin.foodclub.network.retrofit.utils.auth.RefreshTokenManager
 import android.kotlin.foodclub.repositories.AuthRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.views.authentication.loginWithEmail.LoginState
@@ -23,24 +24,28 @@ object LoginErrorCodes {
     const val WRONG_CREDENTIALS = "Wrong username or password"
     const val ACCOUNT_NOT_FOUND = "Account Not found"
     const val PASSWORD_FORMAT= "Password must have at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character"
-    const val USERNAME_FORMAT="Username must only contain letters and numbers"
     const val UNKNOWN_ERROR = "An unexpected error occurred. Please try again later."
 }
 
 @HiltViewModel
 class LogInWithEmailViewModel @Inject constructor(
     private val repository: AuthRepository,
-    private val sessionCache: SessionCache
+    private val sessionCache: SessionCache,
+    private val refreshTokenManager: RefreshTokenManager
 ) : ViewModel(), LoginWithEmailEvents {
 
     private val _state = MutableStateFlow(LoginState.default())
     val state : StateFlow<LoginState>
     get() = _state
 
-    private fun setSession(userId: Long) {
+    private fun setSession(
+        accessToken: String, idToken: String, refreshToken: String, username: String
+    ) {
         if(sessionCache.getActiveSession() != null) sessionCache.clearSession()
-        sessionCache.saveSession(Session(JWTManager.createJWT(userId)!!))
-        Log.d("LoginWithEmailViewModel", "Logged in user: $userId")
+        if(refreshTokenManager.getActiveToken() != null) refreshTokenManager.clearToken()
+        sessionCache.saveSession(Session(accessToken, idToken))
+        refreshTokenManager.saveToken(RefreshToken(refreshToken, username))
+        Log.d("LoginWithEmailViewModel", "Logged in user: $username")
     }
 
 
@@ -52,7 +57,8 @@ class LogInWithEmailViewModel @Inject constructor(
         viewModelScope.launch {
             when (val resource = repository.signIn(userEmail, userPassword)) {
                 is Resource.Success -> {
-                    setSession(resource.data!!.id.toLong())
+                    val data = resource.data!!
+                    setSession(data.accessToken, data.idToken, data.refreshToken, data.username)
                     navController.navigate(Graph.HOME) {
                         popUpTo(Graph.AUTHENTICATION) { inclusive = true }
                     }

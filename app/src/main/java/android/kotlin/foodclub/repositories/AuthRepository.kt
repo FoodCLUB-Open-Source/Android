@@ -32,7 +32,7 @@ class AuthRepository(
         ) {
             is Resource.Success -> {
                 Resource.Success(
-                    signInMapper.mapToDomainModel(resource.data!!.body()!!.user)
+                    signInMapper.mapToDomainModel(resource.data!!.body()!!)
                 )
             }
 
