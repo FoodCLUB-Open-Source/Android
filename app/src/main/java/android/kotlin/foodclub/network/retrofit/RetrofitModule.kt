@@ -5,6 +5,7 @@ import android.kotlin.foodclub.network.retrofit.utils.auth.RefreshTokenManager
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.network.retrofit.utils.auth.AuthAuthenticator
 import android.kotlin.foodclub.network.retrofit.utils.auth.AuthInterceptor
+import android.kotlin.foodclub.network.retrofit.utils.auth.ResponsesInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,6 +27,12 @@ object RetrofitModule {
 
     @Provides
     @Singleton
+    fun provideResponsesInterceptor(): ResponsesInterceptor {
+        return ResponsesInterceptor()
+    }
+
+    @Provides
+    @Singleton
     fun provideAuthAuthenticator(
         sessionCache: SessionCache,
         tokenManager: RefreshTokenManager,
@@ -39,7 +46,7 @@ object RetrofitModule {
     @Named("defaultRetrofit")
     fun provideDefaultRetrofitBuilder(): Retrofit.Builder {
         return Retrofit.Builder()
-            .baseUrl("http://ec2-35-177-0-50.eu-west-2.compute.amazonaws.com:3000/api/v1/")
+            .baseUrl("https://foodclub.sts3.pl/api/v1/")
             .addConverterFactory(GsonConverterFactory.create())
     }
 
@@ -57,10 +64,12 @@ object RetrofitModule {
     @Singleton
     fun provideOkHttpClient(
         authInterceptor: AuthInterceptor,
+        responsesInterceptor: ResponsesInterceptor,
         authAuthenticator: AuthAuthenticator
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(authInterceptor)
+            .addNetworkInterceptor(responsesInterceptor)
             .authenticator(authAuthenticator)
             .build()
     }

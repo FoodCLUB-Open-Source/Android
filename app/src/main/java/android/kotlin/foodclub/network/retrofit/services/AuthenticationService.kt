@@ -2,6 +2,7 @@ package android.kotlin.foodclub.network.retrofit.services
 
 import android.kotlin.foodclub.network.retrofit.dtoModels.auth.ForgotChangePasswordDto
 import android.kotlin.foodclub.network.retrofit.dtoModels.auth.RefreshTokenDto
+import android.kotlin.foodclub.network.retrofit.dtoModels.auth.RefreshTokenRequestDto
 import android.kotlin.foodclub.network.retrofit.dtoModels.auth.SignInUserCredentialsDto
 import android.kotlin.foodclub.network.retrofit.dtoModels.auth.ResendVerificationCodeDto
 import android.kotlin.foodclub.network.retrofit.dtoModels.auth.SignUpUserDto
@@ -10,7 +11,6 @@ import android.kotlin.foodclub.network.retrofit.responses.auth.LoginResponse
 import android.kotlin.foodclub.network.retrofit.responses.general.SingleMessageResponse
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface AuthenticationService {
@@ -22,7 +22,7 @@ interface AuthenticationService {
     @POST("login/confirm_verification")
     suspend fun verifyUserAccount(
         @Body verificationCodeRequestData: VerificationCodeDto
-    ): Response<SingleMessageResponse>
+    ): Response<LoginResponse>
 
     @POST("login/signin")
     suspend fun loginUser(
@@ -34,9 +34,9 @@ interface AuthenticationService {
         @Body verificationCodeResendData: ResendVerificationCodeDto
     ): Response<SingleMessageResponse>
 
-    @POST("login/refresh")
+    @POST("login/refresh_session")
     suspend fun refreshToken(
-        @Header("Authorization") token: String
+        @Body tokenRequest: RefreshTokenRequestDto
     ): Response<RefreshTokenDto>
 
     @POST("login/forgot_password/verification_code")

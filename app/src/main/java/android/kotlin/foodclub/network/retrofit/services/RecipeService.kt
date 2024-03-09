@@ -9,9 +9,8 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface RecipeService {
-    @POST("posts/{user_id}")
+    @POST("posts")
     suspend fun createRecipe(
-        @Path("user_id") userId: String,
         @Body recipe: RecipeDto
     ): Response<Unit>
 

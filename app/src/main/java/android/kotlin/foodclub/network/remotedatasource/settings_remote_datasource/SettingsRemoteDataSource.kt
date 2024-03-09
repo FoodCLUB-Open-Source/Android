@@ -12,12 +12,9 @@ interface SettingsRemoteDataSource {
         changePasswordProfile: ChangePasswordDto
     ): Response<SingleMessageResponse>
 
-    suspend fun retrieveUserDetails(
-        userId: Long
-    ): Response<RetrieveUserDetailsResponse>
+    suspend fun retrieveUserDetails(): Response<RetrieveUserDetailsResponse>
 
     suspend fun updateUserDetails(
-        userId: Long,
         model: UserDetailsDto
     ): Response<UpdateUserDetailsResponse>
 }

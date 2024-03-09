@@ -137,13 +137,11 @@ class ProfileRepository(
     }
 
     suspend fun updateUserProfileImage(
-        userId: Long,
         file: File
     ): Resource<UpdateUserProfileImageResponse, DefaultErrorResponse> {
         return when (val resource = apiRequestFlow<UpdateUserProfileImageResponse, DefaultErrorResponse> {
 
             profileRemoteDataSource.updateUserProfileImage(
-                userId,
                 imagePart = MultipartBody.Part
                     .createFormData(
                         "image",
@@ -205,12 +203,10 @@ class ProfileRepository(
         }
     }
 
-    suspend fun followUser(
-        followerId: Long, userId: Long
-    ): Resource<FollowUnfollowResponse, DefaultErrorResponse> {
+    suspend fun followUser(userId: Long): Resource<FollowUnfollowResponse, DefaultErrorResponse> {
         return when(
             val resource = apiRequestFlow<FollowUnfollowResponse, DefaultErrorResponse> {
-                profileRemoteDataSource.followUser(followerId, userId)
+                profileRemoteDataSource.followUser(userId)
             }
         ) {
             is Resource.Success -> {
@@ -223,12 +219,10 @@ class ProfileRepository(
         }
     }
 
-    suspend fun unfollowUser(
-        followerId: Long, userId: Long
-    ): Resource<FollowUnfollowResponse, DefaultErrorResponse> {
+    suspend fun unfollowUser(userId: Long): Resource<FollowUnfollowResponse, DefaultErrorResponse> {
         return when(
             val resource = apiRequestFlow<FollowUnfollowResponse, DefaultErrorResponse> {
-                profileRemoteDataSource.unfollowUser(followerId, userId)
+                profileRemoteDataSource.unfollowUser(userId)
             }
         ) {
             is Resource.Success -> {

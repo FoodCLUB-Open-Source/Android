@@ -10,19 +10,18 @@ class BookmarkRepository(val api: BookmarksService) {
 
     suspend fun updateBookmarkStatus(
         postId: Long,
-        userId: Long,
         isBookmarked: Boolean
     ): Resource<BookmarksStatusResponse, DefaultErrorResponse> {
 
         val resource = when (isBookmarked) {
             true -> {
                 apiRequestFlow<BookmarksStatusResponse, DefaultErrorResponse> {
-                    api.updatePostBookmark(userId = userId, postId = postId)
+                    api.updatePostBookmark(postId = postId)
                 }
             }
             false -> {
                 apiRequestFlow<BookmarksStatusResponse, DefaultErrorResponse> {
-                    api.deletePostBookmark(userId = userId, postId = postId)
+                    api.deletePostBookmark(postId = postId)
                 }
             }
         }

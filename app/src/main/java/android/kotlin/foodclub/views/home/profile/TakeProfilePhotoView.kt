@@ -65,7 +65,6 @@ fun TakeProfilePhotoView(
                         val file = uriToFile(photoUri!!, context)
                         if (file != null) {
                             events.updateUserProfileImage(
-                                state.myUserId,
                                 file,
                                 photoUri!!
                             )

@@ -10,18 +10,17 @@ class LikesRepository(val api: LikesService) {
 
     suspend fun updatePostLikeStatus(
         postId: Long,
-        userId: Long,
         isLiked: Boolean
     ): Resource<PostLikesStatusResponse, DefaultErrorResponse> {
         val resource = when (isLiked) {
             true -> {
                 apiRequestFlow<PostLikesStatusResponse, DefaultErrorResponse> {
-                    api.updatePostLikeStatus(postId = postId, userId = userId)
+                    api.updatePostLikeStatus(postId = postId)
                 }
             }
             false -> {
                 apiRequestFlow<PostLikesStatusResponse, DefaultErrorResponse> {
-                    api.deletePostLikeStatus(postId = postId, userId = userId)
+                    api.deletePostLikeStatus(postId = postId)
                 }
             }
         }

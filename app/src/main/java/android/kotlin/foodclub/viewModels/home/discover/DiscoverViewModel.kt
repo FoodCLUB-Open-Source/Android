@@ -7,7 +7,6 @@ import android.kotlin.foodclub.domain.models.products.MyBasketCache
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.repositories.ProductRepository
-import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.views.home.discover.DiscoverState
 import android.util.Log
@@ -36,7 +35,6 @@ import javax.inject.Inject
 @HiltViewModel
 class DiscoverViewModel @Inject constructor(
     private val postRepository: PostRepository,
-    private val profileRepo: ProfileRepository,
     private val productsRepo: ProductRepository,
     private val sessionCache: SessionCache,
     private val myBasketCache: MyBasketCache,
@@ -57,13 +55,12 @@ class DiscoverViewModel @Inject constructor(
         exoPlayer.prepare()
         _state.update {state->
             state.copy(
-                userId = sessionCache.getActiveSession()?.sessionUser?.userId!!,
+                username = sessionCache.getActiveSession()?.sessionUser?.username ?: "",
                 myBasketCache = myBasketCache
             )
         }
         getPostsByWorld(197)
         getPostsByUserId()
-        myFridgePosts()
         observeAndFetchSearchedIngredients()
     }
 
@@ -128,12 +125,8 @@ class DiscoverViewModel @Inject constructor(
     }
 
     override fun getPostData(postId: Long) {
-        val userId = sessionCache.getActiveSession()?.sessionUser?.userId ?: return
         viewModelScope.launch {
-            when (val resource = postRepository.getPost(
-                id = postId,
-                userId = userId
-            )) {
+            when (val resource = postRepository.getPost(id = postId)) {
                 is Resource.Success -> {
                     _state.update {
                         it.copy(
@@ -154,7 +147,6 @@ class DiscoverViewModel @Inject constructor(
     override fun getPostsByUserId() {
         viewModelScope.launch {
             when (val resource = postRepository.getHomepagePosts(
-                userId = state.value.sessionUserId.toLong(),
                 pageSize = 10,
                 pageNo = 1
             )) {
@@ -176,36 +168,10 @@ class DiscoverViewModel @Inject constructor(
 
     }
 
-    override fun myFridgePosts() {
-        viewModelScope.launch {
-            when (val resource =
-                profileRepo.retrieveProfileData(
-                    userId = state.value.sessionUserId.toLong(),
-                    pageNo = 10,
-                    pageSize = 1
-                )) {
-                is Resource.Success -> {
-                    _state.update {
-                        it.copy(
-                            myFridgePosts = resource.data!!.userPosts
-                        )
-                    }
-                }
-
-                is Resource.Error -> {
-                    // TODO deal with error
-                }
-
-                else -> {}
-            }
-        }
-
-    }
-
     override fun getPostsByWorld(worldCategory: Long) {
         _state.update {
             it.copy(
-                sessionUserId = sessionCache.getActiveSession()!!.sessionUser.userId.toString(),
+                sessionUsername = sessionCache.getActiveSession()!!.sessionUser.username,
             )
         }
 
