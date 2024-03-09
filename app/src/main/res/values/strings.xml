@@ -549,6 +549,7 @@
     <string name="select_expiration_date">Select Expiration Date</string>
     - Story Viewer
     <string name="foodsnaps">foodsnaps</string>
+    <string name="snap_saved">Snap saved to profile</string>
     <string name="close_story">Close Story</string>
     <string name="author_photo">Author Photo</string>
     <string name="time_ago">%d ago</string>
