@@ -61,9 +61,8 @@ fun NavGraphBuilder.homeNavigationGraph(
             val state = viewModel.state.collectAsState()
 
             HomeView(
-                navController = navController,
                 events = viewModel,
-                triggerStoryView = triggerStory,
+                navController = navController,
                 state = state.value
             )
         }
