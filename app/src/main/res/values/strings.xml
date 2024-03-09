@@ -120,7 +120,7 @@
     <string name="verify">Verify</string>
     <string name="wait_time">Wait %d seconds to </string>
     <string name="resend">Resend</string>
-    <string name ="no_code">I didn\'t receive a code </string>
+    <string name="no_code">I didn\'t receive a code </string>
     - Terms and Conditions
     <string name="accept_terms">Accept terms and conditions</string>
     <string name="please_accept_terms">Please accept the terms and conditions</string>
@@ -286,7 +286,7 @@
     <string name="contact_information">You can contact us here: tech@foodclub.live\n\n</string>
     <string name="additional_regulatory_info">In some countries, the law requires us to provide additional regulatory information and/or contact points within the country, even though we may not be physically present there.\n\n</string>
 
-   Home Screens
+    Home Screens
     -Messaging
     <string name="messages">Messages</string>
     <string name="search_contacts">Search contacts</string>
@@ -458,7 +458,7 @@
     - Camera
     <string name="camera">Camera</string>
     <string name="date_format">yyyy-MM-dd-HH-mm-ss-SSS</string>
-     - Create a Recipe
+    - Create a Recipe
     <string name="ingredient_offset_transitions">Ingredient Offset Transitions</string>
     <string name="share_recipe">Share Recipe</string>
     <string name="categories">Categories</string>
@@ -466,7 +466,7 @@
     <string name="serving_size_colon">Serving Size: %d</string>
     <string name="add_recipe_name">Add recipe\'s name</string>
     <string name="my_new_recipe">My New Recipe</string>
-     - Delete Recipe
+    - Delete Recipe
     <string name="delete_recipe">Delete Recipe</string>
     <string name="no">No</string>
     <string name="yes">Yes</string>
@@ -541,19 +541,19 @@
     - Input Composables
     <string name="terms_and_conditions">Terms and Conditions</string>
     <string name="by_using">By using FoodCLUB you agree to our </string>
-     - Ingredients Bottomsheet
+    - Ingredients Bottomsheet
     <string name="left_arrow">Left Arrow</string>
     <string name="right_arrow">Right Arrow</string>
     <string name="add_items">Add items</string>
     <string name="cancel">Cancel</string>
     <string name="select_expiration_date">Select Expiration Date</string>
-     - Story Viewer
+    - Story Viewer
     <string name="foodsnaps">foodsnaps</string>
     <string name="snap_saved">Snap saved to profile</string>
     <string name="close_story">Close Story</string>
     <string name="author_photo">Author Photo</string>
     <string name="time_ago">%d ago</string>
-     - Video Layout
+    - Video Layout
     <string name="info">Info</string>
     <string name="bookmark">Bookmark</string>
     - CreatorsViewDraggableImageText
@@ -804,4 +804,58 @@ In some countries, the law requires us to provide additional regulatory informat
     <string name="Video_permission_require_message_title">"FoodCLUB" would like to use your <b>Camera</b> and <b>Microphone</b></string>
     <string name="Camera_permission_require_rational">This allows FoddCLUB to take photo for your profile account</string>
     <string name="Video_permission_require_rational">This allows FoddCLUB to take photo for your post</string>
+    - Help and Support
+    <string name="help_and_support_fill_out_form">Please fill out the form, and we\'ll \nget back to you within three days</string>
+    <string name="video_editing_and_customisation">1. Video Editing and Customisation:\n</string>
+    <string name="video_editing_and_customisation_question_1">\t • How can I enhance my cooking videos using \n\t\tFoodSTUDIO\'s graphic features?\n</string>
+    <string name="video_editing_and_customisation_answer_1">To enhance your cooking videos with FoodSTUDIO\'s graphic features, explore options like overlays, text, and animations. You can add logos, transitions, and filters to make your videos more engaging.\n</string>
+    <string name="video_editing_and_customisation_question_2">\t • What customisation options are \n\t\tavailable for video editing?\n</string>
+    <string name="video_editing_and_customisation_answer_2">Customisation options for video editing include adding text overlays, transitions, filters, and logos. You can adjust the duration, speed, and position of elements within your videos.\n</string>
+    <string name="ai_food_detection_and_ingredient_substitution">2. AI Food-Detection and Ingredient Substitution:\n</string>
+    <string name="ai_food_detection_and_ingredient_substitution_question_1">\t • How accurate is the AI food-detection \n\t\tfor scanning my fridge?\n</string>
+    <string name="ai_food_detection_and_ingredient_substitution_answer_1">The AI food-detection for scanning your fridge is highly accurate, providing detailed information about the items detected. It can recognise various food items and ingredients with precision.\n</string>
+    <string name="ai_food_detection_and_ingredient_substitution_question_2">\t • Can the app suggest ingredient \n\t\tsubstitutions based on preferences?\n</string>
+    <string name="ai_food_detection_and_ingredient_substitution_answer_2">Yes, the app can suggest ingredient substitutions based on your preferences, dietary restrictions, and availability. Simply input your preferences, and the app will provide suitable alternatives.\n</string>
+    <string name="macro_calculation_and_nutritional_information">3. Macro Calculation and Nutritional Information:\n</string>
+    <string name="macro_calculation_and_nutritional_information_question_1">\t • How does the automated macro \n\t\tcalculation work for recipes?\n</string>
+    <string name="macro_calculation_and_nutritional_information_answer_1">Automated macro calculation for recipes works by analysing the ingredients and quantities used in your recipe. It calculates the nutritional breakdown, including protein, carbohydrates, and fats, providing valuable information for dietary planning.\n</string>
+    <string name="macro_calculation_and_nutritional_information_question_2">\t • Can I customise nutritional information \n\t\tbased on dietary goals?\n</string>
+    <string name="macro_calculation_and_nutritional_information_answer_2">You can customize nutritional information based on your dietary goals by adjusting settings within the app. Specify your nutritional preferences, such as calorie intake or macronutrient ratios, to receive tailored information.\n</string>
+    <string name="community_interaction_on_foodsnaps">4. Community Interaction on FoodSNAPS:\n</string>
+    <string name="community_interaction_on_foodsnaps_question_1">\t • What features facilitate community \n\t\tconnection on FoodSNAPS?\n</string>
+    <string name="community_interaction_on_foodsnaps_answer_1">Community connection on FoodSNAPS is facilitated through features like recipe sharing, comments, and likes. You can interact with other users, discover new recipes, and share your culinary creations.\n</string>
+    <string name="community_interaction_on_foodsnaps_question_2">\t • Are there privacy settings for sharing \n\t\tcontent on FoodSNAPS?\n</string>
+    <string name="community_interaction_on_foodsnaps_answer_2">Yes, there are privacy settings for sharing content on FoodSNAPS. You can control who can view and interact with your posts, ensuring your privacy preferences are respected.\n</string>
+    <string name="environmental_and_health_footprint_tracking">5. Environmental and Health Footprint Tracking:\n</string>
+    <string name="environmental_and_health_footprint_tracking_question_1">\t • How does the app calculate and \n\t\tdisplay my environmental and health \n\t\tfootprint?\n</string>
+    <string name="environmental_and_health_footprint_tracking_answer_1">The app calculates your environmental and health footprint based on factors like ingredient sourcing, nutritional content, and consumption patterns. It displays this information in a user-friendly format for easy\n</string>
+    <string name="environmental_and_health_footprint_tracking_question_2">\t • Can I receive sustainability \n\t\trecommendations?\n</string>
+    <string name="environmental_and_health_footprint_tracking_answer_2">You can receive sustainability recommendations based on your environmental and health footprint analysis. The app offers suggestions for reducing your impact and making more sustainable choices.\n</string>
+    <string name="foodmaps_and_social_events">6. FoodMAPS and Social Events:\n</string>
+    <string name="foodmaps_and_social_events_question_1">\t • How can I discover and host events on \n\t\tFoodMAPS?\n</string>
+    <string name="foodmaps_and_social_events_answer_1">To discover and host events on FoodMAPS, explore the events section of the app. You can find local culinary events, cooking classes, and food-related gatherings to attend or host.\n</string>
+    <string name="foodmaps_and_social_events_question_2">\t • Can I connect with local cafes and \n\t\trestaurants through FoodMAPS?\n</string>
+    <string name="foodmaps_and_social_events_answer_2">Yes, you can connect with local cafes and restaurants through FoodMAPS. The app provides a platform for discovering nearby dining options, exploring menus, and accessing promotions.\n</string>
+    <string name="food_pitches_and_collaborations">7. Food Pitches and Collaborations:\n</string>
+    <string name="food_pitches_and_collaborations_question_1">\t • What\'s the purpose of food pitches on \n\t\tFoodMAPS?\n</string>
+    <string name="food_pitches_and_collaborations_answer_1">Yes, businesses or individuals can collaborate through the app by sharing resources, expertise, or partnerships. You can connect with others who share similar interests or goals in the culinary space.\n</string>
+    <string name="food_pitches_and_collaborations_question_2">\t • Can businesses or individuals \n\t\tcollaborate through the app?\n</string>
+    <string name="food_pitches_and_collaborations_answer_2">Yes, businesses or individuals can collaborate through the app by sharing resources, expertise, or partnerships. You can connect with others who share similar interests or goals in the culinary space.\n</string>
+    <string name="alerting_neighbors_and_community_support">8. Alerting Neighbors and Community Support:\n</string>
+    <string name="alerting_neighbors_and_community_support_question_1">\t • How can I alert neighbors about food \n\t\tstruggles and seek help?\n</string>
+    <string name="alerting_neighbors_and_community_support_answer_1">To alert neighbors about food struggles and seek help, utilize community support features within the app. You can share your needs discreetly and receive assistance from your local community.\n</string>
+    <string name="alerting_neighbors_and_community_support_question_2">\t • Are there privacy measures for \n\t\tsensitive information?\n</string>
+    <string name="alerting_neighbors_and_community_support_answer_2">Yes, there are privacy measures in place to protect sensitive information. You can control who has access to your posts and messages, ensuring your privacy is maintained.\n</string>
+    <string name="digital_basket_integration_and_shopping">9. Digital Basket Integration and Shopping:\n</string>
+    <string name="digital_basket_integration_and_shopping_question_1">\t • Can I easily purchase suggested \n\t\tingredients through the app?\n</string>
+    <string name="digital_basket_integration_and_shopping_answer_1">You can easily purchase suggested ingredients through the app\'s integrated shopping feature. Partnerships with grocery stores provide a seamless shopping experience, allowing you to order ingredients directly from the app.\n</string>
+    <string name="digital_basket_integration_and_shopping_question_2">\t • Are there partnerships with grocery \n\t\tstores for a seamless experience?\n</string>
+    <string name="digital_basket_integration_and_shopping_answer_2">Yes, there are partnerships with grocery stores to provide a seamless shopping experience within the app. You can access promotions, discounts, and special offers from participating retailers.\n</string>
+    <string name="user_engagement_and_rewards">10. User Engagement and Rewards:\n</string>
+    <string name="user_engagement_and_rewards_question_1">\t • Are there incentives or rewards for \n\t\tcommunity participation?\n</string>
+    <string name="user_engagement_and_rewards_answer_1">Incentives and rewards are offered for community participation, such as challenges, leaderboards, and virtual events. Engage with the community to earn rewards and recognition for your contributions.\n</string>
+    <string name="user_engagement_and_rewards_question_2">\t • How does the app foster a sense of \n\t\tcommunity among users?\n</string>
+    <string name="user_engagement_and_rewards_answer_2">The app fosters a sense of community among users through various features, including recipe sharing, comments, likes, and events. You can connect with like-minded individuals, share your passion for food, and build meaningful relationships within the community.\n</string>
+    <string name="faq">FaQ</string>
+    <string name="help_and_support_page_url">https://tally.so/r/w4rZZo</string>
 </resources>
