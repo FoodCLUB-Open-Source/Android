@@ -15,7 +15,6 @@ data class DiscoverState(
     val userIngredients : List<Ingredient>,
     val searchResults : List<Ingredient>,
     val postList: List<VideoModel>,
-    val myFridgePosts: List<VideoModel>,
     val sessionUsername: String,
     val sessionUserUsername: String,
     val productsData: ProductsData,
@@ -33,7 +32,6 @@ data class DiscoverState(
             userIngredients = emptyList(),
             searchResults = emptyList(),
             postList = emptyList(),
-            myFridgePosts = emptyList(),
             sessionUsername = "",
             sessionUserUsername = "",
             productsData = ProductsData(

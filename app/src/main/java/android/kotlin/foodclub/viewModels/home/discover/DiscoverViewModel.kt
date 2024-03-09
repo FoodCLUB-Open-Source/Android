@@ -7,7 +7,6 @@ import android.kotlin.foodclub.domain.models.products.MyBasketCache
 import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.repositories.ProductRepository
-import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.views.home.discover.DiscoverState
@@ -37,7 +36,6 @@ import javax.inject.Inject
 @HiltViewModel
 class DiscoverViewModel @Inject constructor(
     private val postRepository: PostRepository,
-    private val profileRepo: ProfileRepository,
     private val productsRepo: ProductRepository,
     private val sessionCache: SessionCache,
     private val myBasketCache: MyBasketCache,
@@ -64,7 +62,6 @@ class DiscoverViewModel @Inject constructor(
         }
         getPostsByWorld(197)
         getPostsByUserId()
-        myFridgePosts()
         observeAndFetchSearchedIngredients()
     }
 
@@ -162,30 +159,6 @@ class DiscoverViewModel @Inject constructor(
                     _state.update {
                         it.copy(
                             postList = resource.data!!
-                        )
-                    }
-                }
-
-                is Resource.Error -> {
-                    // TODO deal with error
-                }
-            }
-        }
-
-    }
-
-    override fun myFridgePosts() {
-        viewModelScope.launch {
-            when (val resource =
-                profileRepo.retrieveProfileData(
-                    userId = state.value.sessionUsername.toLong(),
-                    pageNo = 10,
-                    pageSize = 1
-                )) {
-                is Resource.Success -> {
-                    _state.update {
-                        it.copy(
-                            myFridgePosts = resource.data!!.userPosts
                         )
                     }
                 }
