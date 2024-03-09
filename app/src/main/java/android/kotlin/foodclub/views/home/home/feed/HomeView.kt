@@ -73,7 +73,6 @@ fun HomeView(
     events: HomeEvents,
     initialPage: Int? = 0,
     navController: NavHostController,
-    triggerStoryView: () -> Unit,
     state: HomeState,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -104,7 +103,7 @@ fun HomeView(
 
     val exoPlayer = remember(context) { viewModel.exoPlayer }
 
-    var initialPageFlag : Boolean = false;
+    var initialPageFlag: Boolean
 
     BackHandler {
 
@@ -189,7 +188,7 @@ fun HomeView(
         ) { currentPage ->
             when (currentPage) {
                 0 -> {
-                    initialPageFlag = true;
+                    initialPageFlag = true
                     if (state.showMemories) {
                         events.toggleShowMemories(show = false)
                     }
@@ -234,7 +233,6 @@ fun HomeView(
                         },
                         toggleShowMemoriesReel = events::toggleShowMemoriesReel,
                         pagerState = pagerState,
-                        coroutineScope = coroutineScope,
                         navController = navController,
                         selectReaction = { events. selectReaction(it)},
                         clearSelectedReaction = {events.selectReaction(Reactions.ALL)}

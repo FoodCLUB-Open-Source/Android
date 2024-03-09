@@ -122,7 +122,7 @@ fun VideoPager(
                 )
 
                 LikeButton(doubleTapState) {
-                    isLiked = !isLiked
+                    isLiked = true
                     coroutineScope.launch {
                         events.updatePostLikeStatus(currentVideo.videoId, isLiked)
                     }

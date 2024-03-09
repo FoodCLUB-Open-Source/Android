@@ -7,11 +7,11 @@ import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.utils.composables.CustomDatePicker
 import android.kotlin.foodclub.utils.composables.EditIngredientQuantityPicker
+import android.kotlin.foodclub.utils.composables.itemExpirationDate
+import android.kotlin.foodclub.utils.composables.itemQuantity
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
 import android.kotlin.foodclub.views.home.discover.DiscoverState
-import android.kotlin.foodclub.views.home.discover.itemExpirationDate
-import android.kotlin.foodclub.views.home.discover.itemQuantity
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState

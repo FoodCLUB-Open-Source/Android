@@ -31,8 +31,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,10 +45,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -87,7 +86,7 @@ fun MyBasketView(
         modifier = Modifier
             .background(color = Color.White)
             .fillMaxSize()
-            .padding(top = 60.dp),
+            .padding(top = dimensionResource(id = R.dimen.dim_60)),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(
@@ -104,24 +103,25 @@ fun MyBasketView(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                IconButton(
-                    onClick = { navController.navigateUp() },
-                    modifier = Modifier
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.back_icon),
-                        contentDescription = "Back",
-                        tint = Color.Black
-                    )
-                }
+                // this below commented code block will be used in the future
+//                IconButton(
+//                    onClick = { navController.navigateUp() },
+//                    modifier = Modifier
+//                ) {
+//                    Icon(
+//                        painter = painterResource(id = R.drawable.back_icon),
+//                        contentDescription = "Back",
+//                        tint = Color.Black
+//                    )
+//                }
                 Text(
-                    text = stringResource(id = R.string.my_basket),
-                    fontSize = dimensionResource(id = R.dimen.fon_25).value.sp,
+                    text = stringResource(id = R.string.shopping_list),
+                    fontSize = dimensionResource(id = R.dimen.fon_28).value.sp,
                     fontFamily = Montserrat,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight(integerResource(id = R.integer.int_600)),
                     color = Color.Black,
-                    style = TextStyle(letterSpacing = (-1).sp),
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    lineHeight = dimensionResource(id = R.dimen.dim_48).value.sp
                 )
                 Button(
                     shape = RectangleShape,
@@ -151,41 +151,44 @@ fun MyBasketView(
                     )
                 }
             }
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
                         end = dimensionResource(id = R.dimen.dim_20),
                         start = dimensionResource(id = R.dimen.dim_20),
-                        bottom = dimensionResource(id = R.dimen.dim_5)
+                        bottom = dimensionResource(id = R.dimen.dim_10)
                     )
                     .height(dimensionResource(id = R.dimen.dim_80)),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start
             ) {
-                Spacer(modifier = Modifier.weight(1f))
-
                 Button(
                     shape = RectangleShape,
                     modifier = Modifier
                         .border(
-                            dimensionResource(id = R.dimen.dim_1),
-                            Color(126, 198, 11),
-                            RoundedCornerShape(dimensionResource(id = R.dimen.dim_20))
+                            width = dimensionResource(id = R.dimen.dim_1),
+                            color = colorResource(id = R.color.shopping_list_add_items_green),
+                            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16))
                         )
-                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
-                        .width(dimensionResource(id = R.dimen.dim_125)),
+                        .clip(
+                            RoundedCornerShape(dimensionResource(id = R.dimen.dim_16))
+                        ),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.White,
-                        contentColor = Color(126, 198, 11)
+                        colorResource(id = R.color.shopping_list_add_items_green),
                     ),
                     contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_15)),
                     onClick = { showSheet = !showSheet }
                 ) {
                     Text(
                         text = stringResource(id = R.string.add_items_plus),
-                        fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
+                        fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                         fontFamily = Montserrat,
-                        color = Color(126, 198, 11),
+                        fontWeight = FontWeight(integerResource(id = R.integer.int_500)),
+                        lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
+                        color  = colorResource(id = R.color.shopping_list_add_items_green)
                     )
                 }
             }
@@ -257,7 +260,7 @@ fun BasketIngredient(
                     .height(dimensionResource(id = R.dimen.dim_140))
                     .border(
                         dimensionResource(id = R.dimen.dim_1),
-                        Color(0xFFE8E8E8),
+                        colorResource(id = R.color.shopping_list_ingredient_whitish_color),
                         RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                     )
                     .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
@@ -280,7 +283,7 @@ fun BasketIngredient(
                         .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_30)))
                         .background(
                             if (isSelected) foodClubGreen
-                            else Color(0xFFECECEC)
+                            else colorResource(id = R.color.shopping_list_whitish_color)
                         )
                         .clickable {
                             isSelected = !isSelected
@@ -311,7 +314,7 @@ fun BasketIngredient(
                             fontWeight = FontWeight.Normal,
                             fontFamily = Montserrat,
                             overflow = TextOverflow.Ellipsis,
-                            maxLines = 3
+                            maxLines = integerResource(id = R.integer.int_3)
                         )
                     }
                     Box(modifier = Modifier.align(Alignment.BottomEnd)) {
@@ -335,7 +338,7 @@ fun BasketIngredient(
                                 fontFamily = Montserrat,
                                 fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
                                 overflow = TextOverflow.Ellipsis,
-                                maxLines = 1
+                                maxLines = integerResource(id = R.integer.int_1)
                             )
                             Image(
                                 painter = painterResource(id = R.drawable.baseline_arrow_right_24),

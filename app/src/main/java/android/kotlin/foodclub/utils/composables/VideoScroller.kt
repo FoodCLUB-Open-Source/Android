@@ -4,6 +4,8 @@ import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.net.Uri
 import android.view.ViewGroup
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -45,6 +47,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
+const val VIDEO_PROGRESS_BAR_VISIBLE_TIME = 3000L
 @OptIn(ExperimentalFoundationApi::class)
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
@@ -68,6 +71,13 @@ fun VideoScroller(
 
     var thumbnail by remember {
         mutableStateOf(ThumbnailState(null, true))
+    }
+
+    var lastPause by remember {
+        mutableLongStateOf(System.currentTimeMillis()-VIDEO_PROGRESS_BAR_VISIBLE_TIME)
+    }
+    var videoProgressBarVisible by remember {
+        mutableStateOf(false)
     }
 
     val painter = rememberAsyncImagePainter(
@@ -178,6 +188,8 @@ fun VideoScroller(
                         detectTapGestures(
                             onTap = {
                                 onSingleTap(exoPlayer)
+                                lastPause = System.currentTimeMillis()
+                                videoProgressBarVisible = true
                             },
                             onDoubleTap = { offset ->
                                 onDoubleTap(exoPlayer, offset)
@@ -185,11 +197,23 @@ fun VideoScroller(
                         )
                     }
                 )
-                VideoProgressBar(
+
+                LaunchedEffect(videoProgressBarVisible){
+                    delay(VIDEO_PROGRESS_BAR_VISIBLE_TIME)
+                    videoProgressBarVisible = (System.currentTimeMillis() - lastPause).coerceAtMost(VIDEO_PROGRESS_BAR_VISIBLE_TIME) < VIDEO_PROGRESS_BAR_VISIBLE_TIME
+                }
+
+                AnimatedVisibility (
+                    visible = videoProgressBarVisible,
                     modifier = Modifier.align(Alignment.BottomEnd),
-                    currentTime = { currentTime },
-                    totalDuration = { totalDuration }
-                )
+                    enter = EnterTransition.None
+                ) {
+                    VideoProgressBar(
+                        modifier = Modifier,
+                        currentTime = { currentTime },
+                        totalDuration = { totalDuration }
+                    )
+                }
             }
         } else {
             Box(
