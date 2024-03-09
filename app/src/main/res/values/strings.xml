@@ -802,8 +802,8 @@ In some countries, the law requires us to provide additional regulatory informat
 
     <string name="Camera_permission_require_message_title">"FoodCLUB" would like to use your <b>Camera</b></string>
     <string name="Video_permission_require_message_title">"FoodCLUB" would like to use your <b>Camera</b> and <b>Microphone</b></string>
-    <string name="Camera_permission_require_rational">This allows FoddCLUB to take photo for your profile account</string>
-    <string name="Video_permission_require_rational">This allows FoddCLUB to take photo for your post</string>
+    <string name="Camera_permission_require_rational">This allows FoodCLUB to take photo for your profile account</string>
+    <string name="Video_permission_require_rational">This allows FoodCLUB to take photo for your post</string>
     - Help and Support
     <string name="help_and_support_fill_out_form">Please fill out the form, and we\'ll \nget back to you within three days</string>
     <string name="video_editing_and_customisation">1. Video Editing and Customisation:\n</string>
