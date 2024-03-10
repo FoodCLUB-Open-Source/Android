@@ -273,7 +273,6 @@ fun DiscoverView(
                         }
                     }
 
-                    //Ingredients list causes excess space
                     if (isInternetConnected) {
                         IngredientsList(
                             Modifier,
@@ -305,9 +304,9 @@ fun DiscoverView(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         if (isInternetConnected) {
-
                             Button(
                                 onClick = {
+                                    events.onUpdateSearchText()
                                     navController.navigate("ADD_INGREDIENTS")
                                 },
                                 shape = RoundedCornerShape(
@@ -337,7 +336,7 @@ fun DiscoverView(
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-//                    SlideInTitle(pagerState2 = pagerState2)
+                    SlideInTitle(pagerState2 = pagerState2)
 
                     HorizontalPager(
                         beyondBoundsPageCount = 1,
@@ -407,7 +406,6 @@ fun DiscoverView(
                                     }
                                 }
                             }
-
                         }
                     }
                 }

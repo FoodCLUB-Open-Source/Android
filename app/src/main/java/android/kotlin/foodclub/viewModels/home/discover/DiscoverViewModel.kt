@@ -245,6 +245,15 @@ class DiscoverViewModel @Inject constructor(
         }
     }
 
+    override fun onUpdateSearchText() {
+        _state.update {
+            it.copy(
+                ingredientSearchText = "",
+                searchIngredientsListText = ""
+            )
+        }
+    }
+
     override fun onDeleteIngredient(ingredient: Ingredient) {
         val myIngredients = state.value.userIngredients.toMutableList()
         val matchingIngredient = myIngredients.find { it.type == ingredient.type }
