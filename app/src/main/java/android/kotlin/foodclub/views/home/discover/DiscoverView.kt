@@ -23,9 +23,11 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -61,7 +63,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -104,6 +105,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -670,6 +672,25 @@ fun MyIngredientsSearchBar(
     }else{
         stringResource(id = R.string.search_ingredients)
     }
+    val textFieldColors = if (actionType == ActionType.DISCOVER_VIEW){
+        TextFieldDefaults.colors(
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
+            disabledContainerColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
+        )
+    }else{
+        TextFieldDefaults.colors(
+            focusedContainerColor = containerColor,
+            unfocusedContainerColor = containerColor,
+            disabledContainerColor = containerColor,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
+        )
+    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -679,24 +700,18 @@ fun MyIngredientsSearchBar(
                 start = dimensionResource(id = R.dimen.dim_20),
                 bottom = dimensionResource(id = R.dimen.dim_15)
             ),
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
     ) {
         TextField(
             modifier = Modifier
 //                .fillMaxWidth(if (enableCamera && enableMike) 0.68f else 1.0f)
                 .fillMaxWidth()
-                .clip(
-                    RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
+                .border(
+                    border = BorderStroke(1.dp, colorResource(id = R.color.gray).copy(alpha = 0.3f)),
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16))
                 ),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = containerColor,
-                unfocusedContainerColor = containerColor,
-                disabledContainerColor = containerColor,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent,
-            ),
+            colors = textFieldColors,
             value = searchTextValue,
             onValueChange = {
                 onSearch(it)
@@ -704,8 +719,10 @@ fun MyIngredientsSearchBar(
             singleLine = true,
             placeholder = {
                 Text(
-                    modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_3)),
                     text = placeholderText,
+                    fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
+                    lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
+                    fontWeight = FontWeight(400),
                     color = Color.Gray,
                     textAlign = TextAlign.Center
                 )

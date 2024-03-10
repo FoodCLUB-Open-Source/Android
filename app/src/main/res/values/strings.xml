@@ -343,7 +343,7 @@
     <string name="search_for">Search for recipes, usernames…</string>
     <string name="my_kitchen">My Kitchen</string>
     <string name="search_ingredients">Search ingredients</string>
-    <string name="search_from_my_basket">Search from my basket</string>
+    <string name="search_from_my_basket">Search from my basket…</string>
     <string-array name="discover_sub_tabs">
         <item>Veg &amp; Fruits</item>
         <item>Grains &amp; Cereals</item>
