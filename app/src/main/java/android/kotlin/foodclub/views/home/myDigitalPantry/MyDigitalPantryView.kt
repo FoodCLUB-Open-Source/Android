@@ -242,7 +242,7 @@ fun SearchMyIngredients(
             .fillMaxWidth()
             .padding(dimensionResource(id = R.dimen.dim_10))
             .clip(
-                RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
+                RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
             ),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = containerColor,
@@ -378,7 +378,10 @@ fun SwipeableItemsLazyColumn(
 ) {
     LazyColumn(
         modifier = modifier
-            .padding(start = dimensionResource(id = R.dimen.dim_15), end = dimensionResource(id = R.dimen.dim_15))
+            .padding(
+                start = dimensionResource(id = R.dimen.dim_15),
+                end = dimensionResource(id = R.dimen.dim_15)
+            )
             .background(Color.White)
             .height(height.dp)
     ) {
@@ -509,7 +512,7 @@ fun SingleIngredientItem(
             ) {
                 Text(
                     modifier = modifier
-                        .padding(start =dimensionResource(id = R.dimen.dim_6))
+                        .padding(start = dimensionResource(id = R.dimen.dim_6))
                         .clickable {
                             onEditClicked(item)
                         },
@@ -617,7 +620,11 @@ fun EditIngredientView(
                 verticalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = dimensionResource(id = R.dimen.dim_17), end = dimensionResource(id = R.dimen.dim_17), bottom = dimensionResource(id = R.dimen.dim_20)),
+                    .padding(
+                        start = dimensionResource(id = R.dimen.dim_17),
+                        end = dimensionResource(id = R.dimen.dim_17),
+                        bottom = dimensionResource(id = R.dimen.dim_20)
+                    ),
             ) {
                 EditIngredientQuantityPicker(
                     ingredient = ingredient,
@@ -636,9 +643,9 @@ fun EditIngredientView(
                         .border(
                             dimensionResource(id = R.dimen.dim_2),
                             Color(126, 198, 11, 255),
-                            shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
+                            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                         )
-                        .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
+                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
                         .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.White,
@@ -667,9 +674,9 @@ fun EditIngredientView(
                         .border(
                             dimensionResource(id = R.dimen.dim_1),
                             Color(126, 198, 11, 255),
-                            shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15))
+                            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                         )
-                        .clip(RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)))
+                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
                         .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(126, 198, 11, 255),

@@ -683,7 +683,8 @@ fun MyIngredientsSearchBar(
     ) {
         TextField(
             modifier = Modifier
-                .fillMaxWidth(if (enableCamera && enableMike) 0.68f else 1.0f)
+//                .fillMaxWidth(if (enableCamera && enableMike) 0.68f else 1.0f)
+                .fillMaxWidth()
                 .clip(
                     RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                 ),
@@ -722,42 +723,42 @@ fun MyIngredientsSearchBar(
             }
         )
 
-        if (enableCamera) {
-            Button(
-                shape = RoundedCornerShape(corner = CornerSize(dimensionResource(id = R.dimen.dim_25))),
-                modifier = Modifier
-                    .height(dimensionResource(id = R.dimen.dim_56))
-                    .width(dimensionResource(id = R.dimen.dim_56)),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = foodClubGreen,
-                ),
-                contentPadding = PaddingValues(),
-                onClick = {
-                    navController.navigate("ScanView_route")
-                }
-            ) {
-                Icon(painterResource(id = R.drawable.camera_icon), contentDescription = "")
-            }
-        }
-
-        if (enableMike) {
-            Button(
-                shape = RoundedCornerShape(corner = CornerSize(dimensionResource(id = R.dimen.dim_25))),
-                modifier = Modifier
-                    .height(dimensionResource(id = R.dimen.dim_56))
-                    .width(dimensionResource(id = R.dimen.dim_56)),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = foodClubGreen,
-                ),
-                contentPadding = PaddingValues(),
-                onClick = {
-
-                    // TODO impl microphone
-                }
-            ) {
-                Icon(painterResource(id = R.drawable.mic_icon), contentDescription = "")
-            }
-        }
+//        if (enableCamera) {
+//            Button(
+//                shape = RoundedCornerShape(corner = CornerSize(dimensionResource(id = R.dimen.dim_25))),
+//                modifier = Modifier
+//                    .height(dimensionResource(id = R.dimen.dim_56))
+//                    .width(dimensionResource(id = R.dimen.dim_56)),
+//                colors = ButtonDefaults.buttonColors(
+//                    containerColor = foodClubGreen,
+//                ),
+//                contentPadding = PaddingValues(),
+//                onClick = {
+//                    navController.navigate("ScanView_route")
+//                }
+//            ) {
+//                Icon(painterResource(id = R.drawable.camera_icon), contentDescription = "")
+//            }
+//        }
+//
+//        if (enableMike) {
+//            Button(
+//                shape = RoundedCornerShape(corner = CornerSize(dimensionResource(id = R.dimen.dim_25))),
+//                modifier = Modifier
+//                    .height(dimensionResource(id = R.dimen.dim_56))
+//                    .width(dimensionResource(id = R.dimen.dim_56)),
+//                colors = ButtonDefaults.buttonColors(
+//                    containerColor = foodClubGreen,
+//                ),
+//                contentPadding = PaddingValues(),
+//                onClick = {
+//
+//                    // TODO impl microphone
+//                }
+//            ) {
+//                Icon(painterResource(id = R.drawable.mic_icon), contentDescription = "")
+//            }
+//        }
     }
 }
 
