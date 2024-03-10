@@ -798,6 +798,7 @@ In some countries, the law requires us to provide additional regulatory informat
     <string name="Confirm">Confirm</string>
     <string name="Cancel">Cancel</string>
     <string name="add_ingredients">Add ingredients</string>
+    <string name="add_ingredients_information_text">Add ingredients to your kitchen to see recommendations</string>
     <string name="Recommendations">Recommendations</string>
     <string name="All">All</string>
     <string name="Accounts">Accounts</string>

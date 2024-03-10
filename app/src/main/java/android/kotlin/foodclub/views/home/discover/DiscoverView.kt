@@ -297,40 +297,43 @@ fun DiscoverView(
 
                     }
 
+                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
+
+                    if (state.userIngredients.isEmpty()){
+                        Text(
+                            text = stringResource(id = R.string.add_ingredients_information_text),
+                            fontWeight = FontWeight(500),
+                            fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
+                            color = colorResource(
+                                id = R.color.discover_view_add_ingredient_information_text
+                            ).copy(alpha = 0.3f),
+                            lineHeight = dimensionResource(id = R.dimen.fon_17).value.sp,
+                            fontFamily = Montserrat,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
                     Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        if (isInternetConnected) {
-                            Button(
-                                onClick = {
-                                    events.onUpdateSearchText()
-                                    navController.navigate("ADD_INGREDIENTS")
-                                },
-                                shape = RoundedCornerShape(
-                                    dimensionResource(
-                                        id = R.dimen.dim_15
-                                    )
-                                ),
-                                colors = ButtonDefaults.buttonColors(foodClubGreen),
-                            ) {
-                                Text(
-                                    text = stringResource(id = R.string.add_ingredients),
-                                    fontSize = dimensionResource(
-                                        id = R.dimen.fon_20
-                                    ).value.sp,
-                                    fontFamily = Montserrat
-                                )
-                            }
-
-                        } else {
-                            CircularProgressIndicator(
-                                color = foodClubGreen,
-                                strokeWidth = dimensionResource(id = R.dimen.dim_4)
+                    Button(
+                        onClick = {
+                            events.onUpdateSearchText()
+                            navController.navigate("ADD_INGREDIENTS")
+                        },
+                        shape = RoundedCornerShape(
+                            dimensionResource(
+                                id = R.dimen.dim_15
                             )
-                        }
+                        ),
+                        colors = ButtonDefaults.buttonColors(foodClubGreen),
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.add_ingredients),
+                            fontSize = dimensionResource(
+                                id = R.dimen.fon_20
+                            ).value.sp,
+                            fontFamily = Montserrat
+                        )
                     }
                 }
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
