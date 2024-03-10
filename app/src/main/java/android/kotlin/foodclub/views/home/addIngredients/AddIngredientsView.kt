@@ -182,8 +182,8 @@ fun AddIngredientsView(
                                 isDatePickerVisible = true
                             },
                             onIngredientAdd = {},
-                            onDeleteIngredient = {
-                                events.deleteIngredientFromList(it)
+                            onDeleteIngredient = { ingredientToDelete->
+                                events.deleteIngredientFromList(ingredientToDelete)
                             },
                             actionType = ActionType.ADD_INGREDIENTS_VIEW
                         )
@@ -199,12 +199,12 @@ fun AddIngredientsView(
                             onDateClicked = {
                                 isDatePickerVisible = true
                             },
-                            onIngredientAdd = {
-                                events.addToUserIngredients(it)
+                            onIngredientAdd = { ingredientToAdd->
+                                events.addToUserIngredients(ingredientToAdd)
                                 isDialogOpen = false
                             },
-                            onDeleteIngredient = {
-                                events.deleteIngredientFromList(it)
+                            onDeleteIngredient = { ingredientToDelete->
+                                events.deleteIngredientFromList(ingredientToDelete)
                             },
                             actionType = ActionType.ADD_INGREDIENTS_VIEW
                         )
@@ -213,5 +213,4 @@ fun AddIngredientsView(
             }
         }
     )
-
 }

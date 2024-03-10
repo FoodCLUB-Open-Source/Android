@@ -311,9 +311,9 @@ fun DiscoverView(
                             fontFamily = Montserrat,
                             textAlign = TextAlign.Center
                         )
+                        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
                     }
 
-                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
                     Button(
                         onClick = {

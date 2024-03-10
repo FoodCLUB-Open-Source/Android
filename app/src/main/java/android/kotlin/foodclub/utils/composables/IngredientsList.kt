@@ -45,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -148,7 +149,8 @@ fun IngredientsListColumn(
                             },
                             onAddItemClicked = {
                                 onIngredientAdd(item)
-                            }
+                            },
+                            onDeleteIngredient = {}
                         )
                     }
                 } else {
@@ -166,6 +168,9 @@ fun IngredientsListColumn(
                         },
                         onAddItemClicked = {
                             onIngredientAdd(item)
+                        },
+                        onDeleteIngredient = {
+                            onDeleteIngredient(it)
                         }
                     )
                 }
@@ -190,12 +195,13 @@ fun SingleSearchIngredientItem(
     onEditQuantityClicked: (Ingredient) -> Unit,
     onDateClicked: (Ingredient) -> Unit,
     onAddItemClicked: (Ingredient) -> Unit,
+    onDeleteIngredient: (Ingredient) -> Unit,
     userIngredientsList: List<Ingredient>
 ) {
     val unit = stringResource(id = R.string.gram_unit)
     val quantity = itemQuantity(item, unit)
     val expirationDate = itemExpirationDate(item)
-    val isItemAdded = userIngredientsList.filter { item.id == it.id }.size == 1
+    var isItemAdded = userIngredientsList.filter { item.id == it.id }.size == 1
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -286,25 +292,33 @@ fun SingleSearchIngredientItem(
                     )
                 }
 
-                if (!isItemAdded) {
-                    Box(modifier = Modifier.weight(1f, fill = false))
-                    Spacer(modifier = Modifier.weight(1f, fill = true))
-                    Box(
-                        modifier = Modifier
-                            .size(dimensionResource(id = R.dimen.dim_24))
-                            .clip(CircleShape)
-                            .background(foodClubGreen)
-                            .clickable {
+                Box(modifier = Modifier.weight(1f, fill = false))
+                Spacer(modifier = Modifier.weight(1f, fill = true))
+                Box(
+                    modifier = Modifier
+                        .size(dimensionResource(id = R.dimen.dim_24))
+                        .clip(CircleShape)
+                        .background(if (isItemAdded) Color.Red else foodClubGreen)
+                        .clickable {
+                            if (isItemAdded){
+                                onDeleteIngredient(item)
+                            }else{
                                 onAddItemClicked(item)
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.add),
-                            contentDescription = null,
-                            tint = Color.White
-                        )
-                    }
+                            }
+                            isItemAdded = !isItemAdded
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    val rotationAngle by animateFloatAsState(targetValue = if (isItemAdded) 45f else 0f,
+                        label = ""
+                    )
+
+                    Icon(
+                        painter = painterResource(id = R.drawable.add),
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.rotate(rotationAngle)
+                    )
                 }
             }
         }
