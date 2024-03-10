@@ -101,7 +101,6 @@ fun IngredientsList(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IngredientsListColumn(
     events: DiscoverEvents,
@@ -131,63 +130,13 @@ fun IngredientsListColumn(
             .height(height),
         content = {
             itemsIndexed(productsList) { _, item ->
-                var notSwiped by remember { mutableStateOf(false) }
-                val dismissState = rememberDismissState(
-                    confirmValueChange = { dismiss ->
-                        if (dismiss == DismissValue.DismissedToEnd) notSwiped =
-                            !notSwiped
-                        dismiss != DismissValue.DismissedToEnd
-                    }
-                )
-
-                if (dismissState.isDismissed(DismissDirection.EndToStart)) {
-                    LaunchedEffect(key1 = true) {
-                        onDeleteIngredient(item)
-                        dismissState.reset()
-                    }
-                } else {
-                    LaunchedEffect(key1 = true) {
-                        dismissState.reset()
-                    }
-                }
-                SwipeToDismiss(
-                    state = dismissState,
-                    directions = setOf(DismissDirection.EndToStart),
-                    background = {
-                        val color by animateColorAsState(
-                            when (dismissState.targetValue) {
-                                DismissValue.Default -> Color.White
-                                DismissValue.DismissedToEnd -> Color.White
-                                DismissValue.DismissedToStart -> Color.Red
-                            }, label = ""
-                        )
-                        val alignment = Alignment.CenterEnd
-                        val icon = Icons.Default.Delete
-
-                        val scale by animateFloatAsState(
-                            if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f,
-                            label = ""
-                        )
-
-                        Box(
-                            Modifier
-                                .fillMaxSize()
-                                .background(color)
-                                .padding(horizontal = dimensionResource(id = R.dimen.dim_20)),
-                            contentAlignment = alignment
-                        ) {
-                            Icon(
-                                icon,
-                                contentDescription = null,
-                                modifier = Modifier.scale(scale),
-                                tint = Color.White
-                            )
-                        }
-                    },
-                    dismissContent = {
+                if (actionType == ActionType.DISCOVER_VIEW) {
+                    SwipeToDismissContainer(
+                        onDismiss = { onDeleteIngredient(item) }
+                    ) { modifier ->
                         SingleSearchIngredientItem(
-                            modifier = Modifier,
-                            item = item, //Item is different when editing need to make sure to check based on ID
+                            modifier = modifier,
+                            item = item,
                             userIngredientsList = userIngredientsList,
                             onEditQuantityClicked = {
                                 events.updateIngredient(it)
@@ -202,7 +151,24 @@ fun IngredientsListColumn(
                             }
                         )
                     }
-                )
+                } else {
+                    SingleSearchIngredientItem(
+                        modifier = Modifier,
+                        item = item,
+                        userIngredientsList = userIngredientsList,
+                        onEditQuantityClicked = {
+                            events.updateIngredient(it)
+                            onEditQuantityClicked(item)
+                        },
+                        onDateClicked = {
+                            events.updateIngredient(it)
+                            onDateClicked(item)
+                        },
+                        onAddItemClicked = {
+                            onIngredientAdd(item)
+                        }
+                    )
+                }
 
                 Spacer(Modifier.height(dimensionResource(id = R.dimen.dim_8)))
                 Divider(
@@ -211,7 +177,6 @@ fun IngredientsListColumn(
                     color = Color.LightGray
                 )
                 Spacer(Modifier.height(dimensionResource(id = R.dimen.dim_8)))
-
             }
         }
     )
@@ -272,8 +237,7 @@ fun SingleSearchIngredientItem(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start
             ) {
-                if (true)//isItemAdded)
-                {
+                if (isItemAdded) {
                     Text(
                         modifier = modifier
                             .padding(start = dimensionResource(id = R.dimen.dim_6))
@@ -290,7 +254,6 @@ fun SingleSearchIngredientItem(
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )
-
                 } else {
                     Box(modifier = Modifier.weight(1f, fill = false))
                     Spacer(modifier = Modifier.weight(1f, fill = true))
@@ -303,8 +266,7 @@ fun SingleSearchIngredientItem(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                if (true)//isItemAdded)
-                {
+                if (isItemAdded) {
                     Text(
                         modifier = modifier
                             .padding(start = dimensionResource(id = R.dimen.dim_20))
@@ -324,7 +286,6 @@ fun SingleSearchIngredientItem(
                     )
                 }
 
-                //Item may have a different ID when it is being edited so it isn't in the list will have to check that
                 if (!isItemAdded) {
                     Box(modifier = Modifier.weight(1f, fill = false))
                     Spacer(modifier = Modifier.weight(1f, fill = true))
@@ -350,6 +311,71 @@ fun SingleSearchIngredientItem(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SwipeToDismissContainer(
+    onDismiss: () -> Unit,
+    dismissContent: @Composable (Modifier) -> Unit
+) {
+    var notSwiped by remember { mutableStateOf(false) }
+    val dismissState = rememberDismissState(
+        confirmValueChange = { dismiss ->
+            if (dismiss == DismissValue.DismissedToEnd) notSwiped =
+                !notSwiped
+            dismiss != DismissValue.DismissedToEnd
+        }
+    )
+
+    if (dismissState.isDismissed(DismissDirection.EndToStart)) {
+        LaunchedEffect(key1 = true) {
+            onDismiss()
+            dismissState.reset()
+        }
+    } else {
+        LaunchedEffect(key1 = true) {
+            dismissState.reset()
+        }
+    }
+
+    SwipeToDismiss(
+        state = dismissState,
+        directions = setOf(DismissDirection.EndToStart),
+        background = {
+            val color by animateColorAsState(
+                when (dismissState.targetValue) {
+                    DismissValue.Default -> Color.White
+                    DismissValue.DismissedToEnd -> Color.White
+                    DismissValue.DismissedToStart -> Color.Red
+                }, label = ""
+            )
+            val alignment = Alignment.CenterEnd
+            val icon = Icons.Default.Delete
+
+            val scale by animateFloatAsState(
+                if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f,
+                label = ""
+            )
+
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .background(color)
+                    .padding(horizontal = dimensionResource(id = R.dimen.dim_20)),
+                contentAlignment = alignment
+            ) {
+                Icon(
+                    icon,
+                    contentDescription = null,
+                    modifier = Modifier.scale(scale),
+                    tint = Color.White
+                )
+            }
+        },
+        dismissContent = {
+            dismissContent(Modifier)
+        }
+    )
+}
 @Composable
 fun itemQuantity(item: Ingredient, unit: String): String {
     return if (item.quantity != 0) item.quantity.toString() + unit else stringResource(id = R.string.edit)
