@@ -104,6 +104,9 @@ fun ProfileView(
     val brush = shimmerBrush()
     val scope = rememberCoroutineScope()
     var imageUri: Uri? by remember { mutableStateOf(null) }
+    var showProfileImage by remember {
+        mutableStateOf(false)
+    }
     val isAPICallLoading = state.isLoading
 
     LaunchedEffect(key1 = true) {
@@ -208,7 +211,11 @@ fun ProfileView(
             } else if (pagerState.currentPage == 1) {
                 userTabItems = bookmarkedPosts
             }
-
+            if (showProfileImage){
+                ShowProfileImage(imageUri) {
+                    showProfileImage = false
+                }
+            }
             if (showPost) {
                 events.getPostData(postId)
 
@@ -242,6 +249,9 @@ fun ProfileView(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Box(
+                            if (userId == 0L) Modifier.clickable {
+                                showProfileImage = true
+                            } else Modifier
                             modifier = if (userId == 0L) {
                                 Modifier.clickable(
                                     interactionSource = remember { MutableInteractionSource() },
@@ -254,7 +264,7 @@ fun ProfileView(
                             }
                         ) {
                             AsyncImage(
-                                model = imageUri ?: R.drawable.profilepicture,
+                                model = imageUri ?: R.drawable.default_avatar,
                                 contentDescription = stringResource(id = R.string.profile_picture),
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_60)))
@@ -263,7 +273,9 @@ fun ProfileView(
                                 contentScale = ContentScale.Crop
                             )
                             if (userId == 0L) {
-                                ProfilePicturePlaceHolder()
+                                ProfilePicturePlaceHolder {
+                                    showBottomSheet = true
+                                }
                             }
                         }
 

@@ -2,6 +2,7 @@ package android.kotlin.foodclub.utils.helpers
 
 import android.kotlin.foodclub.R
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
@@ -16,7 +17,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 @Composable
-fun ProfilePicturePlaceHolder()
+fun ProfilePicturePlaceHolder(onClick: () -> Unit)
 {
     Image(
         painter = painterResource(R.drawable.profile_picture_change_icon),
@@ -27,6 +28,6 @@ fun ProfilePicturePlaceHolder()
             .offset(
                 x = (cos(PI / 4) * 62 + 39).dp,
                 y = (sin(PI / 4) * 62 + 39).dp
-            )
+            ).clickable { onClick() }
     )
 }
