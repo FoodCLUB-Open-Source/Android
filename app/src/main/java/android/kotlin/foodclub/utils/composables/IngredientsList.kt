@@ -150,7 +150,8 @@ fun IngredientsListColumn(
                             onAddItemClicked = {
                                 onIngredientAdd(item)
                             },
-                            onDeleteIngredient = {}
+                            onDeleteIngredient = {},
+                            actionType = actionType
                         )
                     }
                 } else {
@@ -171,7 +172,8 @@ fun IngredientsListColumn(
                         },
                         onDeleteIngredient = {
                             onDeleteIngredient(it)
-                        }
+                        },
+                        actionType = actionType
                     )
                 }
 
@@ -196,7 +198,8 @@ fun SingleSearchIngredientItem(
     onDateClicked: (Ingredient) -> Unit,
     onAddItemClicked: (Ingredient) -> Unit,
     onDeleteIngredient: (Ingredient) -> Unit,
-    userIngredientsList: List<Ingredient>
+    userIngredientsList: List<Ingredient>,
+    actionType: ActionType
 ) {
     val unit = stringResource(id = R.string.gram_unit)
     val quantity = itemQuantity(item, unit)
@@ -294,31 +297,33 @@ fun SingleSearchIngredientItem(
 
                 Box(modifier = Modifier.weight(1f, fill = false))
                 Spacer(modifier = Modifier.weight(1f, fill = true))
-                Box(
-                    modifier = Modifier
-                        .size(dimensionResource(id = R.dimen.dim_24))
-                        .clip(CircleShape)
-                        .background(if (isItemAdded) Color.Red else foodClubGreen)
-                        .clickable {
-                            if (isItemAdded){
-                                onDeleteIngredient(item)
-                            }else{
-                                onAddItemClicked(item)
-                            }
-                            isItemAdded = !isItemAdded
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    val rotationAngle by animateFloatAsState(targetValue = if (isItemAdded) 45f else 0f,
-                        label = ""
-                    )
+                if (actionType == ActionType.ADD_INGREDIENTS_VIEW){
+                    Box(
+                        modifier = Modifier
+                            .size(dimensionResource(id = R.dimen.dim_24))
+                            .clip(CircleShape)
+                            .background(if (isItemAdded) Color.Red else foodClubGreen)
+                            .clickable {
+                                if (isItemAdded){
+                                    onDeleteIngredient(item)
+                                }else{
+                                    onAddItemClicked(item)
+                                }
+                                isItemAdded = !isItemAdded
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        val rotationAngle by animateFloatAsState(targetValue = if (isItemAdded) 45f else 0f,
+                            label = ""
+                        )
 
-                    Icon(
-                        painter = painterResource(id = R.drawable.add),
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.rotate(rotationAngle)
-                    )
+                        Icon(
+                            painter = painterResource(id = R.drawable.add),
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.rotate(rotationAngle)
+                        )
+                    }
                 }
             }
         }

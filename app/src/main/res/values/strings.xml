@@ -401,7 +401,7 @@
     <string name="quantity">Quantity</string>
     <string name="quantity_picker_discription">Type quantity and choose unit from the wheel picker</string>
     <string name="unit">Unit</string>
-    <string name="expiration_date">Expiration Date</string>
+    <string name="expiry_date">Expiry Date</string>
     <string name="remove">Remove</string>
     <string name="quantity_colon">Quantity:</string>
     - My Basket

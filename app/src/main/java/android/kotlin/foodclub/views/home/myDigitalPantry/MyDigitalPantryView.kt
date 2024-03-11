@@ -314,7 +314,11 @@ fun TitlesSection(modifier: Modifier, view: String) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(start = dimensionResource(id = R.dimen.dim_20), end = dimensionResource(id = R.dimen.dim_20), top = dimensionResource(id = R.dimen.dim_15), bottom = dimensionResource(id = R.dimen.dim_15)),
+            .padding(
+                start = dimensionResource(id = R.dimen.dim_20),
+                top = dimensionResource(id = R.dimen.dim_15),
+                bottom = dimensionResource(id = R.dimen.dim_15)
+            ),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
@@ -335,13 +339,14 @@ fun TitlesSection(modifier: Modifier, view: String) {
             color = Color.Gray
         )
         Text(
-            text = stringResource(id = R.string.expiration_date),
+            text = stringResource(id = R.string.expiry_date),
             fontWeight = FontWeight(500),
             fontSize = fontSizePantry(view = view),
             lineHeight = lineHeightPantry(view = view),
             fontFamily = Montserrat,
             color = Color.Gray
         )
+        Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_5)))
     }
 }
 
