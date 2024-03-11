@@ -1,30 +1,30 @@
 package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.config.ui.Montserrat
 import android.net.Uri
 import androidx.camera.core.CameraSelector
 import androidx.camera.view.LifecycleCameraController
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,7 +33,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 
@@ -44,6 +45,8 @@ fun TakePhotoPreview(
     navController: NavController,
     onTakePhoto: () -> Unit
 ){
+    var flashEnabled by remember { mutableStateOf(false) }
+
     Box(modifier = Modifier.fillMaxSize()){
         CameraPreview(
             controller = controller,
@@ -51,29 +54,73 @@ fun TakePhotoPreview(
                 .fillMaxSize()
         )
 
-        IconButton(
-            onClick = {
-                navController.popBackStack()
-            },
+        Row(
             modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(dimensionResource(id = R.dimen.dim_30))
+                .fillMaxWidth()
+                .padding(top = dimensionResource(id = R.dimen.dim_15)),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                painterResource(id = R.drawable.close),
-                contentDescription = stringResource(id = R.string.close_camera),
-                modifier.size(dimensionResource(id = R.dimen.dim_30)),
-                tint = foodClubGreen
-            )
+            IconButton(
+                onClick = {
+                    navController.popBackStack()
+                },
+                modifier = Modifier
+                    .padding(dimensionResource(id = R.dimen.dim_30))
+            ) {
+                Icon(
+                    painterResource(id = R.drawable.close),
+                    contentDescription = stringResource(id = R.string.close_camera),
+                    modifier.size(dimensionResource(id = R.dimen.dim_30)),
+                    tint = Color.White
+                )
+            }
+
+            IconButton(
+                onClick = {
+                    flashEnabled = !flashEnabled
+                    controller.enableTorch(flashEnabled)
+                },
+                modifier = Modifier
+                    .padding(dimensionResource(id = R.dimen.dim_30))
+            ) {
+                Icon(
+                    if (flashEnabled) painterResource(id = R.drawable.flash_open_icon)
+                    else painterResource(id = R.drawable.flash_icon_closed),
+                    contentDescription = stringResource(id = R.string.camera_flash),
+                    modifier.size(dimensionResource(id = R.dimen.dim_30)),
+                    tint = Color.White
+                )
+            }
+
         }
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(Color.Black)
                 .align(Alignment.BottomCenter)
-                .padding(dimensionResource(id = R.dimen.dim_30)),
-            horizontalArrangement = Arrangement.SpaceAround
+                .padding(dimensionResource(id = R.dimen.dim_25)),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
+            IconButton(
+                onClick = {
+                    //TODO select from gallery
+                }
+            ) {
+                Icon(
+                    painterResource(id = R.drawable.select_from_gallery),
+                    contentDescription = stringResource(id = R.string.select_from_gallery),
+                    modifier = modifier.size(dimensionResource(id = R.dimen.dim_30)),
+                    tint = Color.White,
+                )
+            }
+
+            CustomCameraButton {
+                onTakePhoto()
+            }
+
             IconButton(
                 onClick = {
                     controller.cameraSelector =
@@ -83,22 +130,10 @@ fun TakePhotoPreview(
                 }
             ) {
                 Icon(
-                    painterResource(id = R.drawable.baseline_cameraswitch_24),
+                    painterResource(id = R.drawable.switch_camera),
                     contentDescription = stringResource(id = R.string.switch_camera),
                     modifier = modifier.size(dimensionResource(id = R.dimen.dim_30)),
-                    tint = foodClubGreen
-                )
-            }
-            IconButton(
-                onClick = {
-                    onTakePhoto()
-                }
-            ) {
-                Icon(
-                    painterResource(id = R.drawable.take_photo),
-                    contentDescription = stringResource(id = R.string.take_photo),
-                    modifier = modifier.size(dimensionResource(id = R.dimen.dim_30)),
-                    tint = foodClubGreen,
+                    tint = Color.White
                 )
             }
         }
@@ -108,67 +143,118 @@ fun TakePhotoPreview(
 @Composable
 fun PhotoTakenPreview(
     image: Uri,
+    navController: NavController,
     onSaveClick: () -> Unit,
     onCancelClick: () -> Unit
 ) {
-    Card {
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        AsyncImage(
+            model = remember { mutableStateOf(image) }.value,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .background(Color.White)
+                .fillMaxSize()
+        )
+
         Box(
             modifier = Modifier
-                .fillMaxSize(),
+                .align(Alignment.TopStart)
+                .padding(top = dimensionResource(id = R.dimen.dim_15))
+        ){
+            IconButton(
+                onClick = {
+                    navController.popBackStack()
+                },
+                modifier = Modifier
+                    .padding(dimensionResource(id = R.dimen.dim_30))
+            ) {
+                Icon(
+                    painterResource(id = R.drawable.close),
+                    contentDescription = stringResource(id = R.string.close_camera),
+                    Modifier.size(dimensionResource(id = R.dimen.dim_30)),
+                    tint = Color.White
+                )
+            }
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.Black)
+                .align(Alignment.BottomCenter)
+                .padding(
+                    start = dimensionResource(id = R.dimen.dim_25),
+                    end = dimensionResource(id = R.dimen.dim_25),
+                    top = dimensionResource(id = R.dimen.dim_10),
+                    bottom = dimensionResource(id = R.dimen.dim_30),
+                ),
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(bottom = dimensionResource(id = R.dimen.dim_20))
+                    .clickable {
+                        onCancelClick()
+                    },
+                text = stringResource(id = R.string.camera_redo),
+                fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
+                fontWeight = FontWeight(600),
+                lineHeight = dimensionResource(id = R.dimen.dim_40).value.sp,
+                fontFamily = Montserrat,
+                color = Color.White
+            )
+            Text(
+                modifier = Modifier
+                    .padding(bottom = dimensionResource(id = R.dimen.dim_20))
+                    .clickable {
+                        onSaveClick()
+                    },
+                text = stringResource(id = R.string.camera_done),
+                fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
+                fontWeight = FontWeight(600),
+                lineHeight = dimensionResource(id = R.dimen.dim_40).value.sp,
+                fontFamily = Montserrat,
+                color = Color.White
+            )
+        }
+    }
+}
+
+@Composable
+fun CustomCameraButton(
+    onClick: () -> Unit
+){
+    Box(
+        modifier = Modifier
+            .size(dimensionResource(id = R.dimen.dim_75))
+            .clip(CircleShape)
+            .background(Color.White)
+            .clickable {
+                onClick()
+            },
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .size(dimensionResource(id = R.dimen.dim_60))
+                .clip(CircleShape)
+                .background(Color.Black)
+                .border(BorderStroke(dimensionResource(id = R.dimen.dim_1), Color.Black))
+            ,
             contentAlignment = Alignment.Center
         ) {
-            AsyncImage(
-                model = remember { mutableStateOf(image) }.value,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
+            Box(
                 modifier = Modifier
+                    .size(dimensionResource(id = R.dimen.dim_55))
+                    .clip(CircleShape)
                     .background(Color.White)
-                    .fillMaxSize()
             )
-
-            Row(
-                modifier = Modifier
-                    .background(Color.Transparent)
-                    .padding(bottom = dimensionResource(id = R.dimen.dim_40))
-                    .align(Alignment.BottomCenter),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                IconButton(
-                    modifier = Modifier
-                        .size(56.dp)
-                        .clip(CircleShape)
-                        .background(Color.Gray),
-                    onClick = {
-                        onCancelClick()
-                    }
-                ) {
-                    Icon(
-                        modifier = Modifier.size(dimensionResource(id = R.dimen.dim_30)),
-                        imageVector = Icons.Default.Close,
-                        contentDescription = null,
-                        tint = Color.White
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_40)))
-
-                IconButton(
-                    modifier = Modifier
-                        .size(dimensionResource(id = R.dimen.dim_56))
-                        .clip(CircleShape)
-                        .background(foodClubGreen),
-                    onClick = {
-                        onSaveClick()
-                    }
-                ) {
-                    Icon(
-                        modifier = Modifier.size(dimensionResource(id = R.dimen.dim_30)),
-                        imageVector = Icons.Default.Check,
-                        contentDescription = null,
-                        tint = Color.White
-                    )
-                }
-            }
         }
     }
 }
