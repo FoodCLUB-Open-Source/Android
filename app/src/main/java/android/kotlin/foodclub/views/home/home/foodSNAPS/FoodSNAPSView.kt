@@ -6,15 +6,12 @@ import android.kotlin.foodclub.domain.models.home.VideoStats
 import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
 import android.kotlin.foodclub.views.home.home.feed.HomeState
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
@@ -33,8 +30,8 @@ import kotlinx.coroutines.launch
 fun FoodSNAPSView(
     state: HomeState,
     modifier: Modifier = Modifier,
-    onShowMemoriesChanged: (Boolean) -> Unit,
-    toggleShowMemoriesReel: (Boolean) -> Unit,
+    //onShowMemoriesChanged: (Boolean) -> Unit,
+    //toggleShowMemoriesReel: (Boolean) -> Unit,
     pagerState: PagerState,
     navController: NavHostController,
     selectReaction: (Reactions) -> Unit,
@@ -96,9 +93,10 @@ fun FoodSNAPSView(
 
 
     BackHandler {
-        if (state.showMemories){
-            onShowMemoriesChanged(false)
-        }else if (snapPagerState.currentPage != 0){
+//        if (state.showMemories){
+//            onShowMemoriesChanged(false)
+//        }else
+            if (snapPagerState.currentPage != 0){
             scope.launch {
                 snapPagerState.scrollToPage(0)
             }
@@ -120,25 +118,25 @@ fun FoodSNAPSView(
                 .fillMaxSize()
                 .background(Color.White)
         ) {
-            AnimatedVisibility(visible = state.showMemoriesReel) {
-                MemoriesView(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                    storyListEmpty = storyListData.isEmpty(),
-                    state = state,
-                    onShowMemoriesChanged = { _ ->
-                        onShowMemoriesChanged(true)
-                    },
-                    updateCurrentMemoriesModel = { currentMemoriesModel = it }
-                )
-            }
+//            AnimatedVisibility(visible = state.showMemoriesReel) {
+//                MemoriesView(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .wrapContentHeight(),
+//                    storyListEmpty = storyListData.isEmpty(),
+//                    state = state,
+//                    onShowMemoriesChanged = { _ ->
+//                        onShowMemoriesChanged(true)
+//                    },
+//                    updateCurrentMemoriesModel = { currentMemoriesModel = it }
+//                )
+//            }
 
             FoodSNAPSPager(
                 storyListData = storyListData,
                 navController = navController,
-                showMemoriesReel = state.showMemoriesReel,
-                changeMemoriesReelVisibility = { toggleShowMemoriesReel(it) },
+                //showMemoriesReel = state.showMemoriesReel,
+                //changeMemoriesReelVisibility = { toggleShowMemoriesReel(it) },
                 selectedReaction = state.selectedReaction,
                 selectReaction = selectReaction,
                 clearSelectedReactions = clearSelectedReaction,
