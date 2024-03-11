@@ -2,6 +2,7 @@ package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.snapsTopbar
 import android.net.Uri
 import androidx.camera.core.CameraSelector
 import androidx.camera.view.LifecycleCameraController
@@ -12,10 +13,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -147,74 +151,81 @@ fun PhotoTakenPreview(
     onSaveClick: () -> Unit,
     onCancelClick: () -> Unit
 ) {
-    Card {
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        AsyncImage(
+            model = remember { mutableStateOf(image) }.value,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .background(Color.White)
+                .fillMaxSize()
+        )
+
         Box(
             modifier = Modifier
-                .fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            AsyncImage(
-                model = remember { mutableStateOf(image) }.value,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
+                .align(Alignment.TopStart)
+                .padding(top = dimensionResource(id = R.dimen.dim_15))
+        ){
+            IconButton(
+                onClick = {
+                    navController.popBackStack()
+                },
                 modifier = Modifier
-                    .background(Color.White)
-                    .fillMaxSize()
-            )
-
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(top = dimensionResource(id = R.dimen.dim_15))
-            ){
-                IconButton(
-                    onClick = {
-                        navController.popBackStack()
-                    },
-                    modifier = Modifier
-                        .padding(dimensionResource(id = R.dimen.dim_30))
-                ) {
-                    Icon(
-                        painterResource(id = R.drawable.close),
-                        contentDescription = stringResource(id = R.string.close_camera),
-                        Modifier.size(dimensionResource(id = R.dimen.dim_30)),
-                        tint = Color.White
-                    )
-                }
-            }
-            
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.Black)
-                    .align(Alignment.BottomCenter)
-                    .padding(dimensionResource(id = R.dimen.dim_25)),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(dimensionResource(id = R.dimen.dim_30))
             ) {
-                Text(
-                    modifier = Modifier.clickable {
-                      onCancelClick()
-                    },
-                    text = stringResource(id = R.string.camera_redo),
-                    fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
-                    fontWeight = FontWeight(600),
-                    lineHeight = dimensionResource(id = R.dimen.dim_40).value.sp,
-                    fontFamily = Montserrat,
-                    color = Color.White
+                Icon(
+                    painterResource(id = R.drawable.close),
+                    contentDescription = stringResource(id = R.string.close_camera),
+                    Modifier.size(dimensionResource(id = R.dimen.dim_30)),
+                    tint = Color.White
                 )
-                Text(
-                    modifier = Modifier.clickable {
+            }
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.Black)
+                .align(Alignment.BottomCenter)
+                .padding(
+                    start = dimensionResource(id = R.dimen.dim_25),
+                    end = dimensionResource(id = R.dimen.dim_25),
+                    top = dimensionResource(id = R.dimen.dim_10),
+                    bottom = dimensionResource(id = R.dimen.dim_30),
+                ),
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(bottom = dimensionResource(id = R.dimen.dim_20))
+                    .clickable {
+                        onCancelClick()
+                    },
+                text = stringResource(id = R.string.camera_redo),
+                fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
+                fontWeight = FontWeight(600),
+                lineHeight = dimensionResource(id = R.dimen.dim_40).value.sp,
+                fontFamily = Montserrat,
+                color = Color.White
+            )
+            Text(
+                modifier = Modifier
+                    .padding(bottom = dimensionResource(id = R.dimen.dim_20))
+                    .clickable {
                         onSaveClick()
                     },
-                    text = stringResource(id = R.string.camera_done),
-                    fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
-                    fontWeight = FontWeight(600),
-                    lineHeight = dimensionResource(id = R.dimen.dim_40).value.sp,
-                    fontFamily = Montserrat,
-                    color = Color.White
-                )
-            }
+                text = stringResource(id = R.string.camera_done),
+                fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
+                fontWeight = FontWeight(600),
+                lineHeight = dimensionResource(id = R.dimen.dim_40).value.sp,
+                fontFamily = Montserrat,
+                color = Color.White
+            )
         }
     }
 }
