@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -149,7 +150,7 @@ fun MainLogInAndSignUp(
                             navController.navigate(route = AuthScreen.Login.route)
                         },
                         style = TextStyle(
-                            color = Color(126, 198, 11, 255),
+                            color = colorResource(id = R.color.login_text_color),
                             fontFamily = Montserrat,
                             fontSize = dimensionResource(id = R.dimen.fon_14).value.sp
                         )

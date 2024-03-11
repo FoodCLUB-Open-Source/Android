@@ -17,5 +17,5 @@ interface CreateRecipeEvents {
     fun onIngredientDeleted(ingredient: Ingredient)
 
     fun clearIngredients()
-    suspend fun createRecipe(recipe: Recipe, userId: String): Boolean
+    suspend fun createRecipe(recipe: Recipe): Boolean
 }

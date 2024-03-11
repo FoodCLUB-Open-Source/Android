@@ -186,8 +186,8 @@ class CreateRecipeViewModel @Inject constructor(
     }
 
     // CREATE RECIPE FUNCTION
-    override  suspend fun createRecipe(recipe: Recipe, userId: String): Boolean {
-            return recipeRepository.createRecipe(recipe, userId)
+    override  suspend fun createRecipe(recipe: Recipe): Boolean {
+            return recipeRepository.createRecipe(recipe)
     }
 
 }

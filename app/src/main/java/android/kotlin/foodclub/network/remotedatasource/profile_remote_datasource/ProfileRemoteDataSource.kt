@@ -17,7 +17,6 @@ interface ProfileRemoteDataSource {
     ): Response<RetrieveProfileResponse>
 
     suspend fun updateUserProfileImage(
-        userId: Long,
         imagePart: MultipartBody.Part
     ): Response<UpdateUserProfileImageResponse>
 
@@ -40,12 +39,10 @@ interface ProfileRemoteDataSource {
     ): Response<RetrieveFollowingListResponse>
 
     suspend fun followUser(
-        followerId: Long,
         userId: Long
     ): Response<FollowUnfollowResponse>
 
     suspend fun unfollowUser(
-        followerId: Long,
         userId: Long
     ): Response<FollowUnfollowResponse>
 

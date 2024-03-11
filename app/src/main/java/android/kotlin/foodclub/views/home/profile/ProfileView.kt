@@ -24,6 +24,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -190,7 +191,6 @@ fun ProfileView(
                         }
                         val file = uriToFile(uri, context)
                         events.updateUserProfileImage(
-                            id = state.myUserId,
                             file = file!!,
                             uri = uri
                         )
@@ -252,6 +252,16 @@ fun ProfileView(
                             if (userId == 0L) Modifier.clickable {
                                 showProfileImage = true
                             } else Modifier
+                            modifier = if (userId == 0L) {
+                                Modifier.clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) {
+                                    showBottomSheet = true
+                                }
+                            } else {
+                                Modifier
+                            }
                         ) {
                             AsyncImage(
                                 model = imageUri ?: R.drawable.default_avatar,
@@ -270,7 +280,7 @@ fun ProfileView(
                         }
 
 
-                        var settingNavigated by remember { mutableStateOf(false)};
+                        var settingNavigated by remember { mutableStateOf(false)}
                         Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_40)))
                         if (userId == 0L) {
                             Button(shape = CircleShape,
@@ -291,7 +301,7 @@ fun ProfileView(
                                     if(!settingNavigated)
                                     {
                                         navController.navigate("SETTINGS")
-                                        settingNavigated = true;
+                                        settingNavigated = true
                                     }
                                 }
                             ) {
@@ -455,7 +465,6 @@ fun ProfileView(
                                 isFollowed = state.isFollowed,
                                 events = events,
                                 sessionUserId = state.sessionUserId,
-                                userId = userId
                             )
                         }
                         TabRow(selectedTabIndex = pagerState.currentPage,

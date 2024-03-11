@@ -18,10 +18,10 @@ class StoryRepository(
     private val storyMapper: StoryMapper
 ) {
 
-    suspend fun getUserFriendsStories(id: Long): Resource<List<VideoModel>, DefaultErrorResponse> {
+    suspend fun getUserFriendsStories(): Resource<List<VideoModel>, DefaultErrorResponse> {
         return when(
             val resource = apiRequestFlow<RetrieveUserFriendsStoriesResponse, DefaultErrorResponse> {
-                api.getUserFriendStories(id)
+                api.getUserFriendStories()
             }
         ) {
             is Resource.Success -> {
@@ -42,9 +42,9 @@ class StoryRepository(
     }
 
 
-    suspend fun userViewsStory(storyId: Long, userId: Long): Resource<RetrieveUserViewedStoryResponse, DefaultErrorResponse> {
+    suspend fun userViewsStory(storyId: Long): Resource<RetrieveUserViewedStoryResponse, DefaultErrorResponse> {
         try {
-            val response = api.userViewsStory(storyId, userId)
+            val response = api.userViewsStory(storyId)
             if (response.isSuccessful) {
                 val responseBody = response.body()
                 if (responseBody != null) {
@@ -58,10 +58,9 @@ class StoryRepository(
         return Resource.Error("Failed to View Story")
     }
 
-    suspend fun postImageStory(userId: Long, file: File): Resource<RetrievePostImageStoryResponse, DefaultErrorResponse> {
+    suspend fun postImageStory(file: File): Resource<RetrievePostImageStoryResponse, DefaultErrorResponse> {
         return when (val resource = apiRequestFlow<RetrievePostImageStoryResponse, DefaultErrorResponse> {
             api.postImageStory(
-                userId,
                 image = MultipartBody.Part
                     .createFormData(
                         "image",

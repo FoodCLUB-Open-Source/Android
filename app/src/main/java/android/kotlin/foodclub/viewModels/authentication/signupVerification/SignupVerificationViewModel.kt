@@ -1,11 +1,12 @@
 package android.kotlin.foodclub.viewModels.authentication.signupVerification
 
+import android.kotlin.foodclub.domain.models.session.RefreshToken
 import android.kotlin.foodclub.domain.models.session.Session
 import android.kotlin.foodclub.localdatasource.room.entity.OfflineProfileModel
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.navigation.auth.AuthScreen
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
-import android.kotlin.foodclub.network.retrofit.utils.auth.JWTManager
+import android.kotlin.foodclub.network.retrofit.utils.auth.RefreshTokenManager
 import android.kotlin.foodclub.repositories.AuthRepository
 import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.helpers.Resource
@@ -25,6 +26,7 @@ import javax.inject.Inject
 class SignupVerificationViewModel @Inject constructor(
     val repository: AuthRepository,
     private val sessionCache: SessionCache,
+    private val tokenManager: RefreshTokenManager,
     private val profileRepository: ProfileRepository
 ) : ViewModel(), SignupVerificationEvents {
 
@@ -84,24 +86,37 @@ class SignupVerificationViewModel @Inject constructor(
             navController.navigate(Graph.AUTHENTICATION)
             return
         }
+        if (state.value.password == null) {
+            navController.navigate(AuthScreen.Login.route)
+        }
 
         viewModelScope.launch {
             when (
-                val resource = repository.verifyAccount(state.value.username!!, code)
+                val resource = repository.verifyAccount(
+                    state.value.username!!, state.value.password!!, code
+                )
             ) {
                 is Resource.Success -> {
+                    val data = resource.data!!
                     _state.update {
                         it.copy(
                             errorOccurred = false,
                             message = ""
                         )
                     }
+                    setSession(
+                        data.accessToken, data.idToken, data.refreshToken, data.user.id.toLong()
+                    )
                     profileRepository.saveLocalProfileDetails(
                         OfflineProfileModel(
-                            userName = state.value.username!!
+                            userId = data.user.id.toLong(),
+                            userName = state.value.username!!,
+                            profilePicture = data.user.profileImageUrl
                         )
                     )
-                    logInUser(navController = navController)
+                    navController.navigate(Graph.HOME) {
+                        popUpTo(Graph.AUTHENTICATION) { inclusive = true }
+                    }
                 }
 
                 is Resource.Error -> {
@@ -129,46 +144,50 @@ class SignupVerificationViewModel @Inject constructor(
         }
     }
 
-    private fun logInUser(navController: NavHostController) {
-        if (state.value.password == null) {
-            navController.navigate(AuthScreen.Login.route)
-        }
+//    private fun logInUser(navController: NavHostController) {
+//        if (state.value.password == null) {
+//            navController.navigate(AuthScreen.Login.route)
+//        }
+//
+//        viewModelScope.launch {
+//            when (val resource =
+//                repository.signIn(state.value.username!!, state.value.password!!)) {
+//                is Resource.Success -> {
+//                    _state.update {
+//                        it.copy(
+//                            errorOccurred = false,
+//                            message = ""
+//                        )
+//                    }
+//
+//                    setSession(resource.data!!.id.toLong())
+//                    navController.navigate(Graph.HOME) {
+//                        popUpTo(Graph.AUTHENTICATION) { inclusive = true }
+//                    }
+//                }
+//
+//                is Resource.Error -> {
+//                    _state.update {
+//                        it.copy(
+//                            errorOccurred = true,
+//                            message = resource.message!!
+//                        )
+//                    }
+//
+//                    navController.navigate(AuthScreen.Login.route)
+//                }
+//            }
+//        }
+//    }
 
-        viewModelScope.launch {
-            when (val resource =
-                repository.signIn(state.value.username!!, state.value.password!!)) {
-                is Resource.Success -> {
-                    _state.update {
-                        it.copy(
-                            errorOccurred = false,
-                            message = ""
-                        )
-                    }
-
-                    setSession(resource.data!!.id.toLong())
-                    navController.navigate(Graph.HOME) {
-                        popUpTo(Graph.AUTHENTICATION) { inclusive = true }
-                    }
-                }
-
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            errorOccurred = true,
-                            message = resource.message!!
-                        )
-                    }
-
-                    navController.navigate(AuthScreen.Login.route)
-                }
-            }
-        }
-    }
-
-    private fun setSession(userId: Long) {
+    private fun setSession(
+        accessToken: String, idToken: String, refreshToken: String, userId: Long
+    ) {
         if (sessionCache.getActiveSession() != null) sessionCache.clearSession()
-        sessionCache.saveSession(Session(JWTManager.createJWT(userId)!!))
-        Log.d(TAG, "Logged in user: $userId")
+        if (tokenManager.getActiveToken() != null) tokenManager.clearToken()
+        tokenManager.saveToken(RefreshToken(refreshToken, _state.value.username!!))
+        sessionCache.saveSession(Session(accessToken, idToken, userId))
+        Log.d(TAG, "Logged in user: ${_state.value.username}")
     }
 
 }

@@ -10,7 +10,6 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
-import retrofit2.http.Path
 
 interface SettingsService {
     @POST("login/change_password")
@@ -18,14 +17,11 @@ interface SettingsService {
         @Body changePasswordProfile: ChangePasswordDto
     ): Response<SingleMessageResponse>
 
-    @GET("profile/{user_id}/details")
-    suspend fun retrieveUserDetails(
-        @Path("user_id") userId: Long
-    ): Response<RetrieveUserDetailsResponse>
+    @GET("profile/details")
+    suspend fun retrieveUserDetails(): Response<RetrieveUserDetailsResponse>
 
-    @PUT("profile/profile_details/{user_id}")
+    @PUT("profile/profile_details")
     suspend fun updateUserDetails(
-        @Path("user_id") userId: Long,
         @Body model: UserDetailsDto
     ): Response<UpdateUserDetailsResponse>
 

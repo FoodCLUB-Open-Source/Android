@@ -10,17 +10,16 @@ import android.kotlin.foodclub.network.retrofit.responses.posts.GetPostResponse
 import android.kotlin.foodclub.network.retrofit.responses.posts.ViewsPostResponse
 import android.kotlin.foodclub.network.retrofit.utils.apiRequestFlow
 import android.kotlin.foodclub.utils.helpers.Resource
-import android.util.Log
 
 class PostRepository(
     private val api: PostsService,
     private val postToVideoMapper: PostToVideoMapper
 ) {
 
-    suspend fun getPost(id: Long, userId: Long): Resource<VideoModel, DefaultErrorResponse> {
+    suspend fun getPost(id: Long): Resource<VideoModel, DefaultErrorResponse> {
         return when(
             val resource = apiRequestFlow<GetPostResponse, DefaultErrorResponse> {
-                api.getPost(id, userId)
+                api.getPost(id)
             }
         ) {
             is Resource.Success -> {
@@ -36,11 +35,11 @@ class PostRepository(
     }
 
     suspend fun getHomepagePosts(
-        userId: Long, pageSize: Int? = null, pageNo: Int? = null
+        pageSize: Int? = null, pageNo: Int? = null
     ): Resource<List<VideoModel>, DefaultErrorResponse> {
         return when(
             val resource = apiRequestFlow<GetHomepagePostsResponse, DefaultErrorResponse> {
-                api.getHomepagePosts(userId, pageSize, pageNo)
+                api.getHomepagePosts(pageSize, pageNo)
             }
         ) {
             is Resource.Success -> {
@@ -57,12 +56,13 @@ class PostRepository(
         }
     }
 
+    //TODO: Pass Category and parse it to String (use one function for both world and normal categories)
     suspend fun getWorldCategoryPosts(
         userId: Long, pageSize: Int? = null, pageNo: Int? = null
     ): Resource<List<VideoModel>, DefaultErrorResponse> {
         return when(
             val resource = apiRequestFlow<GetHomepagePostsResponse, DefaultErrorResponse> {
-                api.getPostByWorldCategory(userId, pageSize, pageNo)
+                api.getPostByWorldCategory("", pageSize, pageNo)
             }
         ) {
             is Resource.Success -> {
@@ -97,9 +97,9 @@ class PostRepository(
         }
     }
 
-    suspend fun userViewsPost(postId: Long, userId: Long): Resource<ViewsPostResponse, DefaultErrorResponse> {
+    suspend fun userViewsPost(postId: Long): Resource<ViewsPostResponse, DefaultErrorResponse> {
         try {
-            val response = api.viewsPost(postId, userId)
+            val response = api.viewsPost(postId)
             if (response.isSuccessful) {
                 val responseBody = response.body()
                 if (responseBody != null) {
