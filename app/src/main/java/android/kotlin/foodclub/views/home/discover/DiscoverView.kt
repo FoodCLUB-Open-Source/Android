@@ -105,7 +105,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -319,7 +318,7 @@ fun DiscoverView(
 
                     Button(
                         onClick = {
-                            events.onResetSearchText()
+                            events.onResetSearchData()
                             navController.navigate("ADD_INGREDIENTS")
                         },
                         shape = RoundedCornerShape(
@@ -709,13 +708,19 @@ fun MyIngredientsSearchBar(
             modifier = Modifier
 //                .fillMaxWidth(if (enableCamera && enableMike) 0.68f else 1.0f)
                 .fillMaxWidth()
-                .border(
-                    border = BorderStroke(
-                        1.dp,
-                        colorResource(id = R.color.gray).copy(alpha = 0.3f)
-                    ),
-                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16))
-                ),
+                .let { modifier->
+                    if (actionType == ActionType.ADD_INGREDIENTS_VIEW) {
+                        modifier.clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
+                    } else {
+                        modifier.border(
+                            border = BorderStroke(
+                                width = dimensionResource(id = R.dimen.dim_1),
+                                color = colorResource(id = R.color.gray).copy(alpha = 0.3f)
+                            ),
+                            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16))
+                        )
+                    }
+                },
             colors = textFieldColors,
             value = searchTextValue,
             onValueChange = {

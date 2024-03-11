@@ -6,7 +6,6 @@ import android.kotlin.foodclub.utils.composables.ActionType
 import android.kotlin.foodclub.utils.composables.CustomDatePicker
 import android.kotlin.foodclub.utils.composables.EditIngredientBottomModal
 import android.kotlin.foodclub.utils.composables.IngredientsList
-import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
 import android.kotlin.foodclub.views.home.discover.DiscoverState
 import android.kotlin.foodclub.views.home.discover.MyIngredientsSearchBar
@@ -15,18 +14,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,20 +32,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
@@ -62,8 +52,6 @@ fun AddIngredientsView(
     events: DiscoverEvents,
     navController: NavController
 ) {
-    val context = LocalContext.current;
-    val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context));
     var inputText by remember { mutableStateOf("") }
     var isDatePickerVisible by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
@@ -153,63 +141,38 @@ fun AddIngredientsView(
                 }
 
 
-                if (isInternetConnected) {
-
-                    if (topTabIndex == 0) {
-                        MyIngredientsSearchBar(
-                            navController = navController,
-                            searchTextValue = state.ingredientSearchText,
-                            onSearch = { input ->
-                                inputText = input
-                                events.onAddIngredientsSearchTextChange(input)
-                            },
-                            actionType = ActionType.ADD_INGREDIENTS_VIEW
-                        )
-                    }
+                if (topTabIndex == 0) {
+                    MyIngredientsSearchBar(
+                        navController = navController,
+                        searchTextValue = state.ingredientSearchText,
+                        onSearch = { input ->
+                            inputText = input
+                            events.onAddIngredientsSearchTextChange(input)
+                        },
+                        actionType = ActionType.ADD_INGREDIENTS_VIEW
+                    )
                 }
 
-                if (isInternetConnected) {
-                    if (inputText.isBlank()) {
-                        IngredientsList(
-                            Modifier,
-                            events = events,
-                            productsList = state.userIngredients,
-                            userIngredientsList = state.userIngredients,
-                            onEditQuantityClicked = {
-                                isSheetOpen = true
-                            },
-                            onDateClicked = {
-                                isDatePickerVisible = true
-                            },
-                            onIngredientAdd = {},
-                            onDeleteIngredient = { ingredientToDelete->
-                                events.deleteIngredientFromList(ingredientToDelete)
-                            },
-                            actionType = ActionType.ADD_INGREDIENTS_VIEW
-                        )
-                    } else {
-                        IngredientsList(
-                            Modifier,
-                            events = events,
-                            productsList = state.productsData.productsList,
-                            userIngredientsList = state.userIngredients,
-                            onEditQuantityClicked = {
-                                isSheetOpen = true
-                            },
-                            onDateClicked = {
-                                isDatePickerVisible = true
-                            },
-                            onIngredientAdd = { ingredientToAdd->
-                                events.addToUserIngredients(ingredientToAdd)
-                                isDialogOpen = false
-                            },
-                            onDeleteIngredient = { ingredientToDelete->
-                                events.deleteIngredientFromList(ingredientToDelete)
-                            },
-                            actionType = ActionType.ADD_INGREDIENTS_VIEW
-                        )
-                    }
-                }
+                IngredientsList(
+                    Modifier,
+                    events = events,
+                    productsList = state.productsData.productsList,
+                    userIngredientsList = state.userIngredients,
+                    onEditQuantityClicked = {
+                        isSheetOpen = true
+                    },
+                    onDateClicked = {
+                        isDatePickerVisible = true
+                    },
+                    onIngredientAdd = { ingredientToAdd->
+                        events.addToUserIngredients(ingredientToAdd)
+                        isDialogOpen = false
+                    },
+                    onDeleteIngredient = { ingredientToDelete->
+                        events.deleteIngredientFromList(ingredientToDelete)
+                    },
+                    actionType = ActionType.ADD_INGREDIENTS_VIEW
+                )
             }
         }
     )

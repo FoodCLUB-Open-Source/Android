@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.MyBasketCache
+import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.repositories.ProductRepository
@@ -245,11 +246,17 @@ class DiscoverViewModel @Inject constructor(
         }
     }
 
-    override fun onResetSearchText() {
+    override fun onResetSearchData() {
         _state.update {
             it.copy(
                 ingredientSearchText = "",
-                searchIngredientsListText = ""
+                searchIngredientsListText = "",
+                searchResults = emptyList(),
+                productsData = ProductsData(
+                    searchText = "",
+                    nextUrl = "",
+                    productsList = emptyList(),
+                )
             )
         }
     }
