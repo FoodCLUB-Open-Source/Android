@@ -249,9 +249,6 @@ fun ProfileView(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Box(
-                            if (userId == 0L) Modifier.clickable {
-                                showProfileImage = true
-                            } else Modifier
                             modifier = if (userId == 0L) {
                                 Modifier.clickable(
                                     interactionSource = remember { MutableInteractionSource() },
