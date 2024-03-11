@@ -24,6 +24,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -241,9 +242,16 @@ fun ProfileView(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Box(
-                            if (userId == 0L) Modifier.clickable {
-                                showBottomSheet = true
-                            } else Modifier
+                            modifier = if (userId == 0L) {
+                                Modifier.clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) {
+                                    showBottomSheet = true
+                                }
+                            } else {
+                                Modifier
+                            }
                         ) {
                             AsyncImage(
                                 model = imageUri ?: R.drawable.profilepicture,
