@@ -228,10 +228,10 @@ fun HomeView(
 
                     FoodSNAPSView(
                         state = state,
-                        onShowMemoriesChanged = { newShowMemoriesValue ->
-                            events.toggleShowMemories(show = newShowMemoriesValue)
-                        },
-                        toggleShowMemoriesReel = events::toggleShowMemoriesReel,
+//                        onShowMemoriesChanged = { newShowMemoriesValue ->
+//                            events.toggleShowMemories(show = newShowMemoriesValue)
+//                        },
+                        //toggleShowMemoriesReel = events::toggleShowMemoriesReel,
                         pagerState = pagerState,
                         navController = navController,
                         selectReaction = { events. selectReaction(it)},
