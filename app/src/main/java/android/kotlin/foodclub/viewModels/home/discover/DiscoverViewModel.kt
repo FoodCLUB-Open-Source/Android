@@ -245,7 +245,7 @@ class DiscoverViewModel @Inject constructor(
         }
     }
 
-    override fun onUpdateSearchText() {
+    override fun onResetSearchText() {
         _state.update {
             it.copy(
                 ingredientSearchText = "",

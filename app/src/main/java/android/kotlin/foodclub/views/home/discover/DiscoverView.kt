@@ -319,12 +319,12 @@ fun DiscoverView(
 
                     Button(
                         onClick = {
-                            events.onUpdateSearchText()
+                            events.onResetSearchText()
                             navController.navigate("ADD_INGREDIENTS")
                         },
                         shape = RoundedCornerShape(
                             dimensionResource(
-                                id = R.dimen.dim_15
+                                id = R.dimen.dim_20
                             )
                         ),
                         colors = ButtonDefaults.buttonColors(foodClubGreen),
@@ -332,9 +332,11 @@ fun DiscoverView(
                         Text(
                             text = stringResource(id = R.string.add_ingredients),
                             fontSize = dimensionResource(
-                                id = R.dimen.fon_20
+                                id = R.dimen.fon_14
                             ).value.sp,
-                            fontFamily = Montserrat
+                            fontFamily = Montserrat,
+                            lineHeight = dimensionResource(id = R.dimen.fon_17).value.sp,
+                            fontWeight = FontWeight(500)
                         )
                     }
                 }
@@ -708,7 +710,10 @@ fun MyIngredientsSearchBar(
 //                .fillMaxWidth(if (enableCamera && enableMike) 0.68f else 1.0f)
                 .fillMaxWidth()
                 .border(
-                    border = BorderStroke(1.dp, colorResource(id = R.color.gray).copy(alpha = 0.3f)),
+                    border = BorderStroke(
+                        1.dp,
+                        colorResource(id = R.color.gray).copy(alpha = 0.3f)
+                    ),
                     shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16))
                 ),
             colors = textFieldColors,
