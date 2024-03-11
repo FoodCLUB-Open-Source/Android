@@ -2,7 +2,6 @@ package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
-import android.kotlin.foodclub.config.ui.snapsTopbar
 import android.net.Uri
 import androidx.camera.core.CameraSelector
 import androidx.camera.view.LifecycleCameraController
@@ -13,15 +12,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -90,7 +85,8 @@ fun TakePhotoPreview(
                     .padding(dimensionResource(id = R.dimen.dim_30))
             ) {
                 Icon(
-                    painterResource(id = R.drawable.flash_icon),
+                    if (flashEnabled) painterResource(id = R.drawable.flash_open_icon)
+                    else painterResource(id = R.drawable.flash_icon_closed),
                     contentDescription = stringResource(id = R.string.camera_flash),
                     modifier.size(dimensionResource(id = R.dimen.dim_30)),
                     tint = Color.White
