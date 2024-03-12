@@ -648,7 +648,7 @@ fun DiscoverViewHeader(
                         fontWeight = FontWeight(700)
                     )
                 ) {
-                    append("${stringResource(id = R.string.hi)} $userName,")
+                    append("${stringResource(id = R.string.hi)} ${userName.replaceRange(0..0,userName[0].uppercase())},")
                 }
                 append("\n\n")
                 append(stringResource(id = R.string.discover_view_header))
