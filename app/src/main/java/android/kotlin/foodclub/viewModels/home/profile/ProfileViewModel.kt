@@ -59,9 +59,9 @@ class ProfileViewModel @Inject constructor(
         _state.update { it.copy(dataStore = storeData) }
     }
 
-    override fun updateUserProfileImage(id: Long, file: File, uri: Uri) {
+    override fun updateUserProfileImage(file: File, uri: Uri) {
         viewModelScope.launch {
-            when (val resource = profileRepository.updateUserProfileImage(id, file)) {
+            when (val resource = profileRepository.updateUserProfileImage(file)) {
                 is Resource.Success -> {
                     Log.i(TAG, "SUCCESSFULLY UPDATED IMAGE ${resource.data}")
                 }
@@ -98,9 +98,9 @@ class ProfileViewModel @Inject constructor(
             }
         }
     }
-    override fun unfollowUser(sessionUserId: Long, userId: Long) {
+    override fun unfollowUser(userId: Long) {
         viewModelScope.launch {
-            when (val resource = profileRepository.unfollowUser(sessionUserId, userId)) {
+            when (val resource = profileRepository.unfollowUser(userId)) {
                 is Resource.Success -> {
                     _state.update {
                         it.copy(
@@ -117,9 +117,9 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    override fun followUser(sessionUserId: Long, userId: Long) {
+    override fun followUser(userId: Long) {
         viewModelScope.launch {
-            when (val resource = profileRepository.followUser(sessionUserId, userId)) {
+            when (val resource = profileRepository.followUser(userId)) {
                 is Resource.Success -> {
                     _state.update {
                         it.copy(
@@ -245,7 +245,7 @@ class ProfileViewModel @Inject constructor(
                         sessionUserId = sessionCache.getActiveSession()!!.sessionUser.userId,
                         dataStore = storeData,
                         userPosts = resource.data!!.userPosts,
-                        myUserId = sessionCache.getActiveSession()!!.sessionUser.userId,
+                        myUserId = userId,
                     )
                 }
             }

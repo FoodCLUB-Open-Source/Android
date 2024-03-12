@@ -5,7 +5,6 @@ import android.kotlin.foodclub.network.retrofit.responses.profile.RetrievePostsL
 import android.kotlin.foodclub.network.retrofit.responses.profile.RetrieveFollowerListResponse
 import android.kotlin.foodclub.network.retrofit.responses.profile.RetrieveFollowingListResponse
 import android.kotlin.foodclub.network.retrofit.responses.profile.RetrieveProfileResponse
-import android.kotlin.foodclub.network.retrofit.responses.profile.RetrieveUserDetailsResponse
 import android.kotlin.foodclub.network.retrofit.responses.profile.UpdateUserProfileImageResponse
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -19,17 +18,16 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ProfileService {
-    @GET("profile/{Id}")
+    @GET("profile")
     suspend fun retrieveProfileData(
-        @Path("Id") userId: Long,
+        @Query("user_id") userId: Long?,
         @Query("page_number") pageNo: Int?,
         @Query("page_size") pageSize: Int?
     ): Response<RetrieveProfileResponse>
 
-    @PUT("profile/profile_picture/{user_id}")
+    @PUT("profile/profile_picture}")
     @Multipart
     suspend fun updateUserProfileImage(
-        @Path("user_id") userId: Long,
         @Part imagePart: MultipartBody.Part
     ): Response<UpdateUserProfileImageResponse>
 
@@ -54,15 +52,13 @@ interface ProfileService {
         @Query("page_size") pageSize: Int?
     ): Response<RetrieveFollowingListResponse>
 
-    @POST("profile/follow/user/{followerId}/following/{userId}")
+    @POST("profile/follow/user/following/{userId}")
     suspend fun followUser(
-        @Path("followerId") followerId: Long,
         @Path("userId") userId: Long
     ): Response<FollowUnfollowResponse>
 
-    @DELETE("profile/unfollow/user/{followerId}/following/{userId}")
+    @DELETE("profile/unfollow/user/following/{userId}")
     suspend fun unfollowUser(
-        @Path("followerId") followerId: Long,
         @Path("userId") userId: Long
     ): Response<FollowUnfollowResponse>
 }

@@ -12,22 +12,18 @@ import retrofit2.http.Part
 import retrofit2.http.Path
 
 interface StoriesService {
-    @GET("stories/{userId}/following_stories")
-    suspend fun getUserFriendStories(
-        @Path("userId") userId: Long,
-    ): Response<RetrieveUserFriendsStoriesResponse>
+    @GET("stories/following_stories")
+    suspend fun getUserFriendStories(): Response<RetrieveUserFriendsStoriesResponse>
 
     // USER VIEWS A STORY
-    @POST("likes_views/story/{storyId}/view/{userId}")
+    @POST("likes_views/story/{storyId}/view")
     suspend fun userViewsStory(
-        @Path("storyId") storyId: Long,
-        @Path("userId") userId: Long
+        @Path("storyId") storyId: Long
     ): Response<RetrieveUserViewedStoryResponse>
 
     @Multipart
-    @POST("stories/{userId}")
+    @POST("stories")
     suspend fun postImageStory(
-        @Path("userId") userId: Long,
         @Part image: MultipartBody.Part
     ): Response<RetrievePostImageStoryResponse>
 }

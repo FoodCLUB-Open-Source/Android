@@ -39,7 +39,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -65,6 +64,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
@@ -148,7 +148,7 @@ fun PlayPauseButton(buttonVisibility: Boolean) {
                 painter = painterResource(id = R.drawable.pause_video_button),
                 contentDescription = null,
                 tint = Color.Unspecified,
-                modifier = Modifier.size( dimensionResource(id = R.dimen.dim_36))
+                modifier = Modifier.size(dimensionResource(id = R.dimen.dim_36))
             )
         }
     }
@@ -192,7 +192,8 @@ fun VideoLayout(
     onInfoClick: (() -> Unit)? = null,
     onProfileClick: () -> Unit = {},
     onCategoryClick: () -> Unit = {},
-) {val context = LocalContext.current
+) {
+    val context = LocalContext.current
     val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
 
     val brush = shimmerBrush()
@@ -216,7 +217,12 @@ fun VideoLayout(
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(dimensionResource(id = R.dimen.dim_15))
+                    .padding(
+                        top = dimensionResource(id = R.dimen.dim_15),
+                        end = dimensionResource(id = R.dimen.dim_15),
+                        bottom = dimensionResource(id = R.dimen.dim_40),
+                        start = dimensionResource(id = R.dimen.dim_15),
+                    )
             ) {
                 VideoStats(
                     brush,
@@ -238,7 +244,7 @@ fun VideoLayout(
 @Composable
 private fun VideoCategorySection(
     brush: Brush,
-    isInternetConnected:Boolean,
+    isInternetConnected: Boolean,
     category: String?,
     onCategoryClick: () -> Unit,
     onProfileClick: () -> Unit,
@@ -246,24 +252,7 @@ private fun VideoCategorySection(
 ) {
 
     Column {
-        if (category != null && isInternetConnected) {
-            Button(
-                modifier = Modifier
-                    .width(dimensionResource(id = R.dimen.dim_60))
-                    .height(dimensionResource(id = R.dimen.dim_25)),
-                onClick = { onCategoryClick() },
-                contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_0)),
-                colors = ButtonDefaults.buttonColors(Color(0xFFD95978))
-            ) {
-                Text(
-                    category, fontFamily = Montserrat,
-                    fontSize = dimensionResource(id = R.dimen.fon_12).value.sp, style = TextStyle(color = Color.White)
-                )
-            }
-            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
-        }
-
-        if(isInternetConnected) {
+        if (isInternetConnected) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.clickable { onProfileClick() }
@@ -284,28 +273,49 @@ private fun VideoCategorySection(
                     modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_2))
                 )
             }
+
+            if (category != null) {
+                Spacer(
+                    modifier = Modifier
+                        .height(dimensionResource(id = R.dimen.dim_10))
+                )
+
+                Text(
+                    text = if (category.length > 30) {
+                        category.substring(0, 30) + "..."
+                    } else category,
+                    fontFamily = Montserrat,
+                    fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
+                    lineHeight = dimensionResource(id = R.dimen.dim_48).value.sp,
+                    style = TextStyle(color = Color.White),
+                    letterSpacing = (-0.04).em,
+                    modifier = Modifier
+                        .width(dimensionResource(id = R.dimen.dim_230)),
+                )
+            }
+        } else {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.clickable { onProfileClick() }
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(dimensionResource(id = R.dimen.dim_35))
+                        .clip(CircleShape)
+                        .background(brush)
+
+                )
+                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_10)))
+                Box(
+                    modifier = Modifier
+                        .padding(dimensionResource(id = R.dimen.dim_2))
+                        .background(brush)
+                        .width(dimensionResource(id = R.dimen.dim_50))
+                        .height(dimensionResource(id = R.dimen.dim_15))
+
+                )
+            }
         }
-        else{Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.clickable { onProfileClick() }
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(dimensionResource(id = R.dimen.dim_35))
-                    .clip(CircleShape)
-                    .background(brush)
-
-            )
-            Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_10)))
-            Box(
-                modifier = Modifier
-                    .padding(dimensionResource(id = R.dimen.dim_2))
-                    .background(brush)
-                    .width(dimensionResource(id = R.dimen.dim_50))
-                    .height(dimensionResource(id = R.dimen.dim_15))
-
-            )
-        }}
     }
 
 }
@@ -321,7 +331,7 @@ private fun VideoStats(
     onBookmarkClick: () -> Unit = {},
     onInfoClick: (() -> Unit)? = null,
 ) {
-      Column {
+    Column {
         if (bookMarkState != null) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -342,11 +352,11 @@ private fun VideoStats(
                     .width(dimensionResource(id = R.dimen.dim_50))
                     .height(dimensionResource(id = R.dimen.dim_80)),
             ) {
-                VideoLikeButton(brush, isInternetConnected , videoStats, likeState, onLikeClick)
+                VideoLikeButton(brush, isInternetConnected, videoStats, likeState, onLikeClick)
             }
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
-            InfoButton(brush,isInternetConnected,onInfoClick)
+            InfoButton(brush, isInternetConnected, onInfoClick)
         }
     }
 }
@@ -356,9 +366,9 @@ fun BookMarkButton(
     onBookmarkClick: () -> Unit,
     bookMarkState: Boolean
 ) {
-    val durationms1=dimensionResource(id = R.dimen.dim_14)
-    val durationms2=dimensionResource(id = R.dimen.dim_16)
-    val durationms3=dimensionResource(id = R.dimen.dim_22)
+    val durationms1 = dimensionResource(id = R.dimen.dim_14)
+    val durationms2 = dimensionResource(id = R.dimen.dim_16)
+    val durationms3 = dimensionResource(id = R.dimen.dim_22)
 
     Box(modifier = Modifier
         .size(dimensionResource(id = R.dimen.dim_55))
@@ -371,9 +381,11 @@ fun BookMarkButton(
                 .blur(radius = dimensionResource(id = R.dimen.dim_5))
         )
 
-        val maxBookmarkSize =  dimensionResource(id = R.dimen.dim_32)
+        val maxBookmarkSize = dimensionResource(id = R.dimen.dim_32)
         val bookmarkIconSize by animateDpAsState(
-            targetValue = if (bookMarkState) dimensionResource(id = R.dimen.dim_22) else dimensionResource(id = R.dimen.dim_21),
+            targetValue = if (bookMarkState) dimensionResource(id = R.dimen.dim_22) else dimensionResource(
+                id = R.dimen.dim_21
+            ),
             animationSpec = keyframes {
                 durationMillis = 400
                 durationms1.at(50)
@@ -398,15 +410,15 @@ fun BookMarkButton(
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun VideoLikeButton(
-    brush:Brush,
+    brush: Brush,
     isInternetConnected: Boolean,
     videoStats: VideoStats,
     likeState: Boolean,
     onLikeClick: () -> Unit
 ) {
-    val durationms1=dimensionResource(id = R.dimen.dim_14)
-    val durationms2=dimensionResource(id = R.dimen.dim_16)
-    val durationms3=dimensionResource(id = R.dimen.dim_22)
+    val durationms1 = dimensionResource(id = R.dimen.dim_14)
+    val durationms2 = dimensionResource(id = R.dimen.dim_16)
+    val durationms3 = dimensionResource(id = R.dimen.dim_22)
 
     var showBottomSheet by rememberSaveable { mutableStateOf(false) }
     val bottomSheetState = rememberModalBottomSheetState(showBottomSheet)
@@ -458,9 +470,11 @@ fun VideoLikeButton(
                         },
                     ),
             ) {
-                val maxSize =  dimensionResource(id = R.dimen.dim_32)
+                val maxSize = dimensionResource(id = R.dimen.dim_32)
                 val iconSize by animateDpAsState(
-                    targetValue = if (likeState) dimensionResource(id = R.dimen.dim_22) else dimensionResource(id = R.dimen.dim_21),
+                    targetValue = if (likeState) dimensionResource(id = R.dimen.dim_22) else dimensionResource(
+                        id = R.dimen.dim_21
+                    ),
                     animationSpec = keyframes {
                         durationMillis = 400
                         durationms1.at(50)
@@ -477,16 +491,20 @@ fun VideoLikeButton(
                     modifier = Modifier.size(iconSize)
                 )
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_3)))
-                if(isInternetConnected) {
+                if (isInternetConnected) {
                     Text(
                         text = videoStats.displayLike,
                         fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
                         fontFamily = Montserrat,
                         color = if (likeState) foodClubGreen else Color.White
                     )
-                }else{Box(modifier= Modifier
-                    .size(iconSize)
-                    .background(brush))}
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .size(iconSize)
+                            .background(brush)
+                    )
+                }
             }
         }
         Spacer(Modifier.weight(1f))
@@ -494,33 +512,36 @@ fun VideoLikeButton(
 }
 
 @Composable
-private fun InfoButton(brush: Brush,isInternetConnected: Boolean,onInfoClick: (() -> Unit)?) {
+private fun InfoButton(brush: Brush, isInternetConnected: Boolean, onInfoClick: (() -> Unit)?) {
 
     if (onInfoClick != null) {
         Button(
             onClick = { onInfoClick() },
             colors = defaultButtonColors(),
-            shape = RoundedCornerShape( dimensionResource(id = R.dimen.dim_15)),
+            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)),
             modifier = Modifier
                 .width(dimensionResource(id = R.dimen.dim_120))
                 .height(dimensionResource(id = R.dimen.dim_35)),
             contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_0))
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                if(isInternetConnected)
-                {
-                Text(
-                    text = stringResource(id = R.string.info),
-                    fontFamily = Montserrat,
-                    fontSize = dimensionResource(id = R.dimen.fon_14).value.sp
-                )}
-                else{Box(modifier= Modifier
-                    .width(dimensionResource(id = R.dimen.dim_101))
-                    .height(dimensionResource(id = R.dimen.dim_18))
-                    .background(brush))}
+                if (isInternetConnected) {
+                    Text(
+                        text = stringResource(id = R.string.info),
+                        fontFamily = Montserrat,
+                        fontSize = dimensionResource(id = R.dimen.fon_14).value.sp
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .width(dimensionResource(id = R.dimen.dim_101))
+                            .height(dimensionResource(id = R.dimen.dim_18))
+                            .background(brush)
+                    )
+                }
             }
         }
     } else {
-        Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_35)))
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_35)))
     }
 }

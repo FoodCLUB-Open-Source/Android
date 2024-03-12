@@ -16,7 +16,7 @@ object ServicesModule {
     @Provides
     @Singleton
     fun provideEdamamService(): ProductsService {
-        return Retrofit.Builder()
+        return Builder()
             .baseUrl("https://api.edamam.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -26,7 +26,7 @@ object ServicesModule {
     @Provides
     @Singleton
     fun provideAuthenticationService(
-        @Named("defaultRetrofit") defaultRetrofit: Retrofit.Builder
+        @Named("defaultRetrofit") defaultRetrofit:Builder
     ): AuthenticationService {
         return defaultRetrofit
             .build()
@@ -37,7 +37,7 @@ object ServicesModule {
     @Provides
     @Singleton
     fun providePostsService(
-        @Named("defaultRetrofit") defaultRetrofit: Retrofit.Builder
+        @Named("interceptedRetrofit") defaultRetrofit: Builder
     ): PostsService {
         return defaultRetrofit
             .build()
@@ -47,7 +47,7 @@ object ServicesModule {
     @Provides
     @Singleton
     fun provideProfileService(
-        @Named("defaultRetrofit") defaultRetrofit: Retrofit.Builder
+        @Named("interceptedRetrofit") defaultRetrofit: Builder
     ): ProfileService {
         return defaultRetrofit
             .build()
@@ -57,7 +57,7 @@ object ServicesModule {
     @Provides
     @Singleton
     fun provideStoriesService(
-        @Named("defaultRetrofit") defaultRetrofit: Retrofit.Builder
+        @Named("interceptedRetrofit") defaultRetrofit: Builder
     ): StoriesService {
         return defaultRetrofit
             .build()
@@ -67,7 +67,7 @@ object ServicesModule {
     @Provides
     @Singleton
     fun provideRecipeService(
-        @Named("defaultRetrofit") defaultRetrofit: Retrofit.Builder
+        @Named("interceptedRetrofit") defaultRetrofit: Builder
     ): RecipeService {
         return defaultRetrofit
             .build()
@@ -77,7 +77,7 @@ object ServicesModule {
     @Provides
     @Singleton
     fun provideSettingsService(
-        @Named("defaultRetrofit") defaultRetrofit: Retrofit.Builder
+        @Named("interceptedRetrofit") defaultRetrofit: Builder
     ): SettingsService {
         return defaultRetrofit
             .build()
@@ -87,7 +87,7 @@ object ServicesModule {
     @Provides
     @Singleton
     fun provideLikesService(
-        @Named("defaultRetrofit") defaultRetrofit: Retrofit.Builder
+        @Named("interceptedRetrofit") defaultRetrofit: Builder
     ): LikesService {
         return defaultRetrofit
             .build()
@@ -96,7 +96,7 @@ object ServicesModule {
     @Provides
     @Singleton
     fun provideBookmarkService(
-        @Named("defaultRetrofit") defaultRetrofit: Retrofit.Builder
+        @Named("interceptedRetrofit") defaultRetrofit: Builder
     ): BookmarksService {
         return defaultRetrofit
             .build()

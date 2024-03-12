@@ -7,18 +7,16 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.FractionalThreshold
-import androidx.compose.material.SwipeableState
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material.swipeable
+import androidx.compose.material.rememberSwipeableState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -37,23 +35,22 @@ import okio.ByteString.Companion.encodeUtf8
 fun FoodSNAPSPager(
     storyListData: List<VideoModel>,
     navController: NavHostController,
-    showMemoriesReel: Boolean,
-    changeMemoriesReelVisibility: (Boolean) -> Unit,
+    //showMemoriesReel: Boolean,
+    //changeMemoriesReelVisibility: (Boolean) -> Unit,
     selectedReaction: Reactions,
     clearSelectedReactions: () -> Unit,
     selectReaction: (Reactions) -> Unit,
     snapPagerState: PagerState,
-    swipeableState: SwipeableState<SwipeDirection>
 ) {
     var isReactionsClickable by remember { mutableStateOf(selectedReaction != Reactions.ALL) }
-
+    val swipeableState = rememberSwipeableState(initialValue = SwipeDirection.NEUTRAL)
 
     val refreshScope = rememberCoroutineScope()
     var refreshing by remember { mutableStateOf(false) }
 
     fun refresh() = refreshScope.launch {
         refreshing = true
-        changeMemoriesReelVisibility(true)
+        //changeMemoriesReelVisibility(true)
         refreshing = false
     }
 
@@ -62,8 +59,6 @@ fun FoodSNAPSPager(
         onRefresh = ::refresh
     )
 
-
-    val ANIMATION_DURATION_SHORT = 300
     val snapPagerFling = PagerDefaults.flingBehavior(
         state = snapPagerState,
         lowVelocityAnimationSpec = tween(
@@ -75,9 +70,9 @@ fun FoodSNAPSPager(
     LaunchedEffect(key1 = swipeableState.currentValue) {
         when (swipeableState.currentValue) {
             SwipeDirection.UP -> {
-                if (showMemoriesReel) {
-                    changeMemoriesReelVisibility(false)
-                }
+//                if (showMemoriesReel) {
+//                    changeMemoriesReelVisibility(false)
+//                }
                 swipeableState.snapTo(SwipeDirection.NEUTRAL)
             }
 
@@ -99,27 +94,28 @@ fun FoodSNAPSPager(
     } else {
         VerticalPager(
             state = snapPagerState,
-            flingBehavior = snapPagerFling,
-            beyondBoundsPageCount = 1,
-            modifier = Modifier.pullRefresh(inSnapView)
-        ) {
+            modifier = Modifier
+                .pullRefresh(inSnapView)
+                .fillMaxSize(),
+            flingBehavior = snapPagerFling
+        ) {pagerIdx ->
             ReactionsOverlay(
-                modifier = Modifier
-                    .then(
-                        if (it == 0 && showMemoriesReel) {
-                            Modifier.swipeable(
-                                state = swipeableState,
-                                anchors = mapOf(
-                                    0f to SwipeDirection.NEUTRAL,
-                                    -1f to SwipeDirection.UP
-                                ),
-                                thresholds = { _, _ -> FractionalThreshold(0.3f) },
-                                orientation = Orientation.Vertical,
-                            )
-                        } else {
-                            Modifier
-                        }
-                    ),
+                modifier = Modifier,
+//                    .then(
+//                        if (pagerIdx == 0 /* && showMemoriesReel */) {
+//                            Modifier.swipeable(
+//                                state = swipeableState,
+//                                anchors = mapOf(
+//                                    0f to SwipeDirection.NEUTRAL,
+//                                    -1f to SwipeDirection.UP
+//                                ),
+//                                thresholds = { _, _ -> FractionalThreshold(0.3f) },
+//                                orientation = Orientation.Vertical,
+//                            )
+//                        } else {
+//                            Modifier
+//                        }
+//                    )
                 selectedReaction = selectedReaction,
                 clearSelectedReaction = clearSelectedReactions,
                 isReactionsClickable = { isClickable ->
@@ -127,9 +123,9 @@ fun FoodSNAPSPager(
                 }
             ) {
                 FoodSNAPSPage(
-                    index = it,
+                    index = pagerIdx,
                     storyListData = storyListData,
-                    showMemoriesReel = showMemoriesReel,
+                    //showMemoriesReel = showMemoriesReel,
                     selectReaction = selectReaction,
                     reactionsClickable = isReactionsClickable
                 )
@@ -141,3 +137,4 @@ fun FoodSNAPSPager(
 enum class SwipeDirection {
     UP, DOWN, NEUTRAL
 }
+private const val ANIMATION_DURATION_SHORT = 300

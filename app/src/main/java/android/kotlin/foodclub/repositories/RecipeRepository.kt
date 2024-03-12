@@ -13,10 +13,10 @@ class RecipeRepository(
     private val recipeMapper: RecipeMapper
 ) {
 
-    suspend fun createRecipe(recipe: Recipe, userId: String): Boolean {
+    suspend fun createRecipe(recipe: Recipe): Boolean {
         return when(
-            val resource = apiRequestFlow<Unit, DefaultErrorResponse> {
-                api.createRecipe(userId, recipeMapper.mapFromDomainModel(recipe))
+            apiRequestFlow<Unit, DefaultErrorResponse> {
+                api.createRecipe(recipeMapper.mapFromDomainModel(recipe))
             }
         ) {
             is Resource.Success -> {

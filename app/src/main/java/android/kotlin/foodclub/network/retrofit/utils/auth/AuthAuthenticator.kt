@@ -3,12 +3,15 @@ package android.kotlin.foodclub.network.retrofit.utils.auth
 import android.kotlin.foodclub.domain.models.session.Session
 import android.kotlin.foodclub.network.retrofit.services.AuthenticationService
 import android.kotlin.foodclub.network.retrofit.dtoModels.auth.RefreshTokenDto
+import android.kotlin.foodclub.network.retrofit.dtoModels.auth.RefreshTokenRequestDto
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
 class AuthAuthenticator @Inject constructor(
@@ -16,13 +19,18 @@ class AuthAuthenticator @Inject constructor(
     private val refreshTokenManager: RefreshTokenManager,
     val api: AuthenticationService
 ) : Authenticator {
+    private var tokenRefreshInProgress: AtomicBoolean = AtomicBoolean(false)
 
     override fun authenticate(route: Route?, response: Response): Request? {
-        val token = runBlocking {
-            refreshTokenManager.getActiveToken()?.token
+        if (tokenRefreshInProgress.get()) {
+            return runBlocking { waitForRefresh(response) }
         }
+        tokenRefreshInProgress.set(true)
+        val refreshToken = runBlocking { refreshTokenManager.getActiveToken() }
+
         return runBlocking {
-            val newToken = getNewToken(token)
+            val newToken = getNewToken(refreshToken?.token, refreshToken?.username)
+            val userId = sessionCache.getActiveSession()?.sessionUser?.userId ?: 0
 
             if (!newToken.isSuccessful || newToken.body() == null) { //Couldn't refresh the token, so restart the login process
                 sessionCache.clearSession()
@@ -30,15 +38,33 @@ class AuthAuthenticator @Inject constructor(
             }
 
             newToken.body()?.let {
-                sessionCache.saveSession(Session(it.token))
+                sessionCache.saveSession(Session(it.accessToken, it.idToken, userId))
+                tokenRefreshInProgress.set(false)
                 response.request.newBuilder()
-                    .header("Authorization", "Bearer ${it.token}")
+                    .header("Authorisation", "Bearer ${it.accessToken} ${it.idToken}")
                     .build()
             }
         }
     }
 
-    private suspend fun getNewToken(refreshToken: String?): retrofit2.Response<RefreshTokenDto> {
-        return api.refreshToken("Bearer $refreshToken")
+    private suspend fun waitForRefresh(response: Response): Request {
+        while (tokenRefreshInProgress.get()) {
+            delay(100)
+        }
+        val newSession = sessionCache.getActiveSession()
+        return response.request.newBuilder()
+            .header(
+                "Authorisation",
+                "Bearer ${newSession?.accessToken} ${newSession?.idToken}"
+            )
+            .build()
+    }
+
+    private suspend fun getNewToken(
+        refreshToken: String?, username: String?
+    ): retrofit2.Response<RefreshTokenDto> {
+        return api.refreshToken(
+            RefreshTokenRequestDto(username ?: "", refreshToken ?: "")
+        )
     }
 }

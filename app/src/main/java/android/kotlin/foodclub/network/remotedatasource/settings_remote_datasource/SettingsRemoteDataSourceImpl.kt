@@ -16,14 +16,13 @@ class SettingsRemoteDataSourceImpl @Inject constructor(
         return settingsApi.changePassword(changePasswordProfile)
     }
 
-    override suspend fun retrieveUserDetails(userId: Long): Response<RetrieveUserDetailsResponse> {
-        return settingsApi.retrieveUserDetails(userId)
+    override suspend fun retrieveUserDetails(): Response<RetrieveUserDetailsResponse> {
+        return settingsApi.retrieveUserDetails()
     }
 
     override suspend fun updateUserDetails(
-        userId: Long,
         model: UserDetailsDto
     ): Response<UpdateUserDetailsResponse> {
-        return settingsApi.updateUserDetails(userId, model)
+        return settingsApi.updateUserDetails(model)
     }
 }
