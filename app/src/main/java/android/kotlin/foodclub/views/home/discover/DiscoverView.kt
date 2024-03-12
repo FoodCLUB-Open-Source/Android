@@ -281,7 +281,9 @@ fun DiscoverView(
                     }
 
                     var subTabIndex by remember { mutableIntStateOf(0) }
+                    val subTabItemsList = stringArrayResource(id = R.array.discover_sub_tabs)
                     SubTabRow(
+                        subTabItemsList = subTabItemsList,
                         onTabChanged = {
                             subTabIndex = it
                         },
@@ -429,6 +431,32 @@ fun DiscoverView(
                     }
                 }
             }
+        } else {
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+            var subTabCategoriesIndex by remember { mutableIntStateOf(0) }
+            val subTabItemsList: Array<String> = if (mainTabIndex == 1) {
+                arrayOf(
+                    "Proteins",
+                    "Carbs",
+                    "Plant based",
+                    "Drinks"
+                )
+            } else {
+                arrayOf(
+                    "American",
+                    "Asian",
+                    "African",
+                    "Australia"
+                )
+            }
+            SubTabRow(
+                subTabItemsList = subTabItemsList,
+                onTabChanged = {
+                    subTabCategoriesIndex = it
+                },
+                isInternetConnected,
+                brush
+            )
         }
 
     }
@@ -866,14 +894,11 @@ fun SubSearchBar(
 
 @Composable
 fun SubTabRow(
+    subTabItemsList: Array<String>,
     onTabChanged: (Int) -> Unit,
     isInternetConnected: Boolean,
     brush: Brush
 ) {
-    val strokeWidthDp = dimensionResource(id = R.dimen.dim_2)
-    val topPaddingDp = dimensionResource(id = R.dimen.dim_4)
-    val underlineHeightDp = dimensionResource(id = R.dimen.dim_2)
-    val subTabItemsList = stringArrayResource(id = R.array.discover_sub_tabs)
     var subTabIndex by remember { mutableIntStateOf(0) }
 
 
@@ -892,34 +917,19 @@ fun SubTabRow(
 
                     Text(
                         modifier = Modifier
-                            .drawBehind {
-                                if (selected) {
-                                    val strokeWidthPx = strokeWidthDp.toPx()
-                                    val topPaddingPx = topPaddingDp.toPx()
-                                    val underlineHeight = underlineHeightDp.toPx()
-                                    val verticalOffset =
-                                        size.height - (underlineHeight / 2) + topPaddingPx
-                                    drawLine(
-                                        color = Color.Black,
-                                        strokeWidth = strokeWidthPx,
-                                        start = Offset(0f, verticalOffset),
-                                        end = Offset(size.width, verticalOffset)
-                                    )
-                                }
-                            }
                             .clickable {
                                 subTabIndex = index
                                 onTabChanged(index)
                             },
                         text = data,
-                        fontWeight = if (selected) FontWeight(500) else FontWeight.Normal,
+                        fontWeight = if (selected) FontWeight(600) else FontWeight.Normal,
                         color = if (selected) Color.Black else Color(0xFFC2C2C2),
-                        fontSize = dimensionResource(id = R.dimen.fon_17).value.sp,
-                        lineHeight = dimensionResource(id = R.dimen.fon_21).value.sp,
-                        textAlign = TextAlign.Start,
+                        fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
+                        lineHeight = dimensionResource(id = R.dimen.fon_19_5).value.sp,
+                        textAlign = TextAlign.Center,
                         fontFamily = Montserrat
                     )
-                    Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_50)))
+                    Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_25)))
                 }
             } else {
                 itemsIndexed(subTabItemsList) { index, data ->
@@ -928,29 +938,12 @@ fun SubTabRow(
                     Text(
                         modifier = Modifier
                             .background(brush)
-                            .drawBehind {
-                                if (selected) {
-                                    val strokeWidthPx = strokeWidthDp.toPx()
-                                    val topPaddingPx =
-                                        topPaddingDp.toPx()
-                                    val underlineHeight =
-                                        underlineHeightDp.toPx()
-                                    val verticalOffset =
-                                        size.height - (underlineHeight / 2) + topPaddingPx
-                                    drawLine(
-                                        color = Color.Black,
-                                        strokeWidth = strokeWidthPx,
-                                        start = Offset(0f, verticalOffset),
-                                        end = Offset(size.width, verticalOffset)
-                                    )
-                                }
-                            }
                             .clickable {},
                         text = data,
                         color = Color.Transparent,
-                        fontSize = dimensionResource(id = R.dimen.fon_17).value.sp,
-                        lineHeight = dimensionResource(id = R.dimen.fon_21).value.sp,
-                        textAlign = TextAlign.Start,
+                        fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
+                        lineHeight = dimensionResource(id = R.dimen.fon_19_5).value.sp,
+                        textAlign = TextAlign.Center,
                         fontFamily = Montserrat
                     )
                     Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_50)))
