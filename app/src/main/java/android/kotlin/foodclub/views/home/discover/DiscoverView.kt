@@ -175,6 +175,11 @@ fun DiscoverView(
     var mainTabIndex by remember { mutableIntStateOf(0) }
     val mainTabItemsList = stringArrayResource(id = R.array.discover_tabs)
 
+    var subTabCategoriesIndex by rememberSaveable { mutableIntStateOf(0) }
+    var subTabWorldIndex by rememberSaveable { mutableIntStateOf(0) }
+
+    var subTabItemsList: Array<String>
+
 
     //New column to fit the pager
     Column(
@@ -281,9 +286,10 @@ fun DiscoverView(
                     }
 
                     var subTabIndex by remember { mutableIntStateOf(0) }
-                    val subTabItemsList = stringArrayResource(id = R.array.discover_sub_tabs)
+                    val subTabMyKitchenItemsList = stringArrayResource(id = R.array.discover_sub_tabs)
                     SubTabRow(
-                        subTabItemsList = subTabItemsList,
+                        subTabIndex = subTabIndex,
+                        subTabItemsList = subTabMyKitchenItemsList,
                         onTabChanged = {
                             subTabIndex = it
                         },
@@ -434,10 +440,7 @@ fun DiscoverView(
         } else {
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
-            var subTabCategoriesIndex by remember { mutableIntStateOf(0) }
-            var subTabWorldIndex by remember { mutableIntStateOf(0) }
-
-            val subTabItemsList: Array<String> = if (mainTabIndex == 1) {
+             subTabItemsList = if (mainTabIndex == 1) {
                 arrayOf(
                     "Proteins",
                     "Carbs",
@@ -452,15 +455,20 @@ fun DiscoverView(
                     "Australia"
                 )
             }
+
             SubTabRow(
+                subTabIndex = if (mainTabIndex == 1){
+                    subTabCategoriesIndex
+                } else {
+                    subTabWorldIndex
+                },
                 subTabItemsList = subTabItemsList,
                 onTabChanged = {
                     if (mainTabIndex == 1){
                         subTabCategoriesIndex = it
-                    } else {
+                    } else if (mainTabIndex == 2){
                         subTabWorldIndex = it
                     }
-
                 },
                 isInternetConnected,
                 brush
@@ -902,13 +910,12 @@ fun SubSearchBar(
 
 @Composable
 fun SubTabRow(
+    subTabIndex: Int,
     subTabItemsList: Array<String>,
     onTabChanged: (Int) -> Unit,
     isInternetConnected: Boolean,
     brush: Brush
 ) {
-    var subTabIndex by remember { mutableIntStateOf(0) }
-
 
     LazyRow(
         modifier = Modifier.padding(
@@ -926,7 +933,6 @@ fun SubTabRow(
                     Text(
                         modifier = Modifier
                             .clickable {
-                                subTabIndex = index
                                 onTabChanged(index)
                             },
                         text = data,
