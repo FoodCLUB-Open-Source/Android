@@ -449,12 +449,11 @@ fun DiscoverView(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SlideInTitle(pagerState2: PagerState)
-{
+fun SlideInTitle(pagerState2: PagerState) {
     val pageOffset = pagerState2.currentPageOffsetFraction
     val maxDelay = integerResource(id = R.integer.int_200)
     val minDelay = integerResource(id = R.integer.int_50)
-    val delay = (maxDelay - minDelay) * ( 1 - (pageOffset.absoluteValue * 2)) + minDelay
+    val delay = (maxDelay - minDelay) * (1 - (pageOffset.absoluteValue * 2)) + minDelay
 
     AnimatedVisibility(
         visible = pagerState2.currentPage == 1 && pageOffset == 0.00f,
@@ -473,13 +472,17 @@ fun SlideInTitle(pagerState2: PagerState)
         } + fadeOut(animationSpec = tween(durationMillis = delay.toInt()))
     ) {
 
-        Text(text= stringResource(id = R.string.Recommendations), fontFamily = Montserrat, fontSize = dimensionResource(id = R.dimen.fon_25).value.sp)
+        Text(
+            text = stringResource(id = R.string.Recommendations),
+            fontFamily = Montserrat,
+            fontSize = dimensionResource(id = R.dimen.fon_25).value.sp
+        )
     }
 }
 
 //MainSearchBar will be change to DiscoverViewHeader
 //which is "Hi Emily" part
-//Badged Icon for MyBasketView can be reused for future
+//Badged Icon for MyBasketView can be reused in the future
 
 //@OptIn(ExperimentalMaterial3Api::class)
 //@Composable
@@ -655,7 +658,6 @@ fun DiscoverViewHeader(
         }
     }
 }
-
 
 
 @Composable
