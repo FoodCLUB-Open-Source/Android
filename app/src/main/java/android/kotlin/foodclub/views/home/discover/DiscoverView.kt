@@ -433,7 +433,10 @@ fun DiscoverView(
             }
         } else {
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+
             var subTabCategoriesIndex by remember { mutableIntStateOf(0) }
+            var subTabWorldIndex by remember { mutableIntStateOf(0) }
+
             val subTabItemsList: Array<String> = if (mainTabIndex == 1) {
                 arrayOf(
                     "Proteins",
@@ -452,7 +455,12 @@ fun DiscoverView(
             SubTabRow(
                 subTabItemsList = subTabItemsList,
                 onTabChanged = {
-                    subTabCategoriesIndex = it
+                    if (mainTabIndex == 1){
+                        subTabCategoriesIndex = it
+                    } else {
+                        subTabWorldIndex = it
+                    }
+
                 },
                 isInternetConnected,
                 brush
