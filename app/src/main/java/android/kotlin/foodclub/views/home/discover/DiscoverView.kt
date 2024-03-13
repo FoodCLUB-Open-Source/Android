@@ -134,7 +134,11 @@ fun DiscoverView(
 
     var gridHeight by remember { mutableStateOf(0.dp) }
     val recommandationVideosCount by remember { mutableIntStateOf(8) }
-    gridHeight = ((recommandationVideosCount / 2) * dimensionResource(id = R.dimen.dim_272).value).dp
+    gridHeight = if (recommandationVideosCount == 1) {
+        (recommandationVideosCount * dimensionResource(id = R.dimen.dim_272).value).dp
+    } else {
+        ((recommandationVideosCount / 2) * dimensionResource(id = R.dimen.dim_272).value).dp
+    }
 
     Column(
         modifier = Modifier
