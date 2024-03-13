@@ -16,13 +16,6 @@ import android.kotlin.foodclub.utils.composables.IngredientsList
 import android.kotlin.foodclub.utils.composables.shimmerBrush
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -45,16 +38,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PageSize
-import androidx.compose.foundation.pager.PagerDefaults
-import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.pager.VerticalPager
-import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Badge
@@ -66,10 +55,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -96,24 +81,18 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -150,30 +129,16 @@ fun DiscoverView(
 //        1f
 //    }
 
-    val initialPage = 0
-    val pagerState1 = rememberPagerState(
-        initialPage = initialPage,
-        initialPageOffsetFraction = 0f,
-        pageCount = { 4 }
-    )
-    val pagerState2 = rememberPagerState(
-        initialPage = 0,
-        initialPageOffsetFraction = 0f,
-        pageCount = { 2 }
-    )
-
-    val fling = PagerDefaults.flingBehavior(
-        state = pagerState1, lowVelocityAnimationSpec = tween(
-            easing = LinearEasing, durationMillis = 300
-        )
-    )
     var tabIndex by remember { mutableIntStateOf(0) }
     val mainTabItemsList = stringArrayResource(id = R.array.discover_tabs)
 
+    var gridHeight by remember { mutableStateOf(0.dp) }
+    val recommandationVideosCount by remember { mutableIntStateOf(8) }
+    gridHeight = ((recommandationVideosCount / 2) * dimensionResource(id = R.dimen.dim_272).value).dp
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .background(Color.White),
 //            .alpha(alphaValue),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -253,171 +218,138 @@ fun DiscoverView(
         if (tabIndex == 0) {
             homePosts = state.postList
 
-            VerticalPager(
-                state = pagerState2,
-                pageSize = PageSize.Fill
-            ) { pageIndex ->
-                if (pageIndex == 0) {
-                    if (isInternetConnected) {
-                        if (tabIndex == 0) {
-                            MyIngredientsSearchBar(
-                                navController = navController,
-                                searchTextValue = searchText,
-                                onSearch = { input ->
-                                    searchText = input
-                                    events.onSearchIngredientsList(input)
-                                },
-                                enableCamera = false,
-                                enableMike = false,
-                                actionType = ActionType.DISCOVER_VIEW
-                            )
-                        }
-                    }
+            if (isInternetConnected) {
+                MyIngredientsSearchBar(
+                    navController = navController,
+                    searchTextValue = searchText,
+                    onSearch = { input ->
+                        searchText = input
+                        events.onSearchIngredientsList(input)
+                    },
+                    enableCamera = false,
+                    enableMike = false,
+                    actionType = ActionType.DISCOVER_VIEW
+                )
 
-                    if (isInternetConnected) {
-                        IngredientsList(
-                            Modifier,
-                            events = events,
-                            productsList = if (state.searchIngredientsListText == "") state.userIngredients else state.searchResults,
-                            userIngredientsList = if (state.searchIngredientsListText == "") state.userIngredients else state.searchResults,
-                            onEditQuantityClicked = {
-                                isSheetOpen = true
-                                events.updateIngredient(it)
-                            },
-                            onDateClicked = {
-                                events.updateIngredient(it)
-                                isDatePickerVisible = true
-                                events.updateIngredient(it)
-                            },
-                            onIngredientAdd = {},
-                            onDeleteIngredient = {
-                                events.deleteIngredientFromList(it)
-                            },
-                            actionType = ActionType.DISCOVER_VIEW
-                        )
+                IngredientsList(
+                    Modifier,
+                    events = events,
+                    productsList = if (state.searchIngredientsListText == "") state.userIngredients else state.searchResults,
+                    userIngredientsList = if (state.searchIngredientsListText == "") state.userIngredients else state.searchResults,
+                    onEditQuantityClicked = {
+                        isSheetOpen = true
+                        events.updateIngredient(it)
+                    },
+                    onDateClicked = {
+                        events.updateIngredient(it)
+                        isDatePickerVisible = true
+                        events.updateIngredient(it)
+                    },
+                    onIngredientAdd = {},
+                    onDeleteIngredient = {
+                        events.deleteIngredientFromList(it)
+                    },
+                    actionType = ActionType.DISCOVER_VIEW
+                )
 
-                    }
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
 
-                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
-
-                    if (state.userIngredients.isEmpty()){
-                        Text(
-                            text = stringResource(id = R.string.add_ingredients_information_text),
-                            fontWeight = FontWeight(500),
-                            fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
-                            color = colorResource(
-                                id = R.color.discover_view_add_ingredient_information_text
-                            ).copy(alpha = 0.3f),
-                            lineHeight = dimensionResource(id = R.dimen.fon_17).value.sp,
-                            fontFamily = Montserrat,
-                            textAlign = TextAlign.Center
-                        )
-                        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
-                    }
-
-
-                    Button(
-                        onClick = {
-                            events.onResetSearchData()
-                            navController.navigate("ADD_INGREDIENTS")
-                        },
-                        shape = RoundedCornerShape(
-                            dimensionResource(
-                                id = R.dimen.dim_20
-                            )
-                        ),
-                        colors = ButtonDefaults.buttonColors(foodClubGreen),
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.add_ingredients),
-                            fontSize = dimensionResource(
-                                id = R.dimen.fon_14
-                            ).value.sp,
-                            fontFamily = Montserrat,
-                            lineHeight = dimensionResource(id = R.dimen.fon_17).value.sp,
-                            fontWeight = FontWeight(500)
-                        )
-                    }
+                if (state.userIngredients.isEmpty()){
+                    Text(
+                        text = stringResource(id = R.string.add_ingredients_information_text),
+                        fontWeight = FontWeight(500),
+                        fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
+                        color = colorResource(
+                            id = R.color.discover_view_add_ingredient_information_text
+                        ).copy(alpha = 0.3f),
+                        lineHeight = dimensionResource(id = R.dimen.fon_17).value.sp,
+                        fontFamily = Montserrat,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
                 }
-                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-                    SlideInTitle(pagerState2 = pagerState2)
 
-                    HorizontalPager(
-                        beyondBoundsPageCount = 1,
-                        flingBehavior = fling,
-                        modifier = Modifier
-                            .height(dimensionResource(id = R.dimen.dim_500))
-                            .padding(top = dimensionResource(id = R.dimen.dim_0)),
-                        state = pagerState1
-                    ) {
-                        Box(
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(
-                                    top = dimensionResource(id = R.dimen.dim_5),
-                                    start = dimensionResource(id = R.dimen.dim_15),
-                                    end = dimensionResource(id = R.dimen.dim_15),
-                                    bottom = dimensionResource(id = R.dimen.dim_100)
-                                )
-                        ) {
-                            LazyVerticalGrid(columns = GridCells.Fixed(2)) {
-                                val userName = state.sessionUserUsername
-
-                                if (isInternetConnected) {
-                                    if (homePosts != null) {
-                                        items(homePosts!!) { dataItem ->
-                                            events.getPostData(dataItem.videoId)
-                                            GridItem2(
-                                                navController,
-                                                dataItem,
-                                                userName,
-                                                isShowPost = {
-                                                    postId = it
-                                                    isShowPost = !isShowPost
-                                                }
-                                            )
-                                        }
-                                    } else if (worldPosts != null) {
-                                        items(worldPosts.value) { dataItem ->
-                                            events.getPostData(dataItem.videoId)
-                                            GridItem2(
-                                                navController,
-                                                dataItem,
-                                                userName,
-                                                isShowPost = {
-                                                    postId = it
-                                                    isShowPost = !isShowPost
-                                                }
-                                            )
-                                        }
-                                    }
-                                } else {
-                                    items(8) {
-                                        Card(
-                                            modifier = Modifier
-                                                .height(dimensionResource(id = R.dimen.dim_272))
-                                                .width(dimensionResource(id = R.dimen.dim_178))
-                                                .padding(dimensionResource(id = R.dimen.dim_10)),
-                                            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
-                                        ) {
-                                            Box(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .fillMaxHeight()
-                                                    .background(brush)
-                                            )
-                                        }
-                                    }
+                Button(
+                    onClick = {
+                        events.onResetSearchData()
+                        navController.navigate("ADD_INGREDIENTS")
+                    },
+                    shape = RoundedCornerShape(
+                        dimensionResource(
+                            id = R.dimen.dim_20
+                        )
+                    ),
+                    colors = ButtonDefaults.buttonColors(foodClubGreen),
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.add_ingredients),
+                        fontSize = dimensionResource(
+                            id = R.dimen.fon_14
+                        ).value.sp,
+                        fontFamily = Montserrat,
+                        lineHeight = dimensionResource(id = R.dimen.fon_17).value.sp,
+                        fontWeight = FontWeight(500)
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+            if (state.userIngredients.isNotEmpty()){
+                Card(
+                    modifier = Modifier ,
+                    shape = RoundedCornerShape(
+                        dimensionResource(id = R.dimen.dim_30)
+                    ),
+                    border = BorderStroke(
+                        width = dimensionResource(id = R.dimen.dim_1),
+                        color = colorResource(id = R.color.discover_view_recommendations_border_color)
+                    ),
+                    colors = CardDefaults.cardColors(
+                        contentColor = Color.White,
+                        containerColor = Color.White
+                    )
+                ){
+                    Text(
+                        modifier = Modifier.padding(
+                            horizontal = dimensionResource(id = R.dimen.dim_20),
+                            vertical = dimensionResource(id = R.dimen.dim_20)
+                        ),
+                        text = stringResource(id = R.string.recommendations),
+                        fontFamily = Montserrat,
+                        fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
+                        lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
+                        fontWeight = FontWeight(500),
+                        color = Color.Black
+                    )
+                    LazyVerticalGrid(
+                        modifier = Modifier.height(gridHeight),
+                        columns = GridCells.Fixed(2),
+                        state = rememberLazyGridState(
+                            0,
+                            0
+                        ),
+                        userScrollEnabled = true,
+                        content = {
+                            items(recommandationVideosCount) {
+                                Card(
+                                    modifier = Modifier
+                                        .height(dimensionResource(id = R.dimen.dim_272))
+                                        .width(dimensionResource(id = R.dimen.dim_178))
+                                        .padding(dimensionResource(id = R.dimen.dim_10)),
+                                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .background(Color.Gray)
+                                    )
                                 }
                             }
                         }
-                    }
+                    )
                 }
             }
         }
-
     }
 
     var showSheet by remember { mutableStateOf(false) }
@@ -433,38 +365,6 @@ fun DiscoverView(
     }
 
 }
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun SlideInTitle(pagerState2: PagerState)
-{
-    val pageOffset = pagerState2.currentPageOffsetFraction
-    val maxDelay = integerResource(id = R.integer.int_200)
-    val minDelay = integerResource(id = R.integer.int_50)
-    val delay = (maxDelay - minDelay) * ( 1 - (pageOffset.absoluteValue * 2)) + minDelay
-
-    AnimatedVisibility(
-        visible = pagerState2.currentPage == 1 && pageOffset == 0.00f,
-        enter = slideInHorizontally(animationSpec = tween(durationMillis = delay.toInt())) { fullWidth ->
-            // Offsets the content by 1/3 of its width to the left, and slide towards right
-            // Overwrites the default animation with tween for this slide animation.
-            -fullWidth / 3
-        } + fadeIn(
-            // Overwrites the default animation with tween
-            animationSpec = tween(durationMillis = delay.toInt())
-        ),
-        exit = slideOutHorizontally(animationSpec = tween(durationMillis = delay.toInt())) { fullWidth ->
-            // Offsets the content by 1/3 of its width to the left, and slide towards right
-            // Overwrites the default animation with tween for this slide animation.
-            fullWidth / 3
-        } + fadeOut(animationSpec = tween(durationMillis = delay.toInt()))
-    ) {
-
-        Text(text= stringResource(id = R.string.Recommendations), fontFamily = Montserrat, fontSize = dimensionResource(id = R.dimen.fon_25).value.sp)
-    }
-}
-
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -708,7 +608,7 @@ fun MyIngredientsSearchBar(
             modifier = Modifier
 //                .fillMaxWidth(if (enableCamera && enableMike) 0.68f else 1.0f)
                 .fillMaxWidth()
-                .let { modifier->
+                .let { modifier ->
                     if (actionType == ActionType.ADD_INGREDIENTS_VIEW) {
                         modifier.clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
                     } else {
@@ -873,66 +773,8 @@ fun AddIngredientDialog(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TabHomeDiscover(
-    tabItems: List<String>,
-    pagerState1: PagerState,
-    scope: CoroutineScope,
-    fontSize: TextUnit
-) {
-
-    TabRow(
-        selectedTabIndex = pagerState1.currentPage,
-        modifier = Modifier.background(Color.White),
-        containerColor = Color.White,
-        contentColor = Color.White,
-        divider = {},
-        indicator = { tabPositions ->
-            TabRowDefaults.Indicator(
-                modifier = Modifier.tabIndicatorOffset(tabPositions[pagerState1.currentPage]),
-                height = dimensionResource(id = R.dimen.dim_0),
-                color = Color.Black
-            )
-        }
-
-    ) {
-        tabItems.forEachIndexed { index, item ->
-            Tab(selected = pagerState1.currentPage == index,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.White),
-                selectedContentColor = Color.Black,
-                onClick = {
-                    scope.launch {
-                        pagerState1.animateScrollToPage(index)
-                    }
-
-                },
-
-                text = {
-                    Text(
-                        text = AnnotatedString(item), style = TextStyle(
-                            fontWeight = if (pagerState1.currentPage == index)
-                                FontWeight.Bold
-                            else
-                                FontWeight.Normal,
-                            color = if (pagerState1.currentPage == index)
-                                Color.Black
-                            else
-                                Color(0xFFC2C2C2),
-                            fontSize = fontSize,
-                            textAlign = TextAlign.Center,
-                        )
-                    )
-                })
-
-        }
-    }
-}
-
-@Composable
-fun GridItem2(
+fun GridItem(
     navController: NavController,
     dataItem: VideoModel,
     userName: String,
