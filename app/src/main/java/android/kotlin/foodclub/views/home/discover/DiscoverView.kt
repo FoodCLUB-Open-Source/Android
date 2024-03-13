@@ -256,9 +256,10 @@ fun DiscoverView(
                     actionType = ActionType.DISCOVER_VIEW
                 )
 
-                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
 
                 if (state.userIngredients.isEmpty()){
+                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
+
                     Text(
                         text = stringResource(id = R.string.add_ingredients_information_text),
                         fontWeight = FontWeight(500),
