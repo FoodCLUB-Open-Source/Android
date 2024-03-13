@@ -86,6 +86,7 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -300,59 +301,10 @@ fun DiscoverView(
             }
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
             if (state.userIngredients.isNotEmpty()){
-                Card(
-                    modifier = Modifier ,
-                    shape = RoundedCornerShape(
-                        dimensionResource(id = R.dimen.dim_30)
-                    ),
-                    border = BorderStroke(
-                        width = dimensionResource(id = R.dimen.dim_1),
-                        color = colorResource(id = R.color.discover_view_recommendations_border_color)
-                    ),
-                    colors = CardDefaults.cardColors(
-                        contentColor = Color.White,
-                        containerColor = Color.White
-                    )
-                ){
-                    Text(
-                        modifier = Modifier.padding(
-                            horizontal = dimensionResource(id = R.dimen.dim_20),
-                            vertical = dimensionResource(id = R.dimen.dim_20)
-                        ),
-                        text = stringResource(id = R.string.recommendations),
-                        fontFamily = Montserrat,
-                        fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
-                        lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
-                        fontWeight = FontWeight(500),
-                        color = Color.Black
-                    )
-                    LazyVerticalGrid(
-                        modifier = Modifier.height(gridHeight),
-                        columns = GridCells.Fixed(2),
-                        state = rememberLazyGridState(
-                            0,
-                            0
-                        ),
-                        userScrollEnabled = true,
-                        content = {
-                            items(recommandationVideosCount) {
-                                Card(
-                                    modifier = Modifier
-                                        .height(dimensionResource(id = R.dimen.dim_272))
-                                        .width(dimensionResource(id = R.dimen.dim_178))
-                                        .padding(dimensionResource(id = R.dimen.dim_10)),
-                                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .background(Color.Gray)
-                                    )
-                                }
-                            }
-                        }
-                    )
-                }
+                RecommandationSection(
+                    gridHeight,
+                    recommandationVideosCount
+                )
             }
         }
     }
@@ -371,6 +323,65 @@ fun DiscoverView(
 
 }
 
+@Composable
+fun RecommandationSection(
+    gridHeight: Dp,
+    recommandationVideosCount: Int
+){
+    Card(
+        modifier = Modifier ,
+        shape = RoundedCornerShape(
+            dimensionResource(id = R.dimen.dim_30)
+        ),
+        border = BorderStroke(
+            width = dimensionResource(id = R.dimen.dim_1),
+            color = colorResource(id = R.color.discover_view_recommendations_border_color)
+        ),
+        colors = CardDefaults.cardColors(
+            contentColor = Color.White,
+            containerColor = Color.White
+        )
+    ){
+        Text(
+            modifier = Modifier.padding(
+                horizontal = dimensionResource(id = R.dimen.dim_20),
+                vertical = dimensionResource(id = R.dimen.dim_20)
+            ),
+            text = stringResource(id = R.string.recommendations),
+            fontFamily = Montserrat,
+            fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
+            lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
+            fontWeight = FontWeight(500),
+            color = Color.Black
+        )
+        LazyVerticalGrid(
+            modifier = Modifier.height(gridHeight),
+            columns = GridCells.Fixed(2),
+            state = rememberLazyGridState(
+                0,
+                0
+            ),
+            userScrollEnabled = true,
+            content = {
+                items(recommandationVideosCount) {
+                    Card(
+                        modifier = Modifier
+                            .height(dimensionResource(id = R.dimen.dim_272))
+                            .width(dimensionResource(id = R.dimen.dim_178))
+                            .padding(dimensionResource(id = R.dimen.dim_10)),
+                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.Gray)
+                        )
+                    }
+                }
+            }
+        )
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
