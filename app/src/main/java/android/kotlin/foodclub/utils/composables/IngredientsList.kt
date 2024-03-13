@@ -5,7 +5,7 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
-import android.kotlin.foodclub.views.home.myDigitalPantry.TitlesSection
+import android.kotlin.foodclub.views.home.myDigitalPantry.IngredientsListTitleSection
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -84,7 +84,7 @@ fun IngredientsList(
             )
     ) {
 
-        TitlesSection(
+        IngredientsListTitleSection(
             modifier = modifier,
             view = stringResource(id = R.string.discover_view)
         )
