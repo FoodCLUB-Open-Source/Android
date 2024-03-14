@@ -5,7 +5,6 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.utils.helpers.ValueParser
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
@@ -46,7 +46,8 @@ import coil.compose.AsyncImage
 @Composable
 fun HomeIngredient(
     ingredient: Ingredient,
-    quantityMultiplier: Float
+    quantityMultiplier: Float,
+    quantityIndicatorColor: Color = Color.Black
 ) {
     var isSelected by remember { mutableStateOf(ingredient.isSelected) }
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp -
@@ -79,7 +80,7 @@ fun HomeIngredient(
             .background(Color.White)
             .padding(dimensionResource(id = R.dimen.dim_10))
     ) {
-        val ingredientImage = if(ingredient.imageUrl == "") {
+        val ingredientImage = if (ingredient.imageUrl == "") {
             R.drawable.salad_ingredient
         } else ingredient.imageUrl
         AsyncImage(
@@ -97,7 +98,7 @@ fun HomeIngredient(
         Box(
             modifier = Modifier // GREEN TICK
                 .size(dimensionResource(id = R.dimen.dim_35))
-                .align(Alignment.TopEnd)
+                .align(Alignment.CenterEnd)
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_30)))
                 .background(
                     if (isSelected) foodClubGreen
@@ -116,24 +117,28 @@ fun HomeIngredient(
                 contentScale = ContentScale.Crop,
             )
         }
-        Box(modifier = Modifier
-            .padding(
-                start = if (isSmallScreen) dimensionResource(id = R.dimen.dim_90) else
-                    dimensionResource(id = R.dimen.dim_100),
-                top = dimensionResource(id = R.dimen.dim_10)
-            )
-            .fillMaxSize()
+        Box(
+            modifier = Modifier
+                .padding(
+                    start = if (isSmallScreen) dimensionResource(id = R.dimen.dim_90) else
+                        dimensionResource(id = R.dimen.dim_100),
+                    top = dimensionResource(id = R.dimen.dim_10)
+                )
+                .fillMaxSize()
         ) {
-            Box(modifier = Modifier
-                .width(dimensionResource(id = R.dimen.dim_115))
-                .padding(start = dimensionResource(id = R.dimen.dim_10))) {
+            Box(
+                modifier = Modifier
+                    .width(dimensionResource(id = R.dimen.dim_115))
+                    .padding(start = dimensionResource(id = R.dimen.dim_10))
+            ) {
                 Text(
                     text = ingredient.type,
                     lineHeight = dimensionResource(id = R.dimen.fon_18).value.sp,
                     modifier = Modifier
                         .align(Alignment.TopStart),
                     fontWeight = FontWeight.Normal,
-                    fontFamily = Montserrat
+                    fontFamily = Montserrat,
+                    color = Color.Black,
                 )
             }
             Box(modifier = Modifier.align(Alignment.BottomStart)) {
@@ -148,7 +153,8 @@ fun HomeIngredient(
                             .clickable {
                                 ingredient.decrementQuantity((5 / quantityMultiplier).toInt())
                                 quantity = (quantityMultiplier * ingredient.quantity).toInt()
-                            }
+                            },
+                        colorFilter = ColorFilter.tint(quantityIndicatorColor),
                     )
                     Text(
                         quantity.toString() + ValueParser.quantityUnitToString(ingredient.unit),
@@ -166,13 +172,17 @@ fun HomeIngredient(
                             .clickable {
                                 ingredient.incrementQuantity((5 / quantityMultiplier).toInt())
                                 quantity = (quantityMultiplier * ingredient.quantity).toInt()
-                            }
+                            },
+                        colorFilter = ColorFilter.tint(quantityIndicatorColor),
                     )
                 }
             }
         }
     }
-    Spacer(modifier = Modifier.height(
-        if (isSmallScreen) dimensionResource(id = R.dimen.dim_10)
-        else dimensionResource(id = R.dimen.dim_20)))
+    Spacer(
+        modifier = Modifier.height(
+            if (isSmallScreen) dimensionResource(id = R.dimen.dim_10)
+            else dimensionResource(id = R.dimen.dim_20)
+        )
+    )
 }

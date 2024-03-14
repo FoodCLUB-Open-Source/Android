@@ -42,11 +42,14 @@ fun CustomSliderDiscrete(
     initialValue: Float = 0f,
     maxValue: Float,
     onValueChange: (Int) -> Unit,
-    tickSize: Int = 3
+    tickSize: Int = 3,
+    inactiveTrackColor: Color = Color.Black,
+    stepsColor: Color = Color.Black
 ) {
     var sliderPosition by remember { mutableFloatStateOf(initialValue) }
     val density = LocalDensity.current
     var width by remember { mutableStateOf(sliderWidth ?: 0.dp) }
+    val interactionSource = remember { MutableInteractionSource() }
     Box(
         modifier = if(sliderWidth == null)
             Modifier
@@ -70,21 +73,21 @@ fun CustomSliderDiscrete(
             for (i in 0..steps) {
                 val x = stepWidth * (i)
                 drawCircle(
-                    color = if(i <= sliderPosition) foodClubGreen else Color.Black,
+                    color = if(i <= sliderPosition) foodClubGreen else stepsColor,
                     radius = tickSize.dp.toPx(),
                     center = Offset(x, (size.height / 2))
                 )
             }
 
             drawCircle(
-                color = Color.Black,
+                color = stepsColor,
                 radius = tickSize.dp.toPx(),
                 center = Offset((stepWidth*steps+stepWidth), (size.height / 2))
             )
         }
         val colors = SliderDefaults.colors(
             activeTrackColor = foodClubGreen,
-            inactiveTrackColor = Color.Black,
+            inactiveTrackColor = inactiveTrackColor,
             activeTickColor = foodClubGreen
         )
         Slider(
@@ -106,7 +109,7 @@ fun CustomSliderDiscrete(
             },
             thumb = {
                 SliderDefaults.Thumb(
-                    interactionSource = MutableInteractionSource(),
+                    interactionSource = interactionSource,
                     modifier = Modifier.scale(scale = 0.8f),
                     colors = SliderDefaults.colors(thumbColor = foodClubGreen)
                 )
@@ -125,7 +128,8 @@ fun CustomSliderDiscrete(
                             (width - dimensionResource(id = R.dimen.dim_20)) * (sliderPosition / maxValue),
                     y = dimensionResource(id = R.dimen.dim_10)
                 )
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            color = Color.Black
         )
     }
 }

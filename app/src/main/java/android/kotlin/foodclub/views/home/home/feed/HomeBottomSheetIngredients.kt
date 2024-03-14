@@ -1,13 +1,14 @@
 package android.kotlin.foodclub.views.home.home.feed
 
 import android.kotlin.foodclub.R
-import androidx.compose.foundation.horizontalScroll
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.defaultButtonColors
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.recipes.Recipe
-import android.kotlin.foodclub.utils.composables.CustomSlider
+import android.kotlin.foodclub.utils.composables.CustomSliderDiscrete
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,10 +30,12 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,6 +49,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,17 +58,24 @@ fun HomeBottomSheetIngredients(
     recipe: Recipe?,
     onAddToBasket: () -> Unit
 ) {
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp - dimensionResource(id = R.dimen.dim_160)
+    val screenHeight =
+        LocalConfiguration.current.screenHeightDp.dp - dimensionResource(id = R.dimen.dim_160)
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isSmallScreen by remember { mutableStateOf(false) }
 
-//    val sections = listOf("Ingredients", "Chef Ai", "Health", "Environment","Sticker")
+//    val sections = listOf("Ingredients", "Chef Ai", "Health", "Environment", "Sticker")
 //    var selectedSection by remember { mutableStateOf(sections.first()) }
 
     val categories = listOf("Protein", "Breakfast")
 
     if (screenHeight <= dimensionResource(id = R.dimen.dim_440)) {
         isSmallScreen = true
+    }
+    val scope = rememberCoroutineScope()
+    LaunchedEffect(true) {
+        scope.launch {
+            bottomSheetState.expand()
+        }
     }
     ModalBottomSheet(
         containerColor = Color.White,
@@ -99,7 +110,9 @@ fun HomeBottomSheetIngredients(
                             stringResource(id = R.string.example_recipe),
                             color = Color.Black,
                             fontFamily = Montserrat,
-                            fontSize = if (isSmallScreen) dimensionResource(id = R.dimen.dim_18).value.sp else dimensionResource(id = R.dimen.dim_22).value.sp,
+                            fontSize = if (isSmallScreen) dimensionResource(id = R.dimen.dim_18).value.sp else dimensionResource(
+                                id = R.dimen.dim_22
+                            ).value.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -124,17 +137,19 @@ fun HomeBottomSheetIngredients(
                         Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_8)))
                     }
                 }
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(
-                            if (isSmallScreen) dimensionResource(id = R.dimen.dim_0) else dimensionResource(id = R.dimen.dim_16)
+                            if (isSmallScreen) dimensionResource(id = R.dimen.dim_0) else dimensionResource(
+                                id = R.dimen.dim_16
+                            )
                         ),
-                    verticalAlignment = Alignment.CenterVertically
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_16))
                 ) {
                     Box(
                         modifier = Modifier
-                            .weight(1f)
                             .padding(
                                 start = if (isSmallScreen) dimensionResource(id = R.dimen.dim_16) else dimensionResource(
                                     id = R.dimen.dim_0
@@ -145,19 +160,23 @@ fun HomeBottomSheetIngredients(
                             stringResource(id = R.string.serving_size),
                             color = Color.Black,
                             fontFamily = Montserrat,
-                            fontSize = if (isSmallScreen) dimensionResource(id = R.dimen.dim_14).value.sp else dimensionResource(id = R.dimen.dim_17).value.sp
+                            fontSize = if (isSmallScreen) dimensionResource(id = R.dimen.dim_14).value.sp else dimensionResource(
+                                id = R.dimen.dim_17
+                            ).value.sp
                         )
                     }
                     Box(
-                        modifier = Modifier.padding(end = if (isSmallScreen) dimensionResource(id = R.dimen.dim_10) else dimensionResource(id = R.dimen.dim_0))
+                        modifier = Modifier.padding(
+                            end = if (isSmallScreen) dimensionResource(id = R.dimen.dim_10) else dimensionResource(
+                                id = R.dimen.dim_0
+                            )
+                        )
                     ) {
-                        CustomSlider(
-                            sliderWidth = if (isSmallScreen) dimensionResource(id = R.dimen.dim_150) else dimensionResource(id = R.dimen.dim_200),
-                            initialValue = ingredientsDivider,
+                        CustomSliderDiscrete(
                             maxValue = 24f,
-                            onValueChange = {
-                                ingredientsMultiplier = it.toFloat()
-                            }
+                            onValueChange = { ingredientsMultiplier = it.toFloat() },
+                            inactiveTrackColor = Color(0xFF525252),
+                            stepsColor = Color(0xFF525252),
                         )
                     }
                 }
@@ -219,7 +238,7 @@ fun HomeBottomSheetIngredients(
 //
 //                }
 
-                IngredientsSection(isSmallScreen,recipe,ingredientsMultiplier,ingredientsDivider)
+                IngredientsSection(isSmallScreen, recipe, ingredientsMultiplier, ingredientsDivider)
 
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
                 Row(
@@ -239,7 +258,10 @@ fun HomeBottomSheetIngredients(
                         colors = defaultButtonColors(),
                         contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_15)),
                         onClick = {
-                            recipe.ingredients.map { ingredient -> ingredient.quantity = (ingredient.quantity * ingredientsMultiplier/2).toInt() }
+                            recipe.ingredients.map { ingredient ->
+                                ingredient.quantity =
+                                    (ingredient.quantity * ingredientsMultiplier / 2).toInt()
+                            }
                             onAddToBasket()
                             onDismiss()
                         }
@@ -270,7 +292,10 @@ fun LabelText(
         modifier = Modifier
             .clip(RoundedCornerShape(50))
             .background(backgroundColor)
-            .padding(horizontal = dimensionResource(id = R.dimen.dim_8), vertical = dimensionResource(id = R.dimen.dim_4))
+            .padding(
+                horizontal = dimensionResource(id = R.dimen.dim_8),
+                vertical = dimensionResource(id = R.dimen.dim_4)
+            )
     ) {
         Text(
             text = text,
@@ -306,7 +331,12 @@ fun LabelText(
 //}
 
 @Composable
-fun IngredientsSection(isSmallScreen: Boolean, recipe: Recipe?, ingredientsMultiplier: Float, ingredientsDivider: Float) {
+fun IngredientsSection(
+    isSmallScreen: Boolean,
+    recipe: Recipe?,
+    ingredientsMultiplier: Float,
+    ingredientsDivider: Float
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -314,7 +344,9 @@ fun IngredientsSection(isSmallScreen: Boolean, recipe: Recipe?, ingredientsMulti
         Text(
             stringResource(id = R.string.ingredients), color = Color.Black,
             fontFamily = Montserrat,
-            fontSize = if (isSmallScreen) dimensionResource(id = R.dimen.dim_13).value.sp else dimensionResource(id = R.dimen.dim_16).value.sp,
+            fontSize = if (isSmallScreen) dimensionResource(id = R.dimen.dim_13).value.sp else dimensionResource(
+                id = R.dimen.dim_16
+            ).value.sp,
             fontWeight = FontWeight.Bold
         )
         Box(
@@ -323,12 +355,27 @@ fun IngredientsSection(isSmallScreen: Boolean, recipe: Recipe?, ingredientsMulti
                 .padding(start = dimensionResource(id = R.dimen.dim_16))
         ) {
         }
-        Spacer(modifier = Modifier.width(if (isSmallScreen) dimensionResource(id = R.dimen.dim_10) else dimensionResource(id = R.dimen.dim_16)))
-        Box(modifier = Modifier.padding(end = if (isSmallScreen) dimensionResource(id = R.dimen.dim_10) else dimensionResource(id = R.dimen.dim_16))) {
+        Spacer(
+            modifier = Modifier.width(
+                if (isSmallScreen) dimensionResource(id = R.dimen.dim_10) else dimensionResource(
+                    id = R.dimen.dim_16
+                )
+            )
+        )
+        Box(
+            modifier = Modifier.padding(
+                end = if (isSmallScreen) dimensionResource(id = R.dimen.dim_10) else dimensionResource(
+                    id = R.dimen.dim_16
+                )
+            )
+        ) {
             Text(
-                stringResource(id = R.string.clear), color = colorResource(R.color.bottom_sheet_nav_bar_selected_color),
+                stringResource(id = R.string.clear),
+                color = colorResource(R.color.bottom_sheet_nav_bar_selected_color),
                 fontFamily = Montserrat,
-                fontSize = if (isSmallScreen) dimensionResource(id = R.dimen.dim_13).value.sp else dimensionResource(id = R.dimen.dim_16).value.sp,
+                fontSize = if (isSmallScreen) dimensionResource(id = R.dimen.dim_13).value.sp else dimensionResource(
+                    id = R.dimen.dim_16
+                ).value.sp,
                 fontWeight = FontWeight.Bold
             )
         }
@@ -350,7 +397,8 @@ fun IngredientsSection(isSmallScreen: Boolean, recipe: Recipe?, ingredientsMulti
                 itemsIndexed(recipe.ingredients) { _, item ->
                     HomeIngredient(
                         ingredient = item,
-                        quantityMultiplier = (ingredientsMultiplier / ingredientsDivider)
+                        quantityMultiplier = (ingredientsMultiplier / ingredientsDivider),
+                        quantityIndicatorColor = foodClubGreen
                     )
                 }
             }
