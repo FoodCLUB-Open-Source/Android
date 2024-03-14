@@ -6,13 +6,13 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.utils.composables.AddIngredientDialog
 import android.kotlin.foodclub.utils.composables.FabButtonItem
 import android.kotlin.foodclub.utils.composables.FabButtonMain
 import android.kotlin.foodclub.utils.composables.FabButtonSub
 import android.kotlin.foodclub.utils.composables.MultiFloatingActionButton
 import android.kotlin.foodclub.utils.composables.engine.createImageCaptureUseCase
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
-import android.kotlin.foodclub.views.home.discover.AddIngredientDialog
 import android.kotlin.foodclub.views.home.discover.DiscoverState
 import android.os.Build
 import androidx.annotation.RequiresApi
