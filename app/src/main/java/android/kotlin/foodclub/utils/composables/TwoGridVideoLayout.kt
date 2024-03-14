@@ -1,18 +1,10 @@
-package android.kotlin.foodclub.views.home.discover
+package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.config.ui.Satoshi
 import android.kotlin.foodclub.domain.models.home.VideoModel
-import android.kotlin.foodclub.utils.composables.shimmerBrush
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -21,20 +13,13 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
 
 @Composable
 fun RecommendationVideos(
@@ -44,7 +29,7 @@ fun RecommendationVideos(
     dataItem: VideoModel?,
     userName: String?,
     brush: Brush = shimmerBrush(),
-    isShowPost: (Long) -> Unit
+    isShowVideo: (Long) -> Unit
 ){
     // ***** Below is for test visualization *****
     LazyVerticalGrid(

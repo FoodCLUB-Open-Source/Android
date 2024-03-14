@@ -12,6 +12,7 @@ import android.kotlin.foodclub.utils.composables.CustomDatePicker
 import android.kotlin.foodclub.utils.composables.EditIngredientBottomModal
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
 import android.kotlin.foodclub.utils.composables.IngredientsList
+import android.kotlin.foodclub.utils.composables.RecommendationVideos
 import android.kotlin.foodclub.utils.composables.shimmerBrush
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
@@ -349,7 +350,7 @@ fun RecommandationSection(
             navController = navController,
             dataItem = null,
             userName = null,
-            isShowPost = {
+            isShowVideo = {
                 isShowPost(it)
             }
         )
