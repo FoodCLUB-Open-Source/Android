@@ -75,6 +75,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
@@ -604,7 +605,7 @@ fun EditIngredientView(
                     modifier = Modifier
                         .border(
                             dimensionResource(id = R.dimen.dim_2),
-                            Color(126, 198, 11, 255),
+                            colorResource(id = R.color.scan_results_list_button_color),
                             shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                         )
                         .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
@@ -619,7 +620,7 @@ fun EditIngredientView(
                 ) {
                     Text(
                         text = stringResource(id = R.string.remove),
-                        color = Color(126, 198, 11, 255),
+                        color = colorResource(id = R.color.scan_results_list_button_color),
                         fontFamily = Montserrat,
                         fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
                         fontWeight = FontWeight(600),
@@ -635,13 +636,13 @@ fun EditIngredientView(
                     modifier = Modifier
                         .border(
                             dimensionResource(id = R.dimen.dim_1),
-                            Color(126, 198, 11, 255),
+                            colorResource(id = R.color.scan_results_list_button_color),
                             shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                         )
                         .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
                         .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(126, 198, 11, 255),
+                        containerColor = colorResource(id = R.color.scan_results_list_button_color),
                         contentColor = Color.White
                     ), contentPadding = PaddingValues( dimensionResource(id = R.dimen.dim_15)),
                     onClick = {

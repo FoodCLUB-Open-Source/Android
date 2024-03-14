@@ -37,4 +37,5 @@
     <color name="help_and_support_fill_out_form_color">#989898</color>
     <color name="login_text_color">#6AA60A</color>
     <color name="discover_view_add_ingredient_information_text">#000000</color>
+    <color name="scan_results_list_button_color">#7EC60B</color>
 </resources>

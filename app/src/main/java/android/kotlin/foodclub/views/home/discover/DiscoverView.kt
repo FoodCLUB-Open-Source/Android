@@ -2,7 +2,6 @@ package android.kotlin.foodclub.views.home.discover
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
-import android.kotlin.foodclub.config.ui.Satoshi
 import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.home.VideoModel
@@ -17,8 +16,6 @@ import android.kotlin.foodclub.utils.composables.shimmerBrush
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -28,24 +25,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
@@ -76,8 +64,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
@@ -89,13 +75,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DiscoverView(
     navController: NavController,
@@ -303,7 +285,12 @@ fun DiscoverView(
             if (state.userIngredients.isNotEmpty()){
                 RecommandationSection(
                     gridHeight,
-                    recommandationVideosCount
+                    recommandationVideosCount,
+                    navController = navController,
+                    isShowPost = {
+                        isShowPost = !isShowPost
+                        postId = it
+                    }
                 )
             }
         }
@@ -326,7 +313,9 @@ fun DiscoverView(
 @Composable
 fun RecommandationSection(
     gridHeight: Dp,
-    recommandationVideosCount: Int
+    recommandationVideosCount: Int,
+    navController: NavController,
+    isShowPost: (Long) -> Unit
 ){
     Card(
         modifier = Modifier ,
@@ -354,30 +343,14 @@ fun RecommandationSection(
             fontWeight = FontWeight(500),
             color = Color.Black
         )
-        LazyVerticalGrid(
-            modifier = Modifier.height(gridHeight),
-            columns = GridCells.Fixed(2),
-            state = rememberLazyGridState(
-                0,
-                0
-            ),
-            userScrollEnabled = true,
-            content = {
-                items(recommandationVideosCount) {
-                    Card(
-                        modifier = Modifier
-                            .height(dimensionResource(id = R.dimen.dim_272))
-                            .width(dimensionResource(id = R.dimen.dim_178))
-                            .padding(dimensionResource(id = R.dimen.dim_10)),
-                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(Color.Gray)
-                        )
-                    }
-                }
+        RecommendationVideos(
+            gridHeight = gridHeight,
+            recommandationVideosCount = recommandationVideosCount,
+            navController = navController,
+            dataItem = null,
+            userName = null,
+            isShowPost = {
+                isShowPost(it)
             }
         )
     }
@@ -703,148 +676,5 @@ fun MyIngredientsSearchBar(
 //                Icon(painterResource(id = R.drawable.mic_icon), contentDescription = "")
 //            }
 //        }
-    }
-}
-
-
-
-@Composable
-fun AddIngredientDialog(
-    headline: String,
-    textFirst: String,
-    textSecond: String? = "",
-    ingredientName: String? = ""
-) {
-    Dialog(
-        properties = DialogProperties(
-            dismissOnClickOutside = false,
-            dismissOnBackPress = false
-        ),
-        onDismissRequest = { }) {
-        Card(
-            modifier = Modifier
-                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
-                .width(dimensionResource(id = R.dimen.dim_500))
-                .fillMaxHeight(0.25f)
-                .background(Color.White),
-            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16)),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = dimensionResource(id = R.dimen.dim_10)
-            ),
-            colors = CardDefaults.cardColors(containerColor = Color.White)
-        ) {
-            Column(
-                modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_10)),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(dimensionResource(id = R.dimen.dim_10)),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(dimensionResource(id = R.dimen.dim_34))
-                            .clip(CircleShape)
-                            .background(foodClubGreen),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_24)),
-                            imageVector = Icons.Default.Check,
-                            contentDescription = "",
-                            tint = Color.White
-                        )
-                    }
-                    Text(
-                        text = headline,
-                        modifier = Modifier.padding(start = dimensionResource(id = R.dimen.dim_10)),
-                        fontWeight = FontWeight(600),
-                        lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
-                        fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
-                        fontFamily = Montserrat
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            vertical = dimensionResource(id = R.dimen.dim_10),
-                            horizontal = dimensionResource(id = R.dimen.dim_30)
-                        ),
-                ) {
-                    Text(
-                        text = "$textFirst $ingredientName $textSecond",
-                        fontFamily = Montserrat,
-                        fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
-                        lineHeight = dimensionResource(id = R.dimen.fon_17).value.sp,
-                        fontWeight = FontWeight(500)
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun GridItem(
-    navController: NavController,
-    dataItem: VideoModel,
-    userName: String,
-    brush: Brush = shimmerBrush(),
-    isShowPost: (Long) -> Unit
-) {
-    val thumbnailPainter = rememberAsyncImagePainter(dataItem.thumbnailLink)
-    Card(
-        modifier = Modifier
-            .height(dimensionResource(id = R.dimen.dim_272))
-            .width(dimensionResource(id = R.dimen.dim_178))
-            .padding(dimensionResource(id = R.dimen.dim_10)),
-        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
-    ) {
-        Box(
-            modifier = Modifier
-                .background(
-                    if (thumbnailPainter.state is AsyncImagePainter.State.Loading) brush
-                    else SolidColor(Color.Transparent)
-                )
-                .fillMaxWidth()
-                .fillMaxHeight()
-        ) {
-
-            val thumbnailPainterOrDefault = if (thumbnailPainter != null) {
-                thumbnailPainter
-            } else {
-                painterResource(id = R.color.gray)
-            }
-
-            Image(
-                painter = thumbnailPainterOrDefault,
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clickable {
-                        isShowPost(dataItem.videoId)
-                    },
-                contentScale = ContentScale.FillHeight
-            )
-
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .padding(dimensionResource(id = R.dimen.dim_10)),
-                verticalArrangement = Arrangement.Bottom
-            ) {
-                Text(
-                    text = dataItem.videoStats.displayLike,
-                    fontFamily = Satoshi,
-                    color = Color.White,
-                    fontSize = dimensionResource(id = R.dimen.fon_15).value.sp
-                )
-            }
-        }
     }
 }
