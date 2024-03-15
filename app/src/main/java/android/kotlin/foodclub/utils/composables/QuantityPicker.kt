@@ -192,7 +192,6 @@ fun QuantityPicker(
 
                                 }
                                 .size(dimensionResource(id = R.dimen.dim_20))
-                                //.padding(dimensionResource(id = R.dimen.dim_8))
                         )
                     },
                     contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_8))
@@ -209,9 +208,7 @@ fun QuantityPicker(
             ),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(dimensionResource(id = R.dimen.dim_40))
-                //.padding(bottom = dimensionResource(id = R.dimen.dim_16)),
-        )
+                .height(dimensionResource(id = R.dimen.dim_40)))
 
         Box(modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_16)))
         {
@@ -231,75 +228,6 @@ fun QuantityPicker(
                 }
             }
         }
-
-        /*
-        TextField(
-            value = quantity,
-            onValueChange = {
-                val newText = it.trim()
-
-                if (newText.isNotEmpty()) {
-                    if (newText.toIntOrNull() != null &&
-                        newText.toInt() < Int.MAX_VALUE) {
-
-                        quantity = newText
-                        isError = false
-
-                    } else {
-                        isError = true
-                    }
-
-                } else {
-                    quantity = ""
-                }
-            },
-            isError = isError,
-            supportingText = if (!isError) null else {
-                {
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = stringResource(id = R.string.quantity_overflow_error_message),
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-            },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    keyboardController?.hide()
-                }
-            ),
-            placeholder = {
-                Text(stringResource(id = R.string.quantity), color = Color.Gray)
-            },
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = Color.LightGray.copy(alpha = lightGrayAlpha),
-                focusedContainerColor = Color.LightGray.copy(alpha = lightGrayAlpha),
-                cursorColor = foodClubGreen,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-            ),
-            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = dimensionResource(id = R.dimen.dim_16)),
-            trailingIcon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.outline_note_alt_24),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .clickable {
-
-                        }
-                        .padding(dimensionResource(id = R.dimen.dim_8))
-                )
-            }
-        )
-        
-         */
 
         onQuantityUnitSelected(
             if (quantity == "0" || quantity == "") 1 else quantity.toInt(),
