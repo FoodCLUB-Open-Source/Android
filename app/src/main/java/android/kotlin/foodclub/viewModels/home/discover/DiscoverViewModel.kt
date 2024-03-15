@@ -25,7 +25,6 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
@@ -75,7 +74,6 @@ class DiscoverViewModel @Inject constructor(
                 .map { it.ingredientSearchText }
                 .debounce(1000)
                 .filter { it.isNotEmpty() }
-                .distinctUntilChanged()
                 .collect { searchText ->
                     fetchProductsDatabase(searchText)
                 }
@@ -140,7 +138,6 @@ class DiscoverViewModel @Inject constructor(
                     // TODO deal with error
                 }
 
-                else -> {}
             }
         }
     }
@@ -163,7 +160,6 @@ class DiscoverViewModel @Inject constructor(
                     // TODO deal with error
                 }
 
-                else -> {}
             }
         }
 
@@ -190,7 +186,6 @@ class DiscoverViewModel @Inject constructor(
                     // TODO deal with error
                 }
 
-                else -> {}
             }
         }
     }
@@ -278,10 +273,11 @@ class DiscoverViewModel @Inject constructor(
         when (val resource = productsRepo.getProductsList(searchText)) {
             is Resource.Success -> {
                 Log.e(TAG, "SUCCESS")
+                Log.e(TAG, "${resource.data!!.productsList}")
                 _state.update {
                     it.copy(
                         error = "",
-                        productsData = resource.data!!
+                        productsData = resource.data
                     )
                 }
             }
@@ -290,7 +286,6 @@ class DiscoverViewModel @Inject constructor(
                 _state.update { it.copy(error = resource.message!!) }
             }
 
-            else -> {}
         }
     }
 

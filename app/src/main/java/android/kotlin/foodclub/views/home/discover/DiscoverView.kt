@@ -601,6 +601,10 @@ fun MyIngredientsSearchBar(
                 .let { modifier ->
                     if (actionType == ActionType.ADD_INGREDIENTS_VIEW) {
                         modifier.clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
+                        modifier.shadow(
+                            elevation = dimensionResource(id = R.dimen.dim_2),
+                            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16))
+                        )
                     } else {
                         modifier.border(
                             border = BorderStroke(

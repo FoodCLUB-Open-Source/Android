@@ -52,7 +52,6 @@ fun AddIngredientsView(
     events: DiscoverEvents,
     navController: NavController
 ) {
-    var inputText by remember { mutableStateOf("") }
     var isDatePickerVisible by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
     var selectedDate by remember { mutableStateOf("") }
@@ -104,10 +103,13 @@ fun AddIngredientsView(
                 if (isSheetOpen) {
                     EditIngredientBottomModal(
                         ingredient = state.ingredientToEdit!!,
-                        onDismissRequest = { isSheetOpen = it },
+                        onDismissRequest = { boolean->
+                            isSheetOpen = boolean },
                         onEdit = { item ->
                             events.updateIngredient(item)
-                            if (state.userIngredients.none { it.id == item.id }) {
+                            if (state.userIngredients.none { ingredient->
+                                    ingredient.id == item.id
+                            }) {
                                 events.addToUserIngredients(item)
                             }
                         }
@@ -130,7 +132,9 @@ fun AddIngredientsView(
                                 if (date != null) {
                                     selectedDate = date
                                     state.ingredientToEdit!!.expirationDate = selectedDate
-                                    if (state.userIngredients.none { it.id == state.ingredientToEdit.id }) {
+                                    if (state.userIngredients.none { ingredient->
+                                        ingredient.id == state.ingredientToEdit.id
+                                    }) {
                                         events.addToUserIngredients(state.ingredientToEdit)
                                     }
                                     events.updateIngredient(state.ingredientToEdit)
@@ -146,7 +150,6 @@ fun AddIngredientsView(
                         navController = navController,
                         searchTextValue = state.ingredientSearchText,
                         onSearch = { input ->
-                            inputText = input
                             events.onAddIngredientsSearchTextChange(input)
                         },
                         actionType = ActionType.ADD_INGREDIENTS_VIEW
