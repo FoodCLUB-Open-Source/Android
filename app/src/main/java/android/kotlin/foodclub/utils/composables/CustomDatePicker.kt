@@ -21,6 +21,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.ZoneOffset
 import java.util.Date
 import java.util.Locale
 
@@ -40,9 +42,9 @@ fun CustomDatePicker(
     )
     val datePickerColors = DatePickerDefaults.colors(
         weekdayContentColor = Color.Gray,
-        selectedDayContainerColor = Color.Red,
-        todayDateBorderColor = Color.Red,
-        todayContentColor = Color.Red
+        selectedDayContainerColor = foodClubGreen,
+        todayDateBorderColor = foodClubGreen,
+        todayContentColor = foodClubGreen
     )
 
     DatePickerDialog(
@@ -106,11 +108,13 @@ fun CustomDatePicker(
         DatePicker(
             state = datePickerState,
             colors = datePickerColors,
-            title = {
-                Text(
-                    text = stringResource(id = R.string.select_expiration_date),
-                    color = foodClubGreen
-                )
+            dateValidator = { timestamp ->
+                val today = LocalDate
+                    .now()
+                    .atStartOfDay(ZoneOffset.UTC)
+                    .toInstant()
+                    .toEpochMilli()
+                timestamp >= today
             }
         )
     }
