@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -140,6 +141,7 @@ fun QuantityPicker(
             fontFamily = Montserrat,
             modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_16))
         )
+
         BasicTextField(
             value = quantity,
             onValueChange = {
@@ -170,27 +172,6 @@ fun QuantityPicker(
                     visualTransformation = VisualTransformation.None,
                     interactionSource = remember { MutableInteractionSource() },
                     isError = isError,
-                    supportingText = if (!isError) null else {
-                        {
-                            if (quantity.isDigitsOnly())
-                            {
-                                Text(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    text = stringResource(id = R.string.quantity_overflow_error_message),
-                                    color = MaterialTheme.colorScheme.error
-                                )
-                            }
-                            else
-                            {
-                                Text(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    text = stringResource(id = R.string.invalid_quantity_error_message),
-                                    color = MaterialTheme.colorScheme.error
-                                )
-                            }
-
-                        }
-                    },
                     placeholder = {
                         Text(stringResource(id = R.string.quantity), color = Color.Gray)
                     },
@@ -210,10 +191,11 @@ fun QuantityPicker(
                                 .clickable {
 
                                 }
-                                .padding(dimensionResource(id = R.dimen.dim_8))
+                                .size(dimensionResource(id = R.dimen.dim_20))
+                                //.padding(dimensionResource(id = R.dimen.dim_8))
                         )
                     },
-                    contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_10))
+                    contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_8))
                 )
             },
             keyboardOptions = KeyboardOptions(
@@ -227,9 +209,28 @@ fun QuantityPicker(
             ),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(dimensionResource(id = R.dimen.dim_60))
-                .padding(bottom = dimensionResource(id = R.dimen.dim_16)),
+                .height(dimensionResource(id = R.dimen.dim_40))
+                //.padding(bottom = dimensionResource(id = R.dimen.dim_16)),
         )
+
+        Box(modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_16)))
+        {
+            if (isError) {
+                if (quantity.isDigitsOnly()) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(id = R.string.quantity_overflow_error_message),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                } else {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(id = R.string.invalid_quantity_error_message),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
+        }
 
         /*
         TextField(
