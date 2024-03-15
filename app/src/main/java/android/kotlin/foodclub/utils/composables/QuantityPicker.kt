@@ -60,6 +60,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.sp
+import androidx.core.text.isDigitsOnly
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
@@ -171,11 +172,23 @@ fun QuantityPicker(
                     isError = isError,
                     supportingText = if (!isError) null else {
                         {
-                            Text(
-                                modifier = Modifier.fillMaxWidth(),
-                                text = stringResource(id = R.string.quantity_overflow_error_message),
-                                color = MaterialTheme.colorScheme.error
-                            )
+                            if (quantity.isDigitsOnly())
+                            {
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    text = stringResource(id = R.string.quantity_overflow_error_message),
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+                            else
+                            {
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    text = stringResource(id = R.string.invalid_quantity_error_message),
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+
                         }
                     },
                     placeholder = {
@@ -191,7 +204,7 @@ fun QuantityPicker(
                     shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
                     trailingIcon = {
                         Icon(
-                            painter = painterResource(id = R.drawable.outline_note_alt_24),
+                            painter = painterResource(id = R.drawable.outline_save_alt_24),
                             contentDescription = null,
                             modifier = Modifier
                                 .clickable {
