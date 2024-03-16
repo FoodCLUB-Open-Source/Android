@@ -3,13 +3,22 @@ package android.kotlin.foodclub.localdatasource.room.entity
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.home.VideoStats
 import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.PrimaryKey
 
-@Entity("user_posts")
-data class OfflineUserPostsModel(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+@Entity("profile_posts", foreignKeys = [
+    ForeignKey(
+        entity = ProfileEntity::class,
+        parentColumns = ["userId"],
+        childColumns = ["authorId"],
+        onDelete = CASCADE
+    )]
+)
+data class ProfilePostsEntity(
+    @PrimaryKey(autoGenerate = false)
     val videoId: Long,
+    val authorId: Long,
     val title: String? = null,
     val description: String?,
     val createdAt: String? = null,
@@ -19,7 +28,7 @@ data class OfflineUserPostsModel(
     val totalViews: Long? = null
 )
 
-fun OfflineUserPostsModel.toVideoModel(): VideoModel {
+fun ProfilePostsEntity.toVideoModel(): VideoModel {
     return VideoModel(
         videoId = videoId,
         authorDetails = "Marc",

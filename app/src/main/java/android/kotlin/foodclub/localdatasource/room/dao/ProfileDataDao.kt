@@ -1,20 +1,19 @@
 package android.kotlin.foodclub.localdatasource.room.dao
 
-import android.kotlin.foodclub.localdatasource.room.entity.OfflineProfileModel
+import android.kotlin.foodclub.localdatasource.room.entity.ProfileEntity
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ProfileDataDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertProfileData(offlineProfileModel: OfflineProfileModel)
+    @Upsert
+    suspend fun insertProfileData(profileEntity: ProfileEntity)
 
     @Query("SELECT * FROM profile_data WHERE userId=:id")
-    fun getProfileData(id: Long): Flow<OfflineProfileModel>
+    fun getProfileData(id: Long): Flow<ProfileEntity>
 
     @Query("DELETE FROM profile_data")
     fun clearProfileData()

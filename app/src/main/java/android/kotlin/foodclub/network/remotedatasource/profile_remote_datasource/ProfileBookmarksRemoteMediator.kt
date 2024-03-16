@@ -1,13 +1,12 @@
 package android.kotlin.foodclub.network.remotedatasource.profile_remote_datasource
 
 import android.kotlin.foodclub.localdatasource.room.database.FoodCLUBDatabase
-import android.kotlin.foodclub.localdatasource.room.entity.ProfilePostsEntity
+import android.kotlin.foodclub.localdatasource.room.entity.ProfileBookmarksEntity
 import android.kotlin.foodclub.network.retrofit.dtoModels.posts.PostModelDto
-import android.kotlin.foodclub.network.retrofit.dtoModels.posts.toProfilePostsEntity
+import android.kotlin.foodclub.network.retrofit.dtoModels.posts.toProfileBookmarksEntity
 import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.exceptions.RemoteDataRetrievalException
 import android.kotlin.foodclub.utils.helpers.Resource
-import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -18,17 +17,16 @@ import java.io.IOException
 import kotlin.math.ceil
 
 @OptIn(ExperimentalPagingApi::class)
-class ProfilePostsRemoteMediator(
+class ProfileBookmarksRemoteMediator(
     private val userId: Long,
     private val foodClubDb: FoodCLUBDatabase,
     private val repository: ProfileRepository,
-): RemoteMediator<Int, ProfilePostsEntity>() {
+): RemoteMediator<Int, ProfileBookmarksEntity>() {
     override suspend fun load(
         loadType: LoadType,
-        state: PagingState<Int, ProfilePostsEntity>
+        state: PagingState<Int, ProfileBookmarksEntity>
     ): MediatorResult {
-        val dao = foodClubDb.getUserProfilePostsDao()
-
+        val dao = foodClubDb.getUserProfileBookmarksDao()
         return try {
             val loadKey = when(loadType) {
                 LoadType.REFRESH -> 1
@@ -44,28 +42,28 @@ class ProfilePostsRemoteMediator(
                     }
                 }
             }
-            Log.d("ProfileViewLoad", "${loadType.name} + loadKey: $loadKey")
-            var userPosts: List<PostModelDto> = emptyList()
+
+            var userBookmarks: List<PostModelDto> = emptyList()
             when(
-                val result = repository.retrieveProfileData(
+                val result = repository.retrieveBookmarkedPosts(
                     userId = userId,
                     pageNo = loadKey,
                     pageSize = state.config.pageSize)
             ) {
                 is Resource.Error -> throw RemoteDataRetrievalException(result.message)
-                is Resource.Success -> userPosts = result.data!!.userPosts
+                is Resource.Success -> userBookmarks = result.data!!
             }
 
             foodClubDb.withTransaction {
                 if(loadType == LoadType.REFRESH) {
-                    dao.clearAllForAuthor(userId)
+                    dao.clearAllForBookmarkedBy(userId)
                 }
-                val userPostsEntities = userPosts.map { it.toProfilePostsEntity(userId) }
-                dao.insertProfileVideosData(userPostsEntities)
+                val userPostsEntities = userBookmarks.map { it.toProfileBookmarksEntity(userId) }
+                dao.insertBookmarkedVideosData(userPostsEntities)
             }
 
             MediatorResult.Success(
-                endOfPaginationReached = userPosts.isEmpty()
+                endOfPaginationReached = userBookmarks.isEmpty()
             )
         } catch (e: IOException) {
             MediatorResult.Error(e)

@@ -27,6 +27,7 @@ class DatabaseModule {
         )
 //            .fallbackToDestructiveMigration() // later change this to meet our intends
             .addMigrations(FoodCLUBDatabase.migration1To2)
+            .addMigrations(FoodCLUBDatabase.migration2to3)
             .build()
     }
 

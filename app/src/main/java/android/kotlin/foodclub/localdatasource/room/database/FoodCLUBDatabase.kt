@@ -6,9 +6,9 @@ import android.kotlin.foodclub.localdatasource.room.dao.ProfileDataDao
 import android.kotlin.foodclub.localdatasource.room.dao.UserDetailsDao
 import android.kotlin.foodclub.localdatasource.room.dao.UserProfileBookmarksDao
 import android.kotlin.foodclub.localdatasource.room.dao.UserProfilePostsDao
-import android.kotlin.foodclub.localdatasource.room.entity.OfflineProfileModel
-import android.kotlin.foodclub.localdatasource.room.entity.OfflineUserBookmarksModel
-import android.kotlin.foodclub.localdatasource.room.entity.OfflineUserPostsModel
+import android.kotlin.foodclub.localdatasource.room.entity.ProfileEntity
+import android.kotlin.foodclub.localdatasource.room.entity.ProfileBookmarksEntity
+import android.kotlin.foodclub.localdatasource.room.entity.ProfilePostsEntity
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -18,11 +18,11 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 @Database(
     entities = [
         UserDetailsModel::class,
-        OfflineUserPostsModel::class,
-        OfflineProfileModel::class,
-        OfflineUserBookmarksModel::class
+        ProfilePostsEntity::class,
+        ProfileEntity::class,
+        ProfileBookmarksEntity::class
     ],
-    version = 2
+    version = 3
 )
 @TypeConverters(Converters::class)
 abstract class FoodCLUBDatabase : RoomDatabase() {
@@ -76,6 +76,57 @@ abstract class FoodCLUBDatabase : RoomDatabase() {
                 db.execSQL("DROP TABLE user_bookmarks")
 
                 db.execSQL("ALTER TABLE new_user_bookmarks RENAME TO user_bookmarks")
+            }
+
+        }
+
+        val migration2to3 = object : Migration(2, 3){
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("DROP TABLE user_posts")
+                db.execSQL("DROP TABLE user_bookmarks")
+
+                db.execSQL("DELETE FROM profile_data WHERE userId IS NULL")
+                db.execSQL("CREATE TABLE `profile_data_temp`(" +
+                        "`userId` INTEGER NOT NULL PRIMARY KEY, " +
+                        "`userName` TEXT NOT NULL, " +
+                        "`profilePicture` TEXT, " +
+                        "`totalUserFollowers` INTEGER, " +
+                        "`totalUserFollowing` INTEGER, " +
+                        "`totalUserLikes` INTEGER)")
+                db.execSQL("INSERT INTO profile_data_temp(" +
+                        "userId, userName, profilePicture, totalUserFollowers, " +
+                        "totalUserFollowing, totalUserLikes) " +
+                        "SELECT userId, userName, profilePicture, totalUserFollowers, " +
+                        "totalUserFollowing, totalUserLikes FROM profile_data")
+                db.execSQL("DROP TABLE profile_data")
+                db.execSQL("ALTER TABLE profile_data_temp RENAME TO profile_data")
+
+                db.execSQL("CREATE TABLE `profile_posts`(" +
+                        "`videoId` INTEGER NOT NULL PRIMARY KEY, " +
+                        "`authorId` INTEGER NOT NULL, " +
+                        "`title` TEXT, " +
+                        "`description` TEXT, " +
+                        "`createdAt` TEXT, " +
+                        "`videoLink` TEXT, " +
+                        "`thumbnailLink` TEXT, " +
+                        "`totalLikes` INTEGER, " +
+                        "`totalViews` INTEGER, " +
+                        "FOREIGN KEY(`authorId`) REFERENCES `profile_data`(`userId`) " +
+                        "ON UPDATE NO ACTION ON DELETE CASCADE )")
+
+                db.execSQL("CREATE TABLE `profile_bookmarked_posts`(" +
+                        "`videoId` INTEGER NOT NULL PRIMARY KEY, " +
+                        "`bookmarkedBy` INTEGER NOT NULL, " +
+                        " INTEGER NOT NULL, " +
+                        "`title` TEXT, " +
+                        "`description` TEXT, " +
+                        "`createdAt` TEXT, " +
+                        "`videoLink` TEXT, " +
+                        "`thumbnailLink` TEXT, " +
+                        "`totalLikes` INTEGER, " +
+                        "`totalViews` INTEGER, " +
+                        "FOREIGN KEY(`bookmarkedBy`) REFERENCES `profile_data`(`userId`) " +
+                        "ON UPDATE NO ACTION ON DELETE CASCADE )")
             }
 
         }

@@ -10,6 +10,7 @@ import android.kotlin.foodclub.utils.composables.LikeButton
 import android.kotlin.foodclub.utils.composables.PlayPauseButton
 import android.kotlin.foodclub.utils.composables.VideoLayout
 import android.kotlin.foodclub.utils.composables.VideoScroller
+import android.kotlin.foodclub.utils.composables.BackButton
 import android.kotlin.foodclub.views.VideoPagerLoadingSkeleton
 import android.kotlin.foodclub.views.home.profile.DeleteButton
 import android.kotlin.foodclub.views.home.profile.HeaderImage
@@ -53,7 +54,6 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch

@@ -2,7 +2,7 @@ package android.kotlin.foodclub.viewModels.authentication.signupVerification
 
 import android.kotlin.foodclub.domain.models.session.RefreshToken
 import android.kotlin.foodclub.domain.models.session.Session
-import android.kotlin.foodclub.localdatasource.room.entity.OfflineProfileModel
+import android.kotlin.foodclub.localdatasource.room.entity.ProfileEntity
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.navigation.auth.AuthScreen
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
@@ -108,7 +108,7 @@ class SignupVerificationViewModel @Inject constructor(
                         data.accessToken, data.idToken, data.refreshToken, data.user.id.toLong()
                     )
                     profileRepository.saveLocalProfileDetails(
-                        OfflineProfileModel(
+                        ProfileEntity(
                             userId = data.user.id.toLong(),
                             userName = state.value.username!!,
                             profilePicture = data.user.profileImageUrl
