@@ -37,7 +37,7 @@ import coil.compose.rememberAsyncImagePainter
 fun FoodSNAPSPage(
     index: Int,
     storyListData: List<VideoModel>,
-    showMemoriesReel: Boolean,
+    //showMemoriesReel: Boolean,
     selectReaction: (Reactions) -> Unit,
     reactionsClickable: Boolean
 ) {
@@ -51,7 +51,7 @@ fun FoodSNAPSPage(
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
-        if(!showMemoriesReel) {
+        //if(!showMemoriesReel) {
             SnapReactionsView(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -68,7 +68,7 @@ fun FoodSNAPSPage(
                 selectReaction = selectReaction,
                 reactionsClickable = reactionsClickable
             )
-        }
+       // }
         Box(
             modifier = Modifier
                 .align(Alignment.BottomStart)

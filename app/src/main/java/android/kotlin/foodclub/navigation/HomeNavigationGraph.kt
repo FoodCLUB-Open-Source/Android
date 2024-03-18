@@ -20,7 +20,6 @@ import android.kotlin.foodclub.views.home.home.feed.HomeView
 import android.kotlin.foodclub.views.home.home.foodSNAPS.TakeSnapView
 import android.kotlin.foodclub.views.home.messagingView.MessagingView
 import android.kotlin.foodclub.views.home.myBasket.MyBasketView
-import android.kotlin.foodclub.views.home.myDigitalPantry.MyDigitalPantryView
 import android.kotlin.foodclub.views.home.profile.ProfileView
 import android.kotlin.foodclub.views.home.profile.TakeProfilePhotoView
 import android.kotlin.foodclub.views.home.scan.ScanResultView
@@ -237,17 +236,6 @@ fun NavGraphBuilder.homeNavigationGraph(
             NewSearchView(navController = navController)
         }
 
-        composable(route = HomeOtherRoutes.MyDigitalPantryView.route) {
-            val viewModel = it.sharedHiltViewModel<DiscoverViewModel>(navController)
-            val state = viewModel.state.collectAsState()
-
-            MyDigitalPantryView(
-                navController = navController,
-                events = viewModel,
-                state = state.value
-            )
-        }
-
         composable(route = HomeOtherRoutes.AddIngredientsView.route){
             val viewModel = it.sharedHiltViewModel<DiscoverViewModel>(navController)
             val state = viewModel.state.collectAsState()
@@ -296,7 +284,6 @@ sealed class HomeOtherRoutes(val route: String) {
     data object FollowingView : HomeOtherRoutes(route = "FOLLOWING_VIEW")
 
     data object MyBasketView : HomeOtherRoutes(route = "BASKET_VIEW")
-    data object MyDigitalPantryView : HomeOtherRoutes(route = "MY_DIGITAL_PANTRY_VIEW")
     data object AddIngredientsView : HomeOtherRoutes(route = "ADD_INGREDIENTS")
     data object MySearchView : HomeOtherRoutes(route = "SEARCH_VIEW")
 

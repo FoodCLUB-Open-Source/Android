@@ -7,7 +7,6 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -15,11 +14,9 @@ import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberSwipeableState
-import androidx.compose.material.swipeable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -38,8 +35,8 @@ import okio.ByteString.Companion.encodeUtf8
 fun FoodSNAPSPager(
     storyListData: List<VideoModel>,
     navController: NavHostController,
-    showMemoriesReel: Boolean,
-    changeMemoriesReelVisibility: (Boolean) -> Unit,
+    //showMemoriesReel: Boolean,
+    //changeMemoriesReelVisibility: (Boolean) -> Unit,
     selectedReaction: Reactions,
     clearSelectedReactions: () -> Unit,
     selectReaction: (Reactions) -> Unit,
@@ -53,7 +50,7 @@ fun FoodSNAPSPager(
 
     fun refresh() = refreshScope.launch {
         refreshing = true
-        changeMemoriesReelVisibility(true)
+        //changeMemoriesReelVisibility(true)
         refreshing = false
     }
 
@@ -73,9 +70,9 @@ fun FoodSNAPSPager(
     LaunchedEffect(key1 = swipeableState.currentValue) {
         when (swipeableState.currentValue) {
             SwipeDirection.UP -> {
-                if (showMemoriesReel) {
-                    changeMemoriesReelVisibility(false)
-                }
+//                if (showMemoriesReel) {
+//                    changeMemoriesReelVisibility(false)
+//                }
                 swipeableState.snapTo(SwipeDirection.NEUTRAL)
             }
 
@@ -103,22 +100,22 @@ fun FoodSNAPSPager(
             flingBehavior = snapPagerFling
         ) {pagerIdx ->
             ReactionsOverlay(
-                modifier = Modifier
-                    .then(
-                        if (pagerIdx == 0 && showMemoriesReel) {
-                            Modifier.swipeable(
-                                state = swipeableState,
-                                anchors = mapOf(
-                                    0f to SwipeDirection.NEUTRAL,
-                                    -1f to SwipeDirection.UP
-                                ),
-                                thresholds = { _, _ -> FractionalThreshold(0.3f) },
-                                orientation = Orientation.Vertical,
-                            )
-                        } else {
-                            Modifier
-                        }
-                    ),
+                modifier = Modifier,
+//                    .then(
+//                        if (pagerIdx == 0 /* && showMemoriesReel */) {
+//                            Modifier.swipeable(
+//                                state = swipeableState,
+//                                anchors = mapOf(
+//                                    0f to SwipeDirection.NEUTRAL,
+//                                    -1f to SwipeDirection.UP
+//                                ),
+//                                thresholds = { _, _ -> FractionalThreshold(0.3f) },
+//                                orientation = Orientation.Vertical,
+//                            )
+//                        } else {
+//                            Modifier
+//                        }
+//                    )
                 selectedReaction = selectedReaction,
                 clearSelectedReaction = clearSelectedReactions,
                 isReactionsClickable = { isClickable ->
@@ -128,7 +125,7 @@ fun FoodSNAPSPager(
                 FoodSNAPSPage(
                     index = pagerIdx,
                     storyListData = storyListData,
-                    showMemoriesReel = showMemoriesReel,
+                    //showMemoriesReel = showMemoriesReel,
                     selectReaction = selectReaction,
                     reactionsClickable = isReactionsClickable
                 )
