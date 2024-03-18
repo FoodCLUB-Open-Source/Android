@@ -173,6 +173,7 @@ fun QuantityPicker(
 
                 } else {
                     quantity = ""
+                    textError = TextError.NONE
                 }
             },
             decorationBox = {
@@ -219,7 +220,11 @@ fun QuantityPicker(
                 .fillMaxWidth()
                 .height(dimensionResource(id = R.dimen.dim_40)))
 
-        Box(modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_16)))
+        Box(modifier = Modifier
+            .padding(bottom = dimensionResource(id = R.dimen.dim_5))
+            .height(
+                dimensionResource(id = R.dimen.dim_20)
+            ))
         {
             if (isError && textError != TextError.NONE) {
                 if (textError == TextError.OVERFLOW) {
