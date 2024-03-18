@@ -203,7 +203,7 @@ fun SingleSearchIngredientItem(
     val unit = stringResource(id = R.string.gram_unit)
     val quantity = itemQuantity(item, unit)
     val expirationDate = itemExpirationDate(item)
-    var isItemAdded = userIngredientsList.filter { item.id == it.id }.size == 1
+    var isItemAdded = userIngredientsList.any { item.id == it.id }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
