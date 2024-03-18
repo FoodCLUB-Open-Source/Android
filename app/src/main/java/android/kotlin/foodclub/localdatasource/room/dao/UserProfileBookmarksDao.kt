@@ -1,26 +1,35 @@
 package android.kotlin.foodclub.localdatasource.room.dao
 
-import android.kotlin.foodclub.localdatasource.room.entity.OfflineUserBookmarksModel
+import android.kotlin.foodclub.localdatasource.room.entity.ProfileBookmarksEntity
+import androidx.paging.PagingSource
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserProfileBookmarksDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertBookmarkedVideosData(videos: List<OfflineUserBookmarksModel>)
+    @Upsert
+    suspend fun insertBookmarkedVideosData(videos: List<ProfileBookmarksEntity>)
 
-    @Query("SELECT * FROM user_bookmarks where videoId=:id")
-    fun getBookmarkedVideosData(id: Long): Flow<OfflineUserBookmarksModel>
+    @Query("SELECT * FROM profile_bookmarked_posts where videoId=:id")
+    fun getBookmarkedVideosData(id: Long): Flow<ProfileBookmarksEntity>
+
+    @Query("SELECT * FROM profile_bookmarked_posts where bookmarkedBy=:bookmarkedBy")
+    fun pagingSource(bookmarkedBy: Long): PagingSource<Int, ProfileBookmarksEntity>
+
+    @Query("SELECT COUNT(*) FROM profile_bookmarked_posts")
+    fun countRows(): Flow<Int>
 
     @Update
-    suspend fun updateBookmarkedVideosData(videosModel: OfflineUserBookmarksModel)
+    suspend fun updateBookmarkedVideosData(videosModel: ProfileBookmarksEntity)
 
-    @Query("SELECT * FROM user_bookmarks")
-    fun getAllBookmarkedVideosData(): Flow<List<OfflineUserBookmarksModel>>
+    @Query("SELECT * FROM profile_bookmarked_posts")
+    fun getAllBookmarkedVideosData(): Flow<List<ProfileBookmarksEntity>>
+
+    @Query("DELETE FROM profile_bookmarked_posts where bookmarkedBy=:userId")
+    fun clearAllForBookmarkedBy(userId: Long)
 
 }

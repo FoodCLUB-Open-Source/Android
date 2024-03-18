@@ -1,13 +1,13 @@
 package android.kotlin.foodclub.network.retrofit.dtoMappers.profile
 
-import android.kotlin.foodclub.localdatasource.room.entity.OfflineProfileModel
+import android.kotlin.foodclub.localdatasource.room.entity.ProfileEntity
 import android.kotlin.foodclub.network.retrofit.dtoModels.profile.UserProfileDto
 import android.kotlin.foodclub.network.retrofit.utils.DomainMapper
 
-class LocalDataMapper : DomainMapper<UserProfileDto, OfflineProfileModel> {
-    override fun mapToDomainModel(entity: UserProfileDto): OfflineProfileModel {
-        return OfflineProfileModel(
-            userId = null,
+class LocalDataMapper : DomainMapper<UserProfileDto, ProfileEntity> {
+    override fun mapToDomainModel(entity: UserProfileDto): ProfileEntity {
+        return ProfileEntity(
+            userId = 0,
             userName = entity.username,
             profilePicture = entity.profilePictureUrl,
             totalUserFollowers = entity.totalUserFollowers,
@@ -16,7 +16,7 @@ class LocalDataMapper : DomainMapper<UserProfileDto, OfflineProfileModel> {
         )
     }
 
-    override fun mapFromDomainModel(domainModel: OfflineProfileModel): UserProfileDto {
+    override fun mapFromDomainModel(domainModel: ProfileEntity): UserProfileDto {
         return UserProfileDto(
             username = domainModel.userName,
             profilePictureUrl = domainModel.profilePicture,

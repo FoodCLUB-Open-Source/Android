@@ -10,7 +10,6 @@ import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.SignUpUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.FollowerUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.FollowingUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserDetailsMapper
-import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserProfileMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.recipes.RecipeMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.stories.StoryMapper
 import android.kotlin.foodclub.network.retrofit.services.BookmarksService
@@ -31,13 +30,12 @@ import android.kotlin.foodclub.repositories.StoryRepository
 import android.kotlin.foodclub.localdatasource.localdatasource.user_details_local_datasource.UserDetailsLocalDataSource
 import android.kotlin.foodclub.localdatasource.localdatasource.profile_posts_local_datasource.ProfilePostsLocalDataSource
 import android.kotlin.foodclub.localdatasource.localdatasource.profile_local_datasource.ProfileLocalDataSource
+import android.kotlin.foodclub.localdatasource.room.dao.UserProfilePostsDao
+import android.kotlin.foodclub.localdatasource.room.database.FoodCLUBDatabase
 import android.kotlin.foodclub.network.remotedatasource.profile_remote_datasource.ProfileRemoteDataSource
 import android.kotlin.foodclub.network.remotedatasource.settings_remote_datasource.SettingsRemoteDataSource
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.LocalDataMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.OfflineProfileDataMapper
-import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.SharedVideoMapper
-import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserLocalBookmarksMapper
-import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserLocalPostsMapper
 import android.kotlin.foodclub.utils.helpers.ConnectivityUtils
 import dagger.Module
 import dagger.Provides
@@ -53,14 +51,10 @@ object RepositoriesModule {
     fun provideProfileRepository(
         profileRemoteDataSource: ProfileRemoteDataSource,
         profileLocalDataSource: ProfileLocalDataSource,
-        profileVideosDataLocalSource: ProfilePostsLocalDataSource,
+        profilePostsLocalDataSource: ProfilePostsLocalDataSource,
         profileBookmarkedLocalDataSource: ProfileBookmarkedLocalDataSource,
         localDataMapper: LocalDataMapper,
-        userLocalPostsMapper: UserLocalPostsMapper,
-        userLocalBookmarksMapper: UserLocalBookmarksMapper,
-        profileMapper: UserProfileMapper,
-        userPostsMapper: PostToVideoMapper,
-        sharedVideoMapper: SharedVideoMapper,
+        foodCLUBDatabase: FoodCLUBDatabase,
         offlineProfileMapper: OfflineProfileDataMapper,
         followerUserMapper: FollowerUserMapper,
         followingUserMapper: FollowingUserMapper
@@ -68,14 +62,10 @@ object RepositoriesModule {
         return ProfileRepository(
             profileRemoteDataSource,
             profileLocalDataSource,
-            profileVideosDataLocalSource,
+            profilePostsLocalDataSource,
             profileBookmarkedLocalDataSource,
             localDataMapper,
-            userLocalPostsMapper,
-            userLocalBookmarksMapper,
-            sharedVideoMapper,
-            profileMapper,
-            userPostsMapper,
+            foodCLUBDatabase,
             offlineProfileMapper,
             followerUserMapper,
             followingUserMapper
@@ -85,9 +75,11 @@ object RepositoriesModule {
     @Provides
     @Singleton
     fun providePostRepository(
-        api: PostsService, postToVideoMapper: PostToVideoMapper
+        api: PostsService,
+        postToVideoMapper: PostToVideoMapper,
+        userProfilePostsDao: UserProfilePostsDao
     ): PostRepository {
-        return PostRepository(api, postToVideoMapper)
+        return PostRepository(api, postToVideoMapper, userProfilePostsDao)
     }
 
     @Provides

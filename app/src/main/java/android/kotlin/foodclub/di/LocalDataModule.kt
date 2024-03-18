@@ -7,7 +7,7 @@ import android.kotlin.foodclub.localdatasource.room.dao.UserProfilePostsDao
 import android.kotlin.foodclub.localdatasource.localdatasource.user_details_local_datasource.UserDetailsLocalDataSource
 import android.kotlin.foodclub.localdatasource.localdatasource.profile_posts_local_datasource.ProfilePostsLocalDataSource
 import android.kotlin.foodclub.localdatasource.localdatasource.user_details_local_datasource.UserDetailsLocalDataSourceImpl
-import android.kotlin.foodclub.localdatasource.localdatasource.profile_posts_local_datasource.ProfileVideosLocalDataSourceImpl
+import android.kotlin.foodclub.localdatasource.localdatasource.profile_posts_local_datasource.ProfilePostsLocalDataSourceImpl
 import android.kotlin.foodclub.localdatasource.localdatasource.profile_local_datasource.ProfileLocalDataSource
 import android.kotlin.foodclub.localdatasource.localdatasource.profile_local_datasource.ProfileLocalDataSourceImpl
 import android.kotlin.foodclub.localdatasource.room.dao.ProfileDataDao
@@ -31,7 +31,7 @@ class LocalDataModule {
     @Singleton
     @Provides
     fun provideProfilePostsLocalDataSource(userProfileVideosDao: UserProfilePostsDao): ProfilePostsLocalDataSource {
-        return ProfileVideosLocalDataSourceImpl(userProfileVideosDao)
+        return ProfilePostsLocalDataSourceImpl(userProfileVideosDao)
     }
 
     @Singleton

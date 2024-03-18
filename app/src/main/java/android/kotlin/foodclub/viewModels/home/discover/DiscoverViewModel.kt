@@ -38,6 +38,7 @@ class DiscoverViewModel @Inject constructor(
     private val productsRepo: ProductRepository,
     private val sessionCache: SessionCache,
     private val myBasketCache: MyBasketCache,
+    private val videoMapper: SharedVideoMapper,
     val exoPlayer: ExoPlayer
 ) : ViewModel(), DiscoverEvents {
 

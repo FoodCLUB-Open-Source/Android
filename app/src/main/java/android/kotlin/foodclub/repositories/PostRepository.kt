@@ -2,6 +2,7 @@ package android.kotlin.foodclub.repositories
 
 import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorResponse
 import android.kotlin.foodclub.domain.models.home.VideoModel
+import android.kotlin.foodclub.localdatasource.room.dao.UserProfilePostsDao
 import android.kotlin.foodclub.network.retrofit.services.PostsService
 import android.kotlin.foodclub.network.retrofit.dtoMappers.posts.PostToVideoMapper
 import android.kotlin.foodclub.network.retrofit.responses.posts.DeletePostResponse
@@ -13,7 +14,8 @@ import android.kotlin.foodclub.utils.helpers.Resource
 
 class PostRepository(
     private val api: PostsService,
-    private val postToVideoMapper: PostToVideoMapper
+    private val postToVideoMapper: PostToVideoMapper,
+    private val userProfilePostsDao: UserProfilePostsDao
 ) {
 
     suspend fun getPost(id: Long): Resource<VideoModel, DefaultErrorResponse> {
@@ -86,6 +88,8 @@ class PostRepository(
             }
         ) {
             is Resource.Success -> {
+                userProfilePostsDao.deletePost(id)
+
                 Resource.Success(
                     resource.data!!.body()?.status == "Post Deleted"
                 )
