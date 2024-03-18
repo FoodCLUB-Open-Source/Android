@@ -46,7 +46,7 @@ fun ForgotPasswordView(
                     onEmailChange(it)
                     initialEmailCorrectnessState = false
                 },
-                textValidation = true,
+                textValidation = false,
                 validationMethod = { text -> FieldsValidation.checkEmail(text) })
 
             ConfirmButton(

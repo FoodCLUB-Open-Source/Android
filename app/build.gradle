@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'androidx.room'
     id 'com.google.relay' version '0.3.02'
     id 'com.google.devtools.ksp'
     id 'dagger.hilt.android.plugin'
@@ -50,6 +51,10 @@ android {
     }
 }
 
+room {
+    schemaDirectory "$projectDir/schemas"
+}
+
 dependencies {
 
     // AndroidX Core and Lifecycle Dependencies
@@ -75,11 +80,16 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation "androidx.compose.material:material:1.5.4"
 
+    //Paging
+    implementation "androidx.paging:paging-runtime-ktx:3.2.1"
+    implementation "androidx.paging:paging-compose:3.3.0-alpha03"
+
     // Room Database
     implementation("androidx.room:room-runtime:2.6.1")
     annotationProcessor("androidx.room:room-compiler:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
+    implementation("androidx.room:room-paging:2.6.1")
 
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:32.7.2"))

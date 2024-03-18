@@ -30,7 +30,7 @@ fun GridItem(
     brush: Brush,
     isInternetConnected:Boolean,
     dataItem: VideoModel,
-    triggerShowDeleteRecipe: (Long) -> Unit
+    triggerShowDeleteRecipe: () -> Unit
 ){
     val thumbnailPainter = rememberAsyncImagePainter(dataItem.thumbnailLink)
 
@@ -57,7 +57,7 @@ fun GridItem(
                 modifier = Modifier
                     .fillMaxSize()
                     .clickable {
-                        triggerShowDeleteRecipe(dataItem.videoId)
+                        triggerShowDeleteRecipe()
                     }
             )
         }
