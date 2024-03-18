@@ -61,7 +61,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.sp
-import androidx.core.text.isDigitsOnly
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
@@ -91,6 +90,10 @@ fun QuantityPicker(
     var isError by remember {
         mutableStateOf(false)
     }
+    var textError by remember {
+        mutableStateOf(TextError.NONE)
+    }
+
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val lightGrayAlpha = 0.2f
@@ -142,6 +145,8 @@ fun QuantityPicker(
             modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_16))
         )
 
+
+
         BasicTextField(
             value = quantity,
             onValueChange = {
@@ -157,6 +162,13 @@ fun QuantityPicker(
 
                     } else {
                         isError = true
+
+                        textError = if (newText.toBigIntegerOrNull() == null) {
+                            TextError.INVALID
+                        } else {
+                            TextError.OVERFLOW
+                        }
+
                     }
 
                 } else {
@@ -197,10 +209,7 @@ fun QuantityPicker(
                     contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_8))
                 )
             },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Done
-            ),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(
                 onDone = {
                     keyboardController?.hide()
@@ -212,8 +221,8 @@ fun QuantityPicker(
 
         Box(modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_16)))
         {
-            if (isError) {
-                if (quantity.isDigitsOnly()) {
+            if (isError && textError != TextError.NONE) {
+                if (textError == TextError.OVERFLOW) {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         text = stringResource(id = R.string.quantity_overflow_error_message),
@@ -285,6 +294,13 @@ fun QuantityPicker(
         }
 
     }
+}
+
+enum class TextError{
+    OVERFLOW,
+    INVALID,
+    NEGATIVE,
+    NONE
 }
 
 @Composable
