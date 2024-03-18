@@ -114,7 +114,6 @@ fun RecordingClipsButton(
             progressUpdate(progress)
             clipUpdate(false)
         }
-
     }
 
 
@@ -124,10 +123,9 @@ fun RecordingClipsButton(
         modifier = Modifier.size(dimensionResource(id = R.dimen.dim_80))
     ) {
 
-        Canvas(modifier = Modifier.fillMaxSize())
-        {
+        Canvas(modifier = Modifier.fillMaxSize()) {
             drawArc(
-                color = transparentWhite,
+                color = Color.White,
                 startAngle = -90f,
                 sweepAngle = 360f,
                 useCenter = false,
@@ -144,8 +142,7 @@ fun RecordingClipsButton(
 
         )
 
-        Canvas(modifier = Modifier.fillMaxSize())
-        {
+        Canvas(modifier = Modifier.fillMaxSize()) {
             clipArcs.forEach {
                 drawArc(
                     color = Color.White,
@@ -158,8 +155,9 @@ fun RecordingClipsButton(
 
         }
 
-        Canvas(modifier = Modifier.size(dimensionResource(id = R.dimen.dim_60)
-        )) {
+        Canvas(
+            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_60))
+        ) {
             drawCircle(color = darkGrey)
         }
 

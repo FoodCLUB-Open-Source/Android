@@ -70,8 +70,7 @@ fun BottomSheet(
                 text = stringResource(id = R.string.create_a_story),
                 onDismiss = onDismiss,
                 onClick = {
-                    navController.navigate(route = "CAMERA_VIEW" + "/${"story".encodeUtf8()}")
-                    //onDismiss()
+                    navController.navigate(route = CreateRecipeScreen.VideoEditor.route)
                 }
 
             )
@@ -80,9 +79,7 @@ fun BottomSheet(
                 text = stringResource(id = R.string.create_a_recipe),
                 onDismiss = onDismiss,
                 onClick = {
-//                    navController.navigate("VIDEOTRIMMER")
-                    navController.navigate(route = CreateRecipeScreen.VideoEditor.route)
-                    //onDismiss()
+                    navController.navigate(route = "CAMERA_VIEW" + "/${"story".encodeUtf8()}")
                 }
             )
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_25)))
