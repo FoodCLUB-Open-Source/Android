@@ -35,6 +35,7 @@ class TrimmerViewModel @Inject constructor(
         get() = _state
 
     init {
+        Log.i("MYTAG", "TrimmerViewModel initialized")
         player.addListener(
             object : Player.Listener {
                 override fun onTimelineChanged(timeline: Timeline, reason: Int) {
@@ -44,9 +45,13 @@ class TrimmerViewModel @Inject constructor(
         )
         player.prepare()
 
-        addVideoUri(Uri.parse("https://kretu.sts3.pl/test/IMG_6105.MP4"))
-        addVideoUri(Uri.parse("https://kretu.sts3.pl/test/IMG_6106.MP4"))
-        addVideoUri(Uri.parse("https://kretu.sts3.pl/test/IMG_6107.MP4"))
+        addVideoUri(Uri.parse("file:///storage/emulated/0/Android/data/android.kotlin.foodclub/cache/FoodClub/2024-03-19-21-27-21-252.mp4"))
+        addVideoUri(Uri.parse("file:///storage/emulated/0/Android/data/android.kotlin.foodclub/cache/FoodClub/2024-03-19-21-27-21-252.mp4"))
+        addVideoUri(Uri.parse("file:///storage/emulated/0/Android/data/android.kotlin.foodclub/cache/FoodClub/2024-03-19-21-27-21-252.mp4"))
+        addVideoUri(Uri.parse("file:///storage/emulated/0/Android/data/android.kotlin.foodclub/cache/FoodClub/2024-03-19-21-27-21-252.mp4"))
+    }
+    fun setVideoUris(uris: List<Uri>) {
+        _state.value = _state.value.copy(passedVideoUris = uris)
     }
 
     fun setOnVideoCreateFunction(onVideoCreate: (String?) -> Unit = {}) {

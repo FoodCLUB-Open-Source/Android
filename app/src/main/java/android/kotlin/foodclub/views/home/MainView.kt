@@ -79,7 +79,7 @@ fun BottomSheet(
                 text = stringResource(id = R.string.create_a_recipe),
                 onDismiss = onDismiss,
                 onClick = {
-                    navController.navigate(route = "CAMERA_VIEW" + "/${"story".encodeUtf8()}")
+                    navController.navigate(route = CreateRecipeScreen.CameraView.route)
                 }
             )
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_25)))

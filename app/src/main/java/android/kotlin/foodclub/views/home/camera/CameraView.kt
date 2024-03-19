@@ -8,12 +8,12 @@ import android.graphics.Bitmap
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.confirmScreenColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.navigation.CreateRecipeScreen
 import android.kotlin.foodclub.utils.composables.PermissionErrorBox
 import android.kotlin.foodclub.utils.composables.engine.createVideoCaptureUseCase
 import android.kotlin.foodclub.utils.composables.engine.startRecordingVideo
 import android.kotlin.foodclub.viewModels.home.camera.CameraEvents
 import android.kotlin.foodclub.viewModels.home.camera.StopWatchEvent
-import android.kotlin.foodclub.views.home.gallery.GalleryType
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -78,7 +78,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.delay
 import okio.ByteString.Companion.encodeUtf8
 import java.io.File
@@ -86,12 +85,11 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CameraView(
     events: CameraEvents,
     navController: NavController,
-    stateEncoded: String,
     state: CameraState
 ) {
 
@@ -99,13 +97,6 @@ fun CameraView(
     val lifecycleOwner = LocalLifecycleOwner.current
 
     var stateString = ""
-
-    if (stateEncoded.contains(GalleryType.STORY.state)) {
-        stateString = GalleryType.STORY.state
-    }
-    if (stateEncoded.contains(GalleryType.RECIPE.state)) {
-        stateString = GalleryType.RECIPE.state
-    }
 
 //    val permissionState = rememberMultiplePermissionsState(
 //        permissions = listOf(
@@ -146,7 +137,7 @@ fun CameraView(
     val interactionSource = remember { MutableInteractionSource() }
 
     val uris = remember {
-        mutableStateListOf<String>()
+        mutableStateListOf<Uri>()
     }
 
     val (addClip, clipUpdate) = rememberSaveable {
@@ -382,7 +373,7 @@ fun CameraView(
                                                     //navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
                                                     //navController.navigate("GALLERY_VIEW/${uriEncoded}")
                                                     clipUpdate(true)
-                                                    uris.add(uriEncoded)
+                                                    uris.add(uri)
                                                 }
                                             }
                                         }
@@ -573,7 +564,13 @@ fun CameraView(
                         }
 
                         Button(
-                            onClick = { /*TODO*/ },
+                            onClick = {
+                                val mutableUriList: MutableList<Uri> = mutableListOf<Uri>().apply {
+                                    addAll(uris)
+                                }
+                                navController.currentBackStackEntry?.savedStateHandle?.set("videoUris", mutableUriList)
+                                navController.navigate(CreateRecipeScreen.VideoEditor.route)
+                            },
                             colors = ButtonDefaults.buttonColors(foodClubGreen),
                             shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
                             contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_0)),
