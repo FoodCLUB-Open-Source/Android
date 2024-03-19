@@ -344,7 +344,6 @@
         <item>Categories</item>
         <item>World</item>
     </string-array>
-
     <string name="see_all_ingredients">See all ingredients</string>
     <string name="search_for">Search for recipes, usernames…</string>
     <string name="my_kitchen">My Kitchen</string>
