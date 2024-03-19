@@ -73,11 +73,11 @@ fun HomeIngredient(
             )
             .border(
                 dimensionResource(id = R.dimen.dim_1),
-                colorResource(id = R.color.home_ingredient_box_border_color),
+                color = colorResource(id = R.color.home_ingredient_background_color),
                 RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
             )
             .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
-            .background(Color.White)
+            .background(color = colorResource(id = R.color.home_ingredient_background_color))
             .padding(dimensionResource(id = R.dimen.dim_10))
     ) {
         val ingredientImage = if (ingredient.imageUrl == "") {
@@ -102,7 +102,7 @@ fun HomeIngredient(
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_30)))
                 .background(
                     if (isSelected) foodClubGreen
-                    else colorResource(id = R.color.home_ingredient_button_white_color)
+                    else colorResource(id = R.color.home_ingredient_unselected_tick_color)
                 )
                 .clickable {
                     isSelected = !isSelected
@@ -115,7 +115,9 @@ fun HomeIngredient(
                 painter = painterResource(id = R.drawable.check),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
+                colorFilter = ColorFilter.tint(color = colorResource(id = R.color.home_ingredient_background_color))
             )
+
         }
         Box(
             modifier = Modifier

@@ -78,7 +78,7 @@ fun HomeBottomSheetIngredients(
         }
     }
     ModalBottomSheet(
-        containerColor = Color.White,
+        containerColor = Color(0xFF2A2A2A),
         onDismissRequest = { onDismiss() },
         sheetState = bottomSheetState,
         dragHandle = { BottomSheetDefaults.DragHandle() },
@@ -108,12 +108,12 @@ fun HomeBottomSheetIngredients(
                     ) {
                         Text(
                             stringResource(id = R.string.example_recipe),
-                            color = Color.Black,
+                            color = Color.White,
                             fontFamily = Montserrat,
                             fontSize = if (isSmallScreen) dimensionResource(id = R.dimen.dim_18).value.sp else dimensionResource(
                                 id = R.dimen.dim_22
                             ).value.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.SemiBold
                         )
                     }
                     Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_16)))
@@ -158,7 +158,7 @@ fun HomeBottomSheetIngredients(
                     ) {
                         Text(
                             stringResource(id = R.string.serving_size),
-                            color = Color.Black,
+                            color = Color.White,
                             fontFamily = Montserrat,
                             fontSize = if (isSmallScreen) dimensionResource(id = R.dimen.dim_14).value.sp else dimensionResource(
                                 id = R.dimen.dim_17
@@ -250,7 +250,7 @@ fun HomeBottomSheetIngredients(
                         modifier = Modifier
                             .border(
                                 dimensionResource(id = R.dimen.dim_1),
-                                Color(126, 198, 11),
+                                foodClubGreen,
                                 RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                             )
                             .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
@@ -342,7 +342,7 @@ fun IngredientsSection(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            stringResource(id = R.string.ingredients), color = Color.Black,
+            stringResource(id = R.string.ingredients), color = foodClubGreen,
             fontFamily = Montserrat,
             fontSize = if (isSmallScreen) dimensionResource(id = R.dimen.dim_13).value.sp else dimensionResource(
                 id = R.dimen.dim_16
@@ -376,7 +376,7 @@ fun IngredientsSection(
                 fontSize = if (isSmallScreen) dimensionResource(id = R.dimen.dim_13).value.sp else dimensionResource(
                     id = R.dimen.dim_16
                 ).value.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Normal
             )
         }
 
