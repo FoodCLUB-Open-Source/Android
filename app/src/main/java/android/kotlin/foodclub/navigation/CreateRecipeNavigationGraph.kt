@@ -5,12 +5,12 @@ import android.kotlin.foodclub.viewModels.home.camera.CameraViewModel
 import android.kotlin.foodclub.viewModels.home.create.TrimmerViewModel
 import android.kotlin.foodclub.viewModels.home.createRecipe.CreateRecipeViewModel
 import android.kotlin.foodclub.views.home.camera.CameraView
-import android.kotlin.foodclub.views.home.createRecipe.TrimmerView
 import android.kotlin.foodclub.views.home.createRecipe.CreateRecipeView
+import android.kotlin.foodclub.views.home.createRecipe.TrimmerView
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
@@ -49,8 +49,9 @@ fun NavGraphBuilder.createRecipeNavigationGraph(
             }
             setBottomBarVisibility(false)
             val videoUris = navController.previousBackStackEntry?.savedStateHandle?.get<MutableMap<Int, Uri>>("videoUris")
-            Log.i("MYTAG","uris $videoUris")
-            viewModel.setVideoUris(videoUris)
+            LaunchedEffect(videoUris){
+                viewModel.setVideoUris(videoUris)
+            }
             TrimmerView(state = state.value, events = viewModel)
         }
 
