@@ -48,11 +48,12 @@ fun NavGraphBuilder.createRecipeNavigationGraph(
                 navController.navigate(CreateRecipeScreen.PostDetails.route + "?videoPath=$it")
             }
             setBottomBarVisibility(false)
-            val videoUris = navController.previousBackStackEntry?.savedStateHandle?.get<List<Uri>>("videoUris")
-            Log.i("MYTAG","$videoUris")
-            
+            val videoUris = navController.previousBackStackEntry?.savedStateHandle?.get<MutableMap<Int, Uri>>("videoUris")
+            Log.i("MYTAG","uris $videoUris")
+            viewModel.setVideoUris(videoUris)
             TrimmerView(state = state.value, events = viewModel)
         }
+
         composable(
             route = CreateRecipeScreen.PostDetails.route + "?videoPath={videoPath}",
             arguments = listOf(navArgument("videoPath") {

@@ -565,10 +565,13 @@ fun CameraView(
 
                         Button(
                             onClick = {
-                                val mutableUriList: MutableList<Uri> = mutableListOf<Uri>().apply {
-                                    addAll(uris)
+                                val mutableUriMap: MutableMap<Int, Uri> = mutableMapOf()
+
+                                uris.forEachIndexed { index, uri ->
+                                    mutableUriMap[index] = uri
                                 }
-                                navController.currentBackStackEntry?.savedStateHandle?.set("videoUris", mutableUriList)
+
+                                navController.currentBackStackEntry?.savedStateHandle?.set("videoUris", mutableUriMap)
                                 navController.navigate(CreateRecipeScreen.VideoEditor.route)
                             },
                             colors = ButtonDefaults.buttonColors(foodClubGreen),

@@ -6,7 +6,7 @@ import androidx.media3.exoplayer.ExoPlayer
 
 data class TrimmerState(
     val videoObjects: List<TrimmedVideo>,
-    var passedVideoUris: List<Uri>?,
+    var passedVideoUris: MutableMap<Int, Uri>?,
     val player: ExoPlayer,
     val isLoading: Boolean
 ) {
@@ -14,7 +14,7 @@ data class TrimmerState(
     companion object {
         fun default(player: ExoPlayer) = TrimmerState(
             videoObjects = listOf(),
-            passedVideoUris = emptyList(),
+            passedVideoUris = mutableMapOf(),
             player = player,
             isLoading = false
         )
