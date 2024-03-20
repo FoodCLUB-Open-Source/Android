@@ -412,7 +412,11 @@ fun RecommandationSection(
         )
     }
 }
-// discover view basket
+
+/* This is the discover view basket icon from the old design that
+ navigate the user to MyBasketView. There is some proposal designs
+ in FIGMA still keep it, so It might be used in the future. */
+
 //        Button(
 //            shape = RoundedCornerShape(corner = CornerSize(dimensionResource(id = R.dimen.dim_25))),
 //            modifier = Modifier
@@ -519,25 +523,26 @@ fun DiscoverViewHeader(
 
             Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_10)))
 
-            Button(
-                shape = RoundedCornerShape(corner = CornerSize(dimensionResource(id = R.dimen.dim_25))),
-                modifier = Modifier
-                    .height(dimensionResource(id = R.dimen.dim_56))
-                    .width(dimensionResource(id = R.dimen.dim_56)),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(id = R.color.discover_view_basket_icon_container_color),
-                ),
-                contentPadding = PaddingValues(),
-                onClick = {
-                    //navController.navigate("ScanView_route")
-                }
-            ) {
-                Icon(
-                    painterResource(id = R.drawable.camera_icon),
-                    contentDescription = stringResource(id = R.string.scan_my_fridge),
-                    tint = Color.Black
-                )
-            }
+//            The function is not used on the MVP version
+//            Button(
+//                shape = RoundedCornerShape(corner = CornerSize(dimensionResource(id = R.dimen.dim_25))),
+//                modifier = Modifier
+//                    .height(dimensionResource(id = R.dimen.dim_56))
+//                    .width(dimensionResource(id = R.dimen.dim_56)),
+//                colors = ButtonDefaults.buttonColors(
+//                    containerColor = colorResource(id = R.color.discover_view_basket_icon_container_color),
+//                ),
+//                contentPadding = PaddingValues(),
+//                onClick = {
+//                    //navController.navigate("ScanView_route")
+//                }
+//            ) {
+//                Icon(
+//                    painterResource(id = R.drawable.camera_icon),
+//                    contentDescription = stringResource(id = R.string.scan_my_fridge),
+//                    tint = Color.Black
+//                )
+//            }
         }
     }
 }
