@@ -9,7 +9,9 @@ enum class Category(val displayName: String, val categoryType: CategoryType) {
     FAT_REDUCTION("Fat-reduction", CategoryType.DIET),
     ITALIAN("Italian", CategoryType.CUISINE),
     CHINESE("Chinese", CategoryType.CUISINE),
-    VEGETARIAN("Vegetarian", CategoryType.CUISINE);
+    VEGETARIAN("Vegetarian", CategoryType.DIET),
+    JAPANESE("Japanese", CategoryType.CUISINE),
+    MEXICAN("Mexican", CategoryType.CUISINE);
 
     companion object {
         fun deriveFromName(name: String): Category? {
@@ -26,9 +28,4 @@ enum class Category(val displayName: String, val categoryType: CategoryType) {
             }
         }
     }
-}
-
-enum class CategoryType{
-    DIET,
-    CUISINE
 }
