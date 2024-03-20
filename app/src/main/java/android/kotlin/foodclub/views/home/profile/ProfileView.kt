@@ -338,7 +338,7 @@ fun ProfileView(
                 }
             }
 
-            if (state.profileUserId == 0L && showBottomSheet) {
+            if (state.sessionUserId == state.profileUserId && showBottomSheet) {
                 CustomBottomSheet(
                     itemList = listOf(
                         BottomSheetItem(
@@ -389,15 +389,11 @@ fun TopProfileLayout(
         horizontalArrangement = Arrangement.Center
     ) {
         Box(
-            modifier = if (state.profileUserId == 0L) {
-                Modifier.clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                ) {
-                    onProfilePhotoClick()
-                }
-            } else {
-                Modifier
+            Modifier.clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
+                onProfilePhotoClick()
             }
         ) {
             AsyncImage(
