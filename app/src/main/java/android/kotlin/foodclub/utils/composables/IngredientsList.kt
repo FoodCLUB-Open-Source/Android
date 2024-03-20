@@ -159,15 +159,13 @@ fun IngredientsListColumn(
                         item = item,
                         userIngredientsList = userIngredientsList,
                         onEditQuantityClicked = {
-                            events.updateIngredient(it)
                             onEditQuantityClicked(item)
                         },
                         onDateClicked = {
-                            events.updateIngredient(it)
                             onDateClicked(item)
                         },
                         onAddItemClicked = {
-                            onIngredientAdd(item)
+                            onIngredientAdd(it)
                         },
                         onDeleteIngredient = {
                             onDeleteIngredient(it)
@@ -201,8 +199,20 @@ fun SingleSearchIngredientItem(
     actionType: ActionType
 ) {
     val unit = stringResource(id = R.string.gram_unit)
-    val quantity = itemQuantity(item, unit)
-    val expirationDate = itemExpirationDate(item)
+    val quantity: String
+    val expirationDate: String
+    val itemSearched = userIngredientsList.find { item.id == it.id }
+    if (itemSearched != null)
+    {
+        quantity = itemQuantity(itemSearched, unit)
+        expirationDate = itemExpirationDate(itemSearched)
+    }
+    else
+    {
+        quantity = itemQuantity(item, unit)
+        expirationDate = itemExpirationDate(item)
+    }
+
     var isItemAdded = userIngredientsList.any { item.id == it.id }
 
     Row(
