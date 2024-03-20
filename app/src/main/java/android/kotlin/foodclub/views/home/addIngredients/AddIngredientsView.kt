@@ -161,10 +161,36 @@ fun AddIngredientsView(
                     events = events,
                     productsList = state.productsData.productsList,
                     userIngredientsList = state.userIngredients,
-                    onEditQuantityClicked = {
+                    onEditQuantityClicked = {item ->
+                        val ingredient = state.userIngredients.find {it.id == item.id}
+                        if (ingredient != null)
+                        {
+                            events.updateIngredient(ingredient)
+                        }
+                        else
+                        {
+                            events.updateIngredient(item)
+                        }
+                        /*
+                        state.userIngredients.find {it.id == item.id}
+                            ?.let { it1 -> events.updateIngredient(it1) }
+                            */
                         isSheetOpen = true
                     },
-                    onDateClicked = {
+                    onDateClicked = {item ->
+                        val ingredient = state.userIngredients.find {it.id == item.id}
+                        if (ingredient != null)
+                        {
+                            events.updateIngredient(ingredient)
+                        }
+                        else
+                        {
+                            events.updateIngredient(item)
+                        }
+                        /*
+                        state.userIngredients.find {it.id == item.id}
+                            ?.let { it1 -> events.updateIngredient(it1) }
+                            */
                         isDatePickerVisible = true
                     },
                     onIngredientAdd = { ingredientToAdd->
