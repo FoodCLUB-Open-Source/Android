@@ -159,11 +159,9 @@ fun IngredientsListColumn(
                         item = item,
                         userIngredientsList = userIngredientsList,
                         onEditQuantityClicked = {
-                            //events.updateIngredient(it)
                             onEditQuantityClicked(item)
                         },
                         onDateClicked = {
-                            //events.updateIngredient(it)
                             onDateClicked(item)
                         },
                         onAddItemClicked = {

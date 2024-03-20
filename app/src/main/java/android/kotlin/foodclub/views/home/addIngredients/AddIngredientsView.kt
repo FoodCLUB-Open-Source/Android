@@ -171,10 +171,6 @@ fun AddIngredientsView(
                         {
                             events.updateIngredient(item)
                         }
-                        /*
-                        state.userIngredients.find {it.id == item.id}
-                            ?.let { it1 -> events.updateIngredient(it1) }
-                            */
                         isSheetOpen = true
                     },
                     onDateClicked = {item ->
@@ -187,10 +183,6 @@ fun AddIngredientsView(
                         {
                             events.updateIngredient(item)
                         }
-                        /*
-                        state.userIngredients.find {it.id == item.id}
-                            ?.let { it1 -> events.updateIngredient(it1) }
-                            */
                         isDatePickerVisible = true
                     },
                     onIngredientAdd = { ingredientToAdd->
