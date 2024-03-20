@@ -10,6 +10,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,10 +19,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -31,7 +34,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -57,6 +59,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
@@ -73,7 +76,7 @@ import kotlinx.coroutines.flow.map
 
 @OptIn(
     ExperimentalComposeUiApi::class,
-    ExperimentalFoundationApi::class
+    ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class
 )
 @Composable
 fun QuantityPicker(
@@ -87,6 +90,10 @@ fun QuantityPicker(
     var isError by remember {
         mutableStateOf(false)
     }
+    var textError by remember {
+        mutableStateOf(TextError.NONE)
+    }
+
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val lightGrayAlpha = 0.2f
@@ -116,7 +123,9 @@ fun QuantityPicker(
             }
     }
     Column(
-        modifier = Modifier.fillMaxSize().padding(dimensionResource(id = R.dimen.dim_6))
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(dimensionResource(id = R.dimen.dim_6))
     ) {
 
         Text(
@@ -136,71 +145,103 @@ fun QuantityPicker(
             modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_16))
         )
 
-        TextField(
+
+
+        BasicTextField(
             value = quantity,
             onValueChange = {
                 val newText = it.trim()
 
                 if (newText.isNotEmpty()) {
                     if (newText.toIntOrNull() != null &&
-                        newText.toInt() < Int.MAX_VALUE) {
+                        newText.toInt() < Int.MAX_VALUE
+                    ) {
 
                         quantity = newText
                         isError = false
 
                     } else {
                         isError = true
+
+                        textError = if (newText.toBigIntegerOrNull() == null) {
+                            TextError.INVALID
+                        } else {
+                            TextError.OVERFLOW
+                        }
+
                     }
 
                 } else {
                     quantity = ""
+                    textError = TextError.NONE
                 }
             },
-            isError = isError,
-            supportingText = if (!isError) null else {
-                {
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = stringResource(id = R.string.quantity_overflow_error_message),
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
+            decorationBox = {
+                TextFieldDefaults.DecorationBox(
+                    value = quantity,
+                    innerTextField = it,
+                    enabled = true,
+                    singleLine = false,
+                    visualTransformation = VisualTransformation.None,
+                    interactionSource = remember { MutableInteractionSource() },
+                    isError = isError,
+                    placeholder = {
+                        Text(stringResource(id = R.string.quantity), color = Color.Gray)
+                    },
+                    colors = TextFieldDefaults.colors(
+                        unfocusedContainerColor = Color.LightGray.copy(alpha = lightGrayAlpha),
+                        focusedContainerColor = Color.LightGray.copy(alpha = lightGrayAlpha),
+                        cursorColor = foodClubGreen,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                    ),
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
+                    trailingIcon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.outline_save_alt_24),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .clickable {
+
+                                }
+                                .size(dimensionResource(id = R.dimen.dim_20))
+                        )
+                    },
+                    contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_8))
+                )
             },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Done
-            ),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(
                 onDone = {
                     keyboardController?.hide()
                 }
             ),
-            placeholder = {
-                Text(stringResource(id = R.string.quantity), color = Color.Gray)
-            },
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = Color.LightGray.copy(alpha = lightGrayAlpha),
-                focusedContainerColor = Color.LightGray.copy(alpha = lightGrayAlpha),
-                cursorColor = foodClubGreen,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-            ),
-            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = dimensionResource(id = R.dimen.dim_16)),
-            trailingIcon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.outline_note_alt_24),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .clickable {
+                .height(dimensionResource(id = R.dimen.dim_40)))
 
-                        }
-                        .padding(dimensionResource(id = R.dimen.dim_8))
-                )
+        Box(modifier = Modifier
+            .padding(bottom = dimensionResource(id = R.dimen.dim_5))
+            .height(
+                dimensionResource(id = R.dimen.dim_20)
+            ))
+        {
+            if (isError && textError != TextError.NONE) {
+                if (textError == TextError.OVERFLOW) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(id = R.string.quantity_overflow_error_message),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                } else {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(id = R.string.invalid_quantity_error_message),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
             }
-        )
+        }
 
         onQuantityUnitSelected(
             if (quantity == "0" || quantity == "") 1 else quantity.toInt(),
@@ -258,6 +299,13 @@ fun QuantityPicker(
         }
 
     }
+}
+
+enum class TextError{
+    OVERFLOW,
+    INVALID,
+    NEGATIVE,
+    NONE
 }
 
 @Composable
