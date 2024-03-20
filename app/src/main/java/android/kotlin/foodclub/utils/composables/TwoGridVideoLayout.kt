@@ -26,7 +26,7 @@ fun RecommendationVideos(
     gridHeight: Dp,
     recommandationVideosCount: Int,
     navController: NavController,
-    dataItem: VideoModel?,
+    dataItem: List<VideoModel>?,
     userName: String?,
     brush: Brush = shimmerBrush(),
     isShowVideo: (Long) -> Unit
