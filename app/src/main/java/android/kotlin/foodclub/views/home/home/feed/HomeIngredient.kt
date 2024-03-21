@@ -1,24 +1,29 @@
 package android.kotlin.foodclub.views.home.home.feed
 
+import android.content.res.Configuration
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.domain.enums.QuantityUnit
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.utils.helpers.ValueParser
+import android.kotlin.foodclub.views.home.ui.theme.FoodClubTheme
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,9 +44,10 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 
 @Composable
 fun HomeIngredient(
@@ -64,118 +70,112 @@ fun HomeIngredient(
         isSmallScreen = true
     }
 
-    Box(
+    Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(
-                if (isSmallScreen) dimensionResource(id = R.dimen.dim_100) else
-                    dimensionResource(id = R.dimen.dim_130)
-            )
-            .border(
-                dimensionResource(id = R.dimen.dim_1),
-                color = colorResource(id = R.color.home_ingredient_background_color),
-                RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
-            )
-            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
-            .background(color = colorResource(id = R.color.home_ingredient_background_color))
-            .padding(dimensionResource(id = R.dimen.dim_10))
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)),
+        colors = CardDefaults.cardColors(
+            containerColor = colorResource(id = R.color.home_ingredient_section_background_color)
+        ),
     ) {
-        val ingredientImage = if (ingredient.imageUrl == "") {
-            R.drawable.salad_ingredient
-        } else ingredient.imageUrl
-        AsyncImage(
-            model = ingredientImage,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .height(dimensionResource(id = R.dimen.dim_110))
-                .width(
-                    if (isSmallScreen) dimensionResource(id = R.dimen.dim_85) else
-                        dimensionResource(id = R.dimen.dim_100)
-                )
-                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)))
-        )
-        Box(
-            modifier = Modifier // GREEN TICK
-                .size(dimensionResource(id = R.dimen.dim_35))
-                .align(Alignment.CenterEnd)
-                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_30)))
-                .background(
-                    if (isSelected) foodClubGreen
-                    else colorResource(id = R.color.home_ingredient_unselected_tick_color)
-                )
-                .clickable {
-                    isSelected = !isSelected
-                    ingredient.isSelected = !ingredient.isSelected
-                }
-                .padding(dimensionResource(id = R.dimen.dim_4)),
-            contentAlignment = Alignment.Center
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceAround
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.check),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                colorFilter = ColorFilter.tint(color = colorResource(id = R.color.home_ingredient_background_color))
+            val painter = rememberAsyncImagePainter(
+                model = ingredient.imageUrl,
+                placeholder = painterResource(
+                    id = R.drawable.salad_ingredient
+                ),
+                error  = painterResource(
+                    id = R.drawable.salad_ingredient
+                ),
             )
 
-        }
-        Box(
-            modifier = Modifier
-                .padding(
-                    start = if (isSmallScreen) dimensionResource(id = R.dimen.dim_90) else
-                        dimensionResource(id = R.dimen.dim_100),
-                    top = dimensionResource(id = R.dimen.dim_10)
-                )
-                .fillMaxSize()
-        ) {
-            Box(
+            Image(
+                painter = painter,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .width(dimensionResource(id = R.dimen.dim_115))
-                    .padding(start = dimensionResource(id = R.dimen.dim_10))
+                    .padding(vertical = dimensionResource(id = R.dimen.dim_12))
+                    .size(dimensionResource(id = R.dimen.dim_98))
+                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)))
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = ingredient.type,
-                    lineHeight = dimensionResource(id = R.dimen.fon_18).value.sp,
-                    modifier = Modifier
-                        .align(Alignment.TopStart),
-                    fontWeight = FontWeight.Normal,
-                    fontFamily = Montserrat,
-                    color = Color.Black,
-                )
-            }
-            Box(modifier = Modifier.align(Alignment.BottomStart)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Image(
-                        painter = painterResource(id = R.drawable.baseline_arrow_left_24),
-                        contentDescription = stringResource(id = R.string.profile_image),
-                        modifier = Modifier
-                            .size(dimensionResource(id = R.dimen.dim_50))
-                            .padding(end = dimensionResource(id = R.dimen.dim_15))
-                            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
-                            .clickable {
-                                ingredient.decrementQuantity((5 / quantityMultiplier).toInt())
-                                quantity = (quantityMultiplier * ingredient.quantity).toInt()
-                            },
-                        colorFilter = ColorFilter.tint(quantityIndicatorColor),
-                    )
+                Column(
+                    modifier = Modifier.padding(start = dimensionResource(id = R.dimen.dim_32)),
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.spacedBy(32.dp),
+                ) {
                     Text(
-                        quantity.toString() + ValueParser.quantityUnitToString(ingredient.unit),
-                        color = Color.Black,
+                        text = ingredient.type,
+                        lineHeight = dimensionResource(id = R.dimen.fon_18).value.sp,
+                        modifier = Modifier,
+                        fontWeight = FontWeight.Medium,
                         fontFamily = Montserrat,
-                        fontSize = dimensionResource(id = R.dimen.fon_14).value.sp
+                        color = Color.White,
                     )
+                    Row(
+                        modifier = Modifier,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.baseline_arrow_left_24),
+                            contentDescription = stringResource(id = R.string.profile_image),
+                            modifier = Modifier
+                                .clickable {
+                                    ingredient.decrementQuantity((5 / quantityMultiplier).toInt())
+                                    quantity = (quantityMultiplier * ingredient.quantity).toInt()
+                                },
+                            tint = quantityIndicatorColor,
+                        )
+                        Text(
+                            quantity.toString() + ValueParser.quantityUnitToString(ingredient.unit),
+                            color = Color.White,
+                            fontFamily = Montserrat,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = dimensionResource(id = R.dimen.fon_14).value.sp
+                        )
+                        Icon(
+                            painter = painterResource(id = R.drawable.baseline_arrow_right_24),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .clickable {
+                                    ingredient.incrementQuantity((5 / quantityMultiplier).toInt())
+                                    quantity = (quantityMultiplier * ingredient.quantity).toInt()
+                                },
+                            tint = quantityIndicatorColor,
+                        )
+                    }
+
+                }
+                Box(
+                    modifier = Modifier // GREEN TICK
+                        .size(dimensionResource(id = R.dimen.dim_35))
+                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_30)))
+                        .background(
+                            if (isSelected) foodClubGreen
+                            else colorResource(id = R.color.home_ingredient_unselected_tick_color)
+                        )
+                        .clickable {
+                            isSelected = !isSelected
+                            ingredient.isSelected = !ingredient.isSelected
+                        }
+                        .padding(dimensionResource(id = R.dimen.dim_4)),
+                    contentAlignment = Alignment.Center
+                ) {
                     Image(
-                        painter = painterResource(id = R.drawable.baseline_arrow_right_24),
+                        painter = painterResource(id = R.drawable.check),
                         contentDescription = null,
-                        modifier = Modifier
-                            .size(dimensionResource(id = R.dimen.dim_50))
-                            .padding(start = dimensionResource(id = R.dimen.dim_15))
-                            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
-                            .clickable {
-                                ingredient.incrementQuantity((5 / quantityMultiplier).toInt())
-                                quantity = (quantityMultiplier * ingredient.quantity).toInt()
-                            },
-                        colorFilter = ColorFilter.tint(quantityIndicatorColor),
+                        contentScale = ContentScale.Crop,
+                        colorFilter = ColorFilter.tint(color = colorResource(id = R.color.home_ingredient_section_background_color))
                     )
                 }
             }
@@ -187,4 +187,25 @@ fun HomeIngredient(
             else dimensionResource(id = R.dimen.dim_20)
         )
     )
+}
+
+@Preview(name = "Dark mode", uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
+@Preview(name = "Light mode", uiMode = Configuration.UI_MODE_NIGHT_NO, showBackground = true)
+@Composable
+private fun HomeIngredientPreview() {
+    FoodClubTheme {
+        HomeIngredient(
+            ingredient = Ingredient(
+                id = "3",
+                type = "Tomato paste",
+                quantity = 1,
+                unit = QuantityUnit.GRAMS,
+                imageUrl = "",
+                expirationDate = "expirationDate3",
+                isSelected = false
+            ),
+            quantityMultiplier = 1f,
+            quantityIndicatorColor = foodClubGreen
+        )
+    }
 }
