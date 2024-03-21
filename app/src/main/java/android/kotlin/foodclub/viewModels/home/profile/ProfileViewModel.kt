@@ -225,7 +225,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     override suspend fun userViewsPost(postId: Long) {
-        TODO("Not yet implemented")
+//        TODO("Not yet implemented")
     }
 
     override suspend fun updatePostLikeStatus(postId: Long, isLiked: Boolean) {

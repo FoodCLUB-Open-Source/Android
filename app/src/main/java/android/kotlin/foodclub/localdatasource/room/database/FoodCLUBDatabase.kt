@@ -117,7 +117,6 @@ abstract class FoodCLUBDatabase : RoomDatabase() {
                 db.execSQL("CREATE TABLE `profile_bookmarked_posts`(" +
                         "`videoId` INTEGER NOT NULL PRIMARY KEY, " +
                         "`bookmarkedBy` INTEGER NOT NULL, " +
-                        " INTEGER NOT NULL, " +
                         "`title` TEXT, " +
                         "`description` TEXT, " +
                         "`createdAt` TEXT, " +
