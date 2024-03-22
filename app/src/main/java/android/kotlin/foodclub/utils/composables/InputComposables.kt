@@ -53,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.dimensionResource
@@ -206,6 +207,7 @@ fun CustomTextField(
     modifier: Modifier = Modifier,
     label: String? = null,
     initialValue: String = "",
+    iconID: Int? = null,
     textValidation: Boolean = false,
     allowSpace: Boolean = false,
     validationMethod: (text: String) -> String? = { text -> text },
@@ -231,6 +233,7 @@ fun CustomTextField(
         TextField(
             value = text,
             label = composableLabel,
+            textStyle = TextStyle(fontFamily = Montserrat),
             onValueChange = {
                 var textValidCurrent = true
                 val currentVal = if (allowSpace) it else it.trim()
@@ -247,17 +250,32 @@ fun CustomTextField(
                 onValueChange(currentVal)
                 textValid = textValidCurrent
             },
-            placeholder = { Text(text = placeholder, color = Color(0xFF939393)) },
+            placeholder = { Text(text = placeholder, color = Color(0xFF939393), fontFamily = Montserrat) },
             colors = if (errorMessage.isNullOrBlank()) textFieldCustomColors(textColor = Color.Black) else textFieldCustomColors(
                 focusedIndicatorColor = Color.Red,
                 unfocusedIndicatorColor = Color.Red
             ),
+            shape =  RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
+            trailingIcon = {
+                           if (iconID != null)
+                           {
+                               Image(painter = painterResource(id = iconID), contentDescription = "Edit", modifier = Modifier.size(
+                                   dimensionResource(id = R.dimen.dim_15)),
+                                   colorFilter = ColorFilter.tint(Color.Black)
+                               )
+                           }
+            },
             modifier = modifier
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
                 .background(Black.copy(alpha = 0.06F))
+                .border(
+                    width = dimensionResource(id = R.dimen.dim_1),
+                    color = colorGray,
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))
+                )
                 .padding(
-                    horizontal = dimensionResource(id = R.dimen.dim_10),
-                    vertical = dimensionResource(id = R.dimen.dim_5)
+                    //horizontal = dimensionResource(id = R.dimen.dim_10),
+                    //vertical = dimensionResource(id = R.dimen.dim_5)
                 )
                 .fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType)
@@ -352,7 +370,11 @@ fun CustomPasswordTextField(
                     //horizontal = dimensionResource(id = R.dimen.dim_10),
                     //vertical = dimensionResource(id = R.dimen.dim_5)
                 )
-                .border(width = 1.dp, color = colorGray, shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
+                .border(
+                    width = dimensionResource(id = R.dimen.dim_1),
+                    color = colorGray,
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))
+                )
                 .fillMaxWidth(),
             //.border(width = dimensionResource(id = R.dimen.dim_1), color = colorGray, shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
             shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
