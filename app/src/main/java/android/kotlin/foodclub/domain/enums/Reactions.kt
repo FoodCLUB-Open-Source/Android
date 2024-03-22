@@ -8,4 +8,5 @@ enum class Reactions(val drawable:Int) {
     CREATIVE(R.drawable.creative),
     LETSGOTOGETHER(R.drawable.letsgotogether),
     STAYHEALTHY(R.drawable.stayhealthy),
+    ENJOY(R.drawable.enjoy)
 }

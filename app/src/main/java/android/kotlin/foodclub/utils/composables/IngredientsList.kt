@@ -5,7 +5,6 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
-import android.kotlin.foodclub.views.home.myDigitalPantry.TitlesSection
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -45,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -60,6 +60,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import kotlin.math.min
 
 
 @Composable
@@ -71,18 +72,18 @@ fun IngredientsList(
     onDateClicked: (Ingredient) -> Unit,
     onIngredientAdd: (Ingredient) -> Unit,
     onDeleteIngredient: (Ingredient) -> Unit,
-    userIngredientsList: List<Ingredient>
+    userIngredientsList: List<Ingredient>,
+    actionType: ActionType
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            //.fillMaxHeight(0.57f)
             .background(
                 color = Color.White
             )
     ) {
 
-        TitlesSection(
+        IngredientsListTitleSection(
             modifier = modifier,
             view = stringResource(id = R.string.discover_view)
         )
@@ -94,12 +95,12 @@ fun IngredientsList(
             onEditQuantityClicked = { onEditQuantityClicked(it) },
             onDateClicked = { onDateClicked(it) },
             onIngredientAdd = { onIngredientAdd(it) },
-            onDeleteIngredient = { onDeleteIngredient(it) }
+            onDeleteIngredient = { onDeleteIngredient(it) },
+            actionType = actionType
         )
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IngredientsListColumn(
     events: DiscoverEvents,
@@ -108,9 +109,17 @@ fun IngredientsListColumn(
     onDateClicked: (Ingredient) -> Unit,
     onIngredientAdd: (Ingredient) -> Unit,
     onDeleteIngredient: (Ingredient) -> Unit,
-    userIngredientsList: List<Ingredient>
+    userIngredientsList: List<Ingredient>,
+    actionType: ActionType
 ) {
-    //Manipulate height do note, it must have a constraint (non infinite)
+    var height by remember {
+        mutableStateOf(0.dp)
+    }
+
+    height = when (actionType) {
+        ActionType.DISCOVER_VIEW -> (min(productsList.size, 5) * dimensionResource(id = R.dimen.dim_65).value).dp
+        ActionType.ADD_INGREDIENTS_VIEW -> (productsList.size * dimensionResource(id = R.dimen.dim_65).value).dp
+    }
     LazyColumn(
         modifier = Modifier
             .padding(
@@ -118,66 +127,16 @@ fun IngredientsListColumn(
                 end = dimensionResource(id = R.dimen.dim_15)
             )
             .background(Color.White)
-            .height(dimensionResource(id = R.dimen.dim_65).value.dp * if (productsList.size > 5) 5 else productsList.size),
+            .height(height),
         content = {
             itemsIndexed(productsList) { _, item ->
-                var notSwiped by remember { mutableStateOf(false) }
-                val dismissState = rememberDismissState(
-                    confirmValueChange = { dismiss ->
-                        if (dismiss == DismissValue.DismissedToEnd) notSwiped =
-                            !notSwiped
-                        dismiss != DismissValue.DismissedToEnd
-                    }
-                )
-
-                if (dismissState.isDismissed(DismissDirection.EndToStart)) {
-                    LaunchedEffect(key1 = true) {
-                        onDeleteIngredient(item)
-                        dismissState.reset()
-                    }
-                } else {
-                    LaunchedEffect(key1 = true) {
-                        dismissState.reset()
-                    }
-                }
-                SwipeToDismiss(
-                    state = dismissState,
-                    directions = setOf(DismissDirection.EndToStart),
-                    background = {
-                        val color by animateColorAsState(
-                            when (dismissState.targetValue) {
-                                DismissValue.Default -> Color.White
-                                DismissValue.DismissedToEnd -> Color.White
-                                DismissValue.DismissedToStart -> Color.Red
-                            }, label = ""
-                        )
-                        val alignment = Alignment.CenterEnd
-                        val icon = Icons.Default.Delete
-
-                        val scale by animateFloatAsState(
-                            if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f,
-                            label = ""
-                        )
-
-                        Box(
-                            Modifier
-                                .fillMaxSize()
-                                .background(color)
-                                .padding(horizontal = dimensionResource(id = R.dimen.dim_20)),
-                            contentAlignment = alignment
-                        ) {
-                            Icon(
-                                icon,
-                                contentDescription = null,
-                                modifier = Modifier.scale(scale),
-                                tint = Color.White
-                            )
-                        }
-                    },
-                    dismissContent = {
+                if (actionType == ActionType.DISCOVER_VIEW) {
+                    SwipeToDismissContainer(
+                        onDismiss = { onDeleteIngredient(item) }
+                    ) { modifier ->
                         SingleSearchIngredientItem(
-                            modifier = Modifier,
-                            item = item, //Item is different when editing need to make sure to check based on ID
+                            modifier = modifier,
+                            item = item,
                             userIngredientsList = userIngredientsList,
                             onEditQuantityClicked = {
                                 events.updateIngredient(it)
@@ -189,10 +148,31 @@ fun IngredientsListColumn(
                             },
                             onAddItemClicked = {
                                 onIngredientAdd(item)
-                            }
+                            },
+                            onDeleteIngredient = {},
+                            actionType = actionType
                         )
                     }
-                )
+                } else {
+                    SingleSearchIngredientItem(
+                        modifier = Modifier,
+                        item = item,
+                        userIngredientsList = userIngredientsList,
+                        onEditQuantityClicked = {
+                            onEditQuantityClicked(item)
+                        },
+                        onDateClicked = {
+                            onDateClicked(item)
+                        },
+                        onAddItemClicked = {
+                            onIngredientAdd(it)
+                        },
+                        onDeleteIngredient = {
+                            onDeleteIngredient(it)
+                        },
+                        actionType = actionType
+                    )
+                }
 
                 Spacer(Modifier.height(dimensionResource(id = R.dimen.dim_8)))
                 Divider(
@@ -201,7 +181,6 @@ fun IngredientsListColumn(
                     color = Color.LightGray
                 )
                 Spacer(Modifier.height(dimensionResource(id = R.dimen.dim_8)))
-
             }
         }
     )
@@ -215,12 +194,26 @@ fun SingleSearchIngredientItem(
     onEditQuantityClicked: (Ingredient) -> Unit,
     onDateClicked: (Ingredient) -> Unit,
     onAddItemClicked: (Ingredient) -> Unit,
-    userIngredientsList: List<Ingredient>
+    onDeleteIngredient: (Ingredient) -> Unit,
+    userIngredientsList: List<Ingredient>,
+    actionType: ActionType
 ) {
-    val unit = stringResource(id = R.string.gram_unit) // TODO make this dynamic
-    val quantity = itemQuantity(item, unit)
-    val expirationDate = itemExpirationDate(item)
-    val isItemAdded = userIngredientsList.filter { item.id == it.id }.size == 1
+    val unit = stringResource(id = R.string.gram_unit)
+    val quantity: String
+    val expirationDate: String
+    val itemSearched = userIngredientsList.find { item.id == it.id }
+    if (itemSearched != null)
+    {
+        quantity = itemQuantity(itemSearched, unit)
+        expirationDate = itemExpirationDate(itemSearched)
+    }
+    else
+    {
+        quantity = itemQuantity(item, unit)
+        expirationDate = itemExpirationDate(item)
+    }
+
+    var isItemAdded = userIngredientsList.any { item.id == it.id }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -262,8 +255,7 @@ fun SingleSearchIngredientItem(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start
             ) {
-                if (true)//isItemAdded)
-                {
+                if (isItemAdded) {
                     Text(
                         modifier = modifier
                             .padding(start = dimensionResource(id = R.dimen.dim_6))
@@ -280,7 +272,6 @@ fun SingleSearchIngredientItem(
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )
-
                 } else {
                     Box(modifier = Modifier.weight(1f, fill = false))
                     Spacer(modifier = Modifier.weight(1f, fill = true))
@@ -293,8 +284,7 @@ fun SingleSearchIngredientItem(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                if (true)//isItemAdded)
-                {
+                if (isItemAdded) {
                     Text(
                         modifier = modifier
                             .padding(start = dimensionResource(id = R.dimen.dim_20))
@@ -314,24 +304,33 @@ fun SingleSearchIngredientItem(
                     )
                 }
 
-                //Item may have a different ID when it is being edited so it isn't in the list will have to check that
-                if (!isItemAdded) {
-                    Box(modifier = Modifier.weight(1f, fill = false))
-                    Spacer(modifier = Modifier.weight(1f, fill = true))
+                Box(modifier = Modifier.weight(1f, fill = false))
+                Spacer(modifier = Modifier.weight(1f, fill = true))
+                if (actionType == ActionType.ADD_INGREDIENTS_VIEW){
                     Box(
                         modifier = Modifier
                             .size(dimensionResource(id = R.dimen.dim_24))
                             .clip(CircleShape)
-                            .background(foodClubGreen)
+                            .background(if (isItemAdded) Color.Red else foodClubGreen)
                             .clickable {
-                                onAddItemClicked(item)
+                                if (isItemAdded){
+                                    onDeleteIngredient(item)
+                                }else{
+                                    onAddItemClicked(item)
+                                }
+                                isItemAdded = !isItemAdded
                             },
                         contentAlignment = Alignment.Center
                     ) {
+                        val rotationAngle by animateFloatAsState(targetValue = if (isItemAdded) 45f else 0f,
+                            label = ""
+                        )
+
                         Icon(
                             painter = painterResource(id = R.drawable.add),
                             contentDescription = null,
-                            tint = Color.White
+                            tint = Color.White,
+                            modifier = Modifier.rotate(rotationAngle)
                         )
                     }
                 }
@@ -340,6 +339,71 @@ fun SingleSearchIngredientItem(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SwipeToDismissContainer(
+    onDismiss: () -> Unit,
+    dismissContent: @Composable (Modifier) -> Unit
+) {
+    var notSwiped by remember { mutableStateOf(false) }
+    val dismissState = rememberDismissState(
+        confirmValueChange = { dismiss ->
+            if (dismiss == DismissValue.DismissedToEnd) notSwiped =
+                !notSwiped
+            dismiss != DismissValue.DismissedToEnd
+        }
+    )
+
+    if (dismissState.isDismissed(DismissDirection.EndToStart)) {
+        LaunchedEffect(key1 = true) {
+            onDismiss()
+            dismissState.reset()
+        }
+    } else {
+        LaunchedEffect(key1 = true) {
+            dismissState.reset()
+        }
+    }
+
+    SwipeToDismiss(
+        state = dismissState,
+        directions = setOf(DismissDirection.EndToStart),
+        background = {
+            val color by animateColorAsState(
+                when (dismissState.targetValue) {
+                    DismissValue.Default -> Color.White
+                    DismissValue.DismissedToEnd -> Color.White
+                    DismissValue.DismissedToStart -> Color.Red
+                }, label = ""
+            )
+            val alignment = Alignment.CenterEnd
+            val icon = Icons.Default.Delete
+
+            val scale by animateFloatAsState(
+                if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f,
+                label = ""
+            )
+
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .background(color)
+                    .padding(horizontal = dimensionResource(id = R.dimen.dim_20)),
+                contentAlignment = alignment
+            ) {
+                Icon(
+                    icon,
+                    contentDescription = null,
+                    modifier = Modifier.scale(scale),
+                    tint = Color.White
+                )
+            }
+        },
+        dismissContent = {
+            dismissContent(Modifier)
+        }
+    )
+}
 @Composable
 fun itemQuantity(item: Ingredient, unit: String): String {
     return if (item.quantity != 0) item.quantity.toString() + unit else stringResource(id = R.string.edit)
@@ -366,3 +430,7 @@ fun expirationDateTextStyle(expirationDate: String): TextStyle {
     )
 }
 
+enum class ActionType {
+    DISCOVER_VIEW,
+    ADD_INGREDIENTS_VIEW
+}

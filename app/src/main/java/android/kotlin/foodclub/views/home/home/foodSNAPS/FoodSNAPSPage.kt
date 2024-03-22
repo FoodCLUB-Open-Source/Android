@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -55,12 +56,13 @@ fun FoodSNAPSPage(
             SnapReactionsView(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .layout{  measurable, constraints ->
+                    .layout { measurable, constraints ->
                         val placeable = measurable.measure(constraints)
                         layout(placeable.width, placeable.height) {
                             placeable.place(IntOffset(0, reactionsVerticalOffset))
                         }
-                    },
+                    }
+                    .padding(bottom = dimensionResource(id = R.dimen.dim_30)),
                 reactions = Reactions.entries.toTypedArray(),
                 painter = rememberAsyncImagePainter(
                     model = storyListData[index].thumbnailLink

@@ -49,7 +49,7 @@ fun ChangePasswordView(
                     verificationCode = it
                     initialVerificationCodeCorrectnessState = false
                 },
-                textValidation = true,
+                textValidation = false,
                 validationMethod = { text -> FieldsValidation.checkEmail(text) })
 
             CustomPasswordTextField(

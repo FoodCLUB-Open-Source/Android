@@ -337,16 +337,18 @@
     </string-array>
     - Discover
     <string name="discover_view">DiscoverView</string>
+    <string name="hi">Hi</string>
+    <string name="discover_view_header">Let\'s Get Cooking!</string>
     <string-array name="discover_tabs">
         <item>My Kitchen</item>
-        <item>World</item>
         <item>Categories</item>
+        <item>World</item>
     </string-array>
-
     <string name="see_all_ingredients">See all ingredients</string>
     <string name="search_for">Search for recipes, usernames…</string>
     <string name="my_kitchen">My Kitchen</string>
-    <string name="search_to">Search to find or add…</string>
+    <string name="search_ingredients">Search ingredients</string>
+    <string name="search_from_my_basket">Search from my basket…</string>
     <string-array name="discover_sub_tabs">
         <item>Veg &amp; Fruits</item>
         <item>Grains &amp; Cereals</item>
@@ -404,7 +406,7 @@
     <string name="quantity">Quantity</string>
     <string name="quantity_picker_discription">Type quantity and choose unit from the wheel picker</string>
     <string name="unit">Unit</string>
-    <string name="expiration_date">Expiration Date</string>
+    <string name="expiry_date">Expiry Date</string>
     <string name="remove">Remove</string>
     <string name="quantity_colon">Quantity:</string>
     - My Basket
@@ -801,7 +803,8 @@ In some countries, the law requires us to provide additional regulatory informat
     <string name="Confirm">Confirm</string>
     <string name="Cancel">Cancel</string>
     <string name="add_ingredients">Add ingredients</string>
-    <string name="Recommendations">Recommendations</string>
+    <string name="add_ingredients_information_text">Add ingredients to your kitchen to see recommendations</string>
+    <string name="recommendations">Recommendations</string>
     <string name="All">All</string>
     <string name="Accounts">Accounts</string>
     <string name="Recipes">Recipes</string>
@@ -864,4 +867,5 @@ In some countries, the law requires us to provide additional regulatory informat
     <string name="user_engagement_and_rewards_answer_2">The app fosters a sense of community among users through various features, including recipe sharing, comments, likes, and events. You can connect with like-minded individuals, share your passion for food, and build meaningful relationships within the community.\n</string>
     <string name="faq">FaQ</string>
     <string name="help_and_support_page_url">https://tally.so/r/w4rZZo</string>
+    <string name="invalid_quantity_error_message">Quantity must only consist of numbers</string>
 </resources>

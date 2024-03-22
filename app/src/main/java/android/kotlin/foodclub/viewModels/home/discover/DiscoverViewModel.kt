@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.MyBasketCache
+import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.repositories.ProductRepository
@@ -24,7 +25,6 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
@@ -74,7 +74,6 @@ class DiscoverViewModel @Inject constructor(
                 .map { it.ingredientSearchText }
                 .debounce(1000)
                 .filter { it.isNotEmpty() }
-                .distinctUntilChanged()
                 .collect { searchText ->
                     fetchProductsDatabase(searchText)
                 }
@@ -93,7 +92,8 @@ class DiscoverViewModel @Inject constructor(
 
     override fun deleteIngredientFromList(ingredient: Ingredient) {
         val updatedList = state.value.userIngredients.toMutableList()
-        updatedList.remove(ingredient)
+        val ingredientItem = updatedList.find { it.id == ingredient.id }
+        if(ingredientItem != null){updatedList.remove(ingredientItem)}
         _state.update {
             it.copy(
                 userIngredients = updatedList
@@ -139,7 +139,6 @@ class DiscoverViewModel @Inject constructor(
                     // TODO deal with error
                 }
 
-                else -> {}
             }
         }
     }
@@ -162,7 +161,6 @@ class DiscoverViewModel @Inject constructor(
                     // TODO deal with error
                 }
 
-                else -> {}
             }
         }
 
@@ -189,7 +187,6 @@ class DiscoverViewModel @Inject constructor(
                     // TODO deal with error
                 }
 
-                else -> {}
             }
         }
     }
@@ -245,6 +242,21 @@ class DiscoverViewModel @Inject constructor(
         }
     }
 
+    override fun onResetSearchData() {
+        _state.update {
+            it.copy(
+                ingredientSearchText = "",
+                searchIngredientsListText = "",
+                searchResults = emptyList(),
+                productsData = ProductsData(
+                    searchText = "",
+                    nextUrl = "",
+                    productsList = emptyList(),
+                )
+            )
+        }
+    }
+
     override fun onDeleteIngredient(ingredient: Ingredient) {
         val myIngredients = state.value.userIngredients.toMutableList()
         val matchingIngredient = myIngredients.find { it.type == ingredient.type }
@@ -262,10 +274,11 @@ class DiscoverViewModel @Inject constructor(
         when (val resource = productsRepo.getProductsList(searchText)) {
             is Resource.Success -> {
                 Log.e(TAG, "SUCCESS")
+                Log.e(TAG, "${resource.data!!.productsList}")
                 _state.update {
                     it.copy(
                         error = "",
-                        productsData = resource.data!!
+                        productsData = resource.data
                     )
                 }
             }
@@ -274,7 +287,6 @@ class DiscoverViewModel @Inject constructor(
                 _state.update { it.copy(error = resource.message!!) }
             }
 
-            else -> {}
         }
     }
 

@@ -6,13 +6,13 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.utils.composables.AddIngredientDialog
 import android.kotlin.foodclub.utils.composables.FabButtonItem
 import android.kotlin.foodclub.utils.composables.FabButtonMain
 import android.kotlin.foodclub.utils.composables.FabButtonSub
 import android.kotlin.foodclub.utils.composables.MultiFloatingActionButton
 import android.kotlin.foodclub.utils.composables.engine.createImageCaptureUseCase
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
-import android.kotlin.foodclub.views.home.discover.AddIngredientDialog
 import android.kotlin.foodclub.views.home.discover.DiscoverState
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -340,9 +340,9 @@ fun ScanView(
                             )
                         }
 
-                            if(state.scanResultItemList.size>visibleItems.size)
-                            {
-                                Column(modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_8)),
+                        if (state.scanResultItemList.size > visibleItems.size) {
+                            Column(
+                                modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_8)),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             )
                             {
@@ -354,36 +354,38 @@ fun ScanView(
                                         .clickable(onClick = {})
                                         .size(dimensionResource(id = R.dimen.dim_35))
 
-                                        // Handle click on the additional icon
-                                    )
-                                    Text(
-                                        text = " ${state.scanResultItemList.size-visibleItems.size} " +
-                                                "More",
-                                        fontFamily = Montserrat,
-                                    )
-                                }
-                            }
-                            Column(modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_8)),
-                                horizontalAlignment = Alignment.CenterHorizontally) {
-
-                                Icon(
-                                    imageVector = Icons.Default.KeyboardArrowRight,
-                                    contentDescription = null,
-                                    tint = Color.Black,
-                                    modifier = Modifier
-                                        .clickable(onClick = {
-                                            bottomSheetNextButton = !bottomSheetNextButton
-                                            scanState = "Completed"
-                                        })
-                                        .clip(CircleShape)
-                                        .background(foodClubGreen)
-                                        .size(dimensionResource(id = R.dimen.dim_35))
+                                    // Handle click on the additional icon
                                 )
                                 Text(
-                                    text = stringResource(id = R.string.next),
+                                    text = " ${state.scanResultItemList.size - visibleItems.size} " +
+                                            "More",
                                     fontFamily = Montserrat,
-                                    )
+                                )
                             }
+                        }
+                        Column(
+                            modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_8)),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+
+                            Icon(
+                                imageVector = Icons.Default.KeyboardArrowRight,
+                                contentDescription = null,
+                                tint = Color.Black,
+                                modifier = Modifier
+                                    .clickable(onClick = {
+                                        bottomSheetNextButton = !bottomSheetNextButton
+                                        scanState = "Completed"
+                                    })
+                                    .clip(CircleShape)
+                                    .background(foodClubGreen)
+                                    .size(dimensionResource(id = R.dimen.dim_35))
+                            )
+                            Text(
+                                text = stringResource(id = R.string.next),
+                                fontFamily = Montserrat,
+                            )
+                        }
 
                     }
 

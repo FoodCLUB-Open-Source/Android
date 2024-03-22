@@ -3,6 +3,7 @@ package android.kotlin.foodclub.utils.composables
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.net.Uri
+import android.util.Log
 import android.view.ViewGroup
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
@@ -198,7 +199,7 @@ fun VideoScroller(
                     }
                 )
 
-                LaunchedEffect(videoProgressBarVisible){
+                LaunchedEffect(lastPause){
                     delay(VIDEO_PROGRESS_BAR_VISIBLE_TIME)
                     videoProgressBarVisible = (System.currentTimeMillis() - lastPause).coerceAtMost(VIDEO_PROGRESS_BAR_VISIBLE_TIME) < VIDEO_PROGRESS_BAR_VISIBLE_TIME
                 }
