@@ -13,7 +13,9 @@ import android.kotlin.foodclub.domain.models.recipes.Recipe
 import android.kotlin.foodclub.utils.composables.CustomSliderDiscrete
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +34,7 @@ import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -87,7 +90,7 @@ fun HomeBottomSheetIngredients(
     val scope = rememberCoroutineScope()
 
     val systemUiController = rememberSystemUiController()
-    val navigationBarColor =colorResource(id = R.color.home_bottom_sheet_background_color)
+    val navigationBarColor = colorResource(id = R.color.home_bottom_sheet_background_color)
     LaunchedEffect(true) {
         scope.launch {
             bottomSheetState.expand()
@@ -235,52 +238,57 @@ fun HomeBottomSheetIngredients(
                     var selectedTabIndex by remember {
                         mutableIntStateOf(0)
                     }
+                    val interactionSource = remember {
+                        MutableInteractionSource()
+                    }
 
+                    val sections = listOf("Ingredients")
+                    /**
+                     * @param [fillMaxWidth] fixed %30 to screen because we don't have any tabs
+                     * in future just this param to 1f
+                     *
+                     * add more section to the sections list
+                     * */
                     TabRow(
                         modifier = Modifier
                             .padding(horizontal = dimensionResource(id = R.dimen.dim_16))
-                            .fillMaxWidth(),
+                            .fillMaxWidth(0.3f),
                         selectedTabIndex = selectedTabIndex,
                         indicator = { tabPositions ->
-                                TabRowDefaults.Indicator(
-                                    color = foodClubGreen,
-                                    height = 1.dp,
-                                    modifier = Modifier
-                                        .tabIndicatorOffset(tabPositions[selectedTabIndex])
+                            TabRowDefaults.Indicator(
+                                color = foodClubGreen,
+                                height = 1.dp,
+                                modifier = Modifier
+                                    .tabIndicatorOffset(tabPositions[selectedTabIndex])
 
-                                )
-
-
+                            )
                         },
                         containerColor = colorResource(id = R.color.home_bottom_sheet_background_color)
                     ) {
-                        Tab(
-                            selected = selectedTabIndex == 0,
-                            onClick = { selectedTabIndex = 0 },
-                            modifier = Modifier.padding(bottom = 14.dp),
-                        ) {
-                            Text(
-                                text = "Ingredients",
-                                fontFamily = Montserrat,
-                                fontWeight = FontWeight.Medium,
-                                color = foodClubGreen,
-                                lineHeight = 24.85.sp
-                            )
+                        sections.forEachIndexed { index, title ->
+                            Tab(
+                                selected = selectedTabIndex == index,
+                                onClick = { selectedTabIndex = index },
+                                modifier = Modifier.padding(bottom = 14.dp),
+
+                                ) {
+                                Text(
+                                    modifier = Modifier.clickable(
+                                        enabled = true,
+                                        interactionSource = interactionSource,
+                                        indication = null,
+                                        onClick = { selectedTabIndex = index },
+                                    ),
+                                    text = title,
+                                    fontFamily = Montserrat,
+                                    fontWeight = FontWeight.Medium,
+                                    color = foodClubGreen,
+                                    lineHeight = 24.85.sp
+                                )
+                            }
+
                         }
-                        Tab(
-                            selected = selectedTabIndex == 0,
-                            onClick = { selectedTabIndex = 0 },
-                            modifier = Modifier.padding(bottom = 14.dp),
-                        ) {
-                            // Text(text = "Ingredients", fontFamily = Montserrat, fontWeight = FontWeight.Medium, color = foodClubGreen, lineHeight = 24.85.sp)
-                        }
-                        Tab(
-                            selected = selectedTabIndex == 0,
-                            onClick = { selectedTabIndex = 0 },
-                            modifier = Modifier.padding(bottom = 14.dp),
-                        ) {
-                            //Text(text = "Ingredients", fontFamily = Montserrat, fontWeight = FontWeight.Medium, color = foodClubGreen, lineHeight = 24.85.sp)
-                        }
+
                     }
 
 
@@ -312,7 +320,6 @@ fun HomeBottomSheetIngredients(
                                     ingredientsMultiplier,
                                     ingredientsDivider
                                 )
-
                                 1 -> {}
                                 2 -> {}
                                 else -> {}
