@@ -5,6 +5,7 @@ import android.kotlin.foodclub.config.ui.Raleway
 import android.kotlin.foodclub.config.ui.trimmerFilmSelectEdge
 import android.kotlin.foodclub.config.ui.trimmerTimelineText
 import android.kotlin.foodclub.domain.models.others.TrimmedVideo
+import android.kotlin.foodclub.utils.composables.LoadingView
 import android.kotlin.foodclub.viewModels.home.create.TrimmerEvents
 import android.view.ViewGroup
 import androidx.compose.foundation.Image
@@ -65,6 +66,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
+import androidx.navigation.NavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -197,11 +199,7 @@ fun TrimmerView(state: TrimmerState, events: TrimmerEvents) {
                 .fillMaxSize()
                 .background(Color.White)
             ) {
-                Text(
-                    text = "There will be loading screen",
-                    fontSize = dimensionResource(R.dimen.fon_16).value.sp,
-                    modifier = Modifier.align(Alignment.Center)
-                )
+                LoadingView()
             }
         }
     }
