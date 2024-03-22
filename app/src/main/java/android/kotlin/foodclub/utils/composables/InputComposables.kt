@@ -10,6 +10,7 @@ import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.config.ui.textFieldCustomColors
 import android.kotlin.foodclub.utils.helpers.FieldsValidation
 import android.kotlin.foodclub.views.authentication.TermsAndConditionsSimplified
+import android.kotlin.foodclub.views.settings.colorGray
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -65,7 +66,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
@@ -309,9 +309,10 @@ fun CustomPasswordTextField(
         @Composable {
             Text(
                 modifier = Modifier.padding(
-                    bottom = dimensionResource(id = R.dimen.dim_5)
+                    bottom = dimensionResource(id = R.dimen.dim_1),
                 ),
-                text = label
+                text = label,
+                fontFamily = Montserrat
             )
         }
     } else null
@@ -319,6 +320,7 @@ fun CustomPasswordTextField(
     Column {
         TextField(
             value = password,
+            textStyle = TextStyle(fontFamily = Montserrat),
             onValueChange = {
                 var passValidCurrent = true
                 if (strengthValidation) {
@@ -338,7 +340,8 @@ fun CustomPasswordTextField(
             placeholder = {
                 Text(
                     text = placeholder,
-                    color = Color(0xFF939393)
+                    color = Color(0xFF939393),
+                    fontFamily = Montserrat
                 )
             },
             colors = if (errorMessage.isNullOrBlank()) textFieldColors else errorTextFieldColors,
@@ -346,10 +349,13 @@ fun CustomPasswordTextField(
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
                 .background(Black.copy(alpha = 0.06F))
                 .padding(
-                    horizontal = dimensionResource(id = R.dimen.dim_10),
-                    vertical = dimensionResource(id = R.dimen.dim_5)
+                    //horizontal = dimensionResource(id = R.dimen.dim_10),
+                    //vertical = dimensionResource(id = R.dimen.dim_5)
                 )
+                .border(width = 1.dp, color = colorGray, shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
                 .fillMaxWidth(),
+            //.border(width = dimensionResource(id = R.dimen.dim_1), color = colorGray, shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
+            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
             trailingIcon = {
                 if (passVisible) {
                     Button(
@@ -359,6 +365,7 @@ fun CustomPasswordTextField(
                         Image(
                             painter = painterResource(R.drawable.unhide),
                             contentDescription = null,
+                            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_15))
                         )
                     }
                 } else {
@@ -367,8 +374,9 @@ fun CustomPasswordTextField(
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                     ) {
                         Image(
-                            painter = painterResource(R.drawable.hide),
+                            painter = painterResource(R.drawable.hide_alt_1),
                             contentDescription = null,
+                            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_15))
                         )
                     }
                 }
