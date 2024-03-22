@@ -4,6 +4,7 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.navigation.SettingsScreen
+import android.kotlin.foodclub.utils.composables.LogOutDialog
 import android.kotlin.foodclub.utils.composables.SettingsLayout
 import android.kotlin.foodclub.viewModels.settings.SettingsEvents
 import android.net.Uri
@@ -62,6 +63,9 @@ fun SettingsView(
     state: SettingsState
 ) {
     var imageUri: Uri? by remember { mutableStateOf(null) }
+    var isDialog by remember {
+        mutableStateOf(false)
+    }
 
     LaunchedEffect(key1 = true) {
         state.dataStore?.getImage()?.collect { image ->
@@ -185,10 +189,18 @@ fun SettingsView(
             lineHeight = dimensionResource(id = R.dimen.fon_19_5).value.sp,
             borderSize = integerResource(id = R.integer.int_1),
             borderColor = colorGray,
-            destination = Graph.AUTHENTICATION,
-            navController = navController,
-            onClick = { events.logout() }
+            //destination = Graph.AUTHENTICATION,
+            //navController = navController,
+            onClick = { isDialog = true }
         )
+
+        if (isDialog) {
+            LogOutDialog(onDismissRequest = { isDialog = !isDialog }) {
+                events.logout()
+                navController.navigate(Graph.AUTHENTICATION)
+            }
+        }
+
     }
 }
 
@@ -277,7 +289,7 @@ fun SettingsProfile(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            if (userImage != null){
+            if (userImage != null) {
                 AsyncImage(
                     contentDescription = stringResource(id = R.string.user_images),
                     model = userImage,
@@ -287,7 +299,7 @@ fun SettingsProfile(
                         .width(dimensionResource(id = R.dimen.dim_124)),
                     contentScale = ContentScale.Crop
                 )
-            }else{
+            } else {
                 Image(
                     painter = painterResource(id = R.drawable.story_user),
                     contentDescription = stringResource(id = R.string.user_images),
@@ -324,8 +336,8 @@ fun SettingRow(
     fontWeight: FontWeight = FontWeight.Normal,
     borderSize: Int = 1,
     borderColor: Color = colorGray,
-    destination: String,
-    navController: NavController,
+    destination: String? = null,
+    navController: NavController? = null,
     onClick: () -> Unit = {}
 ) {
     val rowSize = dimensionResource(id = R.dimen.dim_65)
@@ -339,7 +351,9 @@ fun SettingRow(
         Button(
             onClick = {
                 onClick()
-                navController.navigate(destination)
+                if (navController != null && destination != null) {
+                    navController.navigate(destination)
+                }
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Transparent,
@@ -355,8 +369,7 @@ fun SettingRow(
                 )
 
         ) {
-            if (iconId != null)
-            {
+            if (iconId != null) {
                 SettingsIcons(size = 24, icon = iconId)
             }
 
@@ -367,7 +380,7 @@ fun SettingRow(
                 size = size,
                 weight = fontWeight,
                 fontC = fontC,
-                lineHeight = lineHeight?: TextUnit.Unspecified
+                lineHeight = lineHeight ?: TextUnit.Unspecified
             )
 
             Spacer(modifier = Modifier.weight(1f))
