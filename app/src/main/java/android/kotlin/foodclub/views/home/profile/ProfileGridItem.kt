@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.views.home.profile
 
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,7 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -22,6 +25,9 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 
@@ -60,6 +66,33 @@ fun GridItem(
                         triggerShowDeleteRecipe()
                     }
             )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .align(Alignment.Center)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            listOf(Color.Transparent, Color.Black, Color.Transparent),
+                        ),
+                        alpha = 0.4f
+                    )
+            ) {
+                Text(
+                    text = "A long Test string and a long string",
+                    // This string should be replaced with videoTitle in dataItem
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.W600,
+                    fontFamily = Montserrat,
+                    lineHeight = 17.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(
+                            dimensionResource(id = R.dimen.dim_16)
+                        )
+                )
+            }
         }
     }
 }
