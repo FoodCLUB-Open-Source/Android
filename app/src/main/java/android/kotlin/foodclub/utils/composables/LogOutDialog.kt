@@ -2,6 +2,7 @@ package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.views.settings.colorGray
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,22 +23,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 
 @Composable
-fun LogOutDialog(onDismissRequest: () -> Unit, onConfirmRequest: () -> Unit )
-{
-    Dialog(onDismissRequest = onDismissRequest, properties = DialogProperties(dismissOnBackPress = false)) {
+fun LogOutDialog(onDismissRequest: () -> Unit, onConfirmRequest: () -> Unit) {
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = DialogProperties(dismissOnBackPress = false)
+    ) {
         Card(
             modifier = Modifier
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
-                .width(dimensionResource(id = R.dimen.dim_500))
-                .fillMaxHeight(0.25f)
+                .width(dimensionResource(id = R.dimen.dim_282))
+                .height(dimensionResource(id = R.dimen.dim_135))
                 .background(Color.White),
             shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16)),
             elevation = CardDefaults.cardElevation(
@@ -44,23 +53,95 @@ fun LogOutDialog(onDismissRequest: () -> Unit, onConfirmRequest: () -> Unit )
             ),
             colors = CardDefaults.cardColors(containerColor = Color.White)
         ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.SpaceBetween) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxHeight()
+            )//, verticalArrangement = Arrangement.SpaceBetween)
+            {
 
-                Box(modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_20))) {
-                    Text(text = stringResource(id = R.string.Log_out_confirmation), fontFamily = Montserrat, fontWeight = FontWeight.Black)
+                Box(
+                    modifier = Modifier
+                        .padding(dimensionResource(id = R.dimen.dim_20))
+                        .weight(1f)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.Log_out_confirmation),
+                        fontFamily = Montserrat,
+                        fontWeight = FontWeight.Black,
+                        textAlign = TextAlign.Center
+                    )
                 }
-                
-                Row(modifier = Modifier
-                    .align(Alignment.End)
-                    .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                    Button(onClick = onDismissRequest, colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = Color.Black)) {
-                        Text(text = stringResource(id = R.string.no), fontFamily = Montserrat, fontWeight = FontWeight.Bold)
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        //.height(IntrinsicSize.Min)
+                        .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly
+                )
+                {
+                    Button(
+                        onClick = onDismissRequest,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Transparent,
+                            contentColor = Color.Black
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth(0.5f)
+                            .padding()
+                            .customBorder(dimensionResource(id = R.dimen.dim_1), colorGray, true)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.cancel),
+                            fontFamily = Montserrat,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
-                    Button(onClick = { /*TODO*/ }, colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = Color.Black)) {
-                        Text(text = stringResource(id = R.string.yes), fontFamily = Montserrat, fontWeight = FontWeight.Bold)
+
+                    Button(
+                        onClick = onConfirmRequest,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Transparent,
+                            contentColor = Color.Black
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding()
+                            .customBorder(dimensionResource(id = R.dimen.dim_1), colorGray, false)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.log_out),
+                            fontFamily = Montserrat,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }
         }
     }
 }
+
+@Composable
+fun Modifier.customBorder(strokeWidth: Dp, color: Color, isLeft: Boolean = true) : Modifier
+{
+    val density = LocalDensity.current
+    val strokeWidthPx = density.run { strokeWidth.toPx() }
+
+    return this then Modifier.drawBehind {
+        val width = size.width
+        val height = size.height - strokeWidthPx / 2
+
+        drawLine(
+            color = color,
+            start = Offset(x = 0f, y = 0f),
+            end = Offset(x = width, y = 0f),
+            strokeWidth = strokeWidthPx
+        )
+
+        drawLine(
+            color = color,
+            start = Offset(x = if (isLeft) width else 0f, y = 0f),
+            end = Offset(x = if (isLeft) width else 0f, y = height),
+            strokeWidth = strokeWidthPx
+        )
+    }
+}
+
