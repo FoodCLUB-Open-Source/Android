@@ -79,11 +79,10 @@ fun GridItem(
             ) {
                 Text(
                     text = "A long Test string and a long string",
-                    // This string should be replaced with videoTitle in dataItem
-                    fontSize = 14.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
                     fontWeight = FontWeight.W600,
                     fontFamily = Montserrat,
-                    lineHeight = 17.sp,
+                    lineHeight = dimensionResource(id = R.dimen.fon_17).value.sp,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
                     modifier = Modifier
