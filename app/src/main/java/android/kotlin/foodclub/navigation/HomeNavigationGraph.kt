@@ -10,6 +10,7 @@ import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
 import android.kotlin.foodclub.viewModels.home.messaging.MessagingViewModel
 import android.kotlin.foodclub.viewModels.home.myBasket.MyBasketViewModel
 import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
+import android.kotlin.foodclub.viewModels.home.search.SearchViewModel
 import android.kotlin.foodclub.views.home.CameraPreviewView
 import android.kotlin.foodclub.views.home.addIngredients.AddIngredientsView
 import android.kotlin.foodclub.views.home.camera.CameraView
@@ -233,7 +234,10 @@ fun NavGraphBuilder.homeNavigationGraph(
         }
 
         composable(route = HomeOtherRoutes.MySearchView.route) {
-            NewSearchView(navController = navController)
+            val viewModel = it.sharedHiltViewModel<SearchViewModel>(navController = navController)
+            val state = viewModel.state.collectAsState()
+
+            NewSearchView(navController = navController, events = viewModel, state = state.value)
         }
 
         composable(route = HomeOtherRoutes.AddIngredientsView.route){
