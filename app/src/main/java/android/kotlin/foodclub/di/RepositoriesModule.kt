@@ -36,6 +36,8 @@ import android.kotlin.foodclub.network.remotedatasource.profile_remote_datasourc
 import android.kotlin.foodclub.network.remotedatasource.settings_remote_datasource.SettingsRemoteDataSource
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.LocalDataMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.OfflineProfileDataMapper
+import android.kotlin.foodclub.network.retrofit.services.SearchService
+import android.kotlin.foodclub.repositories.SearchRepository
 import android.kotlin.foodclub.utils.helpers.ConnectivityUtils
 import dagger.Module
 import dagger.Provides
@@ -141,5 +143,11 @@ object RepositoriesModule {
     @Provides
     fun provideBookmarkRepository(api: BookmarksService): BookmarkRepository {
         return BookmarkRepository(api)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSearchRepository(api: SearchService): SearchRepository {
+        return SearchRepository(api)
     }
 }
