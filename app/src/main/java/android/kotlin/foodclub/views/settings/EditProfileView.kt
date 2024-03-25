@@ -40,6 +40,7 @@ fun EditProfileSetting(
 
         CustomTextField(
             placeholder = "",
+            enabled = false,
             label = stringResource(id = R.string.username),
             initialValue = user?.userName ?: "",
             keyboardType = KeyboardType.Text,

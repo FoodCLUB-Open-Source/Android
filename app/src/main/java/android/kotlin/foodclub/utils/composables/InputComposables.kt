@@ -205,6 +205,7 @@ fun CustomTextField(
     placeholder: String,
     keyboardType: KeyboardType,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     label: String? = null,
     initialValue: String = "",
     iconID: Int? = null,
@@ -234,6 +235,7 @@ fun CustomTextField(
             value = text,
             label = composableLabel,
             textStyle = TextStyle(fontFamily = Montserrat),
+            enabled = enabled,
             onValueChange = {
                 var textValidCurrent = true
                 val currentVal = if (allowSpace) it else it.trim()
