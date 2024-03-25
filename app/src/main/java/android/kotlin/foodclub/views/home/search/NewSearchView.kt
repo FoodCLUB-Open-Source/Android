@@ -9,9 +9,11 @@ import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.utils.composables.shimmerBrush
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
+import android.kotlin.foodclub.viewModels.home.search.SearchEvents
 import android.kotlin.foodclub.views.home.discover.MainTabRow
 import android.kotlin.foodclub.views.home.messagingView.User
 import android.kotlin.foodclub.views.home.profile.GridItem
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -56,6 +58,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -79,10 +82,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
+import kotlinx.coroutines.delay
 
 @Composable
 fun NewSearchView(
-    navController: NavController
+    navController: NavController,
+    events: SearchEvents,
+    state: SearchState
 ){
     val context = LocalContext.current
     val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
@@ -96,11 +102,22 @@ fun NewSearchView(
 
     var searchText by remember { mutableStateOf("") }
 
-
+    LaunchedEffect(key1 = searchText) {
+        if (searchText.isNotEmpty()) {
+            events.searchByText(searchText)
+            delay(6000)
+            if (state.userList.isNotEmpty()){
+                Log.i("1111111", state.userList[1].toString())
+            }
+            if (state.postList.isNotEmpty()){
+                Log.i("1111111", state.postList[1].toString())
+            }
+        }
+    }
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.Start,
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         NewSearchRow(
             searchTextValue = searchText,
@@ -111,7 +128,7 @@ fun NewSearchView(
             isInternetConnected,
             brush,
             tabsList = tabItems,
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             mainTabIndex = it
         }
@@ -157,7 +174,7 @@ fun NewSearchRow(
             .padding(
                 top = dimensionResource(id = R.dimen.dim_60),
                 end = dimensionResource(id = R.dimen.dim_20),
-                start = dimensionResource(id = R.dimen.dim_20),
+                start = dimensionResource(id = R.dimen.dim_10),
                 bottom = dimensionResource(id = R.dimen.dim_10)
             ),
         horizontalArrangement = Arrangement.Start,
@@ -183,6 +200,9 @@ fun NewSearchRow(
                     shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                 )
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
+                .padding(
+                    start = dimensionResource(id = R.dimen.dim_5)
+                )
         ) {
         TextField(
             modifier = Modifier
@@ -244,7 +264,10 @@ fun SearchBodyBoth(
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
-            .padding(start = dimensionResource(id = R.dimen.dim_20), top = dimensionResource(id = R.dimen.dim_20))
+            .padding(
+                start = dimensionResource(id = R.dimen.dim_20),
+                top = dimensionResource(id = R.dimen.dim_20)
+            )
     ) {
         Text(
             text = stringResource(id = R.string.Accounts),
@@ -395,7 +418,9 @@ fun SearchAccountGridItem(){
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_8)).fillMaxWidth()
+        modifier = Modifier
+            .padding(dimensionResource(id = R.dimen.dim_8))
+            .fillMaxWidth()
     ) {
 
         Box(
