@@ -60,43 +60,7 @@ fun PrivacySetting(navController: NavController) {
 
 @Composable
 fun ChangePasswordButton(navController: NavController){
-
     SettingRow(text = stringResource(id = R.string.change_password), size = 16 , destination = SettingsScreen.ChangePassword.route , navController = navController)
-
-    /*
-    Row(modifier = Modifier
-        .clickable { navController.navigate(SettingsScreen.ChangePassword.route) }
-        .fillMaxWidth()
-        .background(Color.Transparent)
-        //.padding(dimensionResource(id = R.dimen.dim_10))
-        .border(
-            width = dimensionResource(id = R.dimen.dim_1),
-            color = colorGray,
-            shape = RoundedCornerShape(
-                dimensionResource(id = R.dimen.dim_8)
-            )
-        )
-    ){
-        Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_10)))
-        SettingsText(
-            text = stringResource(id = R.string.change_password),
-            size = 16,
-            weight = FontWeight.W400,
-            textAlign = TextAlign.Left,
-            lineHeight = 19.5.sp
-        )
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        SettingsIcons(
-            size = 20,
-            icon = R.drawable.forwardarrow
-        )
-        Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_10)))
-    }
-
-     */
-
 }
 @Composable
 @Preview

@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -56,7 +57,7 @@ fun LogOutDialog(onDismissRequest: () -> Unit, onConfirmRequest: () -> Unit) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxHeight()
-            )//, verticalArrangement = Arrangement.SpaceBetween)
+            )
             {
 
                 Box(
@@ -119,13 +120,12 @@ fun LogOutDialog(onDismissRequest: () -> Unit, onConfirmRequest: () -> Unit) {
     }
 }
 
-@Composable
 fun Modifier.customBorder(strokeWidth: Dp, color: Color, isLeft: Boolean = true) : Modifier
-{
+= composed {
     val density = LocalDensity.current
     val strokeWidthPx = density.run { strokeWidth.toPx() }
 
-    return this then Modifier.drawBehind {
+    this then Modifier.drawBehind {
         val width = size.width
         val height = size.height - strokeWidthPx / 2
 

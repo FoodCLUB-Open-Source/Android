@@ -150,21 +150,6 @@ fun SettingsView(
                 navController = navController
             )
 
-            /*
-            SettingRow(
-                text = stringResource(id = R.string.contact_us),
-                iconId = R.drawable.contactus,
-                fontC = Color.Black,
-                size = 16,
-                lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
-                borderSize = 0,
-                borderColor = Color.Transparent,
-                destination = "SETTINGS_PRIVACY",
-                navController = navController
-            )
-            
-             */
-
             SettingRow(
                 text = stringResource(id = R.string.privacy_policy),
                 iconId = R.drawable.privacypolicy,
@@ -189,8 +174,6 @@ fun SettingsView(
             lineHeight = dimensionResource(id = R.dimen.fon_19_5).value.sp,
             borderSize = integerResource(id = R.integer.int_1),
             borderColor = colorGray,
-            //destination = Graph.AUTHENTICATION,
-            //navController = navController,
             onClick = { isDialog = true }
         )
 

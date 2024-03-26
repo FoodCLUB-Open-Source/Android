@@ -369,8 +369,6 @@ fun CustomPasswordTextField(
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
                 .background(Black.copy(alpha = 0.06F))
                 .padding(
-                    //horizontal = dimensionResource(id = R.dimen.dim_10),
-                    //vertical = dimensionResource(id = R.dimen.dim_5)
                 )
                 .border(
                     width = dimensionResource(id = R.dimen.dim_1),
@@ -378,7 +376,6 @@ fun CustomPasswordTextField(
                     shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))
                 )
                 .fillMaxWidth(),
-            //.border(width = dimensionResource(id = R.dimen.dim_1), color = colorGray, shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
             shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
             trailingIcon = {
                 if (passVisible) {
