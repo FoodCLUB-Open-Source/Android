@@ -9,6 +9,7 @@ import android.kotlin.foodclub.localdatasource.room.dao.UserProfilePostsDao
 import android.kotlin.foodclub.localdatasource.room.entity.ProfileEntity
 import android.kotlin.foodclub.localdatasource.room.entity.ProfileBookmarksEntity
 import android.kotlin.foodclub.localdatasource.room.entity.ProfilePostsEntity
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -22,7 +23,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         ProfileEntity::class,
         ProfileBookmarksEntity::class
     ],
-    version = 3
+    version = 4,
+    autoMigrations = [
+        AutoMigration(3, 4)
+    ]
 )
 @TypeConverters(Converters::class)
 abstract class FoodCLUBDatabase : RoomDatabase() {

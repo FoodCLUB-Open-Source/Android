@@ -10,7 +10,8 @@ class SignInUserMapper: DomainMapper<LoginResponse, SignInUser> {
         return SignInUser(
             id = entity.user.id,
             username = entity.user.username,
-            profileImageUrl = entity.user.profileImageUrl ?: "",
+            profileImageUrl = entity.user.profileImageUrl,
+            fullName = entity.user.fullName,
             accessToken = entity.accessToken,
             idToken = entity.idToken,
             refreshToken = entity.refreshToken
@@ -23,6 +24,7 @@ class SignInUserMapper: DomainMapper<LoginResponse, SignInUser> {
                 id = domainModel.id,
                 username = domainModel.username,
                 profileImageUrl = domainModel.profileImageUrl,
+                fullName = domainModel.fullName
             ),
             accessToken = domainModel.accessToken,
             idToken = domainModel.idToken,

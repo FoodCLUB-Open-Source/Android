@@ -46,7 +46,7 @@ object RetrofitModule {
     @Named("defaultRetrofit")
     fun provideDefaultRetrofitBuilder(): Retrofit.Builder {
         return Retrofit.Builder()
-            .baseUrl("https://foodclub.sts3.pl/api/v1/")
+            .baseUrl("http://foodclub-prod-load-balancer-347824685.eu-west-2.elb.amazonaws.com:3000/api/v1/")
             .addConverterFactory(GsonConverterFactory.create())
     }
 
