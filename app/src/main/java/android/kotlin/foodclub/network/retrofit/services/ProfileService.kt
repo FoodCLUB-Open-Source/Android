@@ -18,9 +18,9 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ProfileService {
-    @GET("profile")
+    @GET("profile/{userId}")
     suspend fun retrieveProfileData(
-        @Query("user_id") userId: Long?,
+        @Path("userId") userId: Long?,
         @Query("page_number") pageNo: Int?,
         @Query("page_size") pageSize: Int?
     ): Response<RetrieveProfileResponse>
@@ -38,14 +38,14 @@ interface ProfileService {
         @Query("page_number") pageNo: Int?
     ): Response<RetrievePostsListResponse>
 
-    @GET("profile/{Id}/followers")
+    @GET("profile/followers/{Id}")
     suspend fun retrieveProfileFollowers(
         @Path("Id") userId: Long,
         @Query("page_number") pageNo: Int?,
         @Query("page_size") pageSize: Int?
     ): Response<RetrieveFollowerListResponse>
 
-    @GET("profile/{Id}/following")
+    @GET("profile/following/{Id}")
     suspend fun retrieveProfileFollowing(
         @Path("Id") userId: Long,
         @Query("page_number") pageNo: Int?,

@@ -111,7 +111,8 @@ class SignupVerificationViewModel @Inject constructor(
                         ProfileEntity(
                             userId = data.user.id.toLong(),
                             userName = state.value.username!!,
-                            profilePicture = data.user.profileImageUrl
+                            profilePicture = data.user.profileImageUrl,
+                            fullName = data.user.fullName ?: "Undefined"
                         )
                     )
                     navController.navigate(Graph.HOME) {

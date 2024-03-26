@@ -25,7 +25,7 @@ class DatabaseModule {
             FoodCLUBDatabase::class.java,
             "foodclub_room_database"
         )
-//            .fallbackToDestructiveMigration() // later change this to meet our intends
+            .fallbackToDestructiveMigration() // later change this to meet our intends
             .addMigrations(FoodCLUBDatabase.migration1To2)
             .addMigrations(FoodCLUBDatabase.migration2to3)
             .build()

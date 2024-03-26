@@ -1,14 +1,12 @@
-package android.kotlin.foodclub.network.retrofit.dtoModels.auth
+package android.kotlin.foodclub.network.retrofit.dtoModels.profile
 
 import com.google.gson.annotations.SerializedName
 
-data class SignInUserDto(
-    val id: Int,
+data class UserInfoDto(
+    val id: Long,
     val username: String,
-
     @SerializedName("profile_picture")
-    val profileImageUrl: String? = null,
-
+    val profilePictureUrl: String? = null,
     @SerializedName("full_name")
     val fullName: String? = null
 )
