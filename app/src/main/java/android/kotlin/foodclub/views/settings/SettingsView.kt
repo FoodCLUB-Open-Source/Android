@@ -201,13 +201,14 @@ fun SettingsIcons(
 
 @Composable
 fun SettingsText(
+    modifier: Modifier = Modifier,
     text: String,
     size: Int,
     weight: FontWeight,
     fontC: Color = Color.Black,
     textAlign: TextAlign = TextAlign.Center,
     lineHeight: TextUnit? = null,
-    modifier: Modifier = Modifier
+
 ) {
     Text(
         text = text,
