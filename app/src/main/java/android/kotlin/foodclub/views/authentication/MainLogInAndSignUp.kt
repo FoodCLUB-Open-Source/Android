@@ -40,6 +40,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -126,8 +127,9 @@ fun MainLogInAndSignUp(
                         Text(
                             color = Color.White,
                             text = stringResource(id = R.string.sign_up),
-                            fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
-                            fontFamily = Montserrat
+                            fontSize = dimensionResource(id = R.dimen.fon_19_5).value.sp,
+                            fontFamily = Montserrat,
+                            fontWeight = FontWeight.Medium
                         )
                     }
                 }
@@ -140,8 +142,9 @@ fun MainLogInAndSignUp(
                         color = Color.Black,
                         text = stringResource(id = R.string.already_have_account),
                         fontFamily = Montserrat,
-                        fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
-                        modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dim_5))
+                        fontWeight = FontWeight.Medium,
+                        fontSize = dimensionResource(id = R.dimen.fon_19_5).value.sp,
+                        modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dim_7))
                     )
 
                     ClickableText(
@@ -152,7 +155,8 @@ fun MainLogInAndSignUp(
                         style = TextStyle(
                             color = colorResource(id = R.color.login_text_color),
                             fontFamily = Montserrat,
-                            fontSize = dimensionResource(id = R.dimen.fon_14).value.sp
+                            fontWeight = FontWeight.Medium,
+                            fontSize = dimensionResource(id = R.dimen.fon_19_5).value.sp
                         )
                     )
                 }
