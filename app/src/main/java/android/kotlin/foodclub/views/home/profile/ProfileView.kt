@@ -16,8 +16,6 @@ import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.kotlin.foodclub.utils.helpers.uriToFile
 import android.kotlin.foodclub.viewModels.home.profile.ProfileEvents
 import android.kotlin.foodclub.views.ProfileViewLoadingSkeleton
-import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -106,19 +104,18 @@ fun ProfileView(
     val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
     val brush = shimmerBrush()
     val scope = rememberCoroutineScope()
-    var imageUri: Uri? by remember { mutableStateOf(null) }
+    var profileImage: String? by remember { mutableStateOf(null) }
     var showProfileImage by remember {
         mutableStateOf(false)
     }
 
-    LaunchedEffect(key1 = true) {
-        state.dataStore?.getImage()?.collect { image ->
-            if (image != null) {
-                imageUri = Uri.parse(image)
-            } else {
-                imageUri = null
-                Log.e("ProfileView", "NULL IMG URI")
+    LaunchedEffect(key1 = state) {
+        if (state.userProfile?.profilePictureUrl == null) {
+            state.dataStore?.getImage()?.collect { image ->
+                profileImage = image
             }
+        } else {
+            profileImage = state.userProfile.profilePictureUrl
         }
     }
 
@@ -177,7 +174,7 @@ fun ProfileView(
                 userTabItems = bookmarkedPosts
             }
             if (showProfileImage) {
-                ShowProfileImage(imageUri) {
+                ShowProfileImage(profileImage) {
                     showProfileImage = false
                 }
             }
@@ -215,7 +212,7 @@ fun ProfileView(
                 ) {
                     TopProfileLayout(
                         state = state,
-                        profilePhotoUrl = imageUri,
+                        profilePhotoUrl = profileImage,
                         onProfilePhotoClick = { showBottomSheet = true },
                         onNavigate = onNavigate
                     )
@@ -375,7 +372,7 @@ fun ProfileView(
 @Composable
 fun TopProfileLayout(
     state: ProfileState,
-    profilePhotoUrl: Uri?,
+    profilePhotoUrl: String?,
     onProfilePhotoClick: () -> Unit,
     onNavigate: (String, NavOptionsBuilder.() -> Unit) -> Unit
 ) {
