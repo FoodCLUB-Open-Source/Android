@@ -170,6 +170,7 @@ fun SettingsView(
             text = stringResource(id = R.string.log_out),
             iconId = R.drawable.logout,
             fontC = colorRed,
+            fontWeight = FontWeight(integerResource(id = R.integer.int_600)),
             size = integerResource(id = R.integer.int_16),
             lineHeight = dimensionResource(id = R.dimen.fon_19_5).value.sp,
             borderSize = integerResource(id = R.integer.int_1),

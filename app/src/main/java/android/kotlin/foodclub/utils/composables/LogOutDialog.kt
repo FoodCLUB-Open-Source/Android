@@ -29,6 +29,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -111,7 +112,7 @@ fun LogOutDialog(onDismissRequest: () -> Unit, onConfirmRequest: () -> Unit) {
                         Text(
                             text = stringResource(id = R.string.log_out),
                             fontFamily = Montserrat,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight(integerResource(id = R.integer.int_600)),
                         )
                     }
                 }

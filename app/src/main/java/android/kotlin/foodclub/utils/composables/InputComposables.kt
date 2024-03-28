@@ -402,7 +402,7 @@ fun CustomPasswordTextField(
                     }
                 }
             },
-            visualTransformation = if (passVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            visualTransformation = if (passVisible) VisualTransformation.None else PasswordVisualTransformation(mask = '\u25CF'),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         )
 
