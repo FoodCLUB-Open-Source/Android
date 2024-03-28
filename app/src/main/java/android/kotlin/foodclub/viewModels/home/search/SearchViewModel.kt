@@ -19,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val searchRepository: SearchRepository
-): ViewModel(),SearchEvents {
+) : ViewModel(), SearchEvents {
 
     companion object {
         private val TAG = SearchViewModel::class.java.simpleName
@@ -74,7 +74,7 @@ class SearchViewModel @Inject constructor(
 
                 is Resource.Error -> {
                     Log.e(TAG, "Unexpected Error during searching")
-                    Log.e(TAG,resource.message!!)
+                    Log.e(TAG, resource.message!!)
                 }
             }
         }

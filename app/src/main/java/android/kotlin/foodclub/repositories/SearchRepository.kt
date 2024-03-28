@@ -1,6 +1,5 @@
 package android.kotlin.foodclub.repositories
 
-import android.kotlin.foodclub.network.retrofit.dtoModels.search.SearchDto
 import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorResponse
 import android.kotlin.foodclub.network.retrofit.responses.search.SearchUserPostsResponse
 import android.kotlin.foodclub.network.retrofit.services.SearchService
@@ -10,10 +9,10 @@ class SearchRepository(
     private val api: SearchService
 ) {
     suspend fun searchByText(
-        searchText: String?
-    ): Resource<SearchUserPostsResponse, DefaultErrorResponse>{
+        searchText: String
+    ): Resource<SearchUserPostsResponse, DefaultErrorResponse> {
         try {
-            val response = api.searchPosts(SearchDto(searchText))
+            val response = api.searchPosts(searchText)//SearchDto(searchText))
             if (response.isSuccessful) {
                 val responseBody = response.body()
                 if (responseBody != null) {
