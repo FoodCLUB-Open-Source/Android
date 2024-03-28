@@ -87,7 +87,8 @@ fun SettingsView(
         state.user?.let {
             SettingsProfile(
                 userName = it.userName,
-                userImage = imageUri
+                userImage = imageUri,
+                fullName = it.fullName
             )
         }
 
@@ -267,7 +268,8 @@ fun SettingsTopBar(
 @Composable
 fun SettingsProfile(
     userName: String,
-    userImage: Uri?
+    userImage: Uri?,
+    fullName: String?
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Row(
@@ -296,17 +298,32 @@ fun SettingsProfile(
         }
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_15)))
 
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            SettingsText(
-                text = userName,
-                size = 24,
-                weight = FontWeight.W600,
-                lineHeight = dimensionResource(id = R.dimen.fon_40).value.sp,
-                modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.dim_20))
-            )
+        Column(horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth()) {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                if (fullName != null) {
+                    SettingsText(
+                        text = fullName,
+                        size = 24,
+                        weight = FontWeight.W600,
+                        lineHeight = dimensionResource(id = R.dimen.fon_40).value.sp,
+                        modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.dim_20))
+                    )
+                } else {
+                    SettingsText(
+                        text = "Error full name N/A",
+                        size = 24,
+                        weight = FontWeight.W600,
+                        lineHeight = dimensionResource(id = R.dimen.fon_40).value.sp,
+                        modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.dim_20))
+                    )
+                }
+            }
+
+            SettingsText(text = "#$userName", size = 16, weight = FontWeight.W600, fontC = colorGray)
         }
     }
 }
