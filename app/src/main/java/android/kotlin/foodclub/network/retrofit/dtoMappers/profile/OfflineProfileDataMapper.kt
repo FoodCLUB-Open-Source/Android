@@ -10,9 +10,9 @@ class OfflineProfileDataMapper : DomainMapper<ProfileEntity, UserProfile> {
         return UserProfile(
             username = entity.userName,
             profilePictureUrl = entity.profilePicture,
-            totalUserLikes = entity.totalUserLikes!!,
-            totalUserFollowers = entity.totalUserFollowers!!,
-            totalUserFollowing = entity.totalUserFollowing!!,
+            totalUserLikes = entity.totalUserLikes,
+            totalUserFollowers = entity.totalUserFollowers,
+            totalUserFollowing = entity.totalUserFollowing,
         )
     }
 
