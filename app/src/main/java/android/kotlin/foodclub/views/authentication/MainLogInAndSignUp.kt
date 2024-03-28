@@ -73,7 +73,7 @@ fun MainLogInAndSignUp(
         ) {
             Column(
                 Modifier
-                    .weight(7F)
+                    .weight(13F)
                     .fillMaxSize()
                     .padding(top = dimensionResource(id = R.dimen.dim_120)),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -95,7 +95,7 @@ fun MainLogInAndSignUp(
             }
             Column(
                 Modifier
-                    .weight(8F)
+                    .weight(5F)
                     .fillMaxSize()
                     .padding(
                         horizontal = dimensionResource(id = R.dimen.dim_48),
@@ -164,9 +164,9 @@ fun MainLogInAndSignUp(
 
             Box(
                 Modifier
-                    .weight(5F)
+                    .weight(2F)
                     .fillMaxSize()
-                    .padding(vertical = dimensionResource(id = R.dimen.dim_32))
+                    .padding(vertical = dimensionResource(id = R.dimen.dim_30))
             ) { TermsAndConditionsInfoFooter() }
         }
 
