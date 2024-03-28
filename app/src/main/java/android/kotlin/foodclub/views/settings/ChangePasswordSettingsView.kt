@@ -2,7 +2,6 @@ package android.kotlin.foodclub.views.settings
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
-import android.kotlin.foodclub.config.ui.textFieldCustomColors
 import android.kotlin.foodclub.utils.composables.ConfirmButton
 import android.kotlin.foodclub.utils.composables.CustomPasswordTextField
 import android.kotlin.foodclub.utils.composables.SettingsLayout
@@ -41,21 +40,12 @@ fun ChangePasswordSettings(
             mutableStateOf(false)
         }
 
-        val textFieldColors = textFieldCustomColors(textColor = Color.Black)
-        val errorTextFieldColors = textFieldCustomColors(
-            textColor = Color.Black,
-            focusedIndicatorColor = Color.Red,
-            unfocusedIndicatorColor = Color.Red
-        )
-
         CustomPasswordTextField(
             placeholder = "",
             label = stringResource(id = R.string.password),
             strengthValidation = false,
             onCorrectnessStateChange = { filledOldPassword = !filledOldPassword },
             onValueChange = { oldPassword = it },
-            textFieldColors = textFieldColors,
-            errorTextFieldColors = errorTextFieldColors
         )
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
@@ -65,8 +55,6 @@ fun ChangePasswordSettings(
             strengthValidation = true,
             onCorrectnessStateChange = { filledNewPassword = !filledNewPassword },
             onValueChange = { newPassword = it },
-            textFieldColors = textFieldColors,
-            errorTextFieldColors = errorTextFieldColors
         )
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
@@ -76,10 +64,7 @@ fun ChangePasswordSettings(
             strengthValidation = true,
             onCorrectnessStateChange = { confirmedNewPassword = !confirmedNewPassword },
             onValueChange = { newPasswordConfirm = it },
-            textFieldColors = textFieldColors,
-            errorTextFieldColors = errorTextFieldColors
         )
-
 
         Text(
             text = error ?: "",

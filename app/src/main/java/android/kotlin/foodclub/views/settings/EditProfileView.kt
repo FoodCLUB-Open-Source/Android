@@ -40,8 +40,8 @@ fun EditProfileSetting(
 
         CustomTextField(
             placeholder = "",
-            enabled = false,
             label = stringResource(id = R.string.username),
+            iconID = R.drawable.edit_icon,
             initialValue = user?.userName ?: "",
             keyboardType = KeyboardType.Text,
             onValueChange = { username = it })

@@ -314,10 +314,17 @@ fun CustomPasswordTextField(
     onCorrectnessStateChange: () -> Unit,
     onValueChange: (text: String) -> Unit = {},
     label: String? = null,
-    textFieldColors: TextFieldColors = textFieldCustomColors(),
+    textFieldColors: TextFieldColors = textFieldCustomColors(textColor = Color.Black),
+    passwordColors: TextFieldColors = textFieldCustomColors(textColor = Color.Gray),
     errorTextFieldColors: TextFieldColors = textFieldCustomColors(
         focusedIndicatorColor = Color.Red,
-        unfocusedIndicatorColor = Color.Red
+        unfocusedIndicatorColor = Color.Red,
+        textColor = Color.Black
+    ),
+    errorPasswordColors: TextFieldColors = textFieldCustomColors(
+        focusedIndicatorColor = Color.Red,
+        unfocusedIndicatorColor = Color.Red,
+        textColor = Color.Gray
     )
 ) {
     var password by remember { mutableStateOf(initialValue) }
@@ -340,7 +347,7 @@ fun CustomPasswordTextField(
     Column {
         TextField(
             value = password,
-            textStyle = TextStyle(fontFamily = Montserrat),
+            textStyle = TextStyle(fontFamily = Montserrat, letterSpacing = if (passVisible) TextUnit.Unspecified else dimensionResource(id = R.dimen.fon_5).value.sp),
             onValueChange = {
                 var passValidCurrent = true
                 if (strengthValidation) {
@@ -364,7 +371,7 @@ fun CustomPasswordTextField(
                     fontFamily = Montserrat
                 )
             },
-            colors = if (errorMessage.isNullOrBlank()) textFieldColors else errorTextFieldColors,
+            colors = if (errorMessage.isNullOrBlank()) { if (passVisible) textFieldColors else passwordColors} else if (passVisible) {errorTextFieldColors} else {errorPasswordColors},
             modifier = Modifier
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
                 .background(Black.copy(alpha = 0.06F))
@@ -402,7 +409,7 @@ fun CustomPasswordTextField(
                     }
                 }
             },
-            visualTransformation = if (passVisible) VisualTransformation.None else PasswordVisualTransformation(mask = '\u25CF'),
+            visualTransformation = if (passVisible) VisualTransformation.None else PasswordVisualTransformation('\u25CF'),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         )
 
