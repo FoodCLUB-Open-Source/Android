@@ -4,9 +4,9 @@ data class UserProfile(
     val username: String,
     val profilePictureUrl: String? = null,
 
-    val totalUserLikes: Int,
-    val totalUserFollowers: Int,
-    val totalUserFollowing: Int,
+    val totalUserLikes: Int? = 0,
+    val totalUserFollowers: Int? = 0,
+    val totalUserFollowing: Int? = 0,
 ) {
     companion object {
         fun default() = UserProfile(
