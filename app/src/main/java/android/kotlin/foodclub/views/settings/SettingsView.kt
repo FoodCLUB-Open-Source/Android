@@ -62,11 +62,11 @@ fun SettingsView(
     events: SettingsEvents,
     state: SettingsState
 ) {
-    var imageUri: Uri? by remember { mutableStateOf(null) }
     var isDialog by remember {
         mutableStateOf(false)
     }
 
+    var imageUri: Uri? by remember { mutableStateOf(null) }
     LaunchedEffect(key1 = true) {
         state.dataStore?.getImage()?.collect { image ->
             if (image != null) {
@@ -84,13 +84,12 @@ fun SettingsView(
         val screenSizeHeight =
             LocalConfiguration.current.screenHeightDp.dp
 
-        state.user?.let {
-            SettingsProfile(
-                userName = it.userName,
-                userImage = imageUri,
-                fullName = it.fullName
-            )
-        }
+        SettingsProfile(
+            userName = state.user?.userName,
+            userImage = imageUri,
+            fullName = state.user?.fullName
+        )
+
 
         Spacer(modifier = Modifier.height(height = dimensionResource(id = R.dimen.dim_30)))
 
@@ -211,7 +210,7 @@ fun SettingsText(
     textAlign: TextAlign = TextAlign.Center,
     lineHeight: TextUnit? = null,
 
-) {
+    ) {
     Text(
         text = text,
         fontSize = size.sp,
@@ -267,7 +266,7 @@ fun SettingsTopBar(
 
 @Composable
 fun SettingsProfile(
-    userName: String,
+    userName: String?,
     userImage: Uri?,
     fullName: String?
 ) {
@@ -276,7 +275,7 @@ fun SettingsProfile(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            if (userImage != null) {
+            if (userImage != null){
                 AsyncImage(
                     contentDescription = stringResource(id = R.string.user_images),
                     model = userImage,
@@ -286,7 +285,7 @@ fun SettingsProfile(
                         .width(dimensionResource(id = R.dimen.dim_124)),
                     contentScale = ContentScale.Crop
                 )
-            } else {
+            }else{
                 Image(
                     painter = painterResource(id = R.drawable.story_user),
                     contentDescription = stringResource(id = R.string.user_images),
@@ -297,36 +296,34 @@ fun SettingsProfile(
             }
         }
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_15)))
-
-        Column(horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()) {
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                if (fullName != null) {
-                    SettingsText(
-                        text = fullName,
-                        size = 24,
-                        weight = FontWeight.W600,
-                        lineHeight = dimensionResource(id = R.dimen.fon_40).value.sp,
-                        modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.dim_20))
-                    )
-                } else {
-                    SettingsText(
-                        text = "Error full name N/A",
-                        size = 24,
-                        weight = FontWeight.W600,
-                        lineHeight = dimensionResource(id = R.dimen.fon_40).value.sp,
-                        modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.dim_20))
-                    )
-                }
-            }
-
-            SettingsText(text = "#$userName", size = 16, weight = FontWeight.W600, fontC = colorGray)
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            SettingsText(
+                text = fullName ?: "",
+                size = 24,
+                weight = FontWeight.W600,
+                lineHeight = dimensionResource(id = R.dimen.fon_40).value.sp,
+                modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.dim_20))
+            )
+        }
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            SettingsText(
+                text = ("#$userName") ?: "",
+                size = 16,
+                weight = FontWeight.W600,
+                modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.dim_20)),
+                fontC = colorGray
+            )
         }
     }
 }
+
+
 
 @Composable
 fun SettingRow(
