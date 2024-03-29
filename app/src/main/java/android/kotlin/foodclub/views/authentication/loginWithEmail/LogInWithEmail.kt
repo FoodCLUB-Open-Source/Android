@@ -100,7 +100,7 @@ fun LogInWithEmail(
                 ClickableText(
                     text = AnnotatedString(stringResource(R.string.reset_here)),
                     onClick = {
-                        navController.navigate(route = AuthScreen.Forgot.route)
+                        navController.navigate(route = "${AuthScreen.Forgot.route}?email=$username")
                     },
                     style = TextStyle(
                         color = foodClubGreen,
