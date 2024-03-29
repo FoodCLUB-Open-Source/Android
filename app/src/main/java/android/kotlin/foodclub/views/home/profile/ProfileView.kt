@@ -1,6 +1,5 @@
 package android.kotlin.foodclub.views.home.profile
 
-import android.content.Intent
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
@@ -13,11 +12,10 @@ import android.kotlin.foodclub.utils.composables.videoPager.VideoPager
 import android.kotlin.foodclub.utils.composables.videoPager.VideoPagerState
 import android.kotlin.foodclub.utils.helpers.ProfilePicturePlaceHolder
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
+import android.kotlin.foodclub.utils.helpers.createGalleryLauncher
 import android.kotlin.foodclub.utils.helpers.uriToFile
 import android.kotlin.foodclub.viewModels.home.profile.ProfileEvents
 import android.kotlin.foodclub.views.ProfileViewLoadingSkeleton
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -146,23 +144,17 @@ fun ProfileView(
             var showBottomSheet by remember { mutableStateOf(false) }
 
             val galleryLauncher =
-                rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocument()) {
-                    it?.let { uri ->
-                        context.contentResolver
-                            .takePersistableUriPermission(
-                                uri,
-                                Intent.FLAG_GRANT_READ_URI_PERMISSION
-                            )
-                        scope.launch {
-                            state.dataStore?.storeImage(uri.toString())
-                        }
-                        val file = uriToFile(uri, context)
-                        events.updateUserProfileImage(
-                            file = file!!,
-                            uri = uri
-                        )
+                createGalleryLauncher(context = context, onResult = { uri ->
+                    scope.launch {
+                        state.dataStore?.storeImage(uri.toString())
                     }
-                }
+                    val file = uriToFile(uri, context)
+                    events.updateUserProfileImage(
+                        file = file!!,
+                        uri = uri
+                    )
+                })
+
 
             var showPost by remember { mutableStateOf(false) }
             var showPostIndex by remember { mutableIntStateOf(0) }
