@@ -1,5 +1,8 @@
 package android.kotlin.foodclub.network.retrofit.dtoModels.edamam
 
+import androidx.annotation.Keep
+
+@Keep
 data class EdamamFoodProductFoodDto(
     val foodId: String,
     val label: String,

@@ -1,8 +1,10 @@
 package android.kotlin.foodclub.network.retrofit.responses.auth
 
 import android.kotlin.foodclub.network.retrofit.dtoModels.auth.SignInUserDto
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
+@Keep
 data class LoginResponse(
     val user: SignInUserDto,
     @SerializedName("access_token")
