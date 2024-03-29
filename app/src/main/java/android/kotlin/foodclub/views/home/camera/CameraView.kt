@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.confirmScreenColor
@@ -12,6 +13,7 @@ import android.kotlin.foodclub.navigation.CreateRecipeScreen
 import android.kotlin.foodclub.utils.composables.PermissionErrorBox
 import android.kotlin.foodclub.utils.composables.engine.createVideoCaptureUseCase
 import android.kotlin.foodclub.utils.composables.engine.startRecordingVideo
+import android.kotlin.foodclub.utils.helpers.uriToFile
 import android.kotlin.foodclub.viewModels.home.camera.CameraEvents
 import android.kotlin.foodclub.viewModels.home.camera.StopWatchEvent
 import android.net.Uri
@@ -98,14 +100,19 @@ fun CameraView(
 
     var stateString = ""
 
-//    val permissionState = rememberMultiplePermissionsState(
-//        permissions = listOf(
-//            Manifest.permission.CAMERA,
-//            Manifest.permission.RECORD_AUDIO,
-//            Manifest.permission.READ_MEDIA_IMAGES,
-//            Manifest.permission.READ_MEDIA_VIDEO
-//        )
-//    )
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri ->
+            uri?.let {
+                context.contentResolver.takePersistableUriPermission(
+                    uri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+                val file = uriToFile(uri, context)
+                // Handle the selected video file
+            }
+        }
+    )
     val permissions = arrayOf(
         Manifest.permission.CAMERA,
         Manifest.permission.RECORD_AUDIO,
@@ -364,14 +371,6 @@ fun CameraView(
                                             if (event is VideoRecordEvent.Finalize) {
                                                 val uri = event.outputResults.outputUri
                                                 if (uri != Uri.EMPTY) {
-
-                                                    val uriEncoded = URLEncoder.encode(
-                                                        uri.toString(),
-                                                        StandardCharsets.UTF_8.toString()
-                                                    )
-
-                                                    //navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
-                                                    //navController.navigate("GALLERY_VIEW/${uriEncoded}")
                                                     clipUpdate(true)
                                                     uris.add(uri)
                                                 }
@@ -385,7 +384,6 @@ fun CameraView(
                                     recording?.stop() //Need the object refs to be consistent
                                 }
                             }
-                            //navController.navigate("GALLERY_VIEW")
                         },
                         modifier = Modifier
                             .size(dimensionResource(id = R.dimen.dim_80)),
@@ -402,64 +400,6 @@ fun CameraView(
                                 recording?.stop()
                             }
                         }
-
-                        /*
-                        if (holdOrPress) {
-                            if (isPressed && state.minutes < 1) {
-                                Log.d("Recording Start","Preparing recording")
-                                if (!recordingStarted.value && canAdd) {
-                                    videoCapture.value?.let { videoCapture ->
-                                        recordingStarted.value = true
-                                        events.onEvent(StopWatchEvent.onStart)
-                                        val mediaDir = context.externalCacheDirs.firstOrNull()?.let {
-                                            File(
-                                                it,
-                                                context.getString(R.string.app_name)
-                                            ).apply { mkdirs() }
-                                        }
-
-                                        recording = startRecordingVideo(
-                                            context = context,
-                                            filenameFormat = "yyyy-MM-dd-HH-mm-ss-SSS",
-                                            videoCapture = videoCapture,
-                                            outputDirectory = if (mediaDir != null && mediaDir.exists())
-                                                mediaDir
-                                            else
-                                                context.filesDir,
-                                            executor = context.mainExecutor,
-                                            audioEnabled = audioEnabled.value
-                                        ) { event ->
-                                            if (event is VideoRecordEvent.Finalize) {
-                                                val uri = event.outputResults.outputUri
-                                                if (uri != Uri.EMPTY) {
-
-                                                    val uriEncoded = URLEncoder.encode(
-                                                        uri.toString(),
-                                                        StandardCharsets.UTF_8.toString()
-                                                    )
-
-                                                    //navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}/${state.encodeUtf8()}")
-                                                    //navController.navigate("GALLERY_VIEW/${uriEncoded}")
-                                                    clipUpdate(true)
-                                                    uris.add(uriEncoded)
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            } else {
-                                Log.d("Recording Start","Preparing to end recording")
-                                if (recordingStarted.value) {
-                                    recordingStarted.value = false
-                                    events.onEvent(StopWatchEvent.onStop)
-                                    recording?.stop()
-                                    canAdd = false
-                                }
-                            }
-                        }
-
-                         */
-
                         RecordingClipsButton(
                             isRecording = recordingStarted.value,
                             removeClip = removeClip,
@@ -468,13 +408,6 @@ fun CameraView(
                             clipUpdate = clipUpdate,
                             state = state
                         )
-
-
-                        /*Icon(
-                            painter = painterResource(if (recordingStarted.value) R.drawable.story_user else R.drawable.save),
-                            contentDescription = "",
-                            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_64))
-                        )*/
                     }
                 }
 
@@ -482,48 +415,23 @@ fun CameraView(
                     .height(dimensionResource(id = R.dimen.dim_80))
                     .align(Alignment.BottomStart), verticalAlignment = Alignment.CenterVertically)
                 {
-                    if (!recordingStarted.value) {
-                        val bitmapCheck = loadCurrentThumbnail(context = context)
-                        val bitmap: ImageBitmap
-                        if (bitmapCheck != null) {
-                            bitmap = bitmapCheck.asImageBitmap()
-                            Image(
-                                bitmap = bitmap,
-                                contentScale = ContentScale.Crop,
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_5)))
-                                    .then(
-                                        Modifier
-                                            .size(dimensionResource(id = R.dimen.dim_64))
-                                            .border(
-                                                dimensionResource(id = R.dimen.dim_2),
-                                                Color.White,
-                                                RoundedCornerShape(dimensionResource(id = R.dimen.dim_5))
-                                            )
-                                    )
-                                    .clickable {
-                                        navController.navigate("GALLERY_VIEW/${stateString.encodeUtf8()}")
-                                    }
-                            )
-                        } else {
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_5)))
-                                    .then(
-                                        Modifier
-                                            .size(dimensionResource(id = R.dimen.dim_64))
-                                            .border(
-                                                dimensionResource(id = R.dimen.dim_2),
-                                                Color.White,
-                                                RoundedCornerShape(dimensionResource(id = R.dimen.dim_5))
-                                            )
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_5)))
+                            .then(
+                                Modifier
+                                    .size(dimensionResource(id = R.dimen.dim_64))
+                                    .border(
+                                        dimensionResource(id = R.dimen.dim_2),
+                                        Color.White,
+                                        RoundedCornerShape(dimensionResource(id = R.dimen.dim_5))
                                     )
                             )
-                        }
-                    }
+                            .clickable {
+                                galleryLauncher.launch("video/*")
+                            }
+                    )
                 }
-
 
                 Row(
                     modifier = Modifier
@@ -591,97 +499,3 @@ fun CameraView(
         }
     }
 }
-
-fun loadCurrentThumbnail(context: Context): Bitmap? {
-    val imageProjection = arrayOf(
-        MediaStore.Images.Media._ID,
-        MediaStore.Images.Media.DATE_TAKEN
-    )
-
-    val videoProjection = arrayOf(
-        MediaStore.Video.Media._ID,
-        MediaStore.Video.Media.DATE_TAKEN
-    )
-
-    var uri: Uri = Uri.EMPTY
-    var timeSinceEpoch = "0"
-
-    val selectionImageArgs = Bundle()
-    selectionImageArgs.putInt(ContentResolver.QUERY_ARG_LIMIT, 1)
-    val sortArgs = arrayOf(MediaStore.Images.ImageColumns.DATE_TAKEN)
-    selectionImageArgs.putStringArray(ContentResolver.QUERY_ARG_SORT_COLUMNS, sortArgs)
-    selectionImageArgs.putInt(
-        ContentResolver.QUERY_ARG_SORT_DIRECTION,
-        ContentResolver.QUERY_SORT_DIRECTION_DESCENDING
-    )
-
-    val cursorImage = context.contentResolver.query(
-        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-        imageProjection,
-        selectionImageArgs,
-        null,
-    )
-
-    cursorImage.use {
-        it?.let {
-            val idColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-            val dateColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN)
-            while (it.moveToNext()) {
-                val id = it.getLong(idColumn)
-                val date = it.getString(dateColumn)
-                val contentUri = ContentUris.withAppendedId(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    id
-                )
-                uri = contentUri
-                timeSinceEpoch = date
-            }
-        } ?: run {
-            Log.e("LoadCurrentThumbnail", "Cursor is null!")
-        }
-    }
-
-    val selectionVideoArgs = Bundle()
-    selectionVideoArgs.putInt(ContentResolver.QUERY_ARG_LIMIT, 1)
-    val sortVideoArgs = arrayOf(MediaStore.Video.VideoColumns.DATE_TAKEN)
-    selectionVideoArgs.putStringArray(ContentResolver.QUERY_ARG_SORT_COLUMNS, sortVideoArgs)
-    selectionVideoArgs.putInt(
-        ContentResolver.QUERY_ARG_SORT_DIRECTION,
-        ContentResolver.QUERY_SORT_DIRECTION_DESCENDING
-    )
-
-    val cursor = context.contentResolver.query(
-        MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-        videoProjection,
-        selectionVideoArgs,
-        null,
-    )
-
-    cursor.use {
-        it?.let {
-            val idColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-            val dateColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN)
-            while (it.moveToNext()) {
-                val id = it.getLong(idColumn)
-                val date = it.getString(dateColumn)
-                val contentUri = ContentUris.withAppendedId(
-                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-                    id
-                )
-
-                if (timeSinceEpoch < date) {
-                    uri = contentUri
-                }
-            }
-        } ?: run {
-            Log.e("LoadCurrentThumbnail", "Cursor is null!")
-        }
-    }
-
-    return if (uri.toString().isEmpty()) null else context.contentResolver.loadThumbnail(
-        uri,
-        Size(240, 240),
-        null
-    )
-}
-
