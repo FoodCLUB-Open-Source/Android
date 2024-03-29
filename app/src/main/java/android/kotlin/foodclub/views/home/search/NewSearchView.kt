@@ -1,9 +1,11 @@
 package android.kotlin.foodclub.views.home.search
 
+import android.content.Context
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
+import android.kotlin.foodclub.utils.composables.RecommendationVideos
 import android.kotlin.foodclub.utils.composables.shimmerBrush
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.kotlin.foodclub.viewModels.home.search.SearchEvents
@@ -14,6 +16,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,10 +34,8 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -57,12 +58,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -98,7 +101,9 @@ fun NewSearchView(
             current = searchText.length
             delay(1100)
             if (current == searchText.length) {
-//                events.searchByText(searchText)
+                events.searchByText(searchText)
+                searchUserList = state.userList
+                searchPostList = state.postList
                 Log.i("Request testing", "send")
             }
         }
@@ -125,10 +130,11 @@ fun NewSearchView(
             0 ->
                 Column(modifier = Modifier.fillMaxWidth()) {
                     SearchBodyBoth(
-                        accountTabItems = searchUserList,
-                        recipeTabItems = searchPostList,
+                        searchUserList = searchUserList,
+                        searchPostList = searchPostList,
                         brush = brush,
-                        isInternetConnected = isInternetConnected
+                        isInternetConnected = isInternetConnected,
+                        navController = navController
                     )
                 }
 
@@ -140,11 +146,16 @@ fun NewSearchView(
                 )
             }
 
-            2 -> Column(modifier = Modifier.fillMaxWidth()) {
-                SearchBodyRecipes(
-                    searchPostList = searchPostList,
+            2 -> BoxWithConstraints {
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+                RecommendationVideos(
+                    gridHeight = maxHeight,
+                    recommandationVideosCount = searchPostList.size,
+                    navController = navController,
+                    dataItem = searchPostList,
                     brush = brush,
-                    isInternetConnected = isInternetConnected
+                    userName = null,
+                    isShowVideo = {}
                 )
             }
         }
@@ -247,15 +258,15 @@ fun NewSearchRow(
 @Composable
 fun SearchBodyBoth(
     modifier: Modifier = Modifier,
-    accountTabItems: List<SimpleUserModel>,
-    recipeTabItems: List<VideoModel>,
+    searchUserList: List<SimpleUserModel>,
+    searchPostList: List<VideoModel>,
     brush: Brush,
-    isInternetConnected: Boolean
+    isInternetConnected: Boolean,
+    navController: NavController
 ) {
 
     Column(
         modifier = modifier
-            .verticalScroll(rememberScrollState())
             .padding(
                 start = dimensionResource(id = R.dimen.dim_20),
                 top = dimensionResource(id = R.dimen.dim_20)
@@ -275,16 +286,18 @@ fun SearchBodyBoth(
                 fontFamily = Montserrat
             )
 
-            accountTabItems.forEach { searchUser ->
-                SearchAccountGridItem(searchUser)
-            }
+            SearchBodyAccounts(
+                searchUserList = searchUserList,
+                brush = brush,
+                isInternetConnected = isInternetConnected
+            )
         }
 
-        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_16)))
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
         Column(
             modifier = Modifier
-                .fillMaxHeight(0.6f)
+                .fillMaxHeight()
         ) {
             Text(
                 text = stringResource(id = R.string.Recipes),
@@ -295,25 +308,17 @@ fun SearchBodyBoth(
                 textAlign = TextAlign.Start,
                 fontFamily = Montserrat
             )
-
-            recipeTabItems.chunked(2).forEach { rowItems ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    rowItems.forEach { dataItem ->
-                        SearchRecipeGridItem(
-                            modifier = Modifier.weight(1f),
-                            brush = brush,
-                            isInternetConnected = isInternetConnected,
-                            searchPost = dataItem
-                        )
-                    }
-
-                    if (rowItems.size < 2) {
-                        Spacer(modifier = Modifier.weight(1f))
-                    }
-                }
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+            BoxWithConstraints {
+                RecommendationVideos(
+                    gridHeight = maxHeight,
+                    recommandationVideosCount = searchPostList.size,
+                    navController = navController,
+                    dataItem = searchPostList,
+                    brush = brush,
+                    userName = null,
+                    isShowVideo = {}
+                )
             }
         }
     }
@@ -331,7 +336,7 @@ fun SearchBodyAccounts(
     LazyColumn(
         modifier = modifier
             .padding(
-                start = dimensionResource(id = R.dimen.dim_20),
+                start = dimensionResource(id = R.dimen.dim_10),
                 top = dimensionResource(id = R.dimen.dim_20)
             ),
         state = lazyListState
