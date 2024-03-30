@@ -9,9 +9,6 @@ class Session(val accessToken: String, val idToken: String, userId: Long) {
 
     init {
         decodeToken()
-        Log.d("Session", "token: $accessToken")
-        Log.d("Session", "username: ${sessionUser.username}")
-        Log.d("Session", "expiryAt: ${sessionUser.expiryAt}")
     }
 
     private fun decodeToken() {

@@ -7,7 +7,6 @@ import android.kotlin.foodclub.network.retrofit.dtoModels.posts.toProfilePostsEn
 import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.utils.exceptions.RemoteDataRetrievalException
 import android.kotlin.foodclub.utils.helpers.Resource
-import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -44,7 +43,6 @@ class ProfilePostsRemoteMediator(
                     }
                 }
             }
-            Log.d("ProfileViewLoad", "${loadType.name} + loadKey: $loadKey")
             var userPosts: List<PostModelDto> = emptyList()
             when(
                 val result = repository.retrieveProfileData(
