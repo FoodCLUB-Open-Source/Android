@@ -1,7 +1,9 @@
 package android.kotlin.foodclub.network.retrofit.dtoModels.search
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
+@Keep
 data class SearchPostsDto (
     @SerializedName("id")
     val postId: Int,
