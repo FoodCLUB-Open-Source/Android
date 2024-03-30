@@ -3,17 +3,18 @@ package android.kotlin.foodclub.viewModels.home.profile
 import android.kotlin.foodclub.domain.models.products.MyBasketCache
 import android.kotlin.foodclub.domain.models.profile.UserProfile
 import android.kotlin.foodclub.localdatasource.room.entity.toVideoModel
-import android.kotlin.foodclub.repositories.ProfileRepository
-import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.kotlin.foodclub.repositories.LikesRepository
 import android.kotlin.foodclub.repositories.PostRepository
+import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.repositories.RecipeRepository
+import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.utils.helpers.StoreData
 import android.kotlin.foodclub.views.home.profile.ProfileState
 import android.net.Uri
 import android.util.Log
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.paging.cachedIn
 import androidx.paging.map
@@ -37,6 +38,7 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val postRepository: PostRepository,
     private val profileRepository: ProfileRepository,
+    private val likesRepository: LikesRepository,
     val sessionCache: SessionCache,
     private val storeData: StoreData,
     private val recipeRepository: RecipeRepository,
@@ -225,11 +227,36 @@ class ProfileViewModel @Inject constructor(
     }
 
     override suspend fun userViewsPost(postId: Long) {
-//        TODO("Not yet implemented")
-    }
+        viewModelScope.launch {
+            when (val resource = postRepository.userViewsPost(postId)) {
+                is Resource.Success -> {
+                    Log.i(TAG, "Viewed Post Successfully")
+                }
+
+                is Resource.Error -> {
+                    Log.e(TAG, "Failed to View Post: ${resource.message}")
+                }
+            }
+        }    }
 
     override suspend fun updatePostLikeStatus(postId: Long, isLiked: Boolean) {
-        TODO("Not yet implemented")
+        viewModelScope.launch {
+            when (
+                val resource = likesRepository.updatePostLikeStatus(
+                    postId = postId,
+                    isLiked
+                )
+            ) {
+                is Resource.Success -> {
+                    Log.i(TAG, "${resource.data}")
+                }
+
+                is Resource.Error -> {
+                    Log.i(TAG, "${resource.message}")
+                }
+            }
+        }
+        postRepository.getPost(postId).data?.let {  it.currentViewerInteraction.isLiked=isLiked }
     }
 
     override fun getRecipe(postId: Long) {
