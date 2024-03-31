@@ -5,6 +5,7 @@ import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.navigation.CreateRecipeScreen
+import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.BottomSheetItem
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,7 +37,6 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import okio.ByteString.Companion.encodeUtf8
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,7 +70,7 @@ fun BottomSheet(
                 text = stringResource(id = R.string.create_a_story),
                 onDismiss = onDismiss,
                 onClick = {
-                    navController.navigate(route = "CAMERA_VIEW" + "/${"story".encodeUtf8()}")
+                    navController.navigate(route = HomeOtherRoutes.TakeSnapPhotoView.route)
                     //onDismiss()
                 }
 
