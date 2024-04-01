@@ -41,4 +41,8 @@
     <color name="home_bottom_sheet_background_color">#2A2A2A</color>
     <color name="discover_view_add_ingredient_information_text">#000000</color>
     <color name="scan_results_list_button_color">#7EC60B</color>
+    <color name="home_ingredient_tick_unselected_color">#B5B5B5</color>
+    <color name="home_ingredient_card_border_color">#F3F3F3</color>
+    <color name="home_ingredient_bottom_sheet_divider_color">#CECECE</color>
+    <color name="home_ingredient_slider_color">#525252</color>
 </resources>

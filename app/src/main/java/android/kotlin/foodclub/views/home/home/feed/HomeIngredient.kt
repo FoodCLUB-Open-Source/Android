@@ -8,6 +8,7 @@ import android.kotlin.foodclub.domain.enums.QuantityUnit
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.views.home.ui.theme.FoodClubTheme
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,6 +22,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -75,11 +79,18 @@ fun HomeIngredient(
             .fillMaxWidth(),
         shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)),
         colors = CardDefaults.cardColors(
-            containerColor = colorResource(id = R.color.home_ingredient_section_background_color)
+            containerColor = Color.White
         ),
+        border = BorderStroke(
+            width = dimensionResource(id = R.dimen.dim_2), color = colorResource(
+                id = R.color.home_ingredient_card_border_color
+            )
+        )
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround
         ) {
@@ -88,7 +99,7 @@ fun HomeIngredient(
                 placeholder = painterResource(
                     id = R.drawable.salad_ingredient
                 ),
-                error  = painterResource(
+                error = painterResource(
                     id = R.drawable.salad_ingredient
                 ),
             )
@@ -120,7 +131,7 @@ fun HomeIngredient(
                         modifier = Modifier,
                         fontWeight = FontWeight.Medium,
                         fontFamily = Montserrat,
-                        color = Color.White,
+                        color = Color.Black,
                     )
                     Row(
                         modifier = Modifier,
@@ -138,7 +149,7 @@ fun HomeIngredient(
                         )
                         Text(
                             quantity.toString() + ValueParser.quantityUnitToString(ingredient.unit),
-                            color = Color.White,
+                            color = Color.Black,
                             fontFamily = Montserrat,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = dimensionResource(id = R.dimen.fon_14).value.sp
@@ -172,10 +183,10 @@ fun HomeIngredient(
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.check),
+                        imageVector = if (isSelected) Icons.Outlined.Check else Icons.Outlined.Add,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
-                        colorFilter = ColorFilter.tint(color = colorResource(id = R.color.home_ingredient_section_background_color))
+                        colorFilter = ColorFilter.tint(color = Color.White)
                     )
                 }
             }
