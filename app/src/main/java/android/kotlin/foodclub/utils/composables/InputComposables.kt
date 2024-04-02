@@ -512,7 +512,8 @@ fun TermsAndConditionsInfoFooter() {
             text = stringResource(id = R.string.by_using),
             fontFamily = Montserrat,
             fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
-            modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dim_5))
+            modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dim_5)),
+            maxLines = 1
         )
 
         ClickableText(
@@ -523,8 +524,9 @@ fun TermsAndConditionsInfoFooter() {
                 fontFamily = Montserrat,
                 fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
                 fontWeight = FontWeight.Bold,
-                textDecoration = TextDecoration.Underline
-            )
+                textDecoration = TextDecoration.Underline,
+            ),
+            maxLines = 1
         )
     }
 
