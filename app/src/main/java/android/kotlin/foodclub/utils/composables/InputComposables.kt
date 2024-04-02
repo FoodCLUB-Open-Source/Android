@@ -10,6 +10,7 @@ import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.config.ui.textFieldCustomColors
 import android.kotlin.foodclub.utils.helpers.FieldsValidation
 import android.kotlin.foodclub.views.authentication.TermsAndConditionsSimplified
+import android.kotlin.foodclub.views.settings.colorGray
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -52,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.dimensionResource
@@ -203,8 +205,10 @@ fun CustomTextField(
     placeholder: String,
     keyboardType: KeyboardType,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     label: String? = null,
     initialValue: String = "",
+    iconID: Int? = null,
     textValidation: Boolean = false,
     allowSpace: Boolean = false,
     validationMethod: (text: String) -> String? = { text -> text },
@@ -230,6 +234,8 @@ fun CustomTextField(
         TextField(
             value = text,
             label = composableLabel,
+            textStyle = TextStyle(fontFamily = Montserrat),
+            enabled = enabled,
             onValueChange = {
                 var textValidCurrent = true
                 val currentVal = if (allowSpace) it else it.trim()
@@ -246,17 +252,32 @@ fun CustomTextField(
                 onValueChange(currentVal)
                 textValid = textValidCurrent
             },
-            placeholder = { Text(text = placeholder, color = Color(0xFF939393)) },
+            placeholder = { Text(text = placeholder, color = Color(0xFF939393), fontFamily = Montserrat) },
             colors = if (errorMessage.isNullOrBlank()) textFieldCustomColors(textColor = Color.Black) else textFieldCustomColors(
                 focusedIndicatorColor = Color.Red,
                 unfocusedIndicatorColor = Color.Red
             ),
+            shape =  RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
+            trailingIcon = {
+                           if (iconID != null)
+                           {
+                               Image(painter = painterResource(id = iconID), contentDescription = "Edit", modifier = Modifier.size(
+                                   dimensionResource(id = R.dimen.dim_15)),
+                                   colorFilter = ColorFilter.tint(Color.Black)
+                               )
+                           }
+            },
             modifier = modifier
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
                 .background(Black.copy(alpha = 0.06F))
+                .border(
+                    width = dimensionResource(id = R.dimen.dim_1),
+                    color = colorGray,
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))
+                )
                 .padding(
-                    horizontal = dimensionResource(id = R.dimen.dim_10),
-                    vertical = dimensionResource(id = R.dimen.dim_5)
+                    //horizontal = dimensionResource(id = R.dimen.dim_10),
+                    //vertical = dimensionResource(id = R.dimen.dim_5)
                 )
                 .fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType)
@@ -293,10 +314,17 @@ fun CustomPasswordTextField(
     onCorrectnessStateChange: () -> Unit,
     onValueChange: (text: String) -> Unit = {},
     label: String? = null,
-    textFieldColors: TextFieldColors = textFieldCustomColors(),
+    textFieldColors: TextFieldColors = textFieldCustomColors(textColor = Color.Black),
+    passwordColors: TextFieldColors = textFieldCustomColors(textColor = Color.Gray),
     errorTextFieldColors: TextFieldColors = textFieldCustomColors(
         focusedIndicatorColor = Color.Red,
-        unfocusedIndicatorColor = Color.Red
+        unfocusedIndicatorColor = Color.Red,
+        textColor = Color.Black
+    ),
+    errorPasswordColors: TextFieldColors = textFieldCustomColors(
+        focusedIndicatorColor = Color.Red,
+        unfocusedIndicatorColor = Color.Red,
+        textColor = Color.Gray
     )
 ) {
     var password by remember { mutableStateOf(initialValue) }
@@ -308,9 +336,10 @@ fun CustomPasswordTextField(
         @Composable {
             Text(
                 modifier = Modifier.padding(
-                    bottom = dimensionResource(id = R.dimen.dim_5)
+                    bottom = dimensionResource(id = R.dimen.dim_1),
                 ),
-                text = label
+                text = label,
+                fontFamily = Montserrat
             )
         }
     } else null
@@ -318,6 +347,7 @@ fun CustomPasswordTextField(
     Column {
         TextField(
             value = password,
+            textStyle = TextStyle(fontFamily = Montserrat, letterSpacing = if (passVisible) TextUnit.Unspecified else dimensionResource(id = R.dimen.fon_5).value.sp),
             onValueChange = {
                 var passValidCurrent = true
                 if (strengthValidation) {
@@ -337,18 +367,23 @@ fun CustomPasswordTextField(
             placeholder = {
                 Text(
                     text = placeholder,
-                    color = Color(0xFF939393)
+                    color = Color(0xFF939393),
+                    fontFamily = Montserrat
                 )
             },
-            colors = if (errorMessage.isNullOrBlank()) textFieldColors else errorTextFieldColors,
+            colors = if (errorMessage.isNullOrBlank()) { if (passVisible) textFieldColors else passwordColors} else if (passVisible) {errorTextFieldColors} else {errorPasswordColors},
             modifier = Modifier
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
                 .background(Black.copy(alpha = 0.06F))
                 .padding(
-                    horizontal = dimensionResource(id = R.dimen.dim_10),
-                    vertical = dimensionResource(id = R.dimen.dim_5)
+                )
+                .border(
+                    width = dimensionResource(id = R.dimen.dim_1),
+                    color = colorGray,
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))
                 )
                 .fillMaxWidth(),
+            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
             trailingIcon = {
                 if (passVisible) {
                     Button(
@@ -358,6 +393,7 @@ fun CustomPasswordTextField(
                         Image(
                             painter = painterResource(R.drawable.unhide),
                             contentDescription = null,
+                            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_15))
                         )
                     }
                 } else {
@@ -366,13 +402,14 @@ fun CustomPasswordTextField(
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                     ) {
                         Image(
-                            painter = painterResource(R.drawable.hide),
+                            painter = painterResource(R.drawable.hide_alt_1),
                             contentDescription = null,
+                            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_15))
                         )
                     }
                 }
             },
-            visualTransformation = if (passVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            visualTransformation = if (passVisible) VisualTransformation.None else PasswordVisualTransformation('\u25CF'),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         )
 

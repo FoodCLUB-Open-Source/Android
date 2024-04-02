@@ -24,9 +24,6 @@ class AuthInterceptor @Inject constructor(
             )
         }
 
-        Log.d("RequestFlowUrl", request.build().url.toString())
-        Log.d("RequestFlowUrl", activeSession?.accessToken.toString())
-        Log.d("RequestFlowUrl", activeSession?.idToken.toString())
         return chain.proceed(request.build())
     }
 
