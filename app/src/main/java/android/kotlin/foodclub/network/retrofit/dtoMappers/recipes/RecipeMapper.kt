@@ -31,7 +31,7 @@ class RecipeMapper: DomainMapper<RecipeDto, Recipe> {
         var i = 1
         val list = ArrayList<Ingredient>()
         for(ingredient in ingredientsDto) {
-            list.add(Ingredient(i.toString(), ingredient, 1, QuantityUnit.GRAMS))
+            list.add(Ingredient(i.toString(), ingredient, 1, QuantityUnit.GRAM))
             i++
         }
         return list

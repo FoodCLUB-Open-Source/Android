@@ -199,7 +199,7 @@ private fun HomeIngredientPreview() {
                 id = "3",
                 type = "Tomato paste",
                 quantity = 1,
-                unit = QuantityUnit.GRAMS,
+                unit = QuantityUnit.GRAM,
                 imageUrl = "",
                 expirationDate = "expirationDate3",
                 isSelected = false

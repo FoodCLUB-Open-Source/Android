@@ -121,3 +121,20 @@ fun defaultButtonColors(
     disabledContentColor = disabledContentColor,
     contentColor = contentColor
 )
+
+@Composable
+fun defaultSearchBarColors(
+    focusedContainerColor: Color = containerColor,
+    unfocusedContainerColor: Color = containerColor,
+    disabledContainerColor: Color = containerColor,
+    focusedIndicatorColor: Color = Color.Transparent,
+    unfocusedIndicatorColor: Color = Color.Transparent,
+    disabledIndicatorColor: Color = Color.Transparent
+) = TextFieldDefaults.colors(
+    focusedContainerColor = focusedContainerColor,
+    unfocusedContainerColor = unfocusedContainerColor,
+    disabledContainerColor = disabledContainerColor,
+    focusedIndicatorColor = focusedIndicatorColor,
+    unfocusedIndicatorColor = unfocusedIndicatorColor,
+    disabledIndicatorColor = disabledIndicatorColor,
+)

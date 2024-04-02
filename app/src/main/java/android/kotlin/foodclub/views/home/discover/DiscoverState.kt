@@ -5,6 +5,7 @@ import android.kotlin.foodclub.domain.enums.QuantityUnit
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.MyBasketCache
+import android.kotlin.foodclub.domain.models.products.Product
 import android.kotlin.foodclub.domain.models.products.ProductsData
 import androidx.compose.ui.graphics.ImageBitmap
 
@@ -13,7 +14,7 @@ data class DiscoverState(
     var ingredientSearchText : String,
     var searchIngredientsListText: String,
     val userIngredients : List<Ingredient>,
-    val searchResults : List<Ingredient>,
+    val searchResults : List<Product>,
     val postList: List<VideoModel>,
     val sessionUsername: String,
     val sessionUserUsername: String,
@@ -44,36 +45,48 @@ data class DiscoverState(
             ingredientToEdit = null,
             scanResultItemList = listOf( // TODO Dummy Data, needs removing
                 Ingredient(
-                    id = "1",  // Make sure to copy other properties if needed
+                    product = Product(
+                        foodId = "1",
+                        label = "Capsicum",
+                        image = R.drawable.capsicum.toString(),
+                        units = QuantityUnit.entries
+                    ),
                     quantity = 100,
-                    unit = QuantityUnit.GRAMS,
-                    type = "Capsicum",
-                    expirationDate = "Edit",
-                    imageUrl = R.drawable.capsicum
+                    unit = QuantityUnit.GRAM,
+                    expirationDate = "Edit"
                 ),
                 Ingredient(
-                    id = "2",  // Make sure to copy other properties if needed
+                    product = Product(
+                        foodId = "2",
+                        label = "Tomato Soup",
+                        image = R.drawable.tomato_ingredient.toString(),
+                        units = QuantityUnit.entries
+                    ),
                     quantity = 10,
-                    unit = QuantityUnit.GRAMS,
-                    type = "Tomato Soup",
-                    expirationDate = "Edit",
-                    imageUrl = R.drawable.tomato_ingredient
+                    unit = QuantityUnit.GRAM,
+                    expirationDate = "Edit"
                 ),
                 Ingredient(
-                    id = "3",  // Make sure to copy other properties if needed
+                    product = Product(
+                        foodId = "3",
+                        label = "Lemon",
+                        image = R.drawable.lemon.toString(),
+                        units = QuantityUnit.entries
+                    ),
                     quantity = 1,
-                    unit = QuantityUnit.GRAMS,
-                    type = "Lemon",
+                    unit = QuantityUnit.GRAM,
                     expirationDate = "Edit",
-                    imageUrl = R.drawable.lemon
                 ),
                 Ingredient(
-                    id = "4",  // Make sure to copy other properties if needed
+                    product = Product(
+                        foodId = "4",
+                        label = "Egg",
+                        image = R.drawable.egg.toString(),
+                        units = QuantityUnit.entries
+                    ),
                     quantity = 1000,
-                    unit = QuantityUnit.GRAMS,
-                    type = "Egg",
+                    unit = QuantityUnit.GRAM,
                     expirationDate = "Edit",
-                    imageUrl = R.drawable.egg
                 ),
 
 

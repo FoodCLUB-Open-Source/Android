@@ -34,7 +34,6 @@ import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -380,7 +379,7 @@ private fun HomeBottomSheetIngredientsPreview() {
                         id = "1",
                         type = "type1",
                         quantity = 1,
-                        unit = QuantityUnit.GRAMS,
+                        unit = QuantityUnit.GRAM,
                         imageUrl = "",
                         expirationDate = "expirationDate1",
                         isSelected = false
@@ -389,7 +388,7 @@ private fun HomeBottomSheetIngredientsPreview() {
                         id = "2",
                         type = "type2",
                         quantity = 1,
-                        unit = QuantityUnit.GRAMS,
+                        unit = QuantityUnit.GRAM,
                         imageUrl = "",
                         expirationDate = "expirationDate2",
                         isSelected = false
@@ -398,7 +397,7 @@ private fun HomeBottomSheetIngredientsPreview() {
                         id = "3",
                         type = "type3",
                         quantity = 1,
-                        unit = QuantityUnit.GRAMS,
+                        unit = QuantityUnit.GRAM,
                         imageUrl = "",
                         expirationDate = "expirationDate3",
                         isSelected = false

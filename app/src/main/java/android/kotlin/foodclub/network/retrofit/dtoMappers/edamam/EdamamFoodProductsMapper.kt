@@ -30,9 +30,9 @@ class EdamamFoodProductsMapper: DomainMapper<EdamamFoodProductsDto, ProductsData
     }
 
     private fun determineDefaultUnit(measures: List<EdamamFoodProductMeasuresDto>): QuantityUnit {
-        if(measures.isEmpty()) return QuantityUnit.GRAMS
+        if(measures.isEmpty()) return QuantityUnit.GRAM
         val units = measures.map { measure -> QuantityUnit.parseUnit(measure.label ?: "Grams") }
-        return if(units.any { it == QuantityUnit.MILLILITERS }) QuantityUnit.MILLILITERS
-            else QuantityUnit.GRAMS
+        return if(units.any { it == QuantityUnit.MILLILITER }) QuantityUnit.MILLILITER
+            else QuantityUnit.GRAM
     }
 }

@@ -50,6 +50,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -83,6 +84,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -225,7 +227,6 @@ fun DiscoverView(
             if (isInternetConnected) {
                 MyIngredientsSearchBar(
                     navController = navController,
-                    searchTextValue = searchText,
                     onSearch = { input ->
                         searchText = input
                         events.onSearchIngredientsList(input)
@@ -648,7 +649,6 @@ fun MainTabRow(
 @Composable
 fun MyIngredientsSearchBar(
     navController: NavController,
-    searchTextValue: String,
     onSearch: (String) -> Unit,
     enableCamera: Boolean = true,
     enableMike: Boolean = true,
@@ -678,6 +678,7 @@ fun MyIngredientsSearchBar(
             disabledIndicatorColor = Color.Transparent,
         )
     }
+    var searchText by remember { mutableStateOf("") }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -712,10 +713,8 @@ fun MyIngredientsSearchBar(
                     }
                 },
             colors = textFieldColors,
-            value = searchTextValue,
-            onValueChange = {
-                onSearch(it)
-            },
+            value = searchText,
+            onValueChange = { searchText = it },
             singleLine = true,
             placeholder = {
                 Text(
@@ -740,6 +739,11 @@ fun MyIngredientsSearchBar(
                 }
             }
         )
+
+        LaunchedEffect(searchText) {
+            delay(1000)
+            onSearch(searchText)
+        }
 
 //        if (enableCamera) {
 //            Button(

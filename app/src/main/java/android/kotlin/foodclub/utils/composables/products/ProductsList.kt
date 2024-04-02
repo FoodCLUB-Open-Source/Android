@@ -1,12 +1,17 @@
-package android.kotlin.foodclub.utils.composables
+package android.kotlin.foodclub.utils.composables.products
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
+import android.kotlin.foodclub.utils.composables.ActionType
+import android.kotlin.foodclub.utils.composables.SingleSearchIngredientItem
+import android.kotlin.foodclub.utils.composables.SwipeToDismissContainer
+import android.kotlin.foodclub.utils.composables.expirationDateTextStyle
+import android.kotlin.foodclub.utils.composables.itemExpirationDate
+import android.kotlin.foodclub.utils.composables.itemQuantity
+import android.kotlin.foodclub.utils.composables.quantityTextStyle
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
-import android.kotlin.foodclub.views.home.profile.GridItem
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,27 +21,19 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.DismissDirection
-import androidx.compose.material3.DismissValue
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SwipeToDismiss
+import androidx.compose.material3.SearchBarColors
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDismissState
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,17 +43,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -64,18 +58,14 @@ import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
 import kotlin.math.min
 
-
 @Composable
-fun IngredientsList(
-    modifier: Modifier,
-    events: DiscoverEvents,
-    productsList: List<Ingredient>,
-    onEditQuantityClicked: (Ingredient) -> Unit,
-    onDateClicked: (Ingredient) -> Unit,
-    onIngredientAdd: (Ingredient) -> Unit,
-    onDeleteIngredient: (Ingredient) -> Unit,
-    userIngredientsList: List<Ingredient>,
-    actionType: ActionType
+fun ProductsList(
+    events: ProductsEvents,
+    state: ProductState,
+    productsList: LazyPagingItems<Ingredient>,
+    searchBarPlaceholder: String,
+    searchBarColors: TextFieldColors,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
@@ -84,44 +74,77 @@ fun IngredientsList(
                 color = Color.White
             )
     ) {
-
-        IngredientsListTitleSection(
-            modifier = modifier,
-            view = stringResource(id = R.string.discover_view)
+        ProductSearchBar(
+            onSearch = { events.search(it) },
+            textFieldColors = searchBarColors,
+            placeholder = searchBarPlaceholder
         )
-
-        IngredientsListColumn(
+        ProductsListTitleSection(modifier = modifier, includeExpiryDate = state.allowExpiryDate)
+        ProductsListContent(
             events = events,
             productsList = productsList,
-            userIngredientsList = userIngredientsList,
-            onEditQuantityClicked = { onEditQuantityClicked(it) },
-            onDateClicked = { onDateClicked(it) },
-            onIngredientAdd = { onIngredientAdd(it) },
-            onDeleteIngredient = { onDeleteIngredient(it) },
-            actionType = actionType
+            userIngredientsList = state.addedProducts,
+            includeExpiryDate = state.allowExpiryDate
         )
     }
 }
 
 @Composable
-fun IngredientsListColumn(
-    events: DiscoverEvents,
-    productsList: List<Ingredient>,
-    onEditQuantityClicked: (Ingredient) -> Unit,
-    onDateClicked: (Ingredient) -> Unit,
-    onIngredientAdd: (Ingredient) -> Unit,
-    onDeleteIngredient: (Ingredient) -> Unit,
+fun ProductsListTitleSection(modifier: Modifier, includeExpiryDate: Boolean) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(
+                start = dimensionResource(id = R.dimen.dim_20),
+                top = dimensionResource(id = R.dimen.dim_15),
+                bottom = dimensionResource(id = R.dimen.dim_15)
+            ),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = stringResource(id = R.string.name),
+            fontWeight = FontWeight(500),
+            fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
+            lineHeight = dimensionResource(id = R.dimen.fon_16).value.sp,
+            fontFamily = Montserrat,
+            color = Color.Gray
+        )
+        Text(
+            modifier = modifier.padding(start = dimensionResource(id = R.dimen.dim_15)),
+            text = stringResource(id = R.string.quantity),
+            fontWeight = FontWeight(500),
+            fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
+            lineHeight = dimensionResource(id = R.dimen.fon_16).value.sp,
+            fontFamily = Montserrat,
+            color = Color.Gray
+        )
+        if (includeExpiryDate) {
+            Text(
+                text = stringResource(id = R.string.expiry_date),
+                fontWeight = FontWeight(500),
+                fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
+                lineHeight = dimensionResource(id = R.dimen.fon_16).value.sp,
+                fontFamily = Montserrat,
+                color = Color.Gray
+            )
+        }
+
+        Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_5)))
+    }
+}
+
+@Composable
+fun ProductsListContent(
+    events: ProductsEvents,
+    productsList: LazyPagingItems<Ingredient>,
     userIngredientsList: List<Ingredient>,
-    actionType: ActionType
+    includeExpiryDate: Boolean
 ) {
     var height by remember {
         mutableStateOf(0.dp)
     }
+    height = (productsList.itemCount * dimensionResource(id = R.dimen.dim_65).value).dp
 
-    height = when (actionType) {
-        ActionType.DISCOVER_VIEW -> (min(productsList.size, 5) * dimensionResource(id = R.dimen.dim_65).value).dp
-        ActionType.ADD_INGREDIENTS_VIEW -> (productsList.size * dimensionResource(id = R.dimen.dim_65).value).dp
-    }
     LazyColumn(
         modifier = Modifier
             .padding(
@@ -131,48 +154,28 @@ fun IngredientsListColumn(
             .background(Color.White)
             .height(height),
         content = {
-            itemsIndexed(productsList) { _, item ->
-                if (actionType == ActionType.DISCOVER_VIEW) {
-                    SwipeToDismissContainer(
-                        onDismiss = { onDeleteIngredient(item) }
-                    ) { modifier ->
-                        SingleSearchIngredientItem(
-                            modifier = modifier,
-                            item = item,
-                            userIngredientsList = userIngredientsList,
-                            onEditQuantityClicked = {
-                                events.updateIngredient(it)
-                                onEditQuantityClicked(item)
-                            },
-                            onDateClicked = {
-                                events.updateIngredient(it)
-                                onDateClicked(item)
-                            },
-                            onAddItemClicked = {
-                                onIngredientAdd(item)
-                            },
-                            onDeleteIngredient = {},
-                            actionType = actionType
-                        )
-                    }
-                } else {
-                    SingleSearchIngredientItem(
+            items(
+                count = productsList.itemCount,
+            ) { index ->
+                val item = productsList[index]
+                if (item != null) {
+                    IngredientItem(
                         modifier = Modifier,
                         item = item,
                         userIngredientsList = userIngredientsList,
                         onEditQuantityClicked = {
-                            onEditQuantityClicked(item)
+                            events.selectAction(item, ProductAction.EDIT_QUANTITY)
                         },
                         onDateClicked = {
-                            onDateClicked(item)
+                            events.selectAction(item, ProductAction.CHANGE_EXPIRY_DATE)
                         },
                         onAddItemClicked = {
-                            onIngredientAdd(it)
+                            events.addIngredient(item)
                         },
                         onDeleteIngredient = {
-                            onDeleteIngredient(it)
+                            events.deleteIngredient(item)
                         },
-                        actionType = actionType
+                        includeExpiryDate = includeExpiryDate
                     )
                 }
 
@@ -188,28 +191,24 @@ fun IngredientsListColumn(
     )
 }
 
-
 @Composable
-fun SingleSearchIngredientItem(
+fun IngredientItem(
     modifier: Modifier,
     item: Ingredient,
     onEditQuantityClicked: (Ingredient) -> Unit,
     onDateClicked: (Ingredient) -> Unit,
-    onAddItemClicked: (Ingredient) -> Unit,
+    onAddItemClicked: ((Ingredient) -> Unit)? = null,
     onDeleteIngredient: (Ingredient) -> Unit,
     userIngredientsList: List<Ingredient>,
-    actionType: ActionType
+    includeExpiryDate: Boolean
 ) {
     val quantity: String
     val expirationDate: String
     val itemSearched = userIngredientsList.find { item.product.foodId == it.product.foodId }
-    if (itemSearched != null)
-    {
+    if (itemSearched != null) {
         quantity = itemQuantity(itemSearched)
         expirationDate = itemExpirationDate(itemSearched)
-    }
-    else
-    {
+    } else {
         quantity = itemQuantity(item)
         expirationDate = itemExpirationDate(item)
     }
@@ -256,36 +255,32 @@ fun SingleSearchIngredientItem(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start
             ) {
-                if (isItemAdded) {
-                    Text(
-                        modifier = modifier
-                            .padding(start = dimensionResource(id = R.dimen.dim_6))
-                            .clickable {
-                                onEditQuantityClicked(item)
-                            },
-                        text = quantity,
-                        fontWeight = FontWeight(500),
-                        fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
-                        lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
-                        fontFamily = Montserrat,
-                        color = Color.Gray,
-                        style = quantityTextStyle(quantity),
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1
-                    )
-                } else {
-                    Box(modifier = Modifier.weight(1f, fill = false))
-                    Spacer(modifier = Modifier.weight(1f, fill = true))
-                }
+                Text(
+                    modifier = modifier
+                        .padding(start = dimensionResource(id = R.dimen.dim_6))
+                        .clickable {
+                            onEditQuantityClicked(item)
+                        },
+                    text = quantity,
+                    fontWeight = FontWeight(500),
+                    fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
+                    lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
+                    fontFamily = Montserrat,
+                    color = Color.Gray,
+                    style = quantityTextStyle(quantity),
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
+                )
             }
         }
+
         Column(modifier = modifier.weight(1f)) {
             Row(
                 modifier = modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                if (isItemAdded) {
+                if(includeExpiryDate) {
                     Text(
                         modifier = modifier
                             .padding(start = dimensionResource(id = R.dimen.dim_20))
@@ -307,23 +302,25 @@ fun SingleSearchIngredientItem(
 
                 Box(modifier = Modifier.weight(1f, fill = false))
                 Spacer(modifier = Modifier.weight(1f, fill = true))
-                if (actionType == ActionType.ADD_INGREDIENTS_VIEW){
+
+                if(onAddItemClicked != null) {
                     Box(
                         modifier = Modifier
                             .size(dimensionResource(id = R.dimen.dim_24))
                             .clip(CircleShape)
                             .background(if (isItemAdded) Color.Red else foodClubGreen)
                             .clickable {
-                                if (isItemAdded){
+                                if (isItemAdded) {
                                     onDeleteIngredient(item)
-                                }else{
+                                } else {
                                     onAddItemClicked(item)
                                 }
                                 isItemAdded = !isItemAdded
                             },
                         contentAlignment = Alignment.Center
                     ) {
-                        val rotationAngle by animateFloatAsState(targetValue = if (isItemAdded) 45f else 0f,
+                        val rotationAngle by animateFloatAsState(
+                            targetValue = if (isItemAdded) 45f else 0f,
                             label = ""
                         )
 
@@ -340,98 +337,3 @@ fun SingleSearchIngredientItem(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SwipeToDismissContainer(
-    onDismiss: () -> Unit,
-    dismissContent: @Composable (Modifier) -> Unit
-) {
-    var notSwiped by remember { mutableStateOf(false) }
-    val dismissState = rememberDismissState(
-        confirmValueChange = { dismiss ->
-            if (dismiss == DismissValue.DismissedToEnd) notSwiped =
-                !notSwiped
-            dismiss != DismissValue.DismissedToEnd
-        }
-    )
-
-    if (dismissState.isDismissed(DismissDirection.EndToStart)) {
-        LaunchedEffect(key1 = true) {
-            onDismiss()
-            dismissState.reset()
-        }
-    } else {
-        LaunchedEffect(key1 = true) {
-            dismissState.reset()
-        }
-    }
-
-    SwipeToDismiss(
-        state = dismissState,
-        directions = setOf(DismissDirection.EndToStart),
-        background = {
-            val color by animateColorAsState(
-                when (dismissState.targetValue) {
-                    DismissValue.Default -> Color.White
-                    DismissValue.DismissedToEnd -> Color.White
-                    DismissValue.DismissedToStart -> Color.Red
-                }, label = ""
-            )
-            val alignment = Alignment.CenterEnd
-            val icon = Icons.Default.Delete
-
-            val scale by animateFloatAsState(
-                if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f,
-                label = ""
-            )
-
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .background(color)
-                    .padding(horizontal = dimensionResource(id = R.dimen.dim_20)),
-                contentAlignment = alignment
-            ) {
-                Icon(
-                    icon,
-                    contentDescription = null,
-                    modifier = Modifier.scale(scale),
-                    tint = Color.White
-                )
-            }
-        },
-        dismissContent = {
-            dismissContent(Modifier)
-        }
-    )
-}
-@Composable
-fun itemQuantity(item: Ingredient): String {
-    return if (item.quantity != 0) item.quantity.toString() + item.unit.short else stringResource(id = R.string.edit)
-}
-
-@Composable
-fun itemExpirationDate(item: Ingredient): String {
-    return if (item.expirationDate != "") {
-        item.expirationDate.split(" ").take(2).joinToString(" ")
-    } else stringResource(id = R.string.edit)
-}
-
-@Composable
-fun quantityTextStyle(quantity: String): TextStyle {
-    return if (quantity == stringResource(id = R.string.edit)) TextStyle(textDecoration = TextDecoration.Underline) else TextStyle(
-        textDecoration = TextDecoration.None
-    )
-}
-
-@Composable
-fun expirationDateTextStyle(expirationDate: String): TextStyle {
-    return if (expirationDate == stringResource(id = R.string.edit)) TextStyle(textDecoration = TextDecoration.Underline) else TextStyle(
-        textDecoration = TextDecoration.None
-    )
-}
-
-enum class ActionType {
-    DISCOVER_VIEW,
-    ADD_INGREDIENTS_VIEW
-}

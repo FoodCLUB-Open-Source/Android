@@ -369,10 +369,10 @@ fun EditIngredientBottomModal(
         containerColor = Color.White
     ) {
         val units = listOf(
-            QuantityUnit.GRAMS,
-            QuantityUnit.KILOGRAMS,
-            QuantityUnit.LITERS,
-            QuantityUnit.MILLILITERS
+            QuantityUnit.GRAM,
+            QuantityUnit.KILOGRAM,
+            QuantityUnit.LITER,
+            QuantityUnit.MILLILITER
         )
         Column(
             modifier = Modifier

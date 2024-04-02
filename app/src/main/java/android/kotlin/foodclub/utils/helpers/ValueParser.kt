@@ -16,20 +16,20 @@ class ValueParser {
 
         fun quantityUnitToString(quantityUnit: QuantityUnit): String {
             return when(quantityUnit) {
-                QuantityUnit.GRAMS -> "g"
-                QuantityUnit.KILOGRAMS -> "kg"
-                QuantityUnit.MILLILITERS -> "ml"
-                QuantityUnit.LITERS -> "l"
+                QuantityUnit.GRAM -> "g"
+                QuantityUnit.KILOGRAM -> "kg"
+                QuantityUnit.MILLILITER -> "ml"
+                QuantityUnit.LITER -> "l"
             }
         }
 
         fun quantityStringToInt(quantityString: String, quantityUnit: QuantityUnit): Int {
             return Integer.valueOf(
                 when(quantityUnit) {
-                    QuantityUnit.GRAMS -> quantityString.substring(0, quantityString.length - 1)
-                    QuantityUnit.KILOGRAMS -> quantityString.substring(0, quantityString.length - 2)
-                    QuantityUnit.MILLILITERS -> quantityString.substring(0, quantityString.length - 2)
-                    QuantityUnit.LITERS -> quantityString.substring(0, quantityString.length - 1)
+                    QuantityUnit.GRAM -> quantityString.substring(0, quantityString.length - 1)
+                    QuantityUnit.KILOGRAM -> quantityString.substring(0, quantityString.length - 2)
+                    QuantityUnit.MILLILITER -> quantityString.substring(0, quantityString.length - 2)
+                    QuantityUnit.LITER -> quantityString.substring(0, quantityString.length - 1)
                 }
             )
 

@@ -2,15 +2,27 @@ package android.kotlin.foodclub.repositories
 
 import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorResponse
 import android.kotlin.foodclub.domain.models.products.ProductsData
+import android.kotlin.foodclub.localdatasource.localdatasource.product.ProductLocalDataSource
+import android.kotlin.foodclub.localdatasource.room.database.FoodCLUBDatabase
+import android.kotlin.foodclub.localdatasource.room.relationships.ProductWithUnits
+import android.kotlin.foodclub.network.remotedatasource.product.ProductRemoteDataSource
+import android.kotlin.foodclub.network.remotedatasource.product.ProductRemoteMediator
+import android.kotlin.foodclub.network.remotedatasource.profile_remote_datasource.ProfilePostsRemoteMediator
 import android.kotlin.foodclub.network.retrofit.services.ProductsService
 import android.kotlin.foodclub.network.retrofit.dtoMappers.edamam.EdamamFoodProductsMapper
 import android.kotlin.foodclub.network.retrofit.dtoModels.edamam.EdamamFoodProductsDto
 import android.kotlin.foodclub.network.retrofit.utils.apiRequestFlow
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.util.Log
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 
 class ProductRepository(
     private val api: ProductsService,
+    private val productRemoteDataSource: ProductRemoteDataSource,
+    private val productLocalDataSource: ProductLocalDataSource,
+    private val foodCLUBDatabase: FoodCLUBDatabase,
     private val mapper: EdamamFoodProductsMapper
 ) {
     private val APP_ID = "2c8da0a4"
@@ -34,5 +46,18 @@ class ProductRepository(
                 Resource.Error(resource.message!!)
             }
         }
+    }
+
+    @OptIn(ExperimentalPagingApi::class)
+    fun getProducts(searchText: String): Pager<Int, ProductWithUnits> {
+        return Pager(
+            config = PagingConfig(pageSize = 20),
+            remoteMediator = ProductRemoteMediator(
+                searchString = searchText,
+                foodClubDb = foodCLUBDatabase,
+                productRemoteDataSource = productRemoteDataSource,
+            ),
+            pagingSourceFactory = { productLocalDataSource.pagingSource() }
+        )
     }
 }

@@ -52,7 +52,7 @@ class CreateRecipeViewModel @Inject constructor(
                         "1",
                         "Tomato paste",
                         200,
-                        QuantityUnit.GRAMS,
+                        QuantityUnit.GRAM,
                         "https://kretu.sts3.pl/foodclub_drawable/salad_ingredient.png"
                     )
                 )
@@ -61,7 +61,7 @@ class CreateRecipeViewModel @Inject constructor(
                         "2",
                         "Potato wedges",
                         200,
-                        QuantityUnit.GRAMS,
+                        QuantityUnit.GRAM,
                         "https://kretu.sts3.pl/foodclub_drawable/salad_ingredient.png"
                     )
                 )
@@ -70,7 +70,7 @@ class CreateRecipeViewModel @Inject constructor(
                         "3",
                         "Pasta",
                         200,
-                        QuantityUnit.GRAMS,
+                        QuantityUnit.GRAM,
                         "https://kretu.sts3.pl/foodclub_drawable/salad_ingredient.png"
                     )
                 )

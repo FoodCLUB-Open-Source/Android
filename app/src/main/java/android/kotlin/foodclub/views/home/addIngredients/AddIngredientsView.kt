@@ -2,10 +2,16 @@ package android.kotlin.foodclub.views.home.addIngredients
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.defaultSearchBarColors
+import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.utils.composables.ActionType
 import android.kotlin.foodclub.utils.composables.CustomDatePicker
 import android.kotlin.foodclub.utils.composables.EditIngredientBottomModal
 import android.kotlin.foodclub.utils.composables.IngredientsList
+import android.kotlin.foodclub.utils.composables.products.ProductAction
+import android.kotlin.foodclub.utils.composables.products.ProductState
+import android.kotlin.foodclub.utils.composables.products.ProductsEvents
+import android.kotlin.foodclub.utils.composables.products.ProductsList
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
 import android.kotlin.foodclub.views.home.discover.DiscoverState
 import android.kotlin.foodclub.views.home.discover.MyIngredientsSearchBar
@@ -44,12 +50,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.paging.compose.LazyPagingItems
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddIngredientsView(
     state: DiscoverState,
+    productState: ProductState,
+    searchResult: LazyPagingItems<Ingredient>,
     events: DiscoverEvents,
+    productsEvents: ProductsEvents,
     navController: NavController
 ) {
     var isDatePickerVisible by remember { mutableStateOf(false) }
@@ -100,24 +110,22 @@ fun AddIngredientsView(
                     .fillMaxSize()
                     .padding(it)
             ) {
-                if (isSheetOpen) {
-                    EditIngredientBottomModal(
+                when (productState.currentAction) {
+                    ProductAction.EDIT_QUANTITY -> EditIngredientBottomModal(
                         ingredient = state.ingredientToEdit!!,
                         onDismissRequest = { boolean->
                             isSheetOpen = boolean },
                         onEdit = { item ->
                             events.updateIngredient(item)
-                            if (state.userIngredients.none { ingredient->
-                                    ingredient.id == item.id
-                            }) {
-                                events.addToUserIngredients(item)
+                            if (productState.addedProducts.none { ingredient->
+                                    ingredient.product.foodId == item.product.foodId
+                                }) {
+                                productsEvents.addIngredient(item)
                             }
                         }
                     )
-                }
 
-                if (isDatePickerVisible) {
-                    Box(
+                    ProductAction.CHANGE_EXPIRY_DATE -> Box(
                         modifier = Modifier,
                         contentAlignment = Alignment.Center
                     ) {
@@ -133,8 +141,8 @@ fun AddIngredientsView(
                                     selectedDate = date
                                     state.ingredientToEdit!!.expirationDate = selectedDate
                                     if (state.userIngredients.none { ingredient->
-                                        ingredient.id == state.ingredientToEdit.id
-                                    }) {
+                                            ingredient.product.foodId == state.ingredientToEdit.product.foodId
+                                        }) {
                                         events.addToUserIngredients(state.ingredientToEdit)
                                     }
                                     events.updateIngredient(state.ingredientToEdit)
@@ -142,58 +150,69 @@ fun AddIngredientsView(
                             }
                         )
                     }
+                    else -> {}
                 }
 
 
-                if (topTabIndex == 0) {
-                    MyIngredientsSearchBar(
-                        navController = navController,
-                        searchTextValue = state.ingredientSearchText,
-                        onSearch = { input ->
-                            events.onAddIngredientsSearchTextChange(input)
-                        },
-                        actionType = ActionType.ADD_INGREDIENTS_VIEW
-                    )
-                }
-
-                IngredientsList(
-                    Modifier,
-                    events = events,
-                    productsList = state.productsData.productsList,
-                    userIngredientsList = state.userIngredients,
-                    onEditQuantityClicked = {item ->
-                        val ingredient = state.userIngredients.find {it.id == item.id}
-                        if (ingredient != null)
-                        {
-                            events.updateIngredient(ingredient)
-                        }
-                        else
-                        {
-                            events.updateIngredient(item)
-                        }
-                        isSheetOpen = true
-                    },
-                    onDateClicked = {item ->
-                        val ingredient = state.userIngredients.find {it.id == item.id}
-                        if (ingredient != null)
-                        {
-                            events.updateIngredient(ingredient)
-                        }
-                        else
-                        {
-                            events.updateIngredient(item)
-                        }
-                        isDatePickerVisible = true
-                    },
-                    onIngredientAdd = { ingredientToAdd->
-                        events.addToUserIngredients(ingredientToAdd)
-                        isDialogOpen = false
-                    },
-                    onDeleteIngredient = { ingredientToDelete->
-                        events.deleteIngredientFromList(ingredientToDelete)
-                    },
-                    actionType = ActionType.ADD_INGREDIENTS_VIEW
+                ProductsList(
+                    events = productsEvents,
+                    state = productState,
+                    productsList = searchResult,
+                    searchBarPlaceholder = stringResource(id = R.string.search_ingredients),
+                    searchBarColors = defaultSearchBarColors()
                 )
+//                if (topTabIndex == 0) {
+//                    MyIngredientsSearchBar(
+//                        navController = navController,
+//                        onSearch = { input ->
+//                            events.onAddIngredientsSearchTextChange(input)
+//                        },
+//                        actionType = ActionType.ADD_INGREDIENTS_VIEW
+//                    )
+//                }
+//
+//                IngredientsList(
+//                    Modifier,
+//                    events = events,
+//                    productsList = searchResult,
+//                    userIngredientsList = state.userIngredients,
+//                    onEditQuantityClicked = {item ->
+//                        val ingredient = state.userIngredients.find {
+//                            it.product.foodId == item.product.foodId
+//                        }
+//                        if (ingredient != null)
+//                        {
+//                            events.updateIngredient(ingredient)
+//                        }
+//                        else
+//                        {
+//                            events.updateIngredient(item)
+//                        }
+//                        isSheetOpen = true
+//                    },
+//                    onDateClicked = {item ->
+//                        val ingredient = state.userIngredients.find {
+//                            it.product.foodId == item.product.foodId
+//                        }
+//                        if (ingredient != null)
+//                        {
+//                            events.updateIngredient(ingredient)
+//                        }
+//                        else
+//                        {
+//                            events.updateIngredient(item)
+//                        }
+//                        isDatePickerVisible = true
+//                    },
+//                    onIngredientAdd = { ingredientToAdd->
+//                        events.addToUserIngredients(ingredientToAdd)
+//                        isDialogOpen = false
+//                    },
+//                    onDeleteIngredient = { ingredientToDelete->
+//                        events.deleteIngredientFromList(ingredientToDelete)
+//                    },
+//                    actionType = ActionType.ADD_INGREDIENTS_VIEW
+//                )
             }
         }
     )

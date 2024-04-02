@@ -4,7 +4,10 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.MyBasketCache
+import android.kotlin.foodclub.domain.models.products.Product
 import android.kotlin.foodclub.domain.models.products.ProductsData
+import android.kotlin.foodclub.domain.models.products.toEmptyIngredient
+import android.kotlin.foodclub.localdatasource.room.relationships.toProductModel
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.repositories.ProductRepository
@@ -19,19 +22,23 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.paging.cachedIn
+import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@OptIn(FlowPreview::class)
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class DiscoverViewModel @Inject constructor(
     private val postRepository: PostRepository,
@@ -44,6 +51,12 @@ class DiscoverViewModel @Inject constructor(
     companion object {
         private val TAG = DiscoverViewModel::class.java.simpleName
     }
+
+    private val searchText = MutableStateFlow("")
+    val searchProducts = searchText
+        .flatMapLatest { text -> productsRepo.getProducts(text).flow }
+        .map { pagingData -> pagingData.map { it.toProductModel().toEmptyIngredient() } }
+        .cachedIn(viewModelScope)
 
     private val _state = MutableStateFlow(DiscoverState.default())
     val state: StateFlow<DiscoverState>
@@ -92,7 +105,7 @@ class DiscoverViewModel @Inject constructor(
 
     override fun deleteIngredientFromList(ingredient: Ingredient) {
         val updatedList = state.value.userIngredients.toMutableList()
-        val ingredientItem = updatedList.find { it.id == ingredient.id }
+        val ingredientItem = updatedList.find { it.product.foodId == ingredient.product.foodId }
         if(ingredientItem != null){updatedList.remove(ingredientItem)}
         _state.update {
             it.copy(
@@ -105,14 +118,12 @@ class DiscoverViewModel @Inject constructor(
         _state.update {
             it.copy(
                 userIngredients = state.value.userIngredients.map { item ->
-                    if (item.id == ingredient.id) {
+                    if (item.product.foodId == ingredient.product.foodId) {
                         Ingredient(
-                            id = item.id,
+                            product = item.product,
                             quantity = ingredient.quantity,
                             unit = ingredient.unit,
-                            type = ingredient.type,
-                            expirationDate = ingredient.expirationDate,
-                            imageUrl = ingredient.imageUrl
+                            expirationDate = ingredient.expirationDate
                         )
                     } else {
                         item
@@ -229,17 +240,18 @@ class DiscoverViewModel @Inject constructor(
     }
 
     override fun onSearchIngredientsList(text: String) {
-        val myIngredients = state.value.userIngredients
-        val searchedList = myIngredients.filter { ingredient ->
-            ingredient.type.contains(text, ignoreCase = true)
-        }
-
-        _state.update {
-            it.copy(
-                searchIngredientsListText = text,
-                searchResults = searchedList.toList()
-            )
-        }
+        searchText.update { text }
+//        val myIngredients = state.value.userIngredients
+//        val searchedList = myIngredients.filter { ingredient ->
+//            ingredient.product.label.contains(text, ignoreCase = true)
+//        }
+//
+//        _state.update {
+//            it.copy(
+//                searchIngredientsListText = text,
+//                searchResults = searchedList.toList()
+//            )
+//        }
     }
 
     override fun onResetSearchData() {
@@ -259,7 +271,7 @@ class DiscoverViewModel @Inject constructor(
 
     override fun onDeleteIngredient(ingredient: Ingredient) {
         val myIngredients = state.value.userIngredients.toMutableList()
-        val matchingIngredient = myIngredients.find { it.type == ingredient.type }
+        val matchingIngredient = myIngredients.find { it.product.foodId == ingredient.product.foodId }
 
         if (matchingIngredient != null) {
             myIngredients.remove(matchingIngredient)
