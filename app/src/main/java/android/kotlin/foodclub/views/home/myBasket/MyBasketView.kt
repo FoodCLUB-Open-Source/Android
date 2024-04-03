@@ -6,7 +6,7 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
-import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
+import android.kotlin.foodclub.utils.composables.products.ProductListModalSheet
 import android.kotlin.foodclub.viewModels.home.myBasket.MyBasketEvents
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.shrinkOut
@@ -53,7 +53,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 
@@ -62,25 +62,23 @@ import kotlinx.coroutines.delay
 @Composable
 fun MyBasketView(
     events: MyBasketEvents,
-    navController: NavController,
-    state: MyBasketState
+    state: MyBasketState,
+    searchResult: LazyPagingItems<Ingredient>
 ) {
     var showSheet by remember { mutableStateOf(false) }
     val productsList = state.productsList
     var deleteSelected by remember { mutableStateOf(false) }
 
     if (showSheet) {
-        IngredientsBottomSheet(
-            onDismiss = { showSheet = !showSheet },
-            productsData = state.productsDatabase,
-            loadMoreObjects = { searchText, onLoadCompleted ->
-                events.fetchMoreProducts(searchText, onLoadCompleted)
-            },
-            onListUpdate = { events.fetchProductsDatabase(it) },
-            onSave = { events.addIngredient(it) }
+        ProductListModalSheet(
+            events = events,
+            state = state.productState,
+            productsList = searchResult,
+            onDismiss = { showSheet = !showSheet }
         )
-
     }
+
+
     Column(
         modifier = Modifier
             .background(color = Color.White)

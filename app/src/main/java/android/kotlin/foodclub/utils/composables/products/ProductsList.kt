@@ -2,8 +2,11 @@ package android.kotlin.foodclub.utils.composables.products
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.defaultSearchBarColors
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
+import android.kotlin.foodclub.utils.composables.CustomDatePicker
+import android.kotlin.foodclub.utils.composables.EditIngredientBottomModal
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,10 +23,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
@@ -50,6 +59,33 @@ import androidx.compose.ui.unit.sp
 import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ProductListModalSheet(
+    events: ProductsEvents,
+    state: ProductState,
+    productsList: LazyPagingItems<Ingredient>,
+    onDismiss: () -> Unit,
+) {
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    ModalBottomSheet(
+        containerColor = Color.White,
+        onDismissRequest = onDismiss,
+        sheetState = bottomSheetState,
+        dragHandle = { BottomSheetDefaults.DragHandle() },
+    ) {
+        ProductsList(
+            events = events,
+            state = state,
+            productsList = productsList,
+            searchBarPlaceholder = stringResource(id = R.string.search_ingredients),
+            searchBarColors = defaultSearchBarColors()
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductsList(
     events: ProductsEvents,
@@ -59,6 +95,41 @@ fun ProductsList(
     searchBarColors: TextFieldColors,
     modifier: Modifier = Modifier,
 ) {
+    val datePickerState = rememberDatePickerState()
+
+    when (state.currentAction) {
+        ProductAction.EDIT_QUANTITY -> EditIngredientBottomModal(
+            ingredient = state.editedIngredient,
+            onDismissRequest = {
+                events.dismissAction()
+            },
+            onEdit = { item ->
+                events.updateIngredient(item)
+            }
+        )
+
+        ProductAction.CHANGE_EXPIRY_DATE -> Box(
+            modifier = Modifier,
+            contentAlignment = Alignment.Center
+        ) {
+            CustomDatePicker(
+                modifier = Modifier.shadow(dimensionResource(id = R.dimen.dim_5)),
+                datePickerState = datePickerState,
+                onDismiss = {
+                    datePickerState.setSelection(null)
+                    events.dismissAction()
+                },
+                onSave = { date ->
+                    if (date != null) {
+                        state.editedIngredient.expirationDate = date
+                        events.updateIngredient(state.editedIngredient)
+                    }
+                }
+            )
+        }
+        else -> {}
+    }
+
     Column(
         modifier = modifier
             .fillMaxWidth()

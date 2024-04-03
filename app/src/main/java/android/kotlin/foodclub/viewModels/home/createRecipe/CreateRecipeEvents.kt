@@ -3,11 +3,9 @@ package android.kotlin.foodclub.viewModels.home.createRecipe
 import android.kotlin.foodclub.domain.enums.Category
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.recipes.Recipe
+import android.kotlin.foodclub.utils.composables.products.ProductsEvents
 
-interface CreateRecipeEvents {
-    fun fetchMoreProducts(searchText: String, onLoadCompleted : () -> Unit)
-    fun fetchProductsDatabase(searchText: String = "")
-    fun addIngredient(ingredient: Ingredient)
+interface CreateRecipeEvents: ProductsEvents {
     fun unselectCategory(category: Category)
 
     fun clearCategories()

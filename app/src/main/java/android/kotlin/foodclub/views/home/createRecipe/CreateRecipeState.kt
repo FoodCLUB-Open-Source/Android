@@ -3,6 +3,7 @@ package android.kotlin.foodclub.views.home.createRecipe
 import android.kotlin.foodclub.domain.enums.Category
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.ProductsData
+import android.kotlin.foodclub.utils.composables.products.ProductState
 
 data class CreateRecipeState(
     val title: String,
@@ -10,7 +11,8 @@ data class CreateRecipeState(
     val revealedIngredientId: String,
     val categories: List<Category>,
     val products: ProductsData,
-    val error: String
+    val error: String,
+    val productState: ProductState
 ) {
     companion object {
         fun default() = CreateRecipeState(
@@ -23,7 +25,8 @@ data class CreateRecipeState(
                 nextUrl = "",
                 productsList = emptyList()
             ),
-            error = ""
+            error = "",
+            productState = ProductState.default()
         )
     }
 }

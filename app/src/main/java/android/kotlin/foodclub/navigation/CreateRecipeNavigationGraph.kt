@@ -13,6 +13,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import androidx.paging.compose.collectAsLazyPagingItems
 
 fun NavGraphBuilder.createRecipeNavigationGraph(
     navController: NavHostController,
@@ -20,12 +21,12 @@ fun NavGraphBuilder.createRecipeNavigationGraph(
 ) {
     navigation(
         route = HomeOtherRoutes.CreateRecipeView.route,
-        startDestination = CreateRecipeScreen.PostDetails.route
+        startDestination = CreateRecipeScreen.VideoEditor.route
     ) {
         composable(CreateRecipeScreen.Camera.route) { entry ->
             val viewModel = entry.sharedHiltViewModel<CreateRecipeViewModel>(navController)
         }
-        composable(CreateRecipeScreen.VideoEditor.route) { entry ->
+        composable(CreateRecipeScreen.VideoEditor.route) {
             val viewModel: TrimmerViewModel = hiltViewModel()
             val state = viewModel.state.collectAsState()
             viewModel.setOnVideoCreateFunction {
@@ -49,6 +50,7 @@ fun NavGraphBuilder.createRecipeNavigationGraph(
             }
             val viewModel = entry.sharedHiltViewModel<CreateRecipeViewModel>(navController)
             val state = viewModel.state.collectAsState()
+            val searchResult = viewModel.searchProducts.collectAsLazyPagingItems()
             viewModel.setVideoPath(path)
 
             setBottomBarVisibility(false)
@@ -56,7 +58,8 @@ fun NavGraphBuilder.createRecipeNavigationGraph(
             CreateRecipeView(
                 navController = navController,
                 events = viewModel,
-                state = state.value
+                state = state.value,
+                searchResult = searchResult
             )
         }
     }

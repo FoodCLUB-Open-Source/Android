@@ -8,7 +8,7 @@ import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.utils.composables.CustomSliderDiscrete
-import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
+import android.kotlin.foodclub.utils.composables.products.ProductListModalSheet
 import android.kotlin.foodclub.viewModels.home.createRecipe.CreateRecipeEvents
 import android.kotlin.foodclub.viewModels.home.createRecipe.CreateRecipeViewModel
 import android.kotlin.foodclub.views.home.createRecipe.components.CategoriesSection
@@ -77,6 +77,8 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
@@ -85,7 +87,8 @@ import kotlin.math.roundToInt
 fun CreateRecipeView(
     navController: NavController,
     events: CreateRecipeEvents,
-    state: CreateRecipeState
+    state: CreateRecipeState,
+    searchResult: LazyPagingItems<Ingredient>
 ) {
     var showSheet by remember { mutableStateOf(false) }
     val codeTriggered = remember { mutableStateOf(false) }
@@ -96,10 +99,6 @@ fun CreateRecipeView(
         if (!codeTriggered.value) {
             codeTriggered.value = true
         }
-    }
-
-    val triggerBottomSheetModal: () -> Unit = {
-        showSheet = !showSheet
     }
 
     Box(
@@ -113,15 +112,12 @@ fun CreateRecipeView(
                 bottom = dimensionResource(id = R.dimen.dim_15)
             )
     ) {
-        if (showSheet) {
-            IngredientsBottomSheet(
-                onDismiss = triggerBottomSheetModal,
-                productsData = state.products,
-                loadMoreObjects = { searchText, onLoadCompleted ->
-                    events.fetchMoreProducts(searchText, onLoadCompleted)
-                },
-                onListUpdate = { events.fetchProductsDatabase(it) },
-                onSave = { events.addIngredient(it) }
+        if(showSheet) {
+            ProductListModalSheet(
+                events = events,
+                state = state.productState,
+                productsList = searchResult,
+                onDismiss = { showSheet = !showSheet }
             )
         }
 
@@ -499,9 +495,11 @@ fun CreateRecipeViewPreview() {
     val navController = rememberNavController()
     val viewModel: CreateRecipeViewModel = hiltViewModel()
     val state = viewModel.state.collectAsState()
+    val searchResult = viewModel.searchProducts.collectAsLazyPagingItems()
     CreateRecipeView(
         navController,
         viewModel,
-        state.value
+        state.value,
+        searchResult
     )
 }

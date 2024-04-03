@@ -7,11 +7,7 @@ import android.kotlin.foodclub.domain.enums.Category
 import android.kotlin.foodclub.domain.enums.CategoryType
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.navigation.HomeOtherRoutes
-import android.kotlin.foodclub.utils.composables.CustomDatePicker
-import android.kotlin.foodclub.utils.composables.EditIngredientBottomModal
-import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
 import android.kotlin.foodclub.utils.composables.RecommendationVideos
-import android.kotlin.foodclub.utils.composables.products.ProductAction
 import android.kotlin.foodclub.utils.composables.products.ProductState
 import android.kotlin.foodclub.utils.composables.products.ProductsEvents
 import android.kotlin.foodclub.utils.composables.shimmerBrush
@@ -21,7 +17,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -40,10 +35,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -55,7 +48,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -77,7 +69,6 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DiscoverView(
     navController: NavController,
@@ -96,8 +87,6 @@ fun DiscoverView(
 
     var homePosts: List<VideoModel>?
     val worldPosts: State<List<VideoModel>>? = null
-
-    val datePickerState = rememberDatePickerState()
 
     var subCategoriesTabIndex by remember {
         mutableIntStateOf(0)
@@ -149,38 +138,6 @@ fun DiscoverView(
             tabIndex = it
         }
 
-        when (productState.currentAction) {
-            ProductAction.EDIT_QUANTITY -> EditIngredientBottomModal(
-                ingredient = productState.editedIngredient,
-                onDismissRequest = {
-                    productsEvents.dismissAction()
-                },
-                onEdit = { item ->
-                    productsEvents.updateIngredient(item)
-                }
-            )
-
-            ProductAction.CHANGE_EXPIRY_DATE -> Box(
-                modifier = Modifier,
-                contentAlignment = Alignment.Center
-            ) {
-                CustomDatePicker(
-                    modifier = Modifier.shadow(dimensionResource(id = R.dimen.dim_5)),
-                    datePickerState = datePickerState,
-                    onDismiss = {
-                        datePickerState.setSelection(null)
-                        productsEvents.dismissAction()
-                    },
-                    onSave = { date ->
-                        if (date != null) {
-                            productState.editedIngredient.expirationDate = date
-                            productsEvents.updateIngredient(productState.editedIngredient)
-                        }
-                    }
-                )
-            }
-            else -> {}
-        }
 //        if (isDialogOpen) {
 //            AddIngredientDialog(
 //                stringResource(R.string.added),
@@ -308,19 +265,6 @@ fun DiscoverView(
             }
         }
     }
-
-    var showSheet by remember { mutableStateOf(false) }
-
-    val triggerBottomSheetModal: () -> Unit = {
-        showSheet = !showSheet
-    }
-    if (showSheet) {
-        IngredientsBottomSheet(
-            onDismiss = triggerBottomSheetModal,
-            productsData = state.productsData
-        )
-    }
-
 }
 
 @Composable

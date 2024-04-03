@@ -4,7 +4,7 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
-import android.kotlin.foodclub.navigation.CreateRecipeScreen
+import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.BottomSheetItem
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -81,7 +81,7 @@ fun BottomSheet(
                 onDismiss = onDismiss,
                 onClick = {
 //                    navController.navigate("VIDEOTRIMMER")
-                    navController.navigate(route = CreateRecipeScreen.VideoEditor.route)
+                    navController.navigate(route = HomeOtherRoutes.CreateRecipeView.route)
                     //onDismiss()
                 }
             )
