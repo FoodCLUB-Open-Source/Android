@@ -510,7 +510,9 @@ fun TermsAndConditionsInfoFooter() {
 
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     Row(
-        Modifier.fillMaxSize(),
+        Modifier
+            .fillMaxSize()
+            .padding(horizontal = dimensionResource(id = R.dimen.dim_15)),
         verticalAlignment = Alignment.Bottom,
         horizontalArrangement = Arrangement.Center
     ) {
