@@ -164,7 +164,7 @@ fun MainLogInAndSignUp(
 
             Box(
                 Modifier
-                    .weight(2F)
+                    .weight(3F)
                     .fillMaxSize()
                     .padding(vertical = dimensionResource(id = R.dimen.dim_30))
             ) { TermsAndConditionsInfoFooter() }

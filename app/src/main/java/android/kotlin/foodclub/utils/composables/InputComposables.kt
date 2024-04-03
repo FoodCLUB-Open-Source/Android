@@ -501,33 +501,64 @@ fun AlternativeLoginOption(
 @Composable
 fun TermsAndConditionsInfoFooter() {
     var showBottomSheet by remember { mutableStateOf(false) }
+    var overflowText by remember {
+        mutableStateOf(false)
+    }
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     Row(
         Modifier.fillMaxSize(),
         verticalAlignment = Alignment.Bottom,
         horizontalArrangement = Arrangement.Center
     ) {
-        Text(
-            color = Color.Gray,
-            text = stringResource(id = R.string.by_using),
-            fontFamily = Montserrat,
-            fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
-            modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dim_5)),
-            maxLines = 1
-        )
 
-        ClickableText(
-            text = AnnotatedString(text = stringResource(id = R.string.terms_and_conditions)),
-            onClick = { showBottomSheet = true },
-            style = TextStyle(
+
+        Column(horizontalAlignment = Alignment.CenterHorizontally){
+            Text(
                 color = Color.Gray,
+                text = stringResource(id = R.string.by_using),
                 fontFamily = Montserrat,
-                fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
-                fontWeight = FontWeight.Bold,
-                textDecoration = TextDecoration.Underline,
-            ),
-            maxLines = 1
-        )
+                fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
+                modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dim_5)),
+                maxLines = 2
+            )
+
+            if (overflowText)
+            {
+                ClickableText(
+                    text = AnnotatedString(text = stringResource(id = R.string.terms_and_conditions)),
+                    onClick = { showBottomSheet = true },
+                    style = TextStyle(
+                        color = Color.Gray,
+                        fontFamily = Montserrat,
+                        fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
+                        fontWeight = FontWeight.Bold,
+                        textDecoration = TextDecoration.Underline,
+                    ),
+                    maxLines = 1
+                )
+            }
+        }
+
+        if(!overflowText)
+        {
+            ClickableText(
+                text = AnnotatedString(text = stringResource(id = R.string.terms_and_conditions)),
+                onClick = { showBottomSheet = true },
+                style = TextStyle(
+                    color = Color.Gray,
+                    fontFamily = Montserrat,
+                    fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
+                    fontWeight = FontWeight.Bold,
+                    textDecoration = TextDecoration.Underline,
+                ),
+                maxLines = 1,
+                onTextLayout = {
+                    overflowText = it.didOverflowHeight
+                }
+            )
+        }
+
+
     }
 
     if (showBottomSheet) {
