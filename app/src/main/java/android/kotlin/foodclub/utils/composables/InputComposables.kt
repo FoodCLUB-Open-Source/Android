@@ -504,6 +504,10 @@ fun TermsAndConditionsInfoFooter() {
     var overflowText by remember {
         mutableStateOf(false)
     }
+    var overflow by remember {
+        mutableStateOf("")
+    }
+
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     Row(
         Modifier.fillMaxSize(),
@@ -517,7 +521,7 @@ fun TermsAndConditionsInfoFooter() {
                 color = Color.Gray,
                 text = stringResource(id = R.string.by_using),
                 fontFamily = Montserrat,
-                fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
+                fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
                 modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dim_5)),
                 maxLines = 2
             )
@@ -530,7 +534,7 @@ fun TermsAndConditionsInfoFooter() {
                     style = TextStyle(
                         color = Color.Gray,
                         fontFamily = Montserrat,
-                        fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
+                        fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
                         fontWeight = FontWeight.Bold,
                         textDecoration = TextDecoration.Underline,
                     ),
@@ -547,7 +551,7 @@ fun TermsAndConditionsInfoFooter() {
                 style = TextStyle(
                     color = Color.Gray,
                     fontFamily = Montserrat,
-                    fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
+                    fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
                     fontWeight = FontWeight.Bold,
                     textDecoration = TextDecoration.Underline,
                 ),
