@@ -6,6 +6,7 @@ import android.kotlin.foodclub.network.retrofit.dtoModels.edamam.EdamamFoodProdu
 import android.kotlin.foodclub.network.retrofit.dtoModels.edamam.EdamamFoodProductMeasuresDto
 import android.kotlin.foodclub.network.retrofit.utils.DomainMapper
 import android.kotlin.foodclub.domain.enums.QuantityUnit
+import android.kotlin.foodclub.domain.models.products.Product
 
 class EdamamFoodProductsMapper: DomainMapper<EdamamFoodProductsDto, ProductsData> {
     override fun mapToDomainModel(entity: EdamamFoodProductsDto): ProductsData {
@@ -13,11 +14,15 @@ class EdamamFoodProductsMapper: DomainMapper<EdamamFoodProductsDto, ProductsData
             searchText = entity.text,
             productsList = entity.hints.map { dtoEntity ->
                 Ingredient(
-                    id = dtoEntity.food.foodId,
-                    type = dtoEntity.food.label,
+                    product = Product(
+                        foodId = dtoEntity.food.foodId,
+                        label = dtoEntity.food.label,
+                        image = dtoEntity.food.image,
+                        units = dtoEntity.measures.filter { it.label != null }
+                            .map { QuantityUnit.parseUnit(it.label!!) }.toSet().toList()
+                    ),
                     quantity = 0,
                     unit = determineDefaultUnit(dtoEntity.measures),
-                    imageUrl = dtoEntity.food.image ?: "",
                     expirationDate = ""
                 )
             },

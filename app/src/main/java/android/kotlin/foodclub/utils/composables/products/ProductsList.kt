@@ -4,14 +4,6 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
-import android.kotlin.foodclub.utils.composables.ActionType
-import android.kotlin.foodclub.utils.composables.SingleSearchIngredientItem
-import android.kotlin.foodclub.utils.composables.SwipeToDismissContainer
-import android.kotlin.foodclub.utils.composables.expirationDateTextStyle
-import android.kotlin.foodclub.utils.composables.itemExpirationDate
-import android.kotlin.foodclub.utils.composables.itemQuantity
-import android.kotlin.foodclub.utils.composables.quantityTextStyle
-import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,7 +22,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SearchBarColors
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
@@ -49,14 +40,15 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
-import kotlin.math.min
 
 @Composable
 fun ProductsList(
@@ -97,7 +89,8 @@ fun ProductsListTitleSection(modifier: Modifier, includeExpiryDate: Boolean) {
             .padding(
                 start = dimensionResource(id = R.dimen.dim_20),
                 top = dimensionResource(id = R.dimen.dim_15),
-                bottom = dimensionResource(id = R.dimen.dim_15)
+                bottom = dimensionResource(id = R.dimen.dim_15),
+                end = dimensionResource(id = R.dimen.dim_44)
             ),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -107,10 +100,11 @@ fun ProductsListTitleSection(modifier: Modifier, includeExpiryDate: Boolean) {
             fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
             lineHeight = dimensionResource(id = R.dimen.fon_16).value.sp,
             fontFamily = Montserrat,
-            color = Color.Gray
+            color = Color.Gray,
+            modifier = Modifier.weight(1.2f)
         )
         Text(
-            modifier = modifier.padding(start = dimensionResource(id = R.dimen.dim_15)),
+            modifier = modifier.weight(1f),
             text = stringResource(id = R.string.quantity),
             fontWeight = FontWeight(500),
             fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
@@ -125,11 +119,10 @@ fun ProductsListTitleSection(modifier: Modifier, includeExpiryDate: Boolean) {
                 fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
                 lineHeight = dimensionResource(id = R.dimen.fon_16).value.sp,
                 fontFamily = Montserrat,
-                color = Color.Gray
+                color = Color.Gray,
+                modifier = Modifier.weight(1f)
             )
         }
-
-        Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_5)))
     }
 }
 
@@ -170,7 +163,7 @@ fun ProductsListContent(
                             events.selectAction(item, ProductAction.CHANGE_EXPIRY_DATE)
                         },
                         onAddItemClicked = {
-                            events.addIngredient(item)
+                            events.updateIngredient(item)
                         },
                         onDeleteIngredient = {
                             events.deleteIngredient(item)
@@ -224,7 +217,7 @@ fun IngredientItem(
             .background(Color.White)
     ) {
         Column(
-            modifier = modifier.weight(1f)
+            modifier = modifier.weight(1.2f)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -250,90 +243,110 @@ fun IngredientItem(
                 )
             }
         }
-        Column(modifier = modifier.weight(1f)) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start
-            ) {
+        Box(modifier = modifier.weight(1f)) {
+            Text(
+                modifier = modifier
+//                    .padding(start = dimensionResource(id = R.dimen.dim_6))
+                    .clickable {
+                        onEditQuantityClicked(item)
+                    },
+                text = quantity,
+                fontWeight = FontWeight(500),
+                fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
+                lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
+                fontFamily = Montserrat,
+                color = Color.Gray,
+                style = quantityTextStyle(quantity),
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
+            )
+//            Row(
+//                verticalAlignment = Alignment.CenterVertically,
+//                horizontalArrangement = Arrangement.Start
+//            ) {
+//
+//            }
+        }
+
+        if(includeExpiryDate) {
+            Box(modifier = modifier.weight(1f)) {
                 Text(
                     modifier = modifier
-                        .padding(start = dimensionResource(id = R.dimen.dim_6))
+//                        .padding(start = dimensionResource(id = R.dimen.dim_20))
                         .clickable {
-                            onEditQuantityClicked(item)
+                            onDateClicked(item)
                         },
-                    text = quantity,
+                    text = expirationDate,
                     fontWeight = FontWeight(500),
+                    textAlign = TextAlign.Start,
                     fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                     lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
                     fontFamily = Montserrat,
                     color = Color.Gray,
-                    style = quantityTextStyle(quantity),
+                    style = expirationDateTextStyle(expirationDate),
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1
                 )
             }
         }
 
-        Column(modifier = modifier.weight(1f)) {
-            Row(
-                modifier = modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+        if(onAddItemClicked != null) {
+            Box(
+                modifier = Modifier
+                    .size(dimensionResource(id = R.dimen.dim_24))
+                    .clip(CircleShape)
+                    .background(if (isItemAdded) Color.Red else foodClubGreen)
+                    .clickable {
+                        if (isItemAdded) {
+                            onDeleteIngredient(item)
+                        } else {
+                            onAddItemClicked(item)
+                        }
+                        isItemAdded = !isItemAdded
+                    },
+                contentAlignment = Alignment.Center
             ) {
-                if(includeExpiryDate) {
-                    Text(
-                        modifier = modifier
-                            .padding(start = dimensionResource(id = R.dimen.dim_20))
-                            .clickable {
-                                onDateClicked(item)
-                            },
-                        text = expirationDate,
-                        fontWeight = FontWeight(500),
-                        textAlign = TextAlign.Start,
-                        fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
-                        lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
-                        fontFamily = Montserrat,
-                        color = Color.Gray,
-                        style = expirationDateTextStyle(expirationDate),
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1
-                    )
-                }
+                val rotationAngle by animateFloatAsState(
+                    targetValue = if (isItemAdded) 45f else 0f,
+                    label = ""
+                )
 
-                Box(modifier = Modifier.weight(1f, fill = false))
-                Spacer(modifier = Modifier.weight(1f, fill = true))
-
-                if(onAddItemClicked != null) {
-                    Box(
-                        modifier = Modifier
-                            .size(dimensionResource(id = R.dimen.dim_24))
-                            .clip(CircleShape)
-                            .background(if (isItemAdded) Color.Red else foodClubGreen)
-                            .clickable {
-                                if (isItemAdded) {
-                                    onDeleteIngredient(item)
-                                } else {
-                                    onAddItemClicked(item)
-                                }
-                                isItemAdded = !isItemAdded
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        val rotationAngle by animateFloatAsState(
-                            targetValue = if (isItemAdded) 45f else 0f,
-                            label = ""
-                        )
-
-                        Icon(
-                            painter = painterResource(id = R.drawable.add),
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.rotate(rotationAngle)
-                        )
-                    }
-                }
+                Icon(
+                    painter = painterResource(id = R.drawable.add),
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.rotate(rotationAngle)
+                )
             }
+        } else {
+            Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.dim_24)))
         }
     }
+}
+
+@Composable
+fun itemQuantity(item: Ingredient): String {
+    return if (item.quantity != 0) item.quantity.toString() + item.unit.short else stringResource(id = R.string.edit)
+}
+
+@Composable
+fun itemExpirationDate(item: Ingredient): String {
+    return if (item.expirationDate != "") {
+        item.expirationDate.split(" ").take(2).joinToString(" ")
+    } else stringResource(id = R.string.edit)
+}
+
+@Composable
+fun quantityTextStyle(quantity: String): TextStyle {
+    return if (quantity == stringResource(id = R.string.edit)) TextStyle(textDecoration = TextDecoration.Underline) else TextStyle(
+        textDecoration = TextDecoration.None
+    )
+}
+
+@Composable
+fun expirationDateTextStyle(expirationDate: String): TextStyle {
+    return if (expirationDate == stringResource(id = R.string.edit)) TextStyle(textDecoration = TextDecoration.Underline) else TextStyle(
+        textDecoration = TextDecoration.None
+    )
 }
 

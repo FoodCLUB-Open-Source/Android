@@ -1,25 +1,26 @@
 package android.kotlin.foodclub.views.home.discover
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.defaultSearchBarColors
 import android.kotlin.foodclub.utils.composables.SwipeToDismissContainer
 import android.kotlin.foodclub.utils.composables.products.IngredientItem
 import android.kotlin.foodclub.utils.composables.products.ProductAction
+import android.kotlin.foodclub.utils.composables.products.ProductSearchBar
 import android.kotlin.foodclub.utils.composables.products.ProductState
 import android.kotlin.foodclub.utils.composables.products.ProductsEvents
+import android.kotlin.foodclub.utils.composables.products.ProductsListTitleSection
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,11 +29,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import kotlin.math.min
 
 @Composable
@@ -48,49 +48,28 @@ fun KitchenIngredients(
                 color = Color.White
             )
     ) {
-        IngredientsListTitleSection(modifier)
-        IngredientsListColumn(events = events, productState = state)
-    }
-}
-
-@Composable
-fun IngredientsListTitleSection(modifier: Modifier) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(
-                start = dimensionResource(id = R.dimen.dim_20),
-                top = dimensionResource(id = R.dimen.dim_15),
-                bottom = dimensionResource(id = R.dimen.dim_15)
+        ProductSearchBar(
+            onSearch = { events.searchWithinAddedIngredients(it) },
+            textFieldColors = defaultSearchBarColors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent
             ),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = stringResource(id = R.string.name),
-            fontWeight = FontWeight(500),
-            fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
-            lineHeight = dimensionResource(id = R.dimen.fon_16).value.sp,
-            fontFamily = Montserrat,
-            color = Color.Gray
+            placeholder = stringResource(id = R.string.search_from_my_basket),
+            textFieldModifier = Modifier
+                .fillMaxWidth()
+                .border(
+                    border = BorderStroke(
+                        width = dimensionResource(id = R.dimen.dim_1),
+                        color = colorResource(id = R.color.gray).copy(alpha = 0.3f)
+                    ),
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16))
+                ),
+            enableCamera = false,
+            enableMike = false
         )
-        Text(
-            modifier = modifier.padding(start = dimensionResource(id = R.dimen.dim_15)),
-            text = stringResource(id = R.string.quantity),
-            fontWeight = FontWeight(500),
-            fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
-            lineHeight = dimensionResource(id = R.dimen.fon_16).value.sp,
-            fontFamily = Montserrat,
-            color = Color.Gray
-        )
-        Text(
-            text = stringResource(id = R.string.expiry_date),
-            fontWeight = FontWeight(500),
-            fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
-            lineHeight = dimensionResource(id = R.dimen.fon_16).value.sp,
-            fontFamily = Montserrat,
-            color = Color.Gray
-        )
-        Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_5)))
+        ProductsListTitleSection(modifier = modifier, includeExpiryDate = state.allowExpiryDate)
+        IngredientsListColumn(events = events, productState = state)
     }
 }
 
@@ -102,7 +81,7 @@ fun IngredientsListColumn(
     var height by remember {
         mutableStateOf(0.dp)
     }
-    height = (min(productState.addedProducts.size, 5) * dimensionResource(id = R.dimen.dim_65).value).dp
+    height = (min(productState.filteredAddedProducts.size, 5) * dimensionResource(id = R.dimen.dim_65).value).dp
 
     LazyColumn(
         modifier = Modifier
@@ -113,14 +92,14 @@ fun IngredientsListColumn(
             .background(Color.White)
             .height(height),
         content = {
-            itemsIndexed(productState.addedProducts) { _, item ->
+            itemsIndexed(productState.filteredAddedProducts) { _, item ->
                 SwipeToDismissContainer(
                     onDismiss = { events.deleteIngredient(item) }
                 ) { modifier ->
                     IngredientItem(
                         modifier = modifier,
                         item = item,
-                        userIngredientsList = productState.addedProducts,
+                        userIngredientsList = productState.filteredAddedProducts,
                         onEditQuantityClicked = {
                             events.selectAction(item, ProductAction.EDIT_QUANTITY)
                         },

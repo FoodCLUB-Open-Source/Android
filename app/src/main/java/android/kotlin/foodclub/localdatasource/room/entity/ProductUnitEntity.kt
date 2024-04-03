@@ -2,6 +2,7 @@ package android.kotlin.foodclub.localdatasource.room.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.PrimaryKey
 
 @Entity("product_units", foreignKeys = [
     ForeignKey(
@@ -12,6 +13,8 @@ import androidx.room.ForeignKey
     )]
 )
 data class ProductUnitEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
     val foodId: String,
     val unit: String
 )

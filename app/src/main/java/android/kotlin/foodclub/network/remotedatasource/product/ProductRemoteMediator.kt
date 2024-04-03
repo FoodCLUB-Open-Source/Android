@@ -1,6 +1,6 @@
 package android.kotlin.foodclub.network.remotedatasource.product
 
-import android.kotlin.foodclub.localdatasource.room.database.FoodCLUBDatabase
+import android.kotlin.foodclub.localdatasource.localdatasource.product.ProductLocalDataSource
 import android.kotlin.foodclub.localdatasource.room.relationships.ProductWithUnits
 import android.kotlin.foodclub.network.retrofit.dtoModels.edamam.EdamamFoodProductContainerDto
 import android.kotlin.foodclub.network.retrofit.dtoModels.edamam.toProductWithUnits
@@ -9,22 +9,18 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
-import androidx.room.withTransaction
-import kotlinx.coroutines.flow.firstOrNull
 import java.io.IOException
-import kotlin.math.ceil
 
 @OptIn(ExperimentalPagingApi::class)
 class ProductRemoteMediator(
     private val searchString: String,
-    private val foodClubDb: FoodCLUBDatabase,
     private val productRemoteDataSource: ProductRemoteDataSource,
+    private val productLocalDataSource: ProductLocalDataSource
 ): RemoteMediator<Int, ProductWithUnits>() {
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, ProductWithUnits>
     ): MediatorResult {
-        val dao = foodClubDb.getProductDao()
 
         return try {
             val loadKey = when(loadType) {
@@ -33,7 +29,7 @@ class ProductRemoteMediator(
                     endOfPaginationReached = true
                 )
                 LoadType.APPEND -> {
-                    val rowsCount = dao.countRows().firstOrNull()
+                    val rowsCount = productLocalDataSource.countRows()
                     if(rowsCount == null) {
                         null
                     } else {
@@ -49,13 +45,16 @@ class ProductRemoteMediator(
             if(!response.isSuccessful) throw RemoteDataRetrievalException("Could not retrieve products")
             val products: List<EdamamFoodProductContainerDto> = response.body()!!.hints
 
-            foodClubDb.withTransaction {
-                if(loadType == LoadType.REFRESH) {
-                    dao.clearAll()
-                }
-                val productsWithUnits = products.map { it.toProductWithUnits() }
-                dao.insertProductsWithUnit(productsWithUnits)
-            }
+            val productsWithUnits = products.map { it.toProductWithUnits() }
+            productLocalDataSource.insertPaginatedData(productsWithUnits, loadType)
+//            foodClubDb.withTransaction {
+//                if(loadType == LoadType.REFRESH) {
+//                    dao.clearAll()
+//                }
+//                val productsWithUnits = products.map { it.toProductWithUnits() }
+//                dao.insertProductsWithUnit(productsWithUnits)
+//            }
+
 
             MediatorResult.Success(
                 endOfPaginationReached = products.isEmpty()

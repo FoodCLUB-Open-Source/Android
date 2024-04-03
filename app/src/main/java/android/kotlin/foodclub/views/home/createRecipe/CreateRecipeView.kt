@@ -9,7 +9,6 @@ import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.utils.composables.CustomSliderDiscrete
 import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
-import android.kotlin.foodclub.utils.helpers.ValueParser
 import android.kotlin.foodclub.viewModels.home.createRecipe.CreateRecipeEvents
 import android.kotlin.foodclub.viewModels.home.createRecipe.CreateRecipeViewModel
 import android.kotlin.foodclub.views.home.createRecipe.components.CategoriesSection
@@ -197,12 +196,12 @@ fun CreateRecipeView(
                 }
 
             }
-            items(items = state.ingredients, key = { it.id }) { ingredient ->
+            items(items = state.ingredients, key = { it.product.foodId }) { ingredient ->
                 Ingredient(
                     ingredient = ingredient,
-                    isRevealed = state.revealedIngredientId == ingredient.id,
-                    onExpand = { events.onIngredientExpanded(ingredient.id) },
-                    onCollapse = { events.onIngredientCollapsed(ingredient.id) },
+                    isRevealed = state.revealedIngredientId == ingredient.product.foodId,
+                    onExpand = { events.onIngredientExpanded(ingredient.product.foodId) },
+                    onCollapse = { events.onIngredientCollapsed(ingredient.product.foodId) },
                     onDelete = { events.onIngredientDeleted(ingredient) }
                 )
             }
@@ -263,7 +262,7 @@ fun Ingredient(
     )
 
     var quantity by remember { mutableIntStateOf(ingredient.quantity) }
-    val type by remember { mutableStateOf(ingredient.type) }
+    val type by remember { mutableStateOf(ingredient.product.label) }
     val unit by remember { mutableStateOf(ingredient.unit) }
 
 
@@ -338,7 +337,7 @@ fun Ingredient(
                 .padding(dimensionResource(id = R.dimen.dim_10))
             ) {
                 AsyncImage(
-                    model = ingredient.imageUrl,
+                    model = ingredient.product.image,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -379,7 +378,7 @@ fun Ingredient(
                                     }
                             )
                             Text(
-                                text = quantity.toString() + ValueParser.quantityUnitToString(unit),
+                                text = quantity.toString() + unit.short,
                                 color = Color.Black,
                                 fontFamily = Montserrat,
                                 fontSize = dimensionResource(id = R.dimen.fon_14).value.sp

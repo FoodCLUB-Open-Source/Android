@@ -13,7 +13,7 @@ class ProductsData(val searchText: String, val nextUrl: String, productsList: Li
     private fun removeRepeatedIds() {
         val productsMap: MutableMap<String, Ingredient> = mutableMapOf()
         productsList.forEach {
-            if (!productsMap.containsKey(it.id)) productsMap.put(it.id, it)
+            if (!productsMap.containsKey(it.product.foodId)) productsMap.put(it.product.foodId, it)
         }
         productsList = productsMap.map { it.value }
     }

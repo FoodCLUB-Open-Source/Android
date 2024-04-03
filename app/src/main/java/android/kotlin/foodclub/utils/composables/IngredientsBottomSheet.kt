@@ -163,9 +163,7 @@ fun IngredientsBottomSheet(
                         EditIngredientBottomModal(
                             ingredient = editedIngredient!!,
                             onDismissRequest = {
-                                if(!it) {
-                                    contentState.value = DrawerContentState.IngredientListContent
-                                }
+                                contentState.value = DrawerContentState.IngredientListContent
                             },
                             onEdit = {
                                 onSave(it)
@@ -207,7 +205,7 @@ private fun IngredientSelectedView(
     val pickerValues = remember {
         mutableStateOf((1..99).map {
             (it * 10).toString() +
-                    ValueParser.quantityUnitToString(selectedIngredient.unit)
+                    selectedIngredient.unit.short
         })
     }
 
@@ -252,7 +250,7 @@ private fun IngredientSelectedView(
                     .padding(top = dimensionResource(id = R.dimen.dim_30), bottom =  dimensionResource(id = R.dimen.dim_40))
             ) {
                 AsyncImage(
-                    model = selectedIngredient.imageUrl,
+                    model = selectedIngredient.product.image,
                     contentDescription = null,
                     modifier = Modifier
                         .size(dimensionResource(id = R.dimen.dim_130))
@@ -287,14 +285,12 @@ private fun IngredientSelectedView(
                     onClick = {
                         onSave(
                             Ingredient(
-                                selectedIngredient.id,
-                                selectedIngredient.type,
-                                ValueParser.quantityStringToInt(
+                                product = selectedIngredient.product,
+                                quantity = ValueParser.quantityStringToInt(
                                     valuesPickerState.selectedItem,
                                     selectedIngredient.unit
                                 ),
-                                selectedIngredient.unit,
-                                selectedIngredient.imageUrl
+                                unit = selectedIngredient.unit
                             )
                         )
                     }
@@ -402,7 +398,7 @@ private fun IngredientListView(
             }
             items(
                 items = productsData.productsList,
-                key = { it.id }
+                key = { it.product.foodId }
             ) {
                 if (productsData.productsList.contains(it)) {
                     IngredientComposable(
@@ -455,7 +451,7 @@ private fun IngredientComposable(
             horizontalArrangement = Arrangement.Start
         ) {
             AsyncImage(
-                model = ingredient.imageUrl,
+                model = ingredient.product.image,
                 contentDescription = null,
                 modifier = Modifier
                     .size(dimensionResource(id = R.dimen.dim_40))
@@ -463,7 +459,7 @@ private fun IngredientComposable(
             )
             Spacer(modifier = Modifier.width( dimensionResource(id = R.dimen.dim_15)))
             Text(
-                text = ingredient.type,
+                text = ingredient.product.label,
                 color = Color.White,
                 fontFamily = Montserrat
             )

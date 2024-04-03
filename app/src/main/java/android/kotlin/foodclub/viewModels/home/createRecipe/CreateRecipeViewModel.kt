@@ -3,6 +3,7 @@ package android.kotlin.foodclub.viewModels.home.createRecipe
 import android.kotlin.foodclub.domain.enums.Category
 import android.kotlin.foodclub.domain.enums.QuantityUnit
 import android.kotlin.foodclub.domain.models.products.Ingredient
+import android.kotlin.foodclub.domain.models.products.Product
 import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.domain.models.recipes.Recipe
 import android.kotlin.foodclub.repositories.RecipeRepository
@@ -49,29 +50,38 @@ class CreateRecipeViewModel @Inject constructor(
                 val testIngredientsList = arrayListOf<Ingredient>()
                 testIngredientsList.add(
                     Ingredient(
-                        "1",
-                        "Tomato paste",
-                        200,
-                        QuantityUnit.GRAM,
-                        "https://kretu.sts3.pl/foodclub_drawable/salad_ingredient.png"
+                        product = Product(
+                            foodId = "1",
+                            label = "Tomato paste",
+                            image = "https://kretu.sts3.pl/foodclub_drawable/salad_ingredient.png",
+                            units = QuantityUnit.entries
+                        ),
+                        quantity = 200,
+                        unit = QuantityUnit.GRAM
                     )
                 )
                 testIngredientsList.add(
                     Ingredient(
-                        "2",
-                        "Potato wedges",
-                        200,
-                        QuantityUnit.GRAM,
-                        "https://kretu.sts3.pl/foodclub_drawable/salad_ingredient.png"
+                        product = Product(
+                            foodId = "2",
+                            label = "Potato wedges",
+                            image = "https://kretu.sts3.pl/foodclub_drawable/salad_ingredient.png",
+                            units = QuantityUnit.entries
+                        ),
+                        quantity = 200,
+                        unit = QuantityUnit.GRAM
                     )
                 )
                 testIngredientsList.add(
                     Ingredient(
-                        "3",
-                        "Pasta",
-                        200,
-                        QuantityUnit.GRAM,
-                        "https://kretu.sts3.pl/foodclub_drawable/salad_ingredient.png"
+                        product = Product(
+                            foodId = "3",
+                            label = "Pasta",
+                            image = "https://kretu.sts3.pl/foodclub_drawable/salad_ingredient.png",
+                            units = QuantityUnit.entries
+                        ),
+                        quantity = 200,
+                        unit = QuantityUnit.GRAM
                     )
                 )
                 _state.update { it.copy(ingredients = testIngredientsList) }

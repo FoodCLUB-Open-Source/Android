@@ -2,6 +2,7 @@ package android.kotlin.foodclub.network.retrofit.dtoMappers.recipes
 
 import android.kotlin.foodclub.domain.enums.QuantityUnit
 import android.kotlin.foodclub.domain.models.products.Ingredient
+import android.kotlin.foodclub.domain.models.products.Product
 import android.kotlin.foodclub.domain.models.recipes.Recipe
 import android.kotlin.foodclub.network.retrofit.dtoModels.recipes.RecipeDto
 import android.kotlin.foodclub.network.retrofit.utils.DomainMapper
@@ -22,7 +23,7 @@ class RecipeMapper: DomainMapper<RecipeDto, Recipe> {
             id = domainModel.id,
             postId = domainModel.postId,
             description = domainModel.description,
-            ingredients = domainModel.ingredients.map { it.type },
+            ingredients = domainModel.ingredients.map { it.product.label },
             servingSize = domainModel.servingSize,
         )
     }
@@ -31,7 +32,17 @@ class RecipeMapper: DomainMapper<RecipeDto, Recipe> {
         var i = 1
         val list = ArrayList<Ingredient>()
         for(ingredient in ingredientsDto) {
-            list.add(Ingredient(i.toString(), ingredient, 1, QuantityUnit.GRAM))
+            list.add(Ingredient(
+                    product = Product(
+                        foodId = i.toString(),
+                        label = ingredient,
+                        image = null,
+                        units = QuantityUnit.entries
+                    ),
+                    quantity = 1,
+                    unit = QuantityUnit.GRAM
+                )
+            )
             i++
         }
         return list

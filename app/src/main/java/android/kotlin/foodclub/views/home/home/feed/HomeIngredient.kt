@@ -6,7 +6,7 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.enums.QuantityUnit
 import android.kotlin.foodclub.domain.models.products.Ingredient
-import android.kotlin.foodclub.utils.helpers.ValueParser
+import android.kotlin.foodclub.domain.models.products.Product
 import android.kotlin.foodclub.views.home.ui.theme.FoodClubTheme
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -84,7 +84,7 @@ fun HomeIngredient(
             horizontalArrangement = Arrangement.SpaceAround
         ) {
             val painter = rememberAsyncImagePainter(
-                model = ingredient.imageUrl,
+                model = ingredient.product.image,
                 placeholder = painterResource(
                     id = R.drawable.salad_ingredient
                 ),
@@ -115,7 +115,7 @@ fun HomeIngredient(
                     verticalArrangement = Arrangement.spacedBy(32.dp),
                 ) {
                     Text(
-                        text = ingredient.type,
+                        text = ingredient.product.label,
                         lineHeight = dimensionResource(id = R.dimen.fon_18).value.sp,
                         modifier = Modifier,
                         fontWeight = FontWeight.Medium,
@@ -137,7 +137,7 @@ fun HomeIngredient(
                             tint = quantityIndicatorColor,
                         )
                         Text(
-                            quantity.toString() + ValueParser.quantityUnitToString(ingredient.unit),
+                            quantity.toString() + ingredient.unit.short,
                             color = Color.White,
                             fontFamily = Montserrat,
                             fontWeight = FontWeight.SemiBold,
@@ -196,11 +196,14 @@ private fun HomeIngredientPreview() {
     FoodClubTheme {
         HomeIngredient(
             ingredient = Ingredient(
-                id = "3",
-                type = "Tomato paste",
+                product = Product(
+                    foodId = "3",
+                    label = "Tomato paste",
+                    image = null,
+                    units = QuantityUnit.entries
+                ),
                 quantity = 1,
                 unit = QuantityUnit.GRAM,
-                imageUrl = "",
                 expirationDate = "expirationDate3",
                 isSelected = false
             ),

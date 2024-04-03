@@ -1,6 +1,5 @@
 package android.kotlin.foodclub.network.retrofit.dtoModels.edamam
 
-import android.kotlin.foodclub.domain.models.products.Product
 import android.kotlin.foodclub.localdatasource.room.entity.ProductEntity
 import android.kotlin.foodclub.localdatasource.room.entity.ProductUnitEntity
 import android.kotlin.foodclub.localdatasource.room.relationships.ProductWithUnits
@@ -19,10 +18,10 @@ fun EdamamFoodProductContainerDto.toProductWithUnits(): ProductWithUnits {
             label = food.label,
             image = food.image
         ),
-        units = measures.map {
+        units = measures.filter { it.label != null  }.map {
             ProductUnitEntity(
                 foodId = food.foodId,
-                unit = it.label
+                unit = it.label!!
             )
         }
     )

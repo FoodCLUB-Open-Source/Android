@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.di
 
 import android.app.Application
+import android.kotlin.foodclub.localdatasource.room.dao.ProductDao
 import android.kotlin.foodclub.localdatasource.room.dao.ProfileDataDao
 import android.kotlin.foodclub.localdatasource.room.database.FoodCLUBDatabase
 import android.kotlin.foodclub.localdatasource.room.dao.UserDetailsDao
@@ -53,5 +54,11 @@ class DatabaseModule {
     @Singleton
     fun provideUserProfileBookmarksDao(foodCLUBDatabase: FoodCLUBDatabase): UserProfileBookmarksDao {
         return foodCLUBDatabase.getUserProfileBookmarksDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideProductDao(foodCLUBDatabase: FoodCLUBDatabase): ProductDao {
+        return foodCLUBDatabase.getProductDao()
     }
 }
