@@ -151,7 +151,7 @@ fun MainLogInAndSignUp(
                         text = stringResource(id = R.string.already_have_account),
                         fontFamily = Montserrat,
                         fontWeight = FontWeight.Medium,
-                        fontSize = dimensionResource(id = R.dimen.fon_25).value.sp,
+                        fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                         modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dim_7))
                     )
                     if (overflowText) {
@@ -165,7 +165,7 @@ fun MainLogInAndSignUp(
                                 color = colorResource(id = R.color.login_text_color),
                                 fontFamily = Montserrat,
                                 fontWeight = FontWeight.Medium,
-                                fontSize = dimensionResource(id = R.dimen.fon_25).value.sp
+                                fontSize = dimensionResource(id = R.dimen.fon_16).value.sp
                             )
                         )
                     }
@@ -182,7 +182,7 @@ fun MainLogInAndSignUp(
                             color = colorResource(id = R.color.login_text_color),
                             fontFamily = Montserrat,
                             fontWeight = FontWeight.Medium,
-                            fontSize = dimensionResource(id = R.dimen.fon_25).value.sp
+                            fontSize = dimensionResource(id = R.dimen.fon_16).value.sp
                         ),
                         onTextLayout = {
                             overflowText = it.didOverflowHeight
