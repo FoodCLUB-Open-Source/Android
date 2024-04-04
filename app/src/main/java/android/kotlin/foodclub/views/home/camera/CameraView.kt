@@ -213,33 +213,12 @@ fun CameraView(
                             .align(Alignment.Center)
                     )
                 }
-                if (!recordingStarted.value && uris.isNotEmpty()) {
-                    Box(
-                        modifier = Modifier
-                            .width(dimensionResource(id = R.dimen.dim_60))
-                            .height(dimensionResource(id = R.dimen.dim_40))
-                            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
-                            .background(Color.White)
-                            .align(Alignment.TopEnd)
-                            .clickable {
-                                holdOrPress = !holdOrPress
-                            }
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
-                            contentDescription = stringResource(id = R.string.story),
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .width(dimensionResource(id = R.dimen.dim_20))
-                                .height(dimensionResource(id = R.dimen.dim_20))
-                                .align(Alignment.Center)
-                        )
-                    }
-                }
 
-
-                Column(modifier = Modifier.align(Alignment.BottomCenter), horizontalAlignment = Alignment.CenterHorizontally)
-                {
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     if (confirmDeletion) {
                         AlertDialog(onDismissRequest = { confirmDeletion = !confirmDeletion },
                             modifier = Modifier
