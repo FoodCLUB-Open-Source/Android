@@ -162,7 +162,10 @@ fun HomeBottomSheetIngredients(
                 ) {
                     Text(
                         stringResource(id = R.string.serving_size),
+                        fontWeight = FontWeight.SemiBold,
+                        lineHeight = dimensionResource(id = R.dimen.fon_17).value.sp,
                         color = Color.Black,
+                        letterSpacing = dimensionResource(id = R.dimen.fon_0_04).value.sp,
                         fontFamily = Montserrat,
                         fontSize = if (isSmallScreen) dimensionResource(id = R.dimen.dim_14).value.sp else dimensionResource(
                             id = R.dimen.dim_17
@@ -249,41 +252,51 @@ fun HomeBottomSheetIngredients(
                  *
                  * add more section to the sections list
                  * */
-                TabRow(
-                    modifier = Modifier
-                        .padding(horizontal = dimensionResource(id = R.dimen.dim_16))
-                        .fillMaxWidth(0.3f),
-                    selectedTabIndex = selectedTabIndex,
-                    indicator = { tabPositions ->
-                        TabRowDefaults.Indicator(
-                            color = foodClubGreen,
-                            height = 1.dp,
-                            modifier = Modifier
-                                .tabIndicatorOffset(tabPositions[selectedTabIndex])
-                        )
-                    },
-                    containerColor = Color.White
-                ) {
-                    sections.forEachIndexed { index, title ->
-                        Tab(
-                            selected = selectedTabIndex == index,
-                            onClick = { selectedTabIndex = index },
-                            modifier = Modifier.padding(bottom = 14.dp),
-
-                            ) {
-                            Text(
-                                modifier = Modifier.clickable(
-                                    enabled = true,
-                                    interactionSource = interactionSource,
-                                    indication = null,
-                                    onClick = { selectedTabIndex = index },
-                                ),
-                                text = title,
-                                fontFamily = Montserrat,
-                                fontWeight = FontWeight.Medium,
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    Divider(
+                        color = colorResource(id = R.color.home_ingredient_bottom_sheet_divider_color),
+                        thickness = 1.dp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.BottomCenter)
+                    )
+                    TabRow(
+                        modifier = Modifier
+                            .padding(horizontal = dimensionResource(id = R.dimen.dim_16))
+                            .fillMaxWidth(0.3f),
+                        selectedTabIndex = selectedTabIndex,
+                        indicator = { tabPositions ->
+                            TabRowDefaults.Indicator(
                                 color = foodClubGreen,
-                                lineHeight = 24.85.sp
+                                height = 1.dp,
+                                modifier = Modifier
+                                    .tabIndicatorOffset(tabPositions[selectedTabIndex])
                             )
+                        },
+                        containerColor = Color.White
+                    ) {
+                        sections.forEachIndexed { index, title ->
+                            Tab(
+                                selected = selectedTabIndex == index,
+                                onClick = { selectedTabIndex = index },
+                                modifier = Modifier.padding(bottom = 14.dp),
+
+                                ) {
+                                Text(
+                                    modifier = Modifier.clickable(
+                                        enabled = true,
+                                        interactionSource = interactionSource,
+                                        indication = null,
+                                        onClick = { selectedTabIndex = index },
+                                    ),
+                                    text = title,
+                                    fontFamily = Montserrat,
+                                    fontWeight = FontWeight.Medium,
+                                    color = foodClubGreen,
+                                    lineHeight = 24.85.sp
+                                )
+                            }
+
                         }
 
                     }
@@ -308,7 +321,7 @@ fun HomeBottomSheetIngredients(
                                 stringResource(id = R.string.clear), color = foodClubGreen,
                                 fontFamily = Satoshi,
                                 fontSize = dimensionResource(id = R.dimen.dim_16).value.sp,
-                                fontWeight = FontWeight.Normal
+                                fontWeight = FontWeight.Medium
                             )
                         }
                         when (selectedTabIndex) {
@@ -358,7 +371,8 @@ fun HomeBottomSheetIngredients(
                     color = Color.White,
                     fontFamily = Montserrat,
                     fontSize = dimensionResource(id = R.dimen.dim_16).value.sp,
-                    fontWeight = FontWeight.ExtraBold
+                    lineHeight = dimensionResource(id = R.dimen.fon_24).value.sp,
+                    fontWeight = FontWeight.SemiBold
                 )
             }
         }
@@ -439,7 +453,7 @@ fun LabelText(
             fontWeight = FontWeight.Normal,
             fontFamily = Montserrat,
             lineHeight = dimensionResource(id = R.dimen.dim_14).value.sp,
-            modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_2))
+            modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_4))
         )
     }
 }
@@ -483,7 +497,9 @@ fun IngredientsSection(
             ),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        LazyColumn {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy((-12).dp)
+        ) {
             if (recipe != null) {
                 itemsIndexed(recipe.ingredients) { _, item ->
                     HomeIngredient(

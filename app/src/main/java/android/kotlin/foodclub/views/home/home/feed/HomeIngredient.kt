@@ -82,9 +82,8 @@ fun HomeIngredient(
             containerColor = Color.White
         ),
         border = BorderStroke(
-            width = dimensionResource(id = R.dimen.dim_2), color = colorResource(
-                id = R.color.home_ingredient_card_border_color
-            )
+            width = dimensionResource(id = R.dimen.dim_2),
+            color = colorResource(id = R.color.home_ingredient_card_border_color),
         )
     ) {
         Row(
@@ -116,6 +115,7 @@ fun HomeIngredient(
 
             Row(
                 modifier = Modifier
+                    .padding(end = dimensionResource(id = R.dimen.dim_12))
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -141,6 +141,7 @@ fun HomeIngredient(
                             painter = painterResource(id = R.drawable.baseline_arrow_left_24),
                             contentDescription = stringResource(id = R.string.profile_image),
                             modifier = Modifier
+                                .padding(end = dimensionResource(id = R.dimen.dim_12))
                                 .clickable {
                                     ingredient.decrementQuantity((5 / quantityMultiplier).toInt())
                                     quantity = (quantityMultiplier * ingredient.quantity).toInt()
@@ -158,6 +159,7 @@ fun HomeIngredient(
                             painter = painterResource(id = R.drawable.baseline_arrow_right_24),
                             contentDescription = null,
                             modifier = Modifier
+                                .padding(start = dimensionResource(id = R.dimen.dim_12))
                                 .clickable {
                                     ingredient.incrementQuantity((5 / quantityMultiplier).toInt())
                                     quantity = (quantityMultiplier * ingredient.quantity).toInt()
@@ -173,7 +175,7 @@ fun HomeIngredient(
                         .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_30)))
                         .background(
                             if (isSelected) foodClubGreen
-                            else colorResource(id = R.color.home_ingredient_unselected_tick_color)
+                            else colorResource(id = R.color.home_ingredient_unselected_color)
                         )
                         .clickable {
                             isSelected = !isSelected
