@@ -2,6 +2,7 @@ package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.utils.helpers.createGalleryLauncher
 import android.net.Uri
 import androidx.camera.core.CameraSelector
 import androidx.camera.view.LifecycleCameraController
@@ -30,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -43,11 +45,15 @@ fun TakePhotoPreview(
     modifier: Modifier = Modifier,
     controller: LifecycleCameraController,
     navController: NavController,
-    onTakePhoto: () -> Unit
-){
+    onTakePhoto: (Uri?) -> Unit
+) {
     var flashEnabled by remember { mutableStateOf(false) }
-
-    Box(modifier = Modifier.fillMaxSize()){
+    val context = LocalContext.current
+    val galleryLauncher = createGalleryLauncher(
+        context = context,
+        onResult = { onTakePhoto(it) },
+    )
+    Box(modifier = Modifier.fillMaxSize()) {
         CameraPreview(
             controller = controller,
             modifier = modifier
@@ -106,7 +112,7 @@ fun TakePhotoPreview(
         ) {
             IconButton(
                 onClick = {
-                    //TODO select from gallery
+                    galleryLauncher.launch(arrayOf("image/*"))
                 }
             ) {
                 Icon(
@@ -118,7 +124,7 @@ fun TakePhotoPreview(
             }
 
             CustomCameraButton {
-                onTakePhoto()
+                onTakePhoto(null)
             }
 
             IconButton(
@@ -165,7 +171,7 @@ fun PhotoTakenPreview(
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .padding(top = dimensionResource(id = R.dimen.dim_15))
-        ){
+        ) {
             IconButton(
                 onClick = {
                     navController.popBackStack()
@@ -229,7 +235,7 @@ fun PhotoTakenPreview(
 @Composable
 fun CustomCameraButton(
     onClick: () -> Unit
-){
+) {
     Box(
         modifier = Modifier
             .size(dimensionResource(id = R.dimen.dim_75))
@@ -245,8 +251,7 @@ fun CustomCameraButton(
                 .size(dimensionResource(id = R.dimen.dim_60))
                 .clip(CircleShape)
                 .background(Color.Black)
-                .border(BorderStroke(dimensionResource(id = R.dimen.dim_1), Color.Black))
-            ,
+                .border(BorderStroke(dimensionResource(id = R.dimen.dim_1), Color.Black)),
             contentAlignment = Alignment.Center
         ) {
             Box(
