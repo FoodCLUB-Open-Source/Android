@@ -1,11 +1,7 @@
 package android.kotlin.foodclub.views.home.camera
 
 import android.Manifest
-import android.content.ContentResolver
-import android.content.ContentUris
-import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.confirmScreenColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
@@ -13,15 +9,10 @@ import android.kotlin.foodclub.navigation.CreateRecipeScreen
 import android.kotlin.foodclub.utils.composables.PermissionErrorBox
 import android.kotlin.foodclub.utils.composables.engine.createVideoCaptureUseCase
 import android.kotlin.foodclub.utils.composables.engine.startRecordingVideo
-import android.kotlin.foodclub.utils.helpers.uriToFile
 import android.kotlin.foodclub.viewModels.home.camera.CameraEvents
 import android.kotlin.foodclub.viewModels.home.camera.StopWatchEvent
 import android.net.Uri
 import android.os.Build
-import android.os.Bundle
-import android.provider.MediaStore
-import android.util.Log
-import android.util.Size
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -36,7 +27,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,6 +43,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -68,8 +59,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -81,10 +70,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
-import okio.ByteString.Companion.encodeUtf8
 import java.io.File
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -94,25 +80,9 @@ fun CameraView(
     navController: NavController,
     state: CameraState
 ) {
-
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    var stateString = ""
-
-    val galleryLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
-        onResult = { uri ->
-            uri?.let {
-                context.contentResolver.takePersistableUriPermission(
-                    uri,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION
-                )
-                val file = uriToFile(uri, context)
-                // Handle the selected video file
-            }
-        }
-    )
     val permissions = arrayOf(
         Manifest.permission.CAMERA,
         Manifest.permission.RECORD_AUDIO,
@@ -128,17 +98,6 @@ fun CameraView(
     val cameraSelector: MutableState<CameraSelector> = remember {
         mutableStateOf(CameraSelector.DEFAULT_BACK_CAMERA)
     }
-    val getContent = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetMultipleContents(),
-        onResult = { uri ->
-            val uriEncoded = URLEncoder.encode(
-                uri.toString(),
-                StandardCharsets.UTF_8.toString()
-            )
-            Log.i("CameraView", uri.toString())
-            //navController.navigate("CAMERA_PREVIEW_VIEW/${uriEncoded}")
-        }
-    )
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp + dimensionResource(id = R.dimen.dim_10)
 
     val interactionSource = remember { MutableInteractionSource() }
@@ -171,10 +130,18 @@ fun CameraView(
         mutableStateOf(false)
     }
 
-//    LaunchedEffect(Unit) {
-//        events.onEvent(StopWatchEvent.onReset)
-//        permissionState.launchMultiplePermissionRequest()
-//    }
+    val galleryLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocument()) {
+            it?.let { uri ->
+                context.contentResolver
+                    .takePersistableUriPermission(
+                        uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    )
+                uris.clear()
+                uris.add(uri)
+            }
+        }
 
     LaunchedEffect(previewView) {
         videoCapture.value = context.createVideoCaptureUseCase(
@@ -184,14 +151,12 @@ fun CameraView(
         )
     }
 
-    LaunchedEffect(canDelete)
-    {
+    LaunchedEffect(canDelete) {
         delay(500)
         canDelete = true
     }
 
-    LaunchedEffect(canAdd)
-    {
+    LaunchedEffect(canAdd) {
         delay(1000)
         canAdd = true
     }
@@ -249,8 +214,7 @@ fun CameraView(
                             .align(Alignment.Center)
                     )
                 }
-                if (!recordingStarted.value) {
-
+                if (!recordingStarted.value && uris.isNotEmpty()) {
                     Box(
                         modifier = Modifier
                             .width(dimensionResource(id = R.dimen.dim_60))
@@ -277,8 +241,7 @@ fun CameraView(
 
                 Column(modifier = Modifier.align(Alignment.BottomCenter), horizontalAlignment = Alignment.CenterHorizontally)
                 {
-                    if (confirmDeletion)
-                    {
+                    if (confirmDeletion) {
                         AlertDialog(onDismissRequest = { confirmDeletion = !confirmDeletion },
                             modifier = Modifier
                                 .background(
@@ -315,36 +278,21 @@ fun CameraView(
                         }
                     }
                     
-                    //val stopWatch = Builder(Stopwatch)
-                    //val sdf = SimpleDateFormat("mm:ss")
-
-                    // on below line we are creating a variable for
-                    // current date and time and calling a simple
-                    // date format in it.
-                    //val currentDateAndTime = sdf.format(Date())
-                    var time = if (state.minutes < 10)
-                    {
+                    var time = if (state.minutes < 10) {
                         "0${state.minutes}"
-                    }
-                    else
-                    {
+                    } else {
                         state.minutes.toString()
                     }
 
-                    time += if (state.seconds < 10)
-                    {
+                    time += if (state.seconds < 10) {
                         ":0${state.seconds}"
-                    }
-                    else
-                    {
+                    } else {
                         ":${state.seconds}"
                     }
 
                     Text(text = time, modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_10)), color = Color.White)
-                    val isPressed by interactionSource.collectIsPressedAsState()
                     IconButton(
                         onClick = {
-
                             if(!holdOrPress) {
                                 if (!recordingStarted.value) {
                                     videoCapture.value?.let { videoCapture ->
@@ -381,7 +329,7 @@ fun CameraView(
                                 } else {
                                     recordingStarted.value = false
                                     events.onEvent(StopWatchEvent.onStop)
-                                    recording?.stop() //Need the object refs to be consistent
+                                    recording?.stop()
                                 }
                             }
                         },
@@ -391,10 +339,8 @@ fun CameraView(
                         enabled = state.minutes < 1
                     ) {
 
-                        if(state.minutes >= 1)
-                        {
-                            if (recordingStarted.value)
-                            {
+                        if(state.minutes >= 1) {
+                            if (recordingStarted.value) {
                                 recordingStarted.value = false
                                 events.onEvent(StopWatchEvent.onStop)
                                 recording?.stop()
@@ -411,26 +357,22 @@ fun CameraView(
                     }
                 }
 
-                Row(modifier = Modifier
-                    .height(dimensionResource(id = R.dimen.dim_80))
-                    .align(Alignment.BottomStart), verticalAlignment = Alignment.CenterVertically)
-                {
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_5)))
-                            .then(
-                                Modifier
-                                    .size(dimensionResource(id = R.dimen.dim_64))
-                                    .border(
-                                        dimensionResource(id = R.dimen.dim_2),
-                                        Color.White,
-                                        RoundedCornerShape(dimensionResource(id = R.dimen.dim_5))
-                                    )
+                if (!recordingStarted.value){
+                    Row(modifier = Modifier
+                        .height(dimensionResource(id = R.dimen.dim_80))
+                        .align(Alignment.BottomStart), verticalAlignment = Alignment.CenterVertically)
+                    {
+                        IconButton(
+                            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_64)),
+                            onClick = { galleryLauncher.launch(arrayOf("video/*")) }
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.select_from_gallery),
+                                contentDescription = "gallery launcher",
+                                tint = Color.White
                             )
-                            .clickable {
-                                galleryLauncher.launch("video/*")
-                            }
-                    )
+                        }
+                    }
                 }
 
                 Row(
@@ -440,8 +382,7 @@ fun CameraView(
                         .fillMaxWidth(0.3f),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
-                )
-                {
+                ) {
                     if (uris.isNotEmpty()) {
                         Box(
                             modifier = Modifier
@@ -492,7 +433,6 @@ fun CameraView(
                                 color = Color.White
                             )
                         }
-
                     }
                 }
             }
