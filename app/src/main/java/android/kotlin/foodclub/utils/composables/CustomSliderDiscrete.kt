@@ -124,7 +124,7 @@ fun CustomSliderDiscrete(
                     y = dimensionResource(id = R.dimen.dim_10)
                 )
                 .fillMaxWidth(),
-            color = Color.White
+            color = Color.Black
         )
     }
 }
