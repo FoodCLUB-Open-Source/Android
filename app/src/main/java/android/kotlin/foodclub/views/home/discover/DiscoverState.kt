@@ -6,19 +6,12 @@ import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.MyBasketCache
 import android.kotlin.foodclub.domain.models.products.Product
-import android.kotlin.foodclub.domain.models.products.ProductsData
 import androidx.compose.ui.graphics.ImageBitmap
 
 data class DiscoverState(
     var username: String,
     var ingredientSearchText : String,
-    var searchIngredientsListText: String,
-    val userIngredients : List<Ingredient>,
-    val searchResults : List<Product>,
     val postList: List<VideoModel>,
-    val sessionUsername: String,
-    val sessionUserUsername: String,
-    val productsData: ProductsData,
     val error : String,
     val capturedImage : ImageBitmap?,
     val ingredientToEdit : Ingredient?,
@@ -29,17 +22,7 @@ data class DiscoverState(
         fun default() = DiscoverState(
             username = "",
             ingredientSearchText = "",
-            searchIngredientsListText = "",
-            userIngredients = emptyList(),
-            searchResults = emptyList(),
             postList = emptyList(),
-            sessionUsername = "",
-            sessionUserUsername = "",
-            productsData = ProductsData(
-                searchText = "",
-                nextUrl = "",
-                productsList = emptyList(),
-            ),
             error = "",
             capturedImage = null,
             ingredientToEdit = null,

@@ -2,7 +2,6 @@ package android.kotlin.foodclub.views.home.myBasket
 
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.MyBasket
-import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.utils.composables.products.ProductState
 
 data class MyBasketState(
@@ -10,7 +9,6 @@ data class MyBasketState(
     val error: String,
     val productsList: List<Ingredient>,
     val selectedProductsList: List<String>,
-    val productsDatabase: ProductsData,
     val productState: ProductState
 ) {
     companion object {
@@ -19,7 +17,6 @@ data class MyBasketState(
             error = "",
             productsList = emptyList(),
             selectedProductsList = emptyList(),
-            productsDatabase = ProductsData("", "", emptyList()),
             productState = ProductState.default()
         )
     }

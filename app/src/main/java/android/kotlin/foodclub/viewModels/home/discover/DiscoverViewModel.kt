@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.MyBasketCache
-import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.domain.models.products.toEmptyIngredient
 import android.kotlin.foodclub.localdatasource.room.relationships.toProductModel
 import android.kotlin.foodclub.network.retrofit.utils.SessionCache
@@ -15,7 +14,6 @@ import android.kotlin.foodclub.utils.composables.products.ProductState
 import android.kotlin.foodclub.utils.composables.products.ProductsEvents
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.views.home.discover.DiscoverState
-import android.util.Log
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
@@ -34,8 +32,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -85,38 +81,6 @@ class DiscoverViewModel @Inject constructor(
         }
         getPostsByWorld(197)
         getPostsByUserId()
-        observeAndFetchSearchedIngredients()
-    }
-
-    private fun observeAndFetchSearchedIngredients() {
-        viewModelScope.launch {
-            _state
-                .map { it.ingredientSearchText }
-                .debounce(1000)
-                .filter { it.isNotEmpty() }
-                .collect { searchText ->
-                    fetchProductsDatabase(searchText)
-                }
-        }
-    }
-
-    override fun getPostData(postId: Long) {
-        viewModelScope.launch {
-            when (val resource = postRepository.getPost(id = postId)) {
-                is Resource.Success -> {
-                    _state.update {
-                        it.copy(
-                            sessionUserUsername = resource.data!!.authorDetails,
-                        )
-                    }
-                }
-
-                is Resource.Error -> {
-                    // TODO deal with error
-                }
-
-            }
-        }
     }
 
     override fun getPostsByUserId() {
@@ -143,12 +107,6 @@ class DiscoverViewModel @Inject constructor(
     }
 
     override fun getPostsByWorld(worldCategory: Long) {
-        _state.update {
-            it.copy(
-                sessionUsername = sessionCache.getActiveSession()!!.sessionUser.username,
-            )
-        }
-
         viewModelScope.launch(Dispatchers.Main) {
             when (val resource = postRepository.getWorldCategoryPosts(worldCategory, 10, 1)) {
                 is Resource.Success -> {
@@ -194,11 +152,13 @@ class DiscoverViewModel @Inject constructor(
     }
 
     override fun addScanListToUserIngredients(ingredients: List<Ingredient>) {
-        val updatedList = state.value.userIngredients.toMutableList()
+        val updatedList = _productState.value.addedProducts.toMutableList()
         updatedList.addAll(ingredients)
+        _productState.update {
+            it.copy(addedProducts = updatedList)
+        }
         _state.update {
             it.copy(
-                userIngredients = updatedList,
                 ingredientSearchText = ""
             )
         }
@@ -208,48 +168,7 @@ class DiscoverViewModel @Inject constructor(
         _state.update {
             it.copy(
                 ingredientSearchText = "",
-                searchIngredientsListText = "",
-                searchResults = emptyList(),
-                productsData = ProductsData(
-                    searchText = "",
-                    nextUrl = "",
-                    productsList = emptyList(),
-                )
             )
-        }
-    }
-
-    override fun onDeleteIngredient(ingredient: Ingredient) {
-        val myIngredients = state.value.userIngredients.toMutableList()
-        val matchingIngredient =
-            myIngredients.find { it.product.foodId == ingredient.product.foodId }
-
-        if (matchingIngredient != null) {
-            myIngredients.remove(matchingIngredient)
-            _state.update { it.copy(userIngredients = myIngredients) }
-        }
-
-    }
-
-    private suspend fun fetchProductsDatabase(searchText: String) {
-        Log.e(TAG, "made call $searchText")
-
-        when (val resource = productsRepo.getProductsList(searchText)) {
-            is Resource.Success -> {
-                Log.e(TAG, "SUCCESS")
-                Log.e(TAG, "${resource.data!!.productsList}")
-                _state.update {
-                    it.copy(
-                        error = "",
-                        productsData = resource.data
-                    )
-                }
-            }
-
-            is Resource.Error -> {
-                _state.update { it.copy(error = resource.message!!) }
-            }
-
         }
     }
 

@@ -3,7 +3,6 @@ package android.kotlin.foodclub.di
 import android.kotlin.foodclub.localdatasource.localdatasource.product.ProductLocalDataSource
 import android.kotlin.foodclub.localdatasource.localdatasource.profile_bookmarked_local_datasource.ProfileBookmarkedLocalDataSource
 import android.kotlin.foodclub.network.retrofit.services.AuthenticationService
-import android.kotlin.foodclub.network.retrofit.dtoMappers.edamam.EdamamFoodProductsMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.posts.PostToVideoMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.ForgotChangePasswordMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.SignInUserMapper
@@ -16,7 +15,6 @@ import android.kotlin.foodclub.network.retrofit.dtoMappers.stories.StoryMapper
 import android.kotlin.foodclub.network.retrofit.services.BookmarksService
 import android.kotlin.foodclub.network.retrofit.services.LikesService
 import android.kotlin.foodclub.network.retrofit.services.PostsService
-import android.kotlin.foodclub.network.retrofit.services.ProductsService
 import android.kotlin.foodclub.network.retrofit.services.RecipeService
 import android.kotlin.foodclub.network.retrofit.services.StoriesService
 import android.kotlin.foodclub.repositories.AuthRepository
@@ -102,12 +100,10 @@ object RepositoriesModule {
     @Provides
     @Singleton
     fun provideProductRepository(
-        api: ProductsService,
         productRemoteDataSource: ProductRemoteDataSource,
-        productLocalDataSource: ProductLocalDataSource,
-        mapper: EdamamFoodProductsMapper
+        productLocalDataSource: ProductLocalDataSource
     ): ProductRepository {
-        return ProductRepository(api, productRemoteDataSource, productLocalDataSource, mapper)
+        return ProductRepository(productRemoteDataSource, productLocalDataSource)
     }
 
     @Provides

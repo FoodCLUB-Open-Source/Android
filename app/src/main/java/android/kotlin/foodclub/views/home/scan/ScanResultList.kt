@@ -99,7 +99,6 @@ fun ScanResultView(
 {
 
     val modifier = Modifier
-    val userIngredients = state.userIngredients
 
     var isShowEditScreen by remember { mutableStateOf(false) }
     var topBarTitleText by remember { mutableStateOf("") }

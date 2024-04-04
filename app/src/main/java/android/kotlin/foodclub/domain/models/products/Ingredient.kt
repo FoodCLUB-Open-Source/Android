@@ -3,12 +3,9 @@ package android.kotlin.foodclub.domain.models.products
 import android.kotlin.foodclub.domain.enums.QuantityUnit
 
 class Ingredient(
-//    var id: String,
     val product: Product,
-//    val type: String,
     var quantity: Int,
     var unit: QuantityUnit,
-//    imageUrl: Any = "",
     var expirationDate: String = "",
 
     var isSelected: Boolean = false

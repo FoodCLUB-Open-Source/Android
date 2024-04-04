@@ -60,24 +60,6 @@ fun ProductSearchBar(
         TextField(
             modifier = textFieldModifier,
 //                .fillMaxWidth(if (enableCamera && enableMike) 0.68f else 1.0f)
-//                .fillMaxWidth()
-//                .let { modifier ->
-//                    if (actionType == ActionType.ADD_INGREDIENTS_VIEW) {
-//                        modifier.clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
-//                        modifier.shadow(
-//                            elevation = dimensionResource(id = R.dimen.dim_2),
-//                            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16))
-//                        )
-//                    } else {
-//                        modifier.border(
-//                            border = BorderStroke(
-//                                width = dimensionResource(id = R.dimen.dim_1),
-//                                color = colorResource(id = R.color.gray).copy(alpha = 0.3f)
-//                            ),
-//                            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16))
-//                        )
-//                    }
-//                },
             colors = textFieldColors,
             value = searchText,
             onValueChange = { searchText = it },

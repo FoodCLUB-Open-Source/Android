@@ -1,9 +1,7 @@
 package android.kotlin.foodclub.viewModels.home.createRecipe
 
 import android.kotlin.foodclub.domain.enums.Category
-import android.kotlin.foodclub.domain.enums.QuantityUnit
 import android.kotlin.foodclub.domain.models.products.Ingredient
-import android.kotlin.foodclub.domain.models.products.Product
 import android.kotlin.foodclub.domain.models.products.toEmptyIngredient
 import android.kotlin.foodclub.domain.models.recipes.Recipe
 import android.kotlin.foodclub.localdatasource.room.relationships.toProductModel
@@ -17,7 +15,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -26,8 +23,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -61,86 +56,14 @@ class CreateRecipeViewModel @Inject constructor(
 
     init {
         _state.update { it.copy(title = TAG) }
-        getTestData()
-    }
-
-    private fun getTestData() {
-        viewModelScope.launch {
-            withContext(Dispatchers.Default) {
-                val testIngredientsList = arrayListOf<Ingredient>()
-                testIngredientsList.add(
-                    Ingredient(
-                        product = Product(
-                            foodId = "1",
-                            label = "Tomato paste",
-                            image = "https://kretu.sts3.pl/foodclub_drawable/salad_ingredient.png",
-                            units = QuantityUnit.entries
-                        ),
-                        quantity = 200,
-                        unit = QuantityUnit.GRAM
-                    )
-                )
-                testIngredientsList.add(
-                    Ingredient(
-                        product = Product(
-                            foodId = "2",
-                            label = "Potato wedges",
-                            image = "https://kretu.sts3.pl/foodclub_drawable/salad_ingredient.png",
-                            units = QuantityUnit.entries
-                        ),
-                        quantity = 200,
-                        unit = QuantityUnit.GRAM
-                    )
-                )
-                testIngredientsList.add(
-                    Ingredient(
-                        product = Product(
-                            foodId = "3",
-                            label = "Pasta",
-                            image = "https://kretu.sts3.pl/foodclub_drawable/salad_ingredient.png",
-                            units = QuantityUnit.entries
-                        ),
-                        quantity = 200,
-                        unit = QuantityUnit.GRAM
-                    )
-                )
-                _state.update { it.copy(ingredients = testIngredientsList) }
-            }
-        }
-        _state.update {
-            it.copy(
-                categories = listOf(
-                    Category.MEAT,
-                    Category.FAT_REDUCTION,
-                    Category.ITALIAN
-                )
-            )
-        }
     }
 
     fun setVideoPath(path: String) {
         videoPath = path
     }
 
-    override fun onIngredientExpanded(ingredientId: String) {
-        if (_state.value.revealedIngredientId == ingredientId) return
-        _state.update { it.copy(revealedIngredientId = ingredientId) }
-    }
-
-    override fun onIngredientCollapsed(ingredientId: String) {
-        if (_state.value.revealedIngredientId != ingredientId) return
-        _state.update { it.copy(revealedIngredientId = "") }
-    }
-
-    override fun onIngredientDeleted(ingredient: Ingredient) {
-        if(!_state.value.ingredients.contains(ingredient)) return
-        val newIngredients = _state.value.ingredients.toMutableList()
-        newIngredients.remove(ingredient)
-        _state.update { it.copy(ingredients = newIngredients) }
-    }
-
     override fun clearIngredients() {
-        _state.update { it.copy(ingredients = listOf()) }
+        _productState.update { it.copy(addedProducts = listOf()) }
     }
 
     override fun unselectCategory(category: Category) {

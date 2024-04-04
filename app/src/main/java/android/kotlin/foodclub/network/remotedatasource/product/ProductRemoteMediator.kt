@@ -47,14 +47,6 @@ class ProductRemoteMediator(
 
             val productsWithUnits = products.map { it.toProductWithUnits() }
             productLocalDataSource.insertPaginatedData(productsWithUnits, loadType)
-//            foodClubDb.withTransaction {
-//                if(loadType == LoadType.REFRESH) {
-//                    dao.clearAll()
-//                }
-//                val productsWithUnits = products.map { it.toProductWithUnits() }
-//                dao.insertProductsWithUnit(productsWithUnits)
-//            }
-
 
             MediatorResult.Success(
                 endOfPaginationReached = products.isEmpty()
