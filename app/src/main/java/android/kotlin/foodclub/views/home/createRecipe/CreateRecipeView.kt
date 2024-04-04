@@ -64,6 +64,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.AnnotatedString
@@ -195,8 +196,29 @@ fun CreateRecipeView(
                     modifier = Modifier,
                     includeExpiryDate = state.productState.allowExpiryDate
                 )
+
+                if (state.productState.addedProducts.isEmpty()) {
+                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
+
+                    Text(
+                        text = stringResource(id = R.string.create_recipe_add_ingredients_empty),
+                        fontWeight = FontWeight(500),
+                        fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
+                        color = colorResource(
+                            id = R.color.discover_view_add_ingredient_information_text
+                        ).copy(alpha = 0.3f),
+                        lineHeight = dimensionResource(id = R.dimen.fon_17).value.sp,
+                        fontFamily = Montserrat,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+                }
             }
-            itemsIndexed(state.productState.addedProducts) { _, item ->
+            itemsIndexed(
+                items = state.productState.addedProducts,
+                key = { _, item -> item.product.foodId }
+            ) { _, item ->
                 SwipeToDismissContainer(
                     onDismiss = { events.deleteIngredient(item) }
                 ) { modifier ->

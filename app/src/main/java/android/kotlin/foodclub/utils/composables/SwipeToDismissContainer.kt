@@ -33,25 +33,16 @@ fun SwipeToDismissContainer(
     onDismiss: () -> Unit,
     dismissContent: @Composable (Modifier) -> Unit
 ) {
-    var notSwiped by remember { mutableStateOf(false) }
     val dismissState = rememberDismissState(
         confirmValueChange = { dismiss ->
-            if (dismiss == DismissValue.DismissedToEnd) notSwiped =
-                !notSwiped
-            dismiss != DismissValue.DismissedToEnd
+            if (dismiss == DismissValue.DismissedToStart) {
+                onDismiss()
+                true
+            } else {
+                false
+            }
         }
     )
-
-    if (dismissState.isDismissed(DismissDirection.EndToStart)) {
-        LaunchedEffect(key1 = true) {
-            onDismiss()
-            dismissState.reset()
-        }
-    } else {
-        LaunchedEffect(key1 = true) {
-            dismissState.reset()
-        }
-    }
 
     SwipeToDismiss(
         state = dismissState,

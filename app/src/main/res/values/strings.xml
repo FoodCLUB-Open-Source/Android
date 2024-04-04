@@ -472,6 +472,7 @@
     <string name="serving_size_colon">Serving Size: %d</string>
     <string name="add_recipe_name">Add recipe\'s name</string>
     <string name="create_recipe_ingredient_searchbar">Search and add your ingredient</string>
+    <string name="create_recipe_add_ingredients_empty">Add ingredients to your recipe</string>
     <string name="my_new_recipe">My New Recipe</string>
     - Delete Recipe
     <string name="delete_recipe">Delete Recipe</string>

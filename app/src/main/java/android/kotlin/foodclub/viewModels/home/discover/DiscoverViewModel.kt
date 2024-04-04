@@ -201,7 +201,6 @@ class DiscoverViewModel @Inject constructor(
             editedIngredient.expirationDate = ingredient.expirationDate
             editedIngredient.unit = ingredient.unit
         }
-
         _productState.update { it.copy(addedProducts = addedIngredients) }
     }
 
@@ -211,7 +210,12 @@ class DiscoverViewModel @Inject constructor(
 
         addedIngredients.removeIf { it.product.foodId == ingredient.product.foodId }
         filteredAddedIngredient.removeIf { it.product.foodId == ingredient.product.foodId }
-        _productState.update { it.copy(addedProducts = addedIngredients) }
+        _productState.update {
+            it.copy(
+                addedProducts = addedIngredients,
+                filteredAddedProducts = filteredAddedIngredient
+            )
+        }
     }
 
     override fun search(searchText: String) {

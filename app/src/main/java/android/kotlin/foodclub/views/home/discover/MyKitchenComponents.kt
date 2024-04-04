@@ -135,7 +135,10 @@ fun IngredientsListColumn(
             .background(Color.White)
             .height(height),
         content = {
-            itemsIndexed(productState.filteredAddedProducts) { _, item ->
+            itemsIndexed(
+                items = productState.filteredAddedProducts,
+                key = { _, item -> item.product.foodId }
+            ) { _, item ->
                 SwipeToDismissContainer(
                     onDismiss = { events.deleteIngredient(item) }
                 ) { modifier ->
