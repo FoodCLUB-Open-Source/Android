@@ -106,6 +106,15 @@ class CameraViewModel : ViewModel(), CameraEvents {
             }
         }
     }
+
+    override fun clearAll() {
+        _state.value = _state.value.copy(
+            minutes = 0,
+            seconds = 0,
+            milliseconds = 0,
+            totalMilliseconds = 0
+        )
+    }
 }
 
 sealed interface StopWatchEvent {

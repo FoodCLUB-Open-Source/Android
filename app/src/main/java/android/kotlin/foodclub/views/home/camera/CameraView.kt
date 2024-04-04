@@ -24,7 +24,6 @@ import androidx.camera.video.VideoRecordEvent
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -419,7 +418,7 @@ fun CameraView(
                                 uris.forEachIndexed { index, uri ->
                                     mutableUriMap[index] = uri
                                 }
-
+                                events.clearAll()
                                 navController.currentBackStackEntry?.savedStateHandle?.set("videoUris", mutableUriMap)
                                 navController.navigate(CreateRecipeScreen.VideoEditor.route)
                             },

@@ -2,7 +2,7 @@ package android.kotlin.foodclub.navigation
 
 import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
 import android.kotlin.foodclub.viewModels.home.camera.CameraViewModel
-import android.kotlin.foodclub.viewModels.home.create.TrimmerViewModel
+import android.kotlin.foodclub.viewModels.home.trimmer.TrimmerViewModel
 import android.kotlin.foodclub.viewModels.home.createRecipe.CreateRecipeViewModel
 import android.kotlin.foodclub.views.home.camera.CameraView
 import android.kotlin.foodclub.views.home.createRecipe.CreateRecipeView

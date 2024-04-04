@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.viewModels.home.create
+package android.kotlin.foodclub.viewModels.home.trimmer
 
 import android.content.Context
 import android.kotlin.foodclub.domain.models.others.TrimmedVideo
