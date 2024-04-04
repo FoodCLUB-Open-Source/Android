@@ -5,8 +5,7 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.defaultSearchBarColors
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
-import android.kotlin.foodclub.utils.composables.CustomDatePicker
-import android.kotlin.foodclub.utils.composables.EditIngredientBottomModal
+import android.kotlin.foodclub.utils.composables.customComponents.CustomDatePicker
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -59,6 +58,14 @@ import androidx.compose.ui.unit.sp
 import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
 
+/**
+ * ModalBottomSheet containing all functionality for Searching products
+ *
+ * @param events [ProductsEvents]
+ * @param state [ProductState]
+ * @param productsList [LazyPagingItems] of ingredient object. This list populates the list
+ * @param onDismiss Function called when "Back" button is clicked
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductListModalSheet(
@@ -85,6 +92,17 @@ fun ProductListModalSheet(
     }
 }
 
+/**
+ * Composable contained of embedded Search Bar and result list of products. Used for search
+ * products functionality
+ *
+ * @param events [ProductsEvents]
+ * @param state [ProductState]
+ * @param productsList [LazyPagingItems] of ingredient object. This list populates the list
+ * @param searchBarPlaceholder String placeholder to be displayed on the Search Bar
+ * @param searchBarColors [TextFieldColors] of the search bar
+ * @param modifier Modifier for the whole component. You can impose paddings, offsets etc.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductsList(
@@ -152,6 +170,14 @@ fun ProductsList(
     }
 }
 
+/**
+ * Titles which are going to be put over the list of ingredients. These are only compatible with
+ * [ProductsListContent] component. This component should be put in a [Column] with the
+ * ProductsListContent to work properly.
+ *
+ * @param modifier Modifier which will be imposed on the component
+ * @param includeExpiryDate Boolean which determines if "Expiry date" title should be displayed
+ */
 @Composable
 fun ProductsListTitleSection(modifier: Modifier, includeExpiryDate: Boolean) {
     Row(
@@ -197,6 +223,16 @@ fun ProductsListTitleSection(modifier: Modifier, includeExpiryDate: Boolean) {
     }
 }
 
+/**
+ * Products List which is going to be put under the [ProductsListTitleSection].
+ * This component should be put in a [Column] with the ProductsListTitleSection to work properly.
+ *
+ * @param events [ProductsEvents]
+ * @param productsList [LazyPagingItems] of ingredient object. This list populates the list
+ * @param userIngredientsList List where the searched ingredients are added to. This is used to
+ * check which ingredients in productsList are present in userIngredientsList
+ * @param includeExpiryDate Boolean which determines if "Expiry date" title should be displayed
+ */
 @Composable
 fun ProductsListContent(
     events: ProductsEvents,
@@ -255,6 +291,24 @@ fun ProductsListContent(
     )
 }
 
+/**
+ * Single item which should be displayed in LazyColumn or Column to work properly. This includes
+ * editing quantity, expiration date and remove/add functionality.
+ *
+ * @param modifier Modifier used to change this component
+ * @param item [Ingredient] displayed
+ * @param onEditQuantityClicked Function which takes ingredient and triggers opening of the
+ * edit component. Edit Component needs to be defined separately from this composable.
+ * @param onDateClicked Function which takes ingredient and triggers opening of the edit expiration
+ * date component. Edit component needs to be defined separately from this composable.
+ * @param onAddItemClicked Optional Nullable function which takes ingredient and is triggered when
+ * add button is clicked. If null, add/remove button will not be displayed.
+ * @param onDeleteIngredient Function which takes ingredient and is called when delete button is
+ * clicked
+ * @param userIngredientsList List where the searched ingredients are added to. This is used to
+ * check which ingredients in productsList are present in userIngredientsList
+ * @param includeExpiryDate Boolean which determines if "Expiry date" title should be displayed
+ */
 @Composable
 fun IngredientItem(
     modifier: Modifier,
@@ -317,7 +371,6 @@ fun IngredientItem(
         Box(modifier = modifier.weight(1f)) {
             Text(
                 modifier = modifier
-//                    .padding(start = dimensionResource(id = R.dimen.dim_6))
                     .clickable {
                         onEditQuantityClicked(item)
                     },
@@ -331,19 +384,12 @@ fun IngredientItem(
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
             )
-//            Row(
-//                verticalAlignment = Alignment.CenterVertically,
-//                horizontalArrangement = Arrangement.Start
-//            ) {
-//
-//            }
         }
 
         if(includeExpiryDate) {
             Box(modifier = modifier.weight(1f)) {
                 Text(
                     modifier = modifier
-//                        .padding(start = dimensionResource(id = R.dimen.dim_20))
                         .clickable {
                             onDateClicked(item)
                         },

@@ -1,9 +1,9 @@
-package android.kotlin.foodclub.utils.composables
+package android.kotlin.foodclub.utils.composables.videoPager
 
 import android.kotlin.foodclub.domain.models.home.VideoModel
+import android.kotlin.foodclub.utils.composables.shimmerBrush
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.net.Uri
-import android.util.Log
 import android.view.ViewGroup
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
@@ -75,7 +75,7 @@ fun VideoScroller(
     }
 
     var lastPause by remember {
-        mutableLongStateOf(System.currentTimeMillis()-VIDEO_PROGRESS_BAR_VISIBLE_TIME)
+        mutableLongStateOf(System.currentTimeMillis()- VIDEO_PROGRESS_BAR_VISIBLE_TIME)
     }
     var videoProgressBarVisible by remember {
         mutableStateOf(false)
@@ -201,7 +201,9 @@ fun VideoScroller(
 
                 LaunchedEffect(lastPause){
                     delay(VIDEO_PROGRESS_BAR_VISIBLE_TIME)
-                    videoProgressBarVisible = (System.currentTimeMillis() - lastPause).coerceAtMost(VIDEO_PROGRESS_BAR_VISIBLE_TIME) < VIDEO_PROGRESS_BAR_VISIBLE_TIME
+                    videoProgressBarVisible = (System.currentTimeMillis() - lastPause).coerceAtMost(
+                        VIDEO_PROGRESS_BAR_VISIBLE_TIME
+                    ) < VIDEO_PROGRESS_BAR_VISIBLE_TIME
                 }
 
                 AnimatedVisibility (

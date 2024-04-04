@@ -11,7 +11,7 @@ import android.kotlin.foodclub.domain.enums.QuantityUnit
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.Product
 import android.kotlin.foodclub.domain.models.recipes.Recipe
-import android.kotlin.foodclub.utils.composables.CustomSliderDiscrete
+import android.kotlin.foodclub.utils.composables.customComponents.CustomSliderDiscrete
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable

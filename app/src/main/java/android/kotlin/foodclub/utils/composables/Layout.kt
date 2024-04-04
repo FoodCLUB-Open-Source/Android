@@ -5,6 +5,8 @@ import android.kotlin.foodclub.config.ui.Black
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.PlusJakartaSans
 import android.kotlin.foodclub.navigation.Graph
+import android.kotlin.foodclub.utils.composables.customComponents.BackButton
+import android.kotlin.foodclub.utils.composables.customComponents.TermsAndConditionsInfoFooter
 import android.kotlin.foodclub.viewModels.BaseViewModel
 import android.kotlin.foodclub.views.home.BottomBar
 import android.kotlin.foodclub.views.home.BottomSheet

@@ -5,7 +5,7 @@ import androidx.compose.foundation.horizontalScroll
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.domain.models.recipes.Recipe
-import android.kotlin.foodclub.utils.composables.CustomSlider
+import android.kotlin.foodclub.utils.composables.customComponents.CustomSlider
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement

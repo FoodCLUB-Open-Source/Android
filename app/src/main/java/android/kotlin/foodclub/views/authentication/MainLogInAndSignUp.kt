@@ -3,7 +3,7 @@ package android.kotlin.foodclub.views.authentication
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.navigation.auth.AuthScreen
-import android.kotlin.foodclub.utils.composables.TermsAndConditionsInfoFooter
+import android.kotlin.foodclub.utils.composables.customComponents.TermsAndConditionsInfoFooter
 import android.kotlin.foodclub.viewModels.authentication.mainLogin.MainLogInAndSignUpViewModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

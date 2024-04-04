@@ -5,8 +5,8 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.borderBlue
 import android.kotlin.foodclub.config.ui.defaultSearchBarColors
 import android.kotlin.foodclub.config.ui.foodClubGreen
-import android.kotlin.foodclub.utils.composables.CustomSliderDiscrete
-import android.kotlin.foodclub.utils.composables.EditIngredientBottomModal
+import android.kotlin.foodclub.utils.composables.customComponents.CustomSliderDiscrete
+import android.kotlin.foodclub.utils.composables.products.EditIngredientBottomModal
 import android.kotlin.foodclub.utils.composables.SwipeToDismissContainer
 import android.kotlin.foodclub.utils.composables.products.IngredientItem
 import android.kotlin.foodclub.utils.composables.products.ProductAction

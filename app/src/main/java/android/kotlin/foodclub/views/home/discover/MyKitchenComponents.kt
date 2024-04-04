@@ -2,8 +2,8 @@ package android.kotlin.foodclub.views.home.discover
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.defaultSearchBarColors
-import android.kotlin.foodclub.utils.composables.CustomDatePicker
-import android.kotlin.foodclub.utils.composables.EditIngredientBottomModal
+import android.kotlin.foodclub.utils.composables.customComponents.CustomDatePicker
+import android.kotlin.foodclub.utils.composables.products.EditIngredientBottomModal
 import android.kotlin.foodclub.utils.composables.SwipeToDismissContainer
 import android.kotlin.foodclub.utils.composables.products.IngredientItem
 import android.kotlin.foodclub.utils.composables.products.ProductAction

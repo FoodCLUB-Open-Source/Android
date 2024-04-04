@@ -29,6 +29,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 
+/**
+ * Custom Product Search Bar which is used in ProductsList composable
+ *
+ * This bar includes the camera and microphone button so that you can use ScanMyFridge and
+ * ScanByVoice functionalities. They are gonna be implemented in next releases of the app.
+ *
+ * @param onSearch Function which is called a second after something is typed in the text field
+ * This delay is deliberate to secure from abusing remote API
+ * @param textFieldColors Color of the search bar text field. By default please use
+ * defaultSearchBarColors()
+ * @param placeholder Placeholder of the Text field
+ * @param textFieldModifier Modifier which are imposed on the text field. You can put for example
+ * border, shadow etc.
+ * @param enableCamera Boolean which enables clickable camera icon
+ * @param enableMike Boolean which enables clickable microphone icon
+ */
 @Composable
 fun ProductSearchBar(
     onSearch: (String) -> Unit,

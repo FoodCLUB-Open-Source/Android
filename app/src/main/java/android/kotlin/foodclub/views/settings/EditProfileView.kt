@@ -2,8 +2,8 @@ package android.kotlin.foodclub.views.settings
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.localdatasource.room.entity.UserDetailsModel
-import android.kotlin.foodclub.utils.composables.ConfirmButton
-import android.kotlin.foodclub.utils.composables.CustomTextField
+import android.kotlin.foodclub.utils.composables.customComponents.ConfirmButton
+import android.kotlin.foodclub.utils.composables.customComponents.CustomTextField
 import android.kotlin.foodclub.utils.composables.SettingsLayout
 import android.kotlin.foodclub.viewModels.settings.SettingsEvents
 import androidx.compose.foundation.layout.Spacer

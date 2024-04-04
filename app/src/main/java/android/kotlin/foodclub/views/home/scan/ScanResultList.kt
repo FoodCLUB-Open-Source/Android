@@ -6,7 +6,7 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
-import android.kotlin.foodclub.utils.composables.CustomDatePicker
+import android.kotlin.foodclub.utils.composables.customComponents.CustomDatePicker
 import android.kotlin.foodclub.utils.composables.EditIngredientQuantityPicker
 import android.kotlin.foodclub.utils.composables.IngredientsListTitleSection
 import android.kotlin.foodclub.utils.composables.LoadingProgressBar

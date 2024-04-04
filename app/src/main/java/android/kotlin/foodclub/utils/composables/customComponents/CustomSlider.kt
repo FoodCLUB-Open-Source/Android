@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.utils.composables
+package android.kotlin.foodclub.utils.composables.customComponents
 
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen

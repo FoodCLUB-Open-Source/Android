@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.utils.composables
+package android.kotlin.foodclub.utils.composables.customComponents
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.foodClubGreen
@@ -27,6 +27,16 @@ import java.util.Date
 import java.util.Locale
 
 
+/**
+ * Customised date picker
+ *
+ * @param modifier Modifier which is imposed on [DatePickerDialog]
+ * @param datePickerState [DatePickerState]
+ * @param onDismiss Function called to hide/close the dialog. This is called both for "Cancel" and
+ * "Save" buttons
+ * @param onSave Function which is called when save button is clicked. String passed to the function
+ * is a date in format "dd MMM yyyy".
+ */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun CustomDatePicker(

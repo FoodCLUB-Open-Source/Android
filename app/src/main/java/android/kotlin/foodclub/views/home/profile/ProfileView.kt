@@ -7,7 +7,7 @@ import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.others.BottomSheetItem
 import android.kotlin.foodclub.navigation.HomeOtherRoutes
-import android.kotlin.foodclub.utils.composables.CustomBottomSheet
+import android.kotlin.foodclub.utils.composables.customComponents.CustomBottomSheet
 import android.kotlin.foodclub.utils.composables.shimmerBrush
 import android.kotlin.foodclub.utils.composables.videoPager.VideoPager
 import android.kotlin.foodclub.utils.composables.videoPager.VideoPagerState

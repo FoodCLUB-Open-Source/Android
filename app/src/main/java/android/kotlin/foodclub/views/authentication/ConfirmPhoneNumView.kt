@@ -5,7 +5,7 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.PlusJakartaSans
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.utils.composables.AuthLayout
-import android.kotlin.foodclub.utils.composables.ConfirmButton
+import android.kotlin.foodclub.utils.composables.customComponents.ConfirmButton
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image

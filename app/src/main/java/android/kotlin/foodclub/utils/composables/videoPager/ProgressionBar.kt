@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.utils.composables
+package android.kotlin.foodclub.utils.composables.videoPager
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.foodClubGreen
