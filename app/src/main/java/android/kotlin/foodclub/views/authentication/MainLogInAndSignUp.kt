@@ -2,6 +2,7 @@ package android.kotlin.foodclub.views.authentication
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.navigation.auth.AuthScreen
 import android.kotlin.foodclub.utils.composables.TermsAndConditionsInfoFooter
 import android.kotlin.foodclub.viewModels.authentication.mainLogin.MainLogInAndSignUpViewModel
@@ -118,7 +119,7 @@ fun MainLogInAndSignUp(
                         .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
                         .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(126, 198, 11, 255),
+                        containerColor = foodClubGreen,
                         contentColor = Color.White
                     ),
                     contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_15)),
