@@ -63,7 +63,6 @@ class TrimmedVideo(
         if(currentDuration > 0 && !durationSet) {
             durationSet = true
             duration = currentDuration
-            Log.d("TrimmedVideo","New duration: $duration")
         }
 
         if(durationSet && !initialised) {

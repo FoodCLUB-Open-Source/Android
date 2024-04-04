@@ -1,7 +1,6 @@
 package android.kotlin.foodclub.views.home.profile
 
 import android.kotlin.foodclub.R
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,7 +24,7 @@ import coil.compose.AsyncImage
 
 @Composable
 fun ShowProfileImage(
-    uri: Uri?,
+    profileImage: String?,
     onClose: () -> Unit
 ){
     Column(
@@ -57,7 +56,7 @@ fun ShowProfileImage(
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
-                model = uri ?: R.drawable.default_avatar,
+                model = profileImage ?: R.drawable.default_avatar,
                 contentDescription = stringResource(id = R.string.profile_image),
                 contentScale = ContentScale.Fit
             )

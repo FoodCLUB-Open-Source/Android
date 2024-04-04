@@ -7,18 +7,31 @@ import android.kotlin.foodclub.views.authentication.forgotPassword.ChangePasswor
 import android.kotlin.foodclub.views.authentication.forgotPassword.EmailSentView
 import android.kotlin.foodclub.views.authentication.forgotPassword.forgotPasswordScreen.ForgotPasswordView
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navigation
+import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
 
 fun NavGraphBuilder.forgotPasswordNavigationGraph(navController: NavHostController) {
     navigation(
-        route = AuthScreen.Forgot.route,
-        startDestination = ForgotPasswordScreen.ForgotPasswordPage1.route
+        route = "${AuthScreen.Forgot.route}?email={email}",
+        startDestination = ForgotPasswordScreen.ForgotPasswordPage1.route,
+        arguments = listOf(navArgument("email") {
+            nullable = true
+            type = NavType.StringType
+        } )
     ) {
         composable(route = ForgotPasswordScreen.ForgotPasswordPage1.route) { entry ->
+            val parentEntry = remember(entry) {
+                navController.getBackStackEntry("${AuthScreen.Forgot.route}?email={email}")
+            }
+            val email = parentEntry.arguments?.getString("email") ?: ""
             val viewModel = entry.sharedHiltViewModel<ForgotPasswordViewModel>(navController)
+
+            viewModel.setEmail(email)
             val state = viewModel.state.collectAsState()
             val events : ForgotPasswordEvents = viewModel
 

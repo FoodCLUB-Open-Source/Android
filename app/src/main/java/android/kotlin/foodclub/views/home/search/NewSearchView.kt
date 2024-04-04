@@ -1,32 +1,28 @@
 package android.kotlin.foodclub.views.home.search
 
-import android.accounts.Account
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
-import android.kotlin.foodclub.config.ui.containerColor
-import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.home.VideoModel
+import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
+import android.kotlin.foodclub.utils.composables.RecommendationVideos
 import android.kotlin.foodclub.utils.composables.shimmerBrush
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
-import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
+import android.kotlin.foodclub.viewModels.home.search.SearchEvents
 import android.kotlin.foodclub.views.home.discover.MainTabRow
-import android.kotlin.foodclub.views.home.messagingView.User
-import android.kotlin.foodclub.views.home.profile.GridItem
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -36,26 +32,18 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -77,30 +65,50 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
+import kotlinx.coroutines.delay
 
 @Composable
 fun NewSearchView(
-    navController: NavController
-){
+    navController: NavController,
+    events: SearchEvents,
+    state: SearchState
+) {
     val context = LocalContext.current
     val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
     val brush = shimmerBrush()
     var mainTabIndex by remember { mutableIntStateOf(0) }
-    val tabItems = listOf(stringResource(id = R.string.All),
-        stringResource(id = R.string.Accounts), stringResource(id = R.string.Recipes)).toTypedArray()
-
-    var accountTabItems = listOf<User>()
-    var recipeTabItems = listOf<VideoModel>()
+    val tabItems = listOf(
+        stringResource(id = R.string.All),
+        stringResource(id = R.string.Accounts), stringResource(id = R.string.Recipes)
+    ).toTypedArray()
 
     var searchText by remember { mutableStateOf("") }
 
+    var searchUserList = state.userList
+    var searchPostList = state.postList
+    var current by remember {
+        mutableIntStateOf(0)
+    }
 
+    LaunchedEffect(key1 = searchText) {
+        if (searchText.length > 3) {
+            current = searchText.length
+            delay(1100)
+            if (current == searchText.length) {
+                events.searchByText(searchText)
+                searchUserList = state.userList
+                searchPostList = state.postList
+                Log.i("Request testing", "send")
+            }
+        }
+    }
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.Start,
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         NewSearchRow(
             searchTextValue = searchText,
@@ -111,7 +119,7 @@ fun NewSearchView(
             isInternetConnected,
             brush,
             tabsList = tabItems,
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             mainTabIndex = it
         }
@@ -119,23 +127,32 @@ fun NewSearchView(
             0 ->
                 Column(modifier = Modifier.fillMaxWidth()) {
                     SearchBodyBoth(
-                        accountTabItems = accountTabItems,
-                        recipeTabItems=recipeTabItems,
+                        searchUserList = searchUserList,
+                        searchPostList = searchPostList,
                         brush = brush,
-                        isInternetConnected = isInternetConnected)
+                        isInternetConnected = isInternetConnected,
+                        navController = navController
+                    )
                 }
 
             1 -> Column(modifier = Modifier.fillMaxWidth()) {
                 SearchBodyAccounts(
-                    accountTabItems = accountTabItems,
-                    brush = brush,
-                    isInternetConnected = isInternetConnected)
-                    }
-            2 -> Column(modifier = Modifier.fillMaxWidth()) {
-                SearchBodyRecipes(
-                    recipeTabItems=recipeTabItems,
+                    searchUserList = searchUserList,
                     brush = brush,
                     isInternetConnected = isInternetConnected
+                )
+            }
+
+            2 -> BoxWithConstraints {
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+                RecommendationVideos(
+                    gridHeight = maxHeight,
+                    recommandationVideosCount = searchPostList.size,
+                    navController = navController,
+                    dataItem = searchPostList,
+                    brush = brush,
+                    userName = null,
+                    isShowVideo = {}
                 )
             }
         }
@@ -150,30 +167,30 @@ fun NewSearchRow(
     searchTextValue: String,
     onSearchTextChanged: (String) -> Unit,
     navController: NavController,
-){
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(
                 top = dimensionResource(id = R.dimen.dim_60),
                 end = dimensionResource(id = R.dimen.dim_20),
-                start = dimensionResource(id = R.dimen.dim_20),
+                start = dimensionResource(id = R.dimen.dim_10),
                 bottom = dimensionResource(id = R.dimen.dim_10)
             ),
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
     ) {
-            IconButton(
-                onClick = {
-                    navController.popBackStack()
-                }
-            ) {
-                Icon(
-                    painterResource(id = R.drawable.back_arrow),
-                    contentDescription = null,
-                    tint = Color.Black
-                )
+        IconButton(
+            onClick = {
+                navController.popBackStack()
             }
+        ) {
+            Icon(
+                painterResource(id = R.drawable.back_arrow),
+                contentDescription = null,
+                tint = Color.Black
+            )
+        }
         Box(
             modifier = Modifier
                 .fillMaxWidth(0.95f)
@@ -183,112 +200,122 @@ fun NewSearchRow(
                     shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
                 )
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
-        ) {
-        TextField(
-            modifier = Modifier
-                .fillMaxWidth(0.95f)
-                .clip(
-                    RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
-                ),
-            colors = TextFieldDefaults.colors(
-                focusedTextColor = Color.Gray,
-                unfocusedTextColor = Color.Gray,
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                disabledContainerColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent,
-            ),
-            value = searchTextValue,
-            onValueChange = {
-                    newText -> onSearchTextChanged(newText)
-            },
-            placeholder = {
-                Text(
-                    modifier = Modifier.padding(top =dimensionResource(id = R.dimen.dim_3)),
-                    text = "Search Here",
-                    color = Color.Gray,
-                    textAlign = TextAlign.Center
+                .padding(
+                    start = dimensionResource(id = R.dimen.dim_5)
                 )
-            },
-            leadingIcon = {
-                IconButton(
-                    onClick = {
-                        navController.popBackStack()
-                    }
-                ) {
-                    Icon(
-                        painterResource(id = R.drawable.search_icon_ingredients),
-                        contentDescription = "search"
+        ) {
+            TextField(
+                modifier = Modifier
+                    .fillMaxWidth(0.95f)
+                    .clip(
+                        RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
+                    ),
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = Color.Gray,
+                    unfocusedTextColor = Color.Gray,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    disabledContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                ),
+                value = searchTextValue,
+                onValueChange = { newText ->
+                    onSearchTextChanged(newText)
+                },
+                placeholder = {
+                    Text(
+                        modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dim_3)),
+                        text = "Search Here",
+                        color = Color.Gray,
+                        textAlign = TextAlign.Center
                     )
+                },
+                leadingIcon = {
+                    IconButton(
+                        onClick = {
+                            navController.popBackStack()
+                        }
+                    ) {
+                        Icon(
+                            painterResource(id = R.drawable.search_icon_ingredients),
+                            contentDescription = "search"
+                        )
+                    }
                 }
-            }
-        )
+            )
         }
 
         Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_5)))
-        }
+    }
 
 }
 
 @Composable
 fun SearchBodyBoth(
     modifier: Modifier = Modifier,
-    accountTabItems : List<User>,
-    recipeTabItems : List<VideoModel>,
-    brush:Brush,
-    isInternetConnected :Boolean
+    searchUserList: List<SimpleUserModel>,
+    searchPostList: List<VideoModel>,
+    brush: Brush,
+    isInternetConnected: Boolean,
+    navController: NavController
 ) {
 
     Column(
         modifier = modifier
-            .verticalScroll(rememberScrollState())
-            .padding(start = dimensionResource(id = R.dimen.dim_20), top = dimensionResource(id = R.dimen.dim_20))
+            .padding(
+                start = dimensionResource(id = R.dimen.dim_20),
+                top = dimensionResource(id = R.dimen.dim_20)
+            )
     ) {
-        Text(
-            text = stringResource(id = R.string.Accounts),
-            color = Color.LightGray,
-            fontWeight = FontWeight.Normal,
-            fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
-            lineHeight = dimensionResource(id = R.dimen.fon_24).value.sp,
-            textAlign = TextAlign.Start,
-            fontFamily = Montserrat
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxHeight(0.4f)
+        ) {
+            Text(
+                text = stringResource(id = R.string.Accounts),
+                color = Color.LightGray,
+                fontWeight = FontWeight.Normal,
+                fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
+                lineHeight = dimensionResource(id = R.dimen.fon_24).value.sp,
+                textAlign = TextAlign.Start,
+                fontFamily = Montserrat
+            )
 
-        accountTabItems.forEach { _ ->
-            SearchAccountGridItem()
+            SearchBodyAccounts(
+                searchUserList = searchUserList,
+                brush = brush,
+                isInternetConnected = isInternetConnected
+            )
         }
 
-        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_16)))
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
-        Text(
-            text = stringResource(id = R.string.Recipes),
-            color = Color.LightGray,
-            fontWeight = FontWeight.Normal,
-            fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
-            lineHeight = dimensionResource(id = R.dimen.fon_24).value.sp,
-            textAlign = TextAlign.Start,
-            fontFamily = Montserrat
-        )
-
-        recipeTabItems.chunked(2).forEach { rowItems ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                rowItems.forEach { dataItem ->
-                    SearchRecipeGridItem(
-                        modifier = Modifier.weight(1f),
-                        brush = brush,
-                        isInternetConnected = isInternetConnected,
-                        dataItem = dataItem
-                        )
-                }
-
-                if (rowItems.size < 2) {
-                    Spacer(modifier = Modifier.weight(1f))
-                }
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+        ) {
+            Text(
+                text = stringResource(id = R.string.Recipes),
+                color = Color.LightGray,
+                fontWeight = FontWeight.Normal,
+                fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
+                lineHeight = dimensionResource(id = R.dimen.fon_24).value.sp,
+                textAlign = TextAlign.Start,
+                fontFamily = Montserrat
+            )
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+            BoxWithConstraints {
+                RecommendationVideos(
+                    gridHeight = maxHeight,
+                    recommandationVideosCount = searchPostList.size,
+                    navController = navController,
+                    dataItem = searchPostList,
+                    brush = brush,
+                    userName = null,
+                    isShowVideo = {}
+                )
             }
         }
     }
@@ -298,56 +325,49 @@ fun SearchBodyBoth(
 @Composable
 fun SearchBodyAccounts(
     modifier: Modifier = Modifier,
-    accountTabItems : List<User>,
-    brush:Brush,
-    isInternetConnected :Boolean
+    searchUserList: List<SimpleUserModel>,
+    brush: Brush,
+    isInternetConnected: Boolean
 ) {
-    Column(modifier = modifier
+    val lazyListState = rememberLazyListState()
+    LazyColumn(
+        modifier = modifier
             .padding(
-                start = dimensionResource(id = R.dimen.dim_20),
-                top = dimensionResource(id = R.dimen.dim_20))
-        ) {
-        Row(modifier = Modifier.fillMaxWidth()) {
-            val lazyListState = rememberLazyListState()
-            LazyColumn(
-                state = lazyListState,
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(items = accountTabItems, key = { it }) { _ ->
-                    SearchAccountGridItem()
-                }
-            }
+                start = dimensionResource(id = R.dimen.dim_10),
+                top = dimensionResource(id = R.dimen.dim_20)
+            ),
+        state = lazyListState
+    ) {
+        items(items = searchUserList) { searchUser ->
+            SearchAccountGridItem(searchUser = searchUser)
         }
     }
-
 }
 
 @Composable
 fun SearchBodyRecipes(
     modifier: Modifier = Modifier,
-    recipeTabItems : List<VideoModel>,
-    brush:Brush,
-    isInternetConnected :Boolean
+    searchPostList: List<VideoModel>,
+    brush: Brush,
+    isInternetConnected: Boolean
 ) {
-    Column(modifier = modifier
+    val lazyGridState = rememberLazyGridState()
+    LazyVerticalGrid(
+        modifier = modifier
+            .fillMaxSize()
             .padding(
-                start = dimensionResource(id = R.dimen.dim_20),
-                top = dimensionResource(id = R.dimen.dim_20)))
-    {
-        Row (modifier= Modifier.fillMaxWidth()){
-            val lazyGridState = rememberLazyGridState()
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                state = lazyGridState,
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(items = recipeTabItems, key = { it }) { dataItem ->
-                    SearchRecipeGridItem(
-                        brush = brush,
-                        isInternetConnected = isInternetConnected,
-                        dataItem = dataItem)
-                }
-            }
+                start = dimensionResource(id = R.dimen.dim_10),
+                top = dimensionResource(id = R.dimen.dim_20)
+            ),
+        columns = GridCells.Fixed(2),
+        state = lazyGridState
+    ) {
+        items(items = searchPostList) { searchPost ->
+            SearchRecipeGridItem(
+                searchPost = searchPost,
+                isInternetConnected = isInternetConnected,
+                brush = brush
+            )
         }
     }
 }
@@ -356,16 +376,17 @@ fun SearchBodyRecipes(
 fun SearchRecipeGridItem(
     modifier: Modifier = Modifier,
     brush: Brush,
-    isInternetConnected:Boolean,
-    dataItem: VideoModel,
-){
-    val thumbnailPainter = rememberAsyncImagePainter(dataItem.thumbnailLink)
+    isInternetConnected: Boolean,
+    searchPost: VideoModel,
+) {
+    val thumbnailPainter = rememberAsyncImagePainter(searchPost.thumbnailLink)
 
-    Card(modifier = Modifier
-        .height(dimensionResource(id = R.dimen.dim_272))
-        .width(dimensionResource(id = R.dimen.dim_178))
-        .padding(dimensionResource(id = R.dimen.dim_10))
-        ,shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
+    Card(
+        modifier = Modifier
+            .height(dimensionResource(id = R.dimen.dim_272))
+            .width(dimensionResource(id = R.dimen.dim_178))
+            .padding(dimensionResource(id = R.dimen.dim_10)),
+        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
     ) {
         Box(
             modifier = Modifier
@@ -376,10 +397,10 @@ fun SearchRecipeGridItem(
                 .fillMaxWidth()
                 .fillMaxHeight()
         ) {
-
             Image(
-                painter = painterResource(id = R.drawable.salad_ingredient),
-                contentDescription = null,
+                painter = thumbnailPainter.state.painter
+                    ?: painterResource(id = R.drawable.salad_ingredient),
+                contentDescription = searchPost.description,
                 contentScale = ContentScale.FillHeight,
                 modifier = Modifier
                     .fillMaxSize()
@@ -389,36 +410,41 @@ fun SearchRecipeGridItem(
 }
 
 @Composable
-fun SearchAccountGridItem(){
-    val username by remember { mutableStateOf("Username") }
-    val name by remember { mutableStateOf("Name") }
-
+fun SearchAccountGridItem(
+    searchUser: SimpleUserModel,
+    modifier: Modifier = Modifier
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_8)).fillMaxWidth()
+        modifier = modifier
+            .padding(dimensionResource(id = R.dimen.dim_8))
+            .fillMaxWidth()
     ) {
-
-        Box(
+        AsyncImage(
+            model = searchUser.profilePictureUrl ?: R.drawable.default_avatar,
+            contentDescription = stringResource(id = R.string.profile_picture),
             modifier = Modifier
                 .size(dimensionResource(id = R.dimen.dim_50))
-                .clip(CircleShape)
-                .background(Color.LightGray)
+                .clip(CircleShape),
+            contentScale = ContentScale.Crop
         )
 
         Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_16)))
 
-        Column (){
+        Column() {
             Text(
-                text = username,
+                text = searchUser.username,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = dimensionResource(id = R.dimen.fon_17).value.sp,
                 fontFamily = Montserrat,
                 modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_4))
             )
-            Text(text = name,
+            Text(
+                text = searchUser.userFullname ?: "",
                 fontWeight = FontWeight.Normal,
                 fontFamily = Montserrat,
-                fontSize = dimensionResource(id = R.dimen.fon_15).value.sp)
+                fontSize = dimensionResource(id = R.dimen.fon_15).value.sp
+            )
         }
     }
 }

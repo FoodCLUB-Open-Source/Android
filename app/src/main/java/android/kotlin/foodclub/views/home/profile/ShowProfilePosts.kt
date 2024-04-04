@@ -43,7 +43,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -248,7 +247,7 @@ fun ShowProfilePosts(
                 },
                 onConfirm = {
                     infoDialog.value = false
-                    events.deleteCurrentPost(posts[pagerState.currentPage].videoId)
+                    events.deletePost(posts[pagerState.currentPage].videoId)
                     onPostDeleted()
                 }
             )
@@ -322,7 +321,7 @@ fun ShowProfilePosts(
                     LikeButton(doubleTapState) {}
 
                     val simpleUserModel = SimpleUserModel(
-                        userId = state.myUserId.toInt(),
+                        userId = state.profileUserId.toInt(),
                         username = currentVideo.authorDetails,
                         profilePictureUrl = state.userProfile.profilePictureUrl
                     )

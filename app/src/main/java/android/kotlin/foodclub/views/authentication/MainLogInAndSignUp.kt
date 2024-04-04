@@ -2,6 +2,7 @@ package android.kotlin.foodclub.views.authentication
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.navigation.auth.AuthScreen
 import android.kotlin.foodclub.utils.composables.TermsAndConditionsInfoFooter
 import android.kotlin.foodclub.viewModels.authentication.mainLogin.MainLogInAndSignUpViewModel
@@ -28,7 +29,9 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,6 +43,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -65,84 +69,110 @@ fun MainLogInAndSignUp(
         viewModel.reverseButtonUi()
     }
 
+    Column(
+        Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
         Column(
             Modifier
+                .weight(13F)
                 .fillMaxSize()
-                .background(Color.White)
+                .padding(top = dimensionResource(id = R.dimen.dim_120)),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_36))
         ) {
-            Column(
-                Modifier
-                    .weight(7F)
-                    .fillMaxSize()
-                    .padding(top = dimensionResource(id = R.dimen.dim_120)),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_36))
-            ) {
-                Image(
-                    painterResource(id = R.drawable.welcome_logo),
-                    contentDescription = stringResource(id = R.string.app_logo),
+            Image(
+                painterResource(id = R.drawable.welcome_logo),
+                contentDescription = stringResource(id = R.string.app_logo),
+                modifier = Modifier
+                    .width(dimensionResource(id = R.dimen.dim_80))
+                    .height(dimensionResource(id = R.dimen.dim_80))
+            )
+            Image(
+                painterResource(id = R.drawable.foodclub),
+                contentDescription = stringResource(id = R.string.app_title),
+                modifier = Modifier.height(dimensionResource(id = R.dimen.dim_40))
+
+            )
+        }
+        Column(
+            Modifier
+                .weight(5F)
+                .fillMaxSize()
+                .padding(
+                    horizontal = dimensionResource(id = R.dimen.dim_48),
+                    vertical = dimensionResource(id = R.dimen.dim_40)
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_18))
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_8))) {
+                Button(
+                    shape = RectangleShape,
                     modifier = Modifier
-                        .width(dimensionResource(id = R.dimen.dim_80))
-                        .height(dimensionResource(id = R.dimen.dim_80))
-                )
-                Image(
-                    painterResource(id = R.drawable.foodclub),
-                    contentDescription = stringResource(id = R.string.app_title),
-                    modifier = Modifier.height(dimensionResource(id = R.dimen.dim_40))
-
-                )
-            }
-            Column(
-                Modifier
-                    .weight(8F)
-                    .fillMaxSize()
-                    .padding(
-                        horizontal = dimensionResource(id = R.dimen.dim_48),
-                        vertical = dimensionResource(id = R.dimen.dim_48)
-                    ),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_18))
-            ) {
-                Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_8))) {
-                    Button(
-                        shape = RectangleShape,
-                        modifier = Modifier
-                            .border(
-                                dimensionResource(id = R.dimen.dim_1),
-                                Color.LightGray,
-                                shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))
-                            )
-                            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
-                            .fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(126, 198, 11, 255),
-                            contentColor = Color.White
-                        ),
-                        contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_15)),
-                        onClick = {
-                            navController.navigate(AuthScreen.TermsAndConditions.route)
-                        }
-                    ) {
-                        Text(
-                            color = Color.White,
-                            text = stringResource(id = R.string.sign_up),
-                            fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
-                            fontFamily = Montserrat
+                        .border(
+                            dimensionResource(id = R.dimen.dim_1),
+                            Color.LightGray,
+                            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))
                         )
+                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
+                        .fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = foodClubGreen,
+                        contentColor = Color.White
+                    ),
+                    contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_15)),
+                    onClick = {
+                        navController.navigate(AuthScreen.TermsAndConditions.route)
                     }
-                }
-
-                Row(
-                    modifier = Modifier.wrapContentWidth(),
-                    horizontalArrangement = Arrangement.SpaceAround
                 ) {
+                    Text(
+                        color = Color.White,
+                        text = stringResource(id = R.string.sign_up),
+                        fontSize = dimensionResource(id = R.dimen.fon_19_5).value.sp,
+                        fontFamily = Montserrat,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
+
+            var overflowText by remember {
+                mutableStateOf(false)
+            }
+
+            Row(
+                modifier = Modifier.wrapContentWidth(),
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
                     Text(
                         color = Color.Black,
                         text = stringResource(id = R.string.already_have_account),
                         fontFamily = Montserrat,
-                        fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
-                        modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dim_5))
+                        fontWeight = FontWeight.Medium,
+                        fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
+                        modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dim_7))
                     )
+                    if (overflowText) {
+
+                        ClickableText(
+                            text = AnnotatedString(stringResource(id = R.string.login_arrow)),
+                            onClick = {
+                                navController.navigate(route = AuthScreen.Login.route)
+                            },
+                            style = TextStyle(
+                                color = colorResource(id = R.color.login_text_color),
+                                fontFamily = Montserrat,
+                                fontWeight = FontWeight.Medium,
+                                fontSize = dimensionResource(id = R.dimen.fon_16).value.sp
+                            )
+                        )
+                    }
+                }
+
+                if (!overflowText) {
 
                     ClickableText(
                         text = AnnotatedString(stringResource(id = R.string.login_arrow)),
@@ -152,19 +182,24 @@ fun MainLogInAndSignUp(
                         style = TextStyle(
                             color = colorResource(id = R.color.login_text_color),
                             fontFamily = Montserrat,
-                            fontSize = dimensionResource(id = R.dimen.fon_14).value.sp
-                        )
+                            fontWeight = FontWeight.Medium,
+                            fontSize = dimensionResource(id = R.dimen.fon_16).value.sp
+                        ),
+                        onTextLayout = {
+                            overflowText = it.didOverflowHeight
+                        }
                     )
                 }
             }
-
-            Box(
-                Modifier
-                    .weight(5F)
-                    .fillMaxSize()
-                    .padding(vertical = dimensionResource(id = R.dimen.dim_32))
-            ) { TermsAndConditionsInfoFooter() }
         }
+
+        Box(
+            Modifier
+                .weight(3F)
+                .fillMaxSize()
+                .padding(vertical = dimensionResource(id = R.dimen.dim_30))
+        ) { TermsAndConditionsInfoFooter() }
+    }
 
 }
 

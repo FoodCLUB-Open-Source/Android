@@ -45,7 +45,6 @@ class LogInWithEmailViewModel @Inject constructor(
         if(refreshTokenManager.getActiveToken() != null) refreshTokenManager.clearToken()
         sessionCache.saveSession(Session(accessToken, idToken, userId))
         refreshTokenManager.saveToken(RefreshToken(refreshToken, username))
-        Log.d("LoginWithEmailViewModel", "Logged in user: $username")
     }
 
 

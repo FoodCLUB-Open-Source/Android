@@ -1,25 +1,21 @@
 package android.kotlin.foodclub.views.home.profile
 
-import android.content.Intent
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.others.BottomSheetItem
-import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.CustomBottomSheet
 import android.kotlin.foodclub.utils.composables.shimmerBrush
+import android.kotlin.foodclub.utils.composables.videoPager.VideoPager
+import android.kotlin.foodclub.utils.composables.videoPager.VideoPagerState
 import android.kotlin.foodclub.utils.helpers.ProfilePicturePlaceHolder
-import android.kotlin.foodclub.utils.helpers.UiEvent
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
+import android.kotlin.foodclub.utils.helpers.createGalleryLauncher
 import android.kotlin.foodclub.utils.helpers.uriToFile
 import android.kotlin.foodclub.viewModels.home.profile.ProfileEvents
-import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
 import android.kotlin.foodclub.views.ProfileViewLoadingSkeleton
-import android.net.Uri
-import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -39,7 +35,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -51,6 +46,7 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
@@ -58,9 +54,8 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -72,6 +67,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.integerResource
@@ -84,154 +80,121 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import androidx.navigation.NavOptionsBuilder
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun ProfileView(
-    navController: NavController,
-    userId: Long,
-    viewModel: ProfileViewModel,
+    onNavigate: (String, NavOptionsBuilder.() -> Unit) -> Unit,
+    profilePosts: LazyPagingItems<VideoModel>,
+    bookmarkedPosts: LazyPagingItems<VideoModel>,
     events: ProfileEvents,
     state: ProfileState
 ) {
     val context = LocalContext.current
+    val localDensity = LocalDensity.current
+    val coroutineScope = rememberCoroutineScope()
     val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
     val brush = shimmerBrush()
     val scope = rememberCoroutineScope()
-    var imageUri: Uri? by remember { mutableStateOf(null) }
+    var profileImage: String? by remember { mutableStateOf(null) }
     var showProfileImage by remember {
         mutableStateOf(false)
     }
-    val isAPICallLoading = state.isLoading
 
-    LaunchedEffect(key1 = true) {
-        state.dataStore?.getImage()?.collect { image ->
-            if (image != null) {
-                imageUri = Uri.parse(image)
-            } else {
-                imageUri = null
-                Log.e("ProfileView", "NULL IMG URI")
+    LaunchedEffect(key1 = state) {
+        if (state.userProfile?.profilePictureUrl == null) {
+            state.dataStore?.getImage()?.collect { image ->
+                profileImage = image
             }
+        } else {
+            profileImage = state.userProfile.profilePictureUrl
         }
     }
 
     val pullRefresh = rememberPullRefreshState(
-        refreshing = state.isRefreshingUI,
-        onRefresh = {
-            state.isRefreshingUI = true
-            scope.launch {
-                delay(2000)
-                events.onRefreshUI()
-            }
-        }
+        refreshing = false,
+        onRefresh = { profilePosts.refresh() }
     )
-    if (isAPICallLoading){
+
+    if (profilePosts.loadState.refresh is LoadState.Loading) {
         ProfileViewLoadingSkeleton(
             brush,
-            navController,
-            userId,
+            onNavigate,
             state
         )
-    }else{
+    } else {
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .pullRefresh(pullRefresh)
-        ){
-            LaunchedEffect(userId) {
-                if (userId != 0L && userId != state.sessionUserId) {
-                    events.isFollowedByUser(state.sessionUserId, userId)
-                }
-            }
-
-            LaunchedEffect(key1 = true) {
-                viewModel.uiEvent.collect { event ->
-                    when (event) {
-                        is UiEvent.Navigate -> {
-                            navController.navigate(event.route) {
-                                popUpTo(Graph.HOME) { inclusive = true }
-                            }
-                        }
-                    }
-                }
-            }
-
+        ) {
             val pagerState = rememberPagerState(
                 initialPage = 0,
                 initialPageOffsetFraction = 0f,
                 pageCount = { 2 }
             )
 
-            val profile = state.userProfile
-            val userPosts = state.userPosts
-            val topCreators = profile?.topCreators
-            val bookmarkedPosts = state.bookmarkedPosts
             val tabItems = stringArrayResource(id = R.array.profile_tabs)
             var showBottomSheet by remember { mutableStateOf(false) }
-            var showUserOptionsSheet by remember { mutableStateOf(false) }
-
-            var showBlockView by remember { mutableStateOf(false) }
-            var showReportView by remember { mutableStateOf(false) }
 
             val galleryLauncher =
-                rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocument()) {
-                    it?.let { uri ->
-                        context.contentResolver
-                            .takePersistableUriPermission(
-                                uri,
-                                Intent.FLAG_GRANT_READ_URI_PERMISSION
-                            )
-                        scope.launch {
-                            state.dataStore?.storeImage(uri.toString())
-                        }
-                        val file = uriToFile(uri, context)
-                        events.updateUserProfileImage(
-                            file = file!!,
-                            uri = uri
-                        )
+                createGalleryLauncher(context = context, onResult = { uri ->
+                    scope.launch {
+                        state.dataStore?.storeImage(uri.toString())
                     }
-                }
+                    val file = uriToFile(uri, context)
+                    events.updateUserProfileImage(
+                        file = file!!,
+                        uri = uri
+                    )
+                })
 
-            var showPost by remember {
-                mutableStateOf(false)
-            }
-            var postId by remember {
-                mutableLongStateOf(0L)
-            }
 
-            var userTabItems = listOf<VideoModel>()
+            var showPost by remember { mutableStateOf(false) }
+            var showPostIndex by remember { mutableIntStateOf(0) }
 
+            var userTabItems: LazyPagingItems<VideoModel> = profilePosts
             if (pagerState.currentPage == 0) {
-                userTabItems = userPosts
+                userTabItems = profilePosts
             } else if (pagerState.currentPage == 1) {
                 userTabItems = bookmarkedPosts
             }
-            if (showProfileImage){
-                ShowProfileImage(imageUri) {
+            if (showProfileImage) {
+                ShowProfileImage(profileImage) {
                     showProfileImage = false
                 }
             }
             if (showPost) {
-                events.getPostData(postId)
-
-                ShowProfilePosts(
-                    postId = postId,
+                VideoPager(
+                    exoPlayer = state.exoPlayer,
+                    videoList = userTabItems,
+                    initialPage = showPostIndex,
                     events = events,
-                    state = state,
-                    onPostDeleted = {
-                        events.updatePosts(postId)
-                        showPost = false
-                    },
-                    onBackPressed = {
-                        showPost = false
-                    },
-                    posts = userTabItems
+                    state = VideoPagerState.default(),
+                    modifier = Modifier,
+                    localDensity = localDensity,
+                    coroutineScope = coroutineScope
                 )
+
+//                ShowProfilePosts(
+//                    postId = postIndex,
+//                    events = events,
+//                    state = state,
+//                    onPostDeleted = {
+//                        events.updatePosts(postIndex)
+//                        showPost = false
+//                    },
+//                    onBackPressed = {
+//                        showPost = false
+//                    },
+//                    posts = userTabItems
+//                )
             } else {
                 Column(
                     modifier = Modifier
@@ -239,98 +202,12 @@ fun ProfileView(
                         .background(Color.White),
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                top = dimensionResource(id = R.dimen.dim_70),
-                                start = dimensionResource(id = R.dimen.dim_95)
-                            ),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Box(
-                            modifier = if (userId == 0L) {
-                                Modifier.clickable(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = null
-                                ) {
-                                    showBottomSheet = true
-                                }
-                            } else {
-                                Modifier
-                            }
-                        ) {
-                            AsyncImage(
-                                model = imageUri ?: R.drawable.default_avatar,
-                                contentDescription = stringResource(id = R.string.profile_picture),
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_60)))
-                                    .height(dimensionResource(id = R.dimen.dim_124))
-                                    .width(dimensionResource(id = R.dimen.dim_124)),
-                                contentScale = ContentScale.Crop
-                            )
-                            if (userId == 0L) {
-                                ProfilePicturePlaceHolder {
-                                    showBottomSheet = true
-                                }
-                            }
-                        }
-
-
-                        var settingNavigated by remember { mutableStateOf(false)}
-                        Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_40)))
-                        if (userId == 0L) {
-                            Button(shape = CircleShape,
-                                modifier = Modifier
-                                    .clip(CircleShape)
-                                    .height(dimensionResource(id = R.dimen.dim_53))
-                                    .width(dimensionResource(id = R.dimen.dim_53)),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(
-                                        255,
-                                        255,
-                                        255,
-                                        255
-                                    )
-                                ),
-                                contentPadding = PaddingValues(),
-                                onClick = {
-                                    if(!settingNavigated)
-                                    {
-                                        navController.navigate("SETTINGS")
-                                        settingNavigated = true
-                                    }
-                                }
-                            ) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.vector_1_),
-                                    contentDescription = null,
-                                )
-                            }
-                        } else {
-                            Button(shape = CircleShape,
-                                modifier = Modifier
-                                    .clip(CircleShape)
-                                    .height(dimensionResource(id = R.dimen.dim_53))
-                                    .width(dimensionResource(id = R.dimen.dim_53)),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(
-                                        255,
-                                        255,
-                                        255,
-                                        255
-                                    )
-                                ),
-                                contentPadding = PaddingValues(),
-                                onClick = { showUserOptionsSheet = true }
-                            ) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.dots),
-                                    contentDescription = "",
-                                )
-                            }
-                        }
-                    }
+                    TopProfileLayout(
+                        state = state,
+                        profilePhotoUrl = profileImage,
+                        onProfilePhotoClick = { showBottomSheet = true },
+                        onNavigate = onNavigate
+                    )
                     Column(
                         Modifier
                             .fillMaxSize()
@@ -345,7 +222,7 @@ fun ProfileView(
                     ) {
                         Text(
                             fontFamily = Montserrat,
-                            text = profile?.username ?: "",
+                            text = state.userProfile?.username ?: "",
                             fontSize = dimensionResource(id = R.dimen.fon_23).value.sp,
                             fontWeight = FontWeight.SemiBold,
                             modifier = Modifier
@@ -355,115 +232,12 @@ fun ProfileView(
                             overflow = TextOverflow.Ellipsis,
                             maxLines = integerResource(R.integer.int_2)
                         )
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = dimensionResource(id = R.dimen.dim_5)),
-                            horizontalArrangement = Arrangement.spacedBy(
-                                dimensionResource(id = R.dimen.dim_70),
-                                Alignment.CenterHorizontally
-                            )
-                        ) {
-                            Column {
-                                Box(
-                                    modifier = Modifier
-                                        .width(dimensionResource(id = R.dimen.dim_60))
-                                        .wrapContentHeight()
-                                        .clickable(onClick = {
-                                            navController.navigate(
-                                                "FOLLOWER_VIEW/${
-                                                    if (userId != 0L) userId else state.sessionUserId
-                                                }"
-                                            )
-                                        }),
+                        FollowersSection(
+                            state = state,
+                            events = events,
+                            onNavigate = onNavigate
+                        )
 
-                                    ) {
-                                    Text(
-                                        text = AnnotatedString(profile?.totalUserFollowers?.toString() ?: ""),
-                                        modifier = Modifier.align(Alignment.Center),
-                                        style = TextStyle(
-                                            color = Color.Black,
-                                            fontFamily = Montserrat,
-                                            fontWeight = FontWeight.SemiBold,
-                                            fontSize = dimensionResource(id = R.dimen.fon_17).value.sp
-                                        ),
-                                        textAlign = TextAlign.Center,
-                                        overflow = TextOverflow.Ellipsis,
-                                        maxLines = integerResource(id = R.integer.int_1)
-                                    )
-                                }
-                                Text(
-                                    fontFamily = Montserrat,
-                                    text = stringResource(id = R.string.followers),
-                                    fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
-                                    color = colorResource(id = R.color.followers_following_color),
-                                    fontWeight = FontWeight.Light,
-                                    overflow = TextOverflow.Ellipsis,
-                                    maxLines = integerResource(id = R.integer.int_1)
-                                )
-                            }
-
-                            Column {
-                                Box(
-                                    modifier = Modifier
-                                        .width(dimensionResource(id = R.dimen.dim_60))
-                                        .wrapContentHeight()
-                                        .clickable(onClick = {
-                                            navController.navigate(
-                                                "FOLLOWING_VIEW/${
-                                                    if (userId != 0L) userId else state.sessionUserId
-                                                }"
-                                            )
-                                        }),
-
-                                    ) {
-                                    Text(
-                                        text = AnnotatedString(profile?.totalUserFollowing?.toString() ?: ""),
-                                        modifier = Modifier.align(Alignment.Center),
-                                        style = TextStyle(
-                                            color = Color.Black,
-                                            fontFamily = Montserrat,
-                                            fontWeight = FontWeight.SemiBold,
-                                            fontSize = dimensionResource(id = R.dimen.fon_17).value.sp
-                                        ),
-                                        textAlign = TextAlign.Center,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-
-                                }
-                                Text(
-                                    fontFamily = Montserrat,
-                                    text = stringResource(id = R.string.following),
-                                    fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
-                                    color = colorResource(id = R.color.followers_following_color),
-                                    fontWeight = FontWeight.Light,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
-
-
-                        }
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(Color.White),
-                            horizontalArrangement = Arrangement.spacedBy(
-                                dimensionResource(id = R.dimen.dim_30),
-                                Alignment.CenterHorizontally
-                            )
-                        ) {
-
-
-                        }
-                        if (userId != 0L && userId != state.sessionUserId) {
-                            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
-
-                            FollowButton(
-                                isFollowed = state.isFollowed,
-                                events = events,
-                                sessionUserId = state.sessionUserId,
-                            )
-                        }
                         TabRow(selectedTabIndex = pagerState.currentPage,
                             containerColor = Color.White,
                             contentColor = Color.White,
@@ -493,8 +267,7 @@ fun ProfileView(
                                                 fontWeight = FontWeight.SemiBold,
                                                 color = Color.Black,
                                                 fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
-                                            )
-                                            , overflow = TextOverflow.Ellipsis
+                                            ), overflow = TextOverflow.Ellipsis
                                         )
                                     }
                                 )
@@ -522,40 +295,39 @@ fun ProfileView(
                                     state = lazyGridState,
                                     modifier = Modifier.fillMaxSize()
                                 ) {
-                                    items(items = userTabItems,
-                                        key = { it.videoId }
-                                    ) { dataItem ->
-                                        GridItem(
-                                            brush,
-                                            isInternetConnected,
-                                            dataItem = dataItem,
-                                            triggerShowDeleteRecipe = { tabItemId ->
-                                                postId = tabItemId
-                                                showPost = true
-                                            })
+                                    items(
+                                        count = userTabItems.itemCount,
+                                    ) { index ->
+                                        val tabItem = userTabItems[index]
+                                        if (tabItem != null) {
+                                            GridItem(
+                                                brush = brush,
+                                                isInternetConnected = isInternetConnected,
+                                                dataItem = tabItem,
+                                                triggerShowDeleteRecipe = {
+                                                    showPostIndex = index
+                                                    showPost = true
+                                                }
+                                            )
+                                        }
                                     }
-                                }
-
-                                var listLoading by remember { mutableStateOf(false) }
-                                val loadMore = remember {
-                                    derivedStateOf {
-                                        lazyGridState.firstVisibleItemIndex > userTabItems.size - 10
-                                    }
-                                }
-
-                                LaunchedEffect(loadMore)
-                                {
-                                    if (!listLoading) {
-                                        listLoading = true
+                                    item {
+                                        if (userTabItems.loadState.append is LoadState.Loading) {
+                                            CircularProgressIndicator(
+                                                color = foodClubGreen,
+                                                strokeWidth = dimensionResource(id = R.dimen.dim_4)
+                                            )
+                                        }
                                     }
                                 }
                             }
                         }
+
                     }
                 }
             }
 
-            if (userId == 0L && showBottomSheet) {
+            if (state.sessionUserId == state.profileUserId && showBottomSheet) {
                 CustomBottomSheet(
                     itemList = listOf(
                         BottomSheetItem(
@@ -569,7 +341,7 @@ fun ProfileView(
                             title = stringResource(id = R.string.take_photo),
                             resourceId = R.drawable.take_photo,
                             onClick = {
-                                navController.navigate(route = HomeOtherRoutes.TakeProfilePhotoView.route)
+                                onNavigate(HomeOtherRoutes.TakeProfilePhotoView.route) {}
                             })
                     ),
                     sheetTitle = stringResource(id = R.string.upload_photo),
@@ -578,55 +350,208 @@ fun ProfileView(
                     containerColor = Color.White,
                     titleSpace = true
                 )
-            } else {
-                if (showUserOptionsSheet) {
-                    android.kotlin.foodclub.utils.composables.BottomSheet(
-                        itemList = listOf(
-                            BottomSheetItem(1, stringResource(id = R.string.block), null) {
-                                showUserOptionsSheet = false; showBlockView = true
-                            },
-                            BottomSheetItem(2, stringResource(id = R.string.report), null) {
-                                showUserOptionsSheet = false;showReportView = true
-                            },
-                            BottomSheetItem(3, stringResource(id = R.string.hide_your_foodsnaps), null) {},
-                            BottomSheetItem(4, stringResource(id = R.string.copy_profile_url), null) {},
-                            BottomSheetItem(5, stringResource(id = R.string.share_this_profile), null) {}
-                        ),
-                        sheetTitle = "",
-//                enableDragHandle = true,
-                        onDismiss = { showUserOptionsSheet = false; },
-                        modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_110)),
-                        containerColor = Color.Black,
-                        titleSpace = false
-                    )
-                }
-
-                if (showBlockView) {
-                    android.kotlin.foodclub.utils.composables.BlockReportView(
-                        containerColor = Color.Black,
-                        text = stringResource(id = R.string.block),
-                        type = stringResource(id = R.string.block),
-                        userId = stringResource(id = R.string.user1),
-                        actionBlockReport = {},
-                        onDismiss = { showBlockView = false; showUserOptionsSheet = true }
-                    )
-                }
-                if (showReportView) {
-                    android.kotlin.foodclub.utils.composables.BlockReportView(
-                        containerColor = Color.Black,
-                        text = stringResource(id = R.string.report),
-                        type = stringResource(id = R.string.report),
-                        userId = stringResource(id = R.string.user1),
-                        actionBlockReport = {},
-                        onDismiss = { showReportView = false; showUserOptionsSheet = true }
-                    )
-                }
             }
+
             PullRefreshIndicator(
-                refreshing = state.isRefreshingUI,
+                refreshing = profilePosts.loadState.refresh is LoadState.Loading,
                 state = pullRefresh,
                 modifier = Modifier.align(Alignment.TopCenter)
             )
         }
+    }
+}
+
+@Composable
+fun TopProfileLayout(
+    state: ProfileState,
+    profilePhotoUrl: String?,
+    onProfilePhotoClick: () -> Unit,
+    onNavigate: (String, NavOptionsBuilder.() -> Unit) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                top = dimensionResource(id = R.dimen.dim_70),
+                start = dimensionResource(id = R.dimen.dim_95)
+            ),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Box(
+            Modifier.clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
+                onProfilePhotoClick()
+            }
+        ) {
+            AsyncImage(
+                model = profilePhotoUrl ?: R.drawable.default_avatar,
+                contentDescription = stringResource(id = R.string.profile_picture),
+                modifier = Modifier
+                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_60)))
+                    .height(dimensionResource(id = R.dimen.dim_124))
+                    .width(dimensionResource(id = R.dimen.dim_124)),
+                contentScale = ContentScale.Crop
+            )
+            if (state.profileUserId == 0L) {
+                ProfilePicturePlaceHolder {
+                    onProfilePhotoClick()
+                }
+            }
+        }
+
+
+        var settingNavigated by remember { mutableStateOf(false) }
+        Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_40)))
+
+        Button(shape = CircleShape,
+            modifier = Modifier
+                .clip(CircleShape)
+                .height(dimensionResource(id = R.dimen.dim_53))
+                .width(dimensionResource(id = R.dimen.dim_53)),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(
+                    255,
+                    255,
+                    255,
+                    255
+                )
+            ),
+            contentPadding = PaddingValues(),
+            onClick = {
+                if (!settingNavigated) {
+                    onNavigate("SETTINGS") {}
+                    settingNavigated = true
+                }
+            }
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.vector_1_),
+                contentDescription = null,
+            )
+        }
+
+    }
+}
+
+@Composable
+fun FollowersSection(
+    state: ProfileState,
+    events: ProfileEvents,
+    onNavigate: (String, NavOptionsBuilder.() -> Unit) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = dimensionResource(id = R.dimen.dim_5)),
+        horizontalArrangement = Arrangement.spacedBy(
+            dimensionResource(id = R.dimen.dim_70),
+            Alignment.CenterHorizontally
+        )
+    ) {
+        Column {
+            Box(
+                modifier = Modifier
+                    .width(dimensionResource(id = R.dimen.dim_60))
+                    .wrapContentHeight()
+                    .clickable(onClick = {
+                        onNavigate(
+                            "FOLLOWER_VIEW/${
+                                if (state.profileUserId != 0L) state.profileUserId else state.sessionUserId
+                            }"
+                        ) {}
+                    }),
+
+                ) {
+                Text(
+                    text = AnnotatedString(
+                        state.userProfile?.totalUserFollowers?.toString() ?: ""
+                    ),
+                    modifier = Modifier.align(Alignment.Center),
+                    style = TextStyle(
+                        color = Color.Black,
+                        fontFamily = Montserrat,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = dimensionResource(id = R.dimen.fon_17).value.sp
+                    ),
+                    textAlign = TextAlign.Center,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = integerResource(id = R.integer.int_1)
+                )
+            }
+            Text(
+                fontFamily = Montserrat,
+                text = stringResource(id = R.string.followers),
+                fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
+                color = colorResource(id = R.color.followers_following_color),
+                fontWeight = FontWeight.Light,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = integerResource(id = R.integer.int_1)
+            )
+        }
+
+        Column {
+            Box(
+                modifier = Modifier
+                    .width(dimensionResource(id = R.dimen.dim_60))
+                    .wrapContentHeight()
+                    .clickable(onClick = {
+                        onNavigate(
+                            "FOLLOWING_VIEW/${
+                                if (state.profileUserId != 0L) state.profileUserId else state.sessionUserId
+                            }"
+                        ) {}
+                    }),
+
+                ) {
+                Text(
+                    text = AnnotatedString(
+                        state.userProfile?.totalUserFollowing?.toString() ?: ""
+                    ),
+                    modifier = Modifier.align(Alignment.Center),
+                    style = TextStyle(
+                        color = Color.Black,
+                        fontFamily = Montserrat,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = dimensionResource(id = R.dimen.fon_17).value.sp
+                    ),
+                    textAlign = TextAlign.Center,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+            }
+            Text(
+                fontFamily = Montserrat,
+                text = stringResource(id = R.string.following),
+                fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
+                color = colorResource(id = R.color.followers_following_color),
+                fontWeight = FontWeight.Light,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+
+
+    }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White),
+        horizontalArrangement = Arrangement.spacedBy(
+            dimensionResource(id = R.dimen.dim_30),
+            Alignment.CenterHorizontally
+        )
+    ) {
+
+
+    }
+    if (state.profileUserId != 0L && state.profileUserId != state.sessionUserId) {
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+
+        FollowButton(
+            isFollowed = state.isFollowed,
+            events = events,
+            sessionUserId = state.sessionUserId,
+        )
     }
 }

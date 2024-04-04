@@ -92,7 +92,8 @@ class DiscoverViewModel @Inject constructor(
 
     override fun deleteIngredientFromList(ingredient: Ingredient) {
         val updatedList = state.value.userIngredients.toMutableList()
-        updatedList.remove(ingredient)
+        val ingredientItem = updatedList.find { it.id == ingredient.id }
+        if(ingredientItem != null){updatedList.remove(ingredientItem)}
         _state.update {
             it.copy(
                 userIngredients = updatedList
