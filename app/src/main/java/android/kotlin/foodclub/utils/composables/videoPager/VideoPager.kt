@@ -6,11 +6,7 @@ import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.others.AnimatedIcon
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
-import android.kotlin.foodclub.utils.composables.LikeButton
-import android.kotlin.foodclub.utils.composables.PlayPauseButton
-import android.kotlin.foodclub.utils.composables.VideoLayout
-import android.kotlin.foodclub.utils.composables.VideoScroller
-import android.kotlin.foodclub.utils.composables.BackButton
+import android.kotlin.foodclub.utils.composables.customComponents.BackButton
 import android.kotlin.foodclub.views.VideoPagerLoadingSkeleton
 import android.kotlin.foodclub.views.home.profile.DeleteButton
 import android.kotlin.foodclub.views.home.profile.HeaderImage

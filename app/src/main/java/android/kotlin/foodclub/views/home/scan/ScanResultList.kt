@@ -6,13 +6,13 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
-import android.kotlin.foodclub.utils.composables.CustomDatePicker
+import android.kotlin.foodclub.utils.composables.customComponents.CustomDatePicker
 import android.kotlin.foodclub.utils.composables.EditIngredientQuantityPicker
 import android.kotlin.foodclub.utils.composables.IngredientsListTitleSection
 import android.kotlin.foodclub.utils.composables.LoadingProgressBar
-import android.kotlin.foodclub.utils.composables.itemExpirationDate
-import android.kotlin.foodclub.utils.composables.itemQuantity
-import android.kotlin.foodclub.utils.helpers.ValueParser
+import android.kotlin.foodclub.utils.composables.products.ProductsEvents
+import android.kotlin.foodclub.utils.composables.products.itemExpirationDate
+import android.kotlin.foodclub.utils.composables.products.itemQuantity
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
 import android.kotlin.foodclub.views.home.discover.DiscoverState
 import androidx.activity.compose.BackHandler
@@ -92,13 +92,13 @@ import coil.compose.AsyncImage
 @Composable
 fun ScanResultView(
     navController: NavController,
-    events: DiscoverEvents,
+    events: ProductsEvents,
+    discoverEvents: DiscoverEvents,
     state: DiscoverState
 )
 {
 
     val modifier = Modifier
-    val userIngredients = state.userIngredients
 
     var isShowEditScreen by remember { mutableStateOf(false) }
     var topBarTitleText by remember { mutableStateOf("") }
@@ -150,7 +150,7 @@ fun ScanResultView(
                             TextButton(
                                 onClick = {
                                     loading=!loading
-                                    events.addScanListToUserIngredients(state.scanResultItemList)
+                                    discoverEvents.addScanListToUserIngredients(state.scanResultItemList)
 
                                 }
                             ) {
@@ -195,7 +195,7 @@ fun ScanResultView(
                                 modifier = Modifier,
                                 searchTextValue = searchText,
                                 onSearch = { input->
-                                    events.onAddIngredientsSearchTextChange(input)
+                                    events.searchWithinAddedIngredients(input)
                                 }
                             )
                             Spacer(modifier = Modifier.height( dimensionResource(id = R.dimen.dim_15)))
@@ -430,9 +430,9 @@ fun SingleIngredientItem(
     onAddDateClicked: (Ingredient) -> Unit,
     onEditClicked: (Ingredient) -> Unit
 ) {
-    val title = item.type.split(",").first().trim()
+    val title = item.product.label.split(",").first().trim()
     val unit = stringResource(id = R.string.gram_unit) // TODO make dynamic
-    val quantity = itemQuantity(item = item, unit = unit)
+    val quantity = itemQuantity(item = item)
     val expirationDate = itemExpirationDate(item = item)
 
     Row(
@@ -450,7 +450,7 @@ fun SingleIngredientItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AsyncImage(
-                    model = item.imageUrl,
+                    model = item.product.image,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = modifier
@@ -548,7 +548,7 @@ fun EditIngredientView(
         ) {
             AsyncImage(
                 modifier = Modifier.fillMaxSize(),
-                model = ingredient.imageUrl,
+                model = ingredient.product.image,
                 contentScale = ContentScale.Crop,
                 contentDescription = ""
             )
@@ -557,7 +557,7 @@ fun EditIngredientView(
             mutableStateOf((1..10).map {
                 Pair(
                     it,
-                    (it * 100).toString() + ValueParser.quantityUnitToString(ingredient.unit)
+                    (it * 100).toString() + ingredient.unit.short
                 )
             })
         }

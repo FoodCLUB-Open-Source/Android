@@ -3,8 +3,8 @@ package android.kotlin.foodclub.views.authentication.forgotPassword.forgotPasswo
 import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.utils.composables.AuthLayout
-import android.kotlin.foodclub.utils.composables.ConfirmButton
-import android.kotlin.foodclub.utils.composables.CustomTextField
+import android.kotlin.foodclub.utils.composables.customComponents.ConfirmButton
+import android.kotlin.foodclub.utils.composables.customComponents.CustomTextField
 import android.kotlin.foodclub.utils.helpers.FieldsValidation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

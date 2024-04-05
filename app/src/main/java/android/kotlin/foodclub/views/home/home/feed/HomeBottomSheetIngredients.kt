@@ -9,8 +9,9 @@ import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.enums.QuantityUnit
 import android.kotlin.foodclub.domain.models.products.Ingredient
+import android.kotlin.foodclub.domain.models.products.Product
 import android.kotlin.foodclub.domain.models.recipes.Recipe
-import android.kotlin.foodclub.utils.composables.CustomSliderDiscrete
+import android.kotlin.foodclub.utils.composables.customComponents.CustomSliderDiscrete
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -392,29 +393,38 @@ private fun HomeBottomSheetIngredientsPreview() {
                 servingSize = 1,
                 ingredients = listOf(
                     Ingredient(
-                        id = "1",
-                        type = "type1",
+                        product = Product(
+                            foodId = "1",
+                            label = "type1",
+                            image = null,
+                            units = QuantityUnit.entries
+                        ),
                         quantity = 1,
-                        unit = QuantityUnit.GRAMS,
-                        imageUrl = "",
+                        unit = QuantityUnit.GRAM,
                         expirationDate = "expirationDate1",
                         isSelected = false
                     ),
                     Ingredient(
-                        id = "2",
-                        type = "type2",
+                        product = Product(
+                            foodId = "2",
+                            label = "type2",
+                            image = null,
+                            units = QuantityUnit.entries
+                        ),
                         quantity = 1,
-                        unit = QuantityUnit.GRAMS,
-                        imageUrl = "",
+                        unit = QuantityUnit.GRAM,
                         expirationDate = "expirationDate2",
                         isSelected = false
                     ),
                     Ingredient(
-                        id = "3",
-                        type = "type3",
+                        product = Product(
+                            foodId = "3",
+                            label = "type3",
+                            image = null,
+                            units = QuantityUnit.entries
+                        ),
                         quantity = 1,
-                        unit = QuantityUnit.GRAMS,
-                        imageUrl = "",
+                        unit = QuantityUnit.GRAM,
                         expirationDate = "expirationDate3",
                         isSelected = false
                     ),

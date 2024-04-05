@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.views.authentication.forgotPassword
 
 import android.kotlin.foodclub.utils.composables.AuthLayout
-import android.kotlin.foodclub.utils.composables.ConfirmButton
+import android.kotlin.foodclub.utils.composables.customComponents.ConfirmButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import android.kotlin.foodclub.R

@@ -5,9 +5,9 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.navigation.auth.AuthScreen
 import android.kotlin.foodclub.utils.composables.AuthLayout
-import android.kotlin.foodclub.utils.composables.ConfirmButton
-import android.kotlin.foodclub.utils.composables.CustomPasswordTextField
-import android.kotlin.foodclub.utils.composables.CustomTextField
+import android.kotlin.foodclub.utils.composables.customComponents.ConfirmButton
+import android.kotlin.foodclub.utils.composables.customComponents.CustomPasswordTextField
+import android.kotlin.foodclub.utils.composables.customComponents.CustomTextField
 import android.kotlin.foodclub.viewModels.authentication.loginWithEmail.LoginWithEmailEvents
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

@@ -1,5 +1,7 @@
 package android.kotlin.foodclub.di
 
+import android.kotlin.foodclub.localdatasource.localdatasource.product.ProductLocalDataSource
+import android.kotlin.foodclub.localdatasource.localdatasource.product.ProductLocalDataSourceImpl
 import android.kotlin.foodclub.localdatasource.localdatasource.profile_bookmarked_local_datasource.ProfileBookmarkedLocalDataSource
 import android.kotlin.foodclub.localdatasource.localdatasource.profile_bookmarked_local_datasource.ProfileBookmarkedLocalDataSourceImpl
 import android.kotlin.foodclub.localdatasource.room.dao.UserDetailsDao
@@ -10,6 +12,7 @@ import android.kotlin.foodclub.localdatasource.localdatasource.user_details_loca
 import android.kotlin.foodclub.localdatasource.localdatasource.profile_posts_local_datasource.ProfilePostsLocalDataSourceImpl
 import android.kotlin.foodclub.localdatasource.localdatasource.profile_local_datasource.ProfileLocalDataSource
 import android.kotlin.foodclub.localdatasource.localdatasource.profile_local_datasource.ProfileLocalDataSourceImpl
+import android.kotlin.foodclub.localdatasource.room.dao.ProductDao
 import android.kotlin.foodclub.localdatasource.room.dao.ProfileDataDao
 import android.kotlin.foodclub.localdatasource.room.dao.UserProfileBookmarksDao
 import dagger.Module
@@ -44,5 +47,11 @@ class LocalDataModule {
     @Provides
     fun provideProfileBookmarksLocalDataSource(profileBookmarksDao: UserProfileBookmarksDao): ProfileBookmarkedLocalDataSource {
         return ProfileBookmarkedLocalDataSourceImpl(profileBookmarksDao)
+    }
+
+    @Singleton
+    @Provides
+    fun provideProductLocalDataSource(productDao: ProductDao): ProductLocalDataSource {
+        return ProductLocalDataSourceImpl(productDao)
     }
 }

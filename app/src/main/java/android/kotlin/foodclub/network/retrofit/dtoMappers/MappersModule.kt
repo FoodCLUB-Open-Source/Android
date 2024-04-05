@@ -1,6 +1,5 @@
 package android.kotlin.foodclub.network.retrofit.dtoMappers
 
-import android.kotlin.foodclub.network.retrofit.dtoMappers.edamam.EdamamFoodProductsMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.posts.PostToVideoMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.recipes.RecipeMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.stories.StoryMapper
@@ -13,12 +12,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object MappersModule {
-    @Provides
-    @Singleton
-    fun provideEdamamFoodProductsMapper(): EdamamFoodProductsMapper {
-        return EdamamFoodProductsMapper()
-    }
-
     @Provides
     @Singleton
     fun providePostToVideoMapper(): PostToVideoMapper {

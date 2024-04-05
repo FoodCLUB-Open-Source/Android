@@ -4,8 +4,6 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
-import android.kotlin.foodclub.utils.helpers.ValueParser
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -79,9 +77,7 @@ fun Ingredient(
             .background(Color.White)
             .padding(dimensionResource(id = R.dimen.dim_10))
     ) {
-        val ingredientImage = if(ingredient.imageUrl == "") {
-            R.drawable.salad_ingredient
-        } else ingredient.imageUrl
+        val ingredientImage = ingredient.product.image ?: R.drawable.salad_ingredient
         AsyncImage(
             model = ingredientImage,
             contentDescription = null,
@@ -128,7 +124,7 @@ fun Ingredient(
                 .width(dimensionResource(id = R.dimen.dim_115))
                 .padding(start = dimensionResource(id = R.dimen.dim_10))) {
                 Text(
-                    text = ingredient.type,
+                    text = ingredient.product.label,
                     lineHeight = dimensionResource(id = R.dimen.fon_18).value.sp,
                     modifier = Modifier
                         .align(Alignment.TopStart),
@@ -151,7 +147,7 @@ fun Ingredient(
                             }
                     )
                     Text(
-                        quantity.toString() + ValueParser.quantityUnitToString(ingredient.unit),
+                        quantity.toString() + ingredient.unit.short,
                         color = Color.Black,
                         fontFamily = Montserrat,
                         fontSize = dimensionResource(id = R.dimen.fon_14).value.sp

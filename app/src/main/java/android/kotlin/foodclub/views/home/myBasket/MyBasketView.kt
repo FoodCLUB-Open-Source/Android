@@ -6,7 +6,7 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
-import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
+import android.kotlin.foodclub.utils.composables.products.ProductListModalSheet
 import android.kotlin.foodclub.viewModels.home.myBasket.MyBasketEvents
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.shrinkOut
@@ -52,9 +52,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 
@@ -63,25 +62,23 @@ import kotlinx.coroutines.delay
 @Composable
 fun MyBasketView(
     events: MyBasketEvents,
-    navController: NavController,
-    state: MyBasketState
+    state: MyBasketState,
+    searchResult: LazyPagingItems<Ingredient>
 ) {
     var showSheet by remember { mutableStateOf(false) }
     val productsList = state.productsList
     var deleteSelected by remember { mutableStateOf(false) }
 
     if (showSheet) {
-        IngredientsBottomSheet(
-            onDismiss = { showSheet = !showSheet },
-            productsData = state.productsDatabase,
-            loadMoreObjects = { searchText, onLoadCompleted ->
-                events.fetchMoreProducts(searchText, onLoadCompleted)
-            },
-            onListUpdate = { events.fetchProductsDatabase(it) },
-            onSave = { events.addIngredient(it) }
+        ProductListModalSheet(
+            events = events,
+            state = state.productState,
+            productsList = searchResult,
+            onDismiss = { showSheet = !showSheet }
         )
-
     }
+
+
     Column(
         modifier = Modifier
             .background(color = Color.White)
@@ -202,15 +199,15 @@ fun MyBasketView(
             {
                 itemsIndexed(
                     items = productsList,
-                    key = { _, item -> "${item.id}_${item.quantity}" }
+                    key = { _, item -> "${item.product.foodId}_${item.quantity}" }
                 ) { _, ingredient ->
                     BasketIngredient(
                         ingredient = ingredient,
-                        isShown = !state.selectedProductsList.contains(ingredient.id)
+                        isShown = !state.selectedProductsList.contains(ingredient.product.foodId)
                                 || !deleteSelected,
                         onSelectionChange = { bool ->
-                            if (bool) events.selectIngredient(ingredient.id)
-                            else events.unselectIngredient(ingredient.id)
+                            if (bool) events.selectIngredient(ingredient.product.foodId)
+                            else events.unselectIngredient(ingredient.product.foodId)
                         },
                         onIngredientUpdate = { events.saveBasket() }
                     )
@@ -240,7 +237,7 @@ fun BasketIngredient(
     var isSelected by remember { mutableStateOf(ingredient.isSelected) }
 
     var quantity by remember { mutableIntStateOf(ingredient.quantity) }
-    val type by remember { mutableStateOf(ingredient.type) }
+    val type by remember { mutableStateOf(ingredient.product.label) }
     val unit by remember { mutableStateOf(ingredient.unit) }
 
     var showItem by remember { mutableStateOf(true) }
@@ -268,7 +265,7 @@ fun BasketIngredient(
                     .padding(dimensionResource(id = R.dimen.dim_10))
             ) {
                 AsyncImage(
-                    model = ingredient.imageUrl,
+                    model = ingredient.product.image,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -318,13 +315,22 @@ fun BasketIngredient(
                         )
                     }
                     Box(modifier = Modifier.align(Alignment.BottomEnd)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement
+                                .spacedBy(dimensionResource(id = R.dimen.dim_12)),
+                            modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dim_16))
+                        ) {
                             Image(
-                                painter = painterResource(id = R.drawable.baseline_arrow_left_24),
+                                painter = painterResource(id = R.drawable.shopping_list_arrow_left),
                                 contentDescription = stringResource(id = R.string.profile_picture),
                                 modifier = Modifier
-                                    .size(dimensionResource(id = R.dimen.dim_50))
-                                    .padding(end = dimensionResource(id = R.dimen.dim_15))
+                                    .height(dimensionResource(id = R.dimen.dim_24))
+                                    .width(dimensionResource(id = R.dimen.dim_12))
+                                    .padding(
+                                        vertical = dimensionResource(id = R.dimen.dim_6),
+                                        horizontal = dimensionResource(id = R.dimen.dim_3)
+                                    )
                                     .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
                                     .clickable {
                                         ingredient.decrementQuantity(5)
@@ -337,15 +343,20 @@ fun BasketIngredient(
                                 color = Color.Black,
                                 fontFamily = Montserrat,
                                 fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
+                                fontWeight = FontWeight.SemiBold,
                                 overflow = TextOverflow.Ellipsis,
                                 maxLines = integerResource(id = R.integer.int_1)
                             )
                             Image(
-                                painter = painterResource(id = R.drawable.baseline_arrow_right_24),
+                                painter = painterResource(id = R.drawable.shopping_list_arrow_right),
                                 contentDescription = stringResource(id = R.string.profile_picture),
                                 modifier = Modifier
-                                    .size(dimensionResource(id = R.dimen.dim_50))
-                                    .padding(start = dimensionResource(id = R.dimen.dim_15))
+                                    .height(dimensionResource(id = R.dimen.dim_24))
+                                    .width(dimensionResource(id = R.dimen.dim_12))
+                                    .padding(
+                                        vertical = dimensionResource(id = R.dimen.dim_6),
+                                        horizontal = dimensionResource(id = R.dimen.dim_3)
+                                    )
                                     .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
                                     .clickable {
                                         ingredient.incrementQuantity(5)

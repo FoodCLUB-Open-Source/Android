@@ -1,29 +1,26 @@
 package android.kotlin.foodclub.views.home.createRecipe
 
-import android.annotation.SuppressLint
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.borderBlue
-import android.kotlin.foodclub.config.ui.containerColor
+import android.kotlin.foodclub.config.ui.defaultSearchBarColors
 import android.kotlin.foodclub.config.ui.foodClubGreen
-import android.kotlin.foodclub.domain.models.products.Ingredient
-import android.kotlin.foodclub.utils.composables.CustomSliderDiscrete
-import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
-import android.kotlin.foodclub.utils.helpers.ValueParser
+import android.kotlin.foodclub.utils.composables.customComponents.CustomSliderDiscrete
+import android.kotlin.foodclub.utils.composables.products.EditIngredientBottomModal
+import android.kotlin.foodclub.utils.composables.SwipeToDismissContainer
+import android.kotlin.foodclub.utils.composables.products.IngredientItem
+import android.kotlin.foodclub.utils.composables.products.ProductAction
+import android.kotlin.foodclub.utils.composables.products.ProductsListTitleSection
 import android.kotlin.foodclub.viewModels.home.createRecipe.CreateRecipeEvents
 import android.kotlin.foodclub.viewModels.home.createRecipe.CreateRecipeViewModel
 import android.kotlin.foodclub.views.home.createRecipe.components.CategoriesSection
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.updateTransition
-import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.interaction.Interaction
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,9 +30,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -53,42 +48,42 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.input.pointer.positionChange
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import coil.compose.AsyncImage
-import kotlinx.coroutines.delay
-import kotlin.math.roundToInt
 
 @Composable
 fun CreateRecipeView(
     navController: NavController,
     events: CreateRecipeEvents,
-    state: CreateRecipeState
+    state: CreateRecipeState,
+    onIngredientsSearchBarClick: () -> Unit
 ) {
-    var showSheet by remember { mutableStateOf(false) }
     val codeTriggered = remember { mutableStateOf(false) }
     var servingSize by remember { mutableIntStateOf(0) }
     var recipeName by remember { mutableStateOf("") }
@@ -97,10 +92,6 @@ fun CreateRecipeView(
         if (!codeTriggered.value) {
             codeTriggered.value = true
         }
-    }
-
-    val triggerBottomSheetModal: () -> Unit = {
-        showSheet = !showSheet
     }
 
     Box(
@@ -114,16 +105,17 @@ fun CreateRecipeView(
                 bottom = dimensionResource(id = R.dimen.dim_15)
             )
     ) {
-        if (showSheet) {
-            IngredientsBottomSheet(
-                onDismiss = triggerBottomSheetModal,
-                productsData = state.products,
-                loadMoreObjects = { searchText, onLoadCompleted ->
-                    events.fetchMoreProducts(searchText, onLoadCompleted)
+        when (state.productState.currentAction) {
+            ProductAction.EDIT_QUANTITY -> EditIngredientBottomModal(
+                ingredient = state.productState.editedIngredient,
+                onDismissRequest = {
+                    events.dismissAction()
                 },
-                onListUpdate = { events.fetchProductsDatabase(it) },
-                onSave = { events.addIngredient(it) }
+                onEdit = { item ->
+                    events.updateIngredient(item)
+                }
             )
+            else -> {}
         }
 
         LazyColumn(
@@ -197,14 +189,64 @@ fun CreateRecipeView(
                 }
 
             }
-            items(items = state.ingredients, key = { it.id }) { ingredient ->
-                Ingredient(
-                    ingredient = ingredient,
-                    isRevealed = state.revealedIngredientId == ingredient.id,
-                    onExpand = { events.onIngredientExpanded(ingredient.id) },
-                    onCollapse = { events.onIngredientCollapsed(ingredient.id) },
-                    onDelete = { events.onIngredientDeleted(ingredient) }
+
+            item {
+                IngredientSearchBar(onIngredientsSearchBarClick)
+                ProductsListTitleSection(
+                    modifier = Modifier,
+                    includeExpiryDate = state.productState.allowExpiryDate
                 )
+
+                if (state.productState.addedProducts.isEmpty()) {
+                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
+
+                    Text(
+                        text = stringResource(id = R.string.create_recipe_add_ingredients_empty),
+                        fontWeight = FontWeight(500),
+                        fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
+                        color = colorResource(
+                            id = R.color.discover_view_add_ingredient_information_text
+                        ).copy(alpha = 0.3f),
+                        lineHeight = dimensionResource(id = R.dimen.fon_17).value.sp,
+                        fontFamily = Montserrat,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+                }
+            }
+            itemsIndexed(
+                items = state.productState.addedProducts,
+                key = { _, item -> item.product.foodId }
+            ) { _, item ->
+                SwipeToDismissContainer(
+                    onDismiss = { events.deleteIngredient(item) }
+                ) { modifier ->
+                    IngredientItem(
+                        modifier = modifier,
+                        item = item,
+                        onAddItemClicked = {},
+                        userIngredientsList = state.productState.addedProducts,
+                        onEditQuantityClicked = {
+                            events.selectAction(item, ProductAction.EDIT_QUANTITY)
+                        },
+                        onDateClicked = {
+                            events.selectAction(item, ProductAction.CHANGE_EXPIRY_DATE)
+                        },
+                        onDeleteIngredient = {
+                            events.deleteIngredient(item)
+                        },
+                        includeExpiryDate = state.productState.allowExpiryDate
+                    )
+                }
+
+                Spacer(Modifier.height(dimensionResource(id = R.dimen.dim_8)))
+                Divider(
+                    thickness = dimensionResource(id = R.dimen.dim_1),
+                    modifier = Modifier.alpha(0.5f),
+                    color = Color.LightGray
+                )
+                Spacer(Modifier.height(dimensionResource(id = R.dimen.dim_8)))
             }
         }
 
@@ -236,178 +278,62 @@ fun CreateRecipeView(
     }
 }
 
-//Ingredient is gonna be changed (new design on Figma)
-@SuppressLint("UnusedTransitionTargetStateParameter")
 @Composable
-fun Ingredient(
-    ingredient: Ingredient,
-    isRevealed: Boolean,
-    onExpand: () -> Unit,
-    onCollapse: () -> Unit,
-    onDelete: () -> Unit
-) {
-    val ingredientXOffset = remember { mutableFloatStateOf(0f) }
-    var showItem by remember { mutableStateOf(true) }
+fun IngredientSearchBar(onIngredientsSearchBarClick: () -> Unit) {
+    var searchText by remember { mutableStateOf("") }
+    val interactionSource = remember { MutableInteractionSource() }
+    val interactions = remember { mutableStateListOf<Interaction>() }
 
-    val transitionState = remember {
-        MutableTransitionState(isRevealed).apply { targetState = !isRevealed }
-    }
-    val transition = updateTransition(transitionState, label = "")
-    val offsetTransition by transition.animateFloat(
-        label = stringResource(id = R.string.ingredient_offset_transitions),
-        transitionSpec = { tween(durationMillis = 500) },
-        targetValueByState = {
-            if (isRevealed) (-ingredientXOffset.floatValue - 200f)
-            else -ingredientXOffset.floatValue
-        }
-    )
-
-    var quantity by remember { mutableIntStateOf(ingredient.quantity) }
-    val type by remember { mutableStateOf(ingredient.type) }
-    val unit by remember { mutableStateOf(ingredient.unit) }
-
-
-    AnimatedVisibility(
-        visible = showItem,
-        exit = shrinkOut(shrinkTowards = Alignment.TopCenter)
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
-            contentAlignment = Alignment.CenterEnd,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(dimensionResource(id = R.dimen.dim_100))
-                .padding(end = dimensionResource(id = R.dimen.dim_15))
-        ) {
-            Button(
-                shape = RectangleShape,
-                modifier = Modifier
-                    .border(
-                        dimensionResource(id = R.dimen.dim_1),
-                        containerColor,
-                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_22))
-                    )
-                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_22)))
-                    .width(dimensionResource(id = R.dimen.dim_50))
-                    .height(dimensionResource(id = R.dimen.dim_50)),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = containerColor,
-                    contentColor = Color.White
-                ), contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_5)),
-                onClick = { showItem = false }
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.delete_bin_5_line__2_),
-                    contentDescription = stringResource(id = R.string.go_back),
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .width(dimensionResource(id = R.dimen.dim_20))
-                        .height(dimensionResource(id = R.dimen.dim_20))
+        TextField(
+            modifier = Modifier.clickable { }.fillMaxWidth()
+                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
+                .shadow(
+                    elevation = dimensionResource(id = R.dimen.dim_2),
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16))
+                ),
+            colors = defaultSearchBarColors(),
+            value = searchText,
+            onValueChange = { searchText = it },
+            singleLine = true,
+            placeholder = {
+                Text(
+                    text = stringResource(id = R.string.create_recipe_ingredient_searchbar),
+                    fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
+                    lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
+                    fontWeight = FontWeight(400),
+                    color = Color.Gray,
+                    textAlign = TextAlign.Center
                 )
-            }
-        }
-        Column {
-            Box(modifier = Modifier
-                .offset {
-                    IntOffset((ingredientXOffset.floatValue + offsetTransition).roundToInt(), 0)
-                }
-                .pointerInput(key1 = "") {
-                    detectHorizontalDragGestures { change, dragAmount ->
-                        val original = Offset(ingredientXOffset.floatValue, 0f)
-                        val summed = original + Offset(x = dragAmount, y = 0f)
-                        val newValue = Offset(summed.x.coerceIn(-200f, 0f), 0f)
-                        if (newValue.x <= -20f) {
-                            onExpand()
-                            return@detectHorizontalDragGestures
-                        } else if (newValue.x >= 0) {
-                            onCollapse()
-                            return@detectHorizontalDragGestures
-                        }
-                        if (change.positionChange() != Offset.Zero) change.consume()
-                        ingredientXOffset.floatValue = newValue.x
-                    }
-                }
-                .fillMaxWidth()
-                .height(dimensionResource(id = R.dimen.dim_100))
-                .border(
-                    dimensionResource(id = R.dimen.dim_1),
-                    Color(0xFFE8E8E8),
-                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
-                )
-                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
-                .background(Color.White)
-                .padding(dimensionResource(id = R.dimen.dim_10))
-            ) {
-                AsyncImage(
-                    model = ingredient.imageUrl,
+            },
+            interactionSource = interactionSource,
+            leadingIcon = {
+                Icon(
+                    painterResource(id = R.drawable.search_icon_ingredients),
                     contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .height(dimensionResource(id = R.dimen.dim_80))
-                        .width(dimensionResource(id = R.dimen.dim_80))
-                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_12)))
                 )
-                Box(
-                    modifier = Modifier
-                        .padding(start = dimensionResource(id = R.dimen.dim_95))
-                        .fillMaxWidth()
-                        .height(dimensionResource(id = R.dimen.dim_70)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .width(dimensionResource(id = R.dimen.dim_105))
-                            .align(Alignment.CenterStart)
-                    ) {
-                        Text(
-                            text = type,
-                            modifier = Modifier.align(Alignment.TopStart),
-                            fontFamily = Montserrat,
-                            fontWeight = FontWeight.Normal
-                        )
-                    }
-                    Box(modifier = Modifier.align(Alignment.CenterEnd)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Image(
-                                painter = painterResource(id = R.drawable.baseline_arrow_left_24),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(dimensionResource(id = R.dimen.dim_35))
-                                    .padding(end = dimensionResource(id = R.dimen.dim_5))
-                                    .clickable {
-                                        ingredient.decrementQuantity(5)
-                                        quantity = ingredient.quantity
-                                    }
-                            )
-                            Text(
-                                text = quantity.toString() + ValueParser.quantityUnitToString(unit),
-                                color = Color.Black,
-                                fontFamily = Montserrat,
-                                fontSize = dimensionResource(id = R.dimen.fon_14).value.sp
-                            )
-                            Image(
-                                painter = painterResource(id = R.drawable.baseline_arrow_right_24),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(dimensionResource(id = R.dimen.dim_35))
-                                    .padding(start = dimensionResource(id = R.dimen.dim_5))
-                                    .clickable {
-                                        ingredient.incrementQuantity(5)
-                                        quantity = ingredient.quantity
-                                    }
-                            )
-                        }
-                    }
-                }
             }
-
-            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
-        }
+        )
     }
 
-    LaunchedEffect(showItem) {
-        if (!showItem) {
-            delay(800)
-            onDelete()
+    LaunchedEffect(interactionSource) {
+        interactionSource.interactions.collect { interaction ->
+            when(interaction) {
+                is PressInteraction.Press -> {
+                    interactions.add(interaction)
+                    onIngredientsSearchBarClick()
+                }
+                is PressInteraction.Release -> {
+                    interactions.remove(interaction.press)
+                }
+                is PressInteraction.Cancel -> {
+                    interactions.remove(interaction.press)
+                }
+            }
         }
     }
 }
@@ -504,5 +430,5 @@ fun CreateRecipeViewPreview() {
         navController,
         viewModel,
         state.value
-    )
+    ) {}
 }

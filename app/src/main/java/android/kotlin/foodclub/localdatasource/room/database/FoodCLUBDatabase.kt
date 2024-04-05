@@ -2,10 +2,13 @@ package android.kotlin.foodclub.localdatasource.room.database
 
 import android.kotlin.foodclub.localdatasource.room.entity.UserDetailsModel
 import android.kotlin.foodclub.localdatasource.room.converters.Converters
+import android.kotlin.foodclub.localdatasource.room.dao.ProductDao
 import android.kotlin.foodclub.localdatasource.room.dao.ProfileDataDao
 import android.kotlin.foodclub.localdatasource.room.dao.UserDetailsDao
 import android.kotlin.foodclub.localdatasource.room.dao.UserProfileBookmarksDao
 import android.kotlin.foodclub.localdatasource.room.dao.UserProfilePostsDao
+import android.kotlin.foodclub.localdatasource.room.entity.ProductEntity
+import android.kotlin.foodclub.localdatasource.room.entity.ProductUnitEntity
 import android.kotlin.foodclub.localdatasource.room.entity.ProfileEntity
 import android.kotlin.foodclub.localdatasource.room.entity.ProfileBookmarksEntity
 import android.kotlin.foodclub.localdatasource.room.entity.ProfilePostsEntity
@@ -21,11 +24,14 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         UserDetailsModel::class,
         ProfilePostsEntity::class,
         ProfileEntity::class,
-        ProfileBookmarksEntity::class
+        ProfileBookmarksEntity::class,
+        ProductEntity::class,
+        ProductUnitEntity::class
     ],
-    version = 4,
+    version = 5,
     autoMigrations = [
-        AutoMigration(3, 4)
+        AutoMigration(3, 4),
+        AutoMigration(4, 5)
     ]
 )
 @TypeConverters(Converters::class)
@@ -34,6 +40,7 @@ abstract class FoodCLUBDatabase : RoomDatabase() {
     abstract fun getUserProfilePostsDao(): UserProfilePostsDao
     abstract fun getProfileDao(): ProfileDataDao
     abstract fun getUserProfileBookmarksDao(): UserProfileBookmarksDao
+    abstract fun getProductDao(): ProductDao
 
     companion object {
         val migration1To2 = object: Migration(1, 2) {

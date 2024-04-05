@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.utils.composables
+package android.kotlin.foodclub.utils.composables.customComponents
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
@@ -36,6 +36,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.math.roundToInt
 
+/**
+ * Custom Discrete Slider
+ *
+ * Minimum value is always 0.
+ *
+ * @param sliderWidth Width of slider in Dp. If null, the slider will fill the full width
+ * @param startValue Initial value of the slider [Float]
+ * @param maxValue Maximum value of the slider [Float]
+ * @param onValueChange Function which is called whenever value is changed. Current value is passed
+ * to the function [Int]
+ * @param tickSize Size of the tick dot. If you don't know how to use it, just leave it as default.
+ * @param inactiveTrackColor Color of the inactive track
+ * @param stepsColor Color of steps
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomSliderDiscrete(

@@ -4,10 +4,10 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.others.AnimatedIcon
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
-import android.kotlin.foodclub.utils.composables.LikeButton
-import android.kotlin.foodclub.utils.composables.PlayPauseButton
-import android.kotlin.foodclub.utils.composables.VideoLayout
-import android.kotlin.foodclub.utils.composables.VideoScroller
+import android.kotlin.foodclub.utils.composables.videoPager.LikeButton
+import android.kotlin.foodclub.utils.composables.videoPager.PlayPauseButton
+import android.kotlin.foodclub.utils.composables.videoPager.VideoLayout
+import android.kotlin.foodclub.utils.composables.videoPager.VideoScroller
 import android.kotlin.foodclub.viewModels.home.home.HomeEvents
 import android.kotlin.foodclub.views.VideoPagerLoadingSkeleton
 import androidx.compose.animation.core.LinearEasing

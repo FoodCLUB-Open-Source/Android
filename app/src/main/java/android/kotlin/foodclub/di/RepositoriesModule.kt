@@ -1,8 +1,8 @@
 package android.kotlin.foodclub.di
 
+import android.kotlin.foodclub.localdatasource.localdatasource.product.ProductLocalDataSource
 import android.kotlin.foodclub.localdatasource.localdatasource.profile_bookmarked_local_datasource.ProfileBookmarkedLocalDataSource
 import android.kotlin.foodclub.network.retrofit.services.AuthenticationService
-import android.kotlin.foodclub.network.retrofit.dtoMappers.edamam.EdamamFoodProductsMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.posts.PostToVideoMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.ForgotChangePasswordMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.SignInUserMapper
@@ -15,7 +15,6 @@ import android.kotlin.foodclub.network.retrofit.dtoMappers.stories.StoryMapper
 import android.kotlin.foodclub.network.retrofit.services.BookmarksService
 import android.kotlin.foodclub.network.retrofit.services.LikesService
 import android.kotlin.foodclub.network.retrofit.services.PostsService
-import android.kotlin.foodclub.network.retrofit.services.ProductsService
 import android.kotlin.foodclub.network.retrofit.services.RecipeService
 import android.kotlin.foodclub.network.retrofit.services.StoriesService
 import android.kotlin.foodclub.repositories.AuthRepository
@@ -32,6 +31,7 @@ import android.kotlin.foodclub.localdatasource.localdatasource.profile_posts_loc
 import android.kotlin.foodclub.localdatasource.localdatasource.profile_local_datasource.ProfileLocalDataSource
 import android.kotlin.foodclub.localdatasource.room.dao.UserProfilePostsDao
 import android.kotlin.foodclub.localdatasource.room.database.FoodCLUBDatabase
+import android.kotlin.foodclub.network.remotedatasource.product.ProductRemoteDataSource
 import android.kotlin.foodclub.network.remotedatasource.profile_remote_datasource.ProfileRemoteDataSource
 import android.kotlin.foodclub.network.remotedatasource.settings_remote_datasource.SettingsRemoteDataSource
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.LocalDataMapper
@@ -100,9 +100,10 @@ object RepositoriesModule {
     @Provides
     @Singleton
     fun provideProductRepository(
-        api: ProductsService, mapper: EdamamFoodProductsMapper
+        productRemoteDataSource: ProductRemoteDataSource,
+        productLocalDataSource: ProductLocalDataSource
     ): ProductRepository {
-        return ProductRepository(api, mapper)
+        return ProductRepository(productRemoteDataSource, productLocalDataSource)
     }
 
     @Provides

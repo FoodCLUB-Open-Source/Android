@@ -6,8 +6,8 @@ import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.navigation.auth.AuthScreen
 import android.kotlin.foodclub.utils.composables.AuthLayout
-import android.kotlin.foodclub.utils.composables.ConfirmButton
-import android.kotlin.foodclub.utils.composables.CustomCodeTextField
+import android.kotlin.foodclub.utils.composables.customComponents.ConfirmButton
+import android.kotlin.foodclub.utils.composables.customComponents.CustomCodeTextField
 import android.kotlin.foodclub.viewModels.authentication.signupVerification.SignupVerificationEvents
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement

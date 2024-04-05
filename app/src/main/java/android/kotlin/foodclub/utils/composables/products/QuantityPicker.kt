@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.utils.composables
+package android.kotlin.foodclub.utils.composables.products
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
@@ -46,7 +46,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -69,19 +68,14 @@ import kotlinx.coroutines.flow.map
  * Custom QuantityPicker composable for selecting quantity, unit, and type.
  *
  * @param ingredient The Ingredient object containing initial values.
- * @param units List of available QuantityUnit options.
  * @param onQuantityUnitSelected Callback when quantity, unit, or type is selected.
  * @param onIngredientUpdated Callback when the ingredient is updated.
  */
 
-@OptIn(
-    ExperimentalComposeUiApi::class,
-    ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class
-)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun QuantityPicker(
     ingredient: Ingredient,
-    units: List<QuantityUnit>,
     onQuantityUnitSelected: (quantity: Int, unit: QuantityUnit) -> Unit,
     onIngredientUpdated: (Ingredient) -> Unit
 ) {
@@ -98,8 +92,8 @@ fun QuantityPicker(
 
     val lightGrayAlpha = 0.2f
 
-    var selectedUnit by remember { mutableStateOf(units[0]) }
-    val lazyListContents = units.map { it.longName }.toMutableList().apply {
+    var selectedUnit by remember { mutableStateOf(ingredient.unit) }
+    val lazyListContents = ingredient.product.units.map { it.longName }.toMutableList().apply {
         add(0, "")
         add("")
     }
@@ -114,7 +108,7 @@ fun QuantityPicker(
 
     LaunchedEffect(typeListState) {
         snapshotFlow { typeListState.firstVisibleItemIndex }
-            .map { index -> units[index] }
+            .map { index -> ingredient.product.units[index] }
             .filterNotNull()
             .distinctUntilChanged()
             .collect {
@@ -353,7 +347,7 @@ private fun pixelsToDp(pixels: Int) = with(LocalDensity.current) { pixels.toDp()
 @Composable
 fun EditIngredientBottomModal(
     ingredient: Ingredient,
-    onDismissRequest: (Boolean) -> Unit,
+    onDismissRequest: () -> Unit,
     onEdit: (Ingredient) -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(
@@ -363,17 +357,11 @@ fun EditIngredientBottomModal(
     ModalBottomSheet(
         sheetState = sheetState,
         onDismissRequest = {
-            onDismissRequest(false)
+            onDismissRequest()
         },
         modifier = Modifier.height(dimensionResource(id = R.dimen.dim_450)),
         containerColor = Color.White
     ) {
-        val units = listOf(
-            QuantityUnit.GRAMS,
-            QuantityUnit.KILOGRAMS,
-            QuantityUnit.LITERS,
-            QuantityUnit.MILLILITERS
-        )
         Column(
             modifier = Modifier
                 .wrapContentHeight()
@@ -384,13 +372,12 @@ fun EditIngredientBottomModal(
         ) {
             QuantityPicker(
                 ingredient,
-                units = units,
                 onQuantityUnitSelected = { quantity, unit ->
                     ingredient.quantity = quantity
                 },
                 onIngredientUpdated = {
                     onEdit(it)
-                    onDismissRequest(false)
+                    onDismissRequest()
                 },
 
                 )
