@@ -1003,6 +1003,7 @@
     <dimen name="dim_998">998dp</dimen>
     <dimen name="dim_999">999dp</dimen>
     <dimen name="dim_1000">1000dp</dimen>
+    <dimen name="fon_0_04">0.04sp</dimen>
     <dimen name="fon_1">1sp</dimen>
     <dimen name="fon_2">2sp</dimen>
     <dimen name="fon_3">3sp</dimen>

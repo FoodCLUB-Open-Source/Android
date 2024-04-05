@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -126,8 +127,8 @@ fun AuthLayout(
         Modifier
             .fillMaxSize()
             .padding(
-                start = dimensionResource(id = R.dimen.dim_32),
-                end = dimensionResource(id = R.dimen.dim_32),
+                start = dimensionResource(id = R.dimen.dim_25),
+                end = dimensionResource(id = R.dimen.dim_25),
                 top = dimensionResource(id = R.dimen.dim_100),
                 bottom = dimensionResource(id = R.dimen.dim_32)
             )
@@ -178,6 +179,6 @@ fun AuthLayout(
             content()
         }
 
-        Box(Modifier.weight(1F)) { TermsAndConditionsInfoFooter() }
+        Box(Modifier.weight(1F).fillMaxWidth()) { TermsAndConditionsInfoFooter() }
     }
 }
