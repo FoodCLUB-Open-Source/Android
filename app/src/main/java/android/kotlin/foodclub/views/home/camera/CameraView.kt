@@ -3,6 +3,7 @@ package android.kotlin.foodclub.views.home.camera
 import android.Manifest
 import android.content.Intent
 import android.kotlin.foodclub.R
+import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.confirmScreenColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.navigation.CreateRecipeScreen
@@ -31,6 +32,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -65,7 +67,10 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
@@ -220,35 +225,64 @@ fun CameraView(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     if (confirmDeletion) {
-                        AlertDialog(onDismissRequest = { confirmDeletion = !confirmDeletion },
+                        AlertDialog(
+                            onDismissRequest = { confirmDeletion = !confirmDeletion },
                             modifier = Modifier
                                 .background(
-                                    confirmScreenColor,
-                                    RoundedCornerShape(dimensionResource(id = R.dimen.dim_5))
+                                    Color.White,
+                                    RoundedCornerShape(dimensionResource(id = R.dimen.dim_8))
                                 )
                                 .padding(dimensionResource(id = R.dimen.dim_5)),) {
 
-                            Column(horizontalAlignment = Alignment.CenterHorizontally){
-                                Text(text = stringResource(R.string.Delete_Clip_Message))
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_10))
+                            ){
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.Center,
+                                    text = stringResource(R.string.Delete_Clip_Message)
+                                )
+                                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
                                 Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-                                    Button(colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                                    Button(
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = Color.LightGray
+                                        ),
                                         onClick = {
-                                        confirmDeletion = !confirmDeletion
-
-                                    }) {
-                                        Text(text= stringResource(id = R.string.Cancel))
+                                            confirmDeletion = !confirmDeletion
+                                        }
+                                    ) {
+                                        Text(
+                                            text= stringResource(id = R.string.Cancel),
+                                            fontWeight = FontWeight(600),
+                                            fontFamily = Montserrat,
+                                            color = Color.White,
+                                            fontSize = dimensionResource(id = R.dimen.fon_14).value.sp
+                                        )
                                     }
+                                    Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_10)))
 
-                                    Button(colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                                    Button(
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = Color.Red
+                                        ),
                                         onClick = {
-                                        uris.removeAt(uris.lastIndex)
-                                        events.onEvent(StopWatchEvent.onRecall)
-                                        removeUpdate(true)
-                                        canDelete = false
-                                        confirmDeletion = !confirmDeletion
-                                    }) {
-                                        Text(text= stringResource(id = R.string.Confirm))
+                                            uris.removeAt(uris.lastIndex)
+                                            events.onEvent(StopWatchEvent.onRecall)
+                                            removeUpdate(true)
+                                            canDelete = false
+                                            confirmDeletion = !confirmDeletion
+                                        }
+                                    ) {
+                                        Text(
+                                            text= stringResource(id = R.string.Confirm),
+                                            fontWeight = FontWeight(600),
+                                            fontFamily = Montserrat,
+                                            color = Color.White,
+                                            fontSize = dimensionResource(id = R.dimen.fon_14).value.sp
+                                        )
                                     }
                                 }
                             }
@@ -397,7 +431,7 @@ fun CameraView(
                                 uris.forEachIndexed { index, uri ->
                                     mutableUriMap[index] = uri
                                 }
-                                events.clearAll()
+                                events.onEvent(StopWatchEvent.onReset)
                                 navController.currentBackStackEntry?.savedStateHandle?.set("videoUris", mutableUriMap)
                                 navController.navigate(CreateRecipeScreen.VideoEditor.route)
                             },
