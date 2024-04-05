@@ -73,13 +73,16 @@ fun LogInWithEmail(
                 Text(
                     text = state.loginStatus ?: "",
                     fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
+                    fontFamily = Montserrat,
                     color = Color.Red,
-                    modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.dim_10))
+                    modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.dim_10), vertical = dimensionResource(
+                        id = R.dimen.dim_0
+                    ))
                 )
 
                 ConfirmButton(
                     enabled = filledUsername && filledPassword,
-                    text = stringResource(id = R.string.log_in)
+                    text = stringResource(id = R.string.log_in),
                 ) {
                     events.logInUser(username, userPassword, navController)
                 }
