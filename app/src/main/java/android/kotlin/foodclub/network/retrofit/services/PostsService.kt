@@ -17,7 +17,7 @@ interface PostsService {
         @Path("postId") postId: Long
     ): Response<GetPostResponse>
 
-    @GET("posts/homepage/user")
+    @GET("posts")
     suspend fun getHomepagePosts(
         @Query("page_size") pageSize: Int?,
         @Query("page_number") pageNo: Int?

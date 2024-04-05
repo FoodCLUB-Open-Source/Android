@@ -64,7 +64,8 @@ fun TakeSnapView(
             TakePhotoPreview(
                 controller = controller,
                 navController = navController,
-                onTakePhoto = {
+                onTakePhoto = { previewUri ->
+                    photoUri = previewUri
                     takePhoto(
                         controller,
                         { photoUri = it},

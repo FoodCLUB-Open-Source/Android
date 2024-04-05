@@ -36,27 +36,32 @@ fun EditProfileSetting(
         var email by remember { mutableStateOf("") }
         var username by remember { mutableStateOf("") }
 
-        CustomTextField(
-            placeholder = "",
-            label = stringResource(id = R.string.settings_full_name),
-            initialValue = user?.fullName ?: "Test Name",
-            keyboardType = KeyboardType.Text,
-            onValueChange = { fullName = it })
 
-        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_12)))
 
         CustomTextField(
             placeholder = "",
             label = stringResource(id = R.string.username),
+            iconID = R.drawable.edit_icon,
             initialValue = user?.userName ?: "",
             keyboardType = KeyboardType.Text,
             onValueChange = { username = it })
 
-        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_12)))
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+
+        CustomTextField(
+            placeholder = "",
+            label = stringResource(id = R.string.settings_full_name),
+            iconID = R.drawable.edit_icon,
+            initialValue = user?.fullName ?: "Test Name",
+            keyboardType = KeyboardType.Text,
+            onValueChange = { fullName = it })
+
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
         CustomTextField(
             placeholder = "",
             label = stringResource(id = R.string.email),
+            iconID = R.drawable.edit_icon,
             initialValue = user?.email ?: "",
             keyboardType = KeyboardType.Text,
             onValueChange = { email = it })

@@ -9,6 +9,7 @@ import android.kotlin.foodclub.viewModels.home.home.HomeViewModel
 import android.kotlin.foodclub.viewModels.home.messaging.MessagingViewModel
 import android.kotlin.foodclub.viewModels.home.myBasket.MyBasketViewModel
 import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
+import android.kotlin.foodclub.viewModels.home.search.SearchViewModel
 import android.kotlin.foodclub.views.home.CameraPreviewView
 import android.kotlin.foodclub.views.home.addIngredients.AddIngredientsView
 import android.kotlin.foodclub.views.home.discover.DiscoverView
@@ -35,6 +36,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import androidx.paging.compose.collectAsLazyPagingItems
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -71,6 +73,8 @@ fun NavGraphBuilder.homeNavigationGraph(
             })
         ) {
             val viewModel  = it.sharedHiltViewModel<ProfileViewModel>(navController = navController)
+            val userPosts = viewModel.userPostsPagingFlow.collectAsLazyPagingItems()
+            val userBookmarks = viewModel.userBookmarksPagingFlow.collectAsLazyPagingItems()
             val state = viewModel.state.collectAsState()
             val userId = it.arguments?.getLong("userId")
             if (userId == null) {
@@ -78,12 +82,12 @@ fun NavGraphBuilder.homeNavigationGraph(
                 return@composable
             }
 
-            LaunchedEffect(Unit) {viewModel.setUser(userId)}
+            LaunchedEffect(Unit) { viewModel.setUser(userId) }
 
             ProfileView(
-                navController = navController,
-                userId = userId,
-                viewModel = viewModel,
+                onNavigate = { path, options -> navController.navigate(path) { options() } },
+                profilePosts = userPosts,
+                bookmarkedPosts = userBookmarks,
                 events = viewModel,
                 state = state.value
             )
@@ -215,7 +219,10 @@ fun NavGraphBuilder.homeNavigationGraph(
         }
 
         composable(route = HomeOtherRoutes.MySearchView.route) {
-            NewSearchView(navController = navController)
+            val viewModel = it.sharedHiltViewModel<SearchViewModel>(navController = navController)
+            val state = viewModel.state.collectAsState()
+
+            NewSearchView(navController = navController, events = viewModel, state = state.value)
         }
 
         composable(route = HomeOtherRoutes.AddIngredientsView.route){

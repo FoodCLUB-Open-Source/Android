@@ -1,7 +1,7 @@
 package android.kotlin.foodclub.views.settings
 
 import android.kotlin.foodclub.R
-import android.kotlin.foodclub.config.ui.textFieldCustomColors
+import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.utils.composables.ConfirmButton
 import android.kotlin.foodclub.utils.composables.CustomPasswordTextField
 import android.kotlin.foodclub.utils.composables.SettingsLayout
@@ -30,16 +30,15 @@ fun ChangePasswordSettings(
         onBackAction = { onBackAction() }) {
         var oldPassword by remember { mutableStateOf("") }
         var newPassword by remember { mutableStateOf("") }
+        var newPasswordConfirm by remember {
+            mutableStateOf("")
+        }
 
         var filledOldPassword by remember { mutableStateOf(false) }
         var filledNewPassword by remember { mutableStateOf(false) }
-
-        val textFieldColors = textFieldCustomColors(textColor = Color.Black)
-        val errorTextFieldColors = textFieldCustomColors(
-            textColor = Color.Black,
-            focusedIndicatorColor = Color.Red,
-            unfocusedIndicatorColor = Color.Red
-        )
+        var confirmedNewPassword by remember {
+            mutableStateOf(false)
+        }
 
         CustomPasswordTextField(
             placeholder = "",
@@ -47,10 +46,8 @@ fun ChangePasswordSettings(
             strengthValidation = false,
             onCorrectnessStateChange = { filledOldPassword = !filledOldPassword },
             onValueChange = { oldPassword = it },
-            textFieldColors = textFieldColors,
-            errorTextFieldColors = errorTextFieldColors
         )
-        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_12)))
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
         CustomPasswordTextField(
             placeholder = "",
@@ -58,19 +55,26 @@ fun ChangePasswordSettings(
             strengthValidation = true,
             onCorrectnessStateChange = { filledNewPassword = !filledNewPassword },
             onValueChange = { newPassword = it },
-            textFieldColors = textFieldColors,
-            errorTextFieldColors = errorTextFieldColors
         )
-        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_12)))
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+
+        CustomPasswordTextField(
+            placeholder = "",
+            label = stringResource(id = R.string.new_password),
+            strengthValidation = true,
+            onCorrectnessStateChange = { confirmedNewPassword = !confirmedNewPassword },
+            onValueChange = { newPasswordConfirm = it },
+        )
 
         Text(
             text = error ?: "",
             fontSize = dimensionResource(id = R.dimen.fon_11).value.sp,
-            color = Color.Red
+            color = Color.Red,
+            fontFamily = Montserrat
         )
 
         ConfirmButton(
-            enabled = filledOldPassword && filledNewPassword,
+            enabled = (filledOldPassword && filledNewPassword) && (confirmedNewPassword && newPassword == newPasswordConfirm),
             text = stringResource(id = R.string.save)
         ) {
             sendData(oldPassword, newPassword)

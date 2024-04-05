@@ -67,7 +67,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavController
+import androidx.navigation.NavOptionsBuilder
 import kotlinx.coroutines.launch
 
 @Composable
@@ -254,8 +254,7 @@ fun VideoPagerLoadingSkeleton() {
 @Composable
 fun ProfileViewLoadingSkeleton (
     brush: Brush,
-    navController: NavController,
-    userId: Long,
+    onNavigate: (String, NavOptionsBuilder.() -> Unit) -> Unit,
     state: ProfileState
 ) {
     val scope = rememberCoroutineScope()
@@ -285,7 +284,7 @@ fun ProfileViewLoadingSkeleton (
             horizontalArrangement = Arrangement.Center
         ) {
 
-            Box( Modifier) {
+            Box(Modifier) {
                 Box(
                     modifier = Modifier
                         .clip(CircleShape)
@@ -294,12 +293,12 @@ fun ProfileViewLoadingSkeleton (
                         .background(brush),
 
                     )
-                if (userId == 0L) {
+                if (state.profileUserId == 0L) {
                     ProfilePicturePlaceHolder {}
                 }
             }
             Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_40)))
-            if(userId ==0L) {
+            if(state.profileUserId == 0L) {
                 Button(shape = CircleShape,
                     modifier = Modifier
                         .clip(CircleShape)
@@ -314,7 +313,7 @@ fun ProfileViewLoadingSkeleton (
                         )
                     ),
                     contentPadding = PaddingValues(),
-                    onClick = { navController.navigate("SETTINGS") }
+                    onClick = { onNavigate("SETTINGS"){} }
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.vector_1_),
@@ -407,7 +406,7 @@ fun ProfileViewLoadingSkeleton (
 
 
             }
-            if(userId != 0L && userId != state.sessionUserId) {
+            if(state.profileUserId != 0L && state.profileUserId != state.sessionUserId) {
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
                 Button(
                     onClick = { },

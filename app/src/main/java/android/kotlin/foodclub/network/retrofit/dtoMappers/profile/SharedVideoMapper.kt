@@ -3,20 +3,20 @@ package android.kotlin.foodclub.network.retrofit.dtoMappers.profile
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.home.VideoStats
 import android.kotlin.foodclub.domain.models.home.VideoUserInteraction
-import android.kotlin.foodclub.localdatasource.room.entity.OfflineUserBookmarksModel
-import android.kotlin.foodclub.localdatasource.room.entity.OfflineUserPostsModel
+import android.kotlin.foodclub.localdatasource.room.entity.ProfileBookmarksEntity
+import android.kotlin.foodclub.localdatasource.room.entity.ProfilePostsEntity
 import android.kotlin.foodclub.network.retrofit.utils.DomainMapper
 
 class SharedVideoMapper : DomainMapper<Any, VideoModel> {
 
     override fun mapToDomainModel(entity: Any): VideoModel {
         return when (entity) {
-            is OfflineUserBookmarksModel -> mapBookmarksToVideoModel(entity)
-            is OfflineUserPostsModel -> mapPostsToVideoModel(entity)
+            is ProfileBookmarksEntity -> mapBookmarksToVideoModel(entity)
+            is ProfilePostsEntity -> mapPostsToVideoModel(entity)
             else -> throw IllegalArgumentException("Unknown type")
         }
     }
-    private fun mapBookmarksToVideoModel(model: OfflineUserBookmarksModel): VideoModel {
+    private fun mapBookmarksToVideoModel(model: ProfileBookmarksEntity): VideoModel {
         val videoStats = VideoStats(
             like = model.totalLikes ?: 0L,
             views = model.totalViews ?: (model.totalLikes ?: 500L).plus((500..100000).random())
@@ -36,7 +36,7 @@ class SharedVideoMapper : DomainMapper<Any, VideoModel> {
         )
     }
 
-    private fun mapPostsToVideoModel(model: OfflineUserPostsModel): VideoModel {
+    private fun mapPostsToVideoModel(model: ProfilePostsEntity): VideoModel {
         val videoStats = VideoStats(
             like = model.totalLikes ?: 0L,
             views = model.totalViews ?: (model.totalLikes ?: 500L).plus((500..100000).random())

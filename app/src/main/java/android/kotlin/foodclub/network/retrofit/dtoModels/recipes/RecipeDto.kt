@@ -1,7 +1,9 @@
 package android.kotlin.foodclub.network.retrofit.dtoModels.recipes
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
+@Keep
 data class RecipeDto(
     val id: Long,
 

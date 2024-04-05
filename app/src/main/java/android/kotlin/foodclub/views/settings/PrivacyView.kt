@@ -3,8 +3,13 @@ package android.kotlin.foodclub.views.settings
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.navigation.SettingsScreen
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,7 +45,7 @@ fun PrivacySetting(navController: NavController) {
 
             ChangePasswordButton(navController = navController)
 
-            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_60)))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
             SettingsText(
                 text = stringResource(id = R.string.sent_your_data_request),
@@ -55,27 +60,7 @@ fun PrivacySetting(navController: NavController) {
 
 @Composable
 fun ChangePasswordButton(navController: NavController){
-    Row(modifier = Modifier
-        .clickable { navController.navigate(SettingsScreen.ChangePassword.route) }
-        .fillMaxWidth()
-        .background(Color.Transparent)
-    ){
-        SettingsText(
-            text = stringResource(id = R.string.change_password),
-            size = 16,
-            weight = FontWeight.W400,
-            textAlign = TextAlign.Left,
-            lineHeight = 19.5.sp
-        )
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        SettingsIcons(
-            size = 20,
-            icon = R.drawable.forwardarrow
-        )
-    }
-
+    SettingRow(text = stringResource(id = R.string.change_password), size = 16 , destination = SettingsScreen.ChangePassword.route , navController = navController)
 }
 @Composable
 @Preview

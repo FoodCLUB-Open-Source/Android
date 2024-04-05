@@ -112,4 +112,14 @@ object ServicesModule {
             .build()
             .create(FcmService::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideSearchService(
+        @Named("defaultRetrofit") defaultRetrofit: Builder
+    ): SearchService {
+        return defaultRetrofit
+            .build()
+            .create(SearchService::class.java)
+    }
 }

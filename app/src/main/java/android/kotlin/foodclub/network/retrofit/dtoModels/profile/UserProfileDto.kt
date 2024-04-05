@@ -1,13 +1,12 @@
 package android.kotlin.foodclub.network.retrofit.dtoModels.profile
 
 import android.kotlin.foodclub.network.retrofit.dtoModels.posts.PostModelDto
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
+@Keep
 data class UserProfileDto(
-    val username: String,
-
-    @SerializedName("profile_picture")
-    val profilePictureUrl: String? = null,
+    val userInfo: UserInfoDto,
 
     @SerializedName("total_user_likes")
     val totalUserLikes: Int,
