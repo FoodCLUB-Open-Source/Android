@@ -179,7 +179,11 @@ fun ProfileView(
                     state = VideoPagerState.default(),
                     modifier = Modifier,
                     localDensity = localDensity,
-                    coroutineScope = coroutineScope
+                    coroutineScope = coroutineScope,
+                    onBackPressed = {
+                        showPost = false
+                        state.exoPlayer.stop()
+                    },
                 )
 
 //                ShowProfilePosts(
