@@ -315,13 +315,22 @@ fun BasketIngredient(
                         )
                     }
                     Box(modifier = Modifier.align(Alignment.BottomEnd)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement
+                                .spacedBy(dimensionResource(id = R.dimen.dim_12)),
+                            modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dim_16))
+                        ) {
                             Image(
-                                painter = painterResource(id = R.drawable.baseline_arrow_left_24),
+                                painter = painterResource(id = R.drawable.shopping_list_arrow_left),
                                 contentDescription = stringResource(id = R.string.profile_picture),
                                 modifier = Modifier
-                                    .size(dimensionResource(id = R.dimen.dim_50))
-                                    .padding(end = dimensionResource(id = R.dimen.dim_15))
+                                    .height(dimensionResource(id = R.dimen.dim_24))
+                                    .width(dimensionResource(id = R.dimen.dim_12))
+                                    .padding(
+                                        vertical = dimensionResource(id = R.dimen.dim_6),
+                                        horizontal = dimensionResource(id = R.dimen.dim_3)
+                                    )
                                     .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
                                     .clickable {
                                         ingredient.decrementQuantity(5)
@@ -334,15 +343,20 @@ fun BasketIngredient(
                                 color = Color.Black,
                                 fontFamily = Montserrat,
                                 fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
+                                fontWeight = FontWeight.SemiBold,
                                 overflow = TextOverflow.Ellipsis,
                                 maxLines = integerResource(id = R.integer.int_1)
                             )
                             Image(
-                                painter = painterResource(id = R.drawable.baseline_arrow_right_24),
+                                painter = painterResource(id = R.drawable.shopping_list_arrow_right),
                                 contentDescription = stringResource(id = R.string.profile_picture),
                                 modifier = Modifier
-                                    .size(dimensionResource(id = R.dimen.dim_50))
-                                    .padding(start = dimensionResource(id = R.dimen.dim_15))
+                                    .height(dimensionResource(id = R.dimen.dim_24))
+                                    .width(dimensionResource(id = R.dimen.dim_12))
+                                    .padding(
+                                        vertical = dimensionResource(id = R.dimen.dim_6),
+                                        horizontal = dimensionResource(id = R.dimen.dim_3)
+                                    )
                                     .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
                                     .clickable {
                                         ingredient.incrementQuantity(5)
