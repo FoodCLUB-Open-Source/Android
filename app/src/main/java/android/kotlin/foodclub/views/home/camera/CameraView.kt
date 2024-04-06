@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Intent
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
-import android.kotlin.foodclub.config.ui.confirmScreenColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.navigation.CreateRecipeScreen
 import android.kotlin.foodclub.utils.composables.PermissionErrorBox
@@ -110,11 +109,11 @@ fun CameraView(
         mutableStateListOf<Uri>()
     }
 
-    val (addClip, clipUpdate) = rememberSaveable {
+    val clipUpdate = rememberSaveable {
         mutableStateOf(false)
     }
 
-    val (removeClip, removeUpdate) = rememberSaveable {
+    val removeUpdate = rememberSaveable {
         mutableStateOf(false)
     }
 
@@ -126,7 +125,7 @@ fun CameraView(
         mutableStateOf(true)
     }
 
-    var holdOrPress by remember{
+    val holdOrPress by remember{
         mutableStateOf(false)
     }
 
@@ -271,7 +270,7 @@ fun CameraView(
                                         onClick = {
                                             uris.removeAt(uris.lastIndex)
                                             events.onEvent(StopWatchEvent.onRecall)
-                                            removeUpdate(true)
+                                            removeUpdate.value = true
                                             canDelete = false
                                             confirmDeletion = !confirmDeletion
                                         }
@@ -331,7 +330,7 @@ fun CameraView(
                                             if (event is VideoRecordEvent.Finalize) {
                                                 val uri = event.outputResults.outputUri
                                                 if (uri != Uri.EMPTY) {
-                                                    clipUpdate(true)
+                                                    clipUpdate.value = true
                                                     uris.add(uri)
                                                 }
                                             }
@@ -360,10 +359,8 @@ fun CameraView(
                         }
                         RecordingClipsButton(
                             isRecording = recordingStarted.value,
-                            removeClip = removeClip,
-                            removeUpdate = removeUpdate,
-                            addClip = addClip,
-                            clipUpdate = clipUpdate,
+                            onClipRemoved = { removeUpdate.value = true },
+                            onClipAdded = { clipUpdate.value = true },
                             state = state
                         )
                     }
@@ -395,7 +392,7 @@ fun CameraView(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    if (uris.isNotEmpty()) {
+                    if (uris.isNotEmpty() && !recordingStarted.value) {
                         Box(
                             modifier = Modifier
                                 .width(dimensionResource(id = R.dimen.dim_40))
