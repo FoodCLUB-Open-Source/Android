@@ -8,6 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="gray">#808080</color>
+    <color name="snap_view_background">#F5F5F5</color>
     <color name="home_bottom_sheet_ingredients_copy_button_color">#3A7CA8</color>
     <color name="followers_following_color">#7F938D</color>
     <color name="profile_view_button_container_color">#ffffff</color>
