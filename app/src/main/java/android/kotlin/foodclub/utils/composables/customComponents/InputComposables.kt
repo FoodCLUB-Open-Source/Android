@@ -124,7 +124,8 @@ fun SearchBar(onTextChange: (String) -> Unit, placeholder: String) {
  */
 @Composable
 fun CustomCodeTextField(
-    onFillCallback: (Boolean, String) -> Unit
+    isErrorOccurred: Boolean = false,
+    onFillCallback: (Boolean, String) -> Unit,
 ) {
     var text by remember { mutableStateOf("") }
 
@@ -159,8 +160,9 @@ fun CustomCodeTextField(
                                 .fillMaxHeight()
                                 .border(
                                     dimensionResource(id = R.dimen.dim_1),
-                                    color = if (text.length == index) foodClubGreen
-                                    else Black.copy(alpha = 0.3f),
+                                    color = if (!isErrorOccurred)  if (text.length == index)  foodClubGreen
+                                    else Black.copy(alpha = 0.3f)
+                                    else Color.Red.copy(alpha = 0.3f),
                                     shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16))
                                 ),
                             contentAlignment = Alignment.Center
@@ -171,7 +173,8 @@ fun CustomCodeTextField(
                                 style = TextStyle(
                                     fontFamily = PlusJakartaSans,
                                     fontSize = dimensionResource(id = R.dimen.fon_32).value.sp,
-                                    fontWeight = FontWeight.SemiBold
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = if (!isErrorOccurred) Black.copy(alpha= 0.3f) else Color.Red.copy(alpha = 0.3f)
                                 )
                             )
                         }

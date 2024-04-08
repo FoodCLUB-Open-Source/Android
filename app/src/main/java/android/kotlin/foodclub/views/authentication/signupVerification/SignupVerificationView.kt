@@ -79,7 +79,7 @@ fun SignupVerification(
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_8)),
                 modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_12))
             ) {
-                CustomCodeTextField { isEnabled, code ->
+                CustomCodeTextField(isErrorOccurred = state.errorOccurred) { isEnabled, code ->
                     enableButton = isEnabled
                     currentCode = code
                 }
