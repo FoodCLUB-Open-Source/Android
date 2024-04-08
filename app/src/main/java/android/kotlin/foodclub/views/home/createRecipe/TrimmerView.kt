@@ -270,8 +270,11 @@ fun TrimmedVideos(totalWidth: Dp, dpPerSecond: Float, videoList: List<TrimmedVid
 }
 
 @Composable
-fun TrimmedVideo(dpPerSecond: Float, video: TrimmedVideo, isSelected: Boolean,
-                 onClick: (Int) -> Unit
+fun TrimmedVideo(
+    dpPerSecond: Float,
+    video: TrimmedVideo,
+    isSelected: Boolean,
+    onClick: (Int) -> Unit
 ) {
     val widthDerivedFromLength = (video.initialDuration / 1000 * dpPerSecond).dp
     var maximumElementWidth by remember { mutableStateOf(widthDerivedFromLength) }
@@ -320,7 +323,7 @@ fun TrimmedVideo(dpPerSecond: Float, video: TrimmedVideo, isSelected: Boolean,
         if (isSelected) {
             Box(modifier = Modifier
                 .fillMaxHeight()
-                .width(dimensionResource(R.dimen.dim_12))
+                .width(dimensionResource(R.dimen.dim_17))
                 .background(trimmerFilmSelectEdge)
                 .align(Alignment.CenterStart)
                 .pointerInput(Unit) {
@@ -356,7 +359,7 @@ fun TrimmedVideo(dpPerSecond: Float, video: TrimmedVideo, isSelected: Boolean,
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(dimensionResource(R.dimen.dim_12))
+                    .width(dimensionResource(R.dimen.dim_17))
                     .background(trimmerFilmSelectEdge)
                     .align(Alignment.CenterEnd)
                     .pointerInput(Unit) {
