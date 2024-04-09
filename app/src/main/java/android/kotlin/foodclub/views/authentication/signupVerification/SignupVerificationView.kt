@@ -69,6 +69,9 @@ fun SignupVerification(
     ) {
         Column(verticalArrangement = Arrangement.SpaceBetween) {
             var enableButton by remember { mutableStateOf(false) }
+            var enableText by remember {
+                mutableStateOf(false)
+            }
             var isTimerRunning by remember { mutableStateOf(true) }
             var currentTime by remember {
                 mutableStateOf(TimeUnit.SECONDS.toMillis(62))
@@ -79,9 +82,10 @@ fun SignupVerification(
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_8)),
                 modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_12))
             ) {
-                CustomCodeTextField(isErrorOccurred = state.errorOccurred) { isEnabled, code ->
+                CustomCodeTextField(isErrorOccurred = state.errorOccurred, enableText = enableText) { isEnabled, code ->
                     enableButton = isEnabled
                     currentCode = code
+                    enableText = false
                 }
             }
 
@@ -94,8 +98,8 @@ fun SignupVerification(
                         code = currentCode,
                         navController = navController
                     )
-
-                    enableButton = false
+                    enableText = true
+                    enableButton = false //Better but I need to fix it when the length is already full
                 }
                 Row(
                     horizontalArrangement = Arrangement.Center,

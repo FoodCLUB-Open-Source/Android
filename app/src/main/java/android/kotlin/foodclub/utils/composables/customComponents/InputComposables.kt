@@ -125,15 +125,20 @@ fun SearchBar(onTextChange: (String) -> Unit, placeholder: String) {
 @Composable
 fun CustomCodeTextField(
     isErrorOccurred: Boolean = false,
+    enableText: Boolean = false,
     onFillCallback: (Boolean, String) -> Unit,
 ) {
     var text by remember { mutableStateOf("") }
+    var hasTextBeenChanged by remember { mutableStateOf(false) }
 
     var maxWidthTextField by remember { mutableFloatStateOf(1f) }
-    BasicTextField(modifier = Modifier.fillMaxWidth(),
+    BasicTextField(
+        modifier = Modifier.fillMaxWidth(),
         value = text,
         singleLine = true,
         onValueChange = {
+            hasTextBeenChanged = true
+
             if (it.length <= 6) {
                 text = it
             }
@@ -141,47 +146,51 @@ fun CustomCodeTextField(
         },
         enabled = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-        keyboardActions = KeyboardActions(),
-        decorationBox = {
-            BoxWithConstraints(
+        keyboardActions = KeyboardActions()
+    ) {
+        BoxWithConstraints(
 
+        ) {
+            maxWidthTextField = maxWidth.value
+            Row(
+                modifier = Modifier
+                    .height(dimensionResource(id = R.dimen.dim_72))
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                maxWidthTextField = maxWidth.value
-                Row(
-                    modifier = Modifier
-                        .height(dimensionResource(id = R.dimen.dim_72))
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    repeat(6) { index ->
-                        Box(
-                            modifier = Modifier
-                                .width((maxWidthTextField / 6.5).dp)
-                                .fillMaxHeight()
-                                .border(
-                                    dimensionResource(id = R.dimen.dim_1),
-                                    color = if (!isErrorOccurred)  if (text.length == index)  foodClubGreen
-                                    else Black.copy(alpha = 0.3f)
-                                    else Color.Red.copy(alpha = 0.3f),
-                                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16))
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = text.getOrNull(index)?.toString() ?: "",
-                                textAlign = TextAlign.Center,
-                                style = TextStyle(
-                                    fontFamily = PlusJakartaSans,
-                                    fontSize = dimensionResource(id = R.dimen.fon_32).value.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = if (!isErrorOccurred) Black.copy(alpha= 0.3f) else Color.Red.copy(alpha = 0.3f)
+                repeat(6) { index ->
+                    Box(
+                        modifier = Modifier
+                            .width((maxWidthTextField / 6.5).dp)
+                            .fillMaxHeight()
+                            .border(
+                                dimensionResource(id = R.dimen.dim_1),
+                                color = if (isErrorOccurred && enableText)
+                                    Color.Red.copy(alpha = 0.3f)
+                                else if (text.length == index) foodClubGreen
+                                else Black.copy(alpha = 0.3f),
+                                shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16))
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = text.getOrNull(index)?.toString() ?: "",
+                            textAlign = TextAlign.Center,
+                            style = TextStyle(
+                                fontFamily = PlusJakartaSans,
+                                fontSize = dimensionResource(id = R.dimen.fon_32).value.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = if (isErrorOccurred && enableText) Color.Red.copy(
+                                    alpha = 0.3f
                                 )
+                                else Black.copy(alpha = 0.3f)
                             )
-                        }
+                        )
                     }
                 }
             }
-        })
+        }
+    }
 }
 
 /**
@@ -255,20 +264,29 @@ fun CustomTextField(
                 onValueChange(currentVal)
                 textValid = textValidCurrent
             },
-            placeholder = { Text(text = placeholder, color = Color(0xFF939393), fontFamily = Montserrat) },
+            placeholder = {
+                Text(
+                    text = placeholder,
+                    color = Color(0xFF939393),
+                    fontFamily = Montserrat
+                )
+            },
             colors = if (errorMessage.isNullOrBlank()) textFieldCustomColors(textColor = Color.Black) else textFieldCustomColors(
                 focusedIndicatorColor = Color.Red,
                 unfocusedIndicatorColor = Color.Red
             ),
-            shape =  RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
+            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)),
             trailingIcon = {
-                           if (iconID != null)
-                           {
-                               Image(painter = painterResource(id = iconID), contentDescription = "Edit", modifier = Modifier.size(
-                                   dimensionResource(id = R.dimen.dim_15)),
-                                   colorFilter = ColorFilter.tint(Color.Black)
-                               )
-                           }
+                if (iconID != null) {
+                    Image(
+                        painter = painterResource(id = iconID),
+                        contentDescription = "Edit",
+                        modifier = Modifier.size(
+                            dimensionResource(id = R.dimen.dim_15)
+                        ),
+                        colorFilter = ColorFilter.tint(Color.Black)
+                    )
+                }
             },
             modifier = modifier
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
@@ -350,7 +368,10 @@ fun CustomPasswordTextField(
     Column {
         TextField(
             value = password,
-            textStyle = TextStyle(fontFamily = Montserrat, letterSpacing = if (passVisible) TextUnit.Unspecified else dimensionResource(id = R.dimen.fon_5).value.sp),
+            textStyle = TextStyle(
+                fontFamily = Montserrat,
+                letterSpacing = if (passVisible) TextUnit.Unspecified else dimensionResource(id = R.dimen.fon_5).value.sp
+            ),
             onValueChange = {
                 var passValidCurrent = true
                 if (strengthValidation) {
@@ -374,7 +395,13 @@ fun CustomPasswordTextField(
                     fontFamily = Montserrat
                 )
             },
-            colors = if (errorMessage.isNullOrBlank()) { if (passVisible) textFieldColors else passwordColors} else if (passVisible) {errorTextFieldColors} else {errorPasswordColors},
+            colors = if (errorMessage.isNullOrBlank()) {
+                if (passVisible) textFieldColors else passwordColors
+            } else if (passVisible) {
+                errorTextFieldColors
+            } else {
+                errorPasswordColors
+            },
             modifier = Modifier
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10)))
                 .background(Black.copy(alpha = 0.06F))
@@ -412,7 +439,9 @@ fun CustomPasswordTextField(
                     }
                 }
             },
-            visualTransformation = if (passVisible) VisualTransformation.None else PasswordVisualTransformation('\u25CF'),
+            visualTransformation = if (passVisible) VisualTransformation.None else PasswordVisualTransformation(
+                '\u25CF'
+            ),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         )
 
@@ -521,7 +550,7 @@ fun TermsAndConditionsInfoFooter() {
     ) {
 
 
-        Column(horizontalAlignment = Alignment.CenterHorizontally){
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 color = Color.Gray,
                 text = stringResource(id = R.string.by_using),
@@ -531,8 +560,7 @@ fun TermsAndConditionsInfoFooter() {
                 maxLines = 2
             )
 
-            if (overflowText)
-            {
+            if (overflowText) {
                 ClickableText(
                     text = AnnotatedString(text = stringResource(id = R.string.terms_and_conditions)),
                     onClick = { showBottomSheet = true },
@@ -548,8 +576,7 @@ fun TermsAndConditionsInfoFooter() {
             }
         }
 
-        if(!overflowText)
-        {
+        if (!overflowText) {
             ClickableText(
                 text = AnnotatedString(text = stringResource(id = R.string.terms_and_conditions)),
                 onClick = { showBottomSheet = true },
