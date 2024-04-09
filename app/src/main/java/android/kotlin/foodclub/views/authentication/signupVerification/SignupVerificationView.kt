@@ -85,7 +85,7 @@ fun SignupVerification(
                 CustomCodeTextField(isErrorOccurred = state.errorOccurred, enableText = enableText) { isEnabled, code ->
                     enableButton = isEnabled
                     currentCode = code
-                    if (code.length < 6)
+                    if (code.length <= 6)
                     {
                         enableText = false
                     }

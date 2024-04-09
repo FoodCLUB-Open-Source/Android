@@ -166,7 +166,7 @@ fun CustomCodeTextField(
                             .border(
                                 dimensionResource(id = R.dimen.dim_1),
                                 color = if (isErrorOccurred && enableText)
-                                    Color.Red.copy(alpha = 0.3f)
+                                    Color.Red
                                 else if (text.length == index) foodClubGreen
                                 else Black.copy(alpha = 0.3f),
                                 shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16))
@@ -180,9 +180,7 @@ fun CustomCodeTextField(
                                 fontFamily = PlusJakartaSans,
                                 fontSize = dimensionResource(id = R.dimen.fon_32).value.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = if (isErrorOccurred && enableText) Color.Red.copy(
-                                    alpha = 0.3f
-                                )
+                                color = if (isErrorOccurred && enableText) Color.Red
                                 else Black.copy(alpha = 0.3f)
                             )
                         )
