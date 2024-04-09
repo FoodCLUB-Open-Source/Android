@@ -52,6 +52,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -267,6 +268,8 @@ fun HomeHeaderBackground(
             .background(
                 color = if (pagerState.currentPage == 0 || (pagerState.currentPage == 1 && !state.showMemoriesReel)) {
                     Color.Black
+                } else if (pagerState.currentPage == 1) {
+                    colorResource(id =R.color.snap_view_background)
                 } else {
                     snapsTopbar
                 }
@@ -297,7 +300,7 @@ fun HeaderContent(
             text = stringResource(id = R.string.feed),
             fontFamily = Montserrat,
             fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
-            style = TextStyle(color = if (pagerState.currentPage == 0) Color.White else Color.LightGray),
+            style = TextStyle(color = if (pagerState.currentPage == 0) Color.White else if (pagerState.currentPage == 1) Color.Black else Color.LightGray),
             lineHeight = dimensionResource(id = R.dimen.fon_21_94).value.sp,
             fontWeight = if (pagerState.currentPage == 0) FontWeight.Bold else FontWeight.Medium
         )
@@ -308,7 +311,7 @@ fun HeaderContent(
             text = stringResource(id = R.string.pipe_symbol),
             fontFamily = Montserrat,
             fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
-            style = TextStyle(color = Color.LightGray),
+            style = TextStyle(color = if (pagerState.currentPage == 1) Color.Black else Color.LightGray),
             lineHeight = dimensionResource(id = R.dimen.fon_21_94).value.sp
         )
         Text(
@@ -324,7 +327,7 @@ fun HeaderContent(
             text = stringResource(id = R.string.snaps),
             fontFamily = Montserrat,
             fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,
-            style = TextStyle(color = if (pagerState.currentPage == 1) Color.White else Color.LightGray),
+            style = TextStyle(color = if (pagerState.currentPage == 1) Color.Black else Color.LightGray),
             lineHeight = dimensionResource(id = R.dimen.fon_21_94).value.sp,
             fontWeight = if (pagerState.currentPage == 1) FontWeight.Bold else FontWeight.Medium
         )
