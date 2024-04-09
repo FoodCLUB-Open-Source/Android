@@ -85,7 +85,11 @@ fun SignupVerification(
                 CustomCodeTextField(isErrorOccurred = state.errorOccurred, enableText = enableText) { isEnabled, code ->
                     enableButton = isEnabled
                     currentCode = code
-                    enableText = false
+                    if (code.length < 6)
+                    {
+                        enableText = false
+                    }
+
                 }
             }
 
@@ -99,7 +103,7 @@ fun SignupVerification(
                         navController = navController
                     )
                     enableText = true
-                    enableButton = false //Better but I need to fix it when the length is already full
+                    enableButton = false
                 }
                 Row(
                     horizontalArrangement = Arrangement.Center,
