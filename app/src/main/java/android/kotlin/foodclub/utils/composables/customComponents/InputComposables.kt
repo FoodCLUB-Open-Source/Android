@@ -129,7 +129,6 @@ fun CustomCodeTextField(
     onFillCallback: (Boolean, String) -> Unit,
 ) {
     var text by remember { mutableStateOf("") }
-    var hasTextBeenChanged by remember { mutableStateOf(false) }
 
     var maxWidthTextField by remember { mutableFloatStateOf(1f) }
     BasicTextField(
@@ -137,12 +136,14 @@ fun CustomCodeTextField(
         value = text,
         singleLine = true,
         onValueChange = {
-            hasTextBeenChanged = true
-
-            if (it.length <= 6) {
-                text = it
+            if(it.length <= 6) {
+                if (it != text) {
+                    if (it.length <= 6) {
+                        text = it
+                    }
+                    onFillCallback(text.length == 6, text)
+                }
             }
-            onFillCallback(it.length >= 6, text)
         },
         enabled = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
