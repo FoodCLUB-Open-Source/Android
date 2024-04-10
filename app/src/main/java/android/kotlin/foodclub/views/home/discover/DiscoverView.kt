@@ -110,11 +110,11 @@ fun DiscoverView(
     val mainTabItemsList = stringArrayResource(id = R.array.discover_tabs)
 
     var gridHeight by remember { mutableStateOf(0.dp) }
-    val recommandationVideosCount by remember { mutableIntStateOf(8) }
-    gridHeight = if (recommandationVideosCount == 1) {
-        (recommandationVideosCount * dimensionResource(id = R.dimen.dim_272).value).dp
+    val recommendationVideosCount by remember { mutableIntStateOf(8) }
+    gridHeight = if (recommendationVideosCount == 1) {
+        (recommendationVideosCount * dimensionResource(id = R.dimen.dim_272).value).dp
     } else {
-        ((recommandationVideosCount / 2) * dimensionResource(id = R.dimen.dim_272).value).dp
+        ((recommendationVideosCount / 2) * dimensionResource(id = R.dimen.dim_272).value).dp
     }
 
     Column(
@@ -213,9 +213,9 @@ fun DiscoverView(
             }
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
             if (productState.addedProducts.isNotEmpty()) {
-                RecommandationSection(
+                RecommendationSection(
                     gridHeight,
-                    recommandationVideosCount,
+                    recommendationVideosCount,
                     navController = navController,
                     isShowPost = {
                         isShowPost = !isShowPost
@@ -268,9 +268,9 @@ fun DiscoverView(
 }
 
 @Composable
-fun RecommandationSection(
+fun RecommendationSection(
     gridHeight: Dp,
-    recommandationVideosCount: Int,
+    recommendationVideosCount: Int,
     navController: NavController,
     isShowPost: (Long) -> Unit
 ) {
@@ -302,7 +302,7 @@ fun RecommandationSection(
         )
         RecommendationVideos(
             gridHeight = gridHeight,
-            recommandationVideosCount = recommandationVideosCount,
+            recommendationVideosCount = recommendationVideosCount,
             navController = navController,
             dataItem = null,
             userName = null,
@@ -627,9 +627,9 @@ fun CategoryVideos(
 
     RecommendationVideos(
         gridHeight = screenHeight - dimensionResource(id = R.dimen.dim_280),
-        recommandationVideosCount = /*dataList.size*/8, // require back-end, unfinished
+        recommendationVideosCount = /*dataList.size*/8, // require back-end, unfinished
         navController = navController,
-        dataItem = null,
+        dataItem = categoryDataList,
         userName = null,
         isShowVideo = {}
     )
