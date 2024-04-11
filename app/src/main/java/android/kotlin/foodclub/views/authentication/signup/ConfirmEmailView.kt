@@ -46,7 +46,7 @@ fun ConfirmEmailView(
             CustomTextField(
                 initialValue = repeatedEmail,
                 placeholder = stringResource(id = R.string.email),
-                keyboardType = KeyboardType.Text,
+                keyboardType = KeyboardType.Email,
                 onCorrectnessStateChange = { filledEmail = !filledEmail },
                 onValueChange = {
                     repeatedEmail = it

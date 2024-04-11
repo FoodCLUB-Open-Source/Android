@@ -123,6 +123,7 @@ fun SignupVerification(
                                 events.sendVerificationCode(navController = navController)
                                 currentTime = TimeUnit.SECONDS.toMillis(61)
                                 isTimerRunning = true
+                                enableButton = true
                             }
                         },
                         style = TextStyle(
