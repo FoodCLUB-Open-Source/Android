@@ -136,11 +136,9 @@ fun CustomCodeTextField(
         value = text,
         singleLine = true,
         onValueChange = {
-            if(it.length <= 6) {
+            if (it.length <= 6) {
                 if (it != text) {
-                    if (it.length <= 6) {
-                        text = it
-                    }
+                    text = it
                     onFillCallback(text.length == 6, text)
                 }
             }
