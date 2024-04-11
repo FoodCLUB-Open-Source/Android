@@ -33,7 +33,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -117,9 +116,9 @@ fun RecommendationVideos(
                                 .fillMaxSize()
                                 .align(Alignment.Center)
                         ) {
-                            // TODO change with name which I couldn't find
+
                             Text(
-                                text = "A long Test string and a long string",
+                                text = videoModel.description,
                                 fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
                                 fontWeight = FontWeight.W600,
                                 fontFamily = Montserrat,
