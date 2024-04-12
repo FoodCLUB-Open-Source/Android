@@ -69,6 +69,9 @@ fun SignupVerification(
     ) {
         Column(verticalArrangement = Arrangement.SpaceBetween) {
             var enableButton by remember { mutableStateOf(false) }
+            var enableText by remember {
+                mutableStateOf(false)
+            }
             var isTimerRunning by remember { mutableStateOf(true) }
             var currentTime by remember {
                 mutableStateOf(TimeUnit.SECONDS.toMillis(62))
@@ -79,9 +82,14 @@ fun SignupVerification(
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_8)),
                 modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_12))
             ) {
-                CustomCodeTextField { isEnabled, code ->
+                CustomCodeTextField(isErrorOccurred = state.errorOccurred, enableText = enableText) { isEnabled, code ->
                     enableButton = isEnabled
                     currentCode = code
+                    if (code.length < 6)
+                    {
+                        enableText = false
+                    }
+
                 }
             }
 
@@ -94,7 +102,7 @@ fun SignupVerification(
                         code = currentCode,
                         navController = navController
                     )
-
+                    enableText = true
                     enableButton = false
                 }
                 Row(
@@ -115,6 +123,7 @@ fun SignupVerification(
                                 events.sendVerificationCode(navController = navController)
                                 currentTime = TimeUnit.SECONDS.toMillis(61)
                                 isTimerRunning = true
+                                enableButton = true
                             }
                         },
                         style = TextStyle(
