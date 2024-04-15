@@ -91,6 +91,12 @@ class TrimmerViewModel @Inject constructor(
         }
     }
 
+    override fun resetState() {
+        _state.value.videoObjects.forEach { videoObject ->
+            videoObject.resetTrimmingConfigurations()
+        }
+    }
+
     private fun onVideoSaveListener() {
         if (_state.value.videoObjects.any { it.savedFilePath == null }) return
         var url: String? = null

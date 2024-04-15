@@ -30,6 +30,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -163,25 +165,53 @@ fun TrimmerView(state: TrimmerState, events: TrimmerEvents) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.dim_16))
             ) {
-                Button(
-                    onClick = { events.createVideo(localContext) },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White,
-                        contentColor = Color.Black
-                    ),
+                Row(
                     modifier = Modifier
-                        .align(Alignment.End)
-                        .padding(end = dimensionResource(R.dimen.dim_28))
-                        .width(dimensionResource(R.dimen.dim_92))
-                        .height(dimensionResource(R.dimen.dim_54))
-                        .clip(RoundedCornerShape(dimensionResource(R.dimen.dim_10)))
-                        .background(Color.White)
+                        .fillMaxWidth()
+                        .padding(dimensionResource(id = R.dimen.dim_10)),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.right_arrow),
-                        contentDescription = null,
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    )
+                    Button(
+                        onClick = { events.resetState() },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            contentColor = Color.Black
+                        ),
+                        modifier = Modifier
+                            .padding(end = dimensionResource(R.dimen.dim_28))
+                            .width(dimensionResource(R.dimen.dim_92))
+                            .height(dimensionResource(R.dimen.dim_54))
+                            .clip(RoundedCornerShape(dimensionResource(R.dimen.dim_10)))
+                            .background(Color.White)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = null,
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                    }
+
+                    Button(
+                        onClick = { events.createVideo(localContext) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            contentColor = Color.Black
+                        ),
+                        modifier = Modifier
+                            .padding(end = dimensionResource(R.dimen.dim_28))
+                            .width(dimensionResource(R.dimen.dim_92))
+                            .height(dimensionResource(R.dimen.dim_54))
+                            .clip(RoundedCornerShape(dimensionResource(R.dimen.dim_10)))
+                            .background(Color.White)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.right_arrow),
+                            contentDescription = null,
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                    }
+
                 }
                 BottomTrimmerControl(
                     timeSeconds = 120,

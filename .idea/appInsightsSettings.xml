@@ -8,7 +8,7 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="com.HavokIndustries.HoldMyJellO" />
+                  <option name="appId" value="coinwise.investmenttracker" />
                 </ConnectionSetting>
               </option>
               <option name="failureTypes">
@@ -27,10 +27,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="android.kotlin.foodclub" />
+                  <option name="mobileSdkAppId" value="1:15380520850:android:3362281641cc821076eb4b" />
+                  <option name="projectId" value="foodclub-d29e8" />
+                  <option name="projectNumber" value="15380520850" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
