@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -22,15 +23,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,29 +57,27 @@ import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
 
 /**
- * ModalBottomSheet containing all functionality for Searching products
  *
  * @param events [ProductsEvents]
  * @param state [ProductState]
  * @param productsList [LazyPagingItems] of ingredient object. This list populates the list
  * @param onDismiss Function called when "Back" button is clicked
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductListModalSheet(
+fun AddIngredientsView(
     events: ProductsEvents,
     state: ProductState,
     productsList: LazyPagingItems<Ingredient>,
     onDismiss: () -> Unit,
 ) {
-    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    ModalBottomSheet(
-        containerColor = Color.White,
-        onDismissRequest = onDismiss,
-        sheetState = bottomSheetState,
-        dragHandle = { BottomSheetDefaults.DragHandle() },
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(dimensionResource(id = R.dimen.dim_4))
+            .padding(top = dimensionResource(id = R.dimen.dim_60)),
     ) {
+        AddIngredientsTitle(onDismiss = onDismiss)
         ProductsList(
             events = events,
             state = state,
@@ -89,6 +85,37 @@ fun ProductListModalSheet(
             searchBarPlaceholder = stringResource(id = R.string.search_ingredients),
             searchBarColors = defaultSearchBarColors()
         )
+    }
+}
+
+@Composable
+fun AddIngredientsTitle(
+    onDismiss: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .padding(horizontal = dimensionResource(id = R.dimen.dim_4))
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+
+        Icon(
+            modifier = Modifier
+                .size(25.dp)
+                .clickable { onDismiss() },
+            painter = painterResource(id = R.drawable.back_icon),
+            contentDescription = null
+        )
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+            Text(
+                text = stringResource(id = R.string.add_ingredients),
+                fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
+                fontFamily = Montserrat,
+                lineHeight = dimensionResource(id = R.dimen.fon_48).value.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+
     }
 }
 
@@ -145,12 +172,13 @@ fun ProductsList(
                 }
             )
         }
+
         else -> {}
     }
 
     Column(
         modifier = modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .background(
                 color = Color.White
             )
@@ -331,7 +359,9 @@ fun IngredientItem(
         expirationDate = itemExpirationDate(item)
     }
 
-    var isItemAdded = userIngredientsList.any { item.product.foodId == it.product.foodId }
+    var isItemAdded by remember {
+        mutableStateOf(userIngredientsList.any { item.product.foodId == it.product.foodId })
+    }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -386,7 +416,7 @@ fun IngredientItem(
             )
         }
 
-        if(includeExpiryDate) {
+        if (includeExpiryDate) {
             Box(modifier = modifier.weight(1f)) {
                 Text(
                     modifier = modifier
@@ -407,7 +437,7 @@ fun IngredientItem(
             }
         }
 
-        if(onAddItemClicked != null) {
+        if (onAddItemClicked != null) {
             Box(
                 modifier = Modifier
                     .size(dimensionResource(id = R.dimen.dim_24))
