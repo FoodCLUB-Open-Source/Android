@@ -40,6 +40,7 @@ class MyBasket {
         val removeList = ingredients.filter { selectedIngredients.contains(it.product.foodId) }
         ingredients.removeAll(removeList)
         removedIds.addAll(removeList.map { it.product.foodId })
+        removeList.map { it.quantity = 0 }
         selectedIngredients = mutableListOf()
     }
 
