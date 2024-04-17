@@ -147,6 +147,7 @@ class MyBasketViewModel @Inject constructor(
     }
 
     override fun deleteIngredient(ingredient: Ingredient) {
+        ingredient.quantity = 0
         val basket = state.value.basket!!
         basket.removeIngredient(ingredient.product.foodId)
         _productState.update {
