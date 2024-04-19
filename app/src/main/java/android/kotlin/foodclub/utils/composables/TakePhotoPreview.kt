@@ -2,6 +2,7 @@ package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
+import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.helpers.createGalleryLauncher
 import android.net.Uri
 import androidx.camera.core.CameraSelector
@@ -174,7 +175,7 @@ fun PhotoTakenPreview(
         ) {
             IconButton(
                 onClick = {
-                    navController.popBackStack()
+                    navController.navigate(route = HomeOtherRoutes.TakeSnapPhotoView.route)
                 },
                 modifier = Modifier
                     .padding(dimensionResource(id = R.dimen.dim_30))
