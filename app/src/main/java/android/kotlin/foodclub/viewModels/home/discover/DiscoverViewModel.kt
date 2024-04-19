@@ -205,6 +205,8 @@ class DiscoverViewModel @Inject constructor(
     }
 
     override fun deleteIngredient(ingredient: Ingredient) {
+        ingredient.quantity = 0
+        ingredient.expirationDate = ""
         val addedIngredients = _productState.value.addedProducts.toMutableList()
         val filteredAddedIngredient = _productState.value.filteredAddedProducts.toMutableList()
 

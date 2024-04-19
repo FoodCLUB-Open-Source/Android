@@ -76,7 +76,7 @@ import kotlinx.coroutines.flow.map
 @Composable
 fun QuantityPicker(
     ingredient: Ingredient,
-    onQuantityUnitSelected: (quantity: Int, unit: QuantityUnit) -> Unit,
+    onQuantityUnitSelected: (quantity: Int?, unit: QuantityUnit) -> Unit,
     onIngredientUpdated: (Ingredient) -> Unit
 ) {
     var quantity by remember { mutableStateOf(if(ingredient.quantity== 0)"" else ingredient.quantity.toString()) }
@@ -238,7 +238,8 @@ fun QuantityPicker(
         }
 
         onQuantityUnitSelected(
-            if (quantity == "0" || quantity == "") 1 else quantity.toInt(),
+//            if (quantity == "0" || quantity == "") 1 else
+                quantity.toIntOrNull(),
             selectedUnit
         )
 
@@ -276,9 +277,9 @@ fun QuantityPicker(
             contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_15)),
             onClick = {
 
-                val updatedQuantity: Int =
-                    if (quantity == "0" || quantity == "") 1 else quantity.toInt()
-                ingredient.quantity = updatedQuantity
+//                val updatedQuantity: Int =
+//                    if (quantity == "0" || quantity == "") 1 else quantity.toInt()
+//                ingredient.quantity = updatedQuantity
                 ingredient.unit = selectedUnit
                 onIngredientUpdated(ingredient)
             }
@@ -373,7 +374,7 @@ fun EditIngredientBottomModal(
             QuantityPicker(
                 ingredient,
                 onQuantityUnitSelected = { quantity, unit ->
-                    ingredient.quantity = quantity
+                    ingredient.quantity = quantity ?: 0
                 },
                 onIngredientUpdated = {
                     onEdit(it)

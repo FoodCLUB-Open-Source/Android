@@ -411,7 +411,7 @@
     <string name="quantity_colon">Quantity:</string>
     - My Basket
     <string name="shopping_list">Shopping List</string>
-    <string name="add_items_plus">Add items +</string>
+    <string name="add_items_plus">Add items</string>
     - Main
     <string name="home">Home</string>
     <string name="discover">Discover</string>
@@ -804,7 +804,7 @@ In some countries, the law requires us to provide additional regulatory informat
     <string name="Delete_Clip_Message">Do you want to delete the last clip made?</string>
     <string name="Confirm">Confirm</string>
     <string name="Cancel">Cancel</string>
-    <string name="add_ingredients">Add ingredients</string>
+    <string name="add_ingredients">Add Ingredients</string>
     <string name="add_ingredients_information_text">Add ingredients to your kitchen to see recommendations</string>
     <string name="recommendations">Recommendations</string>
     <string name="All">All</string>
