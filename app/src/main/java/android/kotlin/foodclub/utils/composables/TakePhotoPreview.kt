@@ -105,7 +105,7 @@ fun TakePhotoPreview(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.Black)
+                .background(Color.Black.copy(alpha = 0.4f))
                 .align(Alignment.BottomCenter)
                 .padding(dimensionResource(id = R.dimen.dim_25)),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -192,7 +192,7 @@ fun PhotoTakenPreview(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.Black)
+                .background(Color.Black.copy(alpha = 0.4f))
                 .align(Alignment.BottomCenter)
                 .padding(
                     start = dimensionResource(id = R.dimen.dim_25),
