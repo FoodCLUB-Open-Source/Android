@@ -1,7 +1,6 @@
 package android.kotlin.foodclub.views.home.profile
 
 import android.kotlin.foodclub.domain.models.profile.UserProfile
-import android.kotlin.foodclub.domain.models.recipes.Recipe
 import android.kotlin.foodclub.utils.composables.videoPager.VideoPagerState
 import android.kotlin.foodclub.utils.helpers.StoreData
 import androidx.media3.exoplayer.ExoPlayer

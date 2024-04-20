@@ -61,8 +61,6 @@ fun RecipeBottomSheet(
 //    val sections = listOf("Ingredients", "Chef Ai", "Health", "Environment","Sticker")
 //    var selectedSection by remember { mutableStateOf(sections.first()) }
 
-    val categories = listOf("Protein", "Breakfast")
-
     if (screenHeight <= dimensionResource(id = R.dimen.dim_440)) {
         isSmallScreen = true
     }

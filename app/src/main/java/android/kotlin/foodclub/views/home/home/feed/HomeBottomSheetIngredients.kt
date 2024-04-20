@@ -251,7 +251,7 @@ fun HomeBottomSheetIngredients(
 
                 val sections = listOf("Ingredients")
                 /**
-                 * @param [fillMaxWidth] fixed %30 to screen, because we just have ingredients
+                 * fillMaxWidth fixed %30 to screen, because we just have ingredients
                  * tabs. In future just set this param to 1f
                  *
                  * add more section to the sections list
