@@ -59,6 +59,7 @@ class TrimmedVideo(
                 .setClippingConfiguration(originalConfig)
             player.replaceMediaItem(id, newItemBuilder.build())
         }
+        updateTimeline()
     }
 
     private fun addListeners() {

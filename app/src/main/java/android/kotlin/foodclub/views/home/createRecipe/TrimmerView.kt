@@ -7,6 +7,7 @@ import android.kotlin.foodclub.config.ui.trimmerTimelineText
 import android.kotlin.foodclub.domain.models.others.TrimmedVideo
 import android.kotlin.foodclub.utils.composables.LoadingView
 import android.kotlin.foodclub.viewModels.home.trimmer.TrimmerEvents
+import android.util.Log
 import android.view.ViewGroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -38,6 +39,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -82,6 +84,10 @@ fun TrimmerView(state: TrimmerState, events: TrimmerEvents) {
     var isPlaying by remember { mutableStateOf(false) }
     val localContext = LocalContext.current
     val systemUiController = rememberSystemUiController()
+
+    val triggerReset: () -> Unit = {
+        currentTime.value = 0L
+    }
 
     var lifecycle by remember {
         mutableStateOf(Lifecycle.Event.ON_CREATE)
@@ -218,6 +224,9 @@ fun TrimmerView(state: TrimmerState, events: TrimmerEvents) {
                     videoList = state.videoObjects,
                     currentTime = currentTime,
                     onSeek = { events.navigate(it) },
+                    onResetVideo = {
+                        triggerReset()
+                    },
                     modifier = Modifier.height(dimensionResource(R.dimen.dim_150))
                 )
             }
@@ -240,6 +249,7 @@ fun BottomTrimmerControl(
     videoList: List<TrimmedVideo>,
     currentTime: State<Long>,
     onSeek: (Long) -> Unit,
+    onResetVideo: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val totalWidth = (timeSeconds.toInt() * 6 + 26).dp
@@ -251,7 +261,7 @@ fun BottomTrimmerControl(
         .horizontalScroll(rememberScrollState())) {
         Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.dim_8))) {
             Timeline(totalWidth, timeSeconds)
-            TrimmedVideos(totalWidth, dpPerSecond, videoList)
+            TrimmedVideos(totalWidth, dpPerSecond, videoList, onResetVideo = { onResetVideo() })
         }
 
         Box(modifier = Modifier
@@ -276,7 +286,12 @@ fun BottomTrimmerControl(
 }
 
 @Composable
-fun TrimmedVideos(totalWidth: Dp, dpPerSecond: Float, videoList: List<TrimmedVideo>) {
+fun TrimmedVideos(
+    totalWidth: Dp,
+    dpPerSecond: Float,
+    videoList: List<TrimmedVideo>,
+    onResetVideo: () -> Unit // Add a callback function for reset
+) {
     var selectedVideo by remember { mutableIntStateOf(-1) }
     LazyRow(
         contentPadding = PaddingValues(start = dimensionResource(R.dimen.dim_8)),
@@ -294,7 +309,11 @@ fun TrimmedVideos(totalWidth: Dp, dpPerSecond: Float, videoList: List<TrimmedVid
                 dpPerSecond = dpPerSecond,
                 video = item,
                 isSelected = selectedVideo == item.id,
-                onClick = { selectedVideo = it })
+                onClick = { selectedVideo = it },
+                onReset = {
+                    onResetVideo()
+                }
+            )
         }
     }
 }
@@ -304,7 +323,8 @@ fun TrimmedVideo(
     dpPerSecond: Float,
     video: TrimmedVideo,
     isSelected: Boolean,
-    onClick: (Int) -> Unit
+    onClick: (Int) -> Unit,
+    onReset: () -> Unit // Add a callback function for reset
 ) {
     val widthDerivedFromLength = (video.initialDuration / 1000 * dpPerSecond).dp
     var maximumElementWidth by remember { mutableStateOf(widthDerivedFromLength) }
@@ -316,6 +336,17 @@ fun TrimmedVideo(
     }
     var startOffset by remember { mutableStateOf(0.dp) }
     var endOffset by remember { mutableStateOf(0.dp) }
+
+    // Call the reset function when the onReset callback is triggered
+    LaunchedEffect(onReset) {
+        Log.i("MYTAG","start offSet before reset: $startOffset end offSet: $endOffset")
+        Log.i("MYTAG","elementWidth before reset: $elementWidth")
+        startOffset = 0.dp
+        endOffset = 0.dp
+        elementWidth = maximumElementWidth
+        Log.i("MYTAG","start offSet after reset: $startOffset end offSet: $endOffset")
+        Log.i("MYTAG","elementWidth after reset: $elementWidth")
+    }
 
     Box(
         Modifier
