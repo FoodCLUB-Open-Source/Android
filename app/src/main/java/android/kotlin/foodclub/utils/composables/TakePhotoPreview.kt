@@ -2,7 +2,6 @@ package android.kotlin.foodclub.utils.composables
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
-import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.helpers.createGalleryLauncher
 import android.net.Uri
 import androidx.activity.compose.BackHandler
@@ -151,12 +150,11 @@ fun TakePhotoPreview(
 @Composable
 fun PhotoTakenPreview(
     image: Uri,
-    navController: NavController,
     onSaveClick: () -> Unit,
     onCancelClick: () -> Unit
 ) {
     BackHandler {
-        navController.navigate(route = HomeOtherRoutes.TakeSnapPhotoView.route)
+        onCancelClick()
     }
     Box(
         modifier = Modifier
@@ -179,7 +177,7 @@ fun PhotoTakenPreview(
         ) {
             IconButton(
                 onClick = {
-                    navController.navigate(route = HomeOtherRoutes.TakeSnapPhotoView.route)
+                    onCancelClick()
                 },
                 modifier = Modifier
                     .padding(dimensionResource(id = R.dimen.dim_30))
