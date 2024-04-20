@@ -5,6 +5,7 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.helpers.createGalleryLauncher
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.camera.core.CameraSelector
 import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.BorderStroke
@@ -154,6 +155,9 @@ fun PhotoTakenPreview(
     onSaveClick: () -> Unit,
     onCancelClick: () -> Unit
 ) {
+    BackHandler {
+        navController.navigate(route = HomeOtherRoutes.TakeSnapPhotoView.route)
+    }
     Box(
         modifier = Modifier
             .fillMaxSize(),
