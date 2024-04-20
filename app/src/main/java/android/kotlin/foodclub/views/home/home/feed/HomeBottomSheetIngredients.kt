@@ -7,6 +7,7 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.Satoshi
 import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.config.ui.foodClubGreen
+import android.kotlin.foodclub.domain.enums.Category
 import android.kotlin.foodclub.domain.enums.QuantityUnit
 import android.kotlin.foodclub.domain.models.products.Ingredient
 import android.kotlin.foodclub.domain.models.products.Product
@@ -74,6 +75,7 @@ import kotlinx.coroutines.launch
 fun HomeBottomSheetIngredients(
     onDismiss: () -> Unit,
     recipe: Recipe?,
+    postTitle: String,
     onAddToBasket: () -> Unit
 ) {
     val screenHeight =
@@ -128,7 +130,7 @@ fun HomeBottomSheetIngredients(
                             .padding(start = dimensionResource(id = R.dimen.dim_16))
                     ) {
                         Text(
-                            stringResource(id = R.string.example_recipe),
+                            postTitle,
                             color = Color.Black,
                             fontFamily = Montserrat,
                             fontSize = dimensionResource(id = R.dimen.dim_20).value.sp,
@@ -175,6 +177,7 @@ fun HomeBottomSheetIngredients(
 
                     CustomSliderDiscrete(
                         maxValue = 24f,
+                        startValue = recipe.servingSize.toFloat(),
                         onValueChange = { ingredientsMultiplier = it.toFloat() },
                         inactiveTrackColor = colorResource(id = R.color.home_ingredient_slider_color),
                         stepsColor = colorResource(id = R.color.home_ingredient_slider_color),
@@ -428,11 +431,13 @@ private fun HomeBottomSheetIngredientsPreview() {
                         expirationDate = "expirationDate3",
                         isSelected = false
                     ),
-                )
+                ),
+                categories = listOf(Category.ITALIAN, Category.MEAT, Category.FAT_REDUCTION)
             )
             HomeBottomSheetIngredients(
                 onAddToBasket = {},
                 onDismiss = {},
+                postTitle = "Chicken broth and meatballs",
                 recipe = fakeRecipe
             )
         }

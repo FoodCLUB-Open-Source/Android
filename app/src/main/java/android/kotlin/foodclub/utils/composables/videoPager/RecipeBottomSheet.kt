@@ -117,10 +117,8 @@ fun RecipeBottomSheet(
                             )
                         )
                 ) {
-                    categories.forEach { category ->
-                        LabelText(
-                            text = category
-                        )
+                    recipe.categories.forEach { category ->
+                        LabelText(text = category.displayName)
                         Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_8)))
                     }
                 }
@@ -128,7 +126,9 @@ fun RecipeBottomSheet(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(
-                            if (isSmallScreen) dimensionResource(id = R.dimen.dim_0) else dimensionResource(id = R.dimen.dim_16)
+                            if (isSmallScreen) dimensionResource(id = R.dimen.dim_0) else dimensionResource(
+                                id = R.dimen.dim_16
+                            )
                         ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -270,7 +270,10 @@ fun LabelText(
         modifier = Modifier
             .clip(RoundedCornerShape(50))
             .background(backgroundColor)
-            .padding(horizontal = dimensionResource(id = R.dimen.dim_8), vertical = dimensionResource(id = R.dimen.dim_4))
+            .padding(
+                horizontal = dimensionResource(id = R.dimen.dim_8),
+                vertical = dimensionResource(id = R.dimen.dim_4)
+            )
     ) {
         Text(
             text = text,

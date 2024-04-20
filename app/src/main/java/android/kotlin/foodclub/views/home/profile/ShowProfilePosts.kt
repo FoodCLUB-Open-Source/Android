@@ -261,7 +261,8 @@ fun ShowProfilePosts(
             if (showIngredientSheet) {
                 HomeBottomSheetIngredients(
                     triggerIngredientBottomSheetModal,
-                    state.recipe,
+                    state.videoPagerState.recipe,
+                    state.videoPagerState.postTitle,
                     onAddToBasket = { events.addIngredientsToBasket()}
                 )
             }

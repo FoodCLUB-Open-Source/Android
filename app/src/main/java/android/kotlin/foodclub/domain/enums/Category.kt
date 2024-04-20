@@ -1,5 +1,7 @@
 package android.kotlin.foodclub.domain.enums
 
+import android.kotlin.foodclub.network.retrofit.dtoModels.recipes.RecipeCategoryDto
+
 enum class Category(val displayName: String, val categoryType: CategoryType) {
     MEAT("Meat", CategoryType.DIET),
     KETO("Keto", CategoryType.DIET),
@@ -11,7 +13,8 @@ enum class Category(val displayName: String, val categoryType: CategoryType) {
     CHINESE("Chinese", CategoryType.CUISINE),
     VEGETARIAN("Vegetarian", CategoryType.DIET),
     JAPANESE("Japanese", CategoryType.CUISINE),
-    MEXICAN("Mexican", CategoryType.CUISINE);
+    MEXICAN("Mexican", CategoryType.CUISINE),
+    SPANISH("Spanish", CategoryType.CUISINE);
 
     companion object {
         fun deriveFromName(name: String): Category? {
@@ -28,4 +31,8 @@ enum class Category(val displayName: String, val categoryType: CategoryType) {
             }
         }
     }
+}
+
+fun Category.toRecipeCategoryDto(): RecipeCategoryDto {
+    return RecipeCategoryDto(category = displayName)
 }

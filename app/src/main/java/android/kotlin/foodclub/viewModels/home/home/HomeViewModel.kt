@@ -115,9 +115,9 @@ class HomeViewModel @Inject constructor(
         }
         updatePostById(postId, isLiked)
     }
-    override fun getRecipe(postId: Long) {
+    override fun getRecipe(recipeId: Long) {
         viewModelScope.launch {
-            when (val resource = recipeRepository.getRecipe(postId)) {
+            when (val resource = recipeRepository.getRecipe(recipeId)) {
                 is Resource.Success -> {
                     _state.update {
                         it.copy(

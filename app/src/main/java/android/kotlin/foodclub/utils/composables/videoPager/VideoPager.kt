@@ -209,7 +209,7 @@ fun VideoPager(
                             }
                         },
                         onInfoClick = {
-                            events.getRecipe(197)
+                            events.getRecipe(502)
                             triggerIngredientBottomSheetModal()
                                       },
                         modifier = Modifier
