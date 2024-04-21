@@ -4,6 +4,7 @@ import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.utils.helpers.createGalleryLauncher
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.camera.core.CameraSelector
 import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.BorderStroke
@@ -104,7 +105,7 @@ fun TakePhotoPreview(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.Black)
+                .background(Color.Black.copy(alpha = 0.4f))
                 .align(Alignment.BottomCenter)
                 .padding(dimensionResource(id = R.dimen.dim_25)),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -149,10 +150,12 @@ fun TakePhotoPreview(
 @Composable
 fun PhotoTakenPreview(
     image: Uri,
-    navController: NavController,
     onSaveClick: () -> Unit,
     onCancelClick: () -> Unit
 ) {
+    BackHandler {
+        onCancelClick()
+    }
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -174,7 +177,7 @@ fun PhotoTakenPreview(
         ) {
             IconButton(
                 onClick = {
-                    navController.popBackStack()
+                    onCancelClick()
                 },
                 modifier = Modifier
                     .padding(dimensionResource(id = R.dimen.dim_30))
@@ -191,7 +194,7 @@ fun PhotoTakenPreview(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.Black)
+                .background(Color.Black.copy(alpha = 0.4f))
                 .align(Alignment.BottomCenter)
                 .padding(
                     start = dimensionResource(id = R.dimen.dim_25),
