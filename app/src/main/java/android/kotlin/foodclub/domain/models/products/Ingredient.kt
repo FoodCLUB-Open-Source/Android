@@ -1,6 +1,7 @@
 package android.kotlin.foodclub.domain.models.products
 
 import android.kotlin.foodclub.domain.enums.QuantityUnit
+import android.kotlin.foodclub.network.retrofit.dtoModels.recipes.RecipeIngredientDto
 
 class Ingredient(
     val product: Product,
@@ -25,4 +26,15 @@ class Ingredient(
     ): Ingredient {
         return Ingredient(product, quantity, unit)
     }
+}
+
+fun Ingredient.toRecipeIngredientDto(recipeId: Long): RecipeIngredientDto {
+    return RecipeIngredientDto(
+        recipeId = recipeId,
+        productId = product.foodId,
+        quantity = quantity,
+        unit = unit.longName,
+        label = product.label,
+        imageUrl = product.image
+    )
 }

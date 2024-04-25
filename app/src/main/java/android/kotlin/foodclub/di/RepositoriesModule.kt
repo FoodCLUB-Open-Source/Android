@@ -10,7 +10,6 @@ import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.SignUpUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.FollowerUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.FollowingUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.UserDetailsMapper
-import android.kotlin.foodclub.network.retrofit.dtoMappers.recipes.RecipeMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.stories.StoryMapper
 import android.kotlin.foodclub.network.retrofit.services.BookmarksService
 import android.kotlin.foodclub.network.retrofit.services.LikesService
@@ -114,8 +113,8 @@ object RepositoriesModule {
 
     @Provides
     @Singleton
-    fun provideRecipeRepository(api: RecipeService, recipeMapper: RecipeMapper): RecipeRepository {
-        return RecipeRepository(api, recipeMapper)
+    fun provideRecipeRepository(api: RecipeService): RecipeRepository {
+        return RecipeRepository(api)
     }
 
     @Provides

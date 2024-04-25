@@ -8,6 +8,7 @@ import android.kotlin.foodclub.repositories.LikesRepository
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.repositories.ProfileRepository
 import android.kotlin.foodclub.repositories.RecipeRepository
+import android.kotlin.foodclub.utils.composables.videoPager.VideoPagerState
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.kotlin.foodclub.utils.helpers.StoreData
 import android.kotlin.foodclub.views.home.profile.ProfileState
@@ -51,6 +52,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     private val _state = MutableStateFlow(ProfileState.default(exoPlayer))
+    private val _videoPagerState = MutableStateFlow(VideoPagerState.default())
     private val _profileUserId = MutableStateFlow(0L)
 
     val userPostsPagingFlow = _profileUserId
@@ -71,12 +73,13 @@ class ProfileViewModel @Inject constructor(
         .flatMapLatest { userId -> flow { emit(isFollowedBy(userId)) } }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
-    val state = combine(_state, _profileUserId, _profile, _isFollowed)
-    { state, profileUserId, profile, isFollowed ->
+    val state = combine(_state, _profileUserId, _profile, _isFollowed, _videoPagerState)
+    { state, profileUserId, profile, isFollowed, videoPagerState ->
         state.copy(
             profileUserId = profileUserId,
             userProfile = profile,
-            isFollowed = isFollowed
+            isFollowed = isFollowed,
+            videoPagerState = videoPagerState
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000),
         ProfileState.default(exoPlayer))
@@ -218,7 +221,7 @@ class ProfileViewModel @Inject constructor(
 
     override fun addIngredientsToBasket() {
         val basket = basketCache.getBasket()
-        val selectedIngredients = _state.value.recipe?.ingredients?.filter { it.isSelected }
+        val selectedIngredients = _videoPagerState.value.recipe?.ingredients?.filter { it.isSelected }
         selectedIngredients?.forEach {
             it.isSelected = false
             basket.addIngredient(it.copy())
@@ -259,13 +262,11 @@ class ProfileViewModel @Inject constructor(
         postRepository.getPost(postId).data?.let {  it.currentViewerInteraction.isLiked=isLiked }
     }
 
-    override fun getRecipe(postId: Long) {
+    override fun getRecipe(recipeId: Long) {
         viewModelScope.launch {
-            when(val resource = recipeRepository.getRecipe(postId)) {
+            when(val resource = recipeRepository.getRecipe(recipeId)) {
                 is Resource.Success -> {
-                    _state.update { it.copy(
-                        recipe = resource.data
-                    ) }
+                    _videoPagerState.update { it.copy(recipe = resource.data) }
                 }
                 is Resource.Error -> {
                     _state.update { it.copy(error = resource.message!!) }

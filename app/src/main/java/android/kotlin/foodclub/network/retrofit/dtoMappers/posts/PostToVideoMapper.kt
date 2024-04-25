@@ -18,7 +18,7 @@ class PostToVideoMapper: DomainMapper<PostModelDto, VideoModel> {
                 entity.views ?: 100
             ),
             videoLink = entity.videoUrl,
-            description = entity.description,
+            description = entity.description ?: "",
             thumbnailLink = entity.thumbnailUrl
         )
     }

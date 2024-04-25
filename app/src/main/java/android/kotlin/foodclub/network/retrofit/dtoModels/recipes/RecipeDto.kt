@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.network.retrofit.dtoModels.recipes
 
+import android.kotlin.foodclub.domain.models.recipes.Recipe
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
@@ -11,10 +12,23 @@ data class RecipeDto(
     val postId: Long,
 
     @SerializedName("recipe_description")
-    val description: String,
+    val description: String?,
 
     @SerializedName("recipe_ingredients")
-    val ingredients: List<String>,
+    val ingredients: List<RecipeIngredientDto>,
     @SerializedName("serving_size")
-    val servingSize: Int
+    val servingSize: Int,
+
+    val categories: List<RecipeCategoryDto>
 )
+
+fun RecipeDto.toRecipeModel(): Recipe {
+    return Recipe(
+        id = id,
+        postId = postId,
+        description = description,
+        ingredients = ingredients.map { it.toIngredientModel() },
+        servingSize = servingSize,
+        categories = categories.mapNotNull { it.toCategory() }
+    )
+}

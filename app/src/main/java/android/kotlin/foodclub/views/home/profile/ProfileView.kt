@@ -9,7 +9,6 @@ import android.kotlin.foodclub.navigation.HomeOtherRoutes
 import android.kotlin.foodclub.utils.composables.customComponents.CustomBottomSheet
 import android.kotlin.foodclub.utils.composables.shimmerBrush
 import android.kotlin.foodclub.utils.composables.videoPager.VideoPager
-import android.kotlin.foodclub.utils.composables.videoPager.VideoPagerState
 import android.kotlin.foodclub.utils.helpers.ProfilePicturePlaceHolder
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import android.kotlin.foodclub.utils.helpers.createGalleryLauncher
@@ -117,9 +116,21 @@ fun ProfileView(
         }
     }
 
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        initialPageOffsetFraction = 0f,
+        pageCount = { 2 }
+    )
+
     val pullRefresh = rememberPullRefreshState(
         refreshing = false,
-        onRefresh = { profilePosts.refresh() }
+        onRefresh = {
+            if (pagerState.currentPage == 0) {
+                profilePosts.refresh()
+            } else if (pagerState.currentPage == 1) {
+                bookmarkedPosts.refresh()
+            }
+        }
     )
 
     if (profilePosts.loadState.refresh is LoadState.Loading) {
@@ -134,12 +145,6 @@ fun ProfileView(
                 .fillMaxSize()
                 .pullRefresh(pullRefresh)
         ) {
-            val pagerState = rememberPagerState(
-                initialPage = 0,
-                initialPageOffsetFraction = 0f,
-                pageCount = { 2 }
-            )
-
             val tabItems = stringArrayResource(id = R.array.profile_tabs)
             var showBottomSheet by remember { mutableStateOf(false) }
 
@@ -176,7 +181,7 @@ fun ProfileView(
                     videoList = userTabItems,
                     initialPage = showPostIndex,
                     events = events,
-                    state = VideoPagerState.default(),
+                    state = state.videoPagerState,
                     modifier = Modifier,
                     localDensity = localDensity,
                     coroutineScope = coroutineScope,
@@ -357,7 +362,8 @@ fun ProfileView(
             }
 
             PullRefreshIndicator(
-                refreshing = profilePosts.loadState.refresh is LoadState.Loading,
+                refreshing = profilePosts.loadState.refresh is LoadState.Loading
+                        || bookmarkedPosts.loadState.refresh is LoadState.Loading,
                 state = pullRefresh,
                 modifier = Modifier.align(Alignment.TopCenter)
             )
