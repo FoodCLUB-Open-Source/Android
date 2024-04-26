@@ -103,6 +103,9 @@ fun HomeView(
 
     val exoPlayer = remember(context) { viewModel.exoPlayer }
 
+    val isLiked by remember { mutableStateOf(false) }
+    val isBookmarked by remember { mutableStateOf(false) }
+
     var initialPageFlag: Boolean
 
     BackHandler {
@@ -214,7 +217,9 @@ fun HomeView(
                         modifier = modifier,
                         localDensity = localDensity,
                         onInfoClick = triggerIngredientBottomSheetModal,
-                        coroutineScope = coroutineScope
+                        coroutineScope = coroutineScope,
+                        isLiked = isLiked,
+                        isBookmarked = isBookmarked
                     )
                 }
 
@@ -259,7 +264,7 @@ fun HomeHeaderBackground(
             .background(
                 color = if (!state.showMemoriesReel) {
                     Color.Black
-                }else {
+                } else {
                     snapsTopbar
                 }
             )
