@@ -15,11 +15,11 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace 'android.kotlin.foodclub'
+    namespace 'live.foodclub'
     compileSdk 34
 
     defaultConfig {
-        applicationId "android.kotlin.foodclub"
+        applicationId "live.foodclub"
         minSdk 29
         targetSdk 33
         versionCode 1
