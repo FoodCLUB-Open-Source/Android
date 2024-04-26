@@ -1,5 +1,8 @@
 package android.kotlin.foodclub.domain.models.products
 
+import androidx.annotation.Keep
+
+@Keep
 class MyBasket {
     var ingredients: MutableList<Ingredient> = mutableListOf()
         private set

@@ -1,8 +1,9 @@
 package android.kotlin.foodclub.domain.models.session
 
-import android.util.Log
+import androidx.annotation.Keep
 import com.auth0.android.jwt.JWT
 
+@Keep
 class Session(val accessToken: String, val idToken: String, userId: Long) {
     var sessionUser: SessionUser = SessionUser("", userId, 0)
         private set

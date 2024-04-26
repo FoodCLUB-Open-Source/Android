@@ -29,14 +29,9 @@
 # is used.
 -keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
 
-# GSON
--keepattributes RuntimeVisibleAnnotations,AnnotationDefault
--keepattributes *Annotation*
--keep @com.google.gson.annotations.JsonAdapter class *
-
 # GSON TypeToken
 -keepattributes Signature
--if class com.google.gson.reflect.TypeToken
+#-if class com.google.gson.reflect.TypeToken
 -keep,allowobfuscation class com.google.gson.reflect.TypeToken
 -keep,allowobfuscation class * extends com.google.gson.reflect.TypeToken
 
@@ -54,33 +49,9 @@
   <init>();
 }
 
-# Other GSON classes
--keepclassmembers class * {
-  @com.google.gson.annotations.Expose <fields>;
-  @com.google.gson.annotations.JsonAdapter <fields>;
-  @com.google.gson.annotations.Since <fields>;
-  @com.google.gson.annotations.Until <fields>;
-}
-
--keep class * extends com.google.gson.TypeAdapter {
-  <init>();
-}
--keep class * implements com.google.gson.TypeAdapterFactory {
-  <init>();
-}
--keep class * implements com.google.gson.JsonSerializer {
-  <init>();
-}
--keep class * implements com.google.gson.JsonDeserializer {
-  <init>();
-}
-
 # Retrofit
 -if interface * { @retrofit2.http.* public *** *(...); }
 -keep,allowoptimization,allowshrinking,allowobfuscation class <3>
-
-# Kotlin coroutines
--keep class kotlin.coroutines.Continuation
 
 -dontwarn java.beans.ConstructorProperties
 -dontwarn java.beans.Transient
