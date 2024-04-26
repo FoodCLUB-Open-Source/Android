@@ -7,7 +7,6 @@ import android.kotlin.foodclub.config.ui.trimmerTimelineText
 import android.kotlin.foodclub.domain.models.others.TrimmedVideo
 import android.kotlin.foodclub.utils.composables.LoadingView
 import android.kotlin.foodclub.viewModels.home.trimmer.TrimmerEvents
-import android.util.Log
 import android.view.ViewGroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -85,9 +84,19 @@ fun TrimmerView(state: TrimmerState, events: TrimmerEvents) {
     val localContext = LocalContext.current
     val systemUiController = rememberSystemUiController()
 
-    val triggerReset: () -> Unit = {
-        currentTime.value = 0L
+    var isResetting by remember {
+        mutableStateOf(false)
     }
+    LaunchedEffect(isResetting){
+        currentTime.value = 0L
+        state.player.play()
+        isPlaying = true
+        isResetting = false
+    }
+
+    val timeSeconds = 120
+    val totalWidth = (timeSeconds * 6 + 26).dp
+    val dpPerSecond = (totalWidth.value - 26) / timeSeconds
 
     var lifecycle by remember {
         mutableStateOf(Lifecycle.Event.ON_CREATE)
@@ -179,7 +188,11 @@ fun TrimmerView(state: TrimmerState, events: TrimmerEvents) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Button(
-                        onClick = { events.resetState() },
+                        onClick = {
+                            state.player.pause()
+                            events.resetState()
+                            isResetting = !isResetting
+                                  },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.White,
                             contentColor = Color.Black
@@ -221,12 +234,12 @@ fun TrimmerView(state: TrimmerState, events: TrimmerEvents) {
                 }
                 BottomTrimmerControl(
                     timeSeconds = 120,
+                    totalWidth = totalWidth,
+                    dpPerSecond = dpPerSecond,
                     videoList = state.videoObjects,
                     currentTime = currentTime,
                     onSeek = { events.navigate(it) },
-                    onResetVideo = {
-                        triggerReset()
-                    },
+                    isResetting = isResetting,
                     modifier = Modifier.height(dimensionResource(R.dimen.dim_150))
                 )
             }
@@ -246,14 +259,14 @@ fun TrimmerView(state: TrimmerState, events: TrimmerEvents) {
 @Composable
 fun BottomTrimmerControl(
     timeSeconds: Long,
+    totalWidth: Dp,
+    dpPerSecond: Float,
     videoList: List<TrimmedVideo>,
     currentTime: State<Long>,
     onSeek: (Long) -> Unit,
-    onResetVideo: () -> Unit,
+    isResetting: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val totalWidth = (timeSeconds.toInt() * 6 + 26).dp
-    val dpPerSecond = (totalWidth.value - 26) / timeSeconds
     Box(modifier = modifier
         .background(Color.White)
         .padding(top = dimensionResource(R.dimen.dim_24))
@@ -261,7 +274,7 @@ fun BottomTrimmerControl(
         .horizontalScroll(rememberScrollState())) {
         Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.dim_8))) {
             Timeline(totalWidth, timeSeconds)
-            TrimmedVideos(totalWidth, dpPerSecond, videoList, onResetVideo = { onResetVideo() })
+            TrimmedVideos(totalWidth, dpPerSecond, videoList, isResetting = isResetting)
         }
 
         Box(modifier = Modifier
@@ -280,7 +293,8 @@ fun BottomTrimmerControl(
                     detectTapGestures { offset ->
                         onSeek(((offset.x.toDp() / dpPerSecond).value * 1000).toLong())
                     }
-                })
+                }
+            )
         }
     }
 }
@@ -290,7 +304,7 @@ fun TrimmedVideos(
     totalWidth: Dp,
     dpPerSecond: Float,
     videoList: List<TrimmedVideo>,
-    onResetVideo: () -> Unit // Add a callback function for reset
+    isResetting: Boolean,
 ) {
     var selectedVideo by remember { mutableIntStateOf(-1) }
     LazyRow(
@@ -310,9 +324,7 @@ fun TrimmedVideos(
                 video = item,
                 isSelected = selectedVideo == item.id,
                 onClick = { selectedVideo = it },
-                onReset = {
-                    onResetVideo()
-                }
+                isResetting = isResetting
             )
         }
     }
@@ -324,7 +336,7 @@ fun TrimmedVideo(
     video: TrimmedVideo,
     isSelected: Boolean,
     onClick: (Int) -> Unit,
-    onReset: () -> Unit // Add a callback function for reset
+    isResetting: Boolean
 ) {
     val widthDerivedFromLength = (video.initialDuration / 1000 * dpPerSecond).dp
     var maximumElementWidth by remember { mutableStateOf(widthDerivedFromLength) }
@@ -337,15 +349,11 @@ fun TrimmedVideo(
     var startOffset by remember { mutableStateOf(0.dp) }
     var endOffset by remember { mutableStateOf(0.dp) }
 
-    // Call the reset function when the onReset callback is triggered
-    LaunchedEffect(onReset) {
-        Log.i("MYTAG","start offSet before reset: $startOffset end offSet: $endOffset")
-        Log.i("MYTAG","elementWidth before reset: $elementWidth")
+    LaunchedEffect(isResetting) {
+        maximumElementWidth = (video.initialDuration / 1000 * dpPerSecond).dp
+        elementWidth = maximumElementWidth
         startOffset = 0.dp
         endOffset = 0.dp
-        elementWidth = maximumElementWidth
-        Log.i("MYTAG","start offSet after reset: $startOffset end offSet: $endOffset")
-        Log.i("MYTAG","elementWidth after reset: $elementWidth")
     }
 
     Box(
