@@ -36,8 +36,10 @@ import android.kotlin.foodclub.network.remotedatasource.settings_remote_datasour
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.LocalDataMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.OfflineProfileDataMapper
 import android.kotlin.foodclub.network.retrofit.services.SearchService
+import android.kotlin.foodclub.repositories.FirebaseUserRepository
 import android.kotlin.foodclub.repositories.SearchRepository
 import android.kotlin.foodclub.utils.helpers.ConnectivityUtils
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -89,10 +91,15 @@ object RepositoriesModule {
         api: AuthenticationService,
         signInUserMapper: SignInUserMapper,
         forgotChangePasswordMapper: ForgotChangePasswordMapper,
-        signUpUserMapper: SignUpUserMapper
+        signUpUserMapper: SignUpUserMapper,
+        firebaseUserRepository: FirebaseUserRepository
     ): AuthRepository {
         return AuthRepository(
-            api, signInUserMapper, forgotChangePasswordMapper, signUpUserMapper
+            api,
+            signInUserMapper,
+            forgotChangePasswordMapper,
+            signUpUserMapper,
+            firebaseUserRepository
         )
     }
 
@@ -150,4 +157,9 @@ object RepositoriesModule {
     fun provideSearchRepository(api: SearchService): SearchRepository {
         return SearchRepository(api)
     }
+
+    @Singleton
+    @Provides
+    fun provideFirebaseUserRepository(firestore: FirebaseFirestore): FirebaseUserRepository =
+        FirebaseUserRepository(firestore)
 }

@@ -1,26 +1,30 @@
 package android.kotlin.foodclub.repositories
 
-import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorResponse
+import android.kotlin.foodclub.domain.models.auth.FirebaseUserModel
 import android.kotlin.foodclub.domain.models.auth.ForgotChangePassword
 import android.kotlin.foodclub.domain.models.auth.SignInUser
 import android.kotlin.foodclub.domain.models.auth.SignUpUser
-import android.kotlin.foodclub.network.retrofit.services.AuthenticationService
 import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.ForgotChangePasswordMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.SignInUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.SignUpUserMapper
-import android.kotlin.foodclub.network.retrofit.dtoModels.auth.SignInUserCredentialsDto
 import android.kotlin.foodclub.network.retrofit.dtoModels.auth.ResendVerificationCodeDto
+import android.kotlin.foodclub.network.retrofit.dtoModels.auth.SignInUserCredentialsDto
 import android.kotlin.foodclub.network.retrofit.dtoModels.auth.VerificationCodeDto
 import android.kotlin.foodclub.network.retrofit.responses.auth.LoginResponse
+import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorResponse
 import android.kotlin.foodclub.network.retrofit.responses.general.SingleMessageResponse
+import android.kotlin.foodclub.network.retrofit.services.AuthenticationService
 import android.kotlin.foodclub.network.retrofit.utils.apiRequestFlow
 import android.kotlin.foodclub.utils.helpers.Resource
 
+// TODO user kaydetme isi signIn yerinde olacak
+// TODO fcm token da signIn icinden al composable icinden
 class AuthRepository(
     private val api: AuthenticationService,
     private val signInMapper: SignInUserMapper,
     private val forgotChangePasswordMapper: ForgotChangePasswordMapper,
-    private val signUpUserMapper: SignUpUserMapper
+    private val signUpUserMapper: SignUpUserMapper,
+    private val firebaseUserRepository: FirebaseUserRepository
 ) {
     suspend fun signIn(
         username: String, password: String
@@ -31,8 +35,9 @@ class AuthRepository(
             }
         ) {
             is Resource.Success -> {
+                val signInUser = signInMapper.mapToDomainModel(resource.data!!.body()!!)
                 Resource.Success(
-                    signInMapper.mapToDomainModel(resource.data!!.body()!!)
+                    data = signInUser
                 )
             }
 

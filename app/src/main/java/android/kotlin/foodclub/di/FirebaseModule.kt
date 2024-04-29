@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.di
 
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.Module
 import dagger.Provides
@@ -13,5 +14,10 @@ object FirebaseModule {
     @Provides
     fun provideFirebaseMessaging(): FirebaseMessaging {
         return FirebaseMessaging.getInstance()
+    }
+
+    @Provides
+    fun provideFirestore(): FirebaseFirestore {
+        return FirebaseFirestore.getInstance()
     }
 }
