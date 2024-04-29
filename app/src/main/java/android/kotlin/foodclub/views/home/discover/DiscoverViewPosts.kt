@@ -139,13 +139,13 @@ fun DiscoverViewPosts(
 
                     val simpleUserModel = SimpleUserModel(
                         userId = state.username.toInt(),
-                        username = currentVideo.authorDetails,
+                        username = state.username,
                         profilePictureUrl = null
                     )
                     PlayPauseButton(buttonVisibility = pauseButtonVisibility)
 
                     VideoLayout(
-                        userDetails = simpleUserModel,
+                        userDetails = currentVideo.authorDetails,
                         videoStats = currentVideo.videoStats,
                         likeState = isLiked,
                         bookMarkState = isBookmarked,

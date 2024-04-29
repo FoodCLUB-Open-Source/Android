@@ -312,7 +312,7 @@ fun ShowProfilePosts(
 
                     hasVideoLoaded.value = true
 
-                    if (currentVideo.authorDetails == state.userProfile!!.username) {
+                    if (currentVideo.authorDetails.username == state.userProfile!!.username) {
                         DeleteButton(
                             alignment = Alignment.TopEnd,
                             onDeleteClicked = { infoDialog.value = true }
@@ -322,13 +322,13 @@ fun ShowProfilePosts(
 
                     val simpleUserModel = SimpleUserModel(
                         userId = state.profileUserId.toInt(),
-                        username = currentVideo.authorDetails,
+                        username = currentVideo.authorDetails.username,
                         profilePictureUrl = state.userProfile.profilePictureUrl
                     )
                     PlayPauseButton(buttonVisibility = pauseButtonVisibility)
 
                     VideoLayout(
-                        userDetails = simpleUserModel,
+                        userDetails = currentVideo.authorDetails,
                         videoStats = currentVideo.videoStats,
                         likeState = isLiked,
                         bookMarkState = isBookmarked,

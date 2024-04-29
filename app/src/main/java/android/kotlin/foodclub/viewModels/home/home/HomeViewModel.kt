@@ -7,14 +7,13 @@ import android.kotlin.foodclub.domain.models.products.MyBasketCache
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.domain.models.snaps.MemoriesModel
 import android.kotlin.foodclub.domain.models.snaps.SnapModel
-import android.kotlin.foodclub.network.retrofit.utils.SessionCache
 import android.kotlin.foodclub.repositories.BookmarkRepository
 import android.kotlin.foodclub.repositories.LikesRepository
 import android.kotlin.foodclub.repositories.PostRepository
 import android.kotlin.foodclub.repositories.RecipeRepository
 import android.kotlin.foodclub.repositories.StoryRepository
-import android.kotlin.foodclub.views.home.home.feed.HomeState
 import android.kotlin.foodclub.utils.helpers.Resource
+import android.kotlin.foodclub.views.home.home.feed.HomeState
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -682,7 +681,7 @@ class HomeViewModel @Inject constructor(
     object RecipesVideos {
         val recipe_vid1 = VideoModel(
             videoId = 1,
-            authorDetails = "kylieJenner",
+            authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
             videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
             videoStats = VideoStats(
                 like = 409876,
@@ -695,7 +694,7 @@ class HomeViewModel @Inject constructor(
         )
         val recipe_vid2 = VideoModel(
             videoId = 2,
-            authorDetails = "kylieJenner",
+            authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
             videoLink = "https://kretu.sts3.pl/foodclub_videos/daniel_vid2.mp4",
             videoStats = VideoStats(
                 like = 564572,
@@ -708,7 +707,7 @@ class HomeViewModel @Inject constructor(
         )
         val recipe_vid3 = VideoModel(
             videoId = 3,
-            authorDetails = "kylieJenner",
+            authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
             videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
             videoStats = VideoStats(
                 like = 2415164,
@@ -721,7 +720,7 @@ class HomeViewModel @Inject constructor(
         )
         val recipe_vid4 = VideoModel(
             videoId = 4,
-            authorDetails = "kylieJenner",
+            authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
             videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
             videoStats = VideoStats(
                 like = 51626,
@@ -734,7 +733,7 @@ class HomeViewModel @Inject constructor(
         )
         val recipe_vid5 = VideoModel(
             videoId = 5,
-            authorDetails = "kylieJenner",
+            authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
             videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
             videoStats = VideoStats(
                 like = 547819,
@@ -747,7 +746,7 @@ class HomeViewModel @Inject constructor(
         )
         val recipe_vid6 = VideoModel(
             videoId = 6,
-            authorDetails = "kylieJenner",
+            authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
             videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
             videoStats = VideoStats(
                 like = 4512340,
@@ -761,7 +760,7 @@ class HomeViewModel @Inject constructor(
 
         val recipe_vid7 = VideoModel(
             videoId = 7,
-            authorDetails = "kylieJenner",
+            authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
             videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
             videoStats = VideoStats(
                 like = 612907,

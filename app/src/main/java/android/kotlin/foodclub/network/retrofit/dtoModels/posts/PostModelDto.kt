@@ -2,6 +2,7 @@ package android.kotlin.foodclub.network.retrofit.dtoModels.posts
 
 import android.kotlin.foodclub.localdatasource.room.entity.ProfileBookmarksEntity
 import android.kotlin.foodclub.localdatasource.room.entity.ProfilePostsEntity
+import android.kotlin.foodclub.network.retrofit.dtoModels.profile.UserInfoDto
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
@@ -11,6 +12,10 @@ data class PostModelDto(
     val title: String,
     val description: String,
     val username: String?,
+
+    @SerializedName("user_id")
+    val userId: Long,
+    val user: UserInfoDto,
 
     @SerializedName("created_at")
     val createdAt:String,

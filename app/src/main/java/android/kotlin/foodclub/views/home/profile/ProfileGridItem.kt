@@ -6,6 +6,7 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.home.VideoStats
 import android.kotlin.foodclub.domain.models.home.VideoUserInteraction
+import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.utils.composables.shimmerBrush
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -110,7 +111,7 @@ private fun GridItemPreview() {
         isInternetConnected = true,
         dataItem = VideoModel(
             videoId = 1L,
-            authorDetails = "author1",
+            authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
             videoLink = "link1",
             videoStats = VideoStats(
                 like = 0L,
