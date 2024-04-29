@@ -123,7 +123,7 @@ fun HomeIngredient(
                 Column(
                     modifier = Modifier.padding(start = dimensionResource(id = R.dimen.dim_32)),
                     horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(32.dp),
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_32)),
                 ) {
                     Text(
                         text = ingredient.product.label,

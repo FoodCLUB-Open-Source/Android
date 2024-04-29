@@ -177,6 +177,8 @@ fun HomeView(
             HomeBottomSheetIngredients(
                 onDismiss = triggerIngredientBottomSheetModal,
                 recipe = state.recipe,
+                //TODO implement post title
+                postTitle = "Chicken broth and meatballs",
                 onAddToBasket = { events.addIngredientsToBasket() }
 
             )

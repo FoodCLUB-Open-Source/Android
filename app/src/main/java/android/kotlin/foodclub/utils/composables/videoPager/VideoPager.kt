@@ -7,14 +7,15 @@ import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.others.AnimatedIcon
 import android.kotlin.foodclub.utils.composables.customComponents.BackButton
 import android.kotlin.foodclub.views.VideoPagerLoadingSkeleton
-import android.kotlin.foodclub.views.home.profile.DeleteButton
-import android.kotlin.foodclub.views.home.profile.HeaderImage
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,11 +23,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -40,8 +43,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.integerResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -50,6 +56,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.paging.compose.LazyPagingItems
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -166,6 +176,7 @@ fun VideoPager(
                         onVideoGoBackground = { pauseButtonVisibility = false }
                     )
 
+                    //TODO Add author id when new PostModelDto is implemented
                     if (/*there should be author id*/0L == state.browsingUserId) {
                         DeleteButton(
                             alignment = Alignment.TopEnd,
@@ -203,7 +214,7 @@ fun VideoPager(
                             }
                         },
                         onInfoClick = {
-                            events.getRecipe(197)
+                            events.getRecipe(502)
                             triggerIngredientBottomSheetModal()
                                       },
                         modifier = Modifier
@@ -337,6 +348,64 @@ fun ConfirmDeleteDialog(
                 modifier = Modifier
                     .size(dimensionResource(id = R.dimen.dim_200))
                     .align(Alignment.TopCenter)
+            )
+        }
+    }
+}
+
+@Composable
+fun HeaderImage(modifier: Modifier) {
+    val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.location))
+    val progress by animateLottieCompositionAsState(composition = composition)
+
+    LottieAnimation(
+        composition = composition,
+        progress = progress,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun DeleteButton(
+    alignment: Alignment,
+    onDeleteClicked: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .padding(
+                end = dimensionResource(id = R.dimen.dim_20),
+                top = dimensionResource(id = R.dimen.dim_50)
+            )
+            .fillMaxSize()
+            .wrapContentSize(align = alignment)
+    ) {
+        Button(
+            shape = RectangleShape,
+            modifier = Modifier
+                .border(
+                    dimensionResource(id = R.dimen.dim_1),
+                    Color.Transparent,
+                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15))
+                )
+                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)))
+                .align(Alignment.BottomCenter)
+                .width(dimensionResource(id = R.dimen.dim_40))
+                .height(dimensionResource(id = R.dimen.dim_40)),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent,
+                contentColor = Color.Transparent
+            ), contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_5)),
+            onClick = {
+                onDeleteClicked()
+            }
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.delete),
+                contentDescription = stringResource(id = R.string.delete_video),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .width(dimensionResource(id = R.dimen.dim_25))
+                    .height(dimensionResource(id = R.dimen.dim_25))
             )
         }
     }

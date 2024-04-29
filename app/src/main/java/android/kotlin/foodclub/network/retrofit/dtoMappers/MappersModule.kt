@@ -1,7 +1,6 @@
 package android.kotlin.foodclub.network.retrofit.dtoMappers
 
 import android.kotlin.foodclub.network.retrofit.dtoMappers.posts.PostToVideoMapper
-import android.kotlin.foodclub.network.retrofit.dtoMappers.recipes.RecipeMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.stories.StoryMapper
 import dagger.Module
 import dagger.Provides
@@ -22,11 +21,5 @@ object MappersModule {
     @Singleton
     fun provideStoryMapper(): StoryMapper {
         return StoryMapper()
-    }
-
-    @Provides
-    @Singleton
-    fun provideRecipeMapper(): RecipeMapper {
-        return RecipeMapper()
     }
 }

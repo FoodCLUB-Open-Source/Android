@@ -114,9 +114,9 @@ class HomeViewModel @Inject constructor(
         }
         updatePostById(postId, isLiked)
     }
-    override fun getRecipe(postId: Long) {
+    override fun getRecipe(recipeId: Long) {
         viewModelScope.launch {
-            when (val resource = recipeRepository.getRecipe(postId)) {
+            when (val resource = recipeRepository.getRecipe(recipeId)) {
                 is Resource.Success -> {
                     _state.update {
                         it.copy(
@@ -596,19 +596,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun setTestData() {
-        if (state.value.videoList.isEmpty()) return
-        val videos = state.value.videoList.map {
-            VideoModel(
-                it.videoId, it.authorDetails, it.videoStats,
-                "https://kretu.sts3.pl/foodclub_videos/daniel_vid2.mp4",
-                it.currentViewerInteraction, it.description, it.createdAt,
-                "https://kretu.sts3.pl/foodclub_thumbnails/daniel_vid2-thumbnail.jpg"
-            )
-        }
-        _state.update { it.copy(videoList = videos) }
-    }
-
     private fun getUserFollowerStories() {
         viewModelScope.launch {
             when (val resource =
@@ -786,6 +773,7 @@ class HomeViewModel @Inject constructor(
     val videosList = arrayListOf<VideoModel>().apply {
         addAll(RecipesVideos.recipesVideosList)
     }
+
 
     override fun onCleared() {
         super.onCleared()
