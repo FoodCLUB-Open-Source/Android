@@ -14,8 +14,8 @@ interface RecipeService {
         @Body recipe: RecipeDto
     ): Response<Unit>
 
-    @GET("recipe/{post_id}")
+    @GET("recipe/{recipe_id}")
     suspend fun getRecipe(
-        @Path("post_id") postId: Long
+        @Path("recipe_id") recipeId: Long
     ): Response<RecipeResponse>
 }

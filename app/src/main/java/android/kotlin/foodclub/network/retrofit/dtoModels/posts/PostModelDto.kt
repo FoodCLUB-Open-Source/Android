@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName
 data class PostModelDto(
     val id: Long,
     val title: String,
-    val description: String,
+    val description: String?,
     val username: String?,
 
     @SerializedName("created_at")

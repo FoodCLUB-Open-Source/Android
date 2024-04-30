@@ -1,22 +1,22 @@
 package android.kotlin.foodclub.repositories
 
 import android.kotlin.foodclub.domain.models.recipes.Recipe
+import android.kotlin.foodclub.domain.models.recipes.toRecipeDto
 import android.kotlin.foodclub.network.retrofit.services.RecipeService
-import android.kotlin.foodclub.network.retrofit.dtoMappers.recipes.RecipeMapper
+import android.kotlin.foodclub.network.retrofit.dtoModels.recipes.toRecipeModel
 import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorResponse
 import android.kotlin.foodclub.network.retrofit.responses.recipes.RecipeResponse
 import android.kotlin.foodclub.network.retrofit.utils.apiRequestFlow
 import android.kotlin.foodclub.utils.helpers.Resource
 
 class RecipeRepository(
-    private val api: RecipeService,
-    private val recipeMapper: RecipeMapper
+    private val api: RecipeService
 ) {
 
     suspend fun createRecipe(recipe: Recipe): Boolean {
         return when(
             apiRequestFlow<Unit, DefaultErrorResponse> {
-                api.createRecipe(recipeMapper.mapFromDomainModel(recipe))
+                api.createRecipe(recipe.toRecipeDto())
             }
         ) {
             is Resource.Success -> {
@@ -29,15 +29,15 @@ class RecipeRepository(
         }
     }
 
-    suspend fun getRecipe(postId: Long): Resource<Recipe, DefaultErrorResponse> {
+    suspend fun getRecipe(recipeId: Long): Resource<Recipe, DefaultErrorResponse> {
         return when(
             val resource = apiRequestFlow<RecipeResponse, DefaultErrorResponse> {
-                api.getRecipe(postId)
+                api.getRecipe(recipeId)
             }
         ) {
             is Resource.Success -> {
                 Resource.Success(
-                    recipeMapper.mapToDomainModel(resource.data!!.body()!!.recipe)
+                    resource.data!!.body()!!.recipe.toRecipeModel()
                 )
             }
 
