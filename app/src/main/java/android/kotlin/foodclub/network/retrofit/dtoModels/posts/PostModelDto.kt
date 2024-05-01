@@ -11,11 +11,13 @@ data class PostModelDto(
     val id: Long,
     val title: String,
     val description: String?,
-    val username: String?,
 
     @SerializedName("user_id")
     val userId: Long,
     val user: UserInfoDto,
+
+    @SerializedName("recipe_id")
+    val recipeID: Long,
 
     @SerializedName("created_at")
     val createdAt:String,
@@ -28,8 +30,6 @@ data class PostModelDto(
     @SerializedName("category_name")
     val categoryName: String?,
 
-    @SerializedName("profile_picture")
-    val profilePictureUrl: String?,
     @SerializedName("video_url")
     val videoUrl: String,
     @SerializedName("thumbnail_url")
@@ -38,7 +38,10 @@ data class PostModelDto(
     @SerializedName("total_likes")
     val likes: Long?,
     @SerializedName("total_views")
-    val views: Long?
+    val views: Long?,
+
+    val isLiked: Boolean,
+    val isViewed: Boolean
 )
 
 fun PostModelDto.toProfilePostsEntity(authorId: Long): ProfilePostsEntity {
