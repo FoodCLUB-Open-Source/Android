@@ -1,5 +1,6 @@
 package android.kotlin.foodclub.repositories
 
+import android.kotlin.foodclub.domain.models.auth.ConversationModel
 import android.kotlin.foodclub.domain.models.auth.FirebaseUserModel
 import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorResponse
 import android.kotlin.foodclub.utils.helpers.Resource
@@ -57,14 +58,20 @@ class FirebaseUserRepository(
 
     }
 
-//    suspend fun createConversation(senderUser: FirebaseUserModel, recipientUser: FirebaseUserModel) = withContext(ioDispatcher) {
-//        try {
-//
-//            firestore.collection(CONVERSATIONS).document(conversationName)
-//        } catch (e: Exception) {
-//
-//        }
-//    }
+    suspend fun createConversation(conversation: ConversationModel) = withContext(ioDispatcher) {
+        try {
+
+            firestore.collection(CONVERSATIONS).document(conversation.conversationName).set(conversation)
+                .addOnSuccessListener {
+                    Log.w(TAG, "createConversation:SUCCESS")
+                }
+                .addOnFailureListener {
+                    Log.e(TAG, "createConversation:ERROR: ", it)
+                }
+        } catch (e: Exception) {
+            Log.e(TAG, "createConversation:ERROR", e)
+        }
+    }
 
 
     private companion object {
