@@ -1,9 +1,9 @@
 package android.kotlin.foodclub.repositories
 
-import android.kotlin.foodclub.domain.models.auth.FirebaseUserModel
 import android.kotlin.foodclub.domain.models.auth.ForgotChangePassword
 import android.kotlin.foodclub.domain.models.auth.SignInUser
 import android.kotlin.foodclub.domain.models.auth.SignUpUser
+import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.FirebaseUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.ForgotChangePasswordMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.SignInUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.SignUpUserMapper
@@ -16,15 +16,18 @@ import android.kotlin.foodclub.network.retrofit.responses.general.SingleMessageR
 import android.kotlin.foodclub.network.retrofit.services.AuthenticationService
 import android.kotlin.foodclub.network.retrofit.utils.apiRequestFlow
 import android.kotlin.foodclub.utils.helpers.Resource
+import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.tasks.await
 
-// TODO user kaydetme isi signIn yerinde olacak
-// TODO fcm token da signIn icinden al composable icinden
+
 class AuthRepository(
     private val api: AuthenticationService,
     private val signInMapper: SignInUserMapper,
     private val forgotChangePasswordMapper: ForgotChangePasswordMapper,
     private val signUpUserMapper: SignUpUserMapper,
-    private val firebaseUserRepository: FirebaseUserRepository
+    private val firebaseUserRepository: FirebaseUserRepository,
+    private val firebaseUserMapper: FirebaseUserMapper,
+    private val firebaseMessaging: FirebaseMessaging
 ) {
     suspend fun signIn(
         username: String, password: String
@@ -36,6 +39,10 @@ class AuthRepository(
         ) {
             is Resource.Success -> {
                 val signInUser = signInMapper.mapToDomainModel(resource.data!!.body()!!)
+                val fcmToken = firebaseMessaging.token.await()
+                val newFirebaseUser = firebaseUserMapper.mapFromDomainModel(signInUser)
+                newFirebaseUser.fcmToken = fcmToken
+                firebaseUserRepository.saveUserToFirestore(newFirebaseUser)
                 Resource.Success(
                     data = signInUser
                 )

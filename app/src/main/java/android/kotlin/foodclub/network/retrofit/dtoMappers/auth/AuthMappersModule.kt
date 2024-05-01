@@ -26,4 +26,10 @@ object AuthMappersModule {
     fun provideSignUpUserMapper(): SignUpUserMapper {
         return SignUpUserMapper()
     }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseUserMapper(): FirebaseUserMapper {
+        return FirebaseUserMapper()
+    }
 }
