@@ -3,7 +3,6 @@ package android.kotlin.foodclub.views.home.discover
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.others.AnimatedIcon
-import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.utils.composables.customComponents.BackButton
 import android.kotlin.foodclub.utils.composables.videoPager.LikeButton
 import android.kotlin.foodclub.utils.composables.videoPager.PlayPauseButton
@@ -137,11 +136,6 @@ fun DiscoverViewPosts(
 
                     LikeButton(doubleTapState) {}
 
-                    val simpleUserModel = SimpleUserModel(
-                        userId = state.username.toInt(),
-                        username = state.username,
-                        profilePictureUrl = null
-                    )
                     PlayPauseButton(buttonVisibility = pauseButtonVisibility)
 
                     VideoLayout(
