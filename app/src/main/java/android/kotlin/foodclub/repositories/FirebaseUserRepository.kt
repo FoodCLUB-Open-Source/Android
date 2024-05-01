@@ -13,63 +13,77 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 
-// TODO mapper for firebase user
-// TODO take fcm token from main activity and add to the user field in firebase
-
-
 class FirebaseUserRepository(
     private val firestore: FirebaseFirestore,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
-    suspend fun saveUserToFirestore(firebaseUserModel: FirebaseUserModel) = withContext(ioDispatcher) {
-        firestore.collection(USERS).document(firebaseUserModel.userID.toString())
-            .set(firebaseUserModel)
-            .addOnSuccessListener {
-                Log.w(TAG, "saveUserToFirestore: SUCCESS")
-            }.addOnFailureListener {
-                Log.e(TAG, "saveUserToFirestore: ERROR", it)
-            }
-
-    }
-
-
-    suspend fun getUserFromFirestore(userId: Int): Resource<FirebaseUserModel, DefaultErrorResponse> = withContext(ioDispatcher) {
-        try {
-            val user = firestore.collection(USERS).document(userId.toString())
-                .get()
+    suspend fun saveUserToFirestore(firebaseUserModel: FirebaseUserModel) =
+        withContext(ioDispatcher) {
+            firestore.collection(USERS).document(firebaseUserModel.userID.toString())
+                .set(firebaseUserModel)
                 .addOnSuccessListener {
-                    Log.w(TAG, "getUserFromFirestore: SUCCESS")
+                    Log.w(TAG, "saveUserToFirestore: SUCCESS")
                 }.addOnFailureListener {
-                    Log.e(TAG, "getUserFromFirestore: ERROR", it)
+                    Log.e(TAG, "saveUserToFirestore: ERROR", it)
                 }
-                .await()
-                .toObject<FirebaseUserModel>()
 
-            if (user != null) {
-                return@withContext Resource.Success(user)
-            } else {
-                return@withContext Resource.Error("User not found")
-            }
-
-        } catch (e: Exception) {
-            return@withContext Resource.Error(message = e.message!!, data = null)
         }
 
 
-    }
+    suspend fun getUserFromFirestore(userId: Int): Resource<FirebaseUserModel, DefaultErrorResponse> =
+        withContext(ioDispatcher) {
+            try {
+                val user = firestore.collection(USERS).document(userId.toString())
+                    .get()
+                    .addOnSuccessListener {
+                        Log.w(TAG, "getUserFromFirestore: SUCCESS")
+                    }.addOnFailureListener {
+                        Log.e(TAG, "getUserFromFirestore: ERROR", it)
+                    }
+                    .await()
+                    .toObject<FirebaseUserModel>()
+
+                if (user != null) {
+                    return@withContext Resource.Success(user)
+                } else {
+                    return@withContext Resource.Error("User not found")
+                }
+
+            } catch (e: Exception) {
+                return@withContext Resource.Error(message = e.message!!, data = null)
+            }
+
+
+        }
 
     suspend fun createConversation(conversation: ConversationModel) = withContext(ioDispatcher) {
         try {
 
-            firestore.collection(CONVERSATIONS).document(conversation.conversationName).set(conversation)
+            firestore.collection(CONVERSATIONS).document(conversation.conversationName)
+                .set(conversation)
                 .addOnSuccessListener {
                     Log.w(TAG, "createConversation:SUCCESS")
                 }
                 .addOnFailureListener {
                     Log.e(TAG, "createConversation:ERROR: ", it)
-                }
+                }.await()
         } catch (e: Exception) {
             Log.e(TAG, "createConversation:ERROR", e)
+        }
+    }
+
+    suspend fun deleteConversation(conversationName: String) = withContext(ioDispatcher) {
+        try {
+            firestore.collection(CONVERSATIONS).document(conversationName).delete()
+                .addOnSuccessListener {
+                    Log.w(TAG, "deleteConversation:SUCCESS")
+                }
+                .addOnFailureListener {
+                    Log.e(TAG, "deleteConversation:ERROR: ", it)
+                }.await()
+            Log.w(TAG, "deleteConversation:Success")
+        } catch (e: Exception) {
+            Log.e(TAG, "deleteConversation:Error", e)
         }
     }
 
