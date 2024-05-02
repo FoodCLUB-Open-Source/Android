@@ -80,12 +80,7 @@ class FirebaseUserRepository(
     ): Resource<ConversationModel, DefaultErrorResponse> = withContext(ioDispatcher) {
         return@withContext try {
             val conversationName = "${senderId}_$recipientId"
-            val conversation = firestore.collection(CONVERSATIONS).document(conversationName)
-                .get()
-                .addOnSuccessListener { }
-                .addOnFailureListener { }
-                .await()
-                .toObject<ConversationModel>()
+            val conversation = getConversation(conversationName)
 
             if (conversation != null) {
                 Log.w(TAG, "getConversation:SUCCESS")
@@ -138,6 +133,43 @@ class FirebaseUserRepository(
             }
         }
 
+    suspend fun updateMessage(message: MessageModel, conversationName: String) =
+        withContext(ioDispatcher) {
+            try {
+                val conversationRef = firestore.collection(CONVERSATIONS).document(conversationName)
+
+                val updatedValue = mapOf(
+                    "messages" to FieldValue.arrayUnion(message)
+                )
+
+                conversationRef.update(updatedValue)
+                    .addOnSuccessListener {
+                        Log.w(TAG, "updateMessage:Success")
+                    }
+                    .addOnFailureListener {
+                        Log.e(TAG, "updateMessage:Error", it)
+                    }
+            } catch (e: Exception) {
+                Log.e(TAG, "updateMessage:ERROR", e)
+            }
+        }
+
+    suspend fun getAllMessages(senderId: String, recipientId: String): Resource<List<MessageModel>, DefaultErrorResponse> =
+        withContext(ioDispatcher) {
+            return@withContext try {
+                val conversationName = "${senderId}_$recipientId"
+                val conversation = getConversation(conversationName)
+                if (conversation != null) {
+                    Resource.Success(data = conversation.messages.toList())
+                } else {
+                    Log.e(TAG, "getAllMessages:Error: Conversation not found.")
+                    Resource.Error("Conversation not found.")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "getAllMessages:ERROR", e)
+                Resource.Error(e.message!!, data = null)
+            }
+        }
 
     suspend fun deleteMessage(messageId: String, conversationName: String) =
         withContext(ioDispatcher) {
@@ -172,6 +204,15 @@ class FirebaseUserRepository(
             }
         }
 
+
+    private suspend fun getConversation(conversationName: String): ConversationModel? {
+        return firestore.collection(CONVERSATIONS).document(conversationName)
+            .get()
+            .addOnSuccessListener { }
+            .addOnFailureListener { }
+            .await()
+            .toObject<ConversationModel>()
+    }
     private fun findMessageIndex(messages: List<MessageModel>, messageId: String): Int {
         return messages.indexOfFirst { it.messageId == messageId }
     }
