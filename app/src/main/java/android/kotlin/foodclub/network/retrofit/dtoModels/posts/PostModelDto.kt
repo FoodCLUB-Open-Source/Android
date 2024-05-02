@@ -54,10 +54,11 @@ fun PostModelDto.toProfilePostsEntity(authorId: Long): ProfilePostsEntity {
         videoLink = videoUrl,
         thumbnailLink = thumbnailUrl,
         totalLikes = likes,
-        totalViews = views
+        totalViews = views,
+        isLiked = isLiked,
+        isBookmarked = isBookmarked
     )
 }
-
 fun PostModelDto.toProfileBookmarksEntity(bookmarkedBy: Long): ProfileBookmarksEntity {
     return ProfileBookmarksEntity(
         bookmarkedBy = bookmarkedBy,
@@ -68,6 +69,6 @@ fun PostModelDto.toProfileBookmarksEntity(bookmarkedBy: Long): ProfileBookmarksE
         videoLink = videoUrl,
         thumbnailLink = thumbnailUrl,
         totalLikes = likes,
-        totalViews = views
+        totalViews = views,
     )
 }

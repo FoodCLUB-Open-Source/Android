@@ -26,7 +26,9 @@ data class ProfilePostsEntity(
     val videoLink: String? = null,
     val thumbnailLink: String? = null,
     val totalLikes: Long? = null,
-    val totalViews: Long? = null
+    val totalViews: Long? = null,
+    val isLiked: Boolean? = null,
+    val isBookmarked: Boolean? = null
 )
 
 fun ProfilePostsEntity.toVideoModel(): VideoModel {
@@ -42,6 +44,8 @@ fun ProfilePostsEntity.toVideoModel(): VideoModel {
         ),
         videoLink = videoLink ?: "",
         description = description ?: "",
-        thumbnailLink = thumbnailLink ?: ""
+        thumbnailLink = thumbnailLink ?: "",
+        isLiked = isLiked ?: false,
+        isBookmarked = isBookmarked ?: false
     )
 }
