@@ -49,9 +49,6 @@ fun MainLayout(
     //Check if user is logged in, otherwise - redirect to auth navigation graph
     val baseViewModel: BaseViewModel = hiltViewModel()
     val currentSessionState = baseViewModel.currentSession.collectAsState()
-    LaunchedEffect(currentSessionState.value) {
-        baseViewModel.checkSession(navController = navController)
-    }
 
     var showSheet by remember { mutableStateOf(false) }
     val triggerBottomSheetModal: () -> Unit = {
@@ -93,6 +90,10 @@ fun MainLayout(
                 triggerStory
             ) { showBottomBar = it }
         }
+    }
+
+    LaunchedEffect(currentSessionState.value) {
+        baseViewModel.checkSession(navController = navController)
     }
 
 }

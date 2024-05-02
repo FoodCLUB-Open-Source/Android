@@ -19,6 +19,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -39,7 +40,8 @@ class MainActivity : ComponentActivity() {
         }
         requestPermissionsForNotifications(requestPermissionLauncher)
 
-        enableEdgeToEdge()
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+//        enableEdgeToEdge()
         var keepSplashOnScreen = true
         val delay = 2500L
 
