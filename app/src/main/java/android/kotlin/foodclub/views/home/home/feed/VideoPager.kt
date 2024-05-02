@@ -3,7 +3,6 @@ package android.kotlin.foodclub.views.home.home.feed
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.others.AnimatedIcon
-import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.utils.composables.videoPager.LikeButton
 import android.kotlin.foodclub.utils.composables.videoPager.PlayPauseButton
 import android.kotlin.foodclub.utils.composables.videoPager.VideoLayout
@@ -86,11 +85,7 @@ fun VideoPager(
 
             Box(modifier = Modifier.fillMaxSize()) {
                 val currentVideo = videoList[index]
-                val authorDetails = SimpleUserModel(
-                    userId = 1,
-                    username = currentVideo.authorDetails,
-                    profilePictureUrl = null
-                )
+
                 var isLiked by remember {
                     mutableStateOf(currentVideo.currentViewerInteraction.isLiked)
                 }
@@ -130,7 +125,7 @@ fun VideoPager(
                 PlayPauseButton(buttonVisibility = pauseButtonVisibility)
 
                 VideoLayout(
-                    userDetails = authorDetails,
+                    userDetails = currentVideo.authorDetails,
                     videoStats = currentVideo.videoStats,
                     likeState = isLiked,
                     bookMarkState = isBookmarked,

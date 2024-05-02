@@ -3,6 +3,7 @@ package android.kotlin.foodclub.network.retrofit.dtoMappers.profile
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.home.VideoStats
 import android.kotlin.foodclub.domain.models.home.VideoUserInteraction
+import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import android.kotlin.foodclub.localdatasource.room.entity.ProfileBookmarksEntity
 import android.kotlin.foodclub.localdatasource.room.entity.ProfilePostsEntity
 import android.kotlin.foodclub.network.retrofit.utils.DomainMapper
@@ -22,7 +23,7 @@ class SharedVideoMapper : DomainMapper<Any, VideoModel> {
             views = model.totalViews ?: (model.totalLikes ?: 500L).plus((500..100000).random())
         )
 
-        val authorDetails = "Author Name"
+        val authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null)
 
         return VideoModel(
             videoId = model.videoId,
@@ -42,7 +43,7 @@ class SharedVideoMapper : DomainMapper<Any, VideoModel> {
             views = model.totalViews ?: (model.totalLikes ?: 500L).plus((500..100000).random())
         )
 
-        val authorDetails = "Author Name"
+        val authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null)
 
         return VideoModel(
             videoId = model.videoId,

@@ -2,6 +2,7 @@ package android.kotlin.foodclub.localdatasource.room.entity
 
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.home.VideoStats
+import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.Companion.CASCADE
@@ -33,7 +34,7 @@ data class ProfilePostsEntity(
 fun ProfilePostsEntity.toVideoModel(): VideoModel {
     return VideoModel(
         videoId = videoId,
-        authorDetails = "Marc",
+        authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
         videoStats = VideoStats(
             totalLikes ?: 0,
             0L,
