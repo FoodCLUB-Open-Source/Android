@@ -93,7 +93,9 @@ fun MainLayout(
     }
 
     LaunchedEffect(currentSessionState.value) {
-        baseViewModel.checkSession(navController = navController)
+        if(navController.visibleEntries.value.isNotEmpty()) {
+            baseViewModel.checkSession(navController = navController)
+        }
     }
 
 }
@@ -180,6 +182,9 @@ fun AuthLayout(
             content()
         }
 
-        Box(Modifier.weight(1F).fillMaxWidth()) { TermsAndConditionsInfoFooter() }
+        Box(
+            Modifier
+                .weight(1F)
+                .fillMaxWidth()) { TermsAndConditionsInfoFooter() }
     }
 }
