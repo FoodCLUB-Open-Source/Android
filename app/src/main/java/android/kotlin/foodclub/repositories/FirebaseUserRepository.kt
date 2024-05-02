@@ -6,7 +6,6 @@ import android.kotlin.foodclub.domain.models.auth.MessageModel
 import android.kotlin.foodclub.network.retrofit.responses.general.DefaultErrorResponse
 import android.kotlin.foodclub.utils.helpers.Resource
 import android.util.Log
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
@@ -35,7 +34,7 @@ class FirebaseUserRepository(
 
     suspend fun getUserFromFirestore(userId: Int): Resource<FirebaseUserModel, DefaultErrorResponse> =
         withContext(ioDispatcher) {
-            try {
+            return@withContext try {
                 val user = firestore.collection(USERS).document(userId.toString())
                     .get()
                     .addOnSuccessListener {
@@ -47,13 +46,13 @@ class FirebaseUserRepository(
                     .toObject<FirebaseUserModel>()
 
                 if (user != null) {
-                    return@withContext Resource.Success(user)
+                    Resource.Success(user)
                 } else {
-                    return@withContext Resource.Error("User not found")
+                    Resource.Error("User not found")
                 }
 
             } catch (e: Exception) {
-                return@withContext Resource.Error(message = e.message!!, data = null)
+                Resource.Error(message = e.message!!, data = null)
             }
 
 
@@ -72,6 +71,32 @@ class FirebaseUserRepository(
                 }.await()
         } catch (e: Exception) {
             Log.e(TAG, "createConversation:ERROR", e)
+        }
+    }
+
+    suspend fun getConversation(
+        senderId: String,
+        recipientId: String
+    ): Resource<ConversationModel, DefaultErrorResponse> = withContext(ioDispatcher) {
+        return@withContext try {
+            val conversationName = "${senderId}_$recipientId"
+            val conversation = firestore.collection(CONVERSATIONS).document(conversationName)
+                .get()
+                .addOnSuccessListener { }
+                .addOnFailureListener { }
+                .await()
+                .toObject<ConversationModel>()
+
+            if (conversation != null) {
+                Log.w(TAG, "getConversation:SUCCESS")
+                Resource.Success(conversation)
+            } else {
+                Log.e(TAG, "getConversation:ERROR: Conversation not found.")
+                Resource.Error("Conversation not found", null)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "getConversation:ERROR: ", e)
+            Resource.Error(e.message!!, data = null)
         }
     }
 
