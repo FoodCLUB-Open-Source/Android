@@ -18,8 +18,10 @@ class PostToVideoMapper: DomainMapper<PostModelDto, VideoModel> {
                 entity.views ?: 100
             ),
             videoLink = entity.videoUrl,
-            description = entity.description ?: "",
-            thumbnailLink = entity.thumbnailUrl
+            description = entity.description,
+            thumbnailLink = entity.thumbnailUrl,
+            isLiked = entity.isLiked ?: false,
+            isBookmarked = entity.isBookmarked ?: false
         )
     }
 

@@ -33,7 +33,12 @@ data class PostModelDto(
     @SerializedName("total_likes")
     val likes: Long?,
     @SerializedName("total_views")
-    val views: Long?
+    val views: Long?,
+
+    @SerializedName("is_liked")
+    val isLiked: Boolean?,
+    @SerializedName("is_bookmarked")
+    val isBookmarked: Boolean?
 )
 
 fun PostModelDto.toProfilePostsEntity(authorId: Long): ProfilePostsEntity {
@@ -46,10 +51,11 @@ fun PostModelDto.toProfilePostsEntity(authorId: Long): ProfilePostsEntity {
         videoLink = videoUrl,
         thumbnailLink = thumbnailUrl,
         totalLikes = likes,
-        totalViews = views
+        totalViews = views,
+        isLiked = isLiked,
+        isBookmarked = isBookmarked
     )
 }
-
 fun PostModelDto.toProfileBookmarksEntity(bookmarkedBy: Long): ProfileBookmarksEntity {
     return ProfileBookmarksEntity(
         bookmarkedBy = bookmarkedBy,
@@ -60,6 +66,6 @@ fun PostModelDto.toProfileBookmarksEntity(bookmarkedBy: Long): ProfileBookmarksE
         videoLink = videoUrl,
         thumbnailLink = thumbnailUrl,
         totalLikes = likes,
-        totalViews = views
+        totalViews = views,
     )
 }
