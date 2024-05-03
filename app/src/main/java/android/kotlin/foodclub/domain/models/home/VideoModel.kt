@@ -10,7 +10,5 @@ data class VideoModel(
     val currentViewerInteraction: VideoUserInteraction = VideoUserInteraction(),
     val description: String,
     val createdAt: String = "${(1..24).random()}h",
-    val thumbnailLink: String = "",
-    val isLiked: Boolean,
-    val isBookmarked: Boolean
+    val thumbnailLink: String = ""
 )

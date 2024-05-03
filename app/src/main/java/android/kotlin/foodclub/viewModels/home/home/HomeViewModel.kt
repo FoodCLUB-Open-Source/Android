@@ -577,6 +577,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun getPostListData() {
+        Log.d("Test", "heyoooo")
         viewModelScope.launch {
             when (val resource = postRepository.getHomepagePosts()) {
                 is Resource.Success -> {

@@ -5,5 +5,5 @@ import androidx.annotation.Keep
 
 @Keep
 data class GetHomepagePostsResponse(
-    val posts: List<PostModelDto> = listOf()
+    val data: List<PostModelDto> = listOf()
 )

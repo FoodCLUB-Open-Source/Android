@@ -2,6 +2,7 @@ package android.kotlin.foodclub.localdatasource.room.entity
 
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.home.VideoStats
+import android.kotlin.foodclub.domain.models.home.VideoUserInteraction
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -45,7 +46,9 @@ fun ProfilePostsEntity.toVideoModel(): VideoModel {
         videoLink = videoLink ?: "",
         description = description ?: "",
         thumbnailLink = thumbnailLink ?: "",
-        isLiked = isLiked ?: false,
-        isBookmarked = isBookmarked ?: false
+        currentViewerInteraction = VideoUserInteraction(
+            isBookmarked = isBookmarked ?: false,
+            isLiked = isLiked ?: false
+        )
     )
 }

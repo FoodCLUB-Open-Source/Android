@@ -103,9 +103,6 @@ fun HomeView(
 
     val exoPlayer = remember(context) { viewModel.exoPlayer }
 
-    val isLiked by remember { mutableStateOf(false) }
-    val isBookmarked by remember { mutableStateOf(false) }
-
     var initialPageFlag: Boolean
 
     BackHandler {
@@ -220,8 +217,6 @@ fun HomeView(
                         localDensity = localDensity,
                         onInfoClick = triggerIngredientBottomSheetModal,
                         coroutineScope = coroutineScope,
-                        isLiked = isLiked,
-                        isBookmarked = isBookmarked
                     )
                 }
 
@@ -273,6 +268,7 @@ fun HomeHeaderBackground(
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HeaderContent(
     modifier: Modifier,

@@ -41,7 +41,8 @@ data class PostModelDto(
     val views: Long?,
 
     val isLiked: Boolean,
-    val isViewed: Boolean
+    val isViewed: Boolean,
+    val isBookmarked: Boolean = false
 )
 
 fun PostModelDto.toProfilePostsEntity(authorId: Long): ProfilePostsEntity {

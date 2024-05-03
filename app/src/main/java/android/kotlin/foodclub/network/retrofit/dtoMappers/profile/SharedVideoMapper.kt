@@ -33,7 +33,10 @@ class SharedVideoMapper : DomainMapper<Any, VideoModel> {
             description = model.description ?: "",
             createdAt = model.createdAt ?: "${(1..24).random()}h",
             thumbnailLink = model.thumbnailLink ?: "",
-            currentViewerInteraction = VideoUserInteraction(isBookmarked = true)
+            currentViewerInteraction = VideoUserInteraction(
+                isBookmarked = model.isBookmarked ?: false,
+                isLiked = model.isLiked ?: false
+            )
         )
     }
 
@@ -53,7 +56,10 @@ class SharedVideoMapper : DomainMapper<Any, VideoModel> {
             description = model.description ?: "",
             createdAt = model.createdAt ?: "${(1..24).random()}h",
             thumbnailLink = model.thumbnailLink ?: "",
-            currentViewerInteraction = VideoUserInteraction(isBookmarked = true)
+            currentViewerInteraction = VideoUserInteraction(
+                isBookmarked = model.isBookmarked ?: false,
+                isLiked = model.isLiked ?: false
+            )
         )
     }
 
