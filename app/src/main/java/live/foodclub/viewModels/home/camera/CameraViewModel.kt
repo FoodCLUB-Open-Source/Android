@@ -33,26 +33,26 @@ class CameraViewModel : ViewModel(), CameraEvents {
         viewModelScope.launch(Dispatchers.IO) {
             while (true) {
                 if (isCounting) {
-                    _state.update { it.copy(
-                        totalMilliseconds = it.totalMilliseconds + 1
-                    )}
-                    if (state.value.milliseconds < 100) {
-                        _state.update { it.copy(
-                            milliseconds = it.milliseconds + 1
-                        )}
-                    }
-                    else {
-                        if (state.value.seconds < 60) {
-                            _state.update { it.copy(
-                                seconds = it.seconds + 1,
-                                milliseconds = 0
-                            )}
+                    _state.update { it.copy(totalMilliseconds = it.totalMilliseconds + 1) }
+
+                    if (state.value.totalMilliseconds >= 180000) {
+                        isCounting = false
+                        onEvent(StopWatchEvent.onStop)
+                    } else {
+                        if (state.value.milliseconds < 100) {
+                            _state.update { it.copy(milliseconds = it.milliseconds + 1) }
                         } else {
-                            _state.update { it.copy(
-                                minutes = it.minutes + 1,
-                                seconds = 0,
-                                milliseconds = 0
-                            )}
+                            if (state.value.seconds < 60) {
+                                _state.update { it.copy(seconds = it.seconds + 1, milliseconds = 0) }
+                            } else {
+                                _state.update {
+                                    it.copy(
+                                        minutes = it.minutes + 1,
+                                        seconds = 0,
+                                        milliseconds = 0
+                                    )
+                                }
+                            }
                         }
                     }
                 }

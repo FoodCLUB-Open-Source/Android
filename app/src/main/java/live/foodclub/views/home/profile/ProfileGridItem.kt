@@ -6,6 +6,7 @@ import live.foodclub.config.ui.Montserrat
 import live.foodclub.domain.models.home.VideoModel
 import live.foodclub.domain.models.home.VideoStats
 import live.foodclub.domain.models.home.VideoUserInteraction
+import live.foodclub.domain.models.profile.SimpleUserModel
 import live.foodclub.utils.composables.shimmerBrush
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -110,7 +111,7 @@ private fun GridItemPreview() {
         isInternetConnected = true,
         dataItem = VideoModel(
             videoId = 1L,
-            authorDetails = "author1",
+            authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
             videoLink = "link1",
             videoStats = VideoStats(
                 like = 0L,

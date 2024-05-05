@@ -3,6 +3,7 @@ package live.foodclub.views.home.home.foodSNAPS
 import live.foodclub.domain.enums.Reactions
 import live.foodclub.domain.models.home.VideoModel
 import live.foodclub.domain.models.home.VideoStats
+import live.foodclub.domain.models.profile.SimpleUserModel
 import live.foodclub.domain.models.snaps.MemoriesModel
 import live.foodclub.views.home.home.feed.HomeState
 import androidx.activity.compose.BackHandler
@@ -19,7 +20,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
@@ -38,14 +38,14 @@ fun FoodSNAPSView(
     clearSelectedReaction: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-    var currentMemoriesModel by remember {
+    val currentMemoriesModel by remember {
         mutableStateOf(MemoriesModel(listOf(), ""))
     }
 
     val dummyListData = listOf(
         VideoModel(
             videoId = 4L,
-            authorDetails = "Steve",
+            authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
             videoStats = VideoStats(
                 like = 100,
                 comment = 50,
@@ -58,7 +58,7 @@ fun FoodSNAPSView(
             ),
         VideoModel(
             videoId = 5L,
-            authorDetails = "Megan",
+            authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
             videoStats = VideoStats(
                 like = 110,
                 comment = 55,
@@ -71,7 +71,7 @@ fun FoodSNAPSView(
         ),
         VideoModel(
             videoId = 5L,
-            authorDetails = "Mike",
+            authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
             videoStats = VideoStats(
                 like = 82,
                 comment = 13,

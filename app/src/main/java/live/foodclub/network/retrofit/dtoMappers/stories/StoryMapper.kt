@@ -2,6 +2,7 @@ package live.foodclub.network.retrofit.dtoMappers.stories
 
 import live.foodclub.domain.models.home.VideoModel
 import live.foodclub.domain.models.home.VideoStats
+import live.foodclub.domain.models.profile.SimpleUserModel
 import live.foodclub.network.retrofit.dtoModels.stories.FriendStoryDto
 import live.foodclub.network.retrofit.utils.DomainMapper
 import kotlin.random.Random
@@ -11,7 +12,7 @@ class StoryMapper: DomainMapper<FriendStoryDto, List<VideoModel>> {
         return entity.stories.map {
             VideoModel(
                 videoId = Random.nextLong(),// use random for now because json data is not long causing NumberFormatException
-                authorDetails = entity.username,
+                authorDetails = SimpleUserModel(entity.userId, entity.username ?: "Marc", entity.profilePicture ),
                 videoStats = VideoStats(
                     15,
                     281L,

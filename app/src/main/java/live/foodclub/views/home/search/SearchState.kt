@@ -102,35 +102,35 @@ data class SearchState(
             postList = listOf(
                 VideoModel(
                     1,
-                    "user1",
+                    SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
                     VideoStats(),
                     "",
                     description = ""
                 ),
                 VideoModel(
                     2,
-                    "user3",
+                    SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
                     VideoStats(),
                     "",
                     description = ""
                 ),
                 VideoModel(
                     1,
-                    "user1",
+                    SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
                     VideoStats(),
                     "",
                     description = ""
                 ),
                 VideoModel(
                     2,
-                    "user3",
+                    SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
                     VideoStats(),
                     "",
                     description = ""
                 ),
                 VideoModel(
                     5,
-                    "user5",
+                    SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
                     VideoStats(),
                     "",
                     description = ""

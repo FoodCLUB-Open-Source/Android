@@ -3,6 +3,7 @@ package live.foodclub.network.retrofit.dtoMappers.profile
 import live.foodclub.domain.models.home.VideoModel
 import live.foodclub.domain.models.home.VideoStats
 import live.foodclub.domain.models.home.VideoUserInteraction
+import live.foodclub.domain.models.profile.SimpleUserModel
 import live.foodclub.localdatasource.room.entity.ProfileBookmarksEntity
 import live.foodclub.localdatasource.room.entity.ProfilePostsEntity
 import live.foodclub.network.retrofit.utils.DomainMapper
@@ -22,7 +23,7 @@ class SharedVideoMapper : DomainMapper<Any, VideoModel> {
             views = model.totalViews ?: (model.totalLikes ?: 500L).plus((500..100000).random())
         )
 
-        val authorDetails = "Author Name"
+        val authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null)
 
         return VideoModel(
             videoId = model.videoId,
@@ -32,7 +33,10 @@ class SharedVideoMapper : DomainMapper<Any, VideoModel> {
             description = model.description ?: "",
             createdAt = model.createdAt ?: "${(1..24).random()}h",
             thumbnailLink = model.thumbnailLink ?: "",
-            currentViewerInteraction = VideoUserInteraction(isBookmarked = true)
+            currentViewerInteraction = VideoUserInteraction(
+                isBookmarked = model.isBookmarked ?: false,
+                isLiked = model.isLiked ?: false
+            )
         )
     }
 
@@ -42,7 +46,7 @@ class SharedVideoMapper : DomainMapper<Any, VideoModel> {
             views = model.totalViews ?: (model.totalLikes ?: 500L).plus((500..100000).random())
         )
 
-        val authorDetails = "Author Name"
+        val authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null)
 
         return VideoModel(
             videoId = model.videoId,
@@ -52,7 +56,10 @@ class SharedVideoMapper : DomainMapper<Any, VideoModel> {
             description = model.description ?: "",
             createdAt = model.createdAt ?: "${(1..24).random()}h",
             thumbnailLink = model.thumbnailLink ?: "",
-            currentViewerInteraction = VideoUserInteraction(isBookmarked = true)
+            currentViewerInteraction = VideoUserInteraction(
+                isBookmarked = model.isBookmarked ?: false,
+                isLiked = model.isLiked ?: false
+            )
         )
     }
 

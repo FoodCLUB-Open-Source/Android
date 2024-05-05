@@ -4,6 +4,7 @@ import live.foodclub.R
 import live.foodclub.config.ui.BottomBarScreenObject
 import live.foodclub.config.ui.Montserrat
 import live.foodclub.config.ui.foodClubGreen
+import live.foodclub.navigation.CreateRecipeScreen
 import live.foodclub.navigation.HomeOtherRoutes
 import live.foodclub.utils.composables.customComponents.BottomSheetItem
 import androidx.compose.foundation.layout.Arrangement
@@ -79,9 +80,7 @@ fun BottomSheet(
                 text = stringResource(id = R.string.create_a_recipe),
                 onDismiss = onDismiss,
                 onClick = {
-//                    navController.navigate("VIDEOTRIMMER")
-                    navController.navigate(route = HomeOtherRoutes.CreateRecipeView.route)
-                    //onDismiss()
+                    navController.navigate(route = CreateRecipeScreen.CameraView.route)
                 }
             )
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_25)))

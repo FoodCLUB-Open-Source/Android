@@ -1,7 +1,6 @@
 package live.foodclub.views.home
 
 import live.foodclub.R
-import live.foodclub.views.home.ui.theme.FoodClubTheme
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -26,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
+import live.foodclub.config.ui.FoodClubTheme
 
 @Composable
 fun UploadingView() {

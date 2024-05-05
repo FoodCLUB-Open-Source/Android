@@ -2,7 +2,6 @@ package live.foodclub.navigation
 
 import live.foodclub.config.ui.BottomBarScreenObject
 import live.foodclub.utils.composables.sharedHiltViewModel
-import live.foodclub.viewModels.home.camera.CameraViewModel
 import live.foodclub.viewModels.home.discover.DiscoverViewModel
 import live.foodclub.viewModels.home.follow.FollowerFollowingViewModel
 import live.foodclub.viewModels.home.gallery.GalleryViewModel
@@ -13,7 +12,6 @@ import live.foodclub.viewModels.home.profile.ProfileViewModel
 import live.foodclub.viewModels.home.search.SearchViewModel
 import live.foodclub.views.home.CameraPreviewView
 import live.foodclub.views.home.addIngredients.AddIngredientsView
-import live.foodclub.views.home.camera.CameraView
 import live.foodclub.views.home.discover.DiscoverView
 import live.foodclub.views.home.followerFollowing.FollowerView
 import live.foodclub.views.home.gallery.GalleryView
@@ -151,19 +149,6 @@ fun NavGraphBuilder.homeNavigationGraph(
 
         }
 
-        composable(route = HomeOtherRoutes.CameraView.route) {
-            val stateEncoded = it.arguments?.getString("state") ?: ""
-            val viewModel = it.sharedHiltViewModel<CameraViewModel>(navController = navController)
-            val state = viewModel.state.collectAsState()
-
-            CameraView(
-                events = viewModel,
-                navController = navController,
-                stateEncoded = stateEncoded,
-                state = state.value
-            )
-
-        }
         composable(route = HomeOtherRoutes.VideoTrimmerView.route) {
 //            CreateView()
         }

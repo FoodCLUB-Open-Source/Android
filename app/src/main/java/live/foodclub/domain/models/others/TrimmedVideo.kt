@@ -40,10 +40,25 @@ class TrimmedVideo(
     var savedFilePath: String? = null
         private set
 
+    private var originalClippingConfiguration: MediaItem.ClippingConfiguration? = null
 
     init {
         addListeners()
         player.addMediaItem(id, MediaItem.fromUri(uri))
+        val initialClippingConfig = player.getMediaItemAt(id)
+        originalClippingConfiguration = initialClippingConfig.clippingConfiguration
+
+    }
+
+    fun resetTrimmingConfigurations() {
+        // Restore the original clipping configuration
+        originalClippingConfiguration?.let { originalConfig ->
+            val oldItem = player.getMediaItemAt(id)
+            val newItemBuilder = oldItem.buildUpon()
+                .setClippingConfiguration(originalConfig)
+            player.replaceMediaItem(id, newItemBuilder.build())
+        }
+        updateTimeline()
     }
 
     private fun addListeners() {

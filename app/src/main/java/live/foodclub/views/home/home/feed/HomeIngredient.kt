@@ -7,7 +7,6 @@ import live.foodclub.config.ui.foodClubGreen
 import live.foodclub.domain.enums.QuantityUnit
 import live.foodclub.domain.models.products.Ingredient
 import live.foodclub.domain.models.products.Product
-import live.foodclub.views.home.ui.theme.FoodClubTheme
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -52,6 +51,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
+import live.foodclub.config.ui.FoodClubTheme
 
 @Composable
 fun HomeIngredient(

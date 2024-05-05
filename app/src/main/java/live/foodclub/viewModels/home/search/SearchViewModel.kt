@@ -54,7 +54,7 @@ class SearchViewModel @Inject constructor(
                         resource.data.posts.map {
                             VideoModel(
                                 videoId = it.postId.toLong(),
-                                authorDetails = "",
+                                authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
                                 description = it.description,
                                 videoLink = it.videoUrl,
                                 thumbnailLink = it.thumbnailUrl,

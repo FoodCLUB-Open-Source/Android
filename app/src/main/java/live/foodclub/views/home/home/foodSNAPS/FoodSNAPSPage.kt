@@ -3,7 +3,6 @@ package live.foodclub.views.home.home.foodSNAPS
 import live.foodclub.R
 import live.foodclub.domain.enums.Reactions
 import live.foodclub.domain.models.home.VideoModel
-import live.foodclub.views.home.ui.theme.Montserrat
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +31,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
+import live.foodclub.config.ui.Montserrat
 
 @Composable
 fun FoodSNAPSPage(
@@ -105,7 +105,7 @@ fun AuthorDetailsView(
             )
             Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_10)))
             Text(
-                storyListData[index].authorDetails,
+                storyListData[index].authorDetails.username,
                 color = Color.Black,
                 fontFamily = Montserrat,
                 fontSize = dimensionResource(id = R.dimen.fon_18).value.sp,

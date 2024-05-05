@@ -3,7 +3,6 @@ package live.foodclub.views.home.discover
 import live.foodclub.R
 import live.foodclub.domain.models.home.VideoModel
 import live.foodclub.domain.models.others.AnimatedIcon
-import live.foodclub.domain.models.profile.SimpleUserModel
 import live.foodclub.utils.composables.customComponents.BackButton
 import live.foodclub.utils.composables.videoPager.LikeButton
 import live.foodclub.utils.composables.videoPager.PlayPauseButton
@@ -137,15 +136,10 @@ fun DiscoverViewPosts(
 
                     LikeButton(doubleTapState) {}
 
-                    val simpleUserModel = SimpleUserModel(
-                        userId = state.username.toInt(),
-                        username = currentVideo.authorDetails,
-                        profilePictureUrl = null
-                    )
                     PlayPauseButton(buttonVisibility = pauseButtonVisibility)
 
                     VideoLayout(
-                        userDetails = simpleUserModel,
+                        userDetails = currentVideo.authorDetails,
                         videoStats = currentVideo.videoStats,
                         likeState = isLiked,
                         bookMarkState = isBookmarked,

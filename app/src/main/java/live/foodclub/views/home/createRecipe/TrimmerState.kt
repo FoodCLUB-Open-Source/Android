@@ -8,6 +8,7 @@ data class TrimmerState(
     val player: ExoPlayer,
     val isLoading: Boolean
 ) {
+
     companion object {
         fun default(player: ExoPlayer) = TrimmerState(
             videoObjects = listOf(),

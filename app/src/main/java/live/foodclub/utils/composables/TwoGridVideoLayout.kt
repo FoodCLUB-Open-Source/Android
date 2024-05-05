@@ -6,8 +6,7 @@ import live.foodclub.config.ui.Montserrat
 import live.foodclub.domain.models.home.VideoModel
 import live.foodclub.domain.models.home.VideoStats
 import live.foodclub.domain.models.home.VideoUserInteraction
-import live.foodclub.views.home.ui.theme.FoodClubTheme
-import live.foodclub.views.home.ui.theme.Satoshi
+import live.foodclub.domain.models.profile.SimpleUserModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -44,6 +43,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
+import live.foodclub.config.ui.FoodClubTheme
+import live.foodclub.config.ui.Satoshi
 
 @Composable
 fun RecommendationVideos(
@@ -166,7 +167,7 @@ private fun RecommendationVideosPreview() {
             dataItem = listOf(
                 VideoModel(
                     videoId = 1L,
-                    authorDetails = "author1",
+                    authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
                     videoLink = "link1",
                     videoStats = VideoStats(
                         like = 0L,
@@ -183,7 +184,7 @@ private fun RecommendationVideosPreview() {
                 ),
                 VideoModel(
                     videoId = 2L,
-                    authorDetails = "author2",
+                    authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
                     videoLink = "link2",
                     videoStats = VideoStats(
                         like = 0L,

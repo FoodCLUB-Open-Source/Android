@@ -216,7 +216,7 @@ fun HomeView(
                         modifier = modifier,
                         localDensity = localDensity,
                         onInfoClick = triggerIngredientBottomSheetModal,
-                        coroutineScope = coroutineScope
+                        coroutineScope = coroutineScope,
                     )
                 }
 
@@ -261,13 +261,14 @@ fun HomeHeaderBackground(
             .background(
                 color = if (!state.showMemoriesReel) {
                     Color.Black
-                }else {
+                } else {
                     snapsTopbar
                 }
             )
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HeaderContent(
     modifier: Modifier,

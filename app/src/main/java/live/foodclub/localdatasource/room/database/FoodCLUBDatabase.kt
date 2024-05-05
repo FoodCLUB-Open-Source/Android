@@ -28,10 +28,11 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         ProductEntity::class,
         ProductUnitEntity::class
     ],
-    version = 5,
+    version = 6,
     autoMigrations = [
         AutoMigration(3, 4),
-        AutoMigration(4, 5)
+        AutoMigration(4, 5),
+        AutoMigration(5, 6)
     ]
 )
 @TypeConverters(Converters::class)

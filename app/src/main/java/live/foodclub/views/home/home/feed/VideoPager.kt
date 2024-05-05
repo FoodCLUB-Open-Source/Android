@@ -3,7 +3,6 @@ package live.foodclub.views.home.home.feed
 import live.foodclub.R
 import live.foodclub.domain.models.home.VideoModel
 import live.foodclub.domain.models.others.AnimatedIcon
-import live.foodclub.domain.models.profile.SimpleUserModel
 import live.foodclub.utils.composables.videoPager.LikeButton
 import live.foodclub.utils.composables.videoPager.PlayPauseButton
 import live.foodclub.utils.composables.videoPager.VideoLayout
@@ -86,11 +85,7 @@ fun VideoPager(
 
             Box(modifier = Modifier.fillMaxSize()) {
                 val currentVideo = videoList[index]
-                val authorDetails = SimpleUserModel(
-                    userId = 1,
-                    username = currentVideo.authorDetails,
-                    profilePictureUrl = null
-                )
+
                 var isLiked by remember {
                     mutableStateOf(currentVideo.currentViewerInteraction.isLiked)
                 }
@@ -130,7 +125,7 @@ fun VideoPager(
                 PlayPauseButton(buttonVisibility = pauseButtonVisibility)
 
                 VideoLayout(
-                    userDetails = authorDetails,
+                    userDetails = currentVideo.authorDetails,
                     videoStats = currentVideo.videoStats,
                     likeState = isLiked,
                     bookMarkState = isBookmarked,

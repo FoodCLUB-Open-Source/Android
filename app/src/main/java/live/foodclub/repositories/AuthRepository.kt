@@ -1,26 +1,33 @@
 package live.foodclub.repositories
 
-import live.foodclub.network.retrofit.responses.general.DefaultErrorResponse
 import live.foodclub.domain.models.auth.ForgotChangePassword
 import live.foodclub.domain.models.auth.SignInUser
 import live.foodclub.domain.models.auth.SignUpUser
-import live.foodclub.network.retrofit.services.AuthenticationService
+import live.foodclub.network.retrofit.dtoMappers.auth.FirebaseUserMapper
 import live.foodclub.network.retrofit.dtoMappers.auth.ForgotChangePasswordMapper
 import live.foodclub.network.retrofit.dtoMappers.auth.SignInUserMapper
 import live.foodclub.network.retrofit.dtoMappers.auth.SignUpUserMapper
-import live.foodclub.network.retrofit.dtoModels.auth.SignInUserCredentialsDto
 import live.foodclub.network.retrofit.dtoModels.auth.ResendVerificationCodeDto
+import live.foodclub.network.retrofit.dtoModels.auth.SignInUserCredentialsDto
 import live.foodclub.network.retrofit.dtoModels.auth.VerificationCodeDto
 import live.foodclub.network.retrofit.responses.auth.LoginResponse
+import live.foodclub.network.retrofit.responses.general.DefaultErrorResponse
 import live.foodclub.network.retrofit.responses.general.SingleMessageResponse
+import live.foodclub.network.retrofit.services.AuthenticationService
 import live.foodclub.network.retrofit.utils.apiRequestFlow
 import live.foodclub.utils.helpers.Resource
+import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.tasks.await
+
 
 class AuthRepository(
     private val api: AuthenticationService,
     private val signInMapper: SignInUserMapper,
     private val forgotChangePasswordMapper: ForgotChangePasswordMapper,
-    private val signUpUserMapper: SignUpUserMapper
+    private val signUpUserMapper: SignUpUserMapper,
+    private val firebaseUserRepository: FirebaseUserRepository,
+    private val firebaseUserMapper: FirebaseUserMapper,
+    private val firebaseMessaging: FirebaseMessaging
 ) {
     suspend fun signIn(
         username: String, password: String
@@ -31,8 +38,13 @@ class AuthRepository(
             }
         ) {
             is Resource.Success -> {
+                val signInUser = signInMapper.mapToDomainModel(resource.data!!.body()!!)
+                val fcmToken = firebaseMessaging.token.await()
+                val newFirebaseUser = firebaseUserMapper.mapFromDomainModel(signInUser)
+                newFirebaseUser.fcmToken = fcmToken
+                firebaseUserRepository.saveUserToFirestore(newFirebaseUser)
                 Resource.Success(
-                    signInMapper.mapToDomainModel(resource.data!!.body()!!)
+                    data = signInUser
                 )
             }
 

@@ -7,5 +7,7 @@ data class SignInUser(
     val fullName: String?,
     val accessToken: String,
     val idToken: String,
-    val refreshToken: String
+    val refreshToken: String,
+    val isOnline: Boolean? = null,
+    val fcmToken: String? = null
 )
