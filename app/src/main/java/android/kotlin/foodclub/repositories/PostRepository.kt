@@ -11,6 +11,7 @@ import android.kotlin.foodclub.network.retrofit.responses.posts.GetPostResponse
 import android.kotlin.foodclub.network.retrofit.responses.posts.ViewsPostResponse
 import android.kotlin.foodclub.network.retrofit.utils.apiRequestFlow
 import android.kotlin.foodclub.utils.helpers.Resource
+import android.util.Log
 
 class PostRepository(
     private val api: PostsService,

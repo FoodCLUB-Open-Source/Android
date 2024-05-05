@@ -5,7 +5,8 @@ import android.kotlin.foodclub.config.ui.Raleway
 import android.kotlin.foodclub.config.ui.trimmerFilmSelectEdge
 import android.kotlin.foodclub.config.ui.trimmerTimelineText
 import android.kotlin.foodclub.domain.models.others.TrimmedVideo
-import android.kotlin.foodclub.viewModels.home.create.TrimmerEvents
+import android.kotlin.foodclub.utils.composables.LoadingView
+import android.kotlin.foodclub.viewModels.home.trimmer.TrimmerEvents
 import android.view.ViewGroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,12 +30,15 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -79,6 +83,20 @@ fun TrimmerView(state: TrimmerState, events: TrimmerEvents) {
     var isPlaying by remember { mutableStateOf(false) }
     val localContext = LocalContext.current
     val systemUiController = rememberSystemUiController()
+
+    var isResetting by remember {
+        mutableStateOf(false)
+    }
+    LaunchedEffect(isResetting){
+        currentTime.value = 0L
+        state.player.play()
+        isPlaying = true
+        isResetting = false
+    }
+
+    val timeSeconds = 120
+    val totalWidth = (timeSeconds * 6 + 26).dp
+    val dpPerSecond = (totalWidth.value - 26) / timeSeconds
 
     var lifecycle by remember {
         mutableStateOf(Lifecycle.Event.ON_CREATE)
@@ -162,31 +180,66 @@ fun TrimmerView(state: TrimmerState, events: TrimmerEvents) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.dim_16))
             ) {
-                Button(
-                    onClick = { events.createVideo(localContext) },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White,
-                        contentColor = Color.Black
-                    ),
+                Row(
                     modifier = Modifier
-                        .align(Alignment.End)
-                        .padding(end = dimensionResource(R.dimen.dim_28))
-                        .width(dimensionResource(R.dimen.dim_92))
-                        .height(dimensionResource(R.dimen.dim_54))
-                        .clip(RoundedCornerShape(dimensionResource(R.dimen.dim_10)))
-                        .background(Color.White)
+                        .fillMaxWidth()
+                        .padding(dimensionResource(id = R.dimen.dim_10)),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.right_arrow),
-                        contentDescription = null,
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    )
+                    Button(
+                        onClick = {
+                            state.player.pause()
+                            events.resetState()
+                            isResetting = !isResetting
+                                  },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            contentColor = Color.Black
+                        ),
+                        modifier = Modifier
+                            .padding(end = dimensionResource(R.dimen.dim_28))
+                            .width(dimensionResource(R.dimen.dim_92))
+                            .height(dimensionResource(R.dimen.dim_54))
+                            .clip(RoundedCornerShape(dimensionResource(R.dimen.dim_10)))
+                            .background(Color.White)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = null,
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                    }
+
+                    Button(
+                        onClick = { events.createVideo(localContext) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            contentColor = Color.Black
+                        ),
+                        modifier = Modifier
+                            .padding(end = dimensionResource(R.dimen.dim_28))
+                            .width(dimensionResource(R.dimen.dim_92))
+                            .height(dimensionResource(R.dimen.dim_54))
+                            .clip(RoundedCornerShape(dimensionResource(R.dimen.dim_10)))
+                            .background(Color.White)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.right_arrow),
+                            contentDescription = null,
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                    }
+
                 }
                 BottomTrimmerControl(
                     timeSeconds = 120,
+                    totalWidth = totalWidth,
+                    dpPerSecond = dpPerSecond,
                     videoList = state.videoObjects,
                     currentTime = currentTime,
                     onSeek = { events.navigate(it) },
+                    isResetting = isResetting,
                     modifier = Modifier.height(dimensionResource(R.dimen.dim_150))
                 )
             }
@@ -197,11 +250,7 @@ fun TrimmerView(state: TrimmerState, events: TrimmerEvents) {
                 .fillMaxSize()
                 .background(Color.White)
             ) {
-                Text(
-                    text = "There will be loading screen",
-                    fontSize = dimensionResource(R.dimen.fon_16).value.sp,
-                    modifier = Modifier.align(Alignment.Center)
-                )
+                LoadingView()
             }
         }
     }
@@ -210,13 +259,14 @@ fun TrimmerView(state: TrimmerState, events: TrimmerEvents) {
 @Composable
 fun BottomTrimmerControl(
     timeSeconds: Long,
+    totalWidth: Dp,
+    dpPerSecond: Float,
     videoList: List<TrimmedVideo>,
     currentTime: State<Long>,
     onSeek: (Long) -> Unit,
+    isResetting: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val totalWidth = (timeSeconds.toInt() * 6 + 26).dp
-    val dpPerSecond = (totalWidth.value - 26) / timeSeconds
     Box(modifier = modifier
         .background(Color.White)
         .padding(top = dimensionResource(R.dimen.dim_24))
@@ -224,7 +274,7 @@ fun BottomTrimmerControl(
         .horizontalScroll(rememberScrollState())) {
         Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.dim_8))) {
             Timeline(totalWidth, timeSeconds)
-            TrimmedVideos(totalWidth, dpPerSecond, videoList)
+            TrimmedVideos(totalWidth, dpPerSecond, videoList, isResetting = isResetting)
         }
 
         Box(modifier = Modifier
@@ -243,13 +293,19 @@ fun BottomTrimmerControl(
                     detectTapGestures { offset ->
                         onSeek(((offset.x.toDp() / dpPerSecond).value * 1000).toLong())
                     }
-                })
+                }
+            )
         }
     }
 }
 
 @Composable
-fun TrimmedVideos(totalWidth: Dp, dpPerSecond: Float, videoList: List<TrimmedVideo>) {
+fun TrimmedVideos(
+    totalWidth: Dp,
+    dpPerSecond: Float,
+    videoList: List<TrimmedVideo>,
+    isResetting: Boolean,
+) {
     var selectedVideo by remember { mutableIntStateOf(-1) }
     LazyRow(
         contentPadding = PaddingValues(start = dimensionResource(R.dimen.dim_8)),
@@ -267,14 +323,20 @@ fun TrimmedVideos(totalWidth: Dp, dpPerSecond: Float, videoList: List<TrimmedVid
                 dpPerSecond = dpPerSecond,
                 video = item,
                 isSelected = selectedVideo == item.id,
-                onClick = { selectedVideo = it })
+                onClick = { selectedVideo = it },
+                isResetting = isResetting
+            )
         }
     }
 }
 
 @Composable
-fun TrimmedVideo(dpPerSecond: Float, video: TrimmedVideo, isSelected: Boolean,
-                 onClick: (Int) -> Unit
+fun TrimmedVideo(
+    dpPerSecond: Float,
+    video: TrimmedVideo,
+    isSelected: Boolean,
+    onClick: (Int) -> Unit,
+    isResetting: Boolean
 ) {
     val widthDerivedFromLength = (video.initialDuration / 1000 * dpPerSecond).dp
     var maximumElementWidth by remember { mutableStateOf(widthDerivedFromLength) }
@@ -286,6 +348,13 @@ fun TrimmedVideo(dpPerSecond: Float, video: TrimmedVideo, isSelected: Boolean,
     }
     var startOffset by remember { mutableStateOf(0.dp) }
     var endOffset by remember { mutableStateOf(0.dp) }
+
+    LaunchedEffect(isResetting) {
+        maximumElementWidth = (video.initialDuration / 1000 * dpPerSecond).dp
+        elementWidth = maximumElementWidth
+        startOffset = 0.dp
+        endOffset = 0.dp
+    }
 
     Box(
         Modifier
@@ -323,7 +392,7 @@ fun TrimmedVideo(dpPerSecond: Float, video: TrimmedVideo, isSelected: Boolean,
         if (isSelected) {
             Box(modifier = Modifier
                 .fillMaxHeight()
-                .width(dimensionResource(R.dimen.dim_12))
+                .width(dimensionResource(R.dimen.dim_17))
                 .background(trimmerFilmSelectEdge)
                 .align(Alignment.CenterStart)
                 .pointerInput(Unit) {
@@ -359,7 +428,7 @@ fun TrimmedVideo(dpPerSecond: Float, video: TrimmedVideo, isSelected: Boolean,
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(dimensionResource(R.dimen.dim_12))
+                    .width(dimensionResource(R.dimen.dim_17))
                     .background(trimmerFilmSelectEdge)
                     .align(Alignment.CenterEnd)
                     .pointerInput(Unit) {

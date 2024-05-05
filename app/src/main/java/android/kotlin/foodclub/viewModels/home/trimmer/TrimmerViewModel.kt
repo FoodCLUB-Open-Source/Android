@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.viewModels.home.create
+package android.kotlin.foodclub.viewModels.home.trimmer
 
 import android.content.Context
 import android.kotlin.foodclub.domain.models.others.TrimmedVideo
@@ -43,10 +43,14 @@ class TrimmerViewModel @Inject constructor(
             }
         )
         player.prepare()
+    }
 
-        addVideoUri(Uri.parse("https://kretu.sts3.pl/test/IMG_6105.MP4"))
-        addVideoUri(Uri.parse("https://kretu.sts3.pl/test/IMG_6106.MP4"))
-        addVideoUri(Uri.parse("https://kretu.sts3.pl/test/IMG_6107.MP4"))
+    fun setVideoUris(uris: MutableMap<Int, Uri>?) {
+        if (!uris.isNullOrEmpty()){
+            uris.forEach {
+                addVideoUri(it.value)
+            }
+        }
     }
 
     fun setOnVideoCreateFunction(onVideoCreate: (String?) -> Unit = {}) {
@@ -84,6 +88,12 @@ class TrimmerViewModel @Inject constructor(
             Log.e(TAG, "Exception during clip trimming", e)
             _state.update { it.copy(isLoading = false) }
             return
+        }
+    }
+
+    override fun resetState() {
+        _state.value.videoObjects.forEach { videoObject ->
+            videoObject.resetTrimmingConfigurations()
         }
     }
 

@@ -2,7 +2,6 @@ package android.kotlin.foodclub.navigation
 
 import android.kotlin.foodclub.config.ui.BottomBarScreenObject
 import android.kotlin.foodclub.utils.composables.sharedHiltViewModel
-import android.kotlin.foodclub.viewModels.home.camera.CameraViewModel
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverViewModel
 import android.kotlin.foodclub.viewModels.home.follow.FollowerFollowingViewModel
 import android.kotlin.foodclub.viewModels.home.gallery.GalleryViewModel
@@ -13,7 +12,6 @@ import android.kotlin.foodclub.viewModels.home.profile.ProfileViewModel
 import android.kotlin.foodclub.viewModels.home.search.SearchViewModel
 import android.kotlin.foodclub.views.home.CameraPreviewView
 import android.kotlin.foodclub.views.home.addIngredients.AddIngredientsView
-import android.kotlin.foodclub.views.home.camera.CameraView
 import android.kotlin.foodclub.views.home.discover.DiscoverView
 import android.kotlin.foodclub.views.home.followerFollowing.FollowerView
 import android.kotlin.foodclub.views.home.gallery.GalleryView
@@ -151,19 +149,6 @@ fun NavGraphBuilder.homeNavigationGraph(
 
         }
 
-        composable(route = HomeOtherRoutes.CameraView.route) {
-            val stateEncoded = it.arguments?.getString("state") ?: ""
-            val viewModel = it.sharedHiltViewModel<CameraViewModel>(navController = navController)
-            val state = viewModel.state.collectAsState()
-
-            CameraView(
-                events = viewModel,
-                navController = navController,
-                stateEncoded = stateEncoded,
-                state = state.value
-            )
-
-        }
         composable(route = HomeOtherRoutes.VideoTrimmerView.route) {
 //            CreateView()
         }
