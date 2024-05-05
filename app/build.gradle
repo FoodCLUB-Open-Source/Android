@@ -15,11 +15,11 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace 'android.kotlin.foodclub'
+    namespace 'live.foodclub'
     compileSdk 34
 
     defaultConfig {
-        applicationId "android.kotlin.foodclub"
+        applicationId "live.foodclub"
         minSdk 29
         targetSdk 33
         versionCode 1
@@ -31,26 +31,18 @@ android {
         }
     }
 
-    signingConfigs {
-        release {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-            storePassword keystoreProperties['storePassword']
-        }
-    }
-
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
+            debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
         }
         development {
-            minifyEnabled false
-            shrinkResources false
+            minifyEnabled true
+            shrinkResources true
             debuggable true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.debug
         }
     }

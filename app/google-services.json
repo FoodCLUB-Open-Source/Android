@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:100959338026:android:2ceb72c9d2f0430f364d53",
         "android_client_info": {
-          "package_name": "android.kotlin.foodclub"
+          "package_name": "live.foodclub"
         }
       },
       "oauth_client": [],
