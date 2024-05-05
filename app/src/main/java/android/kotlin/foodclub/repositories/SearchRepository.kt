@@ -12,7 +12,7 @@ class SearchRepository(
         searchText: String
     ): Resource<SearchUserPostsResponse, DefaultErrorResponse> {
         try {
-            val response = api.searchPosts(searchText)//SearchDto(searchText))
+            val response = api.searchPosts(searchText)
             if (response.isSuccessful) {
                 val responseBody = response.body()
                 if (responseBody != null) {

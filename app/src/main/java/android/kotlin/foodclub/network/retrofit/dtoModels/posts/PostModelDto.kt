@@ -2,6 +2,7 @@ package android.kotlin.foodclub.network.retrofit.dtoModels.posts
 
 import android.kotlin.foodclub.localdatasource.room.entity.ProfileBookmarksEntity
 import android.kotlin.foodclub.localdatasource.room.entity.ProfilePostsEntity
+import android.kotlin.foodclub.network.retrofit.dtoModels.profile.UserInfoDto
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
@@ -9,8 +10,14 @@ import com.google.gson.annotations.SerializedName
 data class PostModelDto(
     val id: Long,
     val title: String,
-    val description: String,
-    val username: String?,
+    val description: String?,
+
+    @SerializedName("user_id")
+    val userId: Long,
+    val user: UserInfoDto,
+
+    @SerializedName("recipe_id")
+    val recipeID: Long,
 
     @SerializedName("created_at")
     val createdAt:String,
@@ -23,8 +30,6 @@ data class PostModelDto(
     @SerializedName("category_name")
     val categoryName: String?,
 
-    @SerializedName("profile_picture")
-    val profilePictureUrl: String?,
     @SerializedName("video_url")
     val videoUrl: String,
     @SerializedName("thumbnail_url")
@@ -33,7 +38,11 @@ data class PostModelDto(
     @SerializedName("total_likes")
     val likes: Long?,
     @SerializedName("total_views")
-    val views: Long?
+    val views: Long?,
+
+    val isLiked: Boolean,
+    val isViewed: Boolean,
+    val isBookmarked: Boolean = false
 )
 
 fun PostModelDto.toProfilePostsEntity(authorId: Long): ProfilePostsEntity {
@@ -46,10 +55,11 @@ fun PostModelDto.toProfilePostsEntity(authorId: Long): ProfilePostsEntity {
         videoLink = videoUrl,
         thumbnailLink = thumbnailUrl,
         totalLikes = likes,
-        totalViews = views
+        totalViews = views,
+        isLiked = isLiked,
+        isBookmarked = isBookmarked
     )
 }
-
 fun PostModelDto.toProfileBookmarksEntity(bookmarkedBy: Long): ProfileBookmarksEntity {
     return ProfileBookmarksEntity(
         bookmarkedBy = bookmarkedBy,
@@ -60,6 +70,6 @@ fun PostModelDto.toProfileBookmarksEntity(bookmarkedBy: Long): ProfileBookmarksE
         videoLink = videoUrl,
         thumbnailLink = thumbnailUrl,
         totalLikes = likes,
-        totalViews = views
+        totalViews = views,
     )
 }

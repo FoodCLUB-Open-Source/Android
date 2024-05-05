@@ -6,8 +6,8 @@ import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.navigation.Graph
 import android.kotlin.foodclub.navigation.auth.AuthScreen
 import android.kotlin.foodclub.utils.composables.AuthLayout
-import android.kotlin.foodclub.utils.composables.ConfirmButton
-import android.kotlin.foodclub.utils.composables.CustomCodeTextField
+import android.kotlin.foodclub.utils.composables.customComponents.ConfirmButton
+import android.kotlin.foodclub.utils.composables.customComponents.CustomCodeTextField
 import android.kotlin.foodclub.viewModels.authentication.signupVerification.SignupVerificationEvents
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
@@ -69,6 +69,9 @@ fun SignupVerification(
     ) {
         Column(verticalArrangement = Arrangement.SpaceBetween) {
             var enableButton by remember { mutableStateOf(false) }
+            var enableText by remember {
+                mutableStateOf(false)
+            }
             var isTimerRunning by remember { mutableStateOf(true) }
             var currentTime by remember {
                 mutableStateOf(TimeUnit.SECONDS.toMillis(62))
@@ -79,9 +82,14 @@ fun SignupVerification(
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_8)),
                 modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_12))
             ) {
-                CustomCodeTextField { isEnabled, code ->
+                CustomCodeTextField(isErrorOccurred = state.errorOccurred, enableText = enableText) { isEnabled, code ->
                     enableButton = isEnabled
                     currentCode = code
+                    if (code.length < 6)
+                    {
+                        enableText = false
+                    }
+
                 }
             }
 
@@ -94,7 +102,7 @@ fun SignupVerification(
                         code = currentCode,
                         navController = navController
                     )
-
+                    enableText = true
                     enableButton = false
                 }
                 Row(
@@ -115,6 +123,7 @@ fun SignupVerification(
                                 events.sendVerificationCode(navController = navController)
                                 currentTime = TimeUnit.SECONDS.toMillis(61)
                                 isTimerRunning = true
+                                enableButton = true
                             }
                         },
                         style = TextStyle(

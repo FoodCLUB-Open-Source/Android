@@ -9,10 +9,16 @@ import java.util.zip.GZIPInputStream
 class ResponsesInterceptor: Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalResponse = chain.proceed(chain.request())
+
         val responseBody = try {
-            val responseText = GZIPInputStream(
-                originalResponse.peekBody(Long.MAX_VALUE).byteStream()
-            ).bufferedReader(Charsets.UTF_8).use { it.readText() }
+            val responseText = if(isGzipped(originalResponse)) {
+                GZIPInputStream(
+                    originalResponse.peekBody(Long.MAX_VALUE).byteStream()
+                ).bufferedReader(Charsets.UTF_8).use { it.readText() }
+            } else {
+                originalResponse.peekBody(Long.MAX_VALUE).string()
+            }
+
             Gson().fromJson(responseText, SingleMessageResponse::class.java)
         } catch (e: Exception) {
             SingleMessageResponse(message = "${originalResponse.code} ${originalResponse.message}")
@@ -25,5 +31,10 @@ class ResponsesInterceptor: Interceptor {
             return originalResponse.newBuilder().request(newRequest).code(401).build()
         }
         return originalResponse
+    }
+
+    private fun isGzipped(response: Response): Boolean {
+        return response.header("Content-Encoding") != null && response.header("Content-Encoding")
+            .equals("gzip")
     }
 }

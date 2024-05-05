@@ -6,8 +6,9 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.enums.QuantityUnit
 import android.kotlin.foodclub.domain.models.products.Ingredient
-import android.kotlin.foodclub.utils.helpers.ValueParser
+import android.kotlin.foodclub.domain.models.products.Product
 import android.kotlin.foodclub.views.home.ui.theme.FoodClubTheme
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,6 +22,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -75,20 +79,26 @@ fun HomeIngredient(
             .fillMaxWidth(),
         shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_15)),
         colors = CardDefaults.cardColors(
-            containerColor = colorResource(id = R.color.home_ingredient_section_background_color)
+            containerColor = Color.White
         ),
+        border = BorderStroke(
+            width = dimensionResource(id = R.dimen.dim_2),
+            color = colorResource(id = R.color.home_ingredient_card_border_color),
+        )
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = dimensionResource(id = R.dimen.dim_12)),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround
         ) {
             val painter = rememberAsyncImagePainter(
-                model = ingredient.imageUrl,
+                model = ingredient.product.image,
                 placeholder = painterResource(
                     id = R.drawable.salad_ingredient
                 ),
-                error  = painterResource(
+                error = painterResource(
                     id = R.drawable.salad_ingredient
                 ),
             )
@@ -105,6 +115,7 @@ fun HomeIngredient(
 
             Row(
                 modifier = Modifier
+                    .padding(end = dimensionResource(id = R.dimen.dim_12))
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -112,15 +123,15 @@ fun HomeIngredient(
                 Column(
                     modifier = Modifier.padding(start = dimensionResource(id = R.dimen.dim_32)),
                     horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(32.dp),
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_32)),
                 ) {
                     Text(
-                        text = ingredient.type,
+                        text = ingredient.product.label,
                         lineHeight = dimensionResource(id = R.dimen.fon_18).value.sp,
                         modifier = Modifier,
                         fontWeight = FontWeight.Medium,
                         fontFamily = Montserrat,
-                        color = Color.White,
+                        color = Color.Black,
                     )
                     Row(
                         modifier = Modifier,
@@ -130,6 +141,7 @@ fun HomeIngredient(
                             painter = painterResource(id = R.drawable.baseline_arrow_left_24),
                             contentDescription = stringResource(id = R.string.profile_image),
                             modifier = Modifier
+                                .padding(end = dimensionResource(id = R.dimen.dim_12))
                                 .clickable {
                                     ingredient.decrementQuantity((5 / quantityMultiplier).toInt())
                                     quantity = (quantityMultiplier * ingredient.quantity).toInt()
@@ -137,8 +149,8 @@ fun HomeIngredient(
                             tint = quantityIndicatorColor,
                         )
                         Text(
-                            quantity.toString() + ValueParser.quantityUnitToString(ingredient.unit),
-                            color = Color.White,
+                            quantity.toString() + ingredient.unit.short,
+                            color = Color.Black,
                             fontFamily = Montserrat,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = dimensionResource(id = R.dimen.fon_14).value.sp
@@ -147,6 +159,7 @@ fun HomeIngredient(
                             painter = painterResource(id = R.drawable.baseline_arrow_right_24),
                             contentDescription = null,
                             modifier = Modifier
+                                .padding(start = dimensionResource(id = R.dimen.dim_12))
                                 .clickable {
                                     ingredient.incrementQuantity((5 / quantityMultiplier).toInt())
                                     quantity = (quantityMultiplier * ingredient.quantity).toInt()
@@ -162,7 +175,7 @@ fun HomeIngredient(
                         .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_30)))
                         .background(
                             if (isSelected) foodClubGreen
-                            else colorResource(id = R.color.home_ingredient_unselected_tick_color)
+                            else colorResource(id = R.color.home_ingredient_unselected_color)
                         )
                         .clickable {
                             isSelected = !isSelected
@@ -172,10 +185,10 @@ fun HomeIngredient(
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.check),
+                        imageVector = if (isSelected) Icons.Outlined.Check else Icons.Outlined.Add,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
-                        colorFilter = ColorFilter.tint(color = colorResource(id = R.color.home_ingredient_section_background_color))
+                        colorFilter = ColorFilter.tint(color = Color.White)
                     )
                 }
             }
@@ -196,11 +209,14 @@ private fun HomeIngredientPreview() {
     FoodClubTheme {
         HomeIngredient(
             ingredient = Ingredient(
-                id = "3",
-                type = "Tomato paste",
+                product = Product(
+                    foodId = "3",
+                    label = "Tomato paste",
+                    image = null,
+                    units = QuantityUnit.entries
+                ),
                 quantity = 1,
-                unit = QuantityUnit.GRAMS,
-                imageUrl = "",
+                unit = QuantityUnit.GRAM,
                 expirationDate = "expirationDate3",
                 isSelected = false
             ),

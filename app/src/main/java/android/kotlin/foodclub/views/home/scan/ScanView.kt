@@ -335,8 +335,8 @@ fun ScanView(
                     Row {
                         visibleItems.forEach {
                             HorizontalBottomSheetItem(
-                                icon = it.imageUrl,
-                                text = it.type,
+                                icon = it.product.image ?: "",
+                                text = it.product.label,
                             )
                         }
 

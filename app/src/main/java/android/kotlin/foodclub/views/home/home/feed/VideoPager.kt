@@ -3,11 +3,10 @@ package android.kotlin.foodclub.views.home.home.feed
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.others.AnimatedIcon
-import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
-import android.kotlin.foodclub.utils.composables.LikeButton
-import android.kotlin.foodclub.utils.composables.PlayPauseButton
-import android.kotlin.foodclub.utils.composables.VideoLayout
-import android.kotlin.foodclub.utils.composables.VideoScroller
+import android.kotlin.foodclub.utils.composables.videoPager.LikeButton
+import android.kotlin.foodclub.utils.composables.videoPager.PlayPauseButton
+import android.kotlin.foodclub.utils.composables.videoPager.VideoLayout
+import android.kotlin.foodclub.utils.composables.videoPager.VideoScroller
 import android.kotlin.foodclub.viewModels.home.home.HomeEvents
 import android.kotlin.foodclub.views.VideoPagerLoadingSkeleton
 import androidx.compose.animation.core.LinearEasing
@@ -86,11 +85,7 @@ fun VideoPager(
 
             Box(modifier = Modifier.fillMaxSize()) {
                 val currentVideo = videoList[index]
-                val authorDetails = SimpleUserModel(
-                    userId = 1,
-                    username = currentVideo.authorDetails,
-                    profilePictureUrl = null
-                )
+
                 var isLiked by remember {
                     mutableStateOf(currentVideo.currentViewerInteraction.isLiked)
                 }
@@ -130,7 +125,7 @@ fun VideoPager(
                 PlayPauseButton(buttonVisibility = pauseButtonVisibility)
 
                 VideoLayout(
-                    userDetails = authorDetails,
+                    userDetails = currentVideo.authorDetails,
                     videoStats = currentVideo.videoStats,
                     likeState = isLiked,
                     bookMarkState = isBookmarked,
@@ -151,7 +146,7 @@ fun VideoPager(
                             )
                         }
                     },
-                    onInfoClick = {events.getRecipe(197); onInfoClick()},
+                    onInfoClick = { events.getRecipe(502); onInfoClick()},
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)

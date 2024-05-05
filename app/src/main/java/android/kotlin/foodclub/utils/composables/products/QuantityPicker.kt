@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.utils.composables
+package android.kotlin.foodclub.utils.composables.products
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
@@ -69,20 +69,17 @@ import kotlinx.coroutines.flow.map
  * Custom QuantityPicker composable for selecting quantity, unit, and type.
  *
  * @param ingredient The Ingredient object containing initial values.
- * @param units List of available QuantityUnit options.
  * @param onQuantityUnitSelected Callback when quantity, unit, or type is selected.
  * @param onIngredientUpdated Callback when the ingredient is updated.
  */
 
-@OptIn(
-    ExperimentalComposeUiApi::class,
-    ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalComposeUiApi::class
 )
 @Composable
 fun QuantityPicker(
     ingredient: Ingredient,
-    units: List<QuantityUnit>,
-    onQuantityUnitSelected: (quantity: Int, unit: QuantityUnit) -> Unit,
+    onQuantityUnitSelected: (quantity: Int?, unit: QuantityUnit) -> Unit,
     onIngredientUpdated: (Ingredient) -> Unit
 ) {
     var quantity by remember { mutableStateOf(if(ingredient.quantity== 0)"" else ingredient.quantity.toString()) }
@@ -98,8 +95,8 @@ fun QuantityPicker(
 
     val lightGrayAlpha = 0.2f
 
-    var selectedUnit by remember { mutableStateOf(units[0]) }
-    val lazyListContents = units.map { it.longName }.toMutableList().apply {
+    var selectedUnit by remember { mutableStateOf(ingredient.unit) }
+    val lazyListContents = ingredient.product.units.map { it.longName }.toMutableList().apply {
         add(0, "")
         add("")
     }
@@ -114,7 +111,7 @@ fun QuantityPicker(
 
     LaunchedEffect(typeListState) {
         snapshotFlow { typeListState.firstVisibleItemIndex }
-            .map { index -> units[index] }
+            .map { index -> ingredient.product.units[index] }
             .filterNotNull()
             .distinctUntilChanged()
             .collect {
@@ -244,7 +241,8 @@ fun QuantityPicker(
         }
 
         onQuantityUnitSelected(
-            if (quantity == "0" || quantity == "") 1 else quantity.toInt(),
+//            if (quantity == "0" || quantity == "") 1 else
+                quantity.toIntOrNull(),
             selectedUnit
         )
 
@@ -282,9 +280,9 @@ fun QuantityPicker(
             contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_15)),
             onClick = {
 
-                val updatedQuantity: Int =
-                    if (quantity == "0" || quantity == "") 1 else quantity.toInt()
-                ingredient.quantity = updatedQuantity
+//                val updatedQuantity: Int =
+//                    if (quantity == "0" || quantity == "") 1 else quantity.toInt()
+//                ingredient.quantity = updatedQuantity
                 ingredient.unit = selectedUnit
                 onIngredientUpdated(ingredient)
             }
@@ -353,7 +351,7 @@ private fun pixelsToDp(pixels: Int) = with(LocalDensity.current) { pixels.toDp()
 @Composable
 fun EditIngredientBottomModal(
     ingredient: Ingredient,
-    onDismissRequest: (Boolean) -> Unit,
+    onDismissRequest: () -> Unit,
     onEdit: (Ingredient) -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(
@@ -363,17 +361,11 @@ fun EditIngredientBottomModal(
     ModalBottomSheet(
         sheetState = sheetState,
         onDismissRequest = {
-            onDismissRequest(false)
+            onDismissRequest()
         },
         modifier = Modifier.height(dimensionResource(id = R.dimen.dim_450)),
         containerColor = Color.White
     ) {
-        val units = listOf(
-            QuantityUnit.GRAMS,
-            QuantityUnit.KILOGRAMS,
-            QuantityUnit.LITERS,
-            QuantityUnit.MILLILITERS
-        )
         Column(
             modifier = Modifier
                 .wrapContentHeight()
@@ -384,13 +376,12 @@ fun EditIngredientBottomModal(
         ) {
             QuantityPicker(
                 ingredient,
-                units = units,
                 onQuantityUnitSelected = { quantity, unit ->
-                    ingredient.quantity = quantity
+                    ingredient.quantity = quantity ?: 0
                 },
                 onIngredientUpdated = {
                     onEdit(it)
-                    onDismissRequest(false)
+                    onDismissRequest()
                 },
 
                 )

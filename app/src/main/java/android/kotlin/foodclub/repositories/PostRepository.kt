@@ -47,7 +47,7 @@ class PostRepository(
         ) {
             is Resource.Success -> {
                 Resource.Success(
-                    resource.data!!.body()!!.posts.map {
+                    resource.data!!.body()!!.data.map {
                         postToVideoMapper.mapToDomainModel(it)
                     }
                 )
@@ -70,7 +70,7 @@ class PostRepository(
         ) {
             is Resource.Success -> {
                 Resource.Success(
-                    resource.data!!.body()!!.posts.map {
+                    resource.data!!.body()!!.data.map {
                         postToVideoMapper.mapToDomainModel(it)
                     }
                 )

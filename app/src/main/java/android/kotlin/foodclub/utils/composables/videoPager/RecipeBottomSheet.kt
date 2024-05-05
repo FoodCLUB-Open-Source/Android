@@ -5,7 +5,7 @@ import androidx.compose.foundation.horizontalScroll
 import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.defaultButtonColors
 import android.kotlin.foodclub.domain.models.recipes.Recipe
-import android.kotlin.foodclub.utils.composables.CustomSlider
+import android.kotlin.foodclub.utils.composables.customComponents.CustomSlider
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -61,8 +61,6 @@ fun RecipeBottomSheet(
 //    val sections = listOf("Ingredients", "Chef Ai", "Health", "Environment","Sticker")
 //    var selectedSection by remember { mutableStateOf(sections.first()) }
 
-    val categories = listOf("Protein", "Breakfast")
-
     if (screenHeight <= dimensionResource(id = R.dimen.dim_440)) {
         isSmallScreen = true
     }
@@ -117,10 +115,8 @@ fun RecipeBottomSheet(
                             )
                         )
                 ) {
-                    categories.forEach { category ->
-                        LabelText(
-                            text = category
-                        )
+                    recipe.categories.forEach { category ->
+                        LabelText(text = category.displayName)
                         Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_8)))
                     }
                 }
@@ -128,7 +124,9 @@ fun RecipeBottomSheet(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(
-                            if (isSmallScreen) dimensionResource(id = R.dimen.dim_0) else dimensionResource(id = R.dimen.dim_16)
+                            if (isSmallScreen) dimensionResource(id = R.dimen.dim_0) else dimensionResource(
+                                id = R.dimen.dim_16
+                            )
                         ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -270,7 +268,10 @@ fun LabelText(
         modifier = Modifier
             .clip(RoundedCornerShape(50))
             .background(backgroundColor)
-            .padding(horizontal = dimensionResource(id = R.dimen.dim_8), vertical = dimensionResource(id = R.dimen.dim_4))
+            .padding(
+                horizontal = dimensionResource(id = R.dimen.dim_8),
+                vertical = dimensionResource(id = R.dimen.dim_4)
+            )
     ) {
         Text(
             text = text,

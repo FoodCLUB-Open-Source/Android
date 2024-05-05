@@ -1,21 +1,30 @@
 package android.kotlin.foodclub.viewModels.home.myBasket
 
 import android.kotlin.foodclub.domain.models.products.Ingredient
-import android.kotlin.foodclub.domain.models.products.ProductsData
 import android.kotlin.foodclub.repositories.ProductRepository
 import android.kotlin.foodclub.domain.models.products.MyBasketCache
-import android.kotlin.foodclub.utils.helpers.Resource
+import android.kotlin.foodclub.domain.models.products.toEmptyIngredient
+import android.kotlin.foodclub.localdatasource.room.relationships.toProductModel
+import android.kotlin.foodclub.utils.composables.products.ProductAction
+import android.kotlin.foodclub.utils.composables.products.ProductState
 import android.kotlin.foodclub.views.home.myBasket.MyBasketState
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
+import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class MyBasketViewModel @Inject constructor(
     private val basketCache: MyBasketCache,
@@ -26,15 +35,29 @@ class MyBasketViewModel @Inject constructor(
         private val TAG = MyBasketViewModel::class.java.simpleName
     }
 
+    private val searchText = MutableStateFlow("")
+    val searchProducts = searchText
+        .flatMapLatest { text -> productRepository.getProducts(text).flow }
+        .map { pagingData -> pagingData.map { it.toProductModel().toEmptyIngredient() } }
+        .cachedIn(viewModelScope)
+
+    private val _productState = MutableStateFlow(ProductState.default())
+
     private val _state = MutableStateFlow(MyBasketState.default())
-    val state: StateFlow<MyBasketState>
-        get() = _state
+    val state = combine(_state, _productState) { state, productState ->
+        state.copy(
+            productState = productState
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000),
+        MyBasketState.default())
 
     init {
-        fetchProductsDatabase("")
         viewModelScope.launch {
             val basket = basketCache.getBasket()
             basket.clearSelectedIngredients()
+            _productState.update {
+                it.copy(addedProducts = basket.ingredients)
+            }
             _state.update {
                 it.copy(
                     basket = basket,
@@ -74,6 +97,9 @@ class MyBasketViewModel @Inject constructor(
     override fun deleteSelectedIngredients() {
         val basket = state.value.basket!!
         basket.deleteIngredients()
+        _productState.update {
+            it.copy(addedProducts = basket.ingredients)
+        }
         _state.update {
             it.copy(
                 basket = basket,
@@ -85,98 +111,32 @@ class MyBasketViewModel @Inject constructor(
 
     }
 
-    override fun fetchProductsDatabase(searchText: String) {
-        viewModelScope.launch {
-            when (val resource = productRepository.getProductsList(searchText)) {
-                is Resource.Success -> {
-                    _state.update {
-                        it.copy(
-                            error = "",
-                            productsDatabase = resource.data!!
-                        )
-                    }
-                    Log.d(TAG, "database: ${state.value.productsDatabase.productsList}")
-                }
-
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            error = resource.message!!
-                        )
-                    }
-                    Log.d(TAG, "error: ${state.value.error}")
-                }
-            }
-        }
-    }
-
-    override fun fetchMoreProducts(searchText: String, onLoadComplete: () -> Unit) {
-        val job = viewModelScope.launch {
-            when (
-                val resource = productRepository.getProductsList(
-                    searchText = searchText,
-                    session = state.value.productsDatabase.getSessionIdFromUrl()
-                )
-            ) {
-                is Resource.Success -> {
-                    val response = resource.data!!
-                    _state.update {
-                        it.copy(
-                            error = "",
-                            productsDatabase = ProductsData(
-                                searchText = it.productsDatabase.searchText,
-                                productsList = it.productsDatabase.productsList + response.productsList,
-                                nextUrl = response.nextUrl
-                            )
-                        )
-                    }
-                }
-
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            error = resource.message!!
-                        )
-                    }
-                    Log.d(TAG, "error: ${state.value.error}")
-                }
-            }
-        }
-        job.invokeOnCompletion { onLoadComplete() }
-    }
-
-    override fun addIngredient(ingredient: Ingredient) {
-        val basket = state.value.basket!!
-        basket.addIngredient(ingredient)
-        _state.update {
+    override fun selectAction(ingredient: Ingredient, productAction: ProductAction) {
+        _productState.update {
             it.copy(
-                basket = basket,
-                productsList = basket.ingredients
+                currentAction = productAction,
+                editedIngredient = ingredient
             )
         }
-        saveBasket()
-
     }
 
-    fun refreshBasket() {
-        _state.update { it.copy(productsList = basketCache.getBasket().ingredients) }
-    }
+    override fun updateIngredient(ingredient: Ingredient) {
+        val basket = state.value.basket!!
+        var editedIngredient = basket.ingredients.filter {
+            it.product.foodId == ingredient.product.foodId
+        }.getOrNull(0)
 
-    fun updateSelectedIngredients(selectedIngredients: List<Ingredient>) {
-        // TOOD Update state, selectedIngredients string or ingredient list
-    }
-
-    fun addIngredientsToBasket(ingredients: List<Ingredient>) {
-        ingredients.forEach { ingredient ->
-            addIngredient(ingredient = ingredient)
+        if(editedIngredient == null) {
+            editedIngredient = ingredient
+            basket.addIngredient(editedIngredient)
+        } else {
+            editedIngredient.quantity = ingredient.quantity
+            editedIngredient.unit = ingredient.unit
         }
 
-        _state.update { it.copy(selectedProductsList = emptyList()) }
-    }
-
-    fun removeIngredient(id: String) {
-        val basket = state.value.basket!!
-        basket.removeIngredient(id)
+        _productState.update {
+            it.copy(addedProducts = basket.ingredients)
+        }
         _state.update {
             it.copy(
                 basket = basket,
@@ -185,4 +145,31 @@ class MyBasketViewModel @Inject constructor(
         }
         saveBasket()
     }
+
+    override fun deleteIngredient(ingredient: Ingredient) {
+        ingredient.quantity = 0
+        ingredient.expirationDate = ""
+        val basket = state.value.basket!!
+        basket.removeIngredient(ingredient.product.foodId)
+        _productState.update {
+            it.copy(addedProducts = basket.ingredients)
+        }
+        _state.update {
+            it.copy(
+                basket = basket,
+                productsList = basket.ingredients
+            )
+        }
+        saveBasket()
+    }
+
+    override fun search(searchText: String) {
+        this.searchText.update { searchText }
+    }
+
+    override fun dismissAction() {
+        _productState.update { it.copy(currentAction = ProductAction.DEFAULT) }
+    }
+
+    override fun searchWithinAddedIngredients(searchText: String) { }
 }

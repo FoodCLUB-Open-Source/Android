@@ -2,6 +2,8 @@ package android.kotlin.foodclub.localdatasource.room.entity
 
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.home.VideoStats
+import android.kotlin.foodclub.domain.models.home.VideoUserInteraction
+import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.Companion.CASCADE
@@ -25,13 +27,15 @@ data class ProfileBookmarksEntity(
     val videoLink: String? = null,
     val thumbnailLink: String? = null,
     val totalLikes: Long? = null,
-    val totalViews: Long? = null
+    val totalViews: Long? = null,
+    val isLiked: Boolean? = null,
+    val isBookmarked: Boolean? = null
 )
 
 fun ProfileBookmarksEntity.toVideoModel(): VideoModel {
     return VideoModel(
         videoId = videoId,
-        authorDetails = "Marc",
+        authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
         videoStats = VideoStats(
             totalLikes ?: 0,
             0L,
@@ -41,6 +45,10 @@ fun ProfileBookmarksEntity.toVideoModel(): VideoModel {
         ),
         videoLink = videoLink ?: "",
         description = description ?: "",
-        thumbnailLink = thumbnailLink ?: ""
+        thumbnailLink = thumbnailLink ?: "",
+        currentViewerInteraction = VideoUserInteraction(
+            isBookmarked = isBookmarked ?: false,
+            isLiked = isLiked ?: false
+        )
     )
 }

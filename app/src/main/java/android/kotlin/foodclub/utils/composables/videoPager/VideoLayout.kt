@@ -1,4 +1,4 @@
-package android.kotlin.foodclub.utils.composables
+package android.kotlin.foodclub.utils.composables.videoPager
 
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.config.ui.Montserrat
@@ -8,6 +8,7 @@ import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.home.VideoStats
 import android.kotlin.foodclub.domain.models.others.AnimatedIcon
 import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
+import android.kotlin.foodclub.utils.composables.shimmerBrush
 import android.kotlin.foodclub.utils.helpers.checkInternetConnectivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing

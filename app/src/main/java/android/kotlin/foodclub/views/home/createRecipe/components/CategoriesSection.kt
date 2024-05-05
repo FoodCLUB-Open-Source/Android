@@ -5,7 +5,7 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.categorySelectedBlue
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.enums.Category
-import android.kotlin.foodclub.utils.composables.SearchBar
+import android.kotlin.foodclub.utils.composables.customComponents.SearchBar
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

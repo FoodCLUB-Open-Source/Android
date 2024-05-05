@@ -6,8 +6,9 @@ import android.kotlin.foodclub.config.ui.Montserrat
 import android.kotlin.foodclub.config.ui.containerColor
 import android.kotlin.foodclub.config.ui.foodClubGreen
 import android.kotlin.foodclub.domain.models.products.Ingredient
-import android.kotlin.foodclub.utils.composables.IngredientsBottomSheet
+import android.kotlin.foodclub.utils.composables.products.AddIngredientsView
 import android.kotlin.foodclub.viewModels.home.myBasket.MyBasketEvents
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.Image
@@ -29,8 +30,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -52,58 +56,59 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
-import kotlinx.coroutines.delay
 
+//right now on the basket view, we are opening a bottom sheet and putting add ingredient section to a bottom sheet.
+// but we want to open it as a composable on the UI instead of putting it to a bottom sheet
+//I mean call for add ingredient composable when it's opened, don't create a navigation for it
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun MyBasketView(
     events: MyBasketEvents,
-    navController: NavController,
-    state: MyBasketState
+    state: MyBasketState,
+    searchResult: LazyPagingItems<Ingredient>
 ) {
     var showSheet by remember { mutableStateOf(false) }
     val productsList = state.productsList
     var deleteSelected by remember { mutableStateOf(false) }
 
-    if (showSheet) {
-        IngredientsBottomSheet(
-            onDismiss = { showSheet = !showSheet },
-            productsData = state.productsDatabase,
-            loadMoreObjects = { searchText, onLoadCompleted ->
-                events.fetchMoreProducts(searchText, onLoadCompleted)
-            },
-            onListUpdate = { events.fetchProductsDatabase(it) },
-            onSave = { events.addIngredient(it) }
-        )
-
+    BackHandler(enabled = showSheet) {
+        showSheet = false
     }
-    Column(
-        modifier = Modifier
-            .background(color = Color.White)
-            .fillMaxSize()
-            .padding(top = dimensionResource(id = R.dimen.dim_60)),
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
+
+    if (showSheet) {
+        AddIngredientsView(
+            events = events,
+            state = state.productState,
+            productsList = searchResult,
+            onDismiss = { showSheet = !showSheet }
+        )
+    } else {
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier
+                .background(color = Color.White)
+                .fillMaxSize()
+                .padding(top = dimensionResource(id = R.dimen.dim_60)),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = dimensionResource(id = R.dimen.dim_20),
-                        end = dimensionResource(id = R.dimen.dim_20)
-                    ),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // this below commented code block will be used in the future
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = dimensionResource(id = R.dimen.dim_20),
+                            end = dimensionResource(id = R.dimen.dim_20)
+                        ),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    // this below commented code block will be used in the future
 //                IconButton(
 //                    onClick = { navController.navigateUp() },
 //                    modifier = Modifier
@@ -114,118 +119,123 @@ fun MyBasketView(
 //                        tint = Color.Black
 //                    )
 //                }
-                Text(
-                    text = stringResource(id = R.string.shopping_list),
-                    fontSize = dimensionResource(id = R.dimen.fon_28).value.sp,
-                    fontFamily = Montserrat,
-                    fontWeight = FontWeight(integerResource(id = R.integer.int_600)),
-                    color = Color.Black,
-                    modifier = Modifier.weight(1f),
-                    lineHeight = dimensionResource(id = R.dimen.dim_48).value.sp
-                )
-                Button(
-                    shape = RectangleShape,
-                    modifier = Modifier
-                        .border(
-                            dimensionResource(id = R.dimen.dim_1),
-                            containerColor,
-                            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_22))
-                        )
-                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_22)))
-                        .width(dimensionResource(id = R.dimen.dim_50))
-                        .height(dimensionResource(id = R.dimen.dim_50)),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = containerColor,
-                        contentColor = Color.White
-                    ),
-                    contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_5)),
-                    onClick = { deleteSelected = true }
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.delete_bin_5_line__2_),
-                        contentDescription = stringResource(id = R.string.go_back),
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .width(dimensionResource(id = R.dimen.dim_20))
-                            .height(dimensionResource(id = R.dimen.dim_20))
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        end = dimensionResource(id = R.dimen.dim_20),
-                        start = dimensionResource(id = R.dimen.dim_20),
-                        bottom = dimensionResource(id = R.dimen.dim_10)
-                    )
-                    .height(dimensionResource(id = R.dimen.dim_80)),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start
-            ) {
-                Button(
-                    shape = RectangleShape,
-                    modifier = Modifier
-                        .border(
-                            width = dimensionResource(id = R.dimen.dim_1),
-                            color = colorResource(id = R.color.shopping_list_add_items_green),
-                            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16))
-                        )
-                        .clip(
-                            RoundedCornerShape(dimensionResource(id = R.dimen.dim_16))
-                        ),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White,
-                        colorResource(id = R.color.shopping_list_add_items_green),
-                    ),
-                    contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_15)),
-                    onClick = { showSheet = !showSheet }
-                ) {
                     Text(
-                        text = stringResource(id = R.string.add_items_plus),
-                        fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
+                        text = stringResource(id = R.string.shopping_list),
+                        fontSize = dimensionResource(id = R.dimen.fon_28).value.sp,
                         fontFamily = Montserrat,
-                        fontWeight = FontWeight(integerResource(id = R.integer.int_500)),
-                        lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
-                        color  = colorResource(id = R.color.shopping_list_add_items_green)
+                        fontWeight = FontWeight(integerResource(id = R.integer.int_600)),
+                        color = Color.Black,
+                        modifier = Modifier.weight(1f),
+                        lineHeight = dimensionResource(id = R.dimen.dim_48).value.sp
                     )
+                    Button(
+                        shape = RectangleShape,
+                        modifier = Modifier
+                            .border(
+                                dimensionResource(id = R.dimen.dim_1),
+                                containerColor,
+                                shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_22))
+                            )
+                            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_22)))
+                            .width(dimensionResource(id = R.dimen.dim_50))
+                            .height(dimensionResource(id = R.dimen.dim_50)),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = containerColor,
+                            contentColor = Color.White
+                        ),
+                        contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_5)),
+                        onClick = { deleteSelected = true }
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.delete_bin_5_line__2_),
+                            contentDescription = stringResource(id = R.string.go_back),
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .width(dimensionResource(id = R.dimen.dim_20))
+                                .height(dimensionResource(id = R.dimen.dim_20))
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            end = dimensionResource(id = R.dimen.dim_20),
+                            start = dimensionResource(id = R.dimen.dim_20),
+                            bottom = dimensionResource(id = R.dimen.dim_10)
+                        )
+                        .height(dimensionResource(id = R.dimen.dim_80)),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    Button(
+                        shape = RectangleShape,
+                        modifier = Modifier
+                            .border(
+                                width = dimensionResource(id = R.dimen.dim_1),
+                                color = colorResource(id = R.color.shopping_list_add_items_green),
+                                shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_16))
+                            )
+                            .clip(
+                                RoundedCornerShape(dimensionResource(id = R.dimen.dim_16))
+                            ),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            colorResource(id = R.color.shopping_list_add_items_green),
+                        ),
+                        contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_15)),
+                        onClick = { showSheet = !showSheet }
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.add_items_plus),
+                            fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
+                            fontFamily = Montserrat,
+                            fontWeight = FontWeight(integerResource(id = R.integer.int_500)),
+                            lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
+                            color = colorResource(id = R.color.shopping_list_add_items_green)
+                        )
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null,
+                            tint = foodClubGreen
+                        )
+                    }
+                }
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(
+                            end = dimensionResource(id = R.dimen.dim_20),
+                            start = dimensionResource(id = R.dimen.dim_20)
+                        )
+                )
+                {
+                    itemsIndexed(
+                        items = productsList,
+                        key = { _, item -> "${item.product.foodId}_${item.quantity}" }
+                    ) { _, ingredient ->
+                        BasketIngredient(
+                            ingredient = ingredient,
+                            isShown = !state.selectedProductsList.contains(ingredient.product.foodId)
+                                    || !deleteSelected,
+                            onSelectionChange = { bool ->
+                                if (bool) events.selectIngredient(ingredient.product.foodId)
+                                else events.unselectIngredient(ingredient.product.foodId)
+                            },
+                            onIngredientUpdate = { events.saveBasket() }
+                        )
+                    }
                 }
             }
-            LazyColumn(
-                modifier = Modifier
-                    .padding(
-                        end = dimensionResource(id = R.dimen.dim_20),
-                        start = dimensionResource(id = R.dimen.dim_20)
-                    )
-            )
-            {
-                itemsIndexed(
-                    items = productsList,
-                    key = { _, item -> "${item.id}_${item.quantity}" }
-                ) { _, ingredient ->
-                    BasketIngredient(
-                        ingredient = ingredient,
-                        isShown = !state.selectedProductsList.contains(ingredient.id)
-                                || !deleteSelected,
-                        onSelectionChange = { bool ->
-                            if (bool) events.selectIngredient(ingredient.id)
-                            else events.unselectIngredient(ingredient.id)
-                        },
-                        onIngredientUpdate = { events.saveBasket() }
-                    )
+
+            LaunchedEffect(deleteSelected) {
+                if (deleteSelected) {
+                    events.deleteSelectedIngredients()
+                    deleteSelected = false
                 }
             }
-        }
 
-        LaunchedEffect(deleteSelected) {
-            if (deleteSelected) {
-                delay(800)
-                events.deleteSelectedIngredients()
-                deleteSelected = false
-            }
         }
-
     }
 }
 
@@ -240,7 +250,7 @@ fun BasketIngredient(
     var isSelected by remember { mutableStateOf(ingredient.isSelected) }
 
     var quantity by remember { mutableIntStateOf(ingredient.quantity) }
-    val type by remember { mutableStateOf(ingredient.type) }
+    val type by remember { mutableStateOf(ingredient.product.label) }
     val unit by remember { mutableStateOf(ingredient.unit) }
 
     var showItem by remember { mutableStateOf(true) }
@@ -268,7 +278,7 @@ fun BasketIngredient(
                     .padding(dimensionResource(id = R.dimen.dim_10))
             ) {
                 AsyncImage(
-                    model = ingredient.imageUrl,
+                    model = ingredient.product.image,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -317,42 +327,58 @@ fun BasketIngredient(
                             maxLines = integerResource(id = R.integer.int_3)
                         )
                     }
-                    Box(modifier = Modifier.align(Alignment.BottomEnd)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Image(
-                                painter = painterResource(id = R.drawable.baseline_arrow_left_24),
-                                contentDescription = stringResource(id = R.string.profile_picture),
-                                modifier = Modifier
-                                    .size(dimensionResource(id = R.dimen.dim_50))
-                                    .padding(end = dimensionResource(id = R.dimen.dim_15))
-                                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
-                                    .clickable {
-                                        ingredient.decrementQuantity(5)
-                                        quantity = ingredient.quantity
-                                        onIngredientUpdate()
-                                    }
-                            )
-                            Text(
-                                quantity.toString() + unit.short,
-                                color = Color.Black,
-                                fontFamily = Montserrat,
-                                fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = integerResource(id = R.integer.int_1)
-                            )
-                            Image(
-                                painter = painterResource(id = R.drawable.baseline_arrow_right_24),
-                                contentDescription = stringResource(id = R.string.profile_picture),
-                                modifier = Modifier
-                                    .size(dimensionResource(id = R.dimen.dim_50))
-                                    .padding(start = dimensionResource(id = R.dimen.dim_15))
-                                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
-                                    .clickable {
-                                        ingredient.incrementQuantity(5)
-                                        quantity = ingredient.quantity
-                                        onIngredientUpdate()
-                                    }
-                            )
+                    if (quantity > 0) {
+                        Box(modifier = Modifier.align(Alignment.BottomEnd)) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement
+                                    .spacedBy(dimensionResource(id = R.dimen.dim_12)),
+                                modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dim_16))
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.shopping_list_arrow_left),
+                                    contentDescription = stringResource(id = R.string.profile_picture),
+                                    modifier = Modifier
+                                        .height(dimensionResource(id = R.dimen.dim_24))
+                                        .width(dimensionResource(id = R.dimen.dim_12))
+                                        .padding(
+                                            vertical = dimensionResource(id = R.dimen.dim_6),
+                                            horizontal = dimensionResource(id = R.dimen.dim_3)
+                                        )
+                                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
+                                        .clickable {
+                                            ingredient.decrementQuantity(5)
+                                            quantity = ingredient.quantity
+                                            onIngredientUpdate()
+                                        }
+                                )
+                                Text(
+                                    quantity.toString() + unit.short,
+                                    color = Color.Black,
+                                    fontFamily = Montserrat,
+                                    fontSize = dimensionResource(id = R.dimen.fon_14).value.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    overflow = TextOverflow.Ellipsis,
+                                    maxLines = integerResource(id = R.integer.int_1)
+                                )
+                                Image(
+                                    painter = painterResource(id = R.drawable.shopping_list_arrow_right),
+                                    contentDescription = stringResource(id = R.string.profile_picture),
+                                    modifier = Modifier
+                                        .height(dimensionResource(id = R.dimen.dim_24))
+                                        .width(dimensionResource(id = R.dimen.dim_12))
+                                        .padding(
+                                            vertical = dimensionResource(id = R.dimen.dim_6),
+                                            horizontal = dimensionResource(id = R.dimen.dim_3)
+                                        )
+                                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_20)))
+                                        .clickable {
+                                            ingredient.incrementQuantity(5)
+                                            quantity = ingredient.quantity
+                                            onIngredientUpdate()
+                                        }
+                                )
+                            }
                         }
                     }
                 }

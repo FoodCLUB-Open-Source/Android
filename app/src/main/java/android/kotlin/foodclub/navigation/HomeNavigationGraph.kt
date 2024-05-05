@@ -96,11 +96,12 @@ fun NavGraphBuilder.homeNavigationGraph(
         composable(route = BottomBarScreenObject.Discover.route) {
             val viewModel: MyBasketViewModel = hiltViewModel()
             val state = viewModel.state.collectAsState()
+            val searchResult = viewModel.searchProducts.collectAsLazyPagingItems()
 
             MyBasketView(
-                navController = navController,
                 events = viewModel,
-                state = state.value
+                state = state.value,
+                searchResult = searchResult
             )
         }
         composable(route = BottomBarScreenObject.Create.route) {
@@ -110,11 +111,14 @@ fun NavGraphBuilder.homeNavigationGraph(
         composable(route = BottomBarScreenObject.Play.route) {
             val viewModel = it.sharedHiltViewModel<DiscoverViewModel>(navController)
             val state = viewModel.state.collectAsState()
+            val productState = viewModel.productState.collectAsState()
 
             DiscoverView(
                 navController = navController,
                 events = viewModel,
-                state = state.value
+                state = state.value,
+                productState = productState.value,
+                productsEvents = viewModel
             )
         }
 
@@ -139,6 +143,7 @@ fun NavGraphBuilder.homeNavigationGraph(
             ScanResultView(
                 navController = navController,
                 events = viewModel,
+                discoverEvents = viewModel,
                 state = state.value
             )
 
@@ -210,11 +215,12 @@ fun NavGraphBuilder.homeNavigationGraph(
         composable(route = HomeOtherRoutes.MyBasketView.route) {
             val viewModel: MyBasketViewModel = hiltViewModel()
             val state = viewModel.state.collectAsState()
+            val searchResult = viewModel.searchProducts.collectAsLazyPagingItems()
 
             MyBasketView(
-                navController = navController,
                 events = viewModel,
-                state = state.value
+                state = state.value,
+                searchResult = searchResult
             )
         }
 
@@ -227,9 +233,14 @@ fun NavGraphBuilder.homeNavigationGraph(
 
         composable(route = HomeOtherRoutes.AddIngredientsView.route){
             val viewModel = it.sharedHiltViewModel<DiscoverViewModel>(navController)
-            val state = viewModel.state.collectAsState()
+            val searchResult = viewModel.searchProducts.collectAsLazyPagingItems()
+            val state = viewModel.productState.collectAsState()
 
-            AddIngredientsView(state = state.value, events = viewModel, navController = navController)
+            AddIngredientsView(
+                state = state.value,
+                events = viewModel,
+                searchResult = searchResult,
+                backHandler = { navController.popBackStack() })
         }
 
         composable(route = HomeOtherRoutes.TakeProfilePhotoView.route) {

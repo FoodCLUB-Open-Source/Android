@@ -3,11 +3,11 @@ package android.kotlin.foodclub.network.retrofit.services
 import android.kotlin.foodclub.network.retrofit.responses.search.SearchUserPostsResponse
 import retrofit2.Response
 import retrofit2.http.GET
-import retrofit2.http.Query
+import retrofit2.http.Path
 
 interface SearchService {
-    @GET("posts/search/user-posts")
+    @GET("posts/search/user-posts/{searchText}")
     suspend fun searchPosts(
-        @Query("search_text") searchText: String
+        @Path("searchText") searchText: String
     ): Response<SearchUserPostsResponse>
 }

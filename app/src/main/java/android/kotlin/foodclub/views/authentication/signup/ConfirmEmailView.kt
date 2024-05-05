@@ -3,8 +3,8 @@ package android.kotlin.foodclub.views.authentication.signup
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.auth.SignUpUser
 import android.kotlin.foodclub.utils.composables.AuthLayout
-import android.kotlin.foodclub.utils.composables.ConfirmButton
-import android.kotlin.foodclub.utils.composables.CustomTextField
+import android.kotlin.foodclub.utils.composables.customComponents.ConfirmButton
+import android.kotlin.foodclub.utils.composables.customComponents.CustomTextField
 import android.kotlin.foodclub.utils.helpers.FieldsValidation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -46,7 +46,7 @@ fun ConfirmEmailView(
             CustomTextField(
                 initialValue = repeatedEmail,
                 placeholder = stringResource(id = R.string.email),
-                keyboardType = KeyboardType.Text,
+                keyboardType = KeyboardType.Email,
                 onCorrectnessStateChange = { filledEmail = !filledEmail },
                 onValueChange = {
                     repeatedEmail = it

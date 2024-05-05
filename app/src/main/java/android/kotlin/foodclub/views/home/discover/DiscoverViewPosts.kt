@@ -3,12 +3,11 @@ package android.kotlin.foodclub.views.home.discover
 import android.kotlin.foodclub.R
 import android.kotlin.foodclub.domain.models.home.VideoModel
 import android.kotlin.foodclub.domain.models.others.AnimatedIcon
-import android.kotlin.foodclub.domain.models.profile.SimpleUserModel
-import android.kotlin.foodclub.utils.composables.BackButton
-import android.kotlin.foodclub.utils.composables.LikeButton
-import android.kotlin.foodclub.utils.composables.PlayPauseButton
-import android.kotlin.foodclub.utils.composables.VideoLayout
-import android.kotlin.foodclub.utils.composables.VideoScroller
+import android.kotlin.foodclub.utils.composables.customComponents.BackButton
+import android.kotlin.foodclub.utils.composables.videoPager.LikeButton
+import android.kotlin.foodclub.utils.composables.videoPager.PlayPauseButton
+import android.kotlin.foodclub.utils.composables.videoPager.VideoLayout
+import android.kotlin.foodclub.utils.composables.videoPager.VideoScroller
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverEvents
 import android.kotlin.foodclub.viewModels.home.discover.DiscoverViewModel
 import androidx.activity.compose.BackHandler
@@ -137,15 +136,10 @@ fun DiscoverViewPosts(
 
                     LikeButton(doubleTapState) {}
 
-                    val simpleUserModel = SimpleUserModel(
-                        userId = state.username.toInt(),
-                        username = currentVideo.authorDetails,
-                        profilePictureUrl = null
-                    )
                     PlayPauseButton(buttonVisibility = pauseButtonVisibility)
 
                     VideoLayout(
-                        userDetails = simpleUserModel,
+                        userDetails = currentVideo.authorDetails,
                         videoStats = currentVideo.videoStats,
                         likeState = isLiked,
                         bookMarkState = isBookmarked,

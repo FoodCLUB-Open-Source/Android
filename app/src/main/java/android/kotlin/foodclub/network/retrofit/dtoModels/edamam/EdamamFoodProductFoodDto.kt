@@ -9,5 +9,5 @@ data class EdamamFoodProductFoodDto(
     val knownAs: String,
     val category: String,
     val categoryLabel: String,
-    val image: String
+    val image: String? = null
 )

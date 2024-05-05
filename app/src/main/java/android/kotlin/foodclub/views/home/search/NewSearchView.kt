@@ -147,7 +147,7 @@ fun NewSearchView(
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
                 RecommendationVideos(
                     gridHeight = maxHeight,
-                    recommandationVideosCount = searchPostList.size,
+                    recommendationVideosCount = searchPostList.size,
                     navController = navController,
                     dataItem = searchPostList,
                     brush = brush,
@@ -309,7 +309,7 @@ fun SearchBodyBoth(
             BoxWithConstraints {
                 RecommendationVideos(
                     gridHeight = maxHeight,
-                    recommandationVideosCount = searchPostList.size,
+                    recommendationVideosCount = searchPostList.size,
                     navController = navController,
                     dataItem = searchPostList,
                     brush = brush,

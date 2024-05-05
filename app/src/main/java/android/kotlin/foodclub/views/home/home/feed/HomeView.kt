@@ -116,7 +116,6 @@ fun HomeView(
         contentAlignment = Alignment.BottomCenter
     ) {
         HomeHeaderBackground(
-            pagerState = pagerState,
             state = state
         )
         Box(
@@ -147,7 +146,7 @@ fun HomeView(
             ) {
                 Box(
                     modifier = Modifier.fillMaxWidth()
-                ){
+                ) {
                     HeaderContent(
                         modifier = modifier.align(Alignment.Center),
                         coroutineScope = coroutineScope,
@@ -178,6 +177,8 @@ fun HomeView(
             HomeBottomSheetIngredients(
                 onDismiss = triggerIngredientBottomSheetModal,
                 recipe = state.recipe,
+                //TODO implement post title
+                postTitle = "Chicken broth and meatballs",
                 onAddToBasket = { events.addIngredientsToBasket() }
 
             )
@@ -192,17 +193,16 @@ fun HomeView(
                     if (state.showMemories) {
                         events.toggleShowMemories(show = false)
                     }
-                    if (state.showMemoriesReel){
+                    if (state.showMemoriesReel) {
                         events.toggleShowMemoriesReel(show = true)
                     }
 
-                    if(initialPageFlag) {
+                    if (initialPageFlag) {
                         LaunchedEffect(key1 = Unit) {
                             delay(500)
 
                         }
-                    }
-                    else{
+                    } else {
                         if (!exoPlayer.isPlaying) {
                             exoPlayer.playWhenReady = true
                         }
@@ -216,13 +216,13 @@ fun HomeView(
                         modifier = modifier,
                         localDensity = localDensity,
                         onInfoClick = triggerIngredientBottomSheetModal,
-                        coroutineScope = coroutineScope
+                        coroutineScope = coroutineScope,
                     )
                 }
 
                 1 -> {
 
-                    if (exoPlayer.isPlaying){
+                    if (exoPlayer.isPlaying) {
                         exoPlayer.pause()
                     }
 
@@ -234,8 +234,8 @@ fun HomeView(
                         //toggleShowMemoriesReel = events::toggleShowMemoriesReel,
                         pagerState = pagerState,
                         navController = navController,
-                        selectReaction = { events. selectReaction(it)},
-                        clearSelectedReaction = {events.selectReaction(Reactions.ALL)}
+                        selectReaction = { events.selectReaction(it) },
+                        clearSelectedReaction = { events.selectReaction(Reactions.ALL) }
                     )
                 }
             }
@@ -245,27 +245,21 @@ fun HomeView(
 
 @Composable
 fun HomeHeaderBackground(
-    pagerState: PagerState,
     state: HomeState
-){
+) {
     Box(
         Modifier
             .fillMaxWidth()
             .height(dimensionResource(id = R.dimen.dim_95))
-            .then(
-                if (pagerState.currentPage == 0 || (pagerState.currentPage == 1 && !state.showMemoriesReel)) {
-                    Modifier
-                        .fadingEdge(
-                            Brush.verticalGradient(
-                                0.5f to Color.Black, 1f to Color.Transparent,
-                                tileMode = TileMode.Mirror
-                            )
-                        )
-                        .alpha(0.4f)
-                } else Modifier
+            .fadingEdge(
+                Brush.verticalGradient(
+                    0.5f to Color.Black, 1f to Color.Transparent,
+                    tileMode = TileMode.Mirror
+                )
             )
+            .alpha(0.4f)
             .background(
-                color = if (pagerState.currentPage == 0 || (pagerState.currentPage == 1 && !state.showMemoriesReel)) {
+                color = if (!state.showMemoriesReel) {
                     Color.Black
                 } else {
                     snapsTopbar
@@ -274,6 +268,7 @@ fun HomeHeaderBackground(
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HeaderContent(
     modifier: Modifier,

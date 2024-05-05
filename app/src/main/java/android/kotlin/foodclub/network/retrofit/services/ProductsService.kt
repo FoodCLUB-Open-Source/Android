@@ -11,7 +11,8 @@ interface ProductsService {
         @Query("session") session: Int?,
         @Query("app_id") appId: String,
         @Query("app_key") appKey: String,
-        @Query("ingr") searchString: String
+        @Query("ingr") searchString: String,
+        @Query("category") category: String = "generic-foods"
     ): Response<EdamamFoodProductsDto>
 
 }

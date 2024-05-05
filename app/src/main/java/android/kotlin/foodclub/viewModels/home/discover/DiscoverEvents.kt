@@ -7,14 +7,7 @@ import androidx.camera.core.ImageCapture
 interface DiscoverEvents {
     fun getPostsByWorld(worldCategory: Long)
     fun getPostsByUserId()
-    fun onAddIngredientsSearchTextChange(text: String)
-    fun updateIngredient(ingredient: Ingredient)
-    fun deleteIngredientFromList(ingredient: Ingredient)
-    fun addToUserIngredients(ingredient: Ingredient)
-    fun getPostData(postId: Long)
     fun scan(imageCapture: ImageCapture, context: Context)
     fun addScanListToUserIngredients(ingredients: List<Ingredient>)
-    fun onSearchIngredientsList(text: String)
     fun onResetSearchData()
-    fun onDeleteIngredient(ingredient: Ingredient)
 }

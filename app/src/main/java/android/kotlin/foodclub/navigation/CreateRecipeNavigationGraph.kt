@@ -5,6 +5,8 @@ import android.kotlin.foodclub.viewModels.home.camera.CameraViewModel
 import android.kotlin.foodclub.viewModels.home.trimmer.TrimmerViewModel
 import android.kotlin.foodclub.viewModels.home.createRecipe.CreateRecipeViewModel
 import android.kotlin.foodclub.views.home.camera.CameraView
+import android.kotlin.foodclub.views.home.addIngredients.AddIngredientsView
+import android.kotlin.foodclub.views.home.createRecipe.TrimmerView
 import android.kotlin.foodclub.views.home.createRecipe.CreateRecipeView
 import android.kotlin.foodclub.views.home.createRecipe.TrimmerView
 import android.net.Uri
@@ -19,6 +21,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import androidx.paging.compose.collectAsLazyPagingItems
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 fun NavGraphBuilder.createRecipeNavigationGraph(
@@ -40,7 +43,6 @@ fun NavGraphBuilder.createRecipeNavigationGraph(
             )
 
         }
-
         composable(CreateRecipeScreen.VideoEditor.route) { entry ->
             val viewModel: TrimmerViewModel = hiltViewModel()
             val state = viewModel.state.collectAsState()
@@ -76,7 +78,22 @@ fun NavGraphBuilder.createRecipeNavigationGraph(
             CreateRecipeView(
                 navController = navController,
                 events = viewModel,
-                state = state.value
+                state = state.value,
+                onIngredientsSearchBarClick = {
+                    navController.navigate(CreateRecipeScreen.AddIngredients.route)
+                }
+            )
+        }
+        composable(route = CreateRecipeScreen.AddIngredients.route) { entry ->
+            val viewModel = entry.sharedHiltViewModel<CreateRecipeViewModel>(navController)
+            val state = viewModel.state.collectAsState()
+            val searchResult = viewModel.searchProducts.collectAsLazyPagingItems()
+
+            AddIngredientsView(
+                state = state.value.productState,
+                searchResult = searchResult,
+                events = viewModel,
+                backHandler = { navController.popBackStack() }
             )
         }
     }
@@ -87,4 +104,5 @@ sealed class CreateRecipeScreen(val route: String) {
     data object VideoEditor : CreateRecipeScreen(route = "CREATE_RECIPE_TRIMMER")
     data object PostDetails : CreateRecipeScreen(route = "CREATE_RECIPE_DETAILS")
     data object CameraView : CreateRecipeScreen(route = "CREATE_RECIPE_CAMERA")
+    data object AddIngredients : CreateRecipeScreen(route = "CREATE_RECIPE_ADD_INGREDIENTS")
 }
