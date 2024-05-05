@@ -33,11 +33,15 @@ import android.kotlin.foodclub.localdatasource.room.database.FoodCLUBDatabase
 import android.kotlin.foodclub.network.remotedatasource.product.ProductRemoteDataSource
 import android.kotlin.foodclub.network.remotedatasource.profile_remote_datasource.ProfileRemoteDataSource
 import android.kotlin.foodclub.network.remotedatasource.settings_remote_datasource.SettingsRemoteDataSource
+import android.kotlin.foodclub.network.retrofit.dtoMappers.auth.FirebaseUserMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.LocalDataMapper
 import android.kotlin.foodclub.network.retrofit.dtoMappers.profile.OfflineProfileDataMapper
 import android.kotlin.foodclub.network.retrofit.services.SearchService
+import android.kotlin.foodclub.repositories.FirebaseUserRepository
 import android.kotlin.foodclub.repositories.SearchRepository
 import android.kotlin.foodclub.utils.helpers.ConnectivityUtils
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -89,10 +93,19 @@ object RepositoriesModule {
         api: AuthenticationService,
         signInUserMapper: SignInUserMapper,
         forgotChangePasswordMapper: ForgotChangePasswordMapper,
-        signUpUserMapper: SignUpUserMapper
+        signUpUserMapper: SignUpUserMapper,
+        firebaseUserRepository: FirebaseUserRepository,
+        firebaseUserMapper: FirebaseUserMapper,
+        firebaseMessaging: FirebaseMessaging
     ): AuthRepository {
         return AuthRepository(
-            api, signInUserMapper, forgotChangePasswordMapper, signUpUserMapper
+            api,
+            signInUserMapper,
+            forgotChangePasswordMapper,
+            signUpUserMapper,
+            firebaseUserRepository,
+            firebaseUserMapper,
+            firebaseMessaging
         )
     }
 
@@ -150,4 +163,9 @@ object RepositoriesModule {
     fun provideSearchRepository(api: SearchService): SearchRepository {
         return SearchRepository(api)
     }
+
+    @Singleton
+    @Provides
+    fun provideFirebaseUserRepository(firestore: FirebaseFirestore): FirebaseUserRepository =
+        FirebaseUserRepository(firestore)
 }

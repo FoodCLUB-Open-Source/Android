@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "15380520850",
-    "project_id": "foodclub-d29e8",
-    "storage_bucket": "foodclub-d29e8.appspot.com"
+    "project_number": "100959338026",
+    "project_id": "foodclub-df809",
+    "storage_bucket": "foodclub-df809.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:15380520850:android:3362281641cc821076eb4b",
+        "mobilesdk_app_id": "1:100959338026:android:2ceb72c9d2f0430f364d53",
         "android_client_info": {
           "package_name": "android.kotlin.foodclub"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": ""
+          "current_key": "AIzaSyB7xwLfNuI04LBFbr2U4y1s-ZM8K03H4VY"
         }
       ],
       "services": {
