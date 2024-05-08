@@ -1,19 +1,6 @@
 package live.foodclub.views.home.discover
 
-import live.foodclub.R
-import live.foodclub.config.ui.Montserrat
-import live.foodclub.config.ui.foodClubGreen
-import live.foodclub.domain.enums.Category
-import live.foodclub.domain.enums.CategoryType
-import live.foodclub.domain.models.home.VideoModel
-import live.foodclub.navigation.HomeOtherRoutes
-import live.foodclub.utils.composables.RecommendationVideos
-import live.foodclub.utils.composables.products.ProductState
-import live.foodclub.utils.composables.products.ProductsEvents
-import live.foodclub.utils.composables.shimmerBrush
-import live.foodclub.utils.helpers.checkInternetConnectivity
-import live.foodclub.viewModels.home.discover.DiscoverEvents
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,10 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.pager.VerticalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -68,7 +55,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import live.foodclub.R
+import live.foodclub.config.ui.Montserrat
+import live.foodclub.config.ui.foodClubGreen
+import live.foodclub.domain.enums.Category
+import live.foodclub.domain.enums.CategoryType
+import live.foodclub.domain.models.home.VideoModel
+import live.foodclub.domain.models.home.VideoStats
+import live.foodclub.domain.models.profile.SimpleUserModel
+import live.foodclub.navigation.HomeOtherRoutes
+import live.foodclub.utils.composables.RecommendationVideos
+import live.foodclub.utils.composables.products.ProductState
+import live.foodclub.utils.composables.products.ProductsEvents
+import live.foodclub.utils.composables.shimmerBrush
+import live.foodclub.utils.helpers.checkInternetConnectivity
+import live.foodclub.viewModels.home.discover.DiscoverEvents
+import kotlin.math.min
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DiscoverView(
     navController: NavController,
@@ -119,7 +123,7 @@ fun DiscoverView(
 
     Column(
         modifier = Modifier
-            .verticalScroll(rememberScrollState())
+            //.verticalScroll(rememberScrollState())
             .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -164,65 +168,97 @@ fun DiscoverView(
             )
         }
 
+        val pagerState = rememberPagerState(pageCount = { 2 })
+        var height by remember {
+            mutableStateOf(0.dp)
+        }
+        height = (min(
+            productState.filteredAddedProducts.size,
+            5
+        ) * dimensionResource(id = R.dimen.dim_65).value).dp + dimensionResource(id = R.dimen.dim_270)
+
         if (tabIndex == 0) {
             homePosts = state.postList
 
             if (isInternetConnected) {
-                KitchenIngredients(events = productsEvents, state = productState)
+                VerticalPager(state = pagerState) {
 
-                if (productState.addedProducts.isEmpty()) {
-                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
+                    if (pagerState.currentPage == 0) {
+                        Column(
+                            modifier = Modifier
+                                .height(height)
+                                .background(Color.Blue),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            KitchenIngredients(events = productsEvents, state = productState)
 
-                    Text(
-                        text = stringResource(id = R.string.add_ingredients_information_text),
-                        fontWeight = FontWeight(500),
-                        fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
-                        color = colorResource(
-                            id = R.color.discover_view_add_ingredient_information_text
-                        ).copy(alpha = 0.3f),
-                        lineHeight = dimensionResource(id = R.dimen.fon_17).value.sp,
-                        fontFamily = Montserrat,
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
-                }
+                            if (productState.addedProducts.isEmpty()) {
+                                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
 
+                                Text(
+                                    text = stringResource(id = R.string.add_ingredients_information_text),
+                                    fontWeight = FontWeight(500),
+                                    fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
+                                    color = colorResource(
+                                        id = R.color.discover_view_add_ingredient_information_text
+                                    ).copy(alpha = 0.3f),
+                                    lineHeight = dimensionResource(id = R.dimen.fon_17).value.sp,
+                                    fontFamily = Montserrat,
+                                    textAlign = TextAlign.Center
+                                )
+                                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+                            }
 
-                Button(
-                    onClick = {
-                        events.onResetSearchData()
-                        navController.navigate("ADD_INGREDIENTS")
-                    },
-                    shape = RoundedCornerShape(
-                        dimensionResource(
-                            id = R.dimen.dim_20
-                        )
-                    ),
-                    colors = ButtonDefaults.buttonColors(foodClubGreen),
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.add_ingredients),
-                        fontSize = dimensionResource(
-                            id = R.dimen.fon_14
-                        ).value.sp,
-                        fontFamily = Montserrat,
-                        lineHeight = dimensionResource(id = R.dimen.fon_17).value.sp,
-                        fontWeight = FontWeight(500)
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
-            if (productState.addedProducts.isNotEmpty()) {
-                RecommendationSection(
-                    gridHeight,
-                    recommendationVideosCount,
-                    navController = navController,
-                    isShowPost = {
-                        isShowPost = !isShowPost
-                        postId = it
+                            Button(
+                                onClick = {
+                                    events.onResetSearchData()
+                                    navController.navigate("ADD_INGREDIENTS")
+                                },
+                                shape = RoundedCornerShape(
+                                    dimensionResource(
+                                        id = R.dimen.dim_20
+                                    )
+                                ),
+                                colors = ButtonDefaults.buttonColors(foodClubGreen),
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.add_ingredients),
+                                    fontSize = dimensionResource(
+                                        id = R.dimen.fon_14
+                                    ).value.sp,
+                                    fontFamily = Montserrat,
+                                    lineHeight = dimensionResource(id = R.dimen.fon_17).value.sp,
+                                    fontWeight = FontWeight(500)
+                                )
+                            }
+                        }
                     }
-                )
+
+                    //Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+
+                    if (true) {
+
+                        Column(
+                            modifier = Modifier
+                                .height(gridHeight + dimensionResource(id = R.dimen.dim_10))
+                                .background(Color.Magenta)
+                        ) {
+
+                            RecommendationSection(
+                                gridHeight,
+                                recommendationVideosCount,
+                                navController = navController,
+                                isShowPost = {
+                                    isShowPost = !isShowPost
+                                    postId = it
+                                }
+                            )
+                        }
+                    }
+                }
             }
+
+
         } else {
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
@@ -274,15 +310,112 @@ fun RecommendationSection(
     navController: NavController,
     isShowPost: (Long) -> Unit
 ) {
+    val recipe_vid1 = VideoModel(
+        videoId = 1,
+        authorDetails = SimpleUserModel(userId = 0, username = "", profilePictureUrl = null),
+        videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
+        videoStats = VideoStats(
+            like = 409876,
+            comment = 8356,
+            share = 3000,
+            favourite = 1500
+        ),
+        description = "Draft video testing  #foryou #fyp #compose #tik",
+        thumbnailLink = "https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg"
+    )
+    val recipe_vid2 = VideoModel(
+        videoId = 2,
+        authorDetails = SimpleUserModel(userId = 0, username = "", profilePictureUrl = null),
+        videoLink = "https://kretu.sts3.pl/foodclub_videos/daniel_vid2.mp4",
+        videoStats = VideoStats(
+            like = 564572,
+            comment = 8790,
+            share = 2000,
+            favourite = 1546
+        ),
+        description = "Draft video testing  #foryou #fyp #compose #tik",
+        thumbnailLink = "https://kretu.sts3.pl/foodclub_thumbnails/daniel_vid2-thumbnail.jpg"
+    )
+    val recipe_vid3 = VideoModel(
+        videoId = 3,
+        authorDetails = SimpleUserModel(userId = 0, username = "", profilePictureUrl = null),
+        videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
+        videoStats = VideoStats(
+            like = 2415164,
+            comment = 5145,
+            share = 5000,
+            favourite = 2000
+        ),
+        description = "Draft video testing  #foryou #fyp #compose #tik",
+        thumbnailLink = "https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg"
+    )
+    val recipe_vid4 = VideoModel(
+        videoId = 4,
+        authorDetails = SimpleUserModel(userId = 0, username = "", profilePictureUrl = null),
+        videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
+        videoStats = VideoStats(
+            like = 51626,
+            comment = 1434,
+            share = 167,
+            favourite = 633
+        ),
+        description = "Draft video testing  #foryou #fyp #compose #tik",
+        thumbnailLink = "https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg"
+    )
+    val recipe_vid5 = VideoModel(
+        videoId = 5,
+        authorDetails = SimpleUserModel(userId = 0, username = "", profilePictureUrl = null),
+        videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
+        videoStats = VideoStats(
+            like = 547819,
+            comment = 79131,
+            share = 8921,
+            favourite = 2901
+        ),
+        description = "Draft video testing  #foryou #fyp #compose #tik",
+        thumbnailLink = "https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg"
+    )
+    val recipe_vid6 = VideoModel(
+        videoId = 6,
+        authorDetails = SimpleUserModel(userId = 0, username = "", profilePictureUrl = null),
+        videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
+        videoStats = VideoStats(
+            like = 4512340,
+            comment = 65901,
+            share = 8165,
+            favourite = 154
+        ),
+        description = "Draft video testing  #foryou #fyp #compose #tik",
+        thumbnailLink = "https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg"
+    )
+
+    val recipe_vid7 = VideoModel(
+        videoId = 7,
+        authorDetails = SimpleUserModel(userId = 0, username = "", profilePictureUrl = null),
+        videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
+        videoStats = VideoStats(
+            like = 612907,
+            comment = 7643,
+            share = 1291,
+            favourite = 890
+        ),
+        description = "Draft video testing  #foryou #fyp #compose #tik",
+        thumbnailLink = "https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg"
+    )
+
+    val recipesVideosList = listOf(
+        recipe_vid1,
+        recipe_vid2,
+        recipe_vid3,
+        recipe_vid4,
+        recipe_vid5,
+        recipe_vid6,
+        recipe_vid7
+    )
+
+
     Card(
         modifier = Modifier,
-        shape = RoundedCornerShape(
-            dimensionResource(id = R.dimen.dim_30)
-        ),
-        border = BorderStroke(
-            width = dimensionResource(id = R.dimen.dim_1),
-            color = colorResource(id = R.color.discover_view_recommendations_border_color)
-        ),
         colors = CardDefaults.cardColors(
             contentColor = Color.White,
             containerColor = Color.White
@@ -304,7 +437,7 @@ fun RecommendationSection(
             gridHeight = gridHeight,
             recommendationVideosCount = recommendationVideosCount,
             navController = navController,
-            dataItem = null,
+            dataItem = recipesVideosList,
             userName = null,
             isShowVideo = {
                 isShowPost(it)
