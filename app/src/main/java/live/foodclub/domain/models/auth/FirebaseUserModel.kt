@@ -1,5 +1,6 @@
 package live.foodclub.domain.models.auth
 
+
 data class FirebaseUserModel(
     val userID: Int = -1,
     val username: String = "",
@@ -10,4 +11,13 @@ data class FirebaseUserModel(
     val accessToken: String = "",
     val idToken: String = "",
     val refreshToken: String = "",
-)
+) {
+    fun mapToUser(): User {
+        return User(
+            userId = userID,
+            userName = username,
+            profileImageUrl = profileImageUrl
+        )
+    }
+
+}

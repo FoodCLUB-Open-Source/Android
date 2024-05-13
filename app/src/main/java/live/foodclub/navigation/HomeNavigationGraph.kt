@@ -72,7 +72,7 @@ fun NavGraphBuilder.homeNavigationGraph(
                 type = NavType.LongType
             })
         ) {
-            val viewModel  = it.sharedHiltViewModel<ProfileViewModel>(navController = navController)
+            val viewModel = it.sharedHiltViewModel<ProfileViewModel>(navController = navController)
             val userPosts = viewModel.userPostsPagingFlow.collectAsLazyPagingItems()
             val userBookmarks = viewModel.userBookmarksPagingFlow.collectAsLazyPagingItems()
             val state = viewModel.state.collectAsState()
@@ -231,7 +231,7 @@ fun NavGraphBuilder.homeNavigationGraph(
             NewSearchView(navController = navController, events = viewModel, state = state.value)
         }
 
-        composable(route = HomeOtherRoutes.AddIngredientsView.route){
+        composable(route = HomeOtherRoutes.AddIngredientsView.route) {
             val viewModel = it.sharedHiltViewModel<DiscoverViewModel>(navController)
             val searchResult = viewModel.searchProducts.collectAsLazyPagingItems()
             val state = viewModel.productState.collectAsState()
@@ -262,10 +262,16 @@ fun NavGraphBuilder.homeNavigationGraph(
             )
         }
 
-        composable(route = HomeOtherRoutes.MessagingView.route){
-            val viewModel : MessagingViewModel = hiltViewModel()
-            val state = viewModel.state.collectAsState()
-            MessagingView(state.value, navController, viewModel)
+        composable(route = HomeOtherRoutes.MessagingView.route) {
+            val viewModel: MessagingViewModel = hiltViewModel()
+            val contactsState = viewModel.contactsState.collectAsState()
+            val chatState = viewModel.chatState.collectAsState()
+            MessagingView(
+                contactsState = contactsState.value,
+                navController = navController,
+                events = viewModel,
+                chatState = chatState.value
+            )
         }
 
     }
@@ -274,7 +280,7 @@ fun NavGraphBuilder.homeNavigationGraph(
 
 sealed class HomeOtherRoutes(val route: String) {
     data object SettingsView : HomeOtherRoutes(route = "SETTINGS")
-    data object MessagingView: HomeOtherRoutes(route = "MESSAGING_VIEW")
+    data object MessagingView : HomeOtherRoutes(route = "MESSAGING_VIEW")
     data object CameraView : HomeOtherRoutes(route = "CAMERA_VIEW/{state}")
     data object CreateRecipeView : HomeOtherRoutes(route = "CREATE_RECIPE_VIEW")
     data object CameraPreviewView : HomeOtherRoutes(route = "CAMERA_PREVIEW_VIEW/{uri}/{state}")
