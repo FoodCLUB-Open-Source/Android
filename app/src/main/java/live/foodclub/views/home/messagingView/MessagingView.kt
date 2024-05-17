@@ -1,5 +1,6 @@
 package live.foodclub.views.home.messagingView
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,6 +9,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -50,13 +52,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import live.foodclub.R
 import live.foodclub.config.ui.BottomBarScreenObject
 import live.foodclub.config.ui.Montserrat
 import live.foodclub.config.ui.foodClubGreen
 import live.foodclub.domain.models.auth.Contact
+import live.foodclub.utils.composables.MessagingProfilePhoto
 import live.foodclub.utils.composables.SwipeToDismissContainer
 import live.foodclub.viewModels.home.messaging.MessagingViewEvents
 
@@ -68,6 +70,7 @@ fun MessagingView(
     events: MessagingViewEvents
 ) {
     var showChatView by remember { mutableStateOf(false) }
+    var showCreateConversationDialog by remember { mutableStateOf(false) }
     val messagesHistory = if (contactsState.contactsSearchText == "")
         contactsState.contacts else contactsState.contactsSearchResult
 
@@ -77,13 +80,20 @@ fun MessagingView(
             chatState = chatState,
             events = events,
         )
+    } else if (showCreateConversationDialog) {
+        CreateConversationView(
+            onBackPressed = { showCreateConversationDialog = !showCreateConversationDialog },
+            contactsState = contactsState,
+            events = events,
+        )
     } else {
         Scaffold(
             topBar = {
                 MessagingTopAppBar(
                     onBackPressed = {
                         navController.navigate(BottomBarScreenObject.Home.route)
-                    }
+                    },
+                    titleRes = R.string.messages
                 )
             },
             content = {
@@ -97,7 +107,7 @@ fun MessagingView(
                 ) {
                     MessagingHeaderSection(contactsState.contactsSearchText) { text ->
                         events.setSearchText(text)
-                        events.filterMessages(text)
+                        events.filterContacts(text)
                     }
                     Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
                     MessagesSection(
@@ -116,7 +126,7 @@ fun MessagingView(
                 FloatingActionButton(
                     contentColor = foodClubGreen,
                     backgroundColor = foodClubGreen,
-                    onClick = { /*TODO impl start new chat*/ }
+                    onClick = { showCreateConversationDialog = !showCreateConversationDialog }
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.start_new_chat),
@@ -130,9 +140,12 @@ fun MessagingView(
     }
 }
 
+
+
 @Composable
 fun MessagingTopAppBar(
-    onBackPressed: () -> Unit
+    onBackPressed: () -> Unit,
+    @StringRes titleRes: Int,
 ) {
     val systemUiController = rememberSystemUiController()
 
@@ -159,7 +172,7 @@ fun MessagingTopAppBar(
             )
         }
         Text(
-            text = stringResource(id = R.string.messages),
+            text = stringResource(id = titleRes),
             fontWeight = FontWeight(600),
             fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
             fontFamily = Montserrat,
@@ -319,14 +332,16 @@ fun StartNewGroupSection() {
 
 @Composable
 fun MessagesSection(
-    messagingHistory: List<Contact>,
+    contacts: List<Contact>,
     onShowChatView: (String) -> Unit,
     onDeleteConversation: (String) -> Unit,
 ) {
     LazyColumn(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_16)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_16))
     ) {
-        itemsIndexed(messagingHistory) { _, contact ->
+        itemsIndexed(contacts) { _, contact ->
             SwipeToDismissContainer(
                 containerBackgroundColor = Color.Black,
                 iconAlignment = Alignment.CenterEnd,
@@ -350,9 +365,10 @@ fun MessagesSection(
 
 @Composable
 fun SingleUserRow(
-    messagingSingleUser: Contact,
+    contact: Contact,
     onShowChatView: () -> Unit
 ) {
+    val contactName = contact.recipientFullName.ifBlank { contact.recipientUsername }
     Row(
         modifier = Modifier
             .background(Color.Black)
@@ -369,18 +385,14 @@ fun SingleUserRow(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                AsyncImage(
-                    model = messagingSingleUser.profileImage,
-                    contentDescription = null,
-                    modifier = Modifier.size(dimensionResource(id = R.dimen.dim_30))
-                )
+                MessagingProfilePhoto(photoUrl = contact.recipientProfileImage)
                 Spacer(modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dim_10)))
                 Column {
-                    if (messagingSingleUser.recipientId == 0) {
+                    if (contact.recipientId == 0) {
                         ChefAiNameBox()
                     } else {
                         Text(
-                            text = messagingSingleUser.recipientName,
+                            text = contactName,
                             fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
                             fontFamily = Montserrat,
                             fontWeight = FontWeight(500),
@@ -390,14 +402,14 @@ fun SingleUserRow(
                     }
                     Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
                     Text(
-                        text = messagingSingleUser.lastMessage,
+                        text = contact.lastMessage,
                         fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
                         fontFamily = Montserrat,
-                        fontWeight = if (messagingSingleUser.isMessageSeen) FontWeight(500) else FontWeight(
+                        fontWeight = if (contact.isMessageSeen) FontWeight(500) else FontWeight(
                             400
                         ),
                         lineHeight = dimensionResource(id = R.dimen.fon_18).value.sp,
-                        color = if (messagingSingleUser.isMessageSeen) Color.White else Color.Gray,
+                        color = if (contact.isMessageSeen) Color.White else Color.Gray,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )
@@ -409,7 +421,7 @@ fun SingleUserRow(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = messagingSingleUser.lastMessageTime,
+                text = contact.lastMessageTime,
                 fontSize = dimensionResource(id = R.dimen.fon_11).value.sp,
                 fontFamily = Montserrat,
                 color = Color.White,
@@ -417,7 +429,7 @@ fun SingleUserRow(
                 fontWeight = FontWeight(400)
             )
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
-            if (messagingSingleUser.unSeenMessageCount != 0) {
+            if (contact.unSeenMessageCount != 0) {
                 Box(
                     modifier = Modifier
                         .size(dimensionResource(id = R.dimen.dim_20))
@@ -426,7 +438,7 @@ fun SingleUserRow(
                 ) {
                     Text(
                         modifier = Modifier.align(Alignment.Center),
-                        text = messagingSingleUser.unSeenMessageCount.toString(),
+                        text = contact.unSeenMessageCount.toString(),
                         fontSize = dimensionResource(id = R.dimen.fon_11).value.sp,
                         fontFamily = Montserrat,
                         color = Color.Black,

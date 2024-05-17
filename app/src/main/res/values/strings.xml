@@ -875,4 +875,5 @@ In some countries, the law requires us to provide additional regulatory informat
     - FCM
     <string name="default_notification_channel_id">fcm_default_channel</string>
     <string name="delete_conversation_content_description">Delete this conversation.</string>
+    <string name="create_conversation">Create Conversation</string>
 </resources>

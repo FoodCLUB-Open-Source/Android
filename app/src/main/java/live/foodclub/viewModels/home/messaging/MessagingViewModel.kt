@@ -12,17 +12,17 @@ import kotlinx.coroutines.launch
 import live.foodclub.domain.models.auth.ConversationModel
 import live.foodclub.network.retrofit.utils.SessionCache
 import live.foodclub.repositories.FirebaseUserRepository
+import live.foodclub.repositories.ProfileRepository
 import live.foodclub.utils.helpers.Resource
 import live.foodclub.views.home.messagingView.ChatState
 import live.foodclub.views.home.messagingView.ContactsState
 import javax.inject.Inject
 
-// TODO get following users to start a conversation with them
-// TODO Check all files for more readibility and clean up some repetitive codes if you can find.
 @HiltViewModel
 class MessagingViewModel @Inject constructor(
     private val sessionCache: SessionCache,
     private val firebaseUserRepository: FirebaseUserRepository,
+    private val profileRepository: ProfileRepository,
 ) : ViewModel(), MessagingViewEvents {
 
     private val _contactsState = MutableStateFlow(ContactsState.default())
@@ -39,6 +39,32 @@ class MessagingViewModel @Inject constructor(
 
     init {
         getConversations()
+        getFollowers()
+    }
+
+    private fun getFollowers() {
+        viewModelScope.launch {
+            val result = profileRepository.retrieveProfileFollowing(currentUserId.toLong())
+
+            when (result) {
+                is Resource.Success -> {
+                    val followings = result.data!!
+                    _contactsState.update {
+                        it.copy(
+                            followings = followings,
+                        )
+                    }
+                }
+
+                is Resource.Error -> {
+                    _contactsState.update {
+                        it.copy(
+                            error = result.message!!
+                        )
+                    }
+                }
+            }
+        }
     }
 
     private fun getConversations() = viewModelScope.launch {
@@ -85,15 +111,33 @@ class MessagingViewModel @Inject constructor(
         conversationListener?.remove()
     }
 
-    override fun setSearchText(searchText: String) {
-        _contactsState.update { it.copy(contactsSearchText = searchText) }
-        filterMessages(searchText)
+    override fun setFollowingsSearchText(searchText: String) {
+        _contactsState.update { it.copy(followingsSearchText = searchText) }
+        filterFollowings(searchText)
     }
 
-    override fun filterMessages(searchText: String) {
-        val messages = contactsState.value.contacts
-        val searchResult = messages.filter { people ->
-            people.recipientName.contains(searchText, ignoreCase = true)
+    override fun filterFollowings(searchText: String) {
+        val followings = contactsState.value.followings
+        val searchResult = followings.filter { following ->
+            following.username.contains(searchText, ignoreCase = true)
+        }
+        _contactsState.update {
+            it.copy(
+                followingsSearchResult = searchResult,
+                followingsSearchText = searchText
+            )
+        }
+    }
+
+    override fun setSearchText(searchText: String) {
+        _contactsState.update { it.copy(contactsSearchText = searchText) }
+        filterContacts(searchText)
+    }
+
+    override fun filterContacts(searchText: String) {
+        val contacts = contactsState.value.contacts
+        val searchResult = contacts.filter { contact ->
+            contact.recipientFullName.contains(searchText, ignoreCase = true)
         }
 
         _contactsState.update {
@@ -105,6 +149,42 @@ class MessagingViewModel @Inject constructor(
 
     }
 
+
+    override fun createConversation(recipientUserId: Int) {
+        viewModelScope.launch {
+            val result = firebaseUserRepository
+                .createConversation(senderId = currentUserId, recipientId = recipientUserId)
+
+            when(result) {
+                is Resource.Success -> {
+                    val newConversation = result.data!!
+                    val senderUser =
+                        newConversation.participants.first { currentUserId == it.userID }
+                            .mapToSimpleUserModel()
+                    val recipientUser =
+                        newConversation.participants.first { currentUserId != it.userID }
+                            .mapToSimpleUserModel()
+
+                    _chatState.update { currentState ->
+                        currentState.copy(
+                            messages = newConversation.messages.map { it.mapToMessage() },
+                            senderUser = senderUser,
+                            recipientUser = recipientUser,
+                            conversationId = newConversation.conversationId,
+                        )
+                    }
+                }
+                is Resource.Error -> {
+                    _chatState.update {
+                        it.copy(
+                            error = result.message!!
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     override fun getConversation(documentId: String) {
         viewModelScope.launch {
             firebaseUserRepository.getConversation(documentId) { document, error ->
@@ -112,12 +192,14 @@ class MessagingViewModel @Inject constructor(
                     val conversation = document.toObject<ConversationModel>()!!
 
                     val senderUser =
-                        conversation.participants.first { currentUserId == it.userID }.mapToUser()
+                        conversation.participants.first { currentUserId == it.userID }
+                            .mapToSimpleUserModel()
                     val recipientUser =
-                        conversation.participants.first { currentUserId != it.userID }.mapToUser()
+                        conversation.participants.first { currentUserId != it.userID }
+                            .mapToSimpleUserModel()
 
-                    _chatState.update {
-                        it.copy(
+                    _chatState.update { currentState ->
+                        currentState.copy(
                             messages = conversation.messages.map { it.mapToMessage() },
                             senderUser = senderUser,
                             recipientUser = recipientUser,
@@ -126,9 +208,9 @@ class MessagingViewModel @Inject constructor(
                     }
 
                 } else {
-                    _contactsState.update {
+                    _chatState.update {
                         it.copy(
-                            error = error!!.message!!
+                            error = error!!.message ?: "An error occurred"
                         )
                     }
                 }

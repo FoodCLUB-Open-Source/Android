@@ -20,14 +20,15 @@ data class ConversationModel(
         return Contact(
             conversationId = conversationId,
             recipientId = recipientUser.userID,
-            recipientName = recipientUser.fullName,
+            recipientFullName = recipientUser.fullName,
             lastMessage = lastMessage?.content ?: "",
             lastMessageTime = formattedLastMessageTime,
             isMessageSeen = lastMessage?.read ?: false,
-            profileImage = recipientUser.profileImageUrl,
+            recipientProfileImage = recipientUser.profileImageUrl,
             unSeenMessageCount = messages.count {
                 it.senderId != currentUserId && !it.read
-            }
+            },
+            recipientUsername = recipientUser.username
         )
     }
 }
@@ -35,12 +36,13 @@ data class ConversationModel(
 data class Contact(
     val conversationId: String = "",
     val recipientId: Int = 1,
-    val recipientName: String = "",
+    val recipientFullName: String = "",
+    val recipientUsername: String = "",
+    val recipientProfileImage: String = "",
     val lastMessage: String = "",
     val lastMessageTime: String = "",
     val isMessageSeen: Boolean = false,
     val unSeenMessageCount: Int = 0,
-    val profileImage: String = ""
 )
 
 data class Message(
@@ -48,17 +50,3 @@ data class Message(
     val content: String,
     val timestamp: String
 )
-
-data class User(
-    val userId: Int,
-    val userName: String,
-    val profileImageUrl: String
-) {
-    companion object {
-        fun default(): User = User(
-            userId = 1,
-            userName = "",
-            profileImageUrl = ""
-        )
-    }
-}

@@ -1,8 +1,5 @@
 package live.foodclub.views.home.messagingView
 
-import live.foodclub.R
-import live.foodclub.config.ui.Montserrat
-import live.foodclub.config.ui.foodClubGreen
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -45,9 +41,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import coil.compose.AsyncImage
+import live.foodclub.R
+import live.foodclub.config.ui.Montserrat
+import live.foodclub.config.ui.foodClubGreen
 import live.foodclub.domain.models.auth.Message
-import live.foodclub.domain.models.auth.User
+import live.foodclub.domain.models.profile.SimpleUserModel
+import live.foodclub.utils.composables.MessagingProfilePhoto
 import live.foodclub.viewModels.home.messaging.MessagingViewEvents
 
 @Composable
@@ -90,7 +89,7 @@ fun ChatView(
 }
 
 @Composable
-fun ChatViewTopBar(onBackPressed: () -> Unit, recipientUser: User) {
+fun ChatViewTopBar(onBackPressed: () -> Unit, recipientUser: SimpleUserModel) {
     Row(
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
@@ -112,15 +111,14 @@ fun ChatViewTopBar(onBackPressed: () -> Unit, recipientUser: User) {
                 tint = Color.White
             )
         }
-        AsyncImage(
-            model = recipientUser.profileImageUrl,
-            contentDescription = null,
-            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_30))
+        MessagingProfilePhoto(
+            photoUrl = recipientUser.profilePictureUrl,
+            photoSize = R.dimen.dim_40
         )
         Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_5)))
 
         Text(
-            text = recipientUser.userName,
+            text = recipientUser.username,
             fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
             fontFamily = Montserrat,
             fontWeight = FontWeight(500),
@@ -191,8 +189,8 @@ fun ChatViewBottomBar(
 @Composable
 fun MessageHistory(
     messages: List<Message>,
-    senderUser: User,
-    recipientUser: User,
+    senderUser: SimpleUserModel,
+    recipientUser: SimpleUserModel,
     paddingValues: PaddingValues
 ) {
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
@@ -232,7 +230,7 @@ fun MessageHistory(
 }
 
 @Composable
-fun MessageBox(message: Message, senderUser: User, recipientUser: User) {
+fun MessageBox(message: Message, senderUser: SimpleUserModel, recipientUser: SimpleUserModel) {
     val isSentByUser1 = message.senderId == senderUser.userId
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -270,10 +268,9 @@ fun MessageBox(message: Message, senderUser: User, recipientUser: User) {
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                AsyncImage(
-                    model = recipientUser.profileImageUrl,
-                    contentDescription = null,
-                    modifier = Modifier.size(dimensionResource(id = R.dimen.dim_30))
+                MessagingProfilePhoto(
+                    photoUrl = recipientUser.profilePictureUrl,
+                    photoSize = R.dimen.dim_40
                 )
                 Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_5)))
                 Box(

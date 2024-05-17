@@ -1,5 +1,7 @@
 package live.foodclub.repositories
 
+import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.tasks.await
 import live.foodclub.domain.models.auth.ForgotChangePassword
 import live.foodclub.domain.models.auth.SignInUser
 import live.foodclub.domain.models.auth.SignUpUser
@@ -16,8 +18,6 @@ import live.foodclub.network.retrofit.responses.general.SingleMessageResponse
 import live.foodclub.network.retrofit.services.AuthenticationService
 import live.foodclub.network.retrofit.utils.apiRequestFlow
 import live.foodclub.utils.helpers.Resource
-import com.google.firebase.messaging.FirebaseMessaging
-import kotlinx.coroutines.tasks.await
 
 
 class AuthRepository(

@@ -2,12 +2,15 @@ package live.foodclub.views.home.messagingView
 
 import live.foodclub.domain.models.auth.Contact
 import live.foodclub.domain.models.auth.Message
-import live.foodclub.domain.models.auth.User
+import live.foodclub.domain.models.profile.SimpleUserModel
 
 data class ContactsState(
     val contacts: List<Contact>,
     val contactsSearchText: String = "",
     val contactsSearchResult: List<Contact>,
+    val followings: List<SimpleUserModel>,
+    val followingsSearchText: String = "",
+    val followingsSearchResult: List<SimpleUserModel>,
     val error: String = "",
 ) {
 
@@ -17,13 +20,16 @@ data class ContactsState(
             contactsSearchText = "",
             contactsSearchResult = listOf(),
             error = "",
+            followings = listOf(),
+            followingsSearchResult = listOf(),
+            followingsSearchText = ""
         )
     }
 }
 
 data class ChatState(
-    val senderUser: User,
-    val recipientUser: User,
+    val senderUser: SimpleUserModel,
+    val recipientUser: SimpleUserModel,
     val conversationId: String,
     val messages: List<Message>,
     val error: String,
@@ -31,8 +37,8 @@ data class ChatState(
     companion object {
         fun default() = ChatState(
             error = "",
-            senderUser = User.default(),
-            recipientUser = User.default(),
+            senderUser = SimpleUserModel.default(),
+            recipientUser = SimpleUserModel.default(),
             conversationId = "",
             messages = listOf(),
         )

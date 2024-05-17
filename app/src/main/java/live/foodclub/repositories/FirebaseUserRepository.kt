@@ -103,10 +103,8 @@ class FirebaseUserRepository(
                 // There is already have a conversation return that conversation
                 val existingConversation = getExistingConversation(senderId, recipientId)
                 if (existingConversation != null) {
-                    Log.i(TAG, "existingConversation: FOUND")
                     Resource.Success(existingConversation)
                 } else {
-                    Log.i(TAG, "existingConversation: NOT FOUND")
                     // Start a conversation if recipient data is found
                     if (recipientUserDocument.isEmpty.not() && senderUserDocument.isEmpty.not()) {
                         val recipientRef = recipientUserDocument.documents.first()
@@ -124,7 +122,11 @@ class FirebaseUserRepository(
                             messages = listOf()
                         )
 
-                        conversationDocument.set(conversation).await()
+                        conversationDocument.set(conversation)
+                            .addOnFailureListener { Log.e(TAG, "createConversation:ERROR", it) }
+                            .addOnSuccessListener { Log.w(TAG, "createConversation:SUCCESS") }
+                            .await()
+
                         Resource.Success(conversation)
                     } else {
                         Resource.Error("User not found")
