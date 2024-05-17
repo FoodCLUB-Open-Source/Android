@@ -69,17 +69,17 @@ class FirebaseUserRepository(
         userId: Int,
     ): Resource<Query, DefaultErrorResponse> =
         withContext(ioDispatcher) {
-            return@withContext try {
+            try {
                 val conversationsQuery = firestore
                     .collection(CONVERSATIONS)
-                    .where(Filter.arrayContains(PARTICIPANT_IDS, userId))
+                    .whereArrayContains(PARTICIPANT_IDS, userId)
                     .orderBy(LAST_UPDATED, Query.Direction.DESCENDING)
 
                 Log.w(TAG, "getAllConversation:Success")
                 Resource.Success(conversationsQuery)
             } catch (e: Exception) {
                 Log.e(TAG, "getAllConversation:Error", e)
-                Resource.Error(e.message!!)
+                Resource.Error(e.message ?: "An error occurred.")
             }
         }
 
@@ -136,7 +136,7 @@ class FirebaseUserRepository(
 
             } catch (e: Exception) {
                 Log.e(TAG, "createConversation:ERROR", e)
-                Resource.Error(e.message!!)
+                Resource.Error(e.message ?: "An error occurred.")
             }
         }
 
@@ -163,13 +163,7 @@ class FirebaseUserRepository(
         try {
             val conversationRef = firestore.collection(CONVERSATIONS).document(documentId)
 
-            conversationRef.delete()
-                .addOnSuccessListener {
-                    Log.w(TAG, "deleteConversation:SUCCESS")
-                }
-                .addOnFailureListener {
-                    Log.e(TAG, "deleteConversation:ERROR: ", it)
-                }.await()
+            conversationRef.delete().await()
             Log.w(TAG, "deleteConversation:Success")
         } catch (e: Exception) {
             Log.e(TAG, "deleteConversation:Error", e)
@@ -206,6 +200,7 @@ class FirebaseUserRepository(
                     }.addOnFailureListener {
                         Log.e(TAG, "createMessage:Error", it)
                     }
+                    .await()
 
             } catch (e: Exception) {
                 Log.e(TAG, "createMessage:Error", e)
@@ -238,7 +233,7 @@ class FirebaseUserRepository(
         messages: List<MessageModel>?,
         conversationDocRef: DocumentReference
     ) {
-        messages?.map { it.read = true }
+        messages?.forEach { it.read = true }
 
         conversationDocRef.update(MESSAGES, messages)
     }
@@ -248,21 +243,10 @@ class FirebaseUserRepository(
         recipientId: Int
     ): ConversationModel? {
         val currentParticipantIds = listOf(senderId, recipientId).sorted()
-
-        val conversationList = firestore
-            .collection(CONVERSATIONS)
-            .get()
-            .await()
+        val existingConversations = firestore.collection(CONVERSATIONS)
+            .whereIn(PARTICIPANT_IDS, listOf(currentParticipantIds)).get().await()
             .toObjects(ConversationModel::class.java)
-
-        val matchingConversations = conversationList.filter {
-            it.participantIds.sorted() == currentParticipantIds
-        }
-        return if (matchingConversations.isNotEmpty()) {
-            matchingConversations.first()
-        } else {
-            null
-        }
+        return existingConversations.firstOrNull { it.participantIds.sorted() == currentParticipantIds }
     }
 
     private suspend fun getRecipientId(
