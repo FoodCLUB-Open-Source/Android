@@ -169,6 +169,7 @@ private fun RecommendationVideosPreview() {
                     videoId = 1L,
                     authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
                     videoLink = "link1",
+                    title = "Title",
                     videoStats = VideoStats(
                         like = 0L,
                         comment = 0L,
@@ -186,6 +187,7 @@ private fun RecommendationVideosPreview() {
                     videoId = 2L,
                     authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
                     videoLink = "link2",
+                    title = "Title2",
                     videoStats = VideoStats(
                         like = 0L,
                         comment = 0L,

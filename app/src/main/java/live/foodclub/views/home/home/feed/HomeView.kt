@@ -61,9 +61,12 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.paging.compose.LazyPagingItems
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import live.foodclub.config.ui.BottomBarScreenObject
+import live.foodclub.domain.models.home.VideoModel
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -73,8 +76,8 @@ fun HomeView(
     events: HomeEvents,
     initialPage: Int? = 0,
     navController: NavHostController,
+    posts: LazyPagingItems<VideoModel>,
     state: HomeState,
-    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     var showIngredientSheet by remember { mutableStateOf(false) }
@@ -101,7 +104,7 @@ fun HomeView(
         highVelocityAnimationSpec = rememberSplineBasedDecay()
     )
 
-    val exoPlayer = remember(context) { viewModel.exoPlayer }
+    val exoPlayer = remember(context) { state.exoPlayer }
 
     var initialPageFlag: Boolean
 
@@ -173,16 +176,16 @@ fun HomeView(
         modifier = Modifier.fillMaxSize()
     ) {
 
-        if (showIngredientSheet) {
-            HomeBottomSheetIngredients(
-                onDismiss = triggerIngredientBottomSheetModal,
-                recipe = state.recipe,
-                //TODO implement post title
-                postTitle = "Chicken broth and meatballs",
-                onAddToBasket = { events.addIngredientsToBasket() }
-
-            )
-        }
+//        if (showIngredientSheet) {
+//            HomeBottomSheetIngredients(
+//                onDismiss = triggerIngredientBottomSheetModal,
+//                recipe = state.recipe,
+//                //TODO implement post title
+//                postTitle = "Chicken broth and meatballs",
+//                onAddToBasket = { events.addIngredientsToBasket() }
+//
+//            )
+//        }
         HorizontalPager(
             state = pagerState,
             flingBehavior = flingBehavior
@@ -208,16 +211,31 @@ fun HomeView(
                         }
                     }
 
-                    VideoPager(
+                    live.foodclub.utils.composables.videoPager.VideoPager(
                         exoPlayer = exoPlayer,
-                        videoList = state.videoList,
+                        videoList = posts,
                         initialPage = initialPage,
                         events = events,
-                        modifier = modifier,
+                        state = state.videoPagerState,
+                        modifier = Modifier,
                         localDensity = localDensity,
-                        onInfoClick = triggerIngredientBottomSheetModal,
                         coroutineScope = coroutineScope,
+                        onBackPressed = {
+                            exoPlayer.stop()
+                        },
+                        onProfileNavigated = { }
                     )
+
+//                    VideoPager(
+//                        exoPlayer = exoPlayer,
+//                        videoList = state.videoList,
+//                        initialPage = initialPage,
+//                        events = events,
+//                        modifier = modifier,
+//                        localDensity = localDensity,
+//                        onInfoClick = triggerIngredientBottomSheetModal,
+//                        coroutineScope = coroutineScope,
+//                    )
                 }
 
                 1 -> {

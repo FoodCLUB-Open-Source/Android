@@ -84,6 +84,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
+import live.foodclub.config.ui.BottomBarScreenObject
 
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
@@ -189,6 +190,9 @@ fun ProfileView(
                         showPost = false
                         state.exoPlayer.stop()
                     },
+                    onProfileNavigated = {
+                        onNavigate(BottomBarScreenObject.Profile.route + "?userId=$it") {}
+                    }
                 )
 
 //                ShowProfilePosts(

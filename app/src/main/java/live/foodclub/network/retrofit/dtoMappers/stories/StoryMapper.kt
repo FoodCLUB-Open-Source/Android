@@ -22,6 +22,7 @@ class StoryMapper: DomainMapper<FriendStoryDto, List<VideoModel>> {
                 ),
                 videoLink = it.videoUrl, // use 0 index for now, later pass model list and loop it
                 description = "Friends' Story",
+                title = null,
                 thumbnailLink = it.thumbnailUrl
             )
         }

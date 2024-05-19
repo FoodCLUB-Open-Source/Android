@@ -129,7 +129,6 @@ fun VideoPager(
                     videoStats = currentVideo.videoStats,
                     likeState = isLiked,
                     bookMarkState = isBookmarked,
-                    category = stringResource(id = R.string.meat),
                     opacity = 0.7f,
                     onLikeClick = {
                         isLiked = !isLiked

@@ -36,6 +36,7 @@ fun ProfilePostsEntity.toVideoModel(): VideoModel {
     return VideoModel(
         videoId = videoId,
         authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
+        title = title,
         videoStats = VideoStats(
             totalLikes ?: 0,
             0L,

@@ -58,11 +58,13 @@ fun NavGraphBuilder.homeNavigationGraph(
             setBottomBarVisibility(true)
             val viewModel: HomeViewModel = hiltViewModel()
             val state = viewModel.state.collectAsState()
+            val posts = viewModel.postsPagingFlow.collectAsLazyPagingItems()
 
             HomeView(
                 events = viewModel,
                 navController = navController,
-                state = state.value
+                state = state.value,
+                posts = posts
             )
         }
         composable(

@@ -74,7 +74,8 @@ fun VideoPager(
     modifier: Modifier,
     localDensity: Density,
     coroutineScope: CoroutineScope,
-    onBackPressed: () -> Unit = {}
+    onBackPressed: () -> Unit = {},
+    onProfileNavigated: (Long) -> Unit
 ) {
     var showIngredientSheet by remember { mutableStateOf(false) }
     val triggerIngredientBottomSheetModal: () -> Unit = {
@@ -196,7 +197,7 @@ fun VideoPager(
                         videoStats = currentVideo.videoStats,
                         likeState = isLiked,
                         bookMarkState = isBookmarked,
-                        category = stringResource(id = R.string.meat),
+                        title = currentVideo.title,
                         opacity = 0.7f,
                         onLikeClick = {
                             isLiked = !isLiked
@@ -217,6 +218,7 @@ fun VideoPager(
                             events.getRecipe(502)
                             triggerIngredientBottomSheetModal()
                                       },
+                        onProfileClick = onProfileNavigated,
                         modifier = Modifier
                             .fillMaxWidth()
                             .align(Alignment.BottomCenter)

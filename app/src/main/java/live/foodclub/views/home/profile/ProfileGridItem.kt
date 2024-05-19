@@ -124,7 +124,8 @@ private fun GridItemPreview() {
                 isBookmarked = false
             ),
             description = "desc1",
-            thumbnailLink = ""
+            thumbnailLink = "",
+            title = "Title"
         ),
         triggerShowDeleteRecipe = {}
         )

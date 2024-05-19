@@ -46,6 +46,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import live.foodclub.localdatasource.room.dao.PostDao
+import live.foodclub.network.remotedatasource.posts.provider.PostsRemoteDataSourceProvider
 import javax.inject.Singleton
 
 @Module
@@ -81,10 +83,14 @@ object RepositoriesModule {
     @Singleton
     fun providePostRepository(
         api: PostsService,
+        postDao: PostDao,
+        postsRemoteDataSourceProvider: PostsRemoteDataSourceProvider,
         postToVideoMapper: PostToVideoMapper,
         userProfilePostsDao: UserProfilePostsDao
     ): PostRepository {
-        return PostRepository(api, postToVideoMapper, userProfilePostsDao)
+        return PostRepository(
+            api, postDao, postsRemoteDataSourceProvider, postToVideoMapper, userProfilePostsDao
+        )
     }
 
     @Provides

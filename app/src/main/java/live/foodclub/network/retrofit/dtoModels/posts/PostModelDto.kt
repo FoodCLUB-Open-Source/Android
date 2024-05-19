@@ -5,6 +5,9 @@ import live.foodclub.localdatasource.room.entity.ProfilePostsEntity
 import live.foodclub.network.retrofit.dtoModels.profile.UserInfoDto
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
+import live.foodclub.localdatasource.room.entity.PostEntity
+import live.foodclub.localdatasource.room.relationships.PostWithUser
+import live.foodclub.network.retrofit.dtoModels.profile.toProfileEntity
 
 @Keep
 data class PostModelDto(
@@ -71,5 +74,25 @@ fun PostModelDto.toProfileBookmarksEntity(bookmarkedBy: Long): ProfileBookmarksE
         thumbnailLink = thumbnailUrl,
         totalLikes = likes,
         totalViews = views
+    )
+}
+
+fun PostModelDto.toPostWithUser(): PostWithUser {
+    return PostWithUser(
+        postEntity = PostEntity(
+            postId = id,
+            authorId = user.id,
+            recipeId = recipeID,
+            title = title,
+            description = description,
+            createdAt = createdAt,
+            videoLink = videoUrl,
+            thumbnailLink = thumbnailUrl,
+            totalLikes = likes,
+            totalViews = views,
+            isLiked = isLiked,
+            isBookmarked = isBookmarked
+        ),
+        user = user.toProfileEntity()
     )
 }

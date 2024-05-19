@@ -11,7 +11,8 @@ class PostToVideoMapper: DomainMapper<PostModelDto, VideoModel> {
     override fun mapToDomainModel(entity: PostModelDto): VideoModel {
         return VideoModel(
             videoId = entity.id,
-            authorDetails = SimpleUserModel(entity.userId.toInt(), entity.user.username ?: "Marc", entity.user.profilePictureUrl ),
+            authorDetails = SimpleUserModel(entity.userId, entity.user.username ?: "Marc", entity.user.profilePictureUrl ),
+            title = entity.title,
             videoStats = VideoStats(
                 entity.likes ?: 15,
                 0L,

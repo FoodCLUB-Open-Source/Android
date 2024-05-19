@@ -12,6 +12,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import live.foodclub.localdatasource.room.dao.PostDao
 import javax.inject.Singleton
 
 @Module
@@ -60,5 +61,11 @@ class DatabaseModule {
     @Singleton
     fun provideProductDao(foodCLUBDatabase: FoodCLUBDatabase): ProductDao {
         return foodCLUBDatabase.getProductDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providePostsDao(foodCLUBDatabase: FoodCLUBDatabase): PostDao {
+        return foodCLUBDatabase.getPostsDao()
     }
 }

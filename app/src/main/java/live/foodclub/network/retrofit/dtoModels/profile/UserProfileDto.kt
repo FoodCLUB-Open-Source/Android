@@ -3,6 +3,7 @@ package live.foodclub.network.retrofit.dtoModels.profile
 import live.foodclub.network.retrofit.dtoModels.posts.PostModelDto
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
+import live.foodclub.network.retrofit.responses.profile.RetrievePostsListResponse
 
 @Keep
 data class UserProfileDto(
@@ -23,3 +24,7 @@ data class UserProfileDto(
     @SerializedName("top_creators")
     val topCreators: List<TopCreatorsDto> = listOf()
 )
+
+fun UserProfileDto.toRetrievePostsListResponse(): RetrievePostsListResponse {
+    return RetrievePostsListResponse(data = userPosts)
+}

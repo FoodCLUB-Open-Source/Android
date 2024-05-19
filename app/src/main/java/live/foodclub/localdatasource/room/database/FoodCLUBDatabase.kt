@@ -18,6 +18,9 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import live.foodclub.localdatasource.room.dao.PostDao
+import live.foodclub.localdatasource.room.entity.HomePostEntity
+import live.foodclub.localdatasource.room.entity.PostEntity
 
 @Database(
     entities = [
@@ -26,13 +29,16 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         ProfileEntity::class,
         ProfileBookmarksEntity::class,
         ProductEntity::class,
-        ProductUnitEntity::class
+        ProductUnitEntity::class,
+        PostEntity::class,
+        HomePostEntity::class
     ],
-    version = 6,
+    version = 7,
     autoMigrations = [
         AutoMigration(3, 4),
         AutoMigration(4, 5),
-        AutoMigration(5, 6)
+        AutoMigration(5, 6),
+        AutoMigration(6, 7)
     ]
 )
 @TypeConverters(Converters::class)
@@ -42,6 +48,7 @@ abstract class FoodCLUBDatabase : RoomDatabase() {
     abstract fun getProfileDao(): ProfileDataDao
     abstract fun getUserProfileBookmarksDao(): UserProfileBookmarksDao
     abstract fun getProductDao(): ProductDao
+    abstract fun getPostsDao(): PostDao
 
     companion object {
         val migration1To2 = object: Migration(1, 2) {

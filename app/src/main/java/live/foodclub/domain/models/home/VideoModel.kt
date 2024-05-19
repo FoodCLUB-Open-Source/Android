@@ -7,6 +7,7 @@ data class VideoModel(
     val authorDetails: SimpleUserModel,
     val videoStats: VideoStats,
     val videoLink: String,
+    val title: String?,
     val currentViewerInteraction: VideoUserInteraction = VideoUserInteraction(),
     val description: String,
     val createdAt: String = "${(1..24).random()}h",
