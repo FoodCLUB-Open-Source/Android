@@ -3,10 +3,6 @@ package live.foodclub.localdatasource.room.entity
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import live.foodclub.domain.models.home.VideoModel
-import live.foodclub.domain.models.home.VideoStats
-import live.foodclub.domain.models.home.VideoUserInteraction
-import live.foodclub.domain.models.profile.SimpleUserModel
 
 @Entity(
     tableName = "posts",
@@ -36,27 +32,13 @@ data class PostEntity(
 )
 
 fun PostEntity.toHomePosts(): HomePostEntity {
-    return HomePostEntity(id = 0, postId = postId)
+    return HomePostEntity(postId = postId)
 }
 
-fun PostEntity.toVideoModel(): VideoModel {
-    return VideoModel(
-        videoId = postId,
-        authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
-        title = title,
-        videoStats = VideoStats(
-            totalLikes ?: 0,
-            0L,
-            0L,
-            0L,
-            totalViews ?: 0
-        ),
-        videoLink = videoLink ?: "",
-        description = description ?: "",
-        thumbnailLink = thumbnailLink ?: "",
-        currentViewerInteraction = VideoUserInteraction(
-            isBookmarked = isBookmarked ?: false,
-            isLiked = isLiked ?: false
-        )
-    )
+fun PostEntity.toProfilePosts(): ProfilePostEntity {
+    return ProfilePostEntity(postId = postId)
+}
+
+fun PostEntity.toBookmarkEntity(): BookmarkPostEntity {
+    return BookmarkPostEntity(postId = postId)
 }

@@ -5,8 +5,6 @@ import live.foodclub.localdatasource.room.dao.ProductDao
 import live.foodclub.localdatasource.room.dao.ProfileDataDao
 import live.foodclub.localdatasource.room.database.FoodCLUBDatabase
 import live.foodclub.localdatasource.room.dao.UserDetailsDao
-import live.foodclub.localdatasource.room.dao.UserProfileBookmarksDao
-import live.foodclub.localdatasource.room.dao.UserProfilePostsDao
 import androidx.room.Room
 import dagger.Module
 import dagger.Provides
@@ -30,6 +28,8 @@ class DatabaseModule {
             .fallbackToDestructiveMigration() // later change this to meet our intends
             .addMigrations(FoodCLUBDatabase.migration1To2)
             .addMigrations(FoodCLUBDatabase.migration2to3)
+            .addMigrations(FoodCLUBDatabase.migration8to9)
+            .addMigrations(FoodCLUBDatabase.migration9to10)
             .build()
     }
 
@@ -41,20 +41,8 @@ class DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideUserProfilePostsDao(foodCLUBDatabase: FoodCLUBDatabase): UserProfilePostsDao {
-        return foodCLUBDatabase.getUserProfilePostsDao()
-    }
-
-    @Provides
-    @Singleton
     fun provideProfileDao(foodCLUBDatabase: FoodCLUBDatabase): ProfileDataDao {
         return foodCLUBDatabase.getProfileDao()
-    }
-
-    @Provides
-    @Singleton
-    fun provideUserProfileBookmarksDao(foodCLUBDatabase: FoodCLUBDatabase): UserProfileBookmarksDao {
-        return foodCLUBDatabase.getUserProfileBookmarksDao()
     }
 
     @Provides

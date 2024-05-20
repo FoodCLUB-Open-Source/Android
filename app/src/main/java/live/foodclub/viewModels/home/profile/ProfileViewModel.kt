@@ -2,7 +2,6 @@ package live.foodclub.viewModels.home.profile
 
 import live.foodclub.domain.models.products.MyBasketCache
 import live.foodclub.domain.models.profile.UserProfile
-import live.foodclub.localdatasource.room.entity.toVideoModel
 import live.foodclub.network.retrofit.utils.SessionCache
 import live.foodclub.repositories.LikesRepository
 import live.foodclub.repositories.PostRepository
@@ -31,6 +30,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import live.foodclub.localdatasource.room.relationships.toVideoModel
 import java.io.File
 import javax.inject.Inject
 
@@ -79,7 +79,7 @@ class ProfileViewModel @Inject constructor(
             profileUserId = profileUserId,
             userProfile = profile,
             isFollowed = isFollowed,
-            videoPagerState = videoPagerState
+            videoPagerState = videoPagerState.copy(browsingUserId = profileUserId)
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000),
         ProfileState.default(exoPlayer))
@@ -169,7 +169,7 @@ class ProfileViewModel @Inject constructor(
         when (val resource = profileRepository.retrieveProfileFollowers(userId)) {
             is Resource.Success -> {
                 return resource.data!!.any {
-                    it.userId.toLong() == _state.value.sessionUserId
+                    it.userId == _state.value.sessionUserId
                 }
             }
 
@@ -187,7 +187,7 @@ class ProfileViewModel @Inject constructor(
                         state.copy(
                             error = "",
                             isFollowed = resource.data!!.any {
-                                it.userId.toLong() == _state.value.sessionUserId
+                                it.userId == _state.value.sessionUserId
                             }
                         )
                     }

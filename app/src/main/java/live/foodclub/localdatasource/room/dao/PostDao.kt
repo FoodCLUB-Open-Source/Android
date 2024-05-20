@@ -1,7 +1,6 @@
 package live.foodclub.localdatasource.room.dao
 
 import androidx.paging.LoadType
-import androidx.paging.Pager
 import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
@@ -9,10 +8,14 @@ import androidx.room.Transaction
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 import live.foodclub.domain.enums.PostType
+import live.foodclub.localdatasource.room.entity.BookmarkPostEntity
 import live.foodclub.localdatasource.room.entity.HomePostEntity
 import live.foodclub.localdatasource.room.entity.PostEntity
 import live.foodclub.localdatasource.room.entity.ProfileEntity
+import live.foodclub.localdatasource.room.entity.ProfilePostEntity
+import live.foodclub.localdatasource.room.entity.toBookmarkEntity
 import live.foodclub.localdatasource.room.entity.toHomePosts
+import live.foodclub.localdatasource.room.entity.toProfilePosts
 import live.foodclub.localdatasource.room.relationships.PostWithUser
 
 @Dao
@@ -20,6 +23,17 @@ interface PostDao {
     @Transaction
     @Query("SELECT * FROM posts INNER JOIN home_posts ON posts.postId = home_posts.postId")
     fun getHomePagePosts(): PagingSource<Int, PostWithUser>
+
+    @Transaction
+    @Query("SELECT * FROM posts INNER JOIN profile_posts ON posts.postId = profile_posts.postId")
+    fun getProfilePosts(): PagingSource<Int, PostWithUser>
+
+    @Transaction
+    @Query("SELECT * FROM posts INNER JOIN bookmark_posts ON posts.postId = bookmark_posts.postId")
+    fun getBookmarkPosts(): PagingSource<Int, PostWithUser>
+
+    @Query("DELETE FROM posts where postId=:id")
+    fun deletePost(id: Long)
 
     @Upsert
     suspend fun insertPosts(posts: List<PostEntity>)
@@ -38,8 +52,20 @@ interface PostDao {
     @Upsert
     suspend fun insertHomePosts(posts: List<HomePostEntity>)
 
+    @Upsert
+    suspend fun insertProfilePosts(posts: List<ProfilePostEntity>)
+
+    @Upsert
+    suspend fun insertBookmarkPosts(posts: List<BookmarkPostEntity>)
+
     @Query("DELETE FROM home_posts")
     fun clearAllHomePosts()
+
+    @Query("DELETE FROM profile_posts")
+    fun clearAllProfilePosts()
+
+    @Query("DELETE FROM bookmark_posts")
+    fun clearAllBookmarkPosts()
 
     @Transaction
     suspend fun insertPaginatedDataForType(
@@ -49,8 +75,14 @@ interface PostDao {
         insertPostsWithUser(posts)
 
         when(postType){
-            PostType.PROFILE -> TODO()
-            PostType.BOOKMARK -> TODO()
+            PostType.PROFILE -> {
+                if(refresh) { clearAllProfilePosts() }
+                insertProfilePosts(posts.map { it.postEntity.toProfilePosts() })
+            }
+            PostType.BOOKMARK -> {
+                if(refresh) { clearAllBookmarkPosts() }
+                insertBookmarkPosts(posts.map { it.postEntity.toBookmarkEntity() })
+            }
             PostType.HOME -> {
                 if(refresh) { clearAllHomePosts() }
                 insertHomePosts(posts.map { it.postEntity.toHomePosts() })
@@ -61,8 +93,8 @@ interface PostDao {
 
     fun getPagingData(postType: PostType): PagingSource<Int, PostWithUser> {
         return when(postType) {
-            PostType.PROFILE -> TODO()
-            PostType.BOOKMARK -> TODO()
+            PostType.PROFILE -> getProfilePosts()
+            PostType.BOOKMARK -> getBookmarkPosts()
             PostType.HOME -> getHomePagePosts()
             PostType.DISCOVER -> TODO()
         }
@@ -70,8 +102,8 @@ interface PostDao {
 
     fun countRows(postType: PostType): Flow<Int> {
         return when(postType) {
-            PostType.PROFILE -> TODO()
-            PostType.BOOKMARK -> TODO()
+            PostType.PROFILE -> countProfilePosts()
+            PostType.BOOKMARK -> countBookmarkPosts()
             PostType.HOME -> countHomePosts()
             PostType.DISCOVER -> TODO()
         }
@@ -79,4 +111,10 @@ interface PostDao {
 
     @Query("SELECT COUNT(*) FROM home_posts")
     fun countHomePosts(): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM profile_posts")
+    fun countProfilePosts(): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM bookmark_posts")
+    fun countBookmarkPosts(): Flow<Int>
 }

@@ -177,8 +177,7 @@ fun VideoPager(
                         onVideoGoBackground = { pauseButtonVisibility = false }
                     )
 
-                    //TODO Add author id when new PostModelDto is implemented
-                    if (/*there should be author id*/0L == state.browsingUserId) {
+                    if (currentVideo.authorDetails.userId == state.browsingUserId) {
                         DeleteButton(
                             alignment = Alignment.TopEnd,
                             onDeleteClicked = { deleteDialog.value = true }
@@ -215,7 +214,7 @@ fun VideoPager(
                             }
                         },
                         onInfoClick = {
-                            events.getRecipe(502)
+                            events.getRecipe(currentVideo.recipeId)
                             triggerIngredientBottomSheetModal()
                                       },
                         onProfileClick = onProfileNavigated,

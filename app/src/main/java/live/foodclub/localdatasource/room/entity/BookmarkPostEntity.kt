@@ -6,7 +6,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "home_posts",
+    tableName = "bookmark_posts",
     foreignKeys = [
         ForeignKey(
             entity = PostEntity::class,
@@ -19,7 +19,7 @@ import androidx.room.PrimaryKey
         Index(value = ["postId"], unique = true)
     ]
 )
-data class HomePostEntity(
+data class BookmarkPostEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val postId: Long

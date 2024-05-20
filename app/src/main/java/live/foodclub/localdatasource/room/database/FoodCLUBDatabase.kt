@@ -5,13 +5,9 @@ import live.foodclub.localdatasource.room.converters.Converters
 import live.foodclub.localdatasource.room.dao.ProductDao
 import live.foodclub.localdatasource.room.dao.ProfileDataDao
 import live.foodclub.localdatasource.room.dao.UserDetailsDao
-import live.foodclub.localdatasource.room.dao.UserProfileBookmarksDao
-import live.foodclub.localdatasource.room.dao.UserProfilePostsDao
 import live.foodclub.localdatasource.room.entity.ProductEntity
 import live.foodclub.localdatasource.room.entity.ProductUnitEntity
 import live.foodclub.localdatasource.room.entity.ProfileEntity
-import live.foodclub.localdatasource.room.entity.ProfileBookmarksEntity
-import live.foodclub.localdatasource.room.entity.ProfilePostsEntity
 import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
@@ -19,34 +15,35 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import live.foodclub.localdatasource.room.dao.PostDao
+import live.foodclub.localdatasource.room.entity.BookmarkPostEntity
 import live.foodclub.localdatasource.room.entity.HomePostEntity
 import live.foodclub.localdatasource.room.entity.PostEntity
+import live.foodclub.localdatasource.room.entity.ProfilePostEntity
 
 @Database(
     entities = [
         UserDetailsModel::class,
-        ProfilePostsEntity::class,
         ProfileEntity::class,
-        ProfileBookmarksEntity::class,
         ProductEntity::class,
         ProductUnitEntity::class,
         PostEntity::class,
-        HomePostEntity::class
+        HomePostEntity::class,
+        BookmarkPostEntity::class,
+        ProfilePostEntity::class
     ],
-    version = 7,
+    version = 10,
     autoMigrations = [
         AutoMigration(3, 4),
         AutoMigration(4, 5),
         AutoMigration(5, 6),
-        AutoMigration(6, 7)
+        AutoMigration(6, 7),
+        AutoMigration(7, 8),
     ]
 )
 @TypeConverters(Converters::class)
 abstract class FoodCLUBDatabase : RoomDatabase() {
     abstract fun getUserDetailsDao(): UserDetailsDao
-    abstract fun getUserProfilePostsDao(): UserProfilePostsDao
     abstract fun getProfileDao(): ProfileDataDao
-    abstract fun getUserProfileBookmarksDao(): UserProfileBookmarksDao
     abstract fun getProductDao(): ProductDao
     abstract fun getPostsDao(): PostDao
 
@@ -147,6 +144,40 @@ abstract class FoodCLUBDatabase : RoomDatabase() {
                         "ON UPDATE NO ACTION ON DELETE CASCADE )")
             }
 
+        }
+
+        val migration8to9 = object : Migration(8, 9){
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("DROP TABLE home_posts")
+
+                db.execSQL("CREATE TABLE `home_posts`(" +
+                        "`id` INTEGER NOT NULL PRIMARY KEY, " +
+                        "`postId` INTEGER NOT NULL, " +
+                        "FOREIGN KEY(`postId`) REFERENCES `posts`(`postId`) " +
+                        "ON UPDATE NO ACTION ON DELETE CASCADE)")
+                db.execSQL("CREATE UNIQUE INDEX `index_home_posts_postId` ON `home_posts` (`postId`)")
+            }
+        }
+
+        val migration9to10 = object : Migration(9, 10){
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("DROP TABLE profile_posts")
+                db.execSQL("DROP TABLE profile_bookmarked_posts")
+
+                db.execSQL("CREATE TABLE `profile_posts`(" +
+                        "`id` INTEGER NOT NULL PRIMARY KEY, " +
+                        "`postId` INTEGER NOT NULL, " +
+                        "FOREIGN KEY(`postId`) REFERENCES `posts`(`postId`) " +
+                        "ON UPDATE NO ACTION ON DELETE CASCADE)")
+                db.execSQL("CREATE UNIQUE INDEX `index_profile_posts_postId` ON `profile_posts` (`postId`)")
+
+                db.execSQL("CREATE TABLE `bookmark_posts`(" +
+                        "`id` INTEGER NOT NULL PRIMARY KEY, " +
+                        "`postId` INTEGER NOT NULL, " +
+                        "FOREIGN KEY(`postId`) REFERENCES `posts`(`postId`) " +
+                        "ON UPDATE NO ACTION ON DELETE CASCADE)")
+                db.execSQL("CREATE UNIQUE INDEX `index_bookmark_posts_postId` ON `bookmark_posts` (`postId`)")
+            }
         }
     }
 

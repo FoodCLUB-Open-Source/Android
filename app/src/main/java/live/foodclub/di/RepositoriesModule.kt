@@ -1,7 +1,6 @@
 package live.foodclub.di
 
 import live.foodclub.localdatasource.localdatasource.product.ProductLocalDataSource
-import live.foodclub.localdatasource.localdatasource.profile_bookmarked_local_datasource.ProfileBookmarkedLocalDataSource
 import live.foodclub.network.retrofit.services.AuthenticationService
 import live.foodclub.network.retrofit.dtoMappers.posts.PostToVideoMapper
 import live.foodclub.network.retrofit.dtoMappers.auth.ForgotChangePasswordMapper
@@ -26,10 +25,7 @@ import live.foodclub.repositories.RecipeRepository
 import live.foodclub.repositories.SettingsRepository
 import live.foodclub.repositories.StoryRepository
 import live.foodclub.localdatasource.localdatasource.user_details_local_datasource.UserDetailsLocalDataSource
-import live.foodclub.localdatasource.localdatasource.profile_posts_local_datasource.ProfilePostsLocalDataSource
 import live.foodclub.localdatasource.localdatasource.profile_local_datasource.ProfileLocalDataSource
-import live.foodclub.localdatasource.room.dao.UserProfilePostsDao
-import live.foodclub.localdatasource.room.database.FoodCLUBDatabase
 import live.foodclub.network.remotedatasource.product.ProductRemoteDataSource
 import live.foodclub.network.remotedatasource.profile_remote_datasource.ProfileRemoteDataSource
 import live.foodclub.network.remotedatasource.settings_remote_datasource.SettingsRemoteDataSource
@@ -58,10 +54,9 @@ object RepositoriesModule {
     fun provideProfileRepository(
         profileRemoteDataSource: ProfileRemoteDataSource,
         profileLocalDataSource: ProfileLocalDataSource,
-        profilePostsLocalDataSource: ProfilePostsLocalDataSource,
-        profileBookmarkedLocalDataSource: ProfileBookmarkedLocalDataSource,
+        postDao: PostDao,
+        postsRemoteDataSourceProvider: PostsRemoteDataSourceProvider,
         localDataMapper: LocalDataMapper,
-        foodCLUBDatabase: FoodCLUBDatabase,
         offlineProfileMapper: OfflineProfileDataMapper,
         followerUserMapper: FollowerUserMapper,
         followingUserMapper: FollowingUserMapper
@@ -69,10 +64,9 @@ object RepositoriesModule {
         return ProfileRepository(
             profileRemoteDataSource,
             profileLocalDataSource,
-            profilePostsLocalDataSource,
-            profileBookmarkedLocalDataSource,
+            postDao,
+            postsRemoteDataSourceProvider,
             localDataMapper,
-            foodCLUBDatabase,
             offlineProfileMapper,
             followerUserMapper,
             followingUserMapper
@@ -86,11 +80,8 @@ object RepositoriesModule {
         postDao: PostDao,
         postsRemoteDataSourceProvider: PostsRemoteDataSourceProvider,
         postToVideoMapper: PostToVideoMapper,
-        userProfilePostsDao: UserProfilePostsDao
     ): PostRepository {
-        return PostRepository(
-            api, postDao, postsRemoteDataSourceProvider, postToVideoMapper, userProfilePostsDao
-        )
+        return PostRepository(api, postDao, postsRemoteDataSourceProvider, postToVideoMapper)
     }
 
     @Provides

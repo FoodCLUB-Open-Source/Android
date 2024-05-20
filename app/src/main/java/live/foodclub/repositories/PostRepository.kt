@@ -7,7 +7,6 @@ import live.foodclub.domain.enums.PostType
 import live.foodclub.network.retrofit.responses.general.DefaultErrorResponse
 import live.foodclub.domain.models.home.VideoModel
 import live.foodclub.localdatasource.room.dao.PostDao
-import live.foodclub.localdatasource.room.dao.UserProfilePostsDao
 import live.foodclub.localdatasource.room.relationships.PostWithUser
 import live.foodclub.network.remotedatasource.posts.PostsRemoteMediator
 import live.foodclub.network.remotedatasource.posts.provider.PostsRemoteDataSourceProvider
@@ -24,8 +23,7 @@ class PostRepository(
     private val api: PostsService,
     private val postDao: PostDao,
     private val postsRemoteDataSourceProvider: PostsRemoteDataSourceProvider,
-    private val postToVideoMapper: PostToVideoMapper,
-    private val userProfilePostsDao: UserProfilePostsDao
+    private val postToVideoMapper: PostToVideoMapper
 ) {
 
     suspend fun getPost(id: Long): Resource<VideoModel, DefaultErrorResponse> {
@@ -112,7 +110,7 @@ class PostRepository(
             }
         ) {
             is Resource.Success -> {
-                userProfilePostsDao.deletePost(id)
+                postDao.deletePost(id)
 
                 Resource.Success(
                     resource.data!!.body()?.status == "Post Deleted"

@@ -23,17 +23,13 @@ import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import live.foodclub.localdatasource.room.entity.toVideoModel
 import live.foodclub.localdatasource.room.relationships.toVideoModel
 import live.foodclub.utils.composables.videoPager.VideoPagerState
-import live.foodclub.views.home.profile.ProfileState
 import java.io.File
 import javax.inject.Inject
 import kotlin.random.Random

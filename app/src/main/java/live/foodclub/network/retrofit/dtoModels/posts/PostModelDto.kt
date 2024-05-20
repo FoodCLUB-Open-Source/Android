@@ -1,7 +1,5 @@
 package live.foodclub.network.retrofit.dtoModels.posts
 
-import live.foodclub.localdatasource.room.entity.ProfileBookmarksEntity
-import live.foodclub.localdatasource.room.entity.ProfilePostsEntity
 import live.foodclub.network.retrofit.dtoModels.profile.UserInfoDto
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
@@ -47,35 +45,6 @@ data class PostModelDto(
     val isViewed: Boolean,
     val isBookmarked: Boolean = false
 )
-
-fun PostModelDto.toProfilePostsEntity(authorId: Long): ProfilePostsEntity {
-    return ProfilePostsEntity(
-        authorId = authorId,
-        videoId = id,
-        title = title,
-        description = description,
-        createdAt = createdAt,
-        videoLink = videoUrl,
-        thumbnailLink = thumbnailUrl,
-        totalLikes = likes,
-        totalViews = views,
-        isLiked = isLiked,
-        isBookmarked = isBookmarked
-    )
-}
-fun PostModelDto.toProfileBookmarksEntity(bookmarkedBy: Long): ProfileBookmarksEntity {
-    return ProfileBookmarksEntity(
-        bookmarkedBy = bookmarkedBy,
-        videoId = id,
-        title = title,
-        description = description,
-        createdAt = createdAt,
-        videoLink = videoUrl,
-        thumbnailLink = thumbnailUrl,
-        totalLikes = likes,
-        totalViews = views
-    )
-}
 
 fun PostModelDto.toPostWithUser(): PostWithUser {
     return PostWithUser(
