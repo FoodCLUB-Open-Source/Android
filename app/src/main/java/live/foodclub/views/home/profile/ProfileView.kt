@@ -1,5 +1,6 @@
 package live.foodclub.views.home.profile
 
+import android.util.Log
 import live.foodclub.R
 import live.foodclub.config.ui.Montserrat
 import live.foodclub.config.ui.foodClubGreen
@@ -191,23 +192,10 @@ fun ProfileView(
                         state.exoPlayer.stop()
                     },
                     onProfileNavigated = {
+                        Log.d("ProfileView", it.toString())
                         onNavigate(BottomBarScreenObject.Profile.route + "?userId=$it") {}
                     }
                 )
-
-//                ShowProfilePosts(
-//                    postId = postIndex,
-//                    events = events,
-//                    state = state,
-//                    onPostDeleted = {
-//                        events.updatePosts(postIndex)
-//                        showPost = false
-//                    },
-//                    onBackPressed = {
-//                        showPost = false
-//                    },
-//                    posts = userTabItems
-//                )
             } else {
                 Column(
                     modifier = Modifier

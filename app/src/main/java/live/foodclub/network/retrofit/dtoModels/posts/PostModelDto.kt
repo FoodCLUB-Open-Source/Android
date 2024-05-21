@@ -13,20 +13,15 @@ data class PostModelDto(
     val title: String,
     val description: String?,
 
-    @SerializedName("user_id")
-    val userId: Long,
     val user: UserInfoDto,
 
     @SerializedName("recipe_id")
     val recipeID: Long,
 
     @SerializedName("created_at")
-    val createdAt:String,
+    val createdAt:String?,
     @SerializedName("updated_at")
-    val updatedAt:String,
-
-    @SerializedName("post_id")
-    val postId:String,
+    val updatedAt:String?,
 
     @SerializedName("category_name")
     val categoryName: String?,
@@ -41,8 +36,8 @@ data class PostModelDto(
     @SerializedName("total_views")
     val views: Long?,
 
-    val isLiked: Boolean,
-    val isViewed: Boolean,
+    val isLiked: Boolean = false,
+    val isViewed: Boolean = false,
     val isBookmarked: Boolean = false
 )
 

@@ -171,13 +171,11 @@ fun PlayPauseButton(buttonVisibility: Boolean) {
  * @param bookMarkState Optional boolean which determines if the bookmark button should be shown.
  * If not provided, bookmark button will not be displayed. True and false determine state of the
  * button
- * @param category Optional category name. If not provided, no category would be displayed.
  * @param opacity Optional opacity which changes transparency level of the whole layout.
  * @param onLikeClick Executes when like button is clicked
  * @param onBookmarkClick Executes when bookmark button is clicked
  * @param onInfoClick Executes when Info button is clicked
  * @param onProfileClick Executes when profile photo or name is clicked
- * @param onCategoryClick Executes when category is clicked
  */
 @Composable
 fun VideoLayout(

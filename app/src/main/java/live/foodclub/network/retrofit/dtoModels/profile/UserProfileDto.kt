@@ -1,8 +1,10 @@
 package live.foodclub.network.retrofit.dtoModels.profile
 
+import android.util.Log
 import live.foodclub.network.retrofit.dtoModels.posts.PostModelDto
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
+import live.foodclub.localdatasource.room.entity.ProfileEntity
 import live.foodclub.network.retrofit.responses.profile.RetrievePostsListResponse
 
 @Keep
@@ -26,5 +28,18 @@ data class UserProfileDto(
 )
 
 fun UserProfileDto.toRetrievePostsListResponse(): RetrievePostsListResponse {
-    return RetrievePostsListResponse(data = userPosts)
+    val posts = userPosts.map { it.copy(user = userInfo) }
+    return RetrievePostsListResponse(data = posts)
+}
+
+fun UserProfileDto.toProfileEntity(): ProfileEntity {
+    return ProfileEntity(
+        userId = userInfo.id,
+        userName = userInfo.username,
+        fullName = userInfo.fullName ?: "Undefined",
+        profilePicture = userInfo.profilePictureUrl,
+        totalUserFollowers = totalUserFollowers,
+        totalUserFollowing = totalUserFollowing,
+        totalUserLikes = totalUserLikes
+    )
 }

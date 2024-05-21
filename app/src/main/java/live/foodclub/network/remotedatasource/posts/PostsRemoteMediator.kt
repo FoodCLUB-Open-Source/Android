@@ -1,5 +1,6 @@
 package live.foodclub.network.remotedatasource.posts
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -67,7 +68,7 @@ class PostsRemoteMediator(
             )
 
             MediatorResult.Success(
-                endOfPaginationReached = userPosts.isEmpty()
+                endOfPaginationReached = userPosts.size < state.config.pageSize
             )
         } catch (e: IOException) {
             MediatorResult.Error(e)

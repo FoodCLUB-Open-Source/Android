@@ -64,7 +64,10 @@ fun NavGraphBuilder.homeNavigationGraph(
                 events = viewModel,
                 navController = navController,
                 state = state.value,
-                posts = posts
+                posts = posts,
+                onProfileNavigated = {
+                    navController.navigate(BottomBarScreenObject.Profile.route + "?userId=$it")
+                }
             )
         }
         composable(

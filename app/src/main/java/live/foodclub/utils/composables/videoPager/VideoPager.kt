@@ -177,7 +177,7 @@ fun VideoPager(
                         onVideoGoBackground = { pauseButtonVisibility = false }
                     )
 
-                    if (currentVideo.authorDetails.userId == state.browsingUserId) {
+                    if (currentVideo.authorDetails.userId == state.browsingUserId && !state.isHomeView) {
                         DeleteButton(
                             alignment = Alignment.TopEnd,
                             onDeleteClicked = { deleteDialog.value = true }

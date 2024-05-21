@@ -3,6 +3,8 @@ package live.foodclub.localdatasource.room.dao
 import androidx.paging.LoadType
 import androidx.paging.PagingSource
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
@@ -25,11 +27,17 @@ interface PostDao {
     fun getHomePagePosts(): PagingSource<Int, PostWithUser>
 
     @Transaction
-    @Query("SELECT * FROM posts INNER JOIN profile_posts ON posts.postId = profile_posts.postId")
+    @Query("""
+        SELECT * FROM posts INNER JOIN profile_posts ON posts.postId = profile_posts.postId 
+        ORDER BY posts.createdAt DESC
+    """)
     fun getProfilePosts(): PagingSource<Int, PostWithUser>
 
     @Transaction
-    @Query("SELECT * FROM posts INNER JOIN bookmark_posts ON posts.postId = bookmark_posts.postId")
+    @Query("""
+        SELECT * FROM posts INNER JOIN bookmark_posts ON posts.postId = bookmark_posts.postId 
+        ORDER BY posts.createdAt DESC
+    """)
     fun getBookmarkPosts(): PagingSource<Int, PostWithUser>
 
     @Query("DELETE FROM posts where postId=:id")
@@ -38,8 +46,23 @@ interface PostDao {
     @Upsert
     suspend fun insertPosts(posts: List<PostEntity>)
 
-    @Upsert
-    suspend fun insertPostUsers(users: List<ProfileEntity>)
+    @Transaction
+    suspend fun insertPostUsers(users: List<ProfileEntity>) {
+        users.forEach {
+            val id = insertPostUser(it)
+            if (id == -1L) updatePostUser(it.userId, it.userName, it.fullName, it.profilePicture)
+        }
+    }
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertPostUser(user: ProfileEntity): Long
+
+    @Query("""
+        UPDATE profile_data
+        SET userName = :username, fullName = :fullName, profilePicture = :profilePicture
+        WHERE userId = :userId
+    """)
+    suspend fun updatePostUser(userId: Long, username: String, fullName: String, profilePicture: String?)
 
     @Transaction
     suspend fun insertPostsWithUser(posts: List<PostWithUser>) {
@@ -117,4 +140,12 @@ interface PostDao {
 
     @Query("SELECT COUNT(*) FROM bookmark_posts")
     fun countBookmarkPosts(): Flow<Int>
+
+    @Query("""
+        DELETE FROM posts
+        WHERE postId NOT IN (SELECT postId FROM home_posts)
+        AND postId NOT IN (SELECT postId FROM profile_posts)
+        AND postId NOT IN (SELECT postId FROM bookmark_posts)
+    """)
+    fun deleteOrphanedPosts()
 }
