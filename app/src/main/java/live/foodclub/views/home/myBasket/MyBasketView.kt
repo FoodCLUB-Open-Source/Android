@@ -66,7 +66,6 @@ fun MyBasketView(
     searchResult: LazyPagingItems<Ingredient>
 ) {
     var showSheet by remember { mutableStateOf(false) }
-    val productsList = state.productsList
     var deleteSelected by remember { mutableStateOf(false) }
 
     LaunchedEffect(deleteSelected) {
@@ -212,7 +211,7 @@ fun MyBasketView(
                 )
                 {
                     itemsIndexed(
-                        items = productsList,
+                        items = state.productsList,
                         key = { _, item -> "${item.product.foodId}_${item.quantity}" }
                     ) { _, ingredient ->
                         BasketIngredient(
