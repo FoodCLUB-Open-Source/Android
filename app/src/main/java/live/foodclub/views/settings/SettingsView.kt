@@ -87,7 +87,7 @@ fun SettingsView(
         SettingsProfile(
             userName = state.user?.userName,
             userImage = imageUri,
-            fullName = state.user?.fullName
+            fullName = state.user?.fullName ?: stringResource(id = R.string.no_name_found)
         )
 
 
@@ -313,7 +313,7 @@ fun SettingsProfile(
             modifier = Modifier.fillMaxWidth()
         ) {
             SettingsText(
-                text = ("#$userName") ?: "",
+                text = userName ?: "",
                 size = 16,
                 weight = FontWeight.W600,
                 modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.dim_20)),
