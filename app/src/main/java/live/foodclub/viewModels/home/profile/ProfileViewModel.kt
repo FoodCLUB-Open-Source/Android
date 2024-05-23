@@ -240,7 +240,8 @@ class ProfileViewModel @Inject constructor(
                     Log.e(TAG, "Failed to View Post: ${resource.message}")
                 }
             }
-        }    }
+        }
+    }
 
     override suspend fun updatePostLikeStatus(postId: Long, isLiked: Boolean) {
         viewModelScope.launch {

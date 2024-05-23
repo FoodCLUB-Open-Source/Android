@@ -117,13 +117,15 @@ fun NavGraphBuilder.homeNavigationGraph(
             val viewModel = it.sharedHiltViewModel<DiscoverViewModel>(navController)
             val state = viewModel.state.collectAsState()
             val productState = viewModel.productState.collectAsState()
+            val categoryPosts = viewModel.categoryPostsFlow.collectAsLazyPagingItems()
 
             DiscoverView(
-                navController = navController,
+                onNavigate = { path, options -> navController.navigate(path) { options() } },
                 events = viewModel,
                 state = state.value,
                 productState = productState.value,
-                productsEvents = viewModel
+                productsEvents = viewModel,
+                categoryPosts = categoryPosts
             )
         }
 

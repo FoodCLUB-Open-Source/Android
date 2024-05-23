@@ -1,7 +1,7 @@
 package live.foodclub.network.retrofit.services
 
 import live.foodclub.network.retrofit.responses.posts.DeletePostResponse
-import live.foodclub.network.retrofit.responses.posts.GetHomepagePostsResponse
+import live.foodclub.network.retrofit.responses.posts.GetDiscoverPostsResponse
 import live.foodclub.network.retrofit.responses.posts.GetPostResponse
 import live.foodclub.network.retrofit.responses.posts.ViewsPostResponse
 import live.foodclub.network.retrofit.responses.profile.RetrievePostsListResponse
@@ -29,7 +29,7 @@ interface PostsService {
         @Path("categoryId") categoryId: String,
         @Query("page_size") pageSize: Int?,
         @Query("page_number") pageNo: Int?
-    ):Response<RetrievePostsListResponse>
+    ):Response<GetDiscoverPostsResponse>
 
     @DELETE("posts/{postId}")
     suspend fun deletePost(

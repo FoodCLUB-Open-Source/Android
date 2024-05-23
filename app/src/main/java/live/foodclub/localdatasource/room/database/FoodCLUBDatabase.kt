@@ -16,6 +16,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import live.foodclub.localdatasource.room.dao.PostDao
 import live.foodclub.localdatasource.room.entity.BookmarkPostEntity
+import live.foodclub.localdatasource.room.entity.DiscoverPostEntity
 import live.foodclub.localdatasource.room.entity.HomePostEntity
 import live.foodclub.localdatasource.room.entity.PostEntity
 import live.foodclub.localdatasource.room.entity.ProfilePostEntity
@@ -29,15 +30,17 @@ import live.foodclub.localdatasource.room.entity.ProfilePostEntity
         PostEntity::class,
         HomePostEntity::class,
         BookmarkPostEntity::class,
-        ProfilePostEntity::class
+        ProfilePostEntity::class,
+        DiscoverPostEntity::class
     ],
-    version = 10,
+    version = 11,
     autoMigrations = [
         AutoMigration(3, 4),
         AutoMigration(4, 5),
         AutoMigration(5, 6),
         AutoMigration(6, 7),
         AutoMigration(7, 8),
+        AutoMigration(10, 11)
     ]
 )
 @TypeConverters(Converters::class)
@@ -150,12 +153,12 @@ abstract class FoodCLUBDatabase : RoomDatabase() {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("DROP TABLE home_posts")
 
-                db.execSQL("CREATE TABLE `home_posts`(" +
+                db.execSQL("CREATE TABLE IF NOT EXISTS `home_posts`(" +
                         "`id` INTEGER NOT NULL PRIMARY KEY, " +
                         "`postId` INTEGER NOT NULL, " +
                         "FOREIGN KEY(`postId`) REFERENCES `posts`(`postId`) " +
                         "ON UPDATE NO ACTION ON DELETE CASCADE)")
-                db.execSQL("CREATE UNIQUE INDEX `index_home_posts_postId` ON `home_posts` (`postId`)")
+                db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_home_posts_postId` ON `home_posts` (`postId`)")
             }
         }
 
@@ -164,19 +167,19 @@ abstract class FoodCLUBDatabase : RoomDatabase() {
                 db.execSQL("DROP TABLE profile_posts")
                 db.execSQL("DROP TABLE profile_bookmarked_posts")
 
-                db.execSQL("CREATE TABLE `profile_posts`(" +
+                db.execSQL("CREATE TABLE IF NOT EXISTS `profile_posts`(" +
                         "`id` INTEGER NOT NULL PRIMARY KEY, " +
                         "`postId` INTEGER NOT NULL, " +
                         "FOREIGN KEY(`postId`) REFERENCES `posts`(`postId`) " +
                         "ON UPDATE NO ACTION ON DELETE CASCADE)")
-                db.execSQL("CREATE UNIQUE INDEX `index_profile_posts_postId` ON `profile_posts` (`postId`)")
+                db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_profile_posts_postId` ON `profile_posts` (`postId`)")
 
-                db.execSQL("CREATE TABLE `bookmark_posts`(" +
+                db.execSQL("CREATE TABLE IF NOT EXISTS `bookmark_posts`(" +
                         "`id` INTEGER NOT NULL PRIMARY KEY, " +
                         "`postId` INTEGER NOT NULL, " +
                         "FOREIGN KEY(`postId`) REFERENCES `posts`(`postId`) " +
                         "ON UPDATE NO ACTION ON DELETE CASCADE)")
-                db.execSQL("CREATE UNIQUE INDEX `index_bookmark_posts_postId` ON `bookmark_posts` (`postId`)")
+                db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_bookmark_posts_postId` ON `bookmark_posts` (`postId`)")
             }
         }
     }

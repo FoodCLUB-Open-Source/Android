@@ -74,7 +74,7 @@ fun VideoPager(
     modifier: Modifier,
     localDensity: Density,
     coroutineScope: CoroutineScope,
-    onBackPressed: () -> Unit = {},
+    onBackPressed: (Int) -> Unit = {},
     onProfileNavigated: (Long) -> Unit
 ) {
     var showIngredientSheet by remember { mutableStateOf(false) }
@@ -229,7 +229,13 @@ fun VideoPager(
                                 start = dimensionResource(id = R.dimen.dim_10)
                             )
                         ) {
-                            BackButton(onBackPressed, backgroundTransparent = true, Color.White)
+                            BackButton(
+                                onBackButtonClick = {
+                                    exoPlayer.stop()
+                                    onBackPressed(index)
+                                                    },
+                                backgroundTransparent = true,
+                                buttonColor = Color.White)
                         }
                     }
 

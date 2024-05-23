@@ -1,9 +1,7 @@
 package live.foodclub.views.home.profile
 
-import android.util.Log
 import live.foodclub.R
 import live.foodclub.config.ui.Montserrat
-import live.foodclub.config.ui.foodClubGreen
 import live.foodclub.domain.models.home.VideoModel
 import live.foodclub.domain.models.others.BottomSheetItem
 import live.foodclub.navigation.HomeOtherRoutes
@@ -33,8 +31,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -46,7 +42,6 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
@@ -86,6 +81,7 @@ import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import live.foodclub.config.ui.BottomBarScreenObject
+import live.foodclub.utils.composables.PostListing
 
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
@@ -177,6 +173,9 @@ fun ProfileView(
                     showProfileImage = false
                 }
             }
+
+            val lazyGridState = rememberLazyGridState()
+            LaunchedEffect(pagerState.currentPage) { lazyGridState.scrollToItem(0) }
             if (showPost) {
                 VideoPager(
                     exoPlayer = state.exoPlayer,
@@ -188,11 +187,10 @@ fun ProfileView(
                     localDensity = localDensity,
                     coroutineScope = coroutineScope,
                     onBackPressed = {
+                        coroutineScope.launch { lazyGridState.scrollToItem(it) }
                         showPost = false
-                        state.exoPlayer.stop()
                     },
                     onProfileNavigated = {
-                        Log.d("ProfileView", it.toString())
                         onNavigate(BottomBarScreenObject.Profile.route + "?userId=$it") {}
                     }
                 )
@@ -289,37 +287,14 @@ fun ProfileView(
                                         end = dimensionResource(id = R.dimen.dim_15)
                                     )
                             ) {
-                                val lazyGridState = rememberLazyGridState()
-
-                                LazyVerticalGrid(
-                                    columns = GridCells.Fixed(2),
-                                    state = lazyGridState,
-                                    modifier = Modifier.fillMaxSize()
+                                PostListing(
+                                    lazyGridState = lazyGridState,
+                                    userTabItems = userTabItems,
+                                    isInternetConnected = isInternetConnected,
+                                    brush = brush
                                 ) {
-                                    items(
-                                        count = userTabItems.itemCount,
-                                    ) { index ->
-                                        val tabItem = userTabItems[index]
-                                        if (tabItem != null) {
-                                            GridItem(
-                                                brush = brush,
-                                                isInternetConnected = isInternetConnected,
-                                                dataItem = tabItem,
-                                                triggerShowDeleteRecipe = {
-                                                    showPostIndex = index
-                                                    showPost = true
-                                                }
-                                            )
-                                        }
-                                    }
-                                    item {
-                                        if (userTabItems.loadState.append is LoadState.Loading) {
-                                            CircularProgressIndicator(
-                                                color = foodClubGreen,
-                                                strokeWidth = dimensionResource(id = R.dimen.dim_4)
-                                            )
-                                        }
-                                    }
+                                    showPostIndex = it
+                                    showPost = true
                                 }
                             }
                         }

@@ -53,7 +53,7 @@ class HomeViewModel @Inject constructor(
             .map { pagingData -> pagingData.map { it.toVideoModel() } }.cachedIn(viewModelScope)
 
     private val _state = MutableStateFlow(HomeState.default(exoPlayer))
-    private val _videoPagerState = MutableStateFlow(VideoPagerState.default())
+    private val _videoPagerState = MutableStateFlow(VideoPagerState.default().copy(isHomeView = true))
 
     val state = combine(_state, _videoPagerState)
     { state, videoPagerState ->

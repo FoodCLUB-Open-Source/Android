@@ -42,3 +42,7 @@ fun PostEntity.toProfilePosts(): ProfilePostEntity {
 fun PostEntity.toBookmarkEntity(): BookmarkPostEntity {
     return BookmarkPostEntity(postId = postId)
 }
+
+fun PostEntity.toDiscoverPostEntity(): DiscoverPostEntity {
+    return DiscoverPostEntity(postId = postId)
+}

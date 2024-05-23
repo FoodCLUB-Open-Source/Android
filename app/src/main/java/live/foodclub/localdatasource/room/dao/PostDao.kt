@@ -11,11 +11,13 @@ import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 import live.foodclub.domain.enums.PostType
 import live.foodclub.localdatasource.room.entity.BookmarkPostEntity
+import live.foodclub.localdatasource.room.entity.DiscoverPostEntity
 import live.foodclub.localdatasource.room.entity.HomePostEntity
 import live.foodclub.localdatasource.room.entity.PostEntity
 import live.foodclub.localdatasource.room.entity.ProfileEntity
 import live.foodclub.localdatasource.room.entity.ProfilePostEntity
 import live.foodclub.localdatasource.room.entity.toBookmarkEntity
+import live.foodclub.localdatasource.room.entity.toDiscoverPostEntity
 import live.foodclub.localdatasource.room.entity.toHomePosts
 import live.foodclub.localdatasource.room.entity.toProfilePosts
 import live.foodclub.localdatasource.room.relationships.PostWithUser
@@ -39,6 +41,13 @@ interface PostDao {
         ORDER BY posts.createdAt DESC
     """)
     fun getBookmarkPosts(): PagingSource<Int, PostWithUser>
+
+    @Transaction
+    @Query("""
+        SELECT * FROM posts INNER JOIN discover_posts ON posts.postId = discover_posts.postId 
+        ORDER BY discover_posts.id ASC
+    """)
+    fun getDiscoverPosts(): PagingSource<Int, PostWithUser>
 
     @Query("DELETE FROM posts where postId=:id")
     fun deletePost(id: Long)
@@ -81,6 +90,9 @@ interface PostDao {
     @Upsert
     suspend fun insertBookmarkPosts(posts: List<BookmarkPostEntity>)
 
+    @Upsert
+    suspend fun insertDiscoverPosts(posts: List<DiscoverPostEntity>)
+
     @Query("DELETE FROM home_posts")
     fun clearAllHomePosts()
 
@@ -89,6 +101,9 @@ interface PostDao {
 
     @Query("DELETE FROM bookmark_posts")
     fun clearAllBookmarkPosts()
+
+    @Query("DELETE FROM discover_posts")
+    fun clearAllDiscoverPosts()
 
     @Transaction
     suspend fun insertPaginatedDataForType(
@@ -110,7 +125,10 @@ interface PostDao {
                 if(refresh) { clearAllHomePosts() }
                 insertHomePosts(posts.map { it.postEntity.toHomePosts() })
             }
-            PostType.DISCOVER -> TODO()
+            PostType.DISCOVER -> {
+                if(refresh) { clearAllDiscoverPosts() }
+                insertDiscoverPosts(posts.map { it.postEntity.toDiscoverPostEntity() })
+            }
         }
     }
 
@@ -119,7 +137,7 @@ interface PostDao {
             PostType.PROFILE -> getProfilePosts()
             PostType.BOOKMARK -> getBookmarkPosts()
             PostType.HOME -> getHomePagePosts()
-            PostType.DISCOVER -> TODO()
+            PostType.DISCOVER -> getDiscoverPosts()
         }
     }
 
@@ -128,7 +146,7 @@ interface PostDao {
             PostType.PROFILE -> countProfilePosts()
             PostType.BOOKMARK -> countBookmarkPosts()
             PostType.HOME -> countHomePosts()
-            PostType.DISCOVER -> TODO()
+            PostType.DISCOVER -> countDiscoverPosts()
         }
     }
 
@@ -140,6 +158,9 @@ interface PostDao {
 
     @Query("SELECT COUNT(*) FROM bookmark_posts")
     fun countBookmarkPosts(): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM discover_posts")
+    fun countDiscoverPosts(): Flow<Int>
 
     @Query("""
         DELETE FROM posts

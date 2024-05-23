@@ -2,6 +2,7 @@ package live.foodclub.viewModels.home.discover
 
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.util.Log
 import live.foodclub.domain.models.products.Ingredient
 import live.foodclub.domain.models.products.MyBasketCache
 import live.foodclub.domain.models.products.toEmptyIngredient
@@ -37,6 +38,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import live.foodclub.domain.enums.Category
+import live.foodclub.localdatasource.room.relationships.toVideoModel
+import live.foodclub.repositories.LikesRepository
+import live.foodclub.repositories.RecipeRepository
+import live.foodclub.utils.composables.videoPager.VideoPagerState
+import live.foodclub.viewModels.home.profile.ProfileViewModel
+import live.foodclub.views.home.profile.ProfileState
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -44,6 +52,8 @@ import javax.inject.Inject
 class DiscoverViewModel @Inject constructor(
     private val postRepository: PostRepository,
     private val productsRepo: ProductRepository,
+    private val likesRepository: LikesRepository,
+    private val recipeRepository: RecipeRepository,
     private val sessionCache: SessionCache,
     private val myBasketCache: MyBasketCache,
     val exoPlayer: ExoPlayer
@@ -59,9 +69,18 @@ class DiscoverViewModel @Inject constructor(
         .map { pagingData -> pagingData.map { it.toProductModel().toEmptyIngredient() } }
         .cachedIn(viewModelScope)
 
-    private val _state = MutableStateFlow(DiscoverState.default())
-    val state: StateFlow<DiscoverState>
-        get() = _state
+    private val _category = MutableStateFlow(Category.KETO)
+    val categoryPostsFlow = _category
+        .flatMapLatest { category -> postRepository.getDiscoverPosts(category).flow }
+        .map { pagingData -> pagingData.map { it.toVideoModel() } }
+        .cachedIn(viewModelScope)
+
+    private val _videoPagerState = MutableStateFlow(VideoPagerState.default())
+    private val _state = MutableStateFlow(DiscoverState.default(exoPlayer))
+    val state = combine(_state, _videoPagerState) { state, videoPagerState ->
+        state.copy(videoPagerState = videoPagerState.copy(browsingUserId = 0))
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000),
+        DiscoverState.default(exoPlayer))
 
     private val _productState =
         MutableStateFlow(ProductState.default().copy(allowExpiryDate = true))
@@ -79,7 +98,6 @@ class DiscoverViewModel @Inject constructor(
                 myBasketCache = myBasketCache
             )
         }
-        getPostsByWorld(197)
         getPostsByUserId()
     }
 
@@ -106,24 +124,6 @@ class DiscoverViewModel @Inject constructor(
 
     }
 
-    override fun getPostsByWorld(worldCategory: Long) {
-        viewModelScope.launch(Dispatchers.Main) {
-            when (val resource = postRepository.getWorldCategoryPosts(worldCategory, 10, 1)) {
-                is Resource.Success -> {
-                    _state.update {
-                        it.copy(
-                            postList = resource.data!!
-                        )
-                    }
-                }
-
-                is Resource.Error -> {
-                    // TODO deal with error
-                }
-
-            }
-        }
-    }
 
     override fun scan(imageCapture: ImageCapture, context: Context) {
         imageCapture.takePicture(
@@ -151,6 +151,10 @@ class DiscoverViewModel @Inject constructor(
         )
     }
 
+    override fun changeCategory(category: Category) {
+        _category.update { category }
+    }
+
     override fun addScanListToUserIngredients(ingredients: List<Ingredient>) {
         val updatedList = _productState.value.addedProducts.toMutableList()
         updatedList.addAll(ingredients)
@@ -170,6 +174,68 @@ class DiscoverViewModel @Inject constructor(
                 ingredientSearchText = "",
             )
         }
+    }
+
+    override suspend fun userViewsPost(postId: Long) {
+        viewModelScope.launch {
+            when (val resource = postRepository.userViewsPost(postId)) {
+                is Resource.Success -> {
+                    Log.i(TAG, "Viewed Post Successfully")
+                }
+
+                is Resource.Error -> {
+                    Log.e(TAG, "Failed to View Post: ${resource.message}")
+                }
+            }
+        }
+    }
+
+    override suspend fun updatePostLikeStatus(postId: Long, isLiked: Boolean) {
+        viewModelScope.launch {
+            when (
+                val resource = likesRepository.updatePostLikeStatus(
+                    postId = postId,
+                    isLiked
+                )
+            ) {
+                is Resource.Success -> {
+                    Log.i(TAG, "${resource.data}")
+                }
+
+                is Resource.Error -> {
+                    Log.i(TAG, "${resource.message}")
+                }
+            }
+        }
+    }
+
+    override fun getRecipe(recipeId: Long) {
+        viewModelScope.launch {
+            when(val resource = recipeRepository.getRecipe(recipeId)) {
+                is Resource.Success -> {
+                    _videoPagerState.update { it.copy(recipe = resource.data) }
+                }
+                is Resource.Error -> {
+                    _state.update { it.copy(error = resource.message!!) }
+                }
+            }
+        }
+    }
+
+    override fun updatePostBookmarkStatus(postId: Long, isBookmarked: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    override fun deletePost(postId: Long) {}
+
+    override fun addIngredientsToBasket() {
+        val basket = myBasketCache.getBasket()
+        val selectedIngredients = _videoPagerState.value.recipe?.ingredients?.filter { it.isSelected }
+        selectedIngredients?.forEach {
+            it.isSelected = false
+            basket.addIngredient(it.copy())
+        }
+        myBasketCache.saveBasket(basket)
     }
 
     override fun onCleared() {
