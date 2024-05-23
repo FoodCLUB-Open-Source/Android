@@ -1,6 +1,5 @@
 package live.foodclub.utils.composables.products
 
-import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -262,8 +261,7 @@ fun ProductsListTitleSection(modifier: Modifier, includeExpiryDate: Boolean) {
  *
  * @param events [ProductsEvents]
  * @param productsList [LazyPagingItems] of ingredient object. This list populates the list
- * @param userIngredientsList List where the searched ingredients are added to. This is used to
- * check which ingredients in productsList are present in userIngredientsList
+ * @param state is for the ProductState we use in BasketView and DiscoverView
  * @param includeExpiryDate Boolean which determines if "Expiry date" title should be displayed
  */
 @Composable
@@ -305,7 +303,6 @@ fun ProductsListContent(
                         userIngredientsList = state.addedProducts,
                         isItemAdded = addedItems.contains(updatedItem.product.foodId),
                         onEditQuantityClicked = {
-                            Log.i("MYTAG","onEditQuantityClicked CLICKED ${it.product.label}")
                             events.selectAction(updatedItem, ProductAction.EDIT_QUANTITY)
                         },
                         onDateClicked = {
@@ -318,7 +315,6 @@ fun ProductsListContent(
                             events.updateIngredient(updatedItem)
                         },
                         onDeleteIngredient = {
-                            Log.i("MYTAG","DELETE ${it.product.label}")
                             addedItems.remove(updatedItem.product.foodId)
                             events.deleteIngredient(updatedItem)
                         },

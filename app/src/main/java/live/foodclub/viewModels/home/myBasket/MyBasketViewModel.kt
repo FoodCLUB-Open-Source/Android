@@ -127,7 +127,6 @@ class MyBasketViewModel @Inject constructor(
     }
 
     override fun updateIngredient(ingredient: Ingredient) {
-        val basket = state.value.basket!!
         val addedIngredients = _productState.value.addedProducts.toMutableList()
         val ingredientIndex = addedIngredients.indexOfFirst {
             it.product.foodId == ingredient.product.foodId
@@ -145,11 +144,11 @@ class MyBasketViewModel @Inject constructor(
         }
         _productState.update {
             it.copy(
-                addedProducts = addedIngredients,
-                filteredAddedProducts = addedIngredients
+                addedProducts = addedIngredients
             )
         }
 
+        val basket = state.value.basket!!
         basket.addIngredient(ingredient)
         _state.update {
             it.copy(

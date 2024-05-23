@@ -206,8 +206,7 @@ class DiscoverViewModel @Inject constructor(
 
         _productState.update {
             it.copy(
-                addedProducts = addedIngredients,
-                filteredAddedProducts = addedIngredients
+                addedProducts = addedIngredients
             )
         }
     }
