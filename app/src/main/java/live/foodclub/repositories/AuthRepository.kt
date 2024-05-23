@@ -49,7 +49,6 @@ class AuthRepository(
             }
         }
     }
-    // TODO shift create firebase user here add necessary attributes to signUp User delete unnecessary ones on signIn User
     suspend fun signUp(
         signUpUser: SignUpUser
     ): Resource<SingleMessageResponse, DefaultErrorResponse> {
