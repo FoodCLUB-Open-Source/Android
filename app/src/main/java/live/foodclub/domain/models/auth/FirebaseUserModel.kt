@@ -13,6 +13,8 @@ data class FirebaseUserModel(
     val accessToken: String = "",
     val idToken: String = "",
     val refreshToken: String = "",
+    val email: String = "",
+    val password: String = ""
 ) {
     fun mapToSimpleUserModel(): SimpleUserModel {
         return SimpleUserModel(

@@ -39,10 +39,6 @@ class AuthRepository(
         ) {
             is Resource.Success -> {
                 val signInUser = signInMapper.mapToDomainModel(resource.data!!.body()!!)
-                val fcmToken = firebaseMessaging.token.await()
-                val newFirebaseUser = firebaseUserMapper.mapFromDomainModel(signInUser)
-                newFirebaseUser.fcmToken = fcmToken
-                firebaseUserRepository.saveUserToFirestore(newFirebaseUser)
                 Resource.Success(
                     data = signInUser
                 )
@@ -53,7 +49,7 @@ class AuthRepository(
             }
         }
     }
-
+    // TODO shift create firebase user here add necessary attributes to signUp User delete unnecessary ones on signIn User
     suspend fun signUp(
         signUpUser: SignUpUser
     ): Resource<SingleMessageResponse, DefaultErrorResponse> {
@@ -63,6 +59,10 @@ class AuthRepository(
             }
         ) {
             is Resource.Success -> {
+                val fcmToken = firebaseMessaging.token.await()
+                val newFirebaseUser = firebaseUserMapper.mapFromDomainModel(signUpUser)
+                newFirebaseUser.fcmToken = fcmToken
+                firebaseUserRepository.saveUserToFirestore(newFirebaseUser)
                 Resource.Success(resource.data!!.body()!!)
             }
 

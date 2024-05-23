@@ -129,6 +129,7 @@ class FirebaseUserRepository(
 
                         Resource.Success(conversation)
                     } else {
+                        Log.e(TAG, "createConversation: User not found")
                         Resource.Error("User not found")
                     }
                 }

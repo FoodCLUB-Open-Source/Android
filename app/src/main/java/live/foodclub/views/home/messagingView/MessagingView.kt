@@ -73,7 +73,6 @@ fun MessagingView(
     var showCreateConversationDialog by remember { mutableStateOf(false) }
     val messagesHistory = if (contactsState.contactsSearchText == "")
         contactsState.contacts else contactsState.contactsSearchResult
-
     if (showChatView) {
         ChatView(
             onBackPressed = { showChatView = !showChatView },
@@ -82,9 +81,13 @@ fun MessagingView(
         )
     } else if (showCreateConversationDialog) {
         CreateConversationView(
-            onBackPressed = { showCreateConversationDialog = !showCreateConversationDialog },
+            navigateToChatView = {
+                showCreateConversationDialog = !showCreateConversationDialog
+                showChatView = !showChatView
+            },
             contactsState = contactsState,
             events = events,
+            chatState = chatState
         )
     } else {
         Scaffold(
@@ -139,7 +142,6 @@ fun MessagingView(
         )
     }
 }
-
 
 
 @Composable
@@ -212,9 +214,7 @@ fun MessagingSearchBar(
         TextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(
-                    RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))
-                ),
+                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_10))),
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = colorResource(id = R.color.messaging_view_search_contacts_container_color),
                 unfocusedContainerColor = colorResource(id = R.color.messaging_view_search_contacts_container_color),
@@ -341,6 +341,7 @@ fun MessagesSection(
         contentPadding = PaddingValues(dimensionResource(id = R.dimen.dim_16)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dim_16))
     ) {
+        // the first one is index use to delete
         itemsIndexed(contacts) { _, contact ->
             SwipeToDismissContainer(
                 containerBackgroundColor = Color.Black,
