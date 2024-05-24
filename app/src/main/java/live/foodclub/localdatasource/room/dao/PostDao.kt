@@ -6,6 +6,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.RewriteQueriesToDropUnusedColumns
 import androidx.room.Transaction
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
@@ -25,26 +26,45 @@ import live.foodclub.localdatasource.room.relationships.PostWithUser
 @Dao
 interface PostDao {
     @Transaction
-    @Query("SELECT * FROM posts INNER JOIN home_posts ON posts.postId = home_posts.postId")
+    @Query("""
+        SELECT posts.postId, posts.authorId, posts.recipeId, posts.title, posts.description, posts.createdAt, 
+               posts.videoLink, posts.thumbnailLink, posts.totalLikes, posts.totalViews, posts.isLiked, 
+               posts.isBookmarked
+        FROM posts 
+        INNER JOIN home_posts ON posts.postId = home_posts.postId
+    """)
     fun getHomePagePosts(): PagingSource<Int, PostWithUser>
+
 
     @Transaction
     @Query("""
-        SELECT * FROM posts INNER JOIN profile_posts ON posts.postId = profile_posts.postId 
+        SELECT posts.postId, posts.authorId, posts.recipeId, posts.title, posts.description, posts.createdAt, 
+               posts.videoLink, posts.thumbnailLink, posts.totalLikes, posts.totalViews, posts.isLiked, 
+               posts.isBookmarked
+        FROM posts 
+        INNER JOIN profile_posts ON posts.postId = profile_posts.postId 
         ORDER BY posts.createdAt DESC
     """)
     fun getProfilePosts(): PagingSource<Int, PostWithUser>
 
     @Transaction
     @Query("""
-        SELECT * FROM posts INNER JOIN bookmark_posts ON posts.postId = bookmark_posts.postId 
+        SELECT posts.postId, posts.authorId, posts.recipeId, posts.title, posts.description, posts.createdAt, 
+               posts.videoLink, posts.thumbnailLink, posts.totalLikes, posts.totalViews, posts.isLiked, 
+               posts.isBookmarked
+        FROM posts 
+        INNER JOIN bookmark_posts ON posts.postId = bookmark_posts.postId 
         ORDER BY posts.createdAt DESC
     """)
     fun getBookmarkPosts(): PagingSource<Int, PostWithUser>
 
     @Transaction
     @Query("""
-        SELECT * FROM posts INNER JOIN discover_posts ON posts.postId = discover_posts.postId 
+        SELECT posts.postId, posts.authorId, posts.recipeId, posts.title, posts.description, posts.createdAt, 
+               posts.videoLink, posts.thumbnailLink, posts.totalLikes, posts.totalViews, posts.isLiked, 
+               posts.isBookmarked
+        FROM posts 
+        INNER JOIN discover_posts ON posts.postId = discover_posts.postId 
         ORDER BY discover_posts.id ASC
     """)
     fun getDiscoverPosts(): PagingSource<Int, PostWithUser>

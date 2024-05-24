@@ -33,7 +33,7 @@ import live.foodclub.localdatasource.room.entity.ProfilePostEntity
         ProfilePostEntity::class,
         DiscoverPostEntity::class
     ],
-    version = 11,
+    version = 12,
     autoMigrations = [
         AutoMigration(3, 4),
         AutoMigration(4, 5),

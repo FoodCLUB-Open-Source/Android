@@ -2,6 +2,7 @@ package live.foodclub.viewModels.home.discover
 
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.util.Log
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
@@ -13,17 +14,32 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.paging.cachedIn
 import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import live.foodclub.domain.enums.Category
+import live.foodclub.domain.models.products.Ingredient
+import live.foodclub.domain.models.products.MyBasketCache
+import live.foodclub.domain.models.products.toEmptyIngredient
+import live.foodclub.localdatasource.room.relationships.toProductModel
+import live.foodclub.localdatasource.room.relationships.toVideoModel
+import live.foodclub.network.retrofit.utils.SessionCache
+import live.foodclub.repositories.LikesRepository
+import live.foodclub.repositories.PostRepository
+import live.foodclub.repositories.ProductRepository
+import live.foodclub.repositories.RecipeRepository
+import live.foodclub.utils.composables.products.ProductAction
+import live.foodclub.utils.composables.products.ProductState
+import live.foodclub.utils.composables.products.ProductsEvents
+import live.foodclub.utils.composables.videoPager.VideoPagerState
+import live.foodclub.utils.helpers.Resource
+import live.foodclub.views.home.discover.DiscoverState
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
