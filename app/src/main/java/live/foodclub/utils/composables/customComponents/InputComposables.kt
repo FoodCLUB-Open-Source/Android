@@ -145,7 +145,9 @@ fun CustomCodeTextField(
         },
         enabled = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-        keyboardActions = KeyboardActions()
+        keyboardActions = KeyboardActions(
+            onDone = {}
+        )
     ) {
         BoxWithConstraints(
 
@@ -298,7 +300,10 @@ fun CustomTextField(
                     //vertical = dimensionResource(id = R.dimen.dim_5)
                 )
                 .fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = keyboardType)
+            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+            keyboardActions = KeyboardActions(
+                onDone = {}
+            )
         )
 
         Text(
@@ -440,6 +445,9 @@ fun CustomPasswordTextField(
                 '\u25CF'
             ),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            keyboardActions = KeyboardActions(
+                onDone = {}
+            )
         )
 
         Text(
