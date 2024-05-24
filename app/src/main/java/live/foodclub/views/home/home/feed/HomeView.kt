@@ -10,7 +10,6 @@ import live.foodclub.domain.enums.Reactions
 import live.foodclub.navigation.HomeOtherRoutes
 import live.foodclub.utils.helpers.fadingEdge
 import live.foodclub.viewModels.home.home.HomeEvents
-import live.foodclub.viewModels.home.home.HomeViewModel
 import live.foodclub.views.home.home.foodSNAPS.FoodSNAPSView
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.FastOutLinearInEasing
@@ -59,11 +58,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.paging.compose.LazyPagingItems
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import live.foodclub.domain.models.home.VideoModel
+import live.foodclub.utils.composables.videoPager.VideoPager
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -73,18 +74,14 @@ fun HomeView(
     events: HomeEvents,
     initialPage: Int? = 0,
     navController: NavHostController,
+    posts: LazyPagingItems<VideoModel>,
     state: HomeState,
-    viewModel: HomeViewModel = hiltViewModel()
+    onProfileNavigated: (Long) -> Unit
 ) {
     val context = LocalContext.current
-    var showIngredientSheet by remember { mutableStateOf(false) }
     val localDensity = LocalDensity.current
 
     val coroutineScope = rememberCoroutineScope()
-
-    val triggerIngredientBottomSheetModal: () -> Unit = {
-        showIngredientSheet = !showIngredientSheet
-    }
     val pagerState = rememberPagerState(
         initialPage = 0,
         initialPageOffsetFraction = 0f,
@@ -101,7 +98,7 @@ fun HomeView(
         highVelocityAnimationSpec = rememberSplineBasedDecay()
     )
 
-    val exoPlayer = remember(context) { viewModel.exoPlayer }
+    val exoPlayer = remember(context) { state.exoPlayer }
 
     var initialPageFlag: Boolean
 
@@ -172,17 +169,6 @@ fun HomeView(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-
-        if (showIngredientSheet) {
-            HomeBottomSheetIngredients(
-                onDismiss = triggerIngredientBottomSheetModal,
-                recipe = state.recipe,
-                //TODO implement post title
-                postTitle = "Chicken broth and meatballs",
-                onAddToBasket = { events.addIngredientsToBasket() }
-
-            )
-        }
         HorizontalPager(
             state = pagerState,
             flingBehavior = flingBehavior
@@ -210,13 +196,17 @@ fun HomeView(
 
                     VideoPager(
                         exoPlayer = exoPlayer,
-                        videoList = state.videoList,
+                        videoList = posts,
                         initialPage = initialPage,
                         events = events,
-                        modifier = modifier,
+                        state = state.videoPagerState,
+                        modifier = Modifier,
                         localDensity = localDensity,
-                        onInfoClick = triggerIngredientBottomSheetModal,
                         coroutineScope = coroutineScope,
+                        onBackPressed = {
+                            exoPlayer.stop()
+                        },
+                        onProfileNavigated = onProfileNavigated
                     )
                 }
 

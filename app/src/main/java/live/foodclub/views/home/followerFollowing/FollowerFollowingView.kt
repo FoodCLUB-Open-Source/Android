@@ -186,7 +186,7 @@ fun FollowerView(
 fun Follower(
 
     navController: NavController,
-    userId: Int,
+    userId: Long,
     imageUrl: String,
     username: String,
     completeName: String

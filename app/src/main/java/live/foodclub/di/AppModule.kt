@@ -13,6 +13,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import live.foodclub.network.remotedatasource.posts.provider.PostsRemoteDataSourceProvider
+import live.foodclub.network.remotedatasource.posts.provider.PostsRemoteDataSourceProviderImpl
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -44,14 +46,15 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideMyBasketViewModel(
-        basketCache: MyBasketCache,
-        productRepository: ProductRepository
-    ): MyBasketViewModel = MyBasketViewModel(basketCache, productRepository)
-
-    @Provides
-    @Singleton
     fun provideConnectivityUtils(
         @ApplicationContext context: Context
     ): ConnectivityUtils = ConnectivityUtils(context)
+
+    @Provides
+    @Singleton
+    fun providePostsRemoteDataSourceProvider(
+        postsRemoteDataSourceProviderImpl: PostsRemoteDataSourceProviderImpl
+    ): PostsRemoteDataSourceProvider {
+        return postsRemoteDataSourceProviderImpl
+    }
 }

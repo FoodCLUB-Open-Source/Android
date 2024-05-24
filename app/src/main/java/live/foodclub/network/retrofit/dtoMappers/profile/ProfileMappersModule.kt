@@ -38,11 +38,4 @@ object ProfileMappersModule {
     fun provideOfflineProfileDataMapper(): OfflineProfileDataMapper {
         return OfflineProfileDataMapper()
     }
-
-    @Provides
-    @Singleton
-    fun provideSharedVideoMapper(): SharedVideoMapper {
-        return SharedVideoMapper()
-    }
-
 }

@@ -42,7 +42,7 @@ class SearchViewModel @Inject constructor(
                     userList = if (resource.data?.users?.isNotEmpty() == true) {
                         resource.data.users.map {
                             SimpleUserModel(
-                                it.userId,
+                                it.userId.toLong(),
                                 it.username,
                                 it.profilePictureUrl,
                                 it.userFullname
@@ -55,6 +55,7 @@ class SearchViewModel @Inject constructor(
                             VideoModel(
                                 videoId = it.postId.toLong(),
                                 authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
+                                title = "Title",
                                 description = it.description,
                                 videoLink = it.videoUrl,
                                 thumbnailLink = it.thumbnailUrl,

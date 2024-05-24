@@ -1,36 +1,25 @@
 package live.foodclub.views.home.discover
 
-import live.foodclub.R
-import live.foodclub.config.ui.Montserrat
-import live.foodclub.config.ui.foodClubGreen
-import live.foodclub.domain.enums.Category
-import live.foodclub.domain.enums.CategoryType
-import live.foodclub.domain.models.home.VideoModel
-import live.foodclub.navigation.HomeOtherRoutes
-import live.foodclub.utils.composables.RecommendationVideos
-import live.foodclub.utils.composables.products.ProductState
-import live.foodclub.utils.composables.products.ProductsEvents
-import live.foodclub.utils.composables.shimmerBrush
-import live.foodclub.utils.helpers.checkInternetConnectivity
-import live.foodclub.viewModels.home.discover.DiscoverEvents
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -38,11 +27,12 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -51,8 +41,8 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -63,37 +53,47 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import androidx.navigation.NavOptionsBuilder
+import androidx.paging.compose.LazyPagingItems
+import kotlinx.coroutines.launch
+import live.foodclub.R
+import live.foodclub.config.ui.BottomBarScreenObject
+import live.foodclub.config.ui.Montserrat
+import live.foodclub.config.ui.foodClubGreen
+import live.foodclub.domain.enums.Category
+import live.foodclub.domain.enums.CategoryType
+import live.foodclub.domain.models.home.VideoModel
+import live.foodclub.navigation.HomeOtherRoutes
+import live.foodclub.utils.composables.PostListing
+import live.foodclub.utils.composables.products.ProductState
+import live.foodclub.utils.composables.products.ProductsEvents
+import live.foodclub.utils.composables.shimmerBrush
+import live.foodclub.utils.composables.videoPager.VideoPager
+import live.foodclub.utils.helpers.checkInternetConnectivity
+import live.foodclub.viewModels.home.discover.DiscoverEvents
 
 @Composable
 fun DiscoverView(
-    navController: NavController,
+    onNavigate: (String, NavOptionsBuilder.() -> Unit) -> Unit,
     events: DiscoverEvents,
     productState: ProductState,
     productsEvents: ProductsEvents,
-    state: DiscoverState
+    state: DiscoverState,
+    categoryPosts: LazyPagingItems<VideoModel>,
 ) {
     val context = LocalContext.current
+    val localDensity = LocalDensity.current
+    val coroutineScope = rememberCoroutineScope()
     val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
 
     var isShowPost by remember { mutableStateOf(false) }
-    var postId: Long? by remember { mutableStateOf(null) }
-
+    var postIndex by remember { mutableIntStateOf(0) }
     val brush = shimmerBrush()
 
-    var homePosts: List<VideoModel>?
-    val worldPosts: State<List<VideoModel>>? = null
-
-    var subCategoriesTabIndex by remember {
-        mutableIntStateOf(0)
-    }
-    var subWorldTabIndex by remember {
-        mutableIntStateOf(0)
-    }
+    var subCategoriesTabIndex by remember { mutableIntStateOf(0) }
+    var subWorldTabIndex by remember { mutableIntStateOf(0) }
     val dietList = Category.deriveFromType(CategoryType.DIET)
     val cuisineList = Category.deriveFromType(CategoryType.CUISINE)
 
@@ -107,36 +107,75 @@ fun DiscoverView(
 //    }
 
     var tabIndex by remember { mutableIntStateOf(0) }
-    val mainTabItemsList = stringArrayResource(id = R.array.discover_tabs)
-
-    var gridHeight by remember { mutableStateOf(0.dp) }
-    val recommendationVideosCount by remember { mutableIntStateOf(8) }
-    gridHeight = if (recommendationVideosCount == 1) {
-        (recommendationVideosCount * dimensionResource(id = R.dimen.dim_272).value).dp
-    } else {
-        ((recommendationVideosCount / 2) * dimensionResource(id = R.dimen.dim_272).value).dp
+    val lazyGridState = rememberLazyGridState()
+    LaunchedEffect(tabIndex, subCategoriesTabIndex, subWorldTabIndex) {
+        if (tabIndex == 1) {
+            events.changeCategory(category = dietList[subCategoriesTabIndex])
+        } else {
+            events.changeCategory(category = cuisineList[subWorldTabIndex])
+        }
+        lazyGridState.scrollToItem(0)
     }
 
-    Column(
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            .background(Color.White),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        DiscoverViewHeader(
-            navController = navController,
-            userName = state.username
+    val mainTabItemsList = stringArrayResource(id = R.array.discover_tabs)
+
+    //Do we need that? *********************************** ~Jakub
+//    var gridHeight by remember { mutableStateOf(0.dp) }
+//    val recommendationVideosCount by remember { mutableIntStateOf(8) }
+//    gridHeight = if (recommendationVideosCount == 1) {
+//        (recommendationVideosCount * dimensionResource(id = R.dimen.dim_272).value).dp
+//    } else {
+//        ((recommendationVideosCount / 2) * dimensionResource(id = R.dimen.dim_272).value).dp
+//    }
+
+
+    if (isShowPost) {
+        VideoPager(
+            exoPlayer = state.exoPlayer,
+            videoList = categoryPosts,
+            initialPage = postIndex,
+            events = events,
+            state = state.videoPagerState,
+            modifier = Modifier,
+            localDensity = localDensity,
+            coroutineScope = coroutineScope,
+            onBackPressed = {
+                coroutineScope.launch { lazyGridState.scrollToItem(it) }
+                isShowPost = false
+                            },
+            onProfileNavigated = {
+                onNavigate(BottomBarScreenObject.Profile.route + "?userId=$it") {}
+            }
         )
+    } else {
 
-        MainTabRow(
-            isInternetConnected,
-            brush,
-            tabsList = mainTabItemsList,
-            horizontalArrangement = Arrangement.SpaceBetween,
+        Column(
+            modifier = Modifier
+                .background(Color.White)
+                .then(
+                    if (tabIndex == 0) {
+//                        Modifier.verticalScroll(rememberScrollState())
+                        Modifier
+                    } else {
+                        Modifier
+                    }
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            DiscoverViewHeader(
+                onNavigate = onNavigate,
+                userName = state.username
+            )
 
-            ) {
-            tabIndex = it
-        }
+            MainTabRow(
+                isInternetConnected,
+                brush,
+                tabsList = mainTabItemsList,
+                horizontalArrangement = Arrangement.SpaceBetween,
+
+                ) {
+                tabIndex = it
+            }
 
 //        if (isDialogOpen) {
 //            AddIngredientDialog(
@@ -151,128 +190,122 @@ fun DiscoverView(
 //            }
 //        }
 
-        if (isShowPost && postId != null) {
-            DiscoverViewPosts(
-                postId = postId!!,
-                posts = state.postList,
-                events = events,
-                state = state,
-                onBackPressed = {
-                    postId = null
-                    isShowPost = !isShowPost
-                }
-            )
-        }
 
-        if (tabIndex == 0) {
-            homePosts = state.postList
+            if (tabIndex == 0) {
+                if (isInternetConnected) {
+                    KitchenIngredients(events = productsEvents, state = productState)
 
-            if (isInternetConnected) {
-                KitchenIngredients(events = productsEvents, state = productState)
+                    if (productState.addedProducts.isEmpty()) {
+                        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
 
-                if (productState.addedProducts.isEmpty()) {
-                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
-
-                    Text(
-                        text = stringResource(id = R.string.add_ingredients_information_text),
-                        fontWeight = FontWeight(500),
-                        fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
-                        color = colorResource(
-                            id = R.color.discover_view_add_ingredient_information_text
-                        ).copy(alpha = 0.3f),
-                        lineHeight = dimensionResource(id = R.dimen.fon_17).value.sp,
-                        fontFamily = Montserrat,
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
-                }
-
-
-                Button(
-                    onClick = {
-                        events.onResetSearchData()
-                        navController.navigate("ADD_INGREDIENTS")
-                    },
-                    shape = RoundedCornerShape(
-                        dimensionResource(
-                            id = R.dimen.dim_20
+                        Text(
+                            text = stringResource(id = R.string.add_ingredients_information_text),
+                            fontWeight = FontWeight(500),
+                            fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
+                            color = colorResource(
+                                id = R.color.discover_view_add_ingredient_information_text
+                            ).copy(alpha = 0.3f),
+                            lineHeight = dimensionResource(id = R.dimen.fon_17).value.sp,
+                            fontFamily = Montserrat,
+                            textAlign = TextAlign.Center
                         )
-                    ),
-                    colors = ButtonDefaults.buttonColors(foodClubGreen),
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.add_ingredients),
-                        fontSize = dimensionResource(
-                            id = R.dimen.fon_14
-                        ).value.sp,
-                        fontFamily = Montserrat,
-                        lineHeight = dimensionResource(id = R.dimen.fon_17).value.sp,
-                        fontWeight = FontWeight(500)
+                        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+                    }
+
+
+                    Button(
+                        onClick = {
+                            events.onResetSearchData()
+                            onNavigate("ADD_INGREDIENTS") {}
+                        },
+                        shape = RoundedCornerShape(
+                            dimensionResource(
+                                id = R.dimen.dim_20
+                            )
+                        ),
+                        colors = ButtonDefaults.buttonColors(foodClubGreen),
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.add_ingredients),
+                            fontSize = dimensionResource(
+                                id = R.dimen.fon_14
+                            ).value.sp,
+                            fontFamily = Montserrat,
+                            lineHeight = dimensionResource(id = R.dimen.fon_17).value.sp,
+                            fontWeight = FontWeight(500)
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+                if (productState.addedProducts.isNotEmpty()) {
+                    RecommendationSection(
+                        lazyGridState = lazyGridState,
+                        isInternetConnected = isInternetConnected,
+                        posts = categoryPosts,
+                        isShowPost = {
+                            postIndex = it
+                            isShowPost = true
+                        }
                     )
                 }
-            }
-            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
-            if (productState.addedProducts.isNotEmpty()) {
-                RecommendationSection(
-                    gridHeight,
-                    recommendationVideosCount,
-                    navController = navController,
-                    isShowPost = {
-                        isShowPost = !isShowPost
-                        postId = it
-                    }
-                )
-            }
-        } else {
-            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
-
-            if (tabIndex == 1) {
-                SubCategoriesTabRow(
-                    subCategoriesTabIndex = subCategoriesTabIndex,
-                    subCategoriesTabItemsList = dietList,
-                    onCategoriesTabChanged = {
-                        subCategoriesTabIndex = it
-                    },
-                    isInternetConnected,
-                    brush
-                )
-
-                CategoryVideos(
-                    dataList = state.postList,
-                    category = dietList[subCategoriesTabIndex],
-                    navController = navController,
-                    brush = brush,
-                    isInternetConnected = isInternetConnected
-                )
             } else {
-                SubCategoriesTabRow(
-                    subCategoriesTabIndex = subWorldTabIndex,
-                    subCategoriesTabItemsList = cuisineList,
-                    onCategoriesTabChanged = {
-                        subWorldTabIndex = it
-                    },
-                    isInternetConnected,
-                    brush
-                )
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
 
-                CategoryVideos(
-                    dataList = state.postList,
-                    category = cuisineList[subWorldTabIndex],
-                    navController = navController,
-                    brush = brush,
-                    isInternetConnected = isInternetConnected
-                )
+                if (tabIndex == 1) {
+                    SubCategoriesTabRow(
+                        subCategoriesTabIndex = subCategoriesTabIndex,
+                        subCategoriesTabItemsList = dietList,
+                        onCategoriesTabChanged = {
+                            events.changeCategory(dietList[it])
+                            subCategoriesTabIndex = it
+                        },
+                        isInternetConnected,
+                        brush
+                    )
+                } else {
+                    SubCategoriesTabRow(
+                        subCategoriesTabIndex = subWorldTabIndex,
+                        subCategoriesTabItemsList = cuisineList,
+                        onCategoriesTabChanged = {
+                            events.changeCategory(cuisineList[it])
+                            subWorldTabIndex = it
+                        },
+                        isInternetConnected,
+                        brush
+                    )
+                }
+
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .background(Color.White)
+                        .padding(
+                            start = dimensionResource(id = R.dimen.dim_15),
+                            end = dimensionResource(id = R.dimen.dim_15)
+                        )
+                ) {
+                    PostListing(
+                        lazyGridState = lazyGridState,
+                        userTabItems = categoryPosts,
+                        isInternetConnected = isInternetConnected
+                    ) {
+                        postIndex = it
+                        isShowPost = true
+                    }
+                }
             }
         }
     }
+
+
 }
 
 @Composable
 fun RecommendationSection(
-    gridHeight: Dp,
-    recommendationVideosCount: Int,
-    navController: NavController,
-    isShowPost: (Long) -> Unit
+    lazyGridState: LazyGridState,
+    isInternetConnected: Boolean,
+    posts: LazyPagingItems<VideoModel>,
+    isShowPost: (Int) -> Unit
 ) {
     Card(
         modifier = Modifier,
@@ -300,15 +333,11 @@ fun RecommendationSection(
             fontWeight = FontWeight(500),
             color = Color.Black
         )
-        RecommendationVideos(
-            gridHeight = gridHeight,
-            recommendationVideosCount = recommendationVideosCount,
-            navController = navController,
-            dataItem = null,
-            userName = null,
-            isShowVideo = {
-                isShowPost(it)
-            }
+        PostListing(
+            lazyGridState = lazyGridState,
+            userTabItems = posts,
+            isInternetConnected = isInternetConnected,
+            onPostSelected = isShowPost
         )
     }
 }
@@ -355,7 +384,7 @@ fun RecommendationSection(
 
 @Composable
 fun DiscoverViewHeader(
-    navController: NavController,
+    onNavigate: (String, NavOptionsBuilder.() -> Unit) -> Unit,
     userName: String
 ) {
     Row(
@@ -385,12 +414,7 @@ fun DiscoverViewHeader(
                     )
                 ) {
                     append(
-                        "${stringResource(id = R.string.hi)} ${
-                            userName.replaceRange(
-                                0..0,
-                                userName[0].uppercase()
-                            )
-                        },"
+                        "${stringResource(id = R.string.hi)} ${userName.replaceFirstChar(Char::titlecase)},"
                     )
                 }
                 append("\n\n")
@@ -411,7 +435,7 @@ fun DiscoverViewHeader(
                 ),
                 contentPadding = PaddingValues(),
                 onClick = {
-                    navController.navigate(HomeOtherRoutes.MySearchView.route)
+                    onNavigate(HomeOtherRoutes.MySearchView.route) {}
                 }
             ) {
                 Icon(
@@ -604,33 +628,5 @@ fun SubCategoriesTabRow(
                 }
             }
         }
-    )
-}
-
-@Composable
-fun CategoryVideos(
-    dataList: List<VideoModel>,
-    category: Category,
-    navController: NavController,
-    brush: Brush = shimmerBrush(),
-    isInternetConnected: Boolean
-) {
-    val configuration = LocalConfiguration.current
-
-    val screenHeight = configuration.screenHeightDp.dp
-
-    val categoryDataList = dataList.filter {
-        // get the posts that have the chosen category
-        // require post category to filter, unfinished
-        it.description == category.displayName
-    }
-
-    RecommendationVideos(
-        gridHeight = screenHeight - dimensionResource(id = R.dimen.dim_280),
-        recommendationVideosCount = /*dataList.size*/8, // require back-end, unfinished
-        navController = navController,
-        dataItem = categoryDataList,
-        userName = null,
-        isShowVideo = {}
     )
 }

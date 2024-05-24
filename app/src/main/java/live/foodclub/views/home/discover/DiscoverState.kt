@@ -7,6 +7,8 @@ import live.foodclub.domain.models.products.Ingredient
 import live.foodclub.domain.models.products.MyBasketCache
 import live.foodclub.domain.models.products.Product
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.media3.exoplayer.ExoPlayer
+import live.foodclub.utils.composables.videoPager.VideoPagerState
 
 data class DiscoverState(
     var username: String,
@@ -15,17 +17,20 @@ data class DiscoverState(
     val error : String,
     val capturedImage : ImageBitmap?,
     val ingredientToEdit : Ingredient?,
+    val videoPagerState: VideoPagerState,
     val scanResultItemList : List<Ingredient>,
     val myBasketCache: MyBasketCache?,
+    val exoPlayer: ExoPlayer,
 ) {
     companion object {
-        fun default() = DiscoverState(
+        fun default(exoPlayer: ExoPlayer) = DiscoverState(
             username = "",
             ingredientSearchText = "",
             postList = emptyList(),
             error = "",
             capturedImage = null,
             ingredientToEdit = null,
+            videoPagerState = VideoPagerState.default(),
             scanResultItemList = listOf( // TODO Dummy Data, needs removing
                 Ingredient(
                     product = Product(
@@ -76,7 +81,7 @@ data class DiscoverState(
                 // Add more items as needed
             ),
             myBasketCache = null,
-
+            exoPlayer = exoPlayer
         )
     }
 }
