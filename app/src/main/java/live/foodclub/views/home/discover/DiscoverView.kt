@@ -1,12 +1,13 @@
 package live.foodclub.views.home.discover
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.AnchoredDraggableState
-import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,11 +21,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.pager.VerticalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material.swipeable
 import androidx.compose.material3.Button
@@ -34,7 +34,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -45,12 +44,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -68,7 +65,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.util.lerp
 import androidx.navigation.NavController
 import live.foodclub.R
 import live.foodclub.config.ui.Montserrat
@@ -87,7 +83,7 @@ import live.foodclub.utils.helpers.checkInternetConnectivity
 import live.foodclub.viewModels.home.discover.DiscoverEvents
 import kotlin.math.min
 
-enum class DragValue {Start, End}
+enum class DragValue { Start, End }
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
@@ -180,11 +176,6 @@ fun DiscoverView(
             }
         }
 
-        val pagerState = rememberPagerState(pageCount = { 2 })
-        val onRecommendations = remember {
-            mutableStateOf(false)
-        }
-
         var showMyKitchen by remember {
             mutableStateOf(true)
         }
@@ -198,9 +189,10 @@ fun DiscoverView(
         height = (min(
             productState.filteredAddedProducts.size,
             5
-        ) * dimensionResource(id = R.dimen.dim_65).value).dp + dimensionResource(id = R.dimen.dim_270)
+        ) * dimensionResource(id = R.dimen.dim_65).value).dp + dimensionResource(id = R.dimen.dim_230)
 
 
+        /*
         val anchorsDraggable = remember {
             DraggableAnchors {
                 DragValue.Start at 0f
@@ -211,15 +203,17 @@ fun DiscoverView(
         val dragState = remember {
             AnchoredDraggableState(
                 initialValue = DragValue.Start,
-                positionalThreshold = {distance:Float -> distance * 0.3f },
-                velocityThreshold = {with(density) {100.dp.toPx()} },
+                positionalThreshold = { distance: Float -> distance * 0.3f },
+                velocityThreshold = { with(density) { 100.dp.toPx() } },
                 animationSpec = tween()
-                )
+            )
         }
 
         SideEffect {
             dragState.updateAnchors(anchorsDraggable)
         }
+
+         */
 
 
         if (tabIndex == 0) {
@@ -228,12 +222,10 @@ fun DiscoverView(
             if (isInternetConnected) {
 
                 val swipeableState = rememberSwipeableState(1)
-                val sizePx = with(LocalDensity.current){height.toPx() + gridHeight.toPx() }
+                val sizePx = with(LocalDensity.current) { height.toPx() + gridHeight.toPx() }
                 val anchors = mapOf(0f to 0, sizePx to 1)
 
                 showMyKitchen = swipeableState.currentValue != 0
-
-                val focusRequester = remember {FocusRequester()}
 
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally,
@@ -243,13 +235,14 @@ fun DiscoverView(
                             state = swipeableState,
                             orientation = Orientation.Vertical,
                             anchors = anchors,
-                            //thresholds = { _, _ -> FractionalThreshold(0.3f) }
+                            thresholds = { _, _ -> FractionalThreshold(0.3f) }
                         )) {
                     AnimatedVisibility(visible = showMyKitchen) {
                         Column(
                             modifier = Modifier
                                 .height(height)
-                                .background(Color.Blue),
+                            //.background( if (swipeableState.currentValue == 0) Color.Green else Color.Blue)
+                            ,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             KitchenIngredients(events = productsEvents, state = productState)
@@ -299,7 +292,6 @@ fun DiscoverView(
                     Column(
                         modifier = Modifier
                             //.height(gridHeight + dimensionResource(id = R.dimen.dim_10))
-                            .background(Color.Magenta)
                             .focusProperties { canFocus = !showMyKitchen }
                             .fillMaxHeight()
                     ) {
@@ -317,45 +309,6 @@ fun DiscoverView(
                     }
                 }
 
-                VerticalPager(state = pagerState, beyondBoundsPageCount = 2, modifier = Modifier
-                    .background(
-                        Color.Green
-                    )
-                    .graphicsLayer {
-
-
-                        val pageOffset = pagerState.getOffsetFractionForPage(pagerState.currentPage)
-
-                        // We animate the scaleX + scaleY, between 85% and 100%
-                        lerp(
-                            start = 0.85f,
-                            stop = 1f,
-                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                        ).also { scale ->
-                            scaleX = scale
-                            scaleY = scale
-                        }
-
-                        // We animate the alpha, between 50% and 100%
-                        alpha = lerp(
-                            start = 0.5f,
-                            stop = 1f,
-                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                        )
-                    })
-                {
-
-                    if (it == 0) {
-
-                    }
-
-                    //Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
-
-                    if (it == 1) {
-
-
-                    }
-                }
             }
 
 
@@ -524,33 +477,35 @@ fun RecommendationSection(
         )
     ) {
 
-        if(onRecomendations)
-        {
-            Text(
-                modifier = Modifier.padding(
-                    horizontal = dimensionResource(id = R.dimen.dim_20),
-                    vertical = dimensionResource(id = R.dimen.dim_20)
-                ),
-                text = stringResource(id = R.string.recommendations),
-                fontFamily = Montserrat,
-                fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
-                lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
-                fontWeight = FontWeight(500),
-                color = Color.Black
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            AnimatedVisibility(visible = onRecomendations, enter = fadeIn() + expandHorizontally(), exit = fadeOut() + shrinkHorizontally())
+            {
+                Text(
+                    modifier = Modifier.padding(
+                        horizontal = dimensionResource(id = R.dimen.dim_20),
+                        vertical = dimensionResource(id = R.dimen.dim_20)
+                    ),
+                    text = stringResource(id = R.string.recommendations),
+                    fontFamily = Montserrat,
+                    fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
+                    lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
+                    fontWeight = FontWeight(500),
+                    color = Color.Black
+                )
+            }
+
+
+            RecommendationVideos(
+                gridHeight = gridHeight,
+                recommendationVideosCount = recommendationVideosCount,
+                navController = navController,
+                dataItem = recipesVideosList,
+                userName = null,
+                isShowVideo = {
+                    isShowPost(it)
+                }
             )
         }
-
-
-        RecommendationVideos(
-            gridHeight = gridHeight,
-            recommendationVideosCount = recommendationVideosCount,
-            navController = navController,
-            dataItem = recipesVideosList,
-            userName = null,
-            isShowVideo = {
-                isShowPost(it)
-            }
-        )
     }
 }
 
