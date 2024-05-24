@@ -93,6 +93,11 @@ fun CreateRecipeView(
             codeTriggered.value = true
         }
     }
+    val addedItems = remember { mutableStateListOf<String>() }
+    LaunchedEffect(state.productState.addedProducts) {
+        addedItems.clear()
+        addedItems.addAll(state.productState.addedProducts.map { it.product.foodId })
+    }
 
     Box(
         Modifier
@@ -219,12 +224,15 @@ fun CreateRecipeView(
                 items = state.productState.addedProducts,
                 key = { _, item -> item.product.foodId }
             ) { _, item ->
+                val updatedItem = state.productState.addedProducts.find { it.product.foodId == item.product.foodId } ?: item
+
                 SwipeToDismissContainer(
                     onDismiss = { events.deleteIngredient(item) }
                 ) { modifier ->
                     IngredientItem(
                         modifier = modifier,
                         item = item,
+                        isItemAdded = addedItems.contains(updatedItem.product.foodId),
                         onAddItemClicked = {},
                         userIngredientsList = state.productState.addedProducts,
                         onEditQuantityClicked = {

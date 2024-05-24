@@ -1,6 +1,5 @@
 package live.foodclub.views.home.myBasket
 
-import android.annotation.SuppressLint
 import live.foodclub.R
 import live.foodclub.config.ui.Montserrat
 import live.foodclub.config.ui.containerColor
@@ -60,11 +59,6 @@ import androidx.compose.ui.unit.sp
 import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
 
-//right now on the basket view, we are opening a bottom sheet and putting add ingredient section to a bottom sheet.
-// but we want to open it as a composable on the UI instead of putting it to a bottom sheet
-//I mean call for add ingredient composable when it's opened, don't create a navigation for it
-
-@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun MyBasketView(
     events: MyBasketEvents,
@@ -72,8 +66,14 @@ fun MyBasketView(
     searchResult: LazyPagingItems<Ingredient>
 ) {
     var showSheet by remember { mutableStateOf(false) }
-    val productsList = state.productsList
     var deleteSelected by remember { mutableStateOf(false) }
+
+    LaunchedEffect(deleteSelected) {
+        if (deleteSelected) {
+            events.deleteSelectedIngredients()
+            deleteSelected = false
+        }
+    }
 
     BackHandler(enabled = showSheet) {
         showSheet = false
@@ -211,7 +211,7 @@ fun MyBasketView(
                 )
                 {
                     itemsIndexed(
-                        items = productsList,
+                        items = state.productsList,
                         key = { _, item -> "${item.product.foodId}_${item.quantity}" }
                     ) { _, ingredient ->
                         BasketIngredient(
@@ -227,14 +227,6 @@ fun MyBasketView(
                     }
                 }
             }
-
-            LaunchedEffect(deleteSelected) {
-                if (deleteSelected) {
-                    events.deleteSelectedIngredients()
-                    deleteSelected = false
-                }
-            }
-
         }
     }
 }

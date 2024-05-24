@@ -2,18 +2,6 @@ package live.foodclub.viewModels.home.discover
 
 import android.content.Context
 import android.graphics.BitmapFactory
-import live.foodclub.domain.models.products.Ingredient
-import live.foodclub.domain.models.products.MyBasketCache
-import live.foodclub.domain.models.products.toEmptyIngredient
-import live.foodclub.localdatasource.room.relationships.toProductModel
-import live.foodclub.network.retrofit.utils.SessionCache
-import live.foodclub.repositories.PostRepository
-import live.foodclub.repositories.ProductRepository
-import live.foodclub.utils.composables.products.ProductAction
-import live.foodclub.utils.composables.products.ProductState
-import live.foodclub.utils.composables.products.ProductsEvents
-import live.foodclub.utils.helpers.Resource
-import live.foodclub.views.home.discover.DiscoverState
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
@@ -27,7 +15,6 @@ import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -37,6 +24,18 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import live.foodclub.domain.models.products.Ingredient
+import live.foodclub.domain.models.products.MyBasketCache
+import live.foodclub.domain.models.products.toEmptyIngredient
+import live.foodclub.localdatasource.room.relationships.toProductModel
+import live.foodclub.network.retrofit.utils.SessionCache
+import live.foodclub.repositories.PostRepository
+import live.foodclub.repositories.ProductRepository
+import live.foodclub.utils.composables.products.ProductAction
+import live.foodclub.utils.composables.products.ProductState
+import live.foodclub.utils.composables.products.ProductsEvents
+import live.foodclub.utils.helpers.Resource
+import live.foodclub.views.home.discover.DiscoverState
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -180,28 +179,36 @@ class DiscoverViewModel @Inject constructor(
     override fun selectAction(ingredient: Ingredient, productAction: ProductAction) {
         _productState.update {
             it.copy(
-                editedIngredient = ingredient,
+                editedIngredient = ingredient.copy(),
                 currentAction = productAction
             )
         }
     }
 
+
     override fun updateIngredient(ingredient: Ingredient) {
         val addedIngredients = _productState.value.addedProducts.toMutableList()
-        var editedIngredient = addedIngredients.filter {
+        val ingredientIndex = addedIngredients.indexOfFirst {
             it.product.foodId == ingredient.product.foodId
-        }.getOrNull(0)
-
-        if (editedIngredient == null) {
-            editedIngredient = ingredient
-            addedIngredients.add(editedIngredient)
-            _productState.update { it.copy(filteredAddedProducts = addedIngredients) }
-        } else {
-            editedIngredient.quantity = ingredient.quantity
-            editedIngredient.expirationDate = ingredient.expirationDate
-            editedIngredient.unit = ingredient.unit
         }
-        _productState.update { it.copy(addedProducts = addedIngredients) }
+
+        if (ingredientIndex == -1) {
+            addedIngredients.add(ingredient)
+        } else {
+            val existingIngredient = addedIngredients[ingredientIndex]
+            val updatedIngredient = existingIngredient.copy(
+                quantity = ingredient.quantity,
+                expirationDate = ingredient.expirationDate,
+                unit = ingredient.unit
+            )
+            addedIngredients[ingredientIndex] = updatedIngredient
+        }
+
+        _productState.update {
+            it.copy(
+                addedProducts = addedIngredients
+            )
+        }
     }
 
     override fun deleteIngredient(ingredient: Ingredient) {

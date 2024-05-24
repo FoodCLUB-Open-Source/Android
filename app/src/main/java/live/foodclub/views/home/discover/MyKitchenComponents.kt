@@ -27,7 +27,9 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -50,6 +52,12 @@ fun KitchenIngredients(
     modifier: Modifier = Modifier
 ) {
     val datePickerState = rememberDatePickerState()
+
+    val addedItems = remember { mutableStateListOf<String>() }
+    LaunchedEffect(state.addedProducts) {
+        addedItems.clear()
+        addedItems.addAll(state.addedProducts.map { it.product.foodId })
+    }
 
     when (state.currentAction) {
         ProductAction.EDIT_QUANTITY -> EditIngredientBottomModal(
@@ -112,14 +120,15 @@ fun KitchenIngredients(
             enableMike = false
         )
         ProductsListTitleSection(modifier = modifier, includeExpiryDate = state.allowExpiryDate)
-        IngredientsListColumn(events = events, productState = state)
+        IngredientsListColumn(events = events, productState = state, addedItems = addedItems)
     }
 }
 
 @Composable
 fun IngredientsListColumn(
     events: ProductsEvents,
-    productState: ProductState
+    productState: ProductState,
+    addedItems: MutableList<String>
 ) {
     var height by remember {
         mutableStateOf(0.dp)
@@ -139,12 +148,15 @@ fun IngredientsListColumn(
                 items = productState.filteredAddedProducts,
                 key = { _, item -> item.product.foodId }
             ) { _, item ->
+                val updatedItem = productState.addedProducts.find { it.product.foodId == item.product.foodId } ?: item
+
                 SwipeToDismissContainer(
                     onDismiss = { events.deleteIngredient(item) }
                 ) { modifier ->
                     IngredientItem(
                         modifier = modifier,
                         item = item,
+                        isItemAdded = addedItems.contains(updatedItem.product.foodId),
                         userIngredientsList = productState.filteredAddedProducts,
                         onEditQuantityClicked = {
                             events.selectAction(item, ProductAction.EDIT_QUANTITY)

@@ -272,7 +272,7 @@ fun HomeBottomSheetIngredients(
                         indicator = { tabPositions ->
                             TabRowDefaults.Indicator(
                                 color = foodClubGreen,
-                                height = 1.dp,
+                                height = 2.dp,
                                 modifier = Modifier
                                     .tabIndicatorOffset(tabPositions[selectedTabIndex])
                             )
