@@ -62,6 +62,7 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import live.foodclub.views.home.home.feed.HomeBottomSheetIngredients
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
@@ -83,12 +84,11 @@ fun VideoPager(
     }
 
     if (showIngredientSheet) {
-        RecipeBottomSheet(
+        HomeBottomSheetIngredients(
             onDismiss = triggerIngredientBottomSheetModal,
             recipe = state.recipe,
-            onAddToBasket = { events.addIngredientsToBasket() }
-
-        )
+            postTitle = state.postTitle,
+            onAddToBasket = {events.addIngredientsToBasket()})
     }
     if (videoList.itemCount > 0) {
         val pagerState = rememberPagerState(
