@@ -96,10 +96,16 @@ class MyBasketViewModel @Inject constructor(
 
     override fun deleteSelectedIngredients() {
         val basket = state.value.basket!!
-        basket.deleteIngredients()
-        _productState.update {
-            it.copy(addedProducts = basket.ingredients)
+        val selectedIngredientIds = basket.selectedIngredients
+
+        _productState.update { currentState ->
+            val filteredProducts = currentState.addedProducts.filterNot { product ->
+                selectedIngredientIds.contains(product.product.foodId)
+            }
+            currentState.copy(addedProducts = filteredProducts)
         }
+
+        basket.deleteIngredients()
         _state.update {
             it.copy(
                 basket = basket,
@@ -114,29 +120,36 @@ class MyBasketViewModel @Inject constructor(
     override fun selectAction(ingredient: Ingredient, productAction: ProductAction) {
         _productState.update {
             it.copy(
-                currentAction = productAction,
-                editedIngredient = ingredient
+                editedIngredient = ingredient.copy(),
+                currentAction = productAction
             )
         }
     }
 
     override fun updateIngredient(ingredient: Ingredient) {
-        val basket = state.value.basket!!
-        var editedIngredient = basket.ingredients.filter {
+        val addedIngredients = _productState.value.addedProducts.toMutableList()
+        val ingredientIndex = addedIngredients.indexOfFirst {
             it.product.foodId == ingredient.product.foodId
-        }.getOrNull(0)
+        }
 
-        if(editedIngredient == null) {
-            editedIngredient = ingredient
-            basket.addIngredient(editedIngredient)
+        if (ingredientIndex == -1) {
+            addedIngredients.add(ingredient)
         } else {
-            editedIngredient.quantity = ingredient.quantity
-            editedIngredient.unit = ingredient.unit
+            val existingIngredient = addedIngredients[ingredientIndex]
+            val updatedIngredient = existingIngredient.copy(
+                quantity = ingredient.quantity,
+                unit = ingredient.unit
+            )
+            addedIngredients[ingredientIndex] = updatedIngredient
+        }
+        _productState.update {
+            it.copy(
+                addedProducts = addedIngredients
+            )
         }
 
-        _productState.update {
-            it.copy(addedProducts = basket.ingredients)
-        }
+        val basket = state.value.basket!!
+        basket.addIngredient(ingredient)
         _state.update {
             it.copy(
                 basket = basket,
@@ -148,12 +161,21 @@ class MyBasketViewModel @Inject constructor(
 
     override fun deleteIngredient(ingredient: Ingredient) {
         ingredient.quantity = 0
-        ingredient.expirationDate = ""
+        val addedIngredients = _productState.value.addedProducts.toMutableList()
+        val filteredAddedIngredient = _productState.value.filteredAddedProducts.toMutableList()
+
+        addedIngredients.removeIf { it.product.foodId == ingredient.product.foodId }
+        filteredAddedIngredient.removeIf { it.product.foodId == ingredient.product.foodId }
+        _productState.update {
+            it.copy(
+                addedProducts = addedIngredients,
+                filteredAddedProducts = filteredAddedIngredient
+            )
+        }
+
         val basket = state.value.basket!!
         basket.removeIngredient(ingredient.product.foodId)
-        _productState.update {
-            it.copy(addedProducts = basket.ingredients)
-        }
+
         _state.update {
             it.copy(
                 basket = basket,

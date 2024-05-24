@@ -23,8 +23,9 @@ class Ingredient(
         product: Product = this.product,
         quantity: Int = this.quantity,
         unit: QuantityUnit = this.unit,
+        expirationDate: String = this.expirationDate
     ): Ingredient {
-        return Ingredient(product, quantity, unit)
+        return Ingredient(product, quantity, unit, expirationDate)
     }
 }
 

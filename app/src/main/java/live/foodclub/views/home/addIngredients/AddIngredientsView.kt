@@ -34,7 +34,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.paging.compose.LazyPagingItems
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddIngredientsView(
     state: ProductState,

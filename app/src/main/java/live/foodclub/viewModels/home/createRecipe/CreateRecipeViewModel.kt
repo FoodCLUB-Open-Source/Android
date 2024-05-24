@@ -131,5 +131,4 @@ class CreateRecipeViewModel @Inject constructor(
     }
 
     override fun searchWithinAddedIngredients(searchText: String) { }
-
 }
