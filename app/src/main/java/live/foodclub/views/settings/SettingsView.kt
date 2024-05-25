@@ -87,7 +87,7 @@ fun SettingsView(
         SettingsProfile(
             userName = state.user?.userName,
             userImage = imageUri,
-            fullName = state.user?.fullName ?: stringResource(id = R.string.no_name_found)
+            fullName = state.user?.fullName ?: ""
         )
 
 
