@@ -12,11 +12,9 @@ import live.foodclub.localdatasource.room.relationships.PostWithUser
 import live.foodclub.network.remotedatasource.posts.PostsRemoteMediator
 import live.foodclub.network.remotedatasource.posts.provider.PostsRemoteDataSourceProvider
 import live.foodclub.network.remotedatasource.posts.sources.DiscoverPostsDataSource
-import live.foodclub.network.remotedatasource.posts.sources.PostsRemoteDataSource
 import live.foodclub.network.retrofit.services.PostsService
 import live.foodclub.network.retrofit.dtoMappers.posts.PostToVideoMapper
 import live.foodclub.network.retrofit.responses.posts.DeletePostResponse
-import live.foodclub.network.retrofit.responses.posts.GetDiscoverPostsResponse
 import live.foodclub.network.retrofit.responses.posts.GetPostResponse
 import live.foodclub.network.retrofit.responses.posts.ViewsPostResponse
 import live.foodclub.network.retrofit.responses.profile.RetrievePostsListResponse
