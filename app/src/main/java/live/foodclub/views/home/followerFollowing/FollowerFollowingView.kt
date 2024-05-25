@@ -136,7 +136,7 @@ fun FollowerView(
                             userId = userList[index].userId,
                             imageUrl = userList[index].profilePictureUrl ?: "",
                             username = userList[index].username,
-                            completeName = userList[index].userFullname ?: stringResource(id = R.string.no_name_found)
+                            completeName = userList[index].userFullName ?: stringResource(id = R.string.no_name_found)
                         )
                     }else{ Row(
                         modifier = Modifier
