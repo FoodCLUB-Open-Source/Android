@@ -30,8 +30,6 @@ import live.foodclub.network.remotedatasource.product.ProductRemoteDataSource
 import live.foodclub.network.remotedatasource.profile_remote_datasource.ProfileRemoteDataSource
 import live.foodclub.network.remotedatasource.settings_remote_datasource.SettingsRemoteDataSource
 import live.foodclub.network.retrofit.dtoMappers.auth.FirebaseUserMapper
-import live.foodclub.network.retrofit.dtoMappers.profile.LocalDataMapper
-import live.foodclub.network.retrofit.dtoMappers.profile.OfflineProfileDataMapper
 import live.foodclub.network.retrofit.services.SearchService
 import live.foodclub.repositories.FirebaseUserRepository
 import live.foodclub.repositories.SearchRepository
@@ -56,8 +54,6 @@ object RepositoriesModule {
         profileLocalDataSource: ProfileLocalDataSource,
         postDao: PostDao,
         postsRemoteDataSourceProvider: PostsRemoteDataSourceProvider,
-        localDataMapper: LocalDataMapper,
-        offlineProfileMapper: OfflineProfileDataMapper,
         followerUserMapper: FollowerUserMapper,
         followingUserMapper: FollowingUserMapper
     ): ProfileRepository {
@@ -66,8 +62,6 @@ object RepositoriesModule {
             profileLocalDataSource,
             postDao,
             postsRemoteDataSourceProvider,
-            localDataMapper,
-            offlineProfileMapper,
             followerUserMapper,
             followingUserMapper
         )
