@@ -1,7 +1,5 @@
 package live.foodclub.domain.models.auth
 
-import live.foodclub.domain.models.profile.SimpleUserModel
-
 
 data class FirebaseUserModel(
     val userID: Int = -1,
@@ -16,13 +14,7 @@ data class FirebaseUserModel(
     val email: String = "",
     val password: String = ""
 ) {
-    fun mapToSimpleUserModel(): SimpleUserModel {
-        return SimpleUserModel(
-            userId = userID,
-            userFullname = username,
-            profilePictureUrl = profileImageUrl,
-            username = username
-        )
+    companion object {
+        fun default(): FirebaseUserModel = FirebaseUserModel()
     }
-
 }

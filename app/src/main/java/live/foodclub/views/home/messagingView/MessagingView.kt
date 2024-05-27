@@ -1,10 +1,7 @@
 package live.foodclub.views.home.messagingView
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -73,6 +71,12 @@ fun MessagingView(
     var showCreateConversationDialog by remember { mutableStateOf(false) }
     val messagesHistory = if (contactsState.contactsSearchText == "")
         contactsState.contacts else contactsState.contactsSearchResult
+    // TODO need fix
+    LaunchedEffect(key1 = chatState) {
+        if (chatState.conversationId.isNotBlank() && !showChatView) {
+            showChatView = true
+        }
+    }
     if (showChatView) {
         ChatView(
             onBackPressed = { showChatView = !showChatView },
@@ -83,11 +87,10 @@ fun MessagingView(
         CreateConversationView(
             navigateToChatView = {
                 showCreateConversationDialog = !showCreateConversationDialog
-                showChatView = !showChatView
+
             },
             contactsState = contactsState,
             events = events,
-            chatState = chatState
         )
     } else {
         Scaffold(
@@ -195,8 +198,9 @@ fun MessagingHeaderSection(
         verticalArrangement = Arrangement.Center,
     ) {
         MessagingSearchBar(searchTextValue = searchTextValue, onSearch = onSearch)
-        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
-        StartNewGroupSection()
+        // we will use in future
+        //Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
+        // StartNewGroupSection()
     }
 }
 
@@ -259,76 +263,76 @@ fun MessagingSearchBar(
     }
 }
 
-@Composable
-fun StartNewGroupSection() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .border(
-                border = BorderStroke(
-                    dimensionResource(id = R.dimen.dim_0pt5),
-                    colorResource(id = R.color.messaging_start_group_container_border_color)
-                ),
-                shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_8))
-            )
-            .background(color = colorResource(id = R.color.messaging_start_group_container_color)),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column(
-            modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_10)),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.Start
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.group),
-                    contentDescription = null,
-                    modifier = Modifier.size(dimensionResource(id = R.dimen.dim_40))
-                )
-                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_10)))
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.messaging_general_text),
-                        fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
-                        fontFamily = Montserrat,
-                        fontWeight = FontWeight(500),
-                        lineHeight = dimensionResource(id = R.dimen.fon_15).value.sp,
-                        color = Color.White
-                    )
-                    Text(
-                        text = stringResource(id = R.string.messaging_general_text2),
-                        fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
-                        fontFamily = Montserrat,
-                        fontWeight = FontWeight(500),
-                        lineHeight = dimensionResource(id = R.dimen.fon_15).value.sp,
-                        color = Color.White
-                    )
-
-                }
-            }
-        }
-        Column(
-            modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_10)),
-            verticalArrangement = Arrangement.Center
-        ) {
-            IconButton(
-                onClick = { /*TODO impl starting new group chat*/ }
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.start_new_group),
-                    contentDescription = null,
-                    modifier = Modifier.size(dimensionResource(id = R.dimen.dim_40))
-                )
-            }
-        }
-    }
-}
+//@Composable
+//fun StartNewGroupSection() {
+//    Row(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .border(
+//                border = BorderStroke(
+//                    dimensionResource(id = R.dimen.dim_0pt5),
+//                    colorResource(id = R.color.messaging_start_group_container_border_color)
+//                ),
+//                shape = RoundedCornerShape(dimensionResource(id = R.dimen.dim_8))
+//            )
+//            .background(color = colorResource(id = R.color.messaging_start_group_container_color)),
+//        horizontalArrangement = Arrangement.SpaceBetween,
+//        verticalAlignment = Alignment.CenterVertically
+//    ) {
+//        Column(
+//            modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_10)),
+//            verticalArrangement = Arrangement.Center,
+//            horizontalAlignment = Alignment.Start
+//        ) {
+//            Row(
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                Image(
+//                    painter = painterResource(id = R.drawable.group),
+//                    contentDescription = null,
+//                    modifier = Modifier.size(dimensionResource(id = R.dimen.dim_40))
+//                )
+//                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_10)))
+//                Column(
+//                    verticalArrangement = Arrangement.Center,
+//                    horizontalAlignment = Alignment.Start
+//                ) {
+//                    Text(
+//                        text = stringResource(id = R.string.messaging_general_text),
+//                        fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
+//                        fontFamily = Montserrat,
+//                        fontWeight = FontWeight(500),
+//                        lineHeight = dimensionResource(id = R.dimen.fon_15).value.sp,
+//                        color = Color.White
+//                    )
+//                    Text(
+//                        text = stringResource(id = R.string.messaging_general_text2),
+//                        fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
+//                        fontFamily = Montserrat,
+//                        fontWeight = FontWeight(500),
+//                        lineHeight = dimensionResource(id = R.dimen.fon_15).value.sp,
+//                        color = Color.White
+//                    )
+//
+//                }
+//            }
+//        }
+//        Column(
+//            modifier = Modifier.padding(dimensionResource(id = R.dimen.dim_10)),
+//            verticalArrangement = Arrangement.Center
+//        ) {
+//            IconButton(
+//                onClick = { /*TODO impl starting new group chat*/ }
+//            ) {
+//                Image(
+//                    painter = painterResource(id = R.drawable.start_new_group),
+//                    contentDescription = null,
+//                    modifier = Modifier.size(dimensionResource(id = R.dimen.dim_40))
+//                )
+//            }
+//        }
+//    }
+//}
 
 @Composable
 fun MessagesSection(

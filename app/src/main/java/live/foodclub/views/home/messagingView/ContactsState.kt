@@ -1,6 +1,7 @@
 package live.foodclub.views.home.messagingView
 
 import live.foodclub.domain.models.auth.Contact
+import live.foodclub.domain.models.auth.FirebaseUserModel
 import live.foodclub.domain.models.auth.Message
 import live.foodclub.domain.models.profile.SimpleUserModel
 
@@ -28,8 +29,8 @@ data class ContactsState(
 }
 
 data class ChatState(
-    val senderUser: SimpleUserModel,
-    val recipientUser: SimpleUserModel,
+    val senderUser: FirebaseUserModel,
+    val recipientUser: FirebaseUserModel,
     val conversationId: String,
     val messages: List<Message>,
     val error: String,
@@ -37,8 +38,8 @@ data class ChatState(
     companion object {
         fun default() = ChatState(
             error = "",
-            senderUser = SimpleUserModel.default(),
-            recipientUser = SimpleUserModel.default(),
+            senderUser = FirebaseUserModel.default(),
+            recipientUser = FirebaseUserModel.default(),
             conversationId = "",
             messages = listOf(),
         )

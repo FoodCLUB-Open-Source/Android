@@ -11,7 +11,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.LaunchedEffect
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -20,15 +19,11 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import live.foodclub.config.ui.FoodClubTheme
 import live.foodclub.navigation.RootNavigationGraph
-import live.foodclub.repositories.FirebaseUserRepository
 import live.foodclub.utils.composables.MainLayout
 import live.foodclub.utils.helpers.checkPermissions
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @Inject
-    lateinit var firebaseUserRepository: FirebaseUserRepository
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,13 +56,6 @@ class MainActivity : ComponentActivity() {
                 ActivityCompat.requestPermissions(
                     this, arrayOf(Manifest.permission.CAMERA), 0
                 )
-            }
-
-            LaunchedEffect(key1 = Unit) {
-                firebaseUserRepository.createConversation(280,1)
-                firebaseUserRepository.createConversation(280,249)
-                firebaseUserRepository.createConversation(280,8)
-                firebaseUserRepository.createConversation(280,89)
             }
 
             FoodClubTheme {

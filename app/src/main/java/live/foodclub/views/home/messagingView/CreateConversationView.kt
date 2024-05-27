@@ -37,7 +37,6 @@ import live.foodclub.viewModels.home.messaging.MessagingViewEvents
 fun CreateConversationView(
     navigateToChatView: () -> Unit,
     contactsState: ContactsState,
-    chatState: ChatState,
     events: MessagingViewEvents,
 ) {
     val followings = if (contactsState.followingsSearchText == "") {
@@ -92,7 +91,7 @@ fun CreateConversationView(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                events.createConversation(following.userId)
+                                events.createConversation(following)
                                 navigateToChatView()
                             },
                         verticalAlignment = Alignment.CenterVertically,

@@ -1,5 +1,7 @@
 package live.foodclub.viewModels.home.messaging
 
+import live.foodclub.domain.models.profile.SimpleUserModel
+
 
 interface MessagingViewEvents {
     fun filterContacts(searchText: String)
@@ -9,5 +11,6 @@ interface MessagingViewEvents {
     fun deleteConversation(documentId: String)
     fun setFollowingsSearchText(searchText: String)
     fun filterFollowings(searchText: String)
-    fun createConversation(recipientUserId: Int)
+    fun createConversation(recipient: SimpleUserModel)
+    fun chatViewClear()
 }

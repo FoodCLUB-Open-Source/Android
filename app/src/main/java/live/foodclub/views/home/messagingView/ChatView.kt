@@ -44,8 +44,8 @@ import androidx.constraintlayout.compose.Dimension
 import live.foodclub.R
 import live.foodclub.config.ui.Montserrat
 import live.foodclub.config.ui.foodClubGreen
+import live.foodclub.domain.models.auth.FirebaseUserModel
 import live.foodclub.domain.models.auth.Message
-import live.foodclub.domain.models.profile.SimpleUserModel
 import live.foodclub.utils.composables.MessagingProfilePhoto
 import live.foodclub.viewModels.home.messaging.MessagingViewEvents
 
@@ -59,11 +59,18 @@ fun ChatView(
 
     BackHandler {
         onBackPressed()
+        events.chatViewClear()
     }
 
     Scaffold(
         topBar = {
-            ChatViewTopBar(onBackPressed, recipientUser = chatState.recipientUser)
+            ChatViewTopBar(
+                onBackPressed = {
+                    onBackPressed()
+                    events.chatViewClear()
+                },
+                recipientUser = chatState.recipientUser,
+            )
         },
         content = { scaffoldPadding ->
             MessageHistory(
@@ -89,7 +96,7 @@ fun ChatView(
 }
 
 @Composable
-fun ChatViewTopBar(onBackPressed: () -> Unit, recipientUser: SimpleUserModel) {
+fun ChatViewTopBar(onBackPressed: () -> Unit, recipientUser: FirebaseUserModel) {
     Row(
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
@@ -112,7 +119,7 @@ fun ChatViewTopBar(onBackPressed: () -> Unit, recipientUser: SimpleUserModel) {
             )
         }
         MessagingProfilePhoto(
-            photoUrl = recipientUser.profilePictureUrl,
+            photoUrl = recipientUser.profileImageUrl,
             photoSize = R.dimen.dim_40
         )
         Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_5)))
@@ -189,8 +196,8 @@ fun ChatViewBottomBar(
 @Composable
 fun MessageHistory(
     messages: List<Message>,
-    senderUser: SimpleUserModel,
-    recipientUser: SimpleUserModel,
+    senderUser: FirebaseUserModel,
+    recipientUser: FirebaseUserModel,
     paddingValues: PaddingValues
 ) {
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
@@ -230,8 +237,8 @@ fun MessageHistory(
 }
 
 @Composable
-fun MessageBox(message: Message, senderUser: SimpleUserModel, recipientUser: SimpleUserModel) {
-    val isSentByUser1 = message.senderId == senderUser.userId
+fun MessageBox(message: Message, senderUser: FirebaseUserModel, recipientUser: FirebaseUserModel) {
+    val isSentByUser1 = message.senderId == senderUser.userID
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -269,7 +276,7 @@ fun MessageBox(message: Message, senderUser: SimpleUserModel, recipientUser: Sim
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 MessagingProfilePhoto(
-                    photoUrl = recipientUser.profilePictureUrl,
+                    photoUrl = recipientUser.profileImageUrl,
                     photoSize = R.dimen.dim_40
                 )
                 Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_5)))

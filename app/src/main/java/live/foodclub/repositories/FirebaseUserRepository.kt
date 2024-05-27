@@ -9,13 +9,15 @@ import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.toObject
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import live.foodclub.di.IoDispatcher
 import live.foodclub.domain.models.auth.ConversationModel
 import live.foodclub.domain.models.auth.FirebaseUserModel
 import live.foodclub.domain.models.auth.MessageModel
+import live.foodclub.domain.models.profile.SimpleUserModel
 import live.foodclub.network.retrofit.responses.general.DefaultErrorResponse
 import live.foodclub.utils.helpers.Resource
 import java.time.LocalDateTime
@@ -24,7 +26,8 @@ import java.util.UUID
 
 class FirebaseUserRepository(
     private val firestore: FirebaseFirestore,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    private val firebaseMessaging: FirebaseMessaging,
 ) {
     suspend fun saveUserToFirestore(firebaseUserModel: FirebaseUserModel) =
         withContext(ioDispatcher) {
@@ -38,32 +41,42 @@ class FirebaseUserRepository(
 
         }
 
+    // TODO discuss with team-lead about where we should use ?
+    suspend fun getUserFromFirestore(userId: Int): Resource<FirebaseUserModel, DefaultErrorResponse> =
+        withContext(ioDispatcher) {
+            return@withContext try {
+                val fcmToken = firebaseMessaging.token.await()
+                val updateToken = mapOf(
+                    FCM_TOKEN to fcmToken
+                )
+                val userRef = firestore.collection(USERS).document(userId.toString())
 
-//    suspend fun getUserFromFirestore(userId: Int): Resource<FirebaseUserModel, DefaultErrorResponse> =
-//        withContext(ioDispatcher) {
-//            return@withContext try {
-//                val user = firestore.collection(USERS).document(userId.toString())
-//                    .get()
-//                    .addOnSuccessListener {
-//                        Log.w(TAG, "getUserFromFirestore: SUCCESS")
-//                    }.addOnFailureListener {
-//                        Log.e(TAG, "getUserFromFirestore: ERROR", it)
-//                    }
-//                    .await()
-//                    .toObject<FirebaseUserModel>()
-//
-//                if (user != null) {
-//                    Resource.Success(user)
-//                } else {
-//                    Resource.Error("User not found")
-//                }
-//
-//            } catch (e: Exception) {
-//                Resource.Error(message = e.message!!, data = null)
-//            }
-//
-//
-//        }
+                val user = userRef.get()
+                    .addOnSuccessListener {
+                        Log.w(TAG, "getUserFromFirestore: SUCCESS")
+                    }.addOnFailureListener {
+                        Log.e(TAG, "getUserFromFirestore: ERROR", it)
+                    }
+                    .await()
+                    .toObject<FirebaseUserModel>()
+
+                user?.let { userModel ->
+                    if (userModel.fcmToken != fcmToken) {
+                        userRef.update(updateToken)
+                            .addOnSuccessListener { Log.w(TAG, "tokenUpdate:SUCCESS") }
+                            .addOnFailureListener { Log.e(TAG, "tokenUpdate:ERROR", it) }
+                    }
+                }
+                if (user != null) {
+                    Resource.Success(user)
+                } else {
+                    Resource.Error("User not found")
+                }
+
+            } catch (e: Exception) {
+                Resource.Error(message = e.message!!, data = null)
+            }
+        }
 
     suspend fun getAllConversation(
         userId: Int,
@@ -83,17 +96,18 @@ class FirebaseUserRepository(
             }
         }
 
+
     suspend fun createConversation(
         senderId: Int,
-        recipientId: Int
+        recipient: SimpleUserModel
     ): Resource<ConversationModel, DefaultErrorResponse> =
         withContext(ioDispatcher) {
             return@withContext try {
-                if (senderId == recipientId) {
+                if (senderId == recipient.userId) {
                     Resource.Error<ConversationModel, DefaultErrorResponse>("You can't start chat with yourself.")
                 }
                 val recipientUserDocument =
-                    firestore.collection(USERS).where(Filter.equalTo(USER_ID, recipientId)).get()
+                    firestore.collection(USERS).where(Filter.equalTo(USER_ID, recipient.userId)).get()
                         .await()
 
                 val senderUserDocument =
@@ -101,7 +115,7 @@ class FirebaseUserRepository(
                         .await()
 
                 // There is already have a conversation return that conversation
-                val existingConversation = getExistingConversation(senderId, recipientId)
+                val existingConversation = getExistingConversation(senderId, recipient.userId)
                 if (existingConversation != null) {
                     Resource.Success(existingConversation)
                 } else {
@@ -116,11 +130,12 @@ class FirebaseUserRepository(
                         val conversation = ConversationModel(
                             conversationId = conversationDocument.id,
                             participants = listOf(recipientUser, senderUser),
-                            participantIds = listOf(recipientUser.userID, senderUser.userID),
+                            participantIds = listOf(recipientUser.userID, senderUser.userID).sorted(),
                             lastMessage = null,
                             lastUpdated = LocalDateTime.now().toString(),
                             messages = listOf()
                         )
+
 
                         conversationDocument.set(conversation)
                             .addOnFailureListener { Log.e(TAG, "createConversation:ERROR", it) }
@@ -129,8 +144,13 @@ class FirebaseUserRepository(
 
                         Resource.Success(conversation)
                     } else {
-                        Log.e(TAG, "createConversation: User not found")
-                        Resource.Error("User not found")
+                        val newFireBaseUser = recipient.mapToFirebaseUserModel()
+                        saveUserToFirestore(newFireBaseUser)
+                            .addOnFailureListener {
+                            Log.e(TAG, "createConversation: User not created")
+                            Resource.Error<ConversationModel, DefaultErrorResponse>("User can not created try again.")
+                        }
+                        createConversation(senderId, recipient)
                     }
                 }
 
@@ -267,5 +287,6 @@ class FirebaseUserRepository(
         const val LAST_UPDATED = "lastUpdated"
         const val PARTICIPANT_IDS = "participantIds"
         const val CONVERSATIONS = "conversations"
+        const val FCM_TOKEN = "fcmToken"
     }
 }
