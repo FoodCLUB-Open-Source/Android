@@ -108,7 +108,10 @@ fun RecommendationVideos(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .clickable {
-                                    isShowVideo(videoModel.videoId)
+                                    if (enableInput)
+                                    {
+                                        isShowVideo(videoModel.videoId)
+                                    }
                                 },
                             contentScale = ContentScale.FillHeight
                         )
