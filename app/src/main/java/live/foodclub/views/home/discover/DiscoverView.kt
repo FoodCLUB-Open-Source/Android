@@ -8,6 +8,7 @@ import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -44,7 +45,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -230,6 +230,7 @@ fun DiscoverView(
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
+                        .focusGroup()
                         //.clickable { focusRequester.requestFocus() }
                         .swipeable(
                             state = swipeableState,
@@ -292,12 +293,12 @@ fun DiscoverView(
                     Column(
                         modifier = Modifier
                             //.height(gridHeight + dimensionResource(id = R.dimen.dim_10))
-                            .focusProperties { canFocus = !showMyKitchen }
+                            .focusGroup()
                             .fillMaxHeight()
                     ) {
 
                         RecommendationSection(
-                            onRecomendations = !showMyKitchen,
+                            onRecommendations = !showMyKitchen,
                             gridHeight,
                             recommendationVideosCount,
                             navController = navController,
@@ -358,7 +359,7 @@ fun DiscoverView(
 
 @Composable
 fun RecommendationSection(
-    onRecomendations: Boolean = true,
+    onRecommendations: Boolean = true,
     gridHeight: Dp,
     recommendationVideosCount: Int,
     navController: NavController,
@@ -478,7 +479,7 @@ fun RecommendationSection(
     ) {
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            AnimatedVisibility(visible = onRecomendations, enter = fadeIn() + expandHorizontally(), exit = fadeOut() + shrinkHorizontally())
+            AnimatedVisibility(visible = onRecommendations, enter = fadeIn() + expandHorizontally(), exit = fadeOut() + shrinkHorizontally())
             {
                 Text(
                     modifier = Modifier.padding(
@@ -496,6 +497,7 @@ fun RecommendationSection(
 
 
             RecommendationVideos(
+                enableInput = onRecommendations,
                 gridHeight = gridHeight,
                 recommendationVideosCount = recommendationVideosCount,
                 navController = navController,

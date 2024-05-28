@@ -1,12 +1,6 @@
 package live.foodclub.utils.composables
 
 import android.content.res.Configuration
-import live.foodclub.R
-import live.foodclub.config.ui.Montserrat
-import live.foodclub.domain.models.home.VideoModel
-import live.foodclub.domain.models.home.VideoStats
-import live.foodclub.domain.models.home.VideoUserInteraction
-import live.foodclub.domain.models.profile.SimpleUserModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -43,11 +37,18 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
+import live.foodclub.R
 import live.foodclub.config.ui.FoodClubTheme
+import live.foodclub.config.ui.Montserrat
 import live.foodclub.config.ui.Satoshi
+import live.foodclub.domain.models.home.VideoModel
+import live.foodclub.domain.models.home.VideoStats
+import live.foodclub.domain.models.home.VideoUserInteraction
+import live.foodclub.domain.models.profile.SimpleUserModel
 
 @Composable
 fun RecommendationVideos(
+    enableInput: Boolean = true,
     gridHeight: Dp,
     recommendationVideosCount: Int,
     navController: NavController,
@@ -64,7 +65,7 @@ fun RecommendationVideos(
             0,
             0
         ),
-        userScrollEnabled = true,
+        userScrollEnabled = enableInput,
         content = {
             items(dataItem ?: listOf()) { videoModel ->
 //                Card(
