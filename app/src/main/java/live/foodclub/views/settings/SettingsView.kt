@@ -9,7 +9,6 @@ import live.foodclub.utils.composables.SettingsLayout
 import live.foodclub.viewModels.settings.SettingsEvents
 import android.net.Uri
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -86,8 +85,8 @@ fun SettingsView(
 
         SettingsProfile(
             userName = state.user?.userName,
-            userImage = imageUri,
-            fullName = state.user?.fullName ?: ""
+            profilePictureUrl = state.userProfile.profilePictureUrl,
+            fullName = state.userProfile.fullName ?: ""
         )
 
 
@@ -267,7 +266,7 @@ fun SettingsTopBar(
 @Composable
 fun SettingsProfile(
     userName: String?,
-    userImage: Uri?,
+    profilePictureUrl: String?,
     fullName: String?
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -275,25 +274,15 @@ fun SettingsProfile(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            if (userImage != null){
-                AsyncImage(
-                    contentDescription = stringResource(id = R.string.user_images),
-                    model = userImage,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_60)))
-                        .height(dimensionResource(id = R.dimen.dim_124))
-                        .width(dimensionResource(id = R.dimen.dim_124)),
-                    contentScale = ContentScale.Crop
-                )
-            }else{
-                Image(
-                    painter = painterResource(id = R.drawable.story_user),
-                    contentDescription = stringResource(id = R.string.user_images),
-                    modifier = Modifier
-                        .size(dimensionResource(id = R.dimen.dim_120))
-                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_100)))
-                )
-            }
+            AsyncImage(
+                contentDescription = stringResource(id = R.string.profile_picture),
+                model = profilePictureUrl ?: R.drawable.default_avatar,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dim_60)))
+                    .height(dimensionResource(id = R.dimen.dim_124))
+                    .width(dimensionResource(id = R.dimen.dim_124)),
+                contentScale = ContentScale.Crop
+            )
         }
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_15)))
         Row(
@@ -313,7 +302,7 @@ fun SettingsProfile(
             modifier = Modifier.fillMaxWidth()
         ) {
             SettingsText(
-                text = userName ?: "",
+                text = userName ?: "undefined",
                 size = 16,
                 weight = FontWeight.W600,
                 modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.dim_20)),
