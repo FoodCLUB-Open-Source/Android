@@ -26,23 +26,4 @@ object ProfileMappersModule {
     fun provideUserDetailsMapper(): UserDetailsMapper {
         return UserDetailsMapper()
     }
-
-    @Provides
-    @Singleton
-    fun provideLocalDataMapper(): LocalDataMapper {
-        return LocalDataMapper()
-    }
-
-    @Provides
-    @Singleton
-    fun provideOfflineProfileDataMapper(): OfflineProfileDataMapper {
-        return OfflineProfileDataMapper()
-    }
-
-    @Provides
-    @Singleton
-    fun provideSharedVideoMapper(): SharedVideoMapper {
-        return SharedVideoMapper()
-    }
-
 }

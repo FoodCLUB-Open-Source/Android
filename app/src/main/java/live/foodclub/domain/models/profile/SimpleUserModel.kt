@@ -3,7 +3,7 @@ package live.foodclub.domain.models.profile
 import live.foodclub.domain.models.auth.FirebaseUserModel
 
 data class SimpleUserModel(
-    val userId: Int,
+    val userId: Long,
     val username: String,
     val profilePictureUrl: String?,
     val userFullname: String? = null,
@@ -28,3 +28,5 @@ data class SimpleUserModel(
         )
     }
 }
+    val userFullName: String? = null
+)

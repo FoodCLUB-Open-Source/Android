@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 @Keep
 data class FriendStoryDto(
     @SerializedName("user_id")
-    val userId: Int,
+    val userId: Long,
     @SerializedName("profile_picture")
     val profilePicture: String,
     val username: String,

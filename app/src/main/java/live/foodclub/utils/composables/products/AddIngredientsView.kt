@@ -1,11 +1,5 @@
 package live.foodclub.utils.composables.products
 
-import live.foodclub.R
-import live.foodclub.config.ui.Montserrat
-import live.foodclub.config.ui.defaultSearchBarColors
-import live.foodclub.config.ui.foodClubGreen
-import live.foodclub.domain.models.products.Ingredient
-import live.foodclub.utils.composables.customComponents.CustomDatePicker
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,7 +24,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -55,6 +51,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
+import live.foodclub.R
+import live.foodclub.config.ui.Montserrat
+import live.foodclub.config.ui.defaultSearchBarColors
+import live.foodclub.config.ui.foodClubGreen
+import live.foodclub.domain.models.products.Ingredient
+import live.foodclub.utils.composables.customComponents.CustomDatePicker
 
 /**
  *
@@ -143,15 +145,17 @@ fun ProductsList(
     val datePickerState = rememberDatePickerState()
 
     when (state.currentAction) {
-        ProductAction.EDIT_QUANTITY -> EditIngredientBottomModal(
-            ingredient = state.editedIngredient,
-            onDismissRequest = {
-                events.dismissAction()
-            },
-            onEdit = { item ->
-                events.updateIngredient(item)
-            }
-        )
+        ProductAction.EDIT_QUANTITY ->
+            EditIngredientBottomModal(
+                ingredient = state.editedIngredient,
+                onDismissRequest = {
+                    events.dismissAction()
+                },
+                onEdit = { item ->
+                    val updatedIngredient = state.editedIngredient.copy(quantity = item.quantity)
+                    events.updateIngredient(updatedIngredient)
+                }
+            )
 
         ProductAction.CHANGE_EXPIRY_DATE -> Box(
             modifier = Modifier,
@@ -166,8 +170,8 @@ fun ProductsList(
                 },
                 onSave = { date ->
                     if (date != null) {
-                        state.editedIngredient.expirationDate = date
-                        events.updateIngredient(state.editedIngredient)
+                        val updatedIngredient = state.editedIngredient.copy(expirationDate = date)
+                        events.updateIngredient(updatedIngredient)
                     }
                 }
             )
@@ -192,7 +196,7 @@ fun ProductsList(
         ProductsListContent(
             events = events,
             productsList = productsList,
-            userIngredientsList = state.addedProducts,
+            state = state,
             includeExpiryDate = state.allowExpiryDate
         )
     }
@@ -257,21 +261,26 @@ fun ProductsListTitleSection(modifier: Modifier, includeExpiryDate: Boolean) {
  *
  * @param events [ProductsEvents]
  * @param productsList [LazyPagingItems] of ingredient object. This list populates the list
- * @param userIngredientsList List where the searched ingredients are added to. This is used to
- * check which ingredients in productsList are present in userIngredientsList
+ * @param state is for the ProductState we use in BasketView and DiscoverView
  * @param includeExpiryDate Boolean which determines if "Expiry date" title should be displayed
  */
 @Composable
 fun ProductsListContent(
     events: ProductsEvents,
     productsList: LazyPagingItems<Ingredient>,
-    userIngredientsList: List<Ingredient>,
+    state: ProductState,
     includeExpiryDate: Boolean
 ) {
     var height by remember {
         mutableStateOf(0.dp)
     }
     height = (productsList.itemCount * dimensionResource(id = R.dimen.dim_65).value).dp
+
+    val addedItems = remember { mutableStateListOf<String>() }
+    LaunchedEffect(state.addedProducts) {
+        addedItems.clear()
+        addedItems.addAll(state.addedProducts.map { it.product.foodId })
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -287,21 +296,27 @@ fun ProductsListContent(
             ) { index ->
                 val item = productsList[index]
                 if (item != null) {
+                    val updatedItem = state.addedProducts.find { it.product.foodId == item.product.foodId } ?: item
                     IngredientItem(
                         modifier = Modifier,
-                        item = item,
-                        userIngredientsList = userIngredientsList,
+                        item = updatedItem,
+                        userIngredientsList = state.addedProducts,
+                        isItemAdded = addedItems.contains(updatedItem.product.foodId),
                         onEditQuantityClicked = {
-                            events.selectAction(item, ProductAction.EDIT_QUANTITY)
+                            events.selectAction(updatedItem, ProductAction.EDIT_QUANTITY)
                         },
                         onDateClicked = {
-                            events.selectAction(item, ProductAction.CHANGE_EXPIRY_DATE)
+                            events.selectAction(updatedItem, ProductAction.CHANGE_EXPIRY_DATE)
                         },
                         onAddItemClicked = {
-                            events.updateIngredient(item)
+                            if (!addedItems.contains(updatedItem.product.foodId)) {
+                                addedItems.add(updatedItem.product.foodId)
+                            }
+                            events.updateIngredient(updatedItem)
                         },
                         onDeleteIngredient = {
-                            events.deleteIngredient(item)
+                            addedItems.remove(updatedItem.product.foodId)
+                            events.deleteIngredient(updatedItem)
                         },
                         includeExpiryDate = includeExpiryDate
                     )
@@ -341,6 +356,7 @@ fun ProductsListContent(
 fun IngredientItem(
     modifier: Modifier,
     item: Ingredient,
+    isItemAdded: Boolean,
     onEditQuantityClicked: (Ingredient) -> Unit,
     onDateClicked: (Ingredient) -> Unit,
     onAddItemClicked: ((Ingredient) -> Unit)? = null,
@@ -357,10 +373,6 @@ fun IngredientItem(
     } else {
         quantity = itemQuantity(item)
         expirationDate = itemExpirationDate(item)
-    }
-
-    var isItemAdded by remember {
-        mutableStateOf(userIngredientsList.any { item.product.foodId == it.product.foodId })
     }
 
     Row(
@@ -449,7 +461,6 @@ fun IngredientItem(
                         } else {
                             onAddItemClicked(item)
                         }
-                        isItemAdded = !isItemAdded
                     },
                 contentAlignment = Alignment.Center
             ) {

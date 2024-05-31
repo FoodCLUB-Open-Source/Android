@@ -25,6 +25,22 @@ import live.foodclub.repositories.RecipeRepository
 import live.foodclub.repositories.StoryRepository
 import live.foodclub.utils.helpers.Resource
 import live.foodclub.views.home.home.feed.HomeState
+import android.util.Log
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.paging.cachedIn
+import androidx.paging.map
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import live.foodclub.localdatasource.room.relationships.toVideoModel
+import live.foodclub.utils.composables.videoPager.VideoPagerState
 import java.io.File
 import javax.inject.Inject
 import kotlin.random.Random
@@ -46,9 +62,19 @@ class HomeViewModel @Inject constructor(
         private val TAG = HomeViewModel::class.java.simpleName
     }
 
-    private val _state = MutableStateFlow(HomeState.default())
-    val state: StateFlow<HomeState>
-        get() = _state
+    val postsPagingFlow = postRepository.getHomePosts().flow
+            .map { pagingData -> pagingData.map { it.toVideoModel() } }.cachedIn(viewModelScope)
+
+    private val _state = MutableStateFlow(HomeState.default(exoPlayer))
+    private val _videoPagerState = MutableStateFlow(VideoPagerState.default().copy(isHomeView = true))
+
+    val state = combine(_state, _videoPagerState)
+    { state, videoPagerState ->
+        state.copy(
+            videoPagerState = videoPagerState
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000),
+        HomeState.default(exoPlayer))
 
     private val userId = sessionCache.session.value!!.sessionUser.userId.toInt()
 
@@ -127,15 +153,10 @@ class HomeViewModel @Inject constructor(
     }
     override fun getRecipe(recipeId: Long) {
         viewModelScope.launch {
-            when (val resource = recipeRepository.getRecipe(recipeId)) {
+            when(val resource = recipeRepository.getRecipe(recipeId)) {
                 is Resource.Success -> {
-                    _state.update {
-                        it.copy(
-                            recipe = resource.data
-                        )
-                    }
+                    _videoPagerState.update { it.copy(recipe = resource.data) }
                 }
-
                 is Resource.Error -> {
                     _state.update { it.copy(error = resource.message!!) }
                 }
@@ -145,7 +166,7 @@ class HomeViewModel @Inject constructor(
 
     override fun addIngredientsToBasket() {
         val basket = basketCache.getBasket()
-        val selectedIngredients = _state.value.recipe?.ingredients?.filter { it.isSelected }
+        val selectedIngredients = _videoPagerState.value.recipe?.ingredients?.filter { it.isSelected }
         selectedIngredients?.forEach {
             it.isSelected = false
             basket.addIngredient(it.copy())
@@ -170,6 +191,10 @@ class HomeViewModel @Inject constructor(
             }
         }
         updateBookmarkStatus(postId, isBookmarked)
+    }
+
+    override fun deletePost(postId: Long) {
+        TODO("Not yet implemented")
     }
 
     override fun toggleShowMemories(show: Boolean) {
@@ -680,6 +705,7 @@ class HomeViewModel @Inject constructor(
         val recipe_vid1 = VideoModel(
             videoId = 1,
             authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
+            title = "Title",
             videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
             videoStats = VideoStats(
                 like = 409876,
@@ -693,6 +719,7 @@ class HomeViewModel @Inject constructor(
         val recipe_vid2 = VideoModel(
             videoId = 2,
             authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
+            title = "Title",
             videoLink = "https://kretu.sts3.pl/foodclub_videos/daniel_vid2.mp4",
             videoStats = VideoStats(
                 like = 564572,
@@ -706,6 +733,7 @@ class HomeViewModel @Inject constructor(
         val recipe_vid3 = VideoModel(
             videoId = 3,
             authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
+            title = "Title",
             videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
             videoStats = VideoStats(
                 like = 2415164,
@@ -719,6 +747,7 @@ class HomeViewModel @Inject constructor(
         val recipe_vid4 = VideoModel(
             videoId = 4,
             authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
+            title = "Title",
             videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
             videoStats = VideoStats(
                 like = 51626,
@@ -732,6 +761,7 @@ class HomeViewModel @Inject constructor(
         val recipe_vid5 = VideoModel(
             videoId = 5,
             authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
+            title = "Title",
             videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
             videoStats = VideoStats(
                 like = 547819,
@@ -745,6 +775,7 @@ class HomeViewModel @Inject constructor(
         val recipe_vid6 = VideoModel(
             videoId = 6,
             authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
+            title = "Title",
             videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
             videoStats = VideoStats(
                 like = 4512340,
@@ -759,6 +790,7 @@ class HomeViewModel @Inject constructor(
         val recipe_vid7 = VideoModel(
             videoId = 7,
             authorDetails = SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
+            title = "Title",
             videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
             videoStats = VideoStats(
                 like = 612907,

@@ -143,7 +143,7 @@ fun DiscoverViewPosts(
                         videoStats = currentVideo.videoStats,
                         likeState = isLiked,
                         bookMarkState = isBookmarked,
-                        category = stringResource(id = R.string.meat),
+                        title = currentVideo.title,
                         opacity = 0.7f,
                         onLikeClick = {
                             isLiked = !isLiked

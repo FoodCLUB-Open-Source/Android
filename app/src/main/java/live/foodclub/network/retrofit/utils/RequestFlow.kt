@@ -1,5 +1,6 @@
 package live.foodclub.network.retrofit.utils
 
+import android.util.Log
 import live.foodclub.network.retrofit.responses.general.DefaultErrorResponse
 import live.foodclub.utils.helpers.Resource
 import live.foodclub.utils.helpers.ValueParser

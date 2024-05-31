@@ -12,7 +12,7 @@ data class VideoPagerState(
         fun default() = VideoPagerState(
             browsingUserId = 0,
             recipe = null,
-            postTitle = "Chicken broth and meatballs"
+            postTitle = ""
         )
     }
 }

@@ -105,13 +105,15 @@ data class SearchState(
                     SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
                     VideoStats(),
                     "",
-                    description = ""
+                    description = "",
+                    title = "Title"
                 ),
                 VideoModel(
                     2,
                     SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
                     VideoStats(),
                     "",
+                    title = "Title",
                     description = ""
                 ),
                 VideoModel(
@@ -119,6 +121,7 @@ data class SearchState(
                     SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
                     VideoStats(),
                     "",
+                    title = "Title",
                     description = ""
                 ),
                 VideoModel(
@@ -126,6 +129,7 @@ data class SearchState(
                     SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
                     VideoStats(),
                     "",
+                    title = "Title",
                     description = ""
                 ),
                 VideoModel(
@@ -133,6 +137,7 @@ data class SearchState(
                     SimpleUserModel(userId = 0,username = "", profilePictureUrl = null),
                     VideoStats(),
                     "",
+                    title = "Title",
                     description = ""
                 ),
             )
