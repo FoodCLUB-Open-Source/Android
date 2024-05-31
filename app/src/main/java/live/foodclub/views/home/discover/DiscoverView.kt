@@ -166,7 +166,6 @@ fun DiscoverView(
                 .background(Color.White)
                 .then(
                     if (tabIndex == 0) {
-//                        Modifier.verticalScroll(rememberScrollState())
                         Modifier
                     } else {
                         Modifier
@@ -189,25 +188,9 @@ fun DiscoverView(
                 tabIndex = it
             }
 
-//        if (isDialogOpen) {
-//            AddIngredientDialog(
-//                stringResource(R.string.added),
-//                stringResource(R.string.successfully_added_first),
-//                stringResource(R.string.successfully_added_second),
-//                state.ingredientToEdit!!.type
-//            )
-//            LaunchedEffect(key1 = true) {
-//                delay(3000)
-//                isDialogOpen = false
-//            }
-//        }
-
-
         var showMyKitchen by remember {
             mutableStateOf(true)
         }
-
-        val anchoredSwipe = rememberSwipeableState(initialValue = 0)
 
         var height by remember {
             mutableStateOf(0.dp)
@@ -219,29 +202,6 @@ fun DiscoverView(
         ) * dimensionResource(id = R.dimen.dim_65).value).dp + dimensionResource(id = R.dimen.dim_230)
 
 
-        /*
-        val anchorsDraggable = remember {
-            DraggableAnchors {
-                DragValue.Start at 0f
-                DragValue.End at height.value
-            }
-        }
-
-        val dragState = remember {
-            AnchoredDraggableState(
-                initialValue = DragValue.Start,
-                positionalThreshold = { distance: Float -> distance * 0.3f },
-                velocityThreshold = { with(density) { 100.dp.toPx() } },
-                animationSpec = tween()
-            )
-        }
-
-        SideEffect {
-            dragState.updateAnchors(anchorsDraggable)
-        }
-
-         */
-
 
         if (tabIndex == 0) {
             if (isInternetConnected) {
@@ -252,8 +212,8 @@ fun DiscoverView(
                 showMyKitchen = swipeableState.currentValue != 0
 
                 
-                // Auto swipes to the other state if it is in overflow
-                LaunchedEffect(lazyGridState.isScrollInProgress)
+                // Auto swipes to the other state if the recommendations list is overflowing upwards
+                LaunchedEffect(lazyGridState.isScrollInProgress, lazyGridState.canScrollBackward)
                 {
                     if(lazyGridState.isScrollInProgress && !lazyGridState.canScrollBackward){
                         CoroutineScope(Dispatchers.Default).launch {
@@ -261,8 +221,9 @@ fun DiscoverView(
                         }
                     }
                 }
-                
-                LaunchedEffect(lazyColumnState.isScrollInProgress)
+
+                // Auto swipes to the other state if the ingredients list is overflowing downwards
+                LaunchedEffect(lazyColumnState.isScrollInProgress, lazyColumnState.canScrollForward)
                 {
                     if(lazyColumnState.isScrollInProgress && !lazyColumnState.canScrollForward){
                         CoroutineScope(Dispatchers.Default).launch {
@@ -274,8 +235,6 @@ fun DiscoverView(
                 Column(horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .focusGroup()
-
-                        //.clickable { focusRequester.requestFocus() }
                         .swipeable(
                             state = swipeableState,
                             orientation = Orientation.Vertical,
@@ -336,7 +295,6 @@ fun DiscoverView(
 
                     Column(
                         modifier = Modifier
-                            //.height(gridHeight + dimensionResource(id = R.dimen.dim_10))
                             .focusGroup()
                             .fillMaxHeight()
                     ) {
@@ -407,6 +365,7 @@ fun DiscoverView(
 
 
 }
+
 
 @Composable
 fun RecommendationSection(
