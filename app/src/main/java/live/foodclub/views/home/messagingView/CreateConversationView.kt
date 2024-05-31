@@ -104,7 +104,7 @@ fun CreateConversationView(
                         ) {
                             MessagingProfilePhoto(photoUrl = following.profilePictureUrl)
                             Text(
-                                text = following.userFullname ?: following.username,
+                                text = following.userFullName ?: following.username,
                                 fontFamily = Montserrat,
                                 fontWeight = FontWeight.SemiBold,
                                 color = Color.White

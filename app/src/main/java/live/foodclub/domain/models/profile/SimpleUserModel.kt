@@ -6,7 +6,7 @@ data class SimpleUserModel(
     val userId: Long,
     val username: String,
     val profilePictureUrl: String?,
-    val userFullname: String? = null,
+    val userFullName: String? = null,
 ) {
     companion object {
         fun default(): SimpleUserModel {
@@ -14,19 +14,17 @@ data class SimpleUserModel(
                 userId = 0,
                 username = "",
                 profilePictureUrl = "",
-                userFullname = ""
+                userFullName = ""
             )
         }
     }
 
     fun mapToFirebaseUserModel(): FirebaseUserModel{
         return FirebaseUserModel(
-            userID = userId,
+            userID = userId.toInt(),
             username = username,
             profileImageUrl = profilePictureUrl ?: "",
-            fullName = userFullname ?: "",
+            fullName = userFullName ?: "",
         )
     }
 }
-    val userFullName: String? = null
-)

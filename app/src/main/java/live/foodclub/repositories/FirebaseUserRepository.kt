@@ -94,7 +94,7 @@ class FirebaseUserRepository @Inject constructor(
     ): Resource<ConversationModel, DefaultErrorResponse> =
         withContext(ioDispatcher) {
             return@withContext try {
-                if (senderId == recipient.userId) {
+                if (senderId.toLong() == recipient.userId) {
                     Resource.Error<ConversationModel, DefaultErrorResponse>("You can't start chat with yourself.")
                 }
                 val recipientUserDocument =
@@ -107,7 +107,7 @@ class FirebaseUserRepository @Inject constructor(
                         .await()
 
                 // There is already have a conversation return that conversation
-                val existingConversation = getExistingConversation(senderId, recipient.userId)
+                val existingConversation = getExistingConversation(senderId, recipient.userId.toInt())
                 if (existingConversation != null) {
                     Resource.Success(existingConversation)
                 } else {
