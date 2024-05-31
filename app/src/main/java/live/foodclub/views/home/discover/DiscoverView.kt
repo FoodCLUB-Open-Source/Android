@@ -1,14 +1,12 @@
 package live.foodclub.views.home.discover
 
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
-
-import androidx.compose.foundation.BorderStroke
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusGroup
@@ -19,11 +17,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-
 import androidx.compose.foundation.layout.fillMaxHeight
-
 import androidx.compose.foundation.layout.fillMaxSize
-
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -34,12 +29,10 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material.swipeable
-
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -73,46 +66,33 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-
-import androidx.navigation.NavController
-import live.foodclub.R
-
 import androidx.navigation.NavOptionsBuilder
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-
+import live.foodclub.R
 import live.foodclub.config.ui.BottomBarScreenObject
-
 import live.foodclub.config.ui.Montserrat
 import live.foodclub.config.ui.foodClubGreen
 import live.foodclub.domain.enums.Category
 import live.foodclub.domain.enums.CategoryType
 import live.foodclub.domain.models.home.VideoModel
-
 import live.foodclub.domain.models.home.VideoStats
 import live.foodclub.domain.models.profile.SimpleUserModel
 import live.foodclub.navigation.HomeOtherRoutes
-import live.foodclub.utils.composables.RecommendationVideos
-import live.foodclub.utils.composables.shimmerBrush
-import live.foodclub.utils.helpers.checkInternetConnectivity
-import kotlin.math.min
-
-
 import live.foodclub.utils.composables.PostListing
 import live.foodclub.utils.composables.products.ProductState
 import live.foodclub.utils.composables.products.ProductsEvents
-
 import live.foodclub.utils.composables.shimmerBrush
 import live.foodclub.utils.composables.videoPager.VideoPager
 import live.foodclub.utils.helpers.checkInternetConnectivity
 import live.foodclub.viewModels.home.discover.DiscoverEvents
+import kotlin.math.min
 
 
 enum class DragValue { Start, End }
@@ -263,8 +243,7 @@ fun DiscoverView(
             if (isInternetConnected) {
 
                 val swipeableState = rememberSwipeableState(1)
-                val sizePx = with(LocalDensity.current) { height.toPx() }
-                val anchors = mapOf(0f to 0, sizePx to 1)
+                val anchors = mapOf(0f to 0, 1f to 1)
 
                 showMyKitchen = swipeableState.currentValue != 0
 
@@ -556,6 +535,7 @@ fun RecommendationSection(
 
         }
         PostListing(
+            enableInput = onRecommendations,
             lazyGridState = lazyGridState,
             userTabItems = testPosts,
             isInternetConnected = isInternetConnected,

@@ -169,6 +169,7 @@ fun RecommendationVideos(
 
 @Composable
 fun PostListing(
+    enableInput: Boolean = true,
     lazyGridState: LazyGridState,
     userTabItems: LazyPagingItems<VideoModel>,
     isInternetConnected: Boolean,
@@ -178,7 +179,8 @@ fun PostListing(
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         state = lazyGridState,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        userScrollEnabled = enableInput
     ) {
         items(
             count = userTabItems.itemCount,
@@ -186,6 +188,7 @@ fun PostListing(
             val tabItem = userTabItems[index]
             if (tabItem != null) {
                 GridItem(
+                    enableInput = enableInput,
                     brush = brush,
                     isInternetConnected = isInternetConnected,
                     dataItem = tabItem,
@@ -206,6 +209,7 @@ fun PostListing(
 
 @Composable
 fun GridItem(
+    enableInput: Boolean = true,
     brush: Brush,
     isInternetConnected: Boolean,
     dataItem: VideoModel,
@@ -236,9 +240,20 @@ fun GridItem(
                 contentScale = ContentScale.FillHeight,
                 modifier = Modifier
                     .fillMaxSize()
-                    .clickable {
-                        triggerShowDeleteRecipe()
-                    })
+                    .then(
+                        if (enableInput)
+                        {
+                            Modifier.clickable {
+                                triggerShowDeleteRecipe()
+                            }
+                        }
+                        else
+                        {
+                            Modifier
+                        }
+                    )
+
+            )
             Box(
                 modifier = Modifier
                     .fillMaxSize()
