@@ -27,6 +27,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
@@ -73,6 +74,8 @@ import androidx.navigation.NavOptionsBuilder
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import live.foodclub.R
@@ -124,6 +127,7 @@ fun DiscoverView(
 
     var tabIndex by remember { mutableIntStateOf(0) }
     val lazyGridState = rememberLazyGridState()
+    val lazyColumnState = rememberLazyListState()
     LaunchedEffect(tabIndex, subCategoriesTabIndex, subWorldTabIndex) {
         if (tabIndex == 1) {
             events.changeCategory(category = dietList[subCategoriesTabIndex])
@@ -247,10 +251,30 @@ fun DiscoverView(
 
                 showMyKitchen = swipeableState.currentValue != 0
 
+                
+                // Auto swipes to the other state if it is in overflow
+                LaunchedEffect(lazyGridState.isScrollInProgress)
+                {
+                    if(lazyGridState.isScrollInProgress && !lazyGridState.canScrollBackward){
+                        CoroutineScope(Dispatchers.Default).launch {
+                            swipeableState.snapTo(1)
+                        }
+                    }
+                }
+                
+                LaunchedEffect(lazyColumnState.isScrollInProgress)
+                {
+                    if(lazyColumnState.isScrollInProgress && !lazyColumnState.canScrollForward){
+                        CoroutineScope(Dispatchers.Default).launch {
+                            swipeableState.snapTo(0)
+                        }
+                    }
+                }
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .focusGroup()
+
                         //.clickable { focusRequester.requestFocus() }
                         .swipeable(
                             state = swipeableState,
@@ -266,7 +290,7 @@ fun DiscoverView(
                             ,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            KitchenIngredients(events = productsEvents, state = productState)
+                            KitchenIngredients(events = productsEvents, state = productState, lazyColumnState = lazyColumnState)
 
                             if (productState.addedProducts.isEmpty()) {
                                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))

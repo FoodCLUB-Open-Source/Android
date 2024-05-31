@@ -176,6 +176,7 @@ fun PostListing(
     brush: Brush = shimmerBrush(),
     onPostSelected: (Int) -> Unit
 ) {
+
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         state = lazyGridState,
