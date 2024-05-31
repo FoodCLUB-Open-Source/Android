@@ -166,7 +166,6 @@ fun DiscoverView(
                 .background(Color.White)
                 .then(
                     if (tabIndex == 0) {
-//                        Modifier.verticalScroll(rememberScrollState())
                         Modifier
                     } else {
                         Modifier
@@ -207,8 +206,6 @@ fun DiscoverView(
             mutableStateOf(true)
         }
 
-        val anchoredSwipe = rememberSwipeableState(initialValue = 0)
-
         var height by remember {
             mutableStateOf(0.dp)
         }
@@ -218,29 +215,6 @@ fun DiscoverView(
             5
         ) * dimensionResource(id = R.dimen.dim_65).value).dp + dimensionResource(id = R.dimen.dim_230)
 
-
-        /*
-        val anchorsDraggable = remember {
-            DraggableAnchors {
-                DragValue.Start at 0f
-                DragValue.End at height.value
-            }
-        }
-
-        val dragState = remember {
-            AnchoredDraggableState(
-                initialValue = DragValue.Start,
-                positionalThreshold = { distance: Float -> distance * 0.3f },
-                velocityThreshold = { with(density) { 100.dp.toPx() } },
-                animationSpec = tween()
-            )
-        }
-
-        SideEffect {
-            dragState.updateAnchors(anchorsDraggable)
-        }
-
-         */
 
 
         if (tabIndex == 0) {
@@ -252,8 +226,8 @@ fun DiscoverView(
                 showMyKitchen = swipeableState.currentValue != 0
 
                 
-                // Auto swipes to the other state if it is in overflow
-                LaunchedEffect(lazyGridState.isScrollInProgress)
+                // Auto swipes to the other state if the recommendations list is overflowing upwards
+                LaunchedEffect(lazyGridState.isScrollInProgress, lazyGridState.canScrollBackward)
                 {
                     if(lazyGridState.isScrollInProgress && !lazyGridState.canScrollBackward){
                         CoroutineScope(Dispatchers.Default).launch {
@@ -261,8 +235,9 @@ fun DiscoverView(
                         }
                     }
                 }
-                
-                LaunchedEffect(lazyColumnState.isScrollInProgress)
+
+                // Auto swipes to the other state if the ingredients list is overflowing downwards
+                LaunchedEffect(lazyColumnState.isScrollInProgress, lazyColumnState.canScrollForward)
                 {
                     if(lazyColumnState.isScrollInProgress && !lazyColumnState.canScrollForward){
                         CoroutineScope(Dispatchers.Default).launch {
@@ -407,6 +382,7 @@ fun DiscoverView(
 
 
 }
+
 
 @Composable
 fun RecommendationSection(
