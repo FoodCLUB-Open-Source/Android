@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 @Keep
 data class FollowingUserDto(
     @SerializedName("user_following_id")
-    val userId: Int,
+    val userId: Long,
 
     val username: String,
 

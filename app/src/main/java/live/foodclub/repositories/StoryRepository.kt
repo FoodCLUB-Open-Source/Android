@@ -9,6 +9,7 @@ import live.foodclub.network.retrofit.responses.stories.RetrieveUserFriendsStori
 import live.foodclub.network.retrofit.responses.stories.RetrieveUserViewedStoryResponse
 import live.foodclub.network.retrofit.utils.apiRequestFlow
 import live.foodclub.utils.helpers.Resource
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
@@ -65,7 +66,7 @@ class StoryRepository(
                     .createFormData(
                         "image",
                         file.name,
-                        file.asRequestBody()
+                        file.asRequestBody("image/jpg".toMediaType())
                     )
             )
         }) {

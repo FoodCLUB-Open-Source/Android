@@ -75,7 +75,8 @@ fun VideoPager(
     modifier: Modifier,
     localDensity: Density,
     coroutineScope: CoroutineScope,
-    onBackPressed: () -> Unit = {}
+    onBackPressed: (Int) -> Unit = {},
+    onProfileNavigated: (Long) -> Unit
 ) {
     var showIngredientSheet by remember { mutableStateOf(false) }
     val triggerIngredientBottomSheetModal: () -> Unit = {
@@ -176,8 +177,7 @@ fun VideoPager(
                         onVideoGoBackground = { pauseButtonVisibility = false }
                     )
 
-                    //TODO Add author id when new PostModelDto is implemented
-                    if (/*there should be author id*/0L == state.browsingUserId) {
+                    if (currentVideo.authorDetails.userId == state.browsingUserId && !state.isHomeView) {
                         DeleteButton(
                             alignment = Alignment.TopEnd,
                             onDeleteClicked = { deleteDialog.value = true }
@@ -196,7 +196,7 @@ fun VideoPager(
                         videoStats = currentVideo.videoStats,
                         likeState = isLiked,
                         bookMarkState = isBookmarked,
-                        category = stringResource(id = R.string.meat),
+                        title = currentVideo.title,
                         opacity = 0.7f,
                         onLikeClick = {
                             isLiked = !isLiked
@@ -214,9 +214,10 @@ fun VideoPager(
                             }
                         },
                         onInfoClick = {
-                            events.getRecipe(502)
+                            events.getRecipe(currentVideo.recipeId)
                             triggerIngredientBottomSheetModal()
                                       },
+                        onProfileClick = onProfileNavigated,
                         modifier = Modifier
                             .fillMaxWidth()
                             .align(Alignment.BottomCenter)
@@ -228,7 +229,13 @@ fun VideoPager(
                                 start = dimensionResource(id = R.dimen.dim_10)
                             )
                         ) {
-                            BackButton(onBackPressed, backgroundTransparent = true, Color.White)
+                            BackButton(
+                                onBackButtonClick = {
+                                    exoPlayer.stop()
+                                    onBackPressed(index)
+                                                    },
+                                backgroundTransparent = true,
+                                buttonColor = Color.White)
                         }
                     }
 

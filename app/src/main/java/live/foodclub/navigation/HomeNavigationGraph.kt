@@ -58,11 +58,16 @@ fun NavGraphBuilder.homeNavigationGraph(
             setBottomBarVisibility(true)
             val viewModel: HomeViewModel = hiltViewModel()
             val state = viewModel.state.collectAsState()
+            val posts = viewModel.postsPagingFlow.collectAsLazyPagingItems()
 
             HomeView(
                 events = viewModel,
                 navController = navController,
-                state = state.value
+                state = state.value,
+                posts = posts,
+                onProfileNavigated = {
+                    navController.navigate(BottomBarScreenObject.Profile.route + "?userId=$it")
+                }
             )
         }
         composable(
@@ -112,13 +117,15 @@ fun NavGraphBuilder.homeNavigationGraph(
             val viewModel = it.sharedHiltViewModel<DiscoverViewModel>(navController)
             val state = viewModel.state.collectAsState()
             val productState = viewModel.productState.collectAsState()
+            val categoryPosts = viewModel.categoryPostsFlow.collectAsLazyPagingItems()
 
             DiscoverView(
-                navController = navController,
+                onNavigate = { path, options -> navController.navigate(path) { options() } },
                 events = viewModel,
                 state = state.value,
                 productState = productState.value,
-                productsEvents = viewModel
+                productsEvents = viewModel,
+                categoryPosts = categoryPosts
             )
         }
 

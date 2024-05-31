@@ -6,28 +6,40 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
+
+import androidx.compose.foundation.BorderStroke
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+
 import androidx.compose.foundation.layout.fillMaxHeight
+
+import androidx.compose.foundation.layout.fillMaxSize
+
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material.swipeable
+
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -35,11 +47,12 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -48,7 +61,6 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
@@ -65,77 +77,121 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+
 import androidx.navigation.NavController
 import live.foodclub.R
+
+import androidx.navigation.NavOptionsBuilder
+import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+
+import live.foodclub.config.ui.BottomBarScreenObject
+
 import live.foodclub.config.ui.Montserrat
 import live.foodclub.config.ui.foodClubGreen
 import live.foodclub.domain.enums.Category
 import live.foodclub.domain.enums.CategoryType
 import live.foodclub.domain.models.home.VideoModel
+
 import live.foodclub.domain.models.home.VideoStats
 import live.foodclub.domain.models.profile.SimpleUserModel
 import live.foodclub.navigation.HomeOtherRoutes
 import live.foodclub.utils.composables.RecommendationVideos
-import live.foodclub.utils.composables.products.ProductState
-import live.foodclub.utils.composables.products.ProductsEvents
 import live.foodclub.utils.composables.shimmerBrush
 import live.foodclub.utils.helpers.checkInternetConnectivity
-import live.foodclub.viewModels.home.discover.DiscoverEvents
 import kotlin.math.min
+
+
+import live.foodclub.utils.composables.PostListing
+import live.foodclub.utils.composables.products.ProductState
+import live.foodclub.utils.composables.products.ProductsEvents
+
+import live.foodclub.utils.composables.shimmerBrush
+import live.foodclub.utils.composables.videoPager.VideoPager
+import live.foodclub.utils.helpers.checkInternetConnectivity
+import live.foodclub.viewModels.home.discover.DiscoverEvents
+
 
 enum class DragValue { Start, End }
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun DiscoverView(
-    navController: NavController,
+    onNavigate: (String, NavOptionsBuilder.() -> Unit) -> Unit,
     events: DiscoverEvents,
     productState: ProductState,
     productsEvents: ProductsEvents,
-    state: DiscoverState
+    state: DiscoverState,
+    categoryPosts: LazyPagingItems<VideoModel>,
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current
+    val localDensity = LocalDensity.current
+    val coroutineScope = rememberCoroutineScope()
     val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
 
     var isShowPost by remember { mutableStateOf(false) }
-    var postId: Long? by remember { mutableStateOf(null) }
-
+    var postIndex by remember { mutableIntStateOf(0) }
     val brush = shimmerBrush()
 
-    var homePosts: List<VideoModel>?
-    val worldPosts: State<List<VideoModel>>? = null
-
-    var subCategoriesTabIndex by remember {
-        mutableIntStateOf(0)
-    }
-    var subWorldTabIndex by remember {
-        mutableIntStateOf(0)
-    }
+    var subCategoriesTabIndex by remember { mutableIntStateOf(0) }
+    var subWorldTabIndex by remember { mutableIntStateOf(0) }
     val dietList = Category.deriveFromType(CategoryType.DIET)
     val cuisineList = Category.deriveFromType(CategoryType.CUISINE)
 
     var tabIndex by remember { mutableIntStateOf(0) }
-    val mainTabItemsList = stringArrayResource(id = R.array.discover_tabs)
-
-    var gridHeight by remember { mutableStateOf(0.dp) }
-    val recommendationVideosCount by remember { mutableIntStateOf(8) }
-    gridHeight = if (recommendationVideosCount == 1) {
-        (recommendationVideosCount * dimensionResource(id = R.dimen.dim_272).value).dp
-    } else {
-        ((recommendationVideosCount / 2) * dimensionResource(id = R.dimen.dim_272).value).dp
+    val lazyGridState = rememberLazyGridState()
+    LaunchedEffect(tabIndex, subCategoriesTabIndex, subWorldTabIndex) {
+        if (tabIndex == 1) {
+            events.changeCategory(category = dietList[subCategoriesTabIndex])
+        } else {
+            events.changeCategory(category = cuisineList[subWorldTabIndex])
+        }
+        lazyGridState.scrollToItem(0)
     }
 
-    Column(
-        modifier = Modifier
-            //.verticalScroll(rememberScrollState())
-            .background(Color.White),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    val mainTabItemsList = stringArrayResource(id = R.array.discover_tabs)
 
-        Column {
+
+    if (isShowPost) {
+        VideoPager(
+            exoPlayer = state.exoPlayer,
+            videoList = categoryPosts,
+            initialPage = postIndex,
+            events = events,
+            state = state.videoPagerState,
+            modifier = Modifier,
+            localDensity = localDensity,
+            coroutineScope = coroutineScope,
+            onBackPressed = {
+                coroutineScope.launch { lazyGridState.scrollToItem(it) }
+                isShowPost = false
+            },
+            onProfileNavigated = {
+                onNavigate(BottomBarScreenObject.Profile.route + "?userId=$it") {}
+            }
+        )
+    }
+    else {
+
+        Column(
+            modifier = Modifier
+                .background(Color.White)
+                .then(
+                    if (tabIndex == 0) {
+//                        Modifier.verticalScroll(rememberScrollState())
+                        Modifier
+                    } else {
+                        Modifier
+                    }
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             DiscoverViewHeader(
-                navController = navController,
+                onNavigate = onNavigate,
                 userName = state.username
             )
 
@@ -162,19 +218,6 @@ fun DiscoverView(
 //            }
 //        }
 
-            if (isShowPost && postId != null) {
-                DiscoverViewPosts(
-                    postId = postId!!,
-                    posts = state.postList,
-                    events = events,
-                    state = state,
-                    onBackPressed = {
-                        postId = null
-                        isShowPost = !isShowPost
-                    }
-                )
-            }
-        }
 
         var showMyKitchen by remember {
             mutableStateOf(true)
@@ -182,10 +225,10 @@ fun DiscoverView(
 
         val anchoredSwipe = rememberSwipeableState(initialValue = 0)
 
-
         var height by remember {
             mutableStateOf(0.dp)
         }
+
         height = (min(
             productState.filteredAddedProducts.size,
             5
@@ -217,12 +260,10 @@ fun DiscoverView(
 
 
         if (tabIndex == 0) {
-            homePosts = state.postList
-
             if (isInternetConnected) {
 
                 val swipeableState = rememberSwipeableState(1)
-                val sizePx = with(LocalDensity.current) { height.toPx() + gridHeight.toPx() }
+                val sizePx = with(LocalDensity.current) { height.toPx() }
                 val anchors = mapOf(0f to 0, sizePx to 1)
 
                 showMyKitchen = swipeableState.currentValue != 0
@@ -268,7 +309,7 @@ fun DiscoverView(
                             Button(
                                 onClick = {
                                     events.onResetSearchData()
-                                    navController.navigate("ADD_INGREDIENTS")
+                                    onNavigate("ADD_INGREDIENTS") {}
                                 },
                                 shape = RoundedCornerShape(
                                     dimensionResource(
@@ -299,19 +340,18 @@ fun DiscoverView(
 
                         RecommendationSection(
                             onRecommendations = !showMyKitchen,
-                            gridHeight,
-                            recommendationVideosCount,
-                            navController = navController,
+                            lazyGridState = lazyGridState,
+                            isInternetConnected = isInternetConnected,
+                            posts = categoryPosts,
                             isShowPost = {
-                                isShowPost = !isShowPost
-                                postId = it
+                                postIndex = it
+                                isShowPost = true
                             }
                         )
                     }
                 }
 
             }
-
 
         } else {
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
@@ -321,52 +361,61 @@ fun DiscoverView(
                     subCategoriesTabIndex = subCategoriesTabIndex,
                     subCategoriesTabItemsList = dietList,
                     onCategoriesTabChanged = {
+                        events.changeCategory(dietList[it])
                         subCategoriesTabIndex = it
                     },
                     isInternetConnected,
                     brush
-                )
-
-                CategoryVideos(
-                    dataList = state.postList,
-                    category = dietList[subCategoriesTabIndex],
-                    navController = navController,
-                    brush = brush,
-                    isInternetConnected = isInternetConnected
                 )
             } else {
                 SubCategoriesTabRow(
                     subCategoriesTabIndex = subWorldTabIndex,
                     subCategoriesTabItemsList = cuisineList,
                     onCategoriesTabChanged = {
+                        events.changeCategory(cuisineList[it])
                         subWorldTabIndex = it
                     },
                     isInternetConnected,
                     brush
                 )
+            }
 
-                CategoryVideos(
-                    dataList = state.postList,
-                    category = cuisineList[subWorldTabIndex],
-                    navController = navController,
-                    brush = brush,
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+                    .padding(
+                        start = dimensionResource(id = R.dimen.dim_15),
+                        end = dimensionResource(id = R.dimen.dim_15)
+                    )
+            ) {
+                PostListing(
+                    lazyGridState = lazyGridState,
+                    userTabItems = categoryPosts,
                     isInternetConnected = isInternetConnected
-                )
+                ) {
+                    postIndex = it
+                    isShowPost = true
+                }
             }
         }
+        }
     }
+
+
 }
 
 @Composable
 fun RecommendationSection(
     onRecommendations: Boolean = true,
-    gridHeight: Dp,
-    recommendationVideosCount: Int,
-    navController: NavController,
-    isShowPost: (Long) -> Unit
+    lazyGridState: LazyGridState,
+    isInternetConnected: Boolean,
+    posts: LazyPagingItems<VideoModel>,
+    isShowPost: (Int) -> Unit
 ) {
     val recipe_vid1 = VideoModel(
         videoId = 1,
+        title = null,
         authorDetails = SimpleUserModel(userId = 0, username = "", profilePictureUrl = null),
         videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
         videoStats = VideoStats(
@@ -380,6 +429,7 @@ fun RecommendationSection(
     )
     val recipe_vid2 = VideoModel(
         videoId = 2,
+        title = null,
         authorDetails = SimpleUserModel(userId = 0, username = "", profilePictureUrl = null),
         videoLink = "https://kretu.sts3.pl/foodclub_videos/daniel_vid2.mp4",
         videoStats = VideoStats(
@@ -393,6 +443,7 @@ fun RecommendationSection(
     )
     val recipe_vid3 = VideoModel(
         videoId = 3,
+        title = null,
         authorDetails = SimpleUserModel(userId = 0, username = "", profilePictureUrl = null),
         videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
         videoStats = VideoStats(
@@ -406,6 +457,7 @@ fun RecommendationSection(
     )
     val recipe_vid4 = VideoModel(
         videoId = 4,
+        title = null,
         authorDetails = SimpleUserModel(userId = 0, username = "", profilePictureUrl = null),
         videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
         videoStats = VideoStats(
@@ -419,6 +471,7 @@ fun RecommendationSection(
     )
     val recipe_vid5 = VideoModel(
         videoId = 5,
+        title = null,
         authorDetails = SimpleUserModel(userId = 0, username = "", profilePictureUrl = null),
         videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
         videoStats = VideoStats(
@@ -432,6 +485,7 @@ fun RecommendationSection(
     )
     val recipe_vid6 = VideoModel(
         videoId = 6,
+        title = null,
         authorDetails = SimpleUserModel(userId = 0, username = "", profilePictureUrl = null),
         videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
         videoStats = VideoStats(
@@ -446,6 +500,7 @@ fun RecommendationSection(
 
     val recipe_vid7 = VideoModel(
         videoId = 7,
+        title = null,
         authorDetails = SimpleUserModel(userId = 0, username = "", profilePictureUrl = null),
         videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
         videoStats = VideoStats(
@@ -468,6 +523,10 @@ fun RecommendationSection(
         recipe_vid7,
         recipe_vid1
     )
+
+    val pagingItems = PagingData.from(recipesVideosList)
+    val fakeDataFlow = MutableStateFlow(pagingItems)
+    val testPosts = fakeDataFlow.collectAsLazyPagingItems()
 
 
     Card(
@@ -495,19 +554,13 @@ fun RecommendationSection(
                 )
             }
 
-
-            RecommendationVideos(
-                enableInput = onRecommendations,
-                gridHeight = gridHeight,
-                recommendationVideosCount = recommendationVideosCount,
-                navController = navController,
-                dataItem = recipesVideosList,
-                userName = null,
-                isShowVideo = {
-                    isShowPost(it)
-                }
-            )
         }
+        PostListing(
+            lazyGridState = lazyGridState,
+            userTabItems = testPosts,
+            isInternetConnected = isInternetConnected,
+            onPostSelected = isShowPost
+        )
     }
 }
 
@@ -553,7 +606,7 @@ fun RecommendationSection(
 
 @Composable
 fun DiscoverViewHeader(
-    navController: NavController,
+    onNavigate: (String, NavOptionsBuilder.() -> Unit) -> Unit,
     userName: String
 ) {
     Row(
@@ -583,12 +636,7 @@ fun DiscoverViewHeader(
                     )
                 ) {
                     append(
-                        "${stringResource(id = R.string.hi)} ${
-                            userName.replaceRange(
-                                0..0,
-                                userName[0].uppercase()
-                            )
-                        },"
+                        "${stringResource(id = R.string.hi)} ${userName.replaceFirstChar(Char::titlecase)},"
                     )
                 }
                 append("\n\n")
@@ -609,7 +657,7 @@ fun DiscoverViewHeader(
                 ),
                 contentPadding = PaddingValues(),
                 onClick = {
-                    navController.navigate(HomeOtherRoutes.MySearchView.route)
+                    onNavigate(HomeOtherRoutes.MySearchView.route) {}
                 }
             ) {
                 Icon(
@@ -802,33 +850,5 @@ fun SubCategoriesTabRow(
                 }
             }
         }
-    )
-}
-
-@Composable
-fun CategoryVideos(
-    dataList: List<VideoModel>,
-    category: Category,
-    navController: NavController,
-    brush: Brush = shimmerBrush(),
-    isInternetConnected: Boolean
-) {
-    val configuration = LocalConfiguration.current
-
-    val screenHeight = configuration.screenHeightDp.dp
-
-    val categoryDataList = dataList.filter {
-        // get the posts that have the chosen category
-        // require post category to filter, unfinished
-        it.description == category.displayName
-    }
-
-    RecommendationVideos(
-        gridHeight = screenHeight - dimensionResource(id = R.dimen.dim_280),
-        recommendationVideosCount = /*dataList.size*/8, // require back-end, unfinished
-        navController = navController,
-        dataItem = categoryDataList,
-        userName = null,
-        isShowVideo = {}
     )
 }

@@ -89,8 +89,9 @@ fun CameraView(
     val permissions = arrayOf(
         Manifest.permission.CAMERA,
         Manifest.permission.RECORD_AUDIO,
-        Manifest.permission.READ_MEDIA_IMAGES,
-        Manifest.permission.READ_MEDIA_VIDEO)
+//        Manifest.permission.READ_MEDIA_IMAGES,
+//        Manifest.permission.READ_MEDIA_VIDEO
+    )
 
     var recording: Recording? by remember { mutableStateOf(null) }
     val previewView: PreviewView = remember { PreviewView(context) }

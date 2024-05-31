@@ -171,13 +171,11 @@ fun PlayPauseButton(buttonVisibility: Boolean) {
  * @param bookMarkState Optional boolean which determines if the bookmark button should be shown.
  * If not provided, bookmark button will not be displayed. True and false determine state of the
  * button
- * @param category Optional category name. If not provided, no category would be displayed.
  * @param opacity Optional opacity which changes transparency level of the whole layout.
  * @param onLikeClick Executes when like button is clicked
  * @param onBookmarkClick Executes when bookmark button is clicked
  * @param onInfoClick Executes when Info button is clicked
  * @param onProfileClick Executes when profile photo or name is clicked
- * @param onCategoryClick Executes when category is clicked
  */
 @Composable
 fun VideoLayout(
@@ -186,13 +184,12 @@ fun VideoLayout(
     videoStats: VideoStats? = null,
     likeState: Boolean? = null,
     bookMarkState: Boolean? = null,
-    category: String? = null,
+    title: String? = null,
     opacity: Float = 1f,
     onLikeClick: () -> Unit = {},
     onBookmarkClick: () -> Unit = {},
     onInfoClick: (() -> Unit)? = null,
-    onProfileClick: () -> Unit = {},
-    onCategoryClick: () -> Unit = {},
+    onProfileClick: (Long) -> Unit = {},
 ) {
     val context = LocalContext.current
     val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
@@ -207,8 +204,7 @@ fun VideoLayout(
             VideoCategorySection(
                 brush,
                 isInternetConnected,
-                category = category,
-                onCategoryClick = onCategoryClick,
+                title = title,
                 onProfileClick = onProfileClick,
                 userDetails = userDetails
             )
@@ -246,9 +242,8 @@ fun VideoLayout(
 private fun VideoCategorySection(
     brush: Brush,
     isInternetConnected: Boolean,
-    category: String?,
-    onCategoryClick: () -> Unit,
-    onProfileClick: () -> Unit,
+    title: String?,
+    onProfileClick: (Long) -> Unit,
     userDetails: SimpleUserModel
 ) {
 
@@ -256,7 +251,7 @@ private fun VideoCategorySection(
         if (isInternetConnected) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.clickable { onProfileClick() }
+                modifier = Modifier.clickable { onProfileClick(userDetails.userId) }
             ) {
                 AsyncImage(
                     model = userDetails.profilePictureUrl ?: defaultProfileImage,
@@ -275,16 +270,16 @@ private fun VideoCategorySection(
                 )
             }
 
-            if (category != null) {
+            if (title != null) {
                 Spacer(
                     modifier = Modifier
                         .height(dimensionResource(id = R.dimen.dim_10))
                 )
 
                 Text(
-                    text = if (category.length > 30) {
-                        category.substring(0, 30) + "..."
-                    } else category,
+                    text = if (title.length > 30) {
+                        title.substring(0, 30) + "..."
+                    } else title,
                     fontFamily = Montserrat,
                     fontSize = dimensionResource(id = R.dimen.fon_12).value.sp,
                     lineHeight = dimensionResource(id = R.dimen.dim_48).value.sp,
@@ -297,7 +292,7 @@ private fun VideoCategorySection(
         } else {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.clickable { onProfileClick() }
+                modifier = Modifier.clickable { onProfileClick(userDetails.userId) }
             ) {
                 Box(
                     modifier = Modifier
@@ -426,7 +421,7 @@ fun VideoLikeButton(
 
     val userList: List<SimpleUserModel> = List(videoStats.displayLike.toInt()) { index ->
         SimpleUserModel(
-            userId = index + 1,
+            userId = index.toLong() + 1,
             username = "User $index",
             profilePictureUrl = "null"
         )

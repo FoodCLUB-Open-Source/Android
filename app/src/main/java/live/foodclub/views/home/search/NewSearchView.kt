@@ -440,7 +440,7 @@ fun SearchAccountGridItem(
                 modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.dim_4))
             )
             Text(
-                text = searchUser.userFullname ?: "",
+                text = searchUser.userFullName ?: "",
                 fontWeight = FontWeight.Normal,
                 fontFamily = Montserrat,
                 fontSize = dimensionResource(id = R.dimen.fon_15).value.sp
