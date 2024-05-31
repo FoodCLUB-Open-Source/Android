@@ -1,6 +1,5 @@
 package live.foodclub.utils.composables
 
-import live.foodclub.R
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -22,12 +21,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
+import live.foodclub.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SwipeToDismissContainer(
     onDismiss: () -> Unit,
-    dismissContent: @Composable (Modifier) -> Unit
+    containerBackgroundColor: Color = Color.White,
+    iconAlignment: Alignment = Alignment.CenterEnd,
+    dismissContent: @Composable (Modifier) -> Unit,
 ) {
     val dismissState = rememberDismissState(
         confirmValueChange = { dismiss ->
@@ -46,12 +48,11 @@ fun SwipeToDismissContainer(
         background = {
             val color by animateColorAsState(
                 when (dismissState.targetValue) {
-                    DismissValue.Default -> Color.White
-                    DismissValue.DismissedToEnd -> Color.White
+                    DismissValue.Default -> containerBackgroundColor
+                    DismissValue.DismissedToEnd -> containerBackgroundColor
                     DismissValue.DismissedToStart -> Color.Red
                 }, label = ""
             )
-            val alignment = Alignment.CenterEnd
             val icon = Icons.Default.Delete
 
             val scale by animateFloatAsState(
@@ -64,7 +65,7 @@ fun SwipeToDismissContainer(
                     .fillMaxSize()
                     .background(color)
                     .padding(horizontal = dimensionResource(id = R.dimen.dim_20)),
-                contentAlignment = alignment
+                contentAlignment = iconAlignment
             ) {
                 Icon(
                     icon,
