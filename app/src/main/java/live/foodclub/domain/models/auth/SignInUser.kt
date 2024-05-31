@@ -9,5 +9,6 @@ data class SignInUser(
     val idToken: String,
     val refreshToken: String,
     val isOnline: Boolean? = null,
-    val fcmToken: String? = null
+    val fcmToken: String? = null,
+    val conversationIds: List<String>? = null,
 )

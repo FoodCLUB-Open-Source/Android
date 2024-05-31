@@ -1,10 +1,6 @@
 package live.foodclub.views.home.messagingView
 
-import live.foodclub.R
-import live.foodclub.config.ui.Montserrat
-import live.foodclub.config.ui.foodClubGreen
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -31,7 +26,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,38 +41,44 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import live.foodclub.R
+import live.foodclub.config.ui.Montserrat
+import live.foodclub.config.ui.foodClubGreen
+import live.foodclub.domain.models.auth.FirebaseUserModel
+import live.foodclub.domain.models.auth.Message
+import live.foodclub.utils.composables.MessagingProfilePhoto
+import live.foodclub.viewModels.home.messaging.MessagingViewEvents
 
 @Composable
 fun ChatView(
-    onBackPressed: () -> Unit
-){
+    onBackPressed: () -> Unit,
+    chatState: ChatState,
+    events: MessagingViewEvents,
+) {
     var sendingText by remember { mutableStateOf("") }
-
-    val user1 = User(userId = 1, userName = "User1")
-    val user2 = User(userId = 2, userName = "User2")
-
-    var currentUserId by remember { mutableIntStateOf(user1.userId) }
-
-    var conversation by remember {
-        mutableStateOf(
-            Conversation(
-                messages = emptyList(),
-                user1 = user1,
-                user2 = user2
-            )
-        )
-    }
 
     BackHandler {
         onBackPressed()
+        events.chatViewClear()
     }
 
     Scaffold(
         topBar = {
-            ChatViewTopBar(onBackPressed)
+            ChatViewTopBar(
+                onBackPressed = {
+                    onBackPressed()
+                    events.chatViewClear()
+                },
+                recipientUser = chatState.recipientUser,
+            )
         },
         content = { scaffoldPadding ->
-            MessageHistory(conversation.messages, scaffoldPadding)
+            MessageHistory(
+                messages = chatState.messages,
+                senderUser = chatState.senderUser,
+                recipientUser = chatState.recipientUser,
+                paddingValues = scaffoldPadding
+            )
         },
         bottomBar = {
             ChatViewBottomBar(
@@ -87,22 +87,16 @@ fun ChatView(
                     sendingText = it
                 },
                 onMessageSent = {
-                    conversation = conversation.copy(
-                        messages = conversation.messages + Message(
-                            senderId = currentUserId,
-                            content = it,
-                            timestamp = ""
-                        )
-                    )
+                    events.sendMessage(content = it, conversationId = chatState.conversationId)
                     sendingText = ""
-                    currentUserId = if (currentUserId == user1.userId) user2.userId else user1.userId
                 }
             )
         }
     )
 }
+
 @Composable
-fun ChatViewTopBar(onBackPressed: () -> Unit) {
+fun ChatViewTopBar(onBackPressed: () -> Unit, recipientUser: FirebaseUserModel) {
     Row(
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
@@ -124,14 +118,20 @@ fun ChatViewTopBar(onBackPressed: () -> Unit) {
                 tint = Color.White
             )
         }
-        Image(
-            painter = painterResource(id = R.drawable.profilepicture),
-            contentDescription = null,
-            modifier = Modifier.size(dimensionResource(id = R.dimen.dim_30))
+        MessagingProfilePhoto(
+            photoUrl = recipientUser.profileImageUrl,
+            photoSize = R.dimen.dim_40
         )
         Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_5)))
 
-        ChefAiNameBox()
+        Text(
+            text = recipientUser.username,
+            fontSize = dimensionResource(id = R.dimen.fon_16).value.sp,
+            fontFamily = Montserrat,
+            fontWeight = FontWeight(500),
+            lineHeight = dimensionResource(id = R.dimen.fon_21).value.sp,
+            color = Color.White
+        )
     }
 }
 
@@ -179,7 +179,7 @@ fun ChatViewBottomBar(
         IconButton(
             modifier = Modifier.align(Alignment.CenterEnd),
             onClick = {
-                if (text != ""){
+                if (text != "") {
                     onMessageSent(text)
                 }
             }
@@ -196,11 +196,12 @@ fun ChatViewBottomBar(
 @Composable
 fun MessageHistory(
     messages: List<Message>,
+    senderUser: FirebaseUserModel,
+    recipientUser: FirebaseUserModel,
     paddingValues: PaddingValues
 ) {
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val (messagesRef, chatBox) = createRefs()
-
         val listState = rememberLazyListState()
         LaunchedEffect(messages.size) {
             listState.animateScrollToItem(messages.size)
@@ -221,9 +222,14 @@ fun MessageHistory(
                     height = Dimension.fillToConstraints
                 }
         ) {
+
             items(messages.size) { index ->
                 val message = messages[index]
-                MessageBox(message = message)
+                MessageBox(
+                    message = message,
+                    senderUser = senderUser,
+                    recipientUser = recipientUser
+                )
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
             }
         }
@@ -231,8 +237,8 @@ fun MessageHistory(
 }
 
 @Composable
-fun MessageBox(message: Message) {
-    val isSentByUser1 = message.senderId == 1
+fun MessageBox(message: Message, senderUser: FirebaseUserModel, recipientUser: FirebaseUserModel) {
+    val isSentByUser1 = message.senderId == senderUser.userID
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -269,12 +275,9 @@ fun MessageBox(message: Message) {
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.profilepicture),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(top = dimensionResource(id = R.dimen.dim_15))
-                        .size(dimensionResource(id = R.dimen.dim_25))
+                MessagingProfilePhoto(
+                    photoUrl = recipientUser.profileImageUrl,
+                    photoSize = R.dimen.dim_40
                 )
                 Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.dim_5)))
                 Box(
@@ -301,19 +304,3 @@ fun MessageBox(message: Message) {
 }
 
 
-data class Conversation(
-    val messages: List<Message>,
-    val user1: User,
-    val user2: User
-)
-
-data class Message(
-    val senderId: Int,
-    val content: String,
-    val timestamp: String
-)
-
-data class User(
-    val userId: Int,
-    val userName: String
-)

@@ -4,7 +4,15 @@ data class MessageModel(
     val messageId: String = "",
     val senderId: Int = 0,
     val recipientId: Int = 0,
-    val read: Boolean = false,
+    var read: Boolean = false,
     val content: String = "",
-    val timeStamp: String = "",
-)
+    val timestamp: String = "",
+) {
+    fun mapToMessage(): Message {
+        return Message(
+            senderId = senderId,
+            content = content,
+            timestamp = timestamp
+        )
+    }
+}
