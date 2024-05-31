@@ -162,15 +162,7 @@ fun DiscoverView(
     else {
 
         Column(
-            modifier = Modifier
-                .background(Color.White)
-                .then(
-                    if (tabIndex == 0) {
-                        Modifier
-                    } else {
-                        Modifier
-                    }
-                ),
+            modifier = Modifier.background(Color.White),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             DiscoverViewHeader(
