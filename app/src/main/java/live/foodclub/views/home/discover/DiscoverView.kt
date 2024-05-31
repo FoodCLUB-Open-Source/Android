@@ -232,15 +232,26 @@ fun DiscoverView(
                     }
                 }
 
+
                 Column(horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .focusGroup()
-                        .swipeable(
-                            state = swipeableState,
-                            orientation = Orientation.Vertical,
-                            anchors = anchors,
-                            thresholds = { _, _ -> FractionalThreshold(0.3f) }
-                        )) {
+                        .then(
+                            if (productState.addedProducts.isNotEmpty())
+                            {
+                                Modifier.swipeable(
+                                    state = swipeableState,
+                                    orientation = Orientation.Vertical,
+                                    anchors = anchors,
+                                    thresholds = { _, _ -> FractionalThreshold(0.3f) }
+                                )
+                            }
+                            else
+                            {
+                                Modifier
+                            }
+                        )
+                        ) {
                     AnimatedVisibility(visible = showMyKitchen) {
                         Column(
                             modifier = Modifier
@@ -293,23 +304,27 @@ fun DiscoverView(
                         }
                     }
 
-                    Column(
-                        modifier = Modifier
-                            .focusGroup()
-                            .fillMaxHeight()
-                    ) {
+                    if(productState.addedProducts.isNotEmpty())
+                    {
+                        Column(
+                            modifier = Modifier
+                                .focusGroup()
+                                .fillMaxHeight()
+                        ) {
 
-                        RecommendationSection(
-                            onRecommendations = !showMyKitchen,
-                            lazyGridState = lazyGridState,
-                            isInternetConnected = isInternetConnected,
-                            posts = categoryPosts,
-                            isShowPost = {
-                                postIndex = it
-                                isShowPost = true
-                            }
-                        )
+                            RecommendationSection(
+                                onRecommendations = !showMyKitchen,
+                                lazyGridState = lazyGridState,
+                                isInternetConnected = isInternetConnected,
+                                posts = categoryPosts,
+                                isShowPost = {
+                                    postIndex = it
+                                    isShowPost = true
+                                }
+                            )
+                        }
                     }
+
                 }
 
             }
