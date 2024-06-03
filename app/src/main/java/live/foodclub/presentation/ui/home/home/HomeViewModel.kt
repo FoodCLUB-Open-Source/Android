@@ -70,7 +70,7 @@ class HomeViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000),
         HomeState.default(exoPlayer))
 
-    private val userId = sessionCache.session.value!!.sessionUser.userId.toInt()
+    private val userId = sessionCache.session.value?.sessionUser?.userId?.toInt()
 
     init {
         exoPlayer.prepare()
@@ -80,7 +80,7 @@ class HomeViewModel @Inject constructor(
         checkUserFcmToken(userId = userId)
     }
 
-    private fun checkUserFcmToken(userId: Int) = viewModelScope.launch {
+    private fun checkUserFcmToken(userId: Int?) = viewModelScope.launch {
         firebaseUserRepository.getUserFromFirestore(userId)
     }
 
