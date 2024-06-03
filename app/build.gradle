@@ -23,7 +23,7 @@ android {
         minSdk 29
         targetSdk 33
         versionCode 1
-        versionName "1.0"
+        versionName "1.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -152,6 +152,7 @@ dependencies {
     implementation "com.airbnb.android:lottie-compose:4.2.0"
     implementation 'com.auth0.android:jwtdecode:2.0.2'
     implementation 'com.auth0:java-jwt:4.4.0'
+    implementation 'com.github.wendykierp:JTransforms:3.1'
 
     // FFmpeg
     implementation ("com.arthenica:ffmpeg-kit-full:6.0-2")
