@@ -3,7 +3,7 @@ package live.foodclub
 import android.Manifest
 import android.content.pm.PackageManager
 import live.foodclub.config.ui.FoodClubTheme
-import live.foodclub.navigation.RootNavigationGraph
+import live.foodclub.presentation.navigation.RootNavigationGraph
 import live.foodclub.utils.composables.MainLayout
 import live.foodclub.utils.helpers.checkPermissions
 import android.os.Build

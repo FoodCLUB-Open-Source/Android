@@ -6,7 +6,7 @@ import live.foodclub.config.ui.defaultButtonColors
 import live.foodclub.domain.models.home.VideoModel
 import live.foodclub.domain.models.others.AnimatedIcon
 import live.foodclub.utils.composables.customComponents.BackButton
-import live.foodclub.views.VideoPagerLoadingSkeleton
+import live.foodclub.presentation.ui.composables.VideoPagerLoadingSkeleton
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -62,7 +62,7 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import live.foodclub.views.home.home.feed.HomeBottomSheetIngredients
+import live.foodclub.presentation.ui.home.home.feed.HomeBottomSheetIngredients
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)

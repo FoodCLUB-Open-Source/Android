@@ -9,8 +9,8 @@ import live.foodclub.config.ui.defaultButtonColors
 import live.foodclub.config.ui.foodClubGreen
 import live.foodclub.config.ui.textFieldCustomColors
 import live.foodclub.utils.helpers.FieldsValidation
-import live.foodclub.views.authentication.TermsAndConditionsSimplified
-import live.foodclub.views.settings.colorGray
+import live.foodclub.presentation.ui.authentication.termsAndConditions.TermsAndConditionsSimplified
+import live.foodclub.presentation.ui.settings.colorGray
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

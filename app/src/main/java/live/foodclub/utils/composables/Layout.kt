@@ -4,12 +4,12 @@ import live.foodclub.R
 import live.foodclub.config.ui.Black
 import live.foodclub.config.ui.Montserrat
 import live.foodclub.config.ui.PlusJakartaSans
-import live.foodclub.navigation.Graph
+import live.foodclub.presentation.navigation.Graph
 import live.foodclub.utils.composables.customComponents.BackButton
 import live.foodclub.utils.composables.customComponents.TermsAndConditionsInfoFooter
-import live.foodclub.viewModels.BaseViewModel
-import live.foodclub.views.home.BottomBar
-import live.foodclub.views.home.BottomSheet
+import live.foodclub.presentation.ui.BaseViewModel
+import live.foodclub.presentation.ui.composables.BottomBar
+import live.foodclub.presentation.ui.composables.BottomSheet
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
