@@ -1,15 +1,17 @@
 package live.foodclub.di
 
+import kotlinx.coroutines.CoroutineDispatcher
 import live.foodclub.localdatasource.localdatasource.product.ProductLocalDataSource
-import live.foodclub.network.retrofit.services.AuthenticationService
-import live.foodclub.network.retrofit.dtoMappers.posts.PostToVideoMapper
+import live.foodclub.localdatasource.localdatasource.profile_local_datasource.ProfileLocalDataSource
 import live.foodclub.network.retrofit.dtoMappers.auth.ForgotChangePasswordMapper
 import live.foodclub.network.retrofit.dtoMappers.auth.SignInUserMapper
 import live.foodclub.network.retrofit.dtoMappers.auth.SignUpUserMapper
+import live.foodclub.network.retrofit.dtoMappers.posts.PostToVideoMapper
 import live.foodclub.network.retrofit.dtoMappers.profile.FollowerUserMapper
 import live.foodclub.network.retrofit.dtoMappers.profile.FollowingUserMapper
 import live.foodclub.network.retrofit.dtoMappers.profile.UserDetailsMapper
 import live.foodclub.network.retrofit.dtoMappers.stories.StoryMapper
+import live.foodclub.network.retrofit.services.AuthenticationService
 import live.foodclub.network.retrofit.services.BookmarksService
 import live.foodclub.network.retrofit.services.LikesService
 import live.foodclub.network.retrofit.services.PostsService
@@ -25,13 +27,10 @@ import live.foodclub.repositories.RecipeRepository
 import live.foodclub.repositories.SettingsRepository
 import live.foodclub.repositories.StoryRepository
 import live.foodclub.localdatasource.localdatasource.user_details_local_datasource.UserDetailsLocalDataSource
-import live.foodclub.localdatasource.localdatasource.profile_local_datasource.ProfileLocalDataSource
 import live.foodclub.network.remotedatasource.product.ProductRemoteDataSource
 import live.foodclub.network.remotedatasource.profile_remote_datasource.ProfileRemoteDataSource
 import live.foodclub.network.remotedatasource.settings_remote_datasource.SettingsRemoteDataSource
 import live.foodclub.network.retrofit.dtoMappers.auth.FirebaseUserMapper
-import live.foodclub.network.retrofit.dtoMappers.profile.LocalDataMapper
-import live.foodclub.network.retrofit.dtoMappers.profile.OfflineProfileDataMapper
 import live.foodclub.network.retrofit.services.SearchService
 import live.foodclub.repositories.FirebaseUserRepository
 import live.foodclub.repositories.SearchRepository
@@ -56,8 +55,6 @@ object RepositoriesModule {
         profileLocalDataSource: ProfileLocalDataSource,
         postDao: PostDao,
         postsRemoteDataSourceProvider: PostsRemoteDataSourceProvider,
-        localDataMapper: LocalDataMapper,
-        offlineProfileMapper: OfflineProfileDataMapper,
         followerUserMapper: FollowerUserMapper,
         followingUserMapper: FollowingUserMapper
     ): ProfileRepository {
@@ -66,8 +63,6 @@ object RepositoriesModule {
             profileLocalDataSource,
             postDao,
             postsRemoteDataSourceProvider,
-            localDataMapper,
-            offlineProfileMapper,
             followerUserMapper,
             followingUserMapper
         )
@@ -163,6 +158,14 @@ object RepositoriesModule {
 
     @Singleton
     @Provides
-    fun provideFirebaseUserRepository(firestore: FirebaseFirestore): FirebaseUserRepository =
-        FirebaseUserRepository(firestore)
+    fun provideFirebaseUserRepository(
+        firestore: FirebaseFirestore,
+        firebaseMessaging: FirebaseMessaging,
+        @IoDispatcher ioDispatcher: CoroutineDispatcher,
+    ): FirebaseUserRepository =
+        FirebaseUserRepository(
+            firestore = firestore,
+            firebaseMessaging = firebaseMessaging,
+            ioDispatcher = ioDispatcher,
+        )
 }

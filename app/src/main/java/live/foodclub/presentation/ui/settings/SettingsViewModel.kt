@@ -9,15 +9,23 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import live.foodclub.domain.models.profile.UserProfile
+import live.foodclub.repositories.ProfileRepository
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val repository: SettingsRepository,
+    private val profileRepository: ProfileRepository,
     val sessionCache: SessionCache,
     private val dataStore: StoreData
 ) : ViewModel(), SettingsEvents {
@@ -25,9 +33,14 @@ class SettingsViewModel @Inject constructor(
         private val TAG = SettingsViewModel::class.java.simpleName
     }
 
+    private val _userId = MutableStateFlow(0L)
+    private val _profile = _userId
+        .flatMapLatest { userId -> profileRepository.getUserProfileData(userId) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), UserProfile.default())
+
     private val _state = MutableStateFlow(SettingsState.default())
-    val state: StateFlow<SettingsState>
-        get() = _state
+    val state = combine(_state, _profile) { state, profile -> state.copy(userProfile = profile,) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SettingsState.default())
 
     init {
         val id = sessionCache.getActiveSession()!!.sessionUser.userId
@@ -36,6 +49,7 @@ class SettingsViewModel @Inject constructor(
                 dataStore = dataStore
             )
         }
+        _userId.update { id }
         getUserDetails(id)
     }
 

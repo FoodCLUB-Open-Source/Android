@@ -3,6 +3,7 @@ package live.foodclub.domain.models.profile
 data class UserProfile(
     val username: String,
     val profilePictureUrl: String? = null,
+    val fullName: String? = null,
 
     val totalUserLikes: Int? = 0,
     val totalUserFollowers: Int? = 0,

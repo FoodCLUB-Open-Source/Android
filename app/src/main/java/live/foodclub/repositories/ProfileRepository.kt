@@ -8,15 +8,11 @@ import live.foodclub.network.retrofit.responses.general.DefaultErrorResponse
 import live.foodclub.network.retrofit.responses.profile.FollowUnfollowResponse
 import live.foodclub.network.retrofit.responses.profile.RetrieveFollowerListResponse
 import live.foodclub.network.retrofit.responses.profile.RetrieveFollowingListResponse
-import live.foodclub.network.retrofit.responses.profile.RetrieveProfileResponse
 import live.foodclub.network.retrofit.responses.profile.UpdateUserProfileImageResponse
 import live.foodclub.network.retrofit.utils.apiRequestFlow
 import live.foodclub.localdatasource.localdatasource.profile_local_datasource.ProfileLocalDataSource
 import live.foodclub.localdatasource.room.entity.ProfileEntity
 import live.foodclub.network.remotedatasource.profile_remote_datasource.ProfileRemoteDataSource
-import live.foodclub.network.retrofit.dtoMappers.profile.LocalDataMapper
-import live.foodclub.network.retrofit.dtoMappers.profile.OfflineProfileDataMapper
-import live.foodclub.network.retrofit.dtoModels.profile.UserProfileDto
 import live.foodclub.utils.helpers.Resource
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
@@ -25,6 +21,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import live.foodclub.domain.enums.PostType
 import live.foodclub.localdatasource.room.dao.PostDao
+import live.foodclub.localdatasource.room.entity.toUserProfile
 import live.foodclub.localdatasource.room.relationships.PostWithUser
 import live.foodclub.network.remotedatasource.posts.PostsRemoteMediator
 import live.foodclub.network.remotedatasource.posts.provider.PostsRemoteDataSourceProvider
@@ -38,42 +35,15 @@ class ProfileRepository(
     private val profileLocalDataSource: ProfileLocalDataSource,
     private val postDao: PostDao,
     private val postsRemoteDataSourceProvider: PostsRemoteDataSourceProvider,
-    private val localDataMapper: LocalDataMapper,
-    private val offlineProfileMapper: OfflineProfileDataMapper,
     private val followerUserMapper: FollowerUserMapper,
     private val followingUserMapper: FollowingUserMapper
 ) {
-
-    suspend fun retrieveProfileData(
-        userId: Long, pageNo: Int? = null, pageSize: Int? = null
-    ): Resource<UserProfileDto, DefaultErrorResponse> {
-        return when(
-            val resource = apiRequestFlow<RetrieveProfileResponse, DefaultErrorResponse> {
-                profileRemoteDataSource.retrieveProfileData(userId, pageNo, pageSize)
-            }
-        ) {
-            is Resource.Success -> {
-                val mappedProfileData = localDataMapper.mapToDomainModel(resource.data!!.body()!!.data)
-                mappedProfileData.userId = userId
-                saveLocalProfileDetails(mappedProfileData)
-
-                Resource.Success(
-                    resource.data.body()!!.data
-                )
-            }
-
-            is Resource.Error -> {
-                Resource.Error(resource.message!!)
-            }
-        }
-    }
-
     fun getUserProfileData(userId: Long): Flow<UserProfile> {
         return profileLocalDataSource.getProfileData(userId).map {
             if (it == null) {
                 UserProfile.default()
             } else {
-                offlineProfileMapper.mapToDomainModel(it)
+                it.toUserProfile()
             }
         }
     }

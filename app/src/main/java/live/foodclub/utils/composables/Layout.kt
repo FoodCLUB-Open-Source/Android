@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 
 @Composable
@@ -65,6 +66,11 @@ fun MainLayout(
             it.route?.startsWith(Graph.HOME) ?: false
         } == true)
     }
+
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setSystemBarsColor(
+        color = Color.Transparent
+    )
 
     Scaffold(
         bottomBar = {

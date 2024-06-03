@@ -1,16 +1,5 @@
 package live.foodclub.presentation.ui.home.discover.composables
 
-import live.foodclub.R
-import live.foodclub.config.ui.defaultSearchBarColors
-import live.foodclub.utils.composables.customComponents.CustomDatePicker
-import live.foodclub.utils.composables.products.EditIngredientBottomModal
-import live.foodclub.utils.composables.SwipeToDismissContainer
-import live.foodclub.utils.composables.products.IngredientItem
-import live.foodclub.utils.composables.products.ProductAction
-import live.foodclub.utils.composables.products.ProductSearchBar
-import live.foodclub.utils.composables.products.ProductState
-import live.foodclub.utils.composables.products.ProductsEvents
-import live.foodclub.utils.composables.products.ProductsListTitleSection
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -21,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
@@ -42,6 +32,17 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import live.foodclub.R
+import live.foodclub.config.ui.defaultSearchBarColors
+import live.foodclub.utils.composables.SwipeToDismissContainer
+import live.foodclub.utils.composables.customComponents.CustomDatePicker
+import live.foodclub.utils.composables.products.EditIngredientBottomModal
+import live.foodclub.utils.composables.products.IngredientItem
+import live.foodclub.utils.composables.products.ProductAction
+import live.foodclub.utils.composables.products.ProductSearchBar
+import live.foodclub.utils.composables.products.ProductState
+import live.foodclub.utils.composables.products.ProductsEvents
+import live.foodclub.utils.composables.products.ProductsListTitleSection
 import kotlin.math.min
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,6 +50,7 @@ import kotlin.math.min
 fun KitchenIngredients(
     events: ProductsEvents,
     state: ProductState,
+    lazyColumnState: LazyListState,
     modifier: Modifier = Modifier
 ) {
     val datePickerState = rememberDatePickerState()
@@ -120,7 +122,7 @@ fun KitchenIngredients(
             enableMike = false
         )
         ProductsListTitleSection(modifier = modifier, includeExpiryDate = state.allowExpiryDate)
-        IngredientsListColumn(events = events, productState = state, addedItems = addedItems)
+        IngredientsListColumn(lazyColumnState = lazyColumnState, events = events, productState = state, addedItems = addedItems)
     }
 }
 
@@ -128,7 +130,8 @@ fun KitchenIngredients(
 fun IngredientsListColumn(
     events: ProductsEvents,
     productState: ProductState,
-    addedItems: MutableList<String>
+    addedItems: MutableList<String>,
+    lazyColumnState: LazyListState
 ) {
     var height by remember {
         mutableStateOf(0.dp)
@@ -136,6 +139,7 @@ fun IngredientsListColumn(
     height = (min(productState.filteredAddedProducts.size, 5) * dimensionResource(id = R.dimen.dim_65).value).dp
 
     LazyColumn(
+        state = lazyColumnState,
         modifier = Modifier
             .padding(
                 start = dimensionResource(id = R.dimen.dim_15),

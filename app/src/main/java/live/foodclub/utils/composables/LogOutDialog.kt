@@ -36,6 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import live.foodclub.config.ui.text_blue
 
 @Composable
 fun LogOutDialog(onDismissRequest: () -> Unit, onConfirmRequest: () -> Unit) {
@@ -69,7 +70,7 @@ fun LogOutDialog(onDismissRequest: () -> Unit, onConfirmRequest: () -> Unit) {
                     Text(
                         text = stringResource(id = R.string.Log_out_confirmation),
                         fontFamily = Montserrat,
-                        fontWeight = FontWeight.Black,
+                        fontWeight = FontWeight.SemiBold,
                         textAlign = TextAlign.Center
                     )
                 }
@@ -93,8 +94,9 @@ fun LogOutDialog(onDismissRequest: () -> Unit, onConfirmRequest: () -> Unit) {
                     ) {
                         Text(
                             text = stringResource(id = R.string.cancel),
+                            color = text_blue,
                             fontFamily = Montserrat,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Medium
                         )
                     }
 
@@ -112,6 +114,7 @@ fun LogOutDialog(onDismissRequest: () -> Unit, onConfirmRequest: () -> Unit) {
                         Text(
                             text = stringResource(id = R.string.log_out),
                             fontFamily = Montserrat,
+                            color = text_blue,
                             fontWeight = FontWeight(integerResource(id = R.integer.int_600)),
                         )
                     }

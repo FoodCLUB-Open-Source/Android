@@ -1,7 +1,6 @@
 package live.foodclub.network.remotedatasource.posts.sources
 
 import live.foodclub.domain.enums.Category
-import live.foodclub.network.retrofit.responses.posts.toRetrievePostsListResponse
 import live.foodclub.network.retrofit.responses.profile.RetrievePostsListResponse
 import live.foodclub.network.retrofit.services.PostsService
 import retrofit2.Response
@@ -16,16 +15,10 @@ class DiscoverPostsDataSource @Inject constructor(
         pageSize: Int?,
         pageNo: Int?,
     ): Response<RetrievePostsListResponse> {
-        val response = api.getPostByWorldCategory(
+        return api.getPostByWorldCategory(
             categoryId = category.displayName,
             pageSize = pageSize,
             pageNo = pageNo
         )
-
-        return if (response.isSuccessful) {
-            Response.success(response.code(), response.body()?.toRetrievePostsListResponse())
-        } else {
-            Response.error(response.errorBody()!!, response.raw())
-        }
     }
 }

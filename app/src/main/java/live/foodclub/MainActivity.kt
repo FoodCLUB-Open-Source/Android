@@ -12,7 +12,6 @@ import android.os.Handler
 import android.os.Looper
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -22,9 +21,14 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
+import live.foodclub.config.ui.FoodClubTheme
+import live.foodclub.presentation.navigation.RootNavigationGraph
+import live.foodclub.utils.composables.MainLayout
+import live.foodclub.utils.helpers.checkPermissions
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

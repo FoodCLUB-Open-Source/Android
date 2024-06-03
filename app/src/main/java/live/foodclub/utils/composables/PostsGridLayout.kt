@@ -1,9 +1,6 @@
 package live.foodclub.utils.composables
 
 import android.content.res.Configuration
-import live.foodclub.R
-import live.foodclub.config.ui.Montserrat
-import live.foodclub.domain.models.home.VideoModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -44,12 +41,16 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
+import live.foodclub.R
 import live.foodclub.config.ui.FoodClubTheme
+import live.foodclub.config.ui.Montserrat
 import live.foodclub.config.ui.Satoshi
 import live.foodclub.config.ui.foodClubGreen
+import live.foodclub.domain.models.home.VideoModel
 
 @Composable
 fun RecommendationVideos(
+    enableInput: Boolean = true,
     gridHeight: Dp,
     recommendationVideosCount: Int,
     navController: NavController,
@@ -66,7 +67,7 @@ fun RecommendationVideos(
             0,
             0
         ),
-        userScrollEnabled = true,
+        userScrollEnabled = enableInput,
         content = {
             items(dataItem ?: listOf()) { videoModel ->
 //                Card(
@@ -108,9 +109,18 @@ fun RecommendationVideos(
                             contentDescription = null,
                             modifier = Modifier
                                 .fillMaxSize()
-                                .clickable {
-                                    isShowVideo(videoModel.videoId)
-                                },
+                                .then(
+                                    if (enableInput)
+                                    {
+                                        Modifier.clickable {
+                                            isShowVideo(videoModel.videoId)
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Modifier
+                                    }
+                                ),
                             contentScale = ContentScale.FillHeight
                         )
 
@@ -159,16 +169,19 @@ fun RecommendationVideos(
 
 @Composable
 fun PostListing(
+    enableInput: Boolean = true,
     lazyGridState: LazyGridState,
     userTabItems: LazyPagingItems<VideoModel>,
     isInternetConnected: Boolean,
     brush: Brush = shimmerBrush(),
     onPostSelected: (Int) -> Unit
 ) {
+
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         state = lazyGridState,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        userScrollEnabled = enableInput
     ) {
         items(
             count = userTabItems.itemCount,
@@ -176,6 +189,7 @@ fun PostListing(
             val tabItem = userTabItems[index]
             if (tabItem != null) {
                 GridItem(
+                    enableInput = enableInput,
                     brush = brush,
                     isInternetConnected = isInternetConnected,
                     dataItem = tabItem,
@@ -196,6 +210,7 @@ fun PostListing(
 
 @Composable
 fun GridItem(
+    enableInput: Boolean = true,
     brush: Brush,
     isInternetConnected: Boolean,
     dataItem: VideoModel,
@@ -226,9 +241,20 @@ fun GridItem(
                 contentScale = ContentScale.FillHeight,
                 modifier = Modifier
                     .fillMaxSize()
-                    .clickable {
-                        triggerShowDeleteRecipe()
-                    })
+                    .then(
+                        if (enableInput)
+                        {
+                            Modifier.clickable {
+                                triggerShowDeleteRecipe()
+                            }
+                        }
+                        else
+                        {
+                            Modifier
+                        }
+                    )
+
+            )
             Box(
                 modifier = Modifier
                     .fillMaxSize()

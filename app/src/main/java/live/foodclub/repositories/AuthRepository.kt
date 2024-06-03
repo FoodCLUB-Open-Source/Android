@@ -1,5 +1,7 @@
 package live.foodclub.repositories
 
+import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.tasks.await
 import live.foodclub.domain.models.auth.ForgotChangePassword
 import live.foodclub.domain.models.auth.SignInUser
 import live.foodclub.domain.models.auth.SignUpUser
@@ -16,8 +18,6 @@ import live.foodclub.network.retrofit.responses.general.SingleMessageResponse
 import live.foodclub.network.retrofit.services.AuthenticationService
 import live.foodclub.network.retrofit.utils.apiRequestFlow
 import live.foodclub.utils.helpers.Resource
-import com.google.firebase.messaging.FirebaseMessaging
-import kotlinx.coroutines.tasks.await
 
 
 class AuthRepository(
@@ -39,10 +39,6 @@ class AuthRepository(
         ) {
             is Resource.Success -> {
                 val signInUser = signInMapper.mapToDomainModel(resource.data!!.body()!!)
-                val fcmToken = firebaseMessaging.token.await()
-                val newFirebaseUser = firebaseUserMapper.mapFromDomainModel(signInUser)
-                newFirebaseUser.fcmToken = fcmToken
-                firebaseUserRepository.saveUserToFirestore(newFirebaseUser)
                 Resource.Success(
                     data = signInUser
                 )
@@ -53,7 +49,6 @@ class AuthRepository(
             }
         }
     }
-
     suspend fun signUp(
         signUpUser: SignUpUser
     ): Resource<SingleMessageResponse, DefaultErrorResponse> {
@@ -63,6 +58,10 @@ class AuthRepository(
             }
         ) {
             is Resource.Success -> {
+                val fcmToken = firebaseMessaging.token.await()
+                val newFirebaseUser = firebaseUserMapper.mapFromDomainModel(signUpUser)
+                newFirebaseUser.fcmToken = fcmToken
+                firebaseUserRepository.saveUserToFirestore(newFirebaseUser)
                 Resource.Success(resource.data!!.body()!!)
             }
 

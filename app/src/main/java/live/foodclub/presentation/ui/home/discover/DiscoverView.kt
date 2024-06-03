@@ -1,14 +1,23 @@
 package live.foodclub.presentation.ui.home.discover
 
-import androidx.compose.foundation.BorderStroke
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusGroup
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,8 +27,13 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FractionalThreshold
+import androidx.compose.material.rememberSwipeableState
+import androidx.compose.material.swipeable
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -53,10 +67,16 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavOptionsBuilder
+import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import live.foodclub.R
 import live.foodclub.config.ui.BottomBarScreenObject
@@ -66,6 +86,8 @@ import live.foodclub.domain.enums.Category
 import live.foodclub.domain.enums.CategoryType
 import live.foodclub.domain.models.home.VideoModel
 import live.foodclub.presentation.navigation.HomeOtherRoutes
+import live.foodclub.domain.models.home.VideoStats
+import live.foodclub.domain.models.profile.SimpleUserModel
 import live.foodclub.utils.composables.PostListing
 import live.foodclub.utils.composables.products.ProductState
 import live.foodclub.utils.composables.products.ProductsEvents
@@ -73,7 +95,12 @@ import live.foodclub.utils.composables.shimmerBrush
 import live.foodclub.utils.composables.videoPager.VideoPager
 import live.foodclub.utils.helpers.checkInternetConnectivity
 import live.foodclub.presentation.ui.home.discover.composables.KitchenIngredients
+import kotlin.math.min
 
+
+enum class DragValue { Start, End }
+
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun DiscoverView(
     onNavigate: (String, NavOptionsBuilder.() -> Unit) -> Unit,
@@ -84,6 +111,7 @@ fun DiscoverView(
     categoryPosts: LazyPagingItems<VideoModel>,
 ) {
     val context = LocalContext.current
+    val density = LocalDensity.current
     val localDensity = LocalDensity.current
     val coroutineScope = rememberCoroutineScope()
     val isInternetConnected by rememberUpdatedState(newValue = checkInternetConnectivity(context))
@@ -97,17 +125,9 @@ fun DiscoverView(
     val dietList = Category.deriveFromType(CategoryType.DIET)
     val cuisineList = Category.deriveFromType(CategoryType.CUISINE)
 
-//    var isDialogOpen by remember { mutableStateOf(false) }
-//    var alphaValue by remember { mutableFloatStateOf(1f) }
-
-//    alphaValue = if (isDialogOpen) {
-//        0.5f
-//    } else {
-//        1f
-//    }
-
     var tabIndex by remember { mutableIntStateOf(0) }
     val lazyGridState = rememberLazyGridState()
+    val lazyColumnState = rememberLazyListState()
     LaunchedEffect(tabIndex, subCategoriesTabIndex, subWorldTabIndex) {
         if (tabIndex == 1) {
             events.changeCategory(category = dietList[subCategoriesTabIndex])
@@ -118,15 +138,6 @@ fun DiscoverView(
     }
 
     val mainTabItemsList = stringArrayResource(id = R.array.discover_tabs)
-
-    //Do we need that? *********************************** ~Jakub
-//    var gridHeight by remember { mutableStateOf(0.dp) }
-//    val recommendationVideosCount by remember { mutableIntStateOf(8) }
-//    gridHeight = if (recommendationVideosCount == 1) {
-//        (recommendationVideosCount * dimensionResource(id = R.dimen.dim_272).value).dp
-//    } else {
-//        ((recommendationVideosCount / 2) * dimensionResource(id = R.dimen.dim_272).value).dp
-//    }
 
 
     if (isShowPost) {
@@ -142,24 +153,16 @@ fun DiscoverView(
             onBackPressed = {
                 coroutineScope.launch { lazyGridState.scrollToItem(it) }
                 isShowPost = false
-                            },
+            },
             onProfileNavigated = {
                 onNavigate(BottomBarScreenObject.Profile.route + "?userId=$it") {}
             }
         )
-    } else {
+    }
+    else {
 
         Column(
-            modifier = Modifier
-                .background(Color.White)
-                .then(
-                    if (tabIndex == 0) {
-//                        Modifier.verticalScroll(rememberScrollState())
-                        Modifier
-                    } else {
-                        Modifier
-                    }
-                ),
+            modifier = Modifier.background(Color.White),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             DiscoverViewHeader(
@@ -177,165 +180,354 @@ fun DiscoverView(
                 tabIndex = it
             }
 
-//        if (isDialogOpen) {
-//            AddIngredientDialog(
-//                stringResource(R.string.added),
-//                stringResource(R.string.successfully_added_first),
-//                stringResource(R.string.successfully_added_second),
-//                state.ingredientToEdit!!.type
-//            )
-//            LaunchedEffect(key1 = true) {
-//                delay(3000)
-//                isDialogOpen = false
-//            }
-//        }
+        var showMyKitchen by remember {
+            mutableStateOf(true)
+        }
+
+        var height by remember {
+            mutableStateOf(0.dp)
+        }
+
+        height = (min(
+            productState.filteredAddedProducts.size,
+            5
+        ) * dimensionResource(id = R.dimen.dim_65).value).dp + dimensionResource(id = R.dimen.dim_230)
 
 
-            if (tabIndex == 0) {
-                if (isInternetConnected) {
-                    KitchenIngredients(events = productsEvents, state = productState)
 
-                    if (productState.addedProducts.isEmpty()) {
-                        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
+        if (tabIndex == 0) {
+            if (isInternetConnected) {
 
-                        Text(
-                            text = stringResource(id = R.string.add_ingredients_information_text),
-                            fontWeight = FontWeight(500),
-                            fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
-                            color = colorResource(
-                                id = R.color.discover_view_add_ingredient_information_text
-                            ).copy(alpha = 0.3f),
-                            lineHeight = dimensionResource(id = R.dimen.fon_17).value.sp,
-                            fontFamily = Montserrat,
-                            textAlign = TextAlign.Center
-                        )
-                        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
-                    }
+                val swipeableState = rememberSwipeableState(1)
+                val anchors = mapOf(0f to 0, 1f to 1)
+
+                showMyKitchen = swipeableState.currentValue != 0
 
 
-                    Button(
-                        onClick = {
-                            events.onResetSearchData()
-                            onNavigate("ADD_INGREDIENTS") {}
-                        },
-                        shape = RoundedCornerShape(
-                            dimensionResource(
-                                id = R.dimen.dim_20
-                            )
-                        ),
-                        colors = ButtonDefaults.buttonColors(foodClubGreen),
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.add_ingredients),
-                            fontSize = dimensionResource(
-                                id = R.dimen.fon_14
-                            ).value.sp,
-                            fontFamily = Montserrat,
-                            lineHeight = dimensionResource(id = R.dimen.fon_17).value.sp,
-                            fontWeight = FontWeight(500)
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
-                if (productState.addedProducts.isNotEmpty()) {
-                    RecommendationSection(
-                        lazyGridState = lazyGridState,
-                        isInternetConnected = isInternetConnected,
-                        posts = categoryPosts,
-                        isShowPost = {
-                            postIndex = it
-                            isShowPost = true
+                // Auto swipes to the other state if the recommendations list is overflowing upwards
+                LaunchedEffect(lazyGridState.isScrollInProgress, lazyGridState.canScrollBackward)
+                {
+                    if(lazyGridState.isScrollInProgress && !lazyGridState.canScrollBackward){
+                        CoroutineScope(Dispatchers.Default).launch {
+                            swipeableState.snapTo(1)
                         }
-                    )
-                }
-            } else {
-                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
-
-                if (tabIndex == 1) {
-                    SubCategoriesTabRow(
-                        subCategoriesTabIndex = subCategoriesTabIndex,
-                        subCategoriesTabItemsList = dietList,
-                        onCategoriesTabChanged = {
-                            events.changeCategory(dietList[it])
-                            subCategoriesTabIndex = it
-                        },
-                        isInternetConnected,
-                        brush
-                    )
-                } else {
-                    SubCategoriesTabRow(
-                        subCategoriesTabIndex = subWorldTabIndex,
-                        subCategoriesTabItemsList = cuisineList,
-                        onCategoriesTabChanged = {
-                            events.changeCategory(cuisineList[it])
-                            subWorldTabIndex = it
-                        },
-                        isInternetConnected,
-                        brush
-                    )
-                }
-
-                Box(
-                    Modifier
-                        .fillMaxSize()
-                        .background(Color.White)
-                        .padding(
-                            start = dimensionResource(id = R.dimen.dim_15),
-                            end = dimensionResource(id = R.dimen.dim_15)
-                        )
-                ) {
-                    PostListing(
-                        lazyGridState = lazyGridState,
-                        userTabItems = categoryPosts,
-                        isInternetConnected = isInternetConnected
-                    ) {
-                        postIndex = it
-                        isShowPost = true
                     }
+                }
+
+                // Auto swipes to the other state if the ingredients list is overflowing downwards
+                LaunchedEffect(lazyColumnState.isScrollInProgress, lazyColumnState.canScrollForward)
+                {
+                    if(lazyColumnState.isScrollInProgress && !lazyColumnState.canScrollForward){
+                        CoroutineScope(Dispatchers.Default).launch {
+                            swipeableState.snapTo(0)
+                        }
+                    }
+                }
+
+
+                Column(horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .focusGroup()
+                        .then(
+                            if (productState.addedProducts.isNotEmpty())
+                            {
+                                Modifier.swipeable(
+                                    state = swipeableState,
+                                    orientation = Orientation.Vertical,
+                                    anchors = anchors,
+                                    thresholds = { _, _ -> FractionalThreshold(0.3f) }
+                                )
+                            }
+                            else
+                            {
+                                Modifier
+                            }
+                        )
+                        ) {
+                    AnimatedVisibility(visible = showMyKitchen) {
+                        Column(
+                            modifier = Modifier
+                                .height(height)
+                            //.background( if (swipeableState.currentValue == 0) Color.Green else Color.Blue)
+                            ,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            KitchenIngredients(events = productsEvents, state = productState, lazyColumnState = lazyColumnState)
+
+                            if (productState.addedProducts.isEmpty()) {
+                                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_20)))
+
+                                Text(
+                                    text = stringResource(id = R.string.add_ingredients_information_text),
+                                    fontWeight = FontWeight(500),
+                                    fontSize = dimensionResource(id = R.dimen.fon_13).value.sp,
+                                    color = colorResource(
+                                        id = R.color.discover_view_add_ingredient_information_text
+                                    ).copy(alpha = 0.3f),
+                                    lineHeight = dimensionResource(id = R.dimen.fon_17).value.sp,
+                                    fontFamily = Montserrat,
+                                    textAlign = TextAlign.Center
+                                )
+                                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+                            }
+
+                            Button(
+                                onClick = {
+                                    events.onResetSearchData()
+                                    onNavigate("ADD_INGREDIENTS") {}
+                                },
+                                shape = RoundedCornerShape(
+                                    dimensionResource(
+                                        id = R.dimen.dim_20
+                                    )
+                                ),
+                                colors = ButtonDefaults.buttonColors(foodClubGreen),
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.add_ingredients),
+                                    fontSize = dimensionResource(
+                                        id = R.dimen.fon_14
+                                    ).value.sp,
+                                    fontFamily = Montserrat,
+                                    lineHeight = dimensionResource(id = R.dimen.fon_17).value.sp,
+                                    fontWeight = FontWeight(500)
+                                )
+                            }
+                        }
+                    }
+
+                    if(productState.addedProducts.isNotEmpty())
+                    {
+                        Column(
+                            modifier = Modifier
+                                .focusGroup()
+                                .fillMaxHeight()
+                        ) {
+
+                            RecommendationSection(
+                                onRecommendations = !showMyKitchen,
+                                lazyGridState = lazyGridState,
+                                isInternetConnected = isInternetConnected,
+                                posts = categoryPosts,
+                                isShowPost = {
+                                    postIndex = it
+                                    isShowPost = true
+                                }
+                            )
+                        }
+                    }
+
+                }
+
+            }
+
+        } else {
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dim_10)))
+
+            if (tabIndex == 1) {
+                SubCategoriesTabRow(
+                    subCategoriesTabIndex = subCategoriesTabIndex,
+                    subCategoriesTabItemsList = dietList,
+                    onCategoriesTabChanged = {
+                        events.changeCategory(dietList[it])
+                        subCategoriesTabIndex = it
+                    },
+                    isInternetConnected,
+                    brush
+                )
+            } else {
+                SubCategoriesTabRow(
+                    subCategoriesTabIndex = subWorldTabIndex,
+                    subCategoriesTabItemsList = cuisineList,
+                    onCategoriesTabChanged = {
+                        events.changeCategory(cuisineList[it])
+                        subWorldTabIndex = it
+                    },
+                    isInternetConnected,
+                    brush
+                )
+            }
+
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+                    .padding(
+                        start = dimensionResource(id = R.dimen.dim_15),
+                        end = dimensionResource(id = R.dimen.dim_15)
+                    )
+            ) {
+                PostListing(
+                    lazyGridState = lazyGridState,
+                    userTabItems = categoryPosts,
+                    isInternetConnected = isInternetConnected
+                ) {
+                    postIndex = it
+                    isShowPost = true
                 }
             }
+        }
         }
     }
 
 
 }
 
+
 @Composable
 fun RecommendationSection(
+    onRecommendations: Boolean = true,
     lazyGridState: LazyGridState,
     isInternetConnected: Boolean,
     posts: LazyPagingItems<VideoModel>,
     isShowPost: (Int) -> Unit
 ) {
+    val recipe_vid1 = VideoModel(
+        videoId = 1,
+        title = null,
+        authorDetails = SimpleUserModel(userId = 0, username = "", profilePictureUrl = null),
+        videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
+        videoStats = VideoStats(
+            like = 409876,
+            comment = 8356,
+            share = 3000,
+            favourite = 1500
+        ),
+        description = "Draft video testing  #foryou #fyp #compose #tik",
+        thumbnailLink = "https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg"
+    )
+    val recipe_vid2 = VideoModel(
+        videoId = 2,
+        title = null,
+        authorDetails = SimpleUserModel(userId = 0, username = "", profilePictureUrl = null),
+        videoLink = "https://kretu.sts3.pl/foodclub_videos/daniel_vid2.mp4",
+        videoStats = VideoStats(
+            like = 564572,
+            comment = 8790,
+            share = 2000,
+            favourite = 1546
+        ),
+        description = "Draft video testing  #foryou #fyp #compose #tik",
+        thumbnailLink = "https://kretu.sts3.pl/foodclub_thumbnails/daniel_vid2-thumbnail.jpg"
+    )
+    val recipe_vid3 = VideoModel(
+        videoId = 3,
+        title = null,
+        authorDetails = SimpleUserModel(userId = 0, username = "", profilePictureUrl = null),
+        videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
+        videoStats = VideoStats(
+            like = 2415164,
+            comment = 5145,
+            share = 5000,
+            favourite = 2000
+        ),
+        description = "Draft video testing  #foryou #fyp #compose #tik",
+        thumbnailLink = "https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg"
+    )
+    val recipe_vid4 = VideoModel(
+        videoId = 4,
+        title = null,
+        authorDetails = SimpleUserModel(userId = 0, username = "", profilePictureUrl = null),
+        videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
+        videoStats = VideoStats(
+            like = 51626,
+            comment = 1434,
+            share = 167,
+            favourite = 633
+        ),
+        description = "Draft video testing  #foryou #fyp #compose #tik",
+        thumbnailLink = "https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg"
+    )
+    val recipe_vid5 = VideoModel(
+        videoId = 5,
+        title = null,
+        authorDetails = SimpleUserModel(userId = 0, username = "", profilePictureUrl = null),
+        videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
+        videoStats = VideoStats(
+            like = 547819,
+            comment = 79131,
+            share = 8921,
+            favourite = 2901
+        ),
+        description = "Draft video testing  #foryou #fyp #compose #tik",
+        thumbnailLink = "https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg"
+    )
+    val recipe_vid6 = VideoModel(
+        videoId = 6,
+        title = null,
+        authorDetails = SimpleUserModel(userId = 0, username = "", profilePictureUrl = null),
+        videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
+        videoStats = VideoStats(
+            like = 4512340,
+            comment = 65901,
+            share = 8165,
+            favourite = 154
+        ),
+        description = "Draft video testing  #foryou #fyp #compose #tik",
+        thumbnailLink = "https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg"
+    )
+
+    val recipe_vid7 = VideoModel(
+        videoId = 7,
+        title = null,
+        authorDetails = SimpleUserModel(userId = 0, username = "", profilePictureUrl = null),
+        videoLink = "https://kretu.sts3.pl/foodclub_videos/recipeVid.mp4",
+        videoStats = VideoStats(
+            like = 612907,
+            comment = 7643,
+            share = 1291,
+            favourite = 890
+        ),
+        description = "Draft video testing  #foryou #fyp #compose #tik",
+        thumbnailLink = "https://kretu.sts3.pl/foodclub_thumbnails/recipeVid-thumbnail.jpg"
+    )
+
+    val recipesVideosList = listOf(
+        recipe_vid1,
+        recipe_vid2,
+        recipe_vid3,
+        recipe_vid4,
+        recipe_vid5,
+        recipe_vid6,
+        recipe_vid7,
+        recipe_vid1
+    )
+
+    val pagingItems = PagingData.from(recipesVideosList)
+    val fakeDataFlow = MutableStateFlow(pagingItems)
+    val testPosts = fakeDataFlow.collectAsLazyPagingItems()
+
+
     Card(
         modifier = Modifier,
-        shape = RoundedCornerShape(
-            dimensionResource(id = R.dimen.dim_30)
-        ),
-        border = BorderStroke(
-            width = dimensionResource(id = R.dimen.dim_1),
-            color = colorResource(id = R.color.discover_view_recommendations_border_color)
-        ),
         colors = CardDefaults.cardColors(
             contentColor = Color.White,
             containerColor = Color.White
         )
     ) {
-        Text(
-            modifier = Modifier.padding(
-                horizontal = dimensionResource(id = R.dimen.dim_20),
-                vertical = dimensionResource(id = R.dimen.dim_20)
-            ),
-            text = stringResource(id = R.string.recommendations),
-            fontFamily = Montserrat,
-            fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
-            lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
-            fontWeight = FontWeight(500),
-            color = Color.Black
-        )
+
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            AnimatedVisibility(visible = onRecommendations, enter = fadeIn() + expandHorizontally(), exit = fadeOut() + shrinkHorizontally())
+            {
+                Text(
+                    modifier = Modifier.padding(
+                        horizontal = dimensionResource(id = R.dimen.dim_20),
+                        vertical = dimensionResource(id = R.dimen.dim_20)
+                    ),
+                    text = stringResource(id = R.string.recommendations),
+                    fontFamily = Montserrat,
+                    fontSize = dimensionResource(id = R.dimen.fon_20).value.sp,
+                    lineHeight = dimensionResource(id = R.dimen.fon_20).value.sp,
+                    fontWeight = FontWeight(500),
+                    color = Color.Black
+                )
+            }
+
+        }
         PostListing(
+            enableInput = onRecommendations,
             lazyGridState = lazyGridState,
-            userTabItems = posts,
+            userTabItems = testPosts,
             isInternetConnected = isInternetConnected,
             onPostSelected = isShowPost
         )

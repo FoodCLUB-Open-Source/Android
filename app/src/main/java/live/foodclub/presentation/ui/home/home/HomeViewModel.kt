@@ -1,5 +1,9 @@
 package live.foodclub.presentation.ui.home.home
 
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import live.foodclub.domain.enums.Reactions
 import live.foodclub.domain.models.home.VideoModel
 import live.foodclub.domain.models.home.VideoStats
@@ -7,7 +11,9 @@ import live.foodclub.domain.models.products.MyBasketCache
 import live.foodclub.domain.models.profile.SimpleUserModel
 import live.foodclub.domain.models.snaps.MemoriesModel
 import live.foodclub.domain.models.snaps.SnapModel
+import live.foodclub.network.retrofit.utils.SessionCache
 import live.foodclub.repositories.BookmarkRepository
+import live.foodclub.repositories.FirebaseUserRepository
 import live.foodclub.repositories.LikesRepository
 import live.foodclub.repositories.PostRepository
 import live.foodclub.repositories.RecipeRepository
@@ -41,7 +47,9 @@ class HomeViewModel @Inject constructor(
     private val bookmarkRepository: BookmarkRepository,
     private val recipeRepository: RecipeRepository,
     private val basketCache: MyBasketCache,
-    val exoPlayer: ExoPlayer
+    val exoPlayer: ExoPlayer,
+    private val sessionCache: SessionCache,
+    private val firebaseUserRepository: FirebaseUserRepository,
 ) : ViewModel(), HomeEvents {
 
     companion object {
@@ -62,11 +70,18 @@ class HomeViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000),
         HomeState.default(exoPlayer))
 
+    private val userId = sessionCache.session.value!!.sessionUser.userId.toInt()
+
     init {
         exoPlayer.prepare()
         getPostListData()
         getUserFollowerStories()
         getMemoriesListData()
+        checkUserFcmToken(userId = userId)
+    }
+
+    private fun checkUserFcmToken(userId: Int) = viewModelScope.launch {
+        firebaseUserRepository.getUserFromFirestore(userId)
     }
 
     override fun postSnap(file: File) {
