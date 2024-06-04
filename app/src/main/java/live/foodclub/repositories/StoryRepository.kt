@@ -27,7 +27,7 @@ class StoryRepository(
         ) {
             is Resource.Success -> {
                 val returnList = ArrayList<VideoModel>()
-                resource.data!!.body()!!.stories.forEach {
+                resource.data!!.body()!!.data.forEach {
                     returnList.addAll(storyMapper.mapToDomainModel(it))
                 }
 

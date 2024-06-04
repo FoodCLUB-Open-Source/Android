@@ -2,7 +2,7 @@ package live.foodclub.utils.composables
 
 import live.foodclub.R
 import live.foodclub.config.ui.Montserrat
-import live.foodclub.views.settings.colorGray
+import live.foodclub.presentation.ui.settings.colorGray
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

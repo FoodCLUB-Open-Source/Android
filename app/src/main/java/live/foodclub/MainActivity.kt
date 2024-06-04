@@ -2,6 +2,10 @@ package live.foodclub
 
 import android.Manifest
 import android.content.pm.PackageManager
+import live.foodclub.config.ui.FoodClubTheme
+import live.foodclub.presentation.navigation.RootNavigationGraph
+import live.foodclub.utils.composables.MainLayout
+import live.foodclub.utils.helpers.checkPermissions
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -18,7 +22,7 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import live.foodclub.config.ui.FoodClubTheme
-import live.foodclub.navigation.RootNavigationGraph
+import live.foodclub.presentation.navigation.RootNavigationGraph
 import live.foodclub.utils.composables.MainLayout
 import live.foodclub.utils.helpers.checkPermissions
 

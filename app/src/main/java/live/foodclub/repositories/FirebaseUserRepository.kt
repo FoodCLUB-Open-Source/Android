@@ -42,9 +42,12 @@ class FirebaseUserRepository @Inject constructor(
 
         }
 
-    suspend fun getUserFromFirestore(userId: Int): Resource<FirebaseUserModel, DefaultErrorResponse> =
+    suspend fun getUserFromFirestore(userId: Int?): Resource<FirebaseUserModel, DefaultErrorResponse> =
         withContext(ioDispatcher) {
             return@withContext try {
+                if (userId == null) {
+                    return@withContext Resource.Error("User not found")
+                }
                 val fcmToken = firebaseMessaging.token.await()
                 val updateToken = mapOf(
                     FCM_TOKEN to fcmToken

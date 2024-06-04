@@ -5,5 +5,5 @@ import androidx.annotation.Keep
 
 @Keep
 data class RetrieveUserFriendsStoriesResponse(
-    val stories: List<FriendStoryDto>
+    val data: List<FriendStoryDto>
 )

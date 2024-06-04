@@ -5,8 +5,6 @@ import android.content.SharedPreferences
 import live.foodclub.network.retrofit.utils.auth.RefreshTokenManager
 import live.foodclub.domain.models.products.MyBasketCache
 import live.foodclub.network.retrofit.utils.SessionCache
-import live.foodclub.repositories.ProductRepository
-import live.foodclub.viewModels.home.myBasket.MyBasketViewModel
 import live.foodclub.utils.helpers.ConnectivityUtils
 import dagger.Module
 import dagger.Provides
